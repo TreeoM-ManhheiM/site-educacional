@@ -33,6 +33,7 @@ border:none;
 border-radius:6px;
 cursor:pointer;
 margin-top:10px;
+margin-right:10px;
 }
 
 .resultado{
@@ -105,9 +106,11 @@ font-weight:bold;
 
 <div id="resultado" class="resultado"></div>
 
-<button id="baixar" onclick="baixarCSV()" style="display:none;">
-Baixar resultado em CSV
-</button>
+<br>
+
+<button onclick="baixarCSV()" id="csv" style="display:none">Baixar CSV</button>
+<button onclick="baixarJSON()" id="json" style="display:none">Baixar JSON</button>
+<button onclick="baixarXML()" id="xml" style="display:none">Baixar XML</button>
 
 </div>
 
@@ -144,9 +147,7 @@ pontuacao++
 }
 
 }else{
-
 respostasAluno.push("NA")
-
 }
 
 }
@@ -166,7 +167,9 @@ mensagem="Reflita mais sobre ética na programação."
 document.getElementById("resultado").innerHTML =
 "Pontuação: "+pontuacao+" / 7<br>"+mensagem
 
-document.getElementById("baixar").style.display="inline"
+document.getElementById("csv").style.display="inline"
+document.getElementById("json").style.display="inline"
+document.getElementById("xml").style.display="inline"
 
 }
 
@@ -175,16 +178,65 @@ function baixarCSV(){
 let nome = document.getElementById("nome").value
 
 let csv = "Nome,P1,P2,P3,P4,P5,P6,P7,Pontuacao\n"
-
 csv += nome + "," + respostasAluno.join(",") + "," + pontuacao
 
-let blob = new Blob([csv], { type: "text/csv" })
+download(csv,"resultado.csv","text/csv")
+
+}
+
+function baixarJSON(){
+
+let nome = document.getElementById("nome").value
+
+let dados = {
+nome:nome,
+respostas:{
+p1:respostasAluno[0],
+p2:respostasAluno[1],
+p3:respostasAluno[2],
+p4:respostasAluno[3],
+p5:respostasAluno[4],
+p6:respostasAluno[5],
+p7:respostasAluno[6]
+},
+pontuacao:pontuacao
+}
+
+download(JSON.stringify(dados,null,2),"resultado.json","application/json")
+
+}
+
+function baixarXML(){
+
+let nome = document.getElementById("nome").value
+
+let xml = `
+<quiz>
+<nome>${nome}</nome>
+<p1>${respostasAluno[0]}</p1>
+<p2>${respostasAluno[1]}</p2>
+<p3>${respostasAluno[2]}</p3>
+<p4>${respostasAluno[3]}</p4>
+<p5>${respostasAluno[4]}</p5>
+<p6>${respostasAluno[5]}</p6>
+<p7>${respostasAluno[6]}</p7>
+<pontuacao>${pontuacao}</pontuacao>
+</quiz>
+`
+
+download(xml,"resultado.xml","text/xml")
+
+}
+
+function download(conteudo,nome,tipo){
+
+let blob = new Blob([conteudo], {type:tipo})
 
 let link = document.createElement("a")
 
 link.href = URL.createObjectURL(blob)
 
-link.download = "resultado_etica_programacao.csv"
+link.download = nome
 
 link.click()
 
