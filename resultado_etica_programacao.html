@@ -2,43 +2,44 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Quiz - Ética na Programação</title>
+<title>Pipeline de IA - Regressão Logística</title>
 
 <style>
 
 body{
 font-family: Arial;
-background:#f2f2f2;
-padding:30px;
+background:#f4f4f4;
+padding:40px;
 }
 
 .container{
-max-width:800px;
+max-width:900px;
 margin:auto;
 background:white;
-padding:25px;
+padding:30px;
 border-radius:10px;
+box-shadow:0px 0px 10px #ccc;
 }
 
-.pergunta{
-margin-bottom:25px;
+pre{
+background:#1e1e1e;
+color:#00ff9c;
+padding:20px;
+border-radius:8px;
+overflow-x:auto;
 }
 
-button{
-padding:12px;
-font-size:16px;
-background:#2ecc71;
-color:white;
-border:none;
-border-radius:6px;
-cursor:pointer;
-margin-top:10px;
+code{
+font-family: Consolas, monospace;
+font-size:15px;
 }
 
-.resultado{
-margin-top:30px;
-font-size:20px;
-font-weight:bold;
+.pipeline{
+background:#eef7ff;
+padding:15px;
+border-radius:8px;
+margin-bottom:20px;
+font-size:18px;
 }
 
 </style>
@@ -48,149 +49,60 @@ font-weight:bold;
 
 <div class="container">
 
-<h1>Atividade: Ética na Programação</h1>
+<h1>Pipeline de Inteligência Artificial</h1>
 
-<label>Nome do aluno:</label><br>
-<input type="text" id="nome" style="width:300px;padding:5px"><br><br>
+<p>Os dados coletados na atividade de ética em programação podem ser utilizados para treinar um modelo de <b>Machine Learning</b> usando <b>Regressão Logística</b>.</p>
 
-<form id="quiz">
+<div class="pipeline">
 
-<div class="pergunta">
-<h3>1) INTEGRIDADE</h3>
-<input type="radio" name="p1" value="1"> Entregar como se fosse dele<br>
-<input type="radio" name="p1" value="2"> Dar crédito ao colega
-</div>
+<b>Fluxo da atividade:</b>
 
-<div class="pergunta">
-<h3>2) RESPONSABILIDADE</h3>
-<input type="radio" name="p2" value="1"> Esconder o erro<br>
-<input type="radio" name="p2" value="2"> Avisar a equipe
-</div>
+<br><br>
 
-<div class="pergunta">
-<h3>3) CONFIDENCIALIDADE</h3>
-<input type="radio" name="p3" value="1"> Compartilhar dados<br>
-<input type="radio" name="p3" value="2"> Proteger dados
-</div>
-
-<div class="pergunta">
-<h3>4) TRANSPARÊNCIA</h3>
-<input type="radio" name="p4" value="1"> Avisar a equipe<br>
-<input type="radio" name="p4" value="2"> Esconder erro
-</div>
-
-<div class="pergunta">
-<h3>5) JUSTIÇA</h3>
-<input type="radio" name="p5" value="1"> Dar crédito a um<br>
-<input type="radio" name="p5" value="2"> Reconhecer os dois
-</div>
-
-<div class="pergunta">
-<h3>6) RESPEITO</h3>
-<input type="radio" name="p6" value="1"> Ridicularizar<br>
-<input type="radio" name="p6" value="2"> Ajudar colega
-</div>
-
-<div class="pergunta">
-<h3>7) LEGALIDADE</h3>
-<input type="radio" name="p7" value="1"> Baixar ilegal<br>
-<input type="radio" name="p7" value="2"> Comprar licença
-</div>
-
-<br>
-
-<button type="button" onclick="corrigir()">Ver Resultado</button>
-
-</form>
-
-<div id="resultado" class="resultado"></div>
-
-<button id="baixar" onclick="baixarCSV()" style="display:none;">
-Baixar resultado em CSV
-</button>
+Atividade HTML (respostas dos alunos)  
+↓  
+Arquivo CSV com resultados  
+↓  
+Python + Pandas  
+↓  
+Regressão Logística (Machine Learning)  
+↓  
+Modelo treinado para análise dos dados
 
 </div>
 
-<script>
+<h2>Exemplo de Código em Python</h2>
 
-let pontuacao = 0
-let respostasAluno = []
+<pre><code>
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
 
-function corrigir(){
+dados = pd.read_csv("resultado_etica_programacao.csv")
 
-pontuacao = 0
-respostasAluno = []
+X = dados[["P1","P2","P3","P4","P5","P6","P7"]]
+y = dados["Pontuacao"] >= 5
 
-const corretas = {
-p1:"2",
-p2:"2",
-p3:"2",
-p4:"1",
-p5:"2",
-p6:"2",
-p7:"2"
-}
+modelo = LogisticRegression()
+modelo.fit(X,y)
 
-for(let i=1;i<=7;i++){
+print("Modelo treinado!")
+</code></pre>
 
-let resposta = document.querySelector('input[name="p'+i+'"]:checked')
+<p>
+Nesse exemplo:
+</p>
 
-if(resposta){
+<ul>
+<li><b>P1 a P7</b> representam as respostas dos alunos</li>
+<li><b>Pontuação</b> indica o desempenho na atividade</li>
+<li>O modelo aprende padrões usando <b>Regressão Logística</b></li>
+</ul>
 
-respostasAluno.push(resposta.value)
+<p>
+Esse processo mostra como uma atividade simples pode gerar dados para estudo em <b>Machine Learning</b>.
+</p>
 
-if(resposta.value == corretas["p"+i]){
-pontuacao++
-}
-
-}else{
-
-respostasAluno.push("NA")
-
-}
-
-}
-
-let mensagem=""
-
-if(pontuacao >=6){
-mensagem="Excelente ética profissional!"
-}
-else if(pontuacao>=4){
-mensagem="Bom, mas ainda pode melhorar."
-}
-else{
-mensagem="Reflita mais sobre ética na programação."
-}
-
-document.getElementById("resultado").innerHTML =
-"Pontuação: "+pontuacao+" / 7<br>"+mensagem
-
-document.getElementById("baixar").style.display="inline"
-
-}
-
-function baixarCSV(){
-
-let nome = document.getElementById("nome").value
-
-let csv = "Nome,P1,P2,P3,P4,P5,P6,P7,Pontuacao\n"
-
-csv += nome + "," + respostasAluno.join(",") + "," + pontuacao
-
-let blob = new Blob([csv], { type: "text/csv" })
-
-let link = document.createElement("a")
-
-link.href = URL.createObjectURL(blob)
-
-link.download = "resultado_etica_programacao.csv"
-
-link.click()
-
-}
-
-</script>
+</div>
 
 </body>
 </html>
