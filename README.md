@@ -1,10 +1,3 @@
-# site-educacional
-Ótima ideia colocar isso no **README do repositório**. Isso valoriza o projeto, a **produção de conhecimento** e mostra transparência sobre as ferramentas usadas. 📚💻
-
-Abaixo está um **texto em formato Markdown (ideal para GitHub)** que você pode colocar no README.
-
----
-
 ## 📚 Site Educacional – Construção Colaborativa do Conhecimento
 
 Este projeto tem como objetivo promover o **aprendizado ativo em programação, ética na tecnologia e inteligência artificial**, utilizando ferramentas modernas de desenvolvimento e práticas abertas de compartilhamento de conhecimento.
