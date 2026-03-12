@@ -95,11 +95,4 @@ Projetos educacionais como este demonstram que:
 
 ---
 
-💡 Se quiser, também posso te ajudar a criar **um README ainda mais forte para o GitHub**, com:
-
-* 🚀 **badges profissionais**
-* 📊 **diagrama do pipeline de IA**
-* 🧠 **seção de pesquisa acadêmica**
-* 🎓 **citação para uso em trabalhos científicos**
-
-Isso deixa o repositório com **cara de projeto universitário/profissional**.
+by TreeoM Mannheim 2026
