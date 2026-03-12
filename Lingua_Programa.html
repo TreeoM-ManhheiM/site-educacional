@@ -1,237 +1,201 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Atividade – Valores e Ética</title>
+<meta charset="UTF-8">
+<title>Atividade Interativa - Ética na Programação</title>
+
 <style>
-  :root{
-    --ok:#155724;        /* verde escuro texto */
-    --ok-bg:#d4edda;     /* verde claro fundo */
-    --err:#721c24;       /* vermelho escuro texto */
-    --err-bg:#f8d7da;    /* vermelho claro fundo */
-    --muted:#6b7280;     /* cinza texto leve */
-    --border:#e5e7eb;    /* cinza borda */
-  }
-  body{
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, Helvetica, sans-serif;
-    margin: 16px;
-    line-height: 1.6;
-  }
-  h1{ margin: 0 0 12px; font-size: 1.6rem; }
-  p.intro{ color: var(--muted); margin-top: 0; }
-  .atividade{ max-width: 860px; }
-  .q{
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 14px;
-    margin: 14px 0;
-    background: #fff;
-  }
-  .q h3{ margin: 0 0 6px; font-size: 1.05rem; }
-  .q .situacao{ margin: 6px 0 10px; }
-  .opcoes{ display: grid; gap: 6px; margin-bottom: 10px; }
-  .opcao{
-    display: flex; align-items: start; gap: 8px;
-    padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border);
-    cursor: pointer; user-select: none;
-  }
-  .opcao input{ margin-top: 3px; }
-  .fb{ display: none; padding: 10px; border-radius: 6px; margin: 8px 0 0; }
-  .correto{ background: var(--ok-bg); color: var(--ok); }
-  .incorreto{ background: var(--err-bg); color: var(--err); }
+body{
+    font-family: Arial;
+    background:#f4f4f4;
+    padding:30px;
+}
 
-  /* Regras de exibição do feedback por pergunta (sem JS) */
-  /* Q1 */
-  #q1a2:checked ~ .fb-q1 .correto{ display:block; }
-  #q1a1:checked ~ .fb-q1 .incorreto{ display:block; }
-  /* Q2 */
-  #q2a2:checked ~ .fb-q2 .correto{ display:block; }
-  #q2a1:checked ~ .fb-q2 .incorreto{ display:block; }
-  /* Q3 */
-  #q3a2:checked ~ .fb-q3 .correto{ display:block; }
-  #q3a1:checked ~ .fb-q3 .incorreto{ display:block; }
-  /* Q4 */
-  #q4a1:checked ~ .fb-q4 .correto{ display:block; }
-  #q4a2:checked ~ .fb-q4 .incorreto{ display:block; }
-  /* Q5 */
-  #q5a2:checked ~ .fb-q5 .correto{ display:block; }
-  #q5a1:checked ~ .fb-q5 .incorreto{ display:block; }
-  /* Q6 */
-  #q6a2:checked ~ .fb-q6 .correto{ display:block; }
-  #q6a1:checked ~ .fb-q6 .incorreto{ display:block; }
-  /* Q7 */
-  #q7a2:checked ~ .fb-q7 .correto{ display:block; }
-  #q7a1:checked ~ .fb-q7 .incorreto{ display:block; }
+.container{
+    max-width:800px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+    box-shadow:0px 0px 10px #ccc;
+}
 
-  hr{ border: none; border-top: 1px solid var(--border); margin: 18px 0; }
-  footer{ color: var(--muted); font-size: .95rem; }
+.pergunta{
+    margin-bottom:35px;
+}
+
+button{
+    padding:10px 15px;
+    margin:5px;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:15px;
+}
+
+.opcao{
+    background:#3498db;
+    color:white;
+}
+
+.resultado{
+    margin-top:10px;
+    font-weight:bold;
+}
+
+.correto{
+    color:green;
+}
+
+.incorreto{
+    color:red;
+}
 </style>
+
 </head>
+
 <body>
-<div class="atividade">
-  <h1>Atividade – Valores e Ética no Trabalho</h1>
-  <p class="intro">Leia cada situação e escolha a alternativa que melhor representa o valor humano em questão.</p>
 
-  <!-- 1) INTEGRIDADE -->
-  <section class="q">
-    <h3>1) INTEGRIDADE</h3>
-    <p class="situacao">Um programador copia parte do código de um colega sem dar crédito. O que fazer?</p>
+<div class="container">
 
-    <div class="opcoes">
-      <label class="opcao">
-        <input type="radio" name="q1" id="q1a1">
-        <span>1 - Entregar o código como se fosse dele</span>
-      </label>
-      <label class="opcao">
-        <input type="radio" name="q1" id="q1a2">
-        <span>2 - Dar crédito ao colega ou pedir autorização</span>
-      </label>
-    </div>
+<h1>Atividade: Ética na Programação</h1>
+<p>Escolha a melhor opção:</p>
 
-    <div class="fb fb-q1">
-      <div class="correto"><strong>Correto!</strong> Você demonstrou <em>integridade</em>.</div>
-      <div class="incorreto"><strong>Incorreto.</strong> Isso demonstra falta de <em>integridade</em>.</div>
-    </div>
-  </section>
+<!-- PERGUNTA 1 -->
+<div class="pergunta">
+<h3>1) INTEGRIDADE</h3>
+<p>Um programador copia parte do código de um colega sem dar crédito.</p>
 
-  <!-- 2) RESPONSABILIDADE -->
-  <section class="q">
-    <h3>2) RESPONSABILIDADE</h3>
-    <p class="situacao">Um desenvolvedor percebe que cometeu um erro no sistema da empresa. O que fazer?</p>
+<button class="opcao" onclick="responder('r1', false)">
+1 - Entregar o código como se fosse dele
+</button>
 
-    <div class="opcoes">
-      <label class="opcao">
-        <input type="radio" name="q2" id="q2a1">
-        <span>1 - Esconder o erro</span>
-      </label>
-      <label class="opcao">
-        <input type="radio" name="q2" id="q2a2">
-        <span>2 - Assumir o erro e avisar a equipe</span>
-      </label>
-    </div>
+<button class="opcao" onclick="responder('r1', true)">
+2 - Dar crédito ao colega ou pedir autorização
+</button>
 
-    <div class="fb fb-q2">
-      <div class="correto"><strong>Correto!</strong> Isso demonstra <em>responsabilidade</em>.</div>
-      <div class="incorreto"><strong>Incorreto.</strong> Esconder o erro demonstra falta de <em>responsabilidade</em>.</div>
-    </div>
-  </section>
-
-  <!-- 3) CONFIDENCIALIDADE -->
-  <section class="q">
-    <h3>3) CONFIDENCIALIDADE</h3>
-    <p class="situacao">Você tem acesso a dados de clientes da empresa. O que fazer?</p>
-
-    <div class="opcoes">
-      <label class="opcao">
-        <input type="radio" name="q3" id="q3a1">
-        <span>1 - Compartilhar informações com amigos</span>
-      </label>
-      <label class="opcao">
-        <input type="radio" name="q3" id="q3a2">
-        <span>2 - Manter os dados protegidos</span>
-      </label>
-    </div>
-
-    <div class="fb fb-q3">
-      <div class="correto"><strong>Correto!</strong> Você respeitou a <em>confidencialidade</em>.</div>
-      <div class="incorreto"><strong>Incorreto.</strong> Isso viola a <em>confidencialidade</em>.</div>
-    </div>
-  </section>
-
-  <!-- 4) TRANSPARÊNCIA -->
-  <section class="q">
-    <h3>4) TRANSPARÊNCIA</h3>
-    <p class="situacao">Um programador encontra um erro grave no sistema. O que fazer?</p>
-
-    <div class="opcoes">
-      <label class="opcao">
-        <input type="radio" name="q4" id="q4a1">
-        <span>1 - Avisar a equipe sobre o problema</span>
-      </label>
-      <label class="opcao">
-        <input type="radio" name="q4" id="q4a2">
-        <span>2 - Esconder o erro para evitar problemas</span>
-      </label>
-    </div>
-
-    <div class="fb fb-q4">
-      <div class="correto"><strong>Correto!</strong> Isso demonstra <em>transparência</em>.</div>
-      <div class="incorreto"><strong>Incorreto.</strong> Esconder o erro demonstra falta de <em>transparência</em>.</div>
-    </div>
-  </section>
-
-  <!-- 5) JUSTIÇA -->
-  <section class="q">
-    <h3>5) JUSTIÇA</h3>
-    <p class="situacao">Dois colegas trabalharam em um projeto. O que é o mais justo?</p>
-
-    <div class="opcoes">
-      <label class="opcao">
-        <input type="radio" name="q5" id="q5a1">
-        <span>1 - Dar crédito apenas para um deles</span>
-      </label>
-      <label class="opcao">
-        <input type="radio" name="q5" id="q5a2">
-        <span>2 - Reconhecer o trabalho dos dois</span>
-      </label>
-    </div>
-
-    <div class="fb fb-q5">
-      <div class="correto"><strong>Correto!</strong> Isso demonstra <em>justiça</em>.</div>
-      <div class="incorreto"><strong>Incorreto.</strong> Isso demonstra falta de <em>justiça</em>.</div>
-    </div>
-  </section>
-
-  <!-- 6) RESPEITO -->
-  <section class="q">
-    <h3>6) RESPEITO</h3>
-    <p class="situacao">Um colega cometeu um erro no trabalho. Qual atitude é respeitosa?</p>
-
-    <div class="opcoes">
-      <label class="opcao">
-        <input type="radio" name="q6" id="q6a1">
-        <span>1 - Ridicularizar o colega</span>
-      </label>
-      <label class="opcao">
-        <input type="radio" name="q6" id="q6a2">
-        <span>2 - Ajudar o colega a resolver o problema</span>
-      </label>
-    </div>
-
-    <div class="fb fb-q6">
-      <div class="correto"><strong>Correto!</strong> Isso demonstra <em>respeito</em>.</div>
-      <div class="incorreto"><strong>Incorreto.</strong> Ridicularizar demonstra falta de <em>respeito</em>.</div>
-    </div>
-  </section>
-
-  <!-- 7) LEGALIDADE -->
-  <section class="q">
-    <h3>7) LEGALIDADE</h3>
-    <p class="situacao">Você encontrou um software pago disponível gratuitamente na internet. O que fazer?</p>
-
-    <div class="opcoes">
-      <label class="opcao">
-        <input type="radio" name="q7" id="q7a1">
-        <span>1 - Baixar ilegalmente</span>
-      </label>
-      <label class="opcao">
-        <input type="radio" name="q7" id="q7a2">
-        <span>2 - Comprar a licença ou usar software gratuito legal</span>
-      </label>
-    </div>
-
-    <div class="fb fb-q7">
-      <div class="correto"><strong>Correto!</strong> Você respeitou a <em>legalidade</em>.</div>
-      <div class="incorreto"><strong>Incorreto.</strong> Isso viola a <em>legalidade</em>.</div>
-    </div>
-  </section>
-
-  <hr>
-  <footer>Fim da atividade.</footer>
-  <hr>
-<a href="index.html">Voltar para a página inicial</a>
+<div id="r1" class="resultado"></div>
 </div>
+
+<!-- PERGUNTA 2 -->
+<div class="pergunta">
+<h3>2) RESPONSABILIDADE</h3>
+<p>Um desenvolvedor percebe que cometeu um erro no sistema.</p>
+
+<button class="opcao" onclick="responder('r2', false)">
+1 - Esconder o erro
+</button>
+
+<button class="opcao" onclick="responder('r2', true)">
+2 - Assumir o erro e avisar a equipe
+</button>
+
+<div id="r2" class="resultado"></div>
+</div>
+
+<!-- PERGUNTA 3 -->
+<div class="pergunta">
+<h3>3) CONFIDENCIALIDADE</h3>
+<p>Você tem acesso a dados de clientes da empresa.</p>
+
+<button class="opcao" onclick="responder('r3', false)">
+1 - Compartilhar informações com amigos
+</button>
+
+<button class="opcao" onclick="responder('r3', true)">
+2 - Manter os dados protegidos
+</button>
+
+<div id="r3" class="resultado"></div>
+</div>
+
+<!-- PERGUNTA 4 -->
+<div class="pergunta">
+<h3>4) TRANSPARÊNCIA</h3>
+<p>Um programador encontra um erro grave no sistema.</p>
+
+<button class="opcao" onclick="responder('r4', true)">
+1 - Avisar a equipe sobre o problema
+</button>
+
+<button class="opcao" onclick="responder('r4', false)">
+2 - Esconder o erro para evitar problemas
+</button>
+
+<div id="r4" class="resultado"></div>
+</div>
+
+<!-- PERGUNTA 5 -->
+<div class="pergunta">
+<h3>5) JUSTIÇA</h3>
+<p>Dois colegas trabalharam em um projeto.</p>
+
+<button class="opcao" onclick="responder('r5', false)">
+1 - Dar crédito apenas para um deles
+</button>
+
+<button class="opcao" onclick="responder('r5', true)">
+2 - Reconhecer o trabalho dos dois
+</button>
+
+<div id="r5" class="resultado"></div>
+</div>
+
+<!-- PERGUNTA 6 -->
+<div class="pergunta">
+<h3>6) RESPEITO</h3>
+<p>Um colega cometeu um erro no trabalho.</p>
+
+<button class="opcao" onclick="responder('r6', false)">
+1 - Ridicularizar o colega
+</button>
+
+<button class="opcao" onclick="responder('r6', true)">
+2 - Ajudar o colega a resolver o problema
+</button>
+
+<div id="r6" class="resultado"></div>
+</div>
+
+<!-- PERGUNTA 7 -->
+<div class="pergunta">
+<h3>7) LEGALIDADE</h3>
+<p>Você encontrou um software pago disponível gratuitamente na internet.</p>
+
+<button class="opcao" onclick="responder('r7', false)">
+1 - Baixar ilegalmente
+</button>
+
+<button class="opcao" onclick="responder('r7', true)">
+2 - Comprar a licença ou usar software gratuito legal
+</button>
+
+<div id="r7" class="resultado"></div>
+</div>
+
+</div>
+
+<script>
+
+function responder(id, correto){
+
+let div = document.getElementById(id)
+
+if(correto){
+    div.innerHTML = "✔ Correto! Boa decisão ética."
+    div.className = "resultado correto"
+}
+else{
+    div.innerHTML = "✖ Incorreto! Reflita sobre a ética profissional."
+    div.className = "resultado incorreto"
+}
+
+}
+
+</script>
+<hr>
+<a href="index.html">Voltar para a página inicial</a>
 </body>
 </html>
+ 
 ``
