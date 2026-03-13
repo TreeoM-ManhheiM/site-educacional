@@ -24,11 +24,12 @@ margin:5px;
 table{
 border-collapse: collapse;
 margin-top:20px;
+font-size:12px;
 }
 
 th,td{
 border:1px solid #999;
-padding:8px;
+padding:6px;
 }
 
 </style>
@@ -39,25 +40,36 @@ padding:8px;
 
 <h2>Cadastro de Usuários</h2>
 
-Nome
-<input id="nome">
+Nome <input id="nome">
+Email <input id="email">
+Idade <input id="idade">
+Telefone <input id="telefone">
+Cidade <input id="cidade">
+Estado <input id="estado">
+País <input id="pais">
+Profissão <input id="profissao">
+Empresa <input id="empresa">
+Curso <input id="curso">
+Semestre <input id="semestre">
+Linguagem Favorita <input id="linguagem">
+Experiência <input id="experiencia">
+Github <input id="github">
+LinkedIn <input id="linkedin">
+Website <input id="website">
+Interesse IA <input id="ia">
+Interesse Dados <input id="dados">
+Interesse Web <input id="web">
+Disponibilidade <input id="disponibilidade">
+Data Cadastro <input id="data">
+Observações <input id="obs">
 
-Email
-<input id="email">
+<br><br>
 
 <button onclick="adicionar()">Cadastrar</button>
 
 <h3>Lista de Usuários</h3>
 
-<table id="tabela">
-
-<tr>
-<th>Nome</th>
-<th>Email</th>
-<th>Ação</th>
-</tr>
-
-</table>
+<table id="tabela"></table>
 
 <h3>Exportar Dados</h3>
 
@@ -72,10 +84,34 @@ let usuarios = []
 
 function adicionar(){
 
-let nome = document.getElementById("nome").value
-let email = document.getElementById("email").value
+let usuario = {
 
-usuarios.push({nome,email})
+nome: document.getElementById("nome").value,
+email: document.getElementById("email").value,
+idade: document.getElementById("idade").value,
+telefone: document.getElementById("telefone").value,
+cidade: document.getElementById("cidade").value,
+estado: document.getElementById("estado").value,
+pais: document.getElementById("pais").value,
+profissao: document.getElementById("profissao").value,
+empresa: document.getElementById("empresa").value,
+curso: document.getElementById("curso").value,
+semestre: document.getElementById("semestre").value,
+linguagem: document.getElementById("linguagem").value,
+experiencia: document.getElementById("experiencia").value,
+github: document.getElementById("github").value,
+linkedin: document.getElementById("linkedin").value,
+website: document.getElementById("website").value,
+ia: document.getElementById("ia").value,
+dados: document.getElementById("dados").value,
+web: document.getElementById("web").value,
+disponibilidade: document.getElementById("disponibilidade").value,
+data: document.getElementById("data").value,
+obs: document.getElementById("obs").value
+
+}
+
+usuarios.push(usuario)
 
 mostrar()
 
@@ -85,17 +121,31 @@ function mostrar(){
 
 let tabela = document.getElementById("tabela")
 
-tabela.innerHTML =
-"<tr><th>Nome</th><th>Email</th><th>Ação</th></tr>"
+tabela.innerHTML = ""
+
+let cabecalho = "<tr>"
+
+for(let chave in usuarios[0] || {nome:"",email:""}){
+cabecalho += "<th>"+chave+"</th>"
+}
+
+cabecalho += "<th>Ação</th></tr>"
+
+tabela.innerHTML += cabecalho
 
 usuarios.forEach((u,i)=>{
 
-tabela.innerHTML +=
-`<tr>
-<td>${u.nome}</td>
-<td>${u.email}</td>
-<td><button onclick="excluir(${i})">Excluir</button></td>
-</tr>`
+let linha = "<tr>"
+
+for(let campo in u){
+linha += "<td>"+u[campo]+"</td>"
+}
+
+linha += `<td><button onclick="excluir(${i})">Excluir</button></td>`
+
+linha += "</tr>"
+
+tabela.innerHTML += linha
 
 })
 
@@ -119,11 +169,17 @@ download("usuarios.json",dados)
 
 function baixarCSV(){
 
-let csv = "nome,email\n"
+let csv = ""
+
+let chaves = Object.keys(usuarios[0] || {})
+
+csv += chaves.join(",") + "\n"
 
 usuarios.forEach(u=>{
 
-csv += u.nome + "," + u.email + "\n"
+let linha = chaves.map(c=>u[c]).join(",")
+
+csv += linha + "\n"
 
 })
 
@@ -137,11 +193,15 @@ let xml = "<usuarios>\n"
 
 usuarios.forEach(u=>{
 
-xml +=
-`<usuario>
-<nome>${u.nome}</nome>
-<email>${u.email}</email>
-</usuario>\n`
+xml += "<usuario>\n"
+
+for(let campo in u){
+
+xml += `<${campo}>${u[campo]}</${campo}>\n`
+
+}
+
+xml += "</usuario>\n"
 
 })
 
@@ -158,8 +218,7 @@ let sql = ""
 usuarios.forEach(u=>{
 
 sql +=
-`INSERT INTO usuarios (nome,email) VALUES ('${u.nome}','${u.email}');
-`
+`INSERT INTO usuarios (nome,email,idade,telefone,cidade,estado,pais,profissao,empresa,curso,semestre,linguagem,experiencia,github,linkedin,website,ia,dados,web,disponibilidade,data,obs) VALUES ('${u.nome}','${u.email}','${u.idade}','${u.telefone}','${u.cidade}','${u.estado}','${u.pais}','${u.profissao}','${u.empresa}','${u.curso}','${u.semestre}','${u.linguagem}','${u.experiencia}','${u.github}','${u.linkedin}','${u.website}','${u.ia}','${u.dados}','${u.web}','${u.disponibilidade}','${u.data}','${u.obs}');\n`
 
 })
 
