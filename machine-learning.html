@@ -55,7 +55,7 @@
 <div class="box">
   <h3>Escolha o Algoritmo</h3>
   <div class="row">
-    <select id="algoritmo" onchange="trocarVariaveis()">
+    <select id="algoritmo">
       <option value="regressao">Regressão Linear</option>
       <option value="logistica">Regressão Logística</option>
       <option value="knn">KNN</option>
@@ -65,9 +65,9 @@
       <option value="kmeans">K-Means</option>
       <option value="pca">PCA</option>
     </select>
-    <button onclick="executar()">Executar Modelo</button>
-    <button class="secondary" onclick="mostrarGrafico()">Mostrar Gráfico</button>
-    <button class="secondary" onclick="limpar()">Limpar</button>
+    <button id="btnExecutar">Executar Modelo</button>
+    <button id="btnGrafico" class="secondary">Mostrar Gráfico</button>
+    <button id="btnLimpar" class="secondary">Limpar</button>
   </div>
   <p class="note">Os resultados numéricos abaixo são apenas uma <b>simulação</b> local para fins de aula. Em scikit‑learn, você <b>treina</b> o modelo antes de prever.</p>
 </div>
@@ -142,8 +142,7 @@ proba = pipe.predict_proba(X_test)[:,1]</code></pre>`
   knn: {
     labels: ["Altura","Peso","Idade","Pressão Arterial"],
     calc: (a,b,c,d)=> (a+b+c+d)/4,
-    explain: `
-      <p><b>O que é:</b> KNN classifica pela <b>proximidade</b> dos k vizinhos mais próximos.</p>`,
+    explain: `<p><b>O que é:</b> KNN classifica pela <b>proximidade</b> dos k vizinhos mais próximos.</p>`,
     sklearn: `
 <pre><code class="language-python">from sklearn.neighbors import KNeighborsClassifier
 modelo = KNeighborsClassifier(n_neighbors=5).fit(X_train, y_train)
@@ -207,26 +206,22 @@ function trocarVariaveis(){
   el("resultado").innerHTML = "–";
   el("graficoBox").style.display = "none";
 }
-
 function getInputs(){
   const vals = [inp.v1.value, inp.v2.value, inp.v3.value, inp.v4.value].map(parseFloat);
   return { vals, hasNaN: vals.some(v => Number.isNaN(v)) };
 }
-
 function executar(){
   const { vals, hasNaN } = getInputs();
   const [a,b,c,d] = vals;
   const alerta = el("alerta");
   alerta.style.display = "none";
   alerta.innerHTML = "";
-
   if(hasNaN){
     alerta.style.display = "block";
     alerta.innerHTML = "Preencha os quatro valores numéricos para executar a simulação.";
     el("resultado").innerHTML = "–";
     return;
   }
-
   const alg = el("algoritmo").value;
   const fn = content[alg].calc;
   let r = fn(a,b,c,d);
@@ -235,7 +230,6 @@ function executar(){
   el("resultado").innerHTML = `Resultado (simulação): <b>${r.toFixed(2)}</b>`;
   el("explicacao").innerHTML = content[alg].explain;
   el("matematica").innerHTML = content[alg].sklearn;
-
   alerta.style.display = "block";
   alerta.innerHTML = `Este número é uma simulação local. Em scikit‑learn, treine o modelo e use <code>predict</code>/<code>predict_proba</code>.`;
 }
@@ -243,7 +237,6 @@ function executar(){
 /* ==== Canvas utilitários ==== */
 const canvas = el('graficoCanvas');
 const ctx = canvas.getContext('2d');
-
 function clearCanvas(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#fff"; ctx.fillRect(0,0,canvas.width,canvas.height); }
 function drawAxes(xLabel, yLabel, xmin, xmax, ymin, ymax){
   const pad=60,W=canvas.width,H=canvas.height;
@@ -278,7 +271,13 @@ function drawBars(labels,values,color){
 }
 
 /* ==== gráficos por algoritmo ==== */
-function graficoRegressao(a,b,c,d){ const pesos=[0.25,0.25,0.25,0.25]; const contrib=[a*pesos[0],b*pesos[1],c*pesos[2],d*pesos[3]]; drawBars(["x1","x2","x3","x4"],contrib, "#1f77b4"); el("graficoDescricao").innerText="Regressão Linear — contribuição de cada feature."; el("graficoLegenda").innerHTML="Barras = valor×peso (didático)."; }
+function graficoRegressao(a,b,c,d){
+  const pesos=[0.25,0.25,0.25,0.25];
+  const contrib=[a*pesos[0],b*pesos[1],c*pesos[2],d*pesos[3]];
+  drawBars(["x1","x2","x3","x4"],contrib, "#1f77b4");
+  el("graficoDescricao").innerText="Regressão Linear — contribuição de cada feature.";
+  el("graficoLegenda").innerHTML="Barras = valor×peso (didático).";
+}
 function graficoLogistica(a,b,c,d){
   clearCanvas(); const {mapX,mapY}=drawAxes("z (0..100 centrado)","Probabilidade (%)",0,100,0,100);
   const xs=[],ys=[]; for(let x=0;x<=100;x++){ const z=(x-50)/10; const p=100/(1+Math.exp(-z)); xs.push(mapX(x)); ys.push(mapY(p)); } drawLine(xs,ys,"#2ca02c",2);
@@ -296,7 +295,6 @@ function graficoKNN(a,b,c,d){
 }
 function graficoArvore(a,b,c,d){
   clearCanvas(); const {mapX,mapY,W,H,pad}=drawAxes("Nota (0–10)","Presença (%)",0,10,0,100);
-  // regiões
   ctx.fillStyle="rgba(214,39,40,0.08)"; ctx.fillRect(mapX(0), mapY(0), mapX(6)-mapX(0), (H-2*pad));
   ctx.fillRect(mapX(6), mapY(70), (W-2*pad)-(mapX(6)-pad), mapY(0)-mapY(70));
   ctx.fillStyle="rgba(31,119,180,0.10)"; ctx.fillRect(mapX(6), mapY(100), (W-2*pad)-(mapX(6)-pad), mapY(70)-mapY(100));
@@ -313,10 +311,15 @@ function graficoSVM(a,b,c,d){
   const px=mapX(Math.max(0,Math.min(12,a))), py=mapY(Math.max(40,Math.min(100,b))); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(px,py,5,0,2*Math.PI); ctx.fill(); ctx.fillText("Você", px+8, py-8);
   el("graficoDescricao").innerText="SVM — Dispersão com fronteira linear ilustrativa."; el("graficoLegenda").innerHTML="Fronteira didática (não-treinada).";
 }
-function graficoRandomForest(){ drawBars(["x1","x2","x3","x4"], [0.28,0.34,0.16,0.22], "#2ca02c"); el("graficoDescricao").innerText="Random Forest — Importância de features (simulação)."; el("graficoLegenda").innerHTML="Em scikit‑learn: feature_importances_."; }
+function graficoRandomForest(){
+  drawBars(["x1","x2","x3","x4"], [0.28,0.34,0.16,0.22], "#2ca02c");
+  el("graficoDescricao").innerText="Random Forest — Importância de features (simulação).";
+  el("graficoLegenda").innerHTML="Em scikit‑learn: feature_importances_.";
+}
 function graficoKMeans(a,b,c,d){
   clearCanvas(); const {mapX,mapY}=drawAxes("Feature 1 (p.ex. Horas)","Feature 2 (p.ex. Presença)",0,12,40,100);
-  const centroids=[[3,55],[7,75],[10,90]]; function rnd(seed){ let s=seed; return ()=> (s=(s*1664525+1013904223)%4294967296)/4294967296; } const R=rnd(2024);
+  const centroids=[[3,55],[7,75],[10,90]];
+  function rnd(seed){ let s=seed; return ()=> (s=(s*1664525+1013904223)%4294967296)/4294967296; } const R=rnd(2024);
   const clusters=[[],[],[]], cols=["#1f77b4","#ff7f0e","#9467bd"];
   for(let k=0;k<3;k++){ for(let i=0;i<35;i++){ const x=centroids[k][0]+(R()-0.5)*2.0, y=centroids[k][1]+(R()-0.5)*8.0; clusters[k].push([x,y]); } }
   for(let k=0;k<3;k++){ drawPoints(clusters[k].map(([x,y])=>[mapX(x),mapY(y)]), cols[k], 4); ctx.fillStyle=cols[k]; ctx.fillRect(mapX(centroids[k][0])-4, mapY(centroids[k][1])-4, 8,8); }
@@ -325,10 +328,18 @@ function graficoKMeans(a,b,c,d){
   el("graficoDescricao").innerText="K-Means — 3 clusters, centróides e seu ponto."; el("graficoLegenda").innerHTML="Quadrado = centróide; ● preto = você.";
 }
 function graficoPCA(){
-  clearCanvas(); const {mapX,mapY}=drawAxes("Componentes","Variância Explicada",0.5,4.5,0,1); const labels=["PC1","PC2","PC3","PC4"], evr=[0.48,0.27,0.15,0.10];
+  clearCanvas(); const {mapX,mapY}=drawAxes("Componentes","Variância Explicada",0.5,4.5,0,1);
+  const labels=["PC1","PC2","PC3","PC4"], evr=[0.48, 0.27, 0.15, 0.10];
   const barW=40; ctx.fillStyle="#ff7f0e";
-  for(let i=0;i<4;i++){ const x=mapX(i+1)-barW/2, y=mapY(evr[i]), h=(mapY(0)-y); ctx.fillRect(x,y,barW,h); ctx.fillStyle="#111"; ctx.fillText(labels[i], mapX(i+1)-10, mapY(0)+18); ctx.fillStyle="#ff7f0e"; }
-  let acc=0; const Xs=[],Ys=[]; for(let i=0;i<4;i++){ acc+=evr[i]; Xs.push(mapX(i+1)); Ys.push(mapY(acc)); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(Xs[i],Ys[i],3,0,2*Math.PI); ctx.fill(); ctx.fillText((acc*100).toFixed(0)+"%", Xs[i]+6, Ys[i]-6); } drawLine(Xs,Ys,"#111",1.7);
+  for(let i=0;i<4;i++){
+    const x=mapX(i+1)-barW/2, y=mapY(evr[i]), h=(mapY(0)-y);
+    ctx.fillRect(x,y,barW,h);
+    ctx.fillStyle="#111"; ctx.fillText(labels[i], mapX(i+1)-10, mapY(0)+18);
+    ctx.fillStyle="#ff7f0e";
+  }
+  let acc=0; const Xs=[],Ys=[];
+  for(let i=0;i<4;i++){ acc+=evr[i]; Xs.push(mapX(i+1)); Ys.push(mapY(acc)); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(Xs[i],Ys[i],3,0,2*Math.PI); ctx.fill(); ctx.fillText((acc*100).toFixed(0)+"%", Xs[i]+6, Ys[i]-6); }
+  drawLine(Xs,Ys,"#111",1.7);
   el("graficoDescricao").innerText="PCA — Scree plot (variância explicada e acumulada)."; el("graficoLegenda").innerHTML="Barras = variância; Linha = acumulada.";
 }
 
@@ -349,9 +360,28 @@ function mostrarGrafico(){
   else if(alg==="pca") graficoPCA();
 }
 
-/* ==== init ==== */
-trocarVariaveis();
-function limpar(){ Object.values(inp).forEach(i=> i.value=""); el("resultado").innerHTML="–"; el("alerta").style.display="none"; el("graficoBox").style.display="none"; }
+/* ==== init e listeners (CSP-friendly) ==== */
+document.addEventListener('DOMContentLoaded', () => {
+  // listeners sem inline JS
+  const btnExec = document.getElementById('btnExecutar');
+  const btnGraf = document.getElementById('btnGrafico');
+  const btnClear = document.getElementById('btnLimpar');
+  const selAlg  = document.getElementById('algoritmo');
+
+  if (btnExec) btnExec.addEventListener('click', executar);
+  if (btnGraf) btnGraf.addEventListener('click', mostrarGrafico);
+  if (btnClear) btnClear.addEventListener('click', limpar);
+  if (selAlg)  selAlg.addEventListener('change', trocarVariaveis);
+
+  trocarVariaveis(); // popula explicação inicial
+});
+
+function limpar(){
+  Object.values(inp).forEach(i => i.value = "");
+  el("resultado").innerHTML = "–";
+  el("alerta").style.display = "none";
+  el("graficoBox").style.display = "none";
+}
 </script>
 
 </body>
