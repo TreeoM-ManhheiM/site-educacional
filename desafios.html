@@ -4,121 +4,37 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Laboratório de Inteligência Artificial</title>
-
 <style>
   :root{
-    --bg:#f5f5f5;
-    --card:#ffffff;
-    --text:#222;
-    --muted:#555;
-    --primary:#333;
-    --accent:#2c7be5;
-    --border:#dcdcdc;
-    --code-bg:#f0f2f5;
-    --ok:#1f9d55;
-    --warn:#cc7a00;
-    --error:#c92a2a;
+    --bg:#f5f5f5; --card:#ffffff; --text:#222; --muted:#555; --primary:#333;
+    --accent:#2c7be5; --border:#dcdcdc; --code-bg:#f0f2f5;
+    --ok:#1f9d55; --warn:#cc7a00; --error:#c92a2a;
   }
-
   *{ box-sizing: border-box; }
-  body{
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 32px;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.4;
-  }
+  body{ font-family: Arial, Helvetica, sans-serif; margin: 32px; background: var(--bg); color: var(--text); line-height: 1.4; }
   h1,h2,h3{ margin: 0 0 10px }
-  h2{
-    background: var(--primary);
-    color: #fff;
-    padding: 12px 16px;
-    border-radius: 6px;
-  }
+  h2{ background: var(--primary); color: #fff; padding: 12px 16px; border-radius: 6px; }
   .subtle{ color: var(--muted); font-size: .95rem; margin: 6px 0 0 }
-  .box{
-    background: var(--card);
-    padding: 14px;
-    margin-top: 16px;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-  }
-  .grid{
-    display: grid;
-    gap: 10px 16px;
-  }
-  .grid-2{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .box{ background: var(--card); padding: 14px; margin-top: 16px; border: 1px solid var(--border); border-radius: 8px; }
+  .grid{ display: grid; gap: 10px 16px; }
   .grid-4{ grid-template-columns: repeat(4, minmax(0,1fr)); }
-  @media (max-width: 860px){
-    .grid-4{ grid-template-columns: repeat(2, minmax(0,1fr)); }
-  }
-  @media (max-width: 520px){
-    .grid-4, .grid-2{ grid-template-columns: 1fr; }
-    body{ margin: 16px; }
-  }
+  @media (max-width: 860px){ .grid-4{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  @media (max-width: 520px){ .grid-4{ grid-template-columns: 1fr; } body{ margin: 16px; } }
   label{ font-weight: bold; display: block; margin: 6px 0 4px; }
-  input, select, button{
-    padding: 8px 10px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    width: 100%;
-    font-size: 14px;
-  }
+  input, select, button{ padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; width: 100%; font-size: 14px; }
   input[type="number"]{ width: 100%; }
-  button{
-    width: auto;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    cursor: pointer;
-  }
-  button.secondary{
-    background: transparent;
-    color: var(--accent);
-    border: 1px solid var(--accent);
-  }
-  .row{
-    display:flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 10px;
-  }
-  .formula, pre{
-    background: var(--code-bg);
-    padding: 12px;
-    border-radius: 6px;
-    overflow: auto;
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-    font-size: 13px;
-  }
-  .badge{
-    display: inline-block;
-    background: #eef5ff;
-    color: #1c5fd4;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 12px;
-    margin-left: 6px;
-  }
-  .callout{
-    border-left: 4px solid var(--accent);
-    background: #f5f9ff;
-    padding: 10px 12px;
-    border-radius: 6px;
-    color: #1a3a6d;
-  }
+  button{ width: auto; background: var(--accent); color: #fff; border: none; cursor: pointer; }
+  button.secondary{ background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  .row{ display:flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+  .formula, pre{ background: var(--code-bg); padding: 12px; border-radius: 6px; overflow: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+  .badge{ display: inline-block; background: #eef5ff; color: #1c5fd4; padding: 2px 8px; border-radius: 999px; font-size: 12px; margin-left: 6px; }
+  .callout{ border-left: 4px solid var(--accent); background: #f5f9ff; padding: 10px 12px; border-radius: 6px; color: #1a3a6d; }
   .note{ color: var(--muted); font-size: .9rem; }
-  .ok{ color: var(--ok); }
-  .warn{ color: var(--warn); }
-  .error{ color: var(--error); }
-  details summary{
-    cursor: pointer;
-    font-weight: bold;
-    margin: 8px 0;
-  }
-  .result-big{
-    font-size: 1.2rem;
-  }
+  .result-big{ font-size: 1.2rem; }
+  /* Gráficos */
+  #graficoBox { display:none; }
+  canvas{ width:100%; max-width: 900px; height: 480px; border:1px dashed #cfd3d7; border-radius:8px; background:white; }
+  .legend{ font-size:.9rem; color:#666 }
 </style>
 </head>
 <body>
@@ -129,22 +45,10 @@
 <div class="box">
   <h3>Variáveis do Modelo</h3>
   <div class="grid grid-4">
-    <div>
-      <label id="l1">Variável 1</label>
-      <input id="v1" type="number" step="any" placeholder="ex.: 5.5" />
-    </div>
-    <div>
-      <label id="l2">Variável 2</label>
-      <input id="v2" type="number" step="any" placeholder="ex.: 75" />
-    </div>
-    <div>
-      <label id="l3">Variável 3</label>
-      <input id="v3" type="number" step="any" placeholder="ex.: 8" />
-    </div>
-    <div>
-      <label id="l4">Variável 4</label>
-      <input id="v4" type="number" step="any" placeholder="ex.: 60" />
-    </div>
+    <div><label id="l1">Variável 1</label><input id="v1" type="number" step="any" placeholder="ex.: 5.5" /></div>
+    <div><label id="l2">Variável 2</label><input id="v2" type="number" step="any" placeholder="ex.: 75" /></div>
+    <div><label id="l3">Variável 3</label><input id="v3" type="number" step="any" placeholder="ex.: 8" /></div>
+    <div><label id="l4">Variável 4</label><input id="v4" type="number" step="any" placeholder="ex.: 60" /></div>
   </div>
 </div>
 
@@ -162,6 +66,7 @@
       <option value="pca">PCA</option>
     </select>
     <button onclick="executar()">Executar Modelo</button>
+    <button class="secondary" onclick="mostrarGrafico()">Mostrar Gráfico</button>
     <button class="secondary" onclick="limpar()">Limpar</button>
   </div>
   <p class="note">Os resultados numéricos abaixo são apenas uma <b>simulação</b> local para fins de aula. Em scikit‑learn, você <b>treina</b> o modelo antes de prever.</p>
@@ -169,396 +74,284 @@
 
 <div class="box" aria-live="polite">
   <h3>Resultado</h3>
-  <div id="alerta" class="warn" style="display:none;"></div>
+  <div id="alerta" class="callout" style="display:none;"></div>
   <div id="resultado" class="result-big">–</div>
 </div>
 
 <div class="box">
   <h3>Explicação do Algoritmo</h3>
   <div id="explicacao"></div>
-
   <h3>Como a biblioteca faria o cálculo (scikit‑learn + Python)</h3>
   <div id="matematica"></div>
 </div>
 
+<div class="box" id="graficoBox">
+  <h3>Gráfico do Modelo</h3>
+  <p class="note" id="graficoDescricao">—</p>
+  <canvas id="graficoCanvas" width="1000" height="520"></canvas>
+  <div class="legend" id="graficoLegenda"></div>
+</div>
+
 <script>
-  // Referências seguras aos elementos
-  const el = (id) => document.getElementById(id);
-  const lbl = { l1: el('l1'), l2: el('l2'), l3: el('l3'), l4: el('l4') };
-  const inp = { v1: el('v1'), v2: el('v2'), v3: el('v3'), v4: el('v4') };
+/* ==== helpers ==== */
+const el = id => document.getElementById(id);
+const lbl = { l1: el('l1'), l2: el('l2'), l3: el('l3'), l4: el('l4') };
+const inp = { v1: el('v1'), v2: el('v2'), v3: el('v3'), v4: el('v4') };
+const colors = { blue:"#1f77b4", red:"#d62728", green:"#2ca02c", orange:"#ff7f0e", gray:"#808080", black:"#111", purple:"#9467bd" };
 
-  // Conteúdo didático por algoritmo
-  const content = {
-    regressao: {
-      labels: ["Horas de Estudo","Presença (%)","Trabalhos Entregues","Nota das Provas"],
-      calc: (a,b,c,d) => (0.25*a + 0.25*b + 0.25*c + 0.25*d), // média ponderada simples didática
-      explain: `
-        <p><b>O que é:</b> A Regressão Linear modela a relação entre variáveis de entrada (X) e uma saída numérica (y) por meio de uma <b>combinação linear</b>.</p>
-        <ul>
-          <li><b>Quando usar:</b> Prever valores contínuos (ex.: nota final, preço, vendas).</li>
-          <li><b>Como funciona:</b> Encontra coeficientes <code>β</code> que minimizam o erro quadrático médio (MSE) entre predições e valores reais.</li>
-          <li><b>Vantagens:</b> Simples, interpretável (coeficientes).</li>
-          <li><b>Cuidados:</b> Outliers e multicolinearidade podem distorcer os coeficientes; normalize se escalas forem muito diferentes.</li>
-        </ul>
-        <details><summary>Fórmula</summary>
-          <div class="formula">y = β₀ + β₁x₁ + β₂x₂ + β₃x₃ + β₄x₄<br>β = argmin<sub>β</sub> ||y - Xβ||²</div>
-        </details>
-      `,
-      sklearn: `
-<pre><code class="language-python">import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.model_selection import train_test_split
-
-# X: 4 features | y: alvo contínuo
-X = np.array([
-    [5, 80, 8, 70],
-    [2, 60, 5, 55],
-    [7, 90, 10, 85],
-    # ... suas amostras
-])
-y = np.array([72, 55, 88])  # ... seus alvos
-
-X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)
-
-modelo = LinearRegression()
-modelo.fit(X_tr, y_tr)
-
-# Prever para um novo aluno com (a,b,c,d)
-a,b,c,d = 6, 75, 9, 68
-pred = modelo.predict(np.array([[a,b,c,d]]))
-print(float(pred[0]))</code></pre>
-      `
-    },
-    logistica: {
-      labels: ["Idade","Renda","Histórico de Crédito","Dívidas"],
-      // simulação: transforma média em probabilidade via sigmoid
-      calc: (a,b,c,d) => 100/(1+Math.exp(-((a+b+c+d)/4 - 50)/10)),
-      explain: `
-        <p><b>O que é:</b> Classificador probabilístico. Apesar do nome, a Regressão Logística prevê <b>probabilidade de classe</b> (ex.: "aprovado" vs "reprovado").</p>
-        <ul>
-          <li><b>Quando usar:</b> Problemas binários (0/1) e multiclasse (one-vs-rest).</li>
-          <li><b>Como funciona:</b> Usa a função <b>sigmoide</b> para mapear o escore linear <code>z = Xβ</code> para uma probabilidade <code>p∈(0,1)</code>. Ajuste por <b>máxima verossimilhança</b> (otimizador como LBFGS).</li>
-          <li><b>Vantagens:</b> Probabilidades interpretáveis; baseline forte.</li>
-          <li><b>Cuidados:</b> Escalar features ajuda; regularização (C) controla overfitting; escolha limiar (0.5 ou sob medida).</li>
-        </ul>
-        <details><summary>Fórmulas</summary>
-          <div class="formula">
-            p(y=1|x) = σ(z) = 1/(1+e^{-z}), &nbsp; z = β₀ + Σ βᵢxᵢ<br>
-            β = argmax log L(β)  (verossimilhança)
-          </div>
-        </details>
-      `,
-      sklearn: `
-<pre><code class="language-python">import numpy as np
-from sklearn.pipeline import make_pipeline
+/* ==== conteúdo (limpo) ==== */
+const content = {
+  regressao: {
+    labels: ["Horas de Estudo","Presença (%)","Trabalhos Entregues","Nota das Provas"],
+    calc: (a,b,c,d) => 0.25*a + 0.25*b + 0.25*c + 0.25*d,
+    explain: `
+      <p><b>O que é:</b> A Regressão Linear modela a relação entre variáveis de entrada (X) e uma saída numérica (y) por meio de uma <b>combinação linear</b>.</p>
+      <ul>
+        <li><b>Quando usar:</b> Prever valores contínuos (ex.: nota final, preço, vendas).</li>
+        <li><b>Como funciona:</b> Encontra coeficientes <code>β</code> que minimizam o erro quadrático médio (MSE).</li>
+        <li><b>Vantagens:</b> Simples, interpretável.</li>
+        <li><b>Cuidados:</b> Outliers/multicolinearidade podem distorcer coeficientes.</li>
+      </ul>
+      <details><summary>Fórmula</summary>
+        <div class="formula">y = β₀ + β₁x₁ + β₂x₂ + β₃x₃ + β₄x₄</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">from sklearn.linear_model import LinearRegression
+modelo = LinearRegression().fit(X_train, y_train)
+pred = modelo.predict(X_test)</code></pre>`
+  },
+  logistica: {
+    labels: ["Idade","Renda","Histórico de Crédito","Dívidas"],
+    calc: (a,b,c,d) => 100/(1+Math.exp(-((a+b+c+d)/4 - 50)/10)),
+    explain: `
+      <p><b>O que é:</b> Regressão Logística prevê <b>probabilidade</b> de classe (0/1) usando a função <b>sigmoide</b>.</p>
+      <ul>
+        <li><b>Quando usar:</b> Classificação binária/multiclasse.</li>
+        <li><b>Como funciona:</b> p = σ(z), z = β₀ + Σβᵢxᵢ.</li>
+        <li><b>Cuidados:</b> Escalonar ajuda; regularização <code>C</code>.</li>
+      </ul>`,
+    sklearn: `
+<pre><code class="language-python">from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-
-# X: 4 features | y: 0/1
-X = np.array([
-    [30, 3000, 1, 500],
-    [52, 6000, 1, 1200],
-    [22, 1500, 0, 200],
-    # ...
-])
-y = np.array([0, 1, 0])  # 0=não, 1=sim
-
 pipe = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000))
-pipe.fit(X, y)
-
-a,b,c,d = 40, 4000, 1, 700
-proba = pipe.predict_proba(np.array([[a,b,c,d]]))[0,1]
-print(proba)  # probabilidade de classe 1</code></pre>
-      `
-    },
-    knn: {
-      labels: ["Altura","Peso","Idade","Pressão Arterial"],
-      calc: (a,b,c,d) => (a+b+c+d)/4, // média simples só para visualização
-      explain: `
-        <p><b>O que é:</b> K-Nearest Neighbors decide pela <b>proximidade</b>: olha os <b>k</b> vizinhos mais próximos e vota (classificação) ou faz média (regressão).</p>
-        <ul>
-          <li><b>Quando usar:</b> Problemas com fronteiras locais e dados não lineares.</li>
-          <li><b>Como funciona:</b> Mede distância (euclidiana, Manhattan...) até todos os pontos de treino, pega os k menores e decide.</li>
-          <li><b>Vantagens:</b> Simples, não paramétrico, bom baseline.</li>
-          <li><b>Cuidados:</b> <b>Escalonar</b> features; custo alto para muitos dados; escolha de k e métrica é crucial.</li>
-        </ul>
-        <details><summary>Distância (ex.: Euclidiana)</summary>
-          <div class="formula">d(x, xᵢ) = √(Σ (xⱼ - xᵢⱼ)²)</div>
-        </details>
-      `,
-      sklearn: `
-<pre><code class="language-python">import numpy as np
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.neighbors import KNeighborsClassifier
-
-X = np.array([
-    [170, 72, 30, 120],
-    [180, 85, 40, 130],
-    [160, 60, 25, 110],
-    # ...
-])
-y = np.array([0, 1, 0])  # classes
-
-pipe = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=5, metric="minkowski", p=2))
-pipe.fit(X, y)
-
-a,b,c,d = 175, 78, 35, 125
-pred = pipe.predict(np.array([[a,b,c,d]]))
-print(int(pred[0]))</code></pre>
-      `
-    },
-    arvore: {
-      labels: ["Nota","Presença (%)","Tarefas","Comportamento (0-10)"],
-      calc: (a,b,c,d) => (a>6 && b>70 ? 90 : 40),
-      explain: `
-        <p><b>O que é:</b> Árvores de Decisão aprendem <b>regras if/else</b> a partir dos dados para classificar ou prever.</p>
-        <ul>
-          <li><b>Quando usar:</b> Explicabilidade por regras; dados tabulares com relações não lineares.</li>
-          <li><b>Como funciona:</b> Divide o espaço por <b>cortes</b> que maximizam a pureza (critério Gini/entropia) ou reduzem MSE (regressão).</li>
-          <li><b>Vantagens:</b> Interpretável; lida com features mistas.</li>
-          <li><b>Cuidados:</b> Propensa a overfitting — use <code>max_depth</code>, <code>min_samples_leaf</code>.</li>
-        </ul>
-        <details><summary>Critério (ex.: Gini)</summary>
-          <div class="formula">Gini = 1 - Σ pₖ² &nbsp;&nbsp; (pₖ = proporção da classe k no nó)</div>
-        </details>
-      `,
-      sklearn: `
-<pre><code class="language-python">import numpy as np
-from sklearn.tree import DecisionTreeClassifier
-
-X = np.array([
-    [7.0, 85, 9, 8],
-    [5.5, 60, 6, 6],
-    [8.5, 92, 10, 9],
-    # ...
-])
-y = np.array([1, 0, 1])  # 1=aprovado, 0=reprovado
-
-modelo = DecisionTreeClassifier(criterion="gini", max_depth=4, random_state=42)
-modelo.fit(X, y)
-
-a,b,c,d = 6.5, 78, 8, 7
-pred = modelo.predict(np.array([[a,b,c,d]]))
-print(int(pred[0]))</code></pre>
-      `
-    },
-    svm: {
-      labels: ["Experiência (anos)","Projetos","Cursos","Certificações"],
-      calc: (a,b,c,d) => 0.25*a + 0.25*b + 0.25*c + 0.25*d, // escore linear didático
-      explain: `
-        <p><b>O que é:</b> Support Vector Machine encontra um <b>hiperplano</b> que separa classes maximizando a <b>margem</b>. Com kernels, separa até dados não lineares.</p>
-        <ul>
-          <li><b>Quando usar:</b> Margens bem definidas; espaços de alta dimensão.</li>
-          <li><b>Como funciona:</b> Minimiza erro com regularização (<code>C</code>) e usa kernel (linear, RBF, polinomial) para mapear dados.</li>
-          <li><b>Vantagens:</b> Eficiente em dimensões altas.</li>
-          <li><b>Cuidados:</b> <b>Escalonar</b> features; escolha de <code>C</code> e <code>gamma</code> (RBF) é sensível.</li>
-        </ul>
-        <details><summary>Hiperplano</summary>
-          <div class="formula">w·x + b = 0 &nbsp;&nbsp; / &nbsp;&nbsp; margem maximizada</div>
-        </details>
-      `,
-      sklearn: `
-<pre><code class="language-python">import numpy as np
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.svm import SVC
-
-X = np.array([
-    [1, 2, 3, 1],
-    [5, 7, 2, 4],
-    [2, 1, 4, 2],
-    # ...
-])
-y = np.array([0, 1, 0])
-
-pipe = make_pipeline(StandardScaler(), SVC(kernel="rbf", C=1.0, gamma="scale", probability=True))
-pipe.fit(X, y)
-
-a,b,c,d = 3, 4, 2, 1
-proba = pipe.predict_proba(np.array([[a,b,c,d]]))[0,1]
-print(proba)</code></pre>
-      `
-    },
-    randomforest: {
-      labels: ["Vendas","Investimento em Marketing","Visitas no Site","Campanhas"],
-      calc: (a,b,c,d) => Math.min(100, ((a+b+c+d)/4) + Math.random()*15), // média + ruído (ensembles)
-      explain: `
-        <p><b>O que é:</b> Conjunto (ensemble) de muitas <b>árvores de decisão</b> treinadas com amostras e features aleatórias. Combina resultados por <b>votação</b> (class.) ou <b>média</b> (reg.).</p>
-        <ul>
-          <li><b>Quando usar:</b> Tabulares com não linearidades; baseline forte.</li>
-          <li><b>Como funciona:</b> <b>Bootstrap</b> de dados por árvore; amostragem aleatória de features em cada split; reduz variância.</li>
-          <li><b>Vantagens:</b> Robusto, pouco tuning, importante para ranking de variáveis.</li>
-          <li><b>Cuidados:</b> Pode ser mais lento; menos interpretável que árvore única.</li>
-        </ul>
-        <details><summary>Agregação</summary>
-          <div class="formula">ŷ = média(ŷ₁, ŷ₂, ..., ŷ_T) &nbsp; ou &nbsp; classe = voto majoritário</div>
-        </details>
-      `,
-      sklearn: `
-<pre><code class="language-python">import numpy as np
-from sklearn.ensemble import RandomForestClassifier
-
-X = np.array([
-    [100, 20, 1000, 2],
-    [250, 40, 3000, 5],
-    [80,  10,  800, 1],
-    # ...
-])
-y = np.array([0, 1, 0])
-
-modelo = RandomForestClassifier(n_estimators=200, max_depth=None, random_state=42, n_jobs=-1)
-modelo.fit(X, y)
-
-a,b,c,d = 180, 30, 2000, 3
-pred = modelo.predict(np.array([[a,b,c,d]]))
-print(int(pred[0]))</code></pre>
-      `
-    },
-    kmeans: {
-      labels: ["Idade do Cliente","Compras (mês)","Visitas","Tempo no Site (min)"],
-      calc: (a,b,c,d) => (a+b+c+d)/4, // "escore" só para visual, KMeans é não supervisionado
-      explain: `
-        <p><b>O que é:</b> Algoritmo de <b>agrupamento</b> não supervisionado. Separa os dados em <b>k</b> grupos por similaridade (distância até centróides).</p>
-        <ul>
-          <li><b>Quando usar:</b> Segmentação de clientes, descoberta de padrões, compressão.</li>
-          <li><b>Como funciona:</b> Inicializa centróides (k‑means++), alterna entre <b>atribuir pontos</b> ao centróide mais próximo e <b>recalcular</b> centróides, até convergir.</li>
-          <li><b>Vantagens:</b> Rápido e simples.</li>
-          <li><b>Cuidados:</b> Escolha de k; <b>escala</b> das features; sensível a outliers.</li>
-        </ul>
-        <details><summary>Atualização de centróide</summary>
-          <div class="formula">cⱼ = média dos pontos atribuídos ao cluster j</div>
-        </details>
-      `,
-      sklearn: `
-<pre><code class="language-python">import numpy as np
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
-
-X = np.array([
-    [25, 5, 12, 8],
-    [42, 2,  4, 3],
-    [33, 7, 15, 10],
-    # ...
-])
-
-pipe = make_pipeline(
-    StandardScaler(),
-    KMeans(n_clusters=3, init="k-means++", n_init=10, random_state=42)
-)
-pipe.fit(X)
-
-# Para rotular um novo ponto:
-a,b,c,d = 35, 6, 10, 9
-cluster = pipe.named_steps["kmeans"].predict(
-    pipe.named_steps["standardscaler"].transform(np.array([[a,b,c,d]]))
-)
-print(int(cluster[0]))</code></pre>
-      `
-    },
-    pca: {
-      labels: ["Variável 1","Variável 2","Variável 3","Variável 4"],
-      calc: (a,b,c,d) => 0.7*d + 0.3*a, // projeção didática no 1º componente sintético
-      explain: `
-        <p><b>O que é:</b> PCA reduz dimensionalidade gerando <b>componentes principais</b> (combinações lineares) que maximizam a variância explicada.</p>
-        <ul>
-          <li><b>Quando usar:</b> Visualização, redução de ruído, acelerar modelos, remover redundância.</li>
-          <li><b>Como funciona:</b> Centraliza e (geralmente) normaliza; calcula autovalores/vetores da matriz de covariância; ordena componentes pela variância.</li>
-          <li><b>Vantagens:</b> Compacta informação; útil antes de modelos.</li>
-          <li><b>Cuidados:</b> Componentes não são diretamente interpretáveis; <b>escale</b> as features.</li>
-        </ul>
-        <details><summary>Transformação</summary>
-          <div class="formula">Z = XW &nbsp; (W: autovetores; variância explicada por componente)</div>
-        </details>
-      `,
-      sklearn: `
-<pre><code class="language-python">import numpy as np
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
-
-X = np.array([
-    [1.2, 3.4, 2.2, 8.0],
-    [0.8, 2.9, 1.9, 6.5],
-    [1.5, 3.6, 2.4, 8.7],
-    # ...
-])
-
-pipe = make_pipeline(StandardScaler(), PCA(n_components=2, random_state=42))
-Z = pipe.fit_transform(X)  # projeções nas 2 componentes
-
-print("Variância explicada:", pipe.named_steps["pca"].explained_variance_ratio_)
-
-# Transformar um novo ponto (a,b,c,d) para espaço 2D:
-a,b,c,d = 1.0, 3.1, 2.0, 7.0
-z_new = pipe.transform(np.array([[a,b,c,d]]))
-print(z_new)</code></pre>
-      `
-    }
-  };
-
-  function trocarVariaveis(){
-    const alg = el("algoritmo").value;
-    const labels = content[alg].labels;
-    [lbl.l1.innerText, lbl.l2.innerText, lbl.l3.innerText, lbl.l4.innerText] = labels;
-    // Atualiza explicação e scikit-learn ao trocar de algoritmo
-    el("explicacao").innerHTML = content[alg].explain;
-    el("matematica").innerHTML = content[alg].sklearn;
-    el("alerta").style.display = "none";
-    el("resultado").innerHTML = "–";
+pipe.fit(X_train, y_train)
+proba = pipe.predict_proba(X_test)[:,1]</code></pre>`
+  },
+  knn: {
+    labels: ["Altura","Peso","Idade","Pressão Arterial"],
+    calc: (a,b,c,d)=> (a+b+c+d)/4,
+    explain: `
+      <p><b>O que é:</b> KNN classifica pela <b>proximidade</b> dos k vizinhos mais próximos.</p>`,
+    sklearn: `
+<pre><code class="language-python">from sklearn.neighbors import KNeighborsClassifier
+modelo = KNeighborsClassifier(n_neighbors=5).fit(X_train, y_train)
+pred = modelo.predict(X_test)</code></pre>`
+  },
+  arvore: {
+    labels: ["Nota","Presença (%)","Tarefas","Comportamento (0-10)"],
+    calc: (a,b,c,d)=> (a>6 && b>70 ? 90 : 40),
+    explain: `<p><b>O que é:</b> Árvores aprendem <b>regras if/else</b> (cortes) para decidir.</p>`,
+    sklearn: `
+<pre><code class="language-python">from sklearn.tree import DecisionTreeClassifier
+modelo = DecisionTreeClassifier(max_depth=4).fit(X_train, y_train)
+pred = modelo.predict(X_test)</code></pre>`
+  },
+  svm: {
+    labels: ["Experiência (anos)","Projetos","Cursos","Certificações"],
+    calc: (a,b,c,d)=> 0.25*(a+b+c+d),
+    explain: `<p><b>O que é:</b> SVM encontra um <b>hiperplano</b> que separa classes maximizando a margem.</p>`,
+    sklearn: `
+<pre><code class="language-python">from sklearn.svm import SVC
+modelo = SVC(kernel="rbf", probability=True).fit(X_train, y_train)
+proba = modelo.predict_proba(X_test)[:,1]</code></pre>`
+  },
+  randomforest: {
+    labels: ["Vendas","Investimento em Marketing","Visitas no Site","Campanhas"],
+    calc: (a,b,c,d)=> Math.min(100, (a+b+c+d)/4 + Math.random()*15),
+    explain: `<p><b>O que é:</b> Conjunto de <b>várias árvores</b> com amostragem aleatória; robusto e forte.</p>`,
+    sklearn: `
+<pre><code class="language-python">from sklearn.ensemble import RandomForestClassifier
+modelo = RandomForestClassifier(n_estimators=200).fit(X_train, y_train)
+importancias = modelo.feature_importances_</code></pre>`
+  },
+  kmeans: {
+    labels: ["Idade do Cliente","Compras (mês)","Visitas","Tempo no Site (min)"],
+    calc: (a,b,c,d)=> (a+b+c+d)/4,
+    explain: `<p><b>O que é:</b> Agrupamento não supervisionado em <b>k</b> clusters (centróides).</p>`,
+    sklearn: `
+<pre><code class="language-python">from sklearn.cluster import KMeans
+modelo = KMeans(n_clusters=3).fit(X)
+labels = modelo.labels_</code></pre>`
+  },
+  pca: {
+    labels: ["Variável 1","Variável 2","Variável 3","Variável 4"],
+    calc: (a,b,c,d)=> 0.7*d + 0.3*a,
+    explain: `<p><b>O que é:</b> PCA cria <b>componentes principais</b> que maximizam a variância explicada.</p>`,
+    sklearn: `
+<pre><code class="language-python">from sklearn.decomposition import PCA
+pca = PCA(n_components=2).fit(X_scaled)
+Z = pca.transform(X_scaled)</code></pre>`
   }
+};
 
-  function getInputs(){
-    const vals = [inp.v1.value, inp.v2.value, inp.v3.value, inp.v4.value].map(parseFloat);
-    const hasNaN = vals.some(v => Number.isNaN(v));
-    return { vals, hasNaN };
-  }
+/* ==== troca de variáveis e execução ==== */
+function trocarVariaveis(){
+  const alg = el("algoritmo").value;
+  const labels = content[alg].labels;
+  [lbl.l1.innerText, lbl.l2.innerText, lbl.l3.innerText, lbl.l4.innerText] = labels;
+  el("explicacao").innerHTML = content[alg].explain;
+  el("matematica").innerHTML = content[alg].sklearn;
+  el("alerta").style.display = "none";
+  el("resultado").innerHTML = "–";
+  el("graficoBox").style.display = "none";
+}
 
-  function executar(){
-    const { vals, hasNaN } = getInputs();
-    const [a,b,c,d] = vals;
-    const alerta = el("alerta");
-    alerta.style.display = "none";
-    alerta.innerHTML = "";
+function getInputs(){
+  const vals = [inp.v1.value, inp.v2.value, inp.v3.value, inp.v4.value].map(parseFloat);
+  return { vals, hasNaN: vals.some(v => Number.isNaN(v)) };
+}
 
-    if(hasNaN){
-      alerta.style.display = "block";
-      alerta.className = "warn";
-      alerta.innerHTML = "Preencha os quatro valores numéricos para executar a simulação.";
-      el("resultado").innerHTML = "–";
-      return;
-    }
+function executar(){
+  const { vals, hasNaN } = getInputs();
+  const [a,b,c,d] = vals;
+  const alerta = el("alerta");
+  alerta.style.display = "none";
+  alerta.innerHTML = "";
 
-    const alg = el("algoritmo").value;
-    const fn = content[alg].calc;
-
-    // Cálculo demonstrativo (didático, não-treinado)
-    let r = fn(a,b,c,d);
-    if(typeof r !== "number" || Number.isNaN(r)) r = 0;
-    r = Math.max(-1e6, Math.min(100, r)); // limita visualmente a 0-100 para a maioria dos casos
-
-    el("resultado").innerHTML = `Resultado (simulação): <b>${r.toFixed(2)}</b>`;
-    el("explicacao").innerHTML = content[alg].explain;
-    el("matematica").innerHTML = content[alg].sklearn;
-
-    // Nota de reforço didático
+  if(hasNaN){
     alerta.style.display = "block";
-    alerta.className = "callout";
-    alerta.innerHTML = `
-      <b>Nota:</b> Este número é uma simulação para visualização. Com <b>scikit‑learn</b>, você treinaria com dados reais e então chamaria
-      <code>predict</code> ou <code>predict_proba</code> conforme mostrado no exemplo de código.
-    `;
-  }
-
-  function limpar(){
-    Object.values(inp).forEach(i => i.value = "");
+    alerta.innerHTML = "Preencha os quatro valores numéricos para executar a simulação.";
     el("resultado").innerHTML = "–";
-    el("alerta").style.display = "none";
+    return;
   }
 
-  // Inicialização
-  trocarVariaveis();
+  const alg = el("algoritmo").value;
+  const fn = content[alg].calc;
+  let r = fn(a,b,c,d);
+  if(!isFinite(r)) r = 0;
+  r = Math.max(-1e6, Math.min(100, r)); // apenas limite visual
+  el("resultado").innerHTML = `Resultado (simulação): <b>${r.toFixed(2)}</b>`;
+  el("explicacao").innerHTML = content[alg].explain;
+  el("matematica").innerHTML = content[alg].sklearn;
+
+  alerta.style.display = "block";
+  alerta.innerHTML = `Este número é uma simulação local. Em scikit‑learn, treine o modelo e use <code>predict</code>/<code>predict_proba</code>.`;
+}
+
+/* ==== Canvas utilitários ==== */
+const canvas = el('graficoCanvas');
+const ctx = canvas.getContext('2d');
+
+function clearCanvas(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#fff"; ctx.fillRect(0,0,canvas.width,canvas.height); }
+function drawAxes(xLabel, yLabel, xmin, xmax, ymin, ymax){
+  const pad=60,W=canvas.width,H=canvas.height;
+  ctx.strokeStyle="#444"; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(pad,pad); ctx.stroke();
+  ctx.fillStyle="#111"; ctx.font="14px Arial";
+  ctx.fillText(xLabel, W/2-ctx.measureText(xLabel).width/2, H-20);
+  ctx.save(); ctx.translate(20, H/2); ctx.rotate(-Math.PI/2); ctx.fillText(yLabel, -ctx.measureText(yLabel).width/2, 0); ctx.restore();
+  ctx.fillStyle="#666"; ctx.font="12px Arial";
+  const xt=5, yt=5;
+  for(let i=0;i<=xt;i++){ const x=pad+(i/xt)*(W-2*pad); const v=(xmin+(i/xt)*(xmax-xmin)); ctx.beginPath(); ctx.moveTo(x,H-pad); ctx.lineTo(x,H-pad+6); ctx.stroke(); ctx.fillText(v.toFixed(0), x-8, H-pad+20); }
+  for(let j=0;j<=yt;j++){ const y=H-pad-(j/yt)*(H-2*pad); const v=(ymin+(j/yt)*(ymax-ymin)); ctx.beginPath(); ctx.moveTo(pad-6,y); ctx.lineTo(pad,y); ctx.stroke(); ctx.fillText(v.toFixed(0), pad-40, y+4); }
+  return { mapX:v=>pad+(v-xmin)/(xmax-xmin)*(W-2*pad), mapY:v=>H-pad-(v-ymin)/(ymax-ymin)*(H-2*pad), pad,W,H };
+}
+function drawPoints(points,color,size=4){ ctx.fillStyle=color; points.forEach(([x,y])=>{ ctx.beginPath(); ctx.arc(x,y,size,0,2*Math.PI); ctx.fill(); }); }
+function drawLine(xs,ys,color,width=2){ ctx.strokeStyle=color; ctx.lineWidth=width; ctx.beginPath(); ctx.moveTo(xs[0],ys[0]); for(let i=1;i<xs.length;i++) ctx.lineTo(xs[i],ys[i]); ctx.stroke(); }
+function drawBars(labels,values,color){
+  clearCanvas();
+  const pad=60,W=canvas.width,H=canvas.height,maxV=Math.max(...values)*1.15;
+  ctx.strokeStyle="#444"; ctx.lineWidth=1.2;
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(pad,pad); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
+  const n=values.length, bw=(W-2*pad)/(n*1.5), gap=bw*0.5;
+  ctx.font="12px Arial";
+  for(let i=0;i<n;i++){
+    const x=pad+i*(bw+gap)+gap, h=(values[i]/maxV)*(H-2*pad), y=(H-pad)-h;
+    ctx.fillStyle=color; ctx.fillRect(x,y,bw,h);
+    ctx.fillStyle="#111"; const t=labels[i], tw=ctx.measureText(t).width; ctx.fillText(t, x+bw/2-tw/2, H-pad+18);
+    ctx.fillStyle="#333"; ctx.fillText(values[i].toFixed(2), x+bw/2-12, y-6);
+  }
+}
+
+/* ==== gráficos por algoritmo ==== */
+function graficoRegressao(a,b,c,d){ const pesos=[0.25,0.25,0.25,0.25]; const contrib=[a*pesos[0],b*pesos[1],c*pesos[2],d*pesos[3]]; drawBars(["x1","x2","x3","x4"],contrib, "#1f77b4"); el("graficoDescricao").innerText="Regressão Linear — contribuição de cada feature."; el("graficoLegenda").innerHTML="Barras = valor×peso (didático)."; }
+function graficoLogistica(a,b,c,d){
+  clearCanvas(); const {mapX,mapY}=drawAxes("z (0..100 centrado)","Probabilidade (%)",0,100,0,100);
+  const xs=[],ys=[]; for(let x=0;x<=100;x++){ const z=(x-50)/10; const p=100/(1+Math.exp(-z)); xs.push(mapX(x)); ys.push(mapY(p)); } drawLine(xs,ys,"#2ca02c",2);
+  const media=(a+b+c+d)/4, z=(media-50)/10, p=100/(1+Math.exp(-z));
+  ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(mapX(media), mapY(p), 5, 0, 2*Math.PI); ctx.fill(); ctx.fillText(`Seu ponto: p≈${p.toFixed(1)}%`, mapX(media)+8, mapY(p)-8);
+  el("graficoDescricao").innerText="Logística — curva sigmoide e seu ponto."; el("graficoLegenda").innerHTML="σ(z)=1/(1+e^{-z}).";
+}
+function graficoKNN(a,b,c,d){
+  clearCanvas(); const {mapX,mapY}=drawAxes("Horas","Presença (%)",0,12,40,100);
+  function rnd(seed){ let s=seed; return ()=> (s=(s*1664525+1013904223)%4294967296)/4294967296; }
+  const R=rnd(1234), c0=[], c1=[]; for(let i=0;i<40;i++) c0.push([2+3*R(),45+20*R()]); for(let i=0;i<40;i++) c1.push([6+4*R(),75+20*R()]);
+  drawPoints(c0.map(([x,y])=>[mapX(x),mapY(y)]), "#d62728",4); drawPoints(c1.map(([x,y])=>[mapX(x),mapY(y)]), "#1f77b4",4);
+  const px=mapX(Math.max(0,Math.min(12,a))), py=mapY(Math.max(40,Math.min(100,b))); ctx.strokeStyle="#111"; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(px-7,py-7); ctx.lineTo(px+7,py+7); ctx.stroke(); ctx.beginPath(); ctx.moveTo(px-7,py+7); ctx.lineTo(px+7,py-7); ctx.stroke(); ctx.fillText("Você", px+10, py-8);
+  el("graficoDescricao").innerText="KNN — Dispersão (Horas × Presença)."; el("graficoLegenda").innerHTML="Cores = classes (sintéticas).";
+}
+function graficoArvore(a,b,c,d){
+  clearCanvas(); const {mapX,mapY,W,H,pad}=drawAxes("Nota (0–10)","Presença (%)",0,10,0,100);
+  // regiões
+  ctx.fillStyle="rgba(214,39,40,0.08)"; ctx.fillRect(mapX(0), mapY(0), mapX(6)-mapX(0), (H-2*pad));
+  ctx.fillRect(mapX(6), mapY(70), (W-2*pad)-(mapX(6)-pad), mapY(0)-mapY(70));
+  ctx.fillStyle="rgba(31,119,180,0.10)"; ctx.fillRect(mapX(6), mapY(100), (W-2*pad)-(mapX(6)-pad), mapY(70)-mapY(100));
+  ctx.strokeStyle="#666"; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(mapX(6), H-pad); ctx.lineTo(mapX(6), pad); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pad, mapY(70)); ctx.lineTo(W-pad, mapY(70)); ctx.stroke(); ctx.setLineDash([]);
+  const px=mapX(Math.max(0,Math.min(10,a))), py=mapY(Math.max(0,Math.min(100,b))); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(px,py,5,0,2*Math.PI); ctx.fill(); ctx.fillText("Você", px+8, py-8);
+  el("graficoDescricao").innerText="Árvore — Regiões de decisão (Nota×Presença)."; el("graficoLegenda").innerHTML="Cortes: Nota>6 e Presença>70 ⇒ aprovado.";
+}
+function graficoSVM(a,b,c,d){
+  clearCanvas(); const {mapX,mapY,W,H,pad}=drawAxes("Horas","Presença (%)",0,12,40,100);
+  function rnd(seed){ let s=seed; return ()=> (s=(s*1103515245+12345)%2**31)/2**31; } const R=rnd(99), A=[],B=[];
+  for(let i=0;i<40;i++) A.push([2+3*R(), 50+15*R()]); for(let i=0;i<40;i++) B.push([7+3*R(), 80+15*R()]);
+  drawPoints(A.map(([x,y])=>[mapX(x),mapY(y)]), "#d62728",4); drawPoints(B.map(([x,y])=>[mapX(x),mapY(y)]), "#1f77b4",4);
+  const x1=0, y1=10*x1+20, x2=12, y2=10*x2+20; drawLine([mapX(x1),mapX(x2)],[mapY(Math.max(40,Math.min(100,y1))), mapY(Math.max(40,Math.min(100,y2)))], "#2ca02c",2);
+  const px=mapX(Math.max(0,Math.min(12,a))), py=mapY(Math.max(40,Math.min(100,b))); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(px,py,5,0,2*Math.PI); ctx.fill(); ctx.fillText("Você", px+8, py-8);
+  el("graficoDescricao").innerText="SVM — Dispersão com fronteira linear ilustrativa."; el("graficoLegenda").innerHTML="Fronteira didática (não-treinada).";
+}
+function graficoRandomForest(){ drawBars(["x1","x2","x3","x4"], [0.28,0.34,0.16,0.22], "#2ca02c"); el("graficoDescricao").innerText="Random Forest — Importância de features (simulação)."; el("graficoLegenda").innerHTML="Em scikit‑learn: feature_importances_."; }
+function graficoKMeans(a,b,c,d){
+  clearCanvas(); const {mapX,mapY}=drawAxes("Feature 1 (p.ex. Horas)","Feature 2 (p.ex. Presença)",0,12,40,100);
+  const centroids=[[3,55],[7,75],[10,90]]; function rnd(seed){ let s=seed; return ()=> (s=(s*1664525+1013904223)%4294967296)/4294967296; } const R=rnd(2024);
+  const clusters=[[],[],[]], cols=["#1f77b4","#ff7f0e","#9467bd"];
+  for(let k=0;k<3;k++){ for(let i=0;i<35;i++){ const x=centroids[k][0]+(R()-0.5)*2.0, y=centroids[k][1]+(R()-0.5)*8.0; clusters[k].push([x,y]); } }
+  for(let k=0;k<3;k++){ drawPoints(clusters[k].map(([x,y])=>[mapX(x),mapY(y)]), cols[k], 4); ctx.fillStyle=cols[k]; ctx.fillRect(mapX(centroids[k][0])-4, mapY(centroids[k][1])-4, 8,8); }
+  const px=mapX(Math.max(0,Math.min(12,a))), py=mapY(Math.max(40,Math.min(100,b))); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(px,py,6,0,2*Math.PI); ctx.fill();
+  const dists=centroids.map(([cx,cy])=> Math.hypot(a-cx, b-cy)); const idx=dists.indexOf(Math.min(...dists)); ctx.fillText(`Seu cluster: ${idx}`, px+10, py-10);
+  el("graficoDescricao").innerText="K-Means — 3 clusters, centróides e seu ponto."; el("graficoLegenda").innerHTML="Quadrado = centróide; ● preto = você.";
+}
+function graficoPCA(){
+  clearCanvas(); const {mapX,mapY}=drawAxes("Componentes","Variância Explicada",0.5,4.5,0,1); const labels=["PC1","PC2","PC3","PC4"], evr=[0.48,0.27,0.15,0.10];
+  const barW=40; ctx.fillStyle="#ff7f0e";
+  for(let i=0;i<4;i++){ const x=mapX(i+1)-barW/2, y=mapY(evr[i]), h=(mapY(0)-y); ctx.fillRect(x,y,barW,h); ctx.fillStyle="#111"; ctx.fillText(labels[i], mapX(i+1)-10, mapY(0)+18); ctx.fillStyle="#ff7f0e"; }
+  let acc=0; const Xs=[],Ys=[]; for(let i=0;i<4;i++){ acc+=evr[i]; Xs.push(mapX(i+1)); Ys.push(mapY(acc)); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(Xs[i],Ys[i],3,0,2*Math.PI); ctx.fill(); ctx.fillText((acc*100).toFixed(0)+"%", Xs[i]+6, Ys[i]-6); } drawLine(Xs,Ys,"#111",1.7);
+  el("graficoDescricao").innerText="PCA — Scree plot (variância explicada e acumulada)."; el("graficoLegenda").innerHTML="Barras = variância; Linha = acumulada.";
+}
+
+/* ==== roteador de gráficos ==== */
+function mostrarGrafico(){
+  const { vals, hasNaN } = getInputs();
+  const [a,b,c,d] = vals;
+  el("graficoBox").style.display = "block";
+  if(hasNaN){ el("graficoDescricao").innerText = "Preencha os 4 valores para ver o gráfico."; clearCanvas(); el("graficoLegenda").innerHTML=""; return; }
+  const alg = el("algoritmo").value;
+  if(alg==="regressao") graficoRegressao(a,b,c,d);
+  else if(alg==="logistica") graficoLogistica(a,b,c,d);
+  else if(alg==="knn") graficoKNN(a,b,c,d);
+  else if(alg==="arvore") graficoArvore(a,b,c,d);
+  else if(alg==="svm") graficoSVM(a,b,c,d);
+  else if(alg==="randomforest") graficoRandomForest();
+  else if(alg==="kmeans") graficoKMeans(a,b,c,d);
+  else if(alg==="pca") graficoPCA();
+}
+
+/* ==== init ==== */
+trocarVariaveis();
+function limpar(){ Object.values(inp).forEach(i=> i.value=""); el("resultado").innerHTML="–"; el("alerta").style.display="none"; el("graficoBox").style.display="none"; }
 </script>
 
 </body>
