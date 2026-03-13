@@ -1,10 +1,611 @@
-<h1>Machine Learning</h1>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Laboratório de IA — Ensino Técnico SP (Ciência de Dados)</title>
+<style>
+  :root{
+    --bg:#f5f5f5; --card:#ffffff; --text:#222; --muted:#555; --primary:#333; --accent:#2c7be5; --border:#dcdcdc;
+    --code-bg:#f0f2f5; --ok:#1f9d55; --warn:#cc7a00; --error:#c92a2a;
+  }
+  *{ box-sizing: border-box; }
+  body{ font-family: Arial, Helvetica, sans-serif; margin: 28px; background: var(--bg); color: var(--text); line-height: 1.45; }
+  h1,h2,h3{ margin: 0 0 10px }
+  h2{ background: var(--primary); color:#fff; padding:12px 16px; border-radius:8px }
+  .subtle{ color: var(--muted); margin-top:6px }
+  .box{ background: var(--card); padding: 14px; margin-top:16px; border: 1px solid var(--border); border-radius:10px }
+  .grid{ display:grid; gap: 12px 16px }
+  .grid-4{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+  .grid-2{ grid-template-columns: repeat(2, minmax(0,1fr)); }
+  @media (max-width: 900px){ .grid-4{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+  @media (max-width: 560px){ .grid-4, .grid-2 { grid-template-columns: 1fr; } body{ margin: 14px; } }
+  label{ font-weight:600; display:block; margin: 6px 0 4px }
+  input, select, button{ padding:8px 10px; border:1px solid var(--border); border-radius:8px; width:100%; font-size:14px }
+  input[type="number"]{ width:100% }
+  button{ width:auto; background: var(--accent); color:#fff; border:none; cursor:pointer }
+  button.secondary{ background: transparent; color: var(--accent); border:1px solid var(--accent) }
+  .row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center }
+  .note{ color: var(--muted); font-size:.95rem }
+  .callout{ border-left: 4px solid var(--accent); background:#f5f9ff; padding:10px 12px; border-radius:8px; color:#1a3a6d; margin-top:8px }
+  .formula, pre{ background: var(--code-bg); padding:12px; border-radius:8px; overflow:auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px }
+  details summary{ cursor:pointer; font-weight:600; margin: 6px 0 }
+  .result-big{ font-size:1.15rem }
+  .badge{ background:#eef5ff; color:#1c5fd4; padding:2px 8px; border-radius:999px; font-size:12px; margin-left:8px }
+  canvas{ width:100%; max-width: 820px; height: 420px; border:1px dashed #cfd3d7; border-radius:8px; background:white }
+  .legend{ font-size:.9rem; color: var(--muted) }
+</style>
+</head>
+<body>
 
-<p>Biblioteca SciKit-learn para instalação:</p>
+<h2>Laboratório de Machine Learning — Ensino Técnico SP <span class="badge">Ciência de Dados</span></h2>
+<p class="subtle">Cenário didático: <b>Desempenho Acadêmico</b> (alunos do ensino técnico em SP). Features:
+<b>Horas de Estudo</b>, <b>Presença (%)</b>, <b>Projetos Práticos</b>, <b>Nota Anterior (0–100)</b>.</p>
 
-<pre>
-py -m pip install scikit-learn
-</pre>
-<hr>
+<div class="box">
+  <h3>Variáveis de Entrada (Features)</h3>
+  <div class="grid grid-4">
+    <div>
+      <label id="l1">Horas de Estudo (semana)</label>
+      <input id="v1" type="number" step="any" placeholder="ex.: 6" />
+    </div>
+    <div>
+      <label id="l2">Presença (%)</label>
+      <input id="v2" type="number" step="any" placeholder="ex.: 82" />
+    </div>
+    <div>
+      <label id="l3">Projetos Práticos Entregues</label>
+      <input id="v3" type="number" step="any" placeholder="ex.: 7" />
+    </div>
+    <div>
+      <label id="l4">Nota Anterior (0–100)</label>
+      <input id="v4" type="number" step="any" placeholder="ex.: 68" />
+    </div>
+  </div>
+</div>
 
-<a href="index.html">Voltar para a página inicial</a>
+<div class="box">
+  <h3>Escolha o Algoritmo</h3>
+  <div class="row">
+    <select id="algoritmo" onchange="onAlgChange()">
+      <option value="regressao">Regressão Linear</option>
+      <option value="logistica">Regressão Logística</option>
+      <option value="knn">KNN</option>
+      <option value="arvore">Árvore de Decisão</option>
+      <option value="svm">SVM</option>
+      <option value="randomforest">Random Forest</option>
+      <option value="kmeans">K-Means</option>
+      <option value="pca">PCA</option>
+    </select>
+    <button onclick="executar()">Executar (Simulação)</button>
+    <button class="secondary" onclick="mostrarGraficos()">Mostrar Gráficos</button>
+    <button class="secondary" onclick="limpar()">Limpar</button>
+  </div>
+  <p class="note">O número exibido é uma <b>simulação didática</b> local. Em <b>scikit‑learn</b>, você treina com dados reais e usa <code>predict</code>/<code>predict_proba</code>.</p>
+</div>
+
+<div class="box" aria-live="polite">
+  <h3>Resultado</h3>
+  <div id="alerta" class="callout" style="display:none;"></div>
+  <div id="resultado" class="result-big">–</div>
+</div>
+
+<div class="box">
+  <h3>Explicação do Algoritmo</h3>
+  <div id="explicacao"></div>
+
+  <h3>Como a biblioteca faria o cálculo (scikit‑learn + Python)</h3>
+  <div id="matematica"></div>
+</div>
+
+<div class="box" id="graficoBox" style="display:none;">
+  <h3>Visualizações Didáticas</h3>
+  <p class="note" id="graficoDescricao">—</p>
+  <canvas id="graficoCanvas" width="900" height="480"></canvas>
+  <div class="legend" id="graficoLegenda"></div>
+</div>
+
+<script>
+/* =======================
+   UTILIDADES E ESTADO
+   ======================= */
+const el = id => document.getElementById(id);
+const inp = { v1: el('v1'), v2: el('v2'), v3: el('v3'), v4: el('v4') };
+const features = ["Horas", "Presença", "Projetos", "Nota Ant."];
+const colors = { blue:"#1f77b4", red:"#d62728", green:"#2ca02c", orange:"#ff7f0e", gray:"#808080", black:"#111" };
+
+function getInputs(){
+  const vals = [inp.v1.value, inp.v2.value, inp.v3.value, inp.v4.value].map(parseFloat);
+  return { vals, hasNaN: vals.some(v => Number.isNaN(v)) };
+}
+
+/* =======================
+   CONTEÚDO DIDÁTICO
+   ======================= */
+const content = {
+  regressao: {
+    calc: (h,p,proj,nota) => 0.2*h + 0.3*p + 0.1*proj + 0.4*nota, // pesos didáticos (0-100)
+    explain: `
+      <p><b>O que é:</b> A Regressão Linear produz uma <b>combinação linear</b> das features para prever um valor contínuo (ex.: nota final).</p>
+      <ul>
+        <li><b>Quando usar:</b> Previsão de valores numéricos (0–100), relação aproximadamente linear.</li>
+        <li><b>Como funciona:</b> Ajusta coeficientes <code>β</code> que minimizam o erro quadrático (MSE). O sinal/magnitude dos <code>β</code> indicam importância/direção.</li>
+        <li><b>Vantagens:</b> Simples e interpretável.</li>
+        <li><b>Cuidados:</b> Outliers e escalas muito diferentes; verifique multicolinearidade.</li>
+      </ul>
+      <details><summary>Fórmula</summary>
+        <div class="formula">ŷ = β₀ + β₁·Horas + β₂·Presença + β₃·Projetos + β₄·NotaAnt<br>β = argmin ||y - Xβ||²</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+
+# Features: [Horas, Presença, Projetos, NotaAnterior]
+X = np.array([
+    [6, 82, 7, 68],
+    [3, 60, 4, 55],
+    [9, 90, 9, 80],
+    # ... (amostras reais)
+])
+y = np.array([72, 58, 86])  # Nota final (exemplo)
+
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.25, random_state=42)
+modelo = LinearRegression().fit(X_tr, y_tr)
+
+# Nova previsão:
+h,p,proj,nota = 7, 85, 8, 70
+pred = modelo.predict(np.array([[h,p,proj,nota]]))
+print(float(pred[0]))</code></pre>`
+  },
+  logistica: {
+    // prob. de aprovação (0-100). Normalizamos rudimentarmente o z.
+    calc: (h,p,proj,nota) => {
+      const z = 0.03*h + 0.04*p + 0.05*proj + 0.05*nota - 4.0;
+      const s = 1/(1+Math.exp(-z));
+      return 100*s;
+    },
+    explain: `
+      <p><b>O que é:</b> Classificador probabilístico para prever <b>probabilidade</b> de uma classe (ex.: aprovado = 1).</p>
+      <ul>
+        <li><b>Quando usar:</b> Problemas 0/1 e multiclasse (One-vs-Rest).</li>
+        <li><b>Como funciona:</b> Transforma o escore linear <code>z=Xβ</code> em probabilidade com a <b>sigmoide</b>. Estima <code>β</code> por máxima verossimilhança (otimizadores como LBFGS).</li>
+        <li><b>Vantagens:</b> Probabilidades interpretáveis.</li>
+        <li><b>Cuidados:</b> Escalonar ajuda; regularização (<code>C</code>) controla overfitting; escolha do limiar (0.5 ou calibrado).</li>
+      </ul>
+      <details><summary>Fórmulas</summary>
+        <div class="formula">p(aprovado|x)=σ(z)=1/(1+e^{-z}), &nbsp; z=β₀+Σβᵢxᵢ</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">import numpy as np
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+
+# y: 1=aprovado, 0=reprovado
+X = np.array([
+    [6, 82, 7, 68],
+    [2, 55, 3, 48],
+    [8, 90, 8, 78],
+    # ...
+])
+y = np.array([1, 0, 1])
+
+pipe = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000))
+pipe.fit(X, y)
+
+h,p,proj,nota = 7, 85, 8, 70
+proba = pipe.predict_proba(np.array([[h,p,proj,nota]]))[0,1]
+print(proba)</code></pre>`
+  },
+  knn: {
+    calc: (h,p,proj,nota) => (h + p + proj + nota)/4, // didático
+    explain: `
+      <p><b>O que é:</b> K-Nearest Neighbors decide pela <b>proximidade</b> dos k vizinhos mais próximos.</p>
+      <ul>
+        <li><b>Quando usar:</b> Fronteiras locais e dados não lineares.</li>
+        <li><b>Como funciona:</b> Calcula distância (euclidiana, etc.) até todos os pontos de treino, pega os k menores e vota (class.) ou faz média (reg.).</li>
+        <li><b>Vantagens:</b> Simples, não-paramétrico.</li>
+        <li><b>Cuidados:</b> Escalonar features; sensível a k e à métrica; custo cresce com dados.</li>
+      </ul>
+      <details><summary>Distância (Euclidiana)</summary>
+        <div class="formula">d(x, xᵢ) = √(Σ (xⱼ - xᵢⱼ)²)</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">import numpy as np
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+
+X = np.array([
+    [6, 82, 7, 68],
+    [3, 60, 4, 55],
+    [9, 90, 9, 80],
+    # ...
+])
+y = np.array([1, 0, 1])  # 1=aprovado
+
+pipe = make_pipeline(StandardScaler(), KNeighborsClassifier(n_neighbors=5, p=2))
+pipe.fit(X, y)
+
+h,p,proj,nota = 7, 85, 8, 70
+pred = pipe.predict(np.array([[h,p,proj,nota]]))
+print(int(pred[0]))</code></pre>`
+  },
+  arvore: {
+    calc: (h,p,proj,nota) => (nota>60 && p>75) ? 90 : 40,
+    explain: `
+      <p><b>O que é:</b> Árvores de Decisão aprendem regras <b>if/else</b> para classificar ou prever.</p>
+      <ul>
+        <li><b>Quando usar:</b> Explicabilidade por regras; dados tabulares.</li>
+        <li><b>Como funciona:</b> Faz cortes que maximizam pureza (Gini/entropia) ou reduzem MSE (reg.).</li>
+        <li><b>Vantagens:</b> Interpretável; aceita features mistas.</li>
+        <li><b>Cuidados:</b> Overfitting — use <code>max_depth</code>, <code>min_samples_leaf</code>.</li>
+      </ul>
+      <details><summary>Critério (ex.: Gini)</summary>
+        <div class="formula">Gini = 1 - Σ pₖ² &nbsp; (pₖ = proporção da classe k no nó)</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">import numpy as np
+from sklearn.tree import DecisionTreeClassifier
+
+X = np.array([
+    [7, 85, 8, 72],
+    [5, 60, 4, 55],
+    [9, 92, 9, 80],
+    # ...
+])
+y = np.array([1, 0, 1])
+
+modelo = DecisionTreeClassifier(criterion="gini", max_depth=4, random_state=42)
+modelo.fit(X, y)
+
+h,p,proj,nota = 6.5, 78, 7, 67
+pred = modelo.predict(np.array([[h,p,proj,nota]]))
+print(int(pred[0]))</code></pre>`
+  },
+  svm: {
+    calc: (h,p,proj,nota) => 0.1*h + 0.3*p + 0.2*proj + 0.4*nota, // escore linear didático
+    explain: `
+      <p><b>O que é:</b> Support Vector Machine encontra um <b>hiperplano</b> que separa classes maximizando a <b>margem</b> (pode usar kernels).</p>
+      <ul>
+        <li><b>Quando usar:</b> Margens definidas; alta dimensão.</li>
+        <li><b>Como funciona:</b> Controla regularização (<code>C</code>) e usa kernel (linear/RBF/polinomial) para separar dados não lineares.</li>
+        <li><b>Vantagens:</b> Eficiente em alta dimensão.</li>
+        <li><b>Cuidados:</b> Escalonar features; escolha sensível de <code>C</code> e <code>gamma</code> (RBF).</li>
+      </ul>
+      <details><summary>Hiperplano</summary>
+        <div class="formula">w·x + b = 0 &nbsp; (maximiza margem)</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">import numpy as np
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.svm import SVC
+
+X = np.array([
+    [5, 72, 6, 58],
+    [8, 90, 8, 78],
+    [7, 85, 7, 70],
+    # ...
+])
+y = np.array([0, 1, 1])
+
+pipe = make_pipeline(StandardScaler(), SVC(kernel="rbf", C=1.0, gamma="scale", probability=True))
+pipe.fit(X, y)
+
+h,p,proj,nota = 6, 80, 7, 65
+proba = pipe.predict_proba(np.array([[h,p,proj,nota]]))[0,1]
+print(proba)</code></pre>`
+  },
+  randomforest: {
+    calc: (h,p,proj,nota) => Math.min(100, 0.25*(h+p+proj+nota) + Math.random()*12), // média + ruído
+    explain: `
+      <p><b>O que é:</b> Ensemble de muitas <b>árvores</b> treinadas com amostras e features aleatórias; agrega por <b>voto</b> (class.) ou <b>média</b> (reg.).</p>
+      <ul>
+        <li><b>Quando usar:</b> Tabelas com relações complexas; baseline forte.</li>
+        <li><b>Como funciona:</b> <b>Bootstrap</b> de linhas; amostragem aleatória de colunas a cada split; reduz variância.</li>
+        <li><b>Vantagens:</b> Robusto; fornece importância de features.</li>
+        <li><b>Cuidados:</b> Menos interpretável que árvore única; pode ser mais lento.</li>
+      </ul>
+      <details><summary>Agregação</summary>
+        <div class="formula">ŷ = média(ŷ₁, ..., ŷ_T) &nbsp;/&nbsp; classe = voto majoritário</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">import numpy as np
+from sklearn.ensemble import RandomForestClassifier
+
+X = np.array([
+    [6, 82, 7, 68],
+    [3, 60, 4, 55],
+    [9, 90, 9, 80],
+    # ...
+])
+y = np.array([1, 0, 1])
+
+modelo = RandomForestClassifier(n_estimators=200, random_state=42, n_jobs=-1)
+modelo.fit(X, y)
+
+# Importâncias
+print(modelo.feature_importances_)  # [Horas, Presença, Projetos, NotaAnt]
+
+h,p,proj,nota = 7, 85, 8, 70
+pred = modelo.predict(np.array([[h,p,proj,nota]]))
+print(int(pred[0]))</code></pre>`
+  },
+  kmeans: {
+    calc: (h,p,proj,nota) => (h+p+proj+nota)/4, // apenas escore ilustrativo
+    explain: `
+      <p><b>O que é:</b> <b>K-Means</b> é não supervisionado: agrupa por similaridade em <b>k</b> clusters (centróides).</p>
+      <ul>
+        <li><b>Quando usar:</b> Segmentar alunos (perfis), descobrir padrões.</li>
+        <li><b>Como funciona:</b> Alterna entre atribuir ao centróide mais próximo e recalcular centróides (k-means++ inicializa bem).</li>
+        <li><b>Vantagens:</b> Rápido e simples.</li>
+        <li><b>Cuidados:</b> Escolha de k; escalonamento; sensível a outliers.</li>
+      </ul>
+      <details><summary>Atualização do centróide</summary>
+        <div class="formula">cⱼ = média dos pontos do cluster j</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">import numpy as np
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+
+X = np.array([
+    [6, 82, 7, 68],
+    [3, 60, 4, 55],
+    [9, 90, 9, 80],
+    # ...
+])
+
+pipe = make_pipeline(StandardScaler(), KMeans(n_clusters=3, init="k-means++", n_init=10, random_state=42))
+labels = pipe.fit_predict(X)
+
+# Novo aluno:
+h,p,proj,nota = 7, 85, 8, 70
+cluster = pipe.named_steps["kmeans"].predict(
+    pipe.named_steps["standardscaler"].transform(np.array([[h,p,proj,nota]]))
+)
+print(int(cluster[0]))</code></pre>`
+  },
+  pca: {
+    calc: (h,p,proj,nota) => 0.3*h + 0.2*p + 0.1*proj + 0.4*nota, // projeção didática
+    explain: `
+      <p><b>O que é:</b> PCA reduz dimensionalidade criando <b>componentes principais</b> (combinações lineares) que maximizam variância explicada.</p>
+      <ul>
+        <li><b>Quando usar:</b> Visualização, redução de ruído, acelerar modelos, remover redundância.</li>
+        <li><b>Como funciona:</b> Centraliza/escala; decompõe a covariância; ordena por autovalores (variância).</li>
+        <li><b>Vantagens:</b> Compacta informação.</li>
+        <li><b>Cuidados:</b> Componentes não têm significado direto; escalonamento é importante.</li>
+      </ul>
+      <details><summary>Transformação</summary>
+        <div class="formula">Z = XW (W: autovetores). Variância explicada: razão por componente.</div>
+      </details>
+    `,
+    sklearn: `
+<pre><code class="language-python">import numpy as np
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
+
+X = np.array([
+    [6, 82, 7, 68],
+    [3, 60, 4, 55],
+    [9, 90, 9, 80],
+    # ...
+])
+
+pipe = make_pipeline(StandardScaler(), PCA(n_components=2, random_state=42))
+Z = pipe.fit_transform(X)
+print("Explicada:", pipe.named_steps["pca"].explained_variance_ratio_)
+
+# Novo aluno:
+h,p,proj,nota = 7, 85, 8, 70
+z_new = pipe.transform(np.array([[h,p,proj,nota]]))
+print(z_new)</code></pre>`
+  }
+};
+
+/* =======================
+   LÓGICA DA INTERFACE
+   ======================= */
+function onAlgChange(){
+  const alg = el("algoritmo").value;
+  el("explicacao").innerHTML = content[alg].explain;
+  el("matematica").innerHTML = content[alg].sklearn;
+  el("resultado").innerHTML = "–";
+  el("alerta").style.display = "none";
+  el("graficoBox").style.display = "none";
+}
+function executar(){
+  const { vals, hasNaN } = getInputs();
+  const [h,p,proj,nota] = vals;
+  if(hasNaN){
+    el("alerta").style.display = "block";
+    el("alerta").innerHTML = "Preencha as quatro features com números (cenário: Desempenho Acadêmico).";
+    el("resultado").innerHTML = "–";
+    return;
+  }
+  const alg = el("algoritmo").value;
+  let r = content[alg].calc(h,p,proj,nota);
+  if(!isFinite(r)) r = 0;
+  // limitar apenas para visual (muitos casos resultam 0–100)
+  r = Math.max(-1e6, Math.min(100, r));
+  el("resultado").innerHTML = `Resultado (simulação didática): <b>${r.toFixed(2)}</b>`;
+  el("alerta").style.display = "block";
+  el("alerta").innerHTML = `
+    <b>Nota:</b> Este resultado é gerado no navegador para fins pedagógicos.
+    Em <b>scikit‑learn</b>, você treina com dados reais e utiliza <code>predict</code>/<code>predict_proba</code> (veja o código abaixo).
+  `;
+}
+
+/* =======================
+   DESENHO DE GRÁFICOS (Canvas)
+   ======================= */
+const canvas = el('graficoCanvas');
+const ctx = canvas.getContext('2d');
+
+function clearCanvas(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // fundo
+  ctx.fillStyle = "#ffffff";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+}
+
+function drawAxes(xLabel, yLabel, xmin, xmax, ymin, ymax){
+  const pad = 60;
+  const W = canvas.width, H = canvas.height;
+  // eixos
+  ctx.strokeStyle = "#444"; ctx.lineWidth = 1.2;
+  // eixo X
+  ctx.beginPath(); ctx.moveTo(pad, H-pad); ctx.lineTo(W-pad, H-pad); ctx.stroke();
+  // eixo Y
+  ctx.beginPath(); ctx.moveTo(pad, H-pad); ctx.lineTo(pad, pad); ctx.stroke();
+  // labels
+  ctx.fillStyle = "#111"; ctx.font = "14px Arial";
+  ctx.fillText(xLabel, W/2 - ctx.measureText(xLabel).width/2, H - 20);
+  ctx.save(); ctx.translate(20, H/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText(yLabel, -ctx.measureText(yLabel).width/2, 0); ctx.restore();
+
+  // ticks
+  ctx.fillStyle = "#666"; ctx.font = "12px Arial";
+  const xticks = 5, yticks = 5;
+  for(let i=0;i<=xticks;i++){
+    const x = pad + (i/xticks)*(W-2*pad);
+    const v = (xmin + (i/xticks)*(xmax-xmin)).toFixed(0);
+    ctx.beginPath(); ctx.moveTo(x, H-pad); ctx.lineTo(x, H-pad+6); ctx.stroke();
+    ctx.fillText(v, x-10, H-pad+20);
+  }
+  for(let j=0;j<=yticks;j++){
+    const y = H-pad - (j/yticks)*(H-2*pad);
+    const v = (ymin + (j/yticks)*(ymax-ymin)).toFixed(0);
+    ctx.beginPath(); ctx.moveTo(pad-6, y); ctx.lineTo(pad, y); ctx.stroke();
+    ctx.fillText(v, pad-40, y+4);
+  }
+  return {
+    mapX: (v) => pad + (v - xmin)/(xmax - xmin) * (W-2*pad),
+    mapY: (v) => H - pad - (v - ymin)/(ymax - ymin) * (H-2*pad)
+  };
+}
+
+function drawPoints(points, color, size=4){
+  ctx.fillStyle = color;
+  points.forEach(([x,y])=>{
+    ctx.beginPath();
+    ctx.arc(x,y,size,0,2*Math.PI);
+    ctx.fill();
+  });
+}
+
+function drawLine(xs, ys, color, width=2){
+  ctx.strokeStyle = color; ctx.lineWidth = width;
+  ctx.beginPath();
+  ctx.moveTo(xs[0], ys[0]);
+  for(let i=1;i<xs.length;i++){ ctx.lineTo(xs[i], ys[i]); }
+  ctx.stroke();
+}
+
+function drawBars(labels, values, color){
+  clearCanvas();
+  const pad = 60;
+  const W = canvas.width, H = canvas.height;
+  const maxVal = Math.max(...values) * 1.15;
+  // eixo Y
+  ctx.strokeStyle = "#444"; ctx.lineWidth = 1.2;
+  ctx.beginPath(); ctx.moveTo(pad, H-pad); ctx.lineTo(pad, pad); ctx.stroke();
+  // eixo X
+  ctx.beginPath(); ctx.moveTo(pad, H-pad); ctx.lineTo(W-pad, H-pad); ctx.stroke();
+
+  const n = values.length;
+  const bw = (W - 2*pad) / (n*1.4);
+  const gap = bw*0.4;
+
+  ctx.fillStyle = color;
+  ctx.font = "12px Arial";
+  for(let i=0;i<n;i++){
+    const x = pad + i*(bw+gap) + gap;
+    const h = (values[i]/maxVal)*(H-2*pad);
+    const y = (H-pad) - h;
+    ctx.fillRect(x,y,bw,h);
+    // rótulo
+    ctx.fillStyle = "#111";
+    const txt = labels[i];
+    const tw = ctx.measureText(txt).width;
+    ctx.fillText(txt, x + bw/2 - tw/2, H - pad + 18);
+    // valor
+    ctx.fillStyle = "#333";
+    ctx.fillText(values[i].toFixed(2), x + bw/2 - 14, y - 6);
+    ctx.fillStyle = color;
+  }
+}
+
+function drawScatterForKnnSvm(){
+  clearCanvas();
+  // Escolhemos 2 features para o plano: Horas (0–12) e Presença (40–100)
+  const xLabel = "Horas de Estudo", yLabel = "Presença (%)";
+  const xmin=0, xmax=12, ymin=40, ymax=100;
+  const { mapX, mapY } = drawAxes(xLabel, yLabel, xmin, xmax, ymin, ymax);
+
+  // Dataset sintético (determinístico)
+  function lcg(seed){ let s = seed; return ()=> (s=(s*1664525+1013904223)%4294967296)/4294967296; }
+  const rnd = lcg(12345);
+  const class0=[], class1=[];
+  for(let i=0;i<40;i++){
+    // reprovado: menos horas, menor presença
+    const H = 2 + 3*rnd(); // 2..5
+    const P = 45 + 20*rnd(); // 45..65
+    class0.push([H,P]);
+  }
+  for(let i=0;i<40;i++){
+    // aprovado: mais horas, maior presença
+    const H = 6 + 4*rnd(); // 6..10
+    const P = 75 + 20*rnd(); // 75..95
+    class1.push([H,P]);
+  }
+  // Desenhar pontos
+  drawPoints(class0.map(([x,y])=>[mapX(x), mapY(y)]), colors.red, 4);
+  drawPoints(class1.map(([x,y])=>[mapX(x), mapY(y)]), colors.blue, 4);
+
+  // Ponto do aluno (se disponível)
+  const { vals, hasNaN } = getInputs();
+  if(!hasNaN){
+    const [h,p] = [vals[0], vals[1]];
+    const px = mapX(Math.max(xmin, Math.min(xmax, h)));
+    const py = mapY(Math.max(ymin, Math.min(ymax, p)));
+    // marcador em X
+    ctx.strokeStyle = colors.black; ctx.lineWidth = 2.5;
+    ctx.beginPath(); ctx.moveTo(px-7, py-7); ctx.lineTo(px+7, py+7); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px-7, py+7); ctx.lineTo(px+7, py-7); ctx.stroke();
+    ctx.fillStyle = colors.black; ctx.font = "12px Arial";
+    ctx.fillText("Você", px+10, py-8);
+  }
+
+  // Legenda
+  el("graficoLegenda").innerHTML = `
+    <span style="color:${colors.blue}">●</span> Aprovado &nbsp;&nbsp;
+    <span style="color:${colors.red}">●</span> Reprovado &nbsp;&nbsp;
+    <span style="color:${colors.black}">✕</span> Seu ponto (Horas × Presença)
+  `;
+  el("graficoDescricao").innerText = "Dispersão 2D (Horas vs Presença). KNN usa proximidade; SVM busca separar por uma fronteira (hiperplano).";
+}
+
+function drawFeatureImportanceRF(){
+  // Importâncias simuladas (exemplo didático)
+  const importances = [0.22, 0.30, 0.14, 0.34]; // Horas, Presença, Projetos, NotaAnt
+  drawBars(["Horas","Presença","Projetos","Nota Ant."], importances, colors.green);
+  el("graficoLegenda").innerHTML = `Importância simulada (exemplo pedagógico). Em scikit‑learn, use <code>modelo.feature_importances_</code>.`;
+  el("graficoDescricao").innerText = "Random Forest — Importância de Features (simulação didática).";
+}
+
+function drawScreePCA(){
+  clearCanvas();
+  const labels = ["PC1","PC2","PC3","PC4"];
+  const evr = [0.48, 0.27, 0.15, 0.10]; // variância
