@@ -1,23 +1,398 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Conteúdos — Lógica e Linguagem de Programação — 3ºB</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;margin:32px;background:#f6f7fb;color:#111827}
-    a{color:#2563eb;text-decoration:none} a:hover{text-decoration:underline}
-    header{margin-bottom:16px} h1{margin:0 0 4px 0} .crumbs{color:#475569;font-size:0.95rem}
-    .box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px}
-  </style>
+<meta charset="UTF-8">
+<title>Lógica e Linguagem de Programação</title>
 </head>
 <body>
-  <header>
-    <div class="crumbs"><a href="/index.html">Início</a> / Lógica e Linguagem de Programação</div>
-    <h1>Conteúdos — Lógica e Linguagem de Programação</h1>
-  </header>
-  <div class="box">
-    <p>Página inicial de <strong>Conteúdos — Lógica e Linguagem de Programação</strong>. Substitua este conteúdo pelos materiais da disciplina.</p>
-  </div>
+
+<h1>Lógica e Linguagem de Programação</h1>
+<p><strong>Carga horária:</strong> 133h20min</p>
+
+<h2>Unidades Curriculares</h2>
+
+<ul>
+<li>I - Estrutura Básica — 13h / 13h prática</li>
+<li>II - Estruturas de Decisão Simples — 7h / 7h prática</li>
+<li>III - Estruturas de Decisão Composta — 6h30min / prática</li>
+<li>IV - Estruturas de Seleção — 6h30min / 6h30min prática</li>
+<li>V - Estruturas de Repetição — 13h30min / 13h20min prática</li>
+<li>VI - Vetores e Matrizes — 13h30min / 13h30min prática</li>
+</ul>
+
+<br>
+<a href="index.html">Voltar para página da turma</a>
+
+<title>Plano de Curso - Lógica de Programação</title>
+
+
+
+<h1>Plano de Curso – Lógica de Programação</h1>
+
+<p>
+Sequência de aulas utilizada no ensino de programação e desenvolvimento de algoritmos.
+O objetivo é que o estudante compreenda progressivamente os conceitos fundamentais
+da programação através de atividades práticas.
+</p>
+
+<hr>
+
+<h2>Semana 1 – Introdução</h2>
+<ul>
+<li>O que é programar</li>
+<li>Algoritmos no cotidiano</li>
+<li>Fluxogramas</li>
+<li>Variáveis</li>
+</ul>
+
+<pre><code>
+# Variáveis
+nome = "Aluno"
+idade = 17
+nota = 8.5
+
+print("Nome:", nome)
+print("Idade:", idade)
+print("Nota:", nota)
+</code></pre>
+
+<hr>
+
+<h2>Semana 2 – Entrada e saída</h2>
+
+<pre><code>
+nome = input("Digite seu nome: ")
+nota1 = float(input("Nota 1: "))
+nota2 = float(input("Nota 2: "))
+
+media = (nota1 + nota2) / 2
+
+print("Aluno:", nome)
+print("Média:", media)
+</code></pre>
+
+<hr>
+
+<h2>Semana 3 – Estrutura SE</h2>
+
+<pre><code>
+nota = float(input("Digite a nota: "))
+
+if nota >= 7:
+    print("Aprovado")
+else:
+    print("Reprovado")
+</code></pre>
+
+<hr>
+
+<h2>Semana 4 – Operadores lógicos</h2>
+
+<pre><code>
+idade = int(input("Idade: "))
+tem_carteira = input("Tem carteira? (s/n): ")
+
+if idade >= 18 and tem_carteira == "s":
+    print("Pode dirigir")
+else:
+    print("Não pode dirigir")
+</code></pre>
+
+<hr>
+
+<h2>Semana 5 – Tomada de decisão</h2>
+
+<pre><code>
+numero = int(input("Digite um número: "))
+
+if numero % 2 == 0:
+    print("Número par")
+else:
+    print("Número ímpar")
+</code></pre>
+
+<hr>
+
+<h2>Semana 6 – Projeto simples</h2>
+
+<pre><code>
+nome = input("Nome do aluno: ")
+nota = float(input("Nota final: "))
+
+if nota >= 6:
+    print(nome, "aprovado")
+else:
+    print(nome, "reprovado")
+</code></pre>
+
+<hr>
+
+<h2>Semana 7 – Condições encadeadas</h2>
+
+<pre><code>
+idade = int(input("Digite sua idade: "))
+
+if idade < 12:
+    print("Criança")
+elif idade < 18:
+    print("Adolescente")
+else:
+    print("Adulto")
+</code></pre>
+
+<hr>
+
+<h2>Semana 8 – While</h2>
+
+<pre><code>
+contador = 1
+
+while contador <= 5:
+    print(contador)
+    contador += 1
+</code></pre>
+
+<hr>
+
+<h2>Semana 9 – For</h2>
+
+<pre><code>
+for numero in range(1,11):
+    print(numero)
+</code></pre>
+
+<hr>
+
+<h2>Semana 10 – Loops aninhados</h2>
+
+<pre><code>
+for i in range(5):
+    for j in range(5):
+        print("*", end="")
+    print()
+</code></pre>
+
+<hr>
+
+<h2>Semana 11 – Vetores</h2>
+
+<pre><code>
+numeros = [5,3,8,1]
+
+for n in numeros:
+    print(n)
+</code></pre>
+
+<hr>
+
+<h2>Semana 12 – Matrizes</h2>
+
+<pre><code>
+matriz = [
+[1,2],
+[3,4]
+]
+
+for linha in matriz:
+    for valor in linha:
+        print(valor)
+</code></pre>
+
+<hr>
+
+<h2>Semana 13 – Funções</h2>
+
+<pre><code>
+def soma(a,b):
+    return a + b
+
+print(soma(5,3))
+</code></pre>
+
+<hr>
+
+<h2>Semana 14 – Função média</h2>
+
+<pre><code>
+def media(n1,n2):
+    return (n1+n2)/2
+
+print(media(7,9))
+</code></pre>
+
+<hr>
+
+<h2>Semana 15 – Vetores com cálculo</h2>
+
+<pre><code>
+notas = [7,8,6,9]
+
+media = sum(notas) / len(notas)
+
+print("Média:", media)
+</code></pre>
+
+<hr>
+
+<h2>Semana 16 – Matrizes com soma</h2>
+
+<pre><code>
+vendas = [
+[100,200],
+[150,300]
+]
+
+total = 0
+
+for linha in vendas:
+    for valor in linha:
+        total += valor
+
+print("Total:", total)
+</code></pre>
+
+<hr>
+
+<h2>Semana 17 – Funções reutilizáveis</h2>
+
+<pre><code>
+def saudacao(nome):
+    print("Olá", nome)
+
+saudacao("Aluno")
+</code></pre>
+
+<hr>
+
+<h2>Semana 18 – Depuração</h2>
+
+<pre><code>
+def dividir(a,b):
+    if b == 0:
+        print("Erro")
+    else:
+        print(a/b)
+
+dividir(10,2)
+</code></pre>
+
+<hr>
+
+<h2>Semana 19 – Strings</h2>
+
+<pre><code>
+texto = "programação"
+
+print(texto.upper())
+print(texto.replace("programação","python"))
+</code></pre>
+
+<hr>
+
+<h2>Semana 20 – Arquivos</h2>
+
+<pre><code>
+with open("dados.txt","w") as f:
+    f.write("Exemplo de arquivo")
+
+with open("dados.txt","r") as f:
+    print(f.read())
+</code></pre>
+
+<hr>
+
+<h2>Semana 21 – Classe</h2>
+
+<pre><code>
+class Aluno:
+
+    def __init__(self,nome):
+        self.nome = nome
+
+    def apresentar(self):
+        print(self.nome)
+
+a = Aluno("Carlos")
+a.apresentar()
+</code></pre>
+
+<hr>
+
+<h2>Semana 22 – Herança</h2>
+
+<pre><code>
+class Pessoa:
+    def falar(self):
+        print("Olá")
+
+class Aluno(Pessoa):
+    pass
+
+a = Aluno()
+a.falar()
+</code></pre>
+
+<hr>
+
+<h2>Semana 23 – Polimorfismo</h2>
+
+<pre><code>
+class Animal:
+    def som(self):
+        print("Som")
+
+class Cachorro(Animal):
+    def som(self):
+        print("Au Au")
+
+c = Cachorro()
+c.som()
+</code></pre>
+
+<hr>
+
+<h2>Semana 24 – Pilha</h2>
+
+<pre><code>
+pilha = []
+
+pilha.append(1)
+pilha.append(2)
+
+print(pilha.pop())
+</code></pre>
+
+<hr>
+
+<h2>Semana 25 – Estrutura de árvore</h2>
+
+<pre><code>
+class No:
+
+    def __init__(self,valor):
+        self.valor = valor
+        self.esquerda = None
+        self.direita = None
+</code></pre>
+
+<hr>
+
+<h2>Semana 26 – Função simples</h2>
+
+<pre><code>
+def area(base,altura):
+    return base * altura
+
+print(area(5,3))
+</code></pre>
+
+<hr>
+
+<p>
+Material educacional para estudo de programação.
+Os alunos são incentivados a experimentar e modificar os códigos.
+</p>
+
 </body>
 </html>
+
