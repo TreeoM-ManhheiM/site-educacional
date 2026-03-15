@@ -15,6 +15,18 @@
  .note{color:#475569}
  pre.code{white-space:pre-wrap;background:#f1f5f9;padding:12px;border-radius:8px;overflow:auto}
  .mono{font-family:Consolas,Monaco,monospace}
+
+<style id="book-style">
+.booky{font-family: Georgia, "Times New Roman", serif; background:#ffffff; border:1px solid #e5e7eb; border-radius:10px; padding:16px; line-height:1.65; text-align:justify;}
+.book-title{font-variant: small-caps; letter-spacing:0.4px; margin:0 0 6px 0; color:#0f172a;}
+.enunciado{margin:6px 0 10px 0}
+.book-sep{border:none; border-top:1px solid #e5e7eb; margin:10px 0}
+.resolucao-titulo{margin:0 0 6px 0; color:#334155}
+.book-ol{padding-left:20px; margin:0}
+.book-ol li{margin: 6px 0}
+.math{font-family: "Times New Roman", Georgia, serif}
+</style>
+
 </style>
 </head>
 <body>
@@ -49,7 +61,7 @@ def main():
     print('u+v =', soma)
     print('u-v =', sub)
     print('||u|| =', round(norm_u,4))
-    print('u·v =', dot)
+    print('u × v =', dot)
     print('angulo(u,v) (graus) =', round(ang,2))
 
 if __name__ == '__main__':
@@ -64,10 +76,21 @@ if __name__ == '__main__':
 # u+v = (1, 7)
 # u-v = (3, -1)
 # ||u|| = 3.6056
-# u·v = 10
+# u × v = 10
 # angulo(u,v) (graus) ≈ 47.73
-# Explicação: produto escalar e normas determinam cos(θ)= (u·v)/(||u||·||v||).
+# Explicação: produto escalar e normas determinam cos(θ)= (u × v)/(||u|| × ||v||).
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Vetores em R2</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q1) — Vetores em R2</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Dados u=(2,3) e v=(−1,4), calcule u+v, u−v, u × v, |u| e o ângulo entre u e v (graus).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>u+v = (2+(-1), 3+4) = (1, 7); u−v = (2−(−1), 3−4) = (3, −1).</li><li>Produto escalar: u × v = 2 × (−1) + 3 × 4 = −2 + 12 = 10.</li><li>|u| = √(2²+3²) = √(4+9) = √13 ≈ 3,6056 (aproximação manual).</li><li>cos θ = (u × v)/(|u||v|). |v|=√((-1)²+4²)=√17≈4,1231 ⇒ cos θ≈10/(3,6056 × 4,1231)≈0,6727; θ≈arccos(0,6727)≈47,7°.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -114,6 +137,17 @@ if __name__ == '__main__':
 # Entrada: Medio, Alto, Baixo, Medio, Alto → valores [2, 3, 1, 2, 3]
 # Média ordinal ≈ 2.20
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Tipos de Dados e Representações</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q2) — Tipos de Dados e Representações</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Monte a tabela de frequências e a média ordinal para: Azul, Verde, Azul, Vermelho, Azul, Verde e sequência ordinal Médio, Alto, Baixo, Médio, Alto (Baixo=1, Médio=2, Alto=3).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Frequências: Azul=3, Verde=2, Vermelho=1; total n=6. Proporções: Azul = 3 ÷ 6 = 0,5; Verde = 2 ÷ 6 ≈ 0,333; Vermelho = 1 ÷ 6 ≈ 0,167. Moda: Azul.</li><li>Média ordinal: {2, 3, 1, 2, 3}. Soma S = 11; N = 5 ⇒ x̄_ord = 11 ÷ 5 = 2,2.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -168,6 +202,17 @@ if __name__=='__main__':
 # det(A) = -2
 # A^-1 ≈ ((-2.00, 1.00), (1.50, -0.50))
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Matrizes 2×2</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q3) — Matrizes 2×2</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Para A=(1 2; 3 4) e B=(2 0; 1 2), calcule A × B, det(A) e A⁻¹ (se existir).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>A × B: c11=4, c12=4, c21=10, c22=8 ⇒ A × B=((4,4),(10,8)).</li><li>det(A)=−2.</li><li>A⁻¹ = (1/−2)×((4, −2),(−3, 1)) ⇒ ((−2, 1),(1,5, −0,5)).</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -211,6 +256,17 @@ if __name__=='__main__':
 # Para visualizar efeito do aparo, use p=0.4 (20% em cada lado):
 # Sem extremos → [4, 4, 6]; Média aparada ≈ 4.667
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Tendência Central</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q4) — Tendência Central</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Para 2,4,4,6,8 calcule média, mediana, moda e média aparada (20%).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Média=(2+4+4+6+8) ÷ 5 = 4,8. Mediana=4. Moda=4.</li><li>Média aparada (20%): retira extremos {2,8} ⇒ {4,4,6} ⇒ 14 ÷ 3 ≈ 4,667.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -248,6 +304,17 @@ if __name__=='__main__':
 # Parte 1: m=2.0, b=1.0, x=3.5 → y=8.0, intercepto x=-0.50
 # Parte 2: P1=(1,2), P2=(4,7) → m=1.6667, b=0.3333
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Função Afim</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q5) — Função Afim</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Encontre a reta por P1=(1,2) e P2=(4,7) e o zero da função.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>m=(7−2) ÷ (4−1) = 5 ÷ 3 ≈ 1,6667; b=2−(5 ÷ 3) = 1 ÷ 3.</li><li>Reta: y=(5 ÷ 3)x + 1 ÷ 3. Zero: 0=(5 ÷ 3)x + 1 ÷ 3 ⇒ (5 ÷ 3)x=−1 ÷ 3 ⇒ x=−1 ÷ 5.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -275,7 +342,7 @@ def main():
     cov = sum((xi-mx)*(yi-my) for xi,yi in zip(x,y))/(n-1)
     sx = math.sqrt(sum((xi-mx)**2 for xi in x))
     sy = math.sqrt(sum((yi-my)**2 for yi in y))
-    r = sum((xi-mx)*(yi-my) for xi,yi in zip(x,y)) / (sx*sy) if sx*sy!=0 else float('nan')
+    r = sum((xi-mx)*(yi-my) for xi,yi in zip(x,y)) ÷ (sx*sy) if sx*sy!=0 else float('nan')
     print('Covariancia (amostral) =', round(cov,6))
     print('Correlacao de Pearson r =', round(r,6))
 
@@ -289,6 +356,17 @@ if __name__=='__main__':
 # Covariância≈ 1.500
 # r≈ 0.775
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Covariância e Correlação</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q6) — Covariância e Correlação</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Para X={1,2,3,4,5}, Y={2,4,5,4,5} calcule a covariância amostral e discuta r.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>X̄=3, Ȳ=4. Cov = Σ((xi−3)(yi−4)) ÷ (n−1) = 6 ÷ 4 = 1,5.</li><li>Cov>0 ⇒ r>0 (correlação positiva).</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -325,6 +403,17 @@ if __name__=='__main__':
 # Média≈ 15.200; Desvio≈ 3.962
 # Z-scores≈ [-1.312, -0.555, -0.05, 0.707, 1.211]
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Normalização e Z-score</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q7) — Normalização e Z-score</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Dado 10,13,15,18,20: Min–Max, média, desvio amostral e z(18).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Min–Max: (x−10) ÷ 10 ⇒ 10→0; 13→0,3; 15→0,5; 18→0,8; 20→1,0.</li><li>Média=15,2; s≈3,962 (amostral).</li><li>z(18)=(18−15,2) ÷ 3,962 ≈ 0,707.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -357,6 +446,17 @@ if __name__=='__main__':
 # Entrada: [4, 6, 8]
 # Média=6.0; Var(pop)=2.667; Var(amostral)=4.000
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Variância e Desvio</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q8) — Variância e Desvio</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Para 4,6,8 calcule variâncias (pop e amostral) e desvios padrão.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Média=6. Pop.: var=8 ÷ 3 ≈ 2,667; desvio=√2,667≈1,633.</li><li>Amostral: var=8 ÷ 2 = 4; desvio=2.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -412,6 +512,17 @@ if __name__=='__main__':
 # 2x2: x+y=5; x-y=1 → (x,y)=(3,2)
 # 3x3: 2x+y−z=8; −3x−y+2z=−11; −2x+y+2z=−3 → (x,y,z)=(2,3,-1)
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Sistemas Lineares</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q9) — Sistemas Lineares</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Resolva o sistema: x+y=5; x−y=1.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Somando: 2x=6 ⇒ x=3.</li><li>Substituindo: y=2 ⇒ (3,2).</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -454,9 +565,20 @@ if __name__=='__main__':
 # ===============================
 # GABARITO (exemplo comentado)
 # ===============================
-# Dado: n=6, k=5 → P(par)=0,5; P(&gt;=5)=0,333; inter=1/6; união≈0,667
-# Moedas: m=2, h=2 → 1/4 = 0,25
+# Dado: n=6, k=5 → P(par)=0,5; P(&gt;=5)=0,333; inter=1 ÷ 6; união≈0,667
+# Moedas: m=2, h=2 → 1 ÷ 4 = 0,25
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Probabilidade Básica</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q10) — Probabilidade Básica</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Num dado honesto, calcule P(par), P(≥5) e P(par ∪ ≥5).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>P(par)=3 ÷ 6 = 1 ÷ 2; P(≥5)=2 ÷ 6 = 1 ÷ 3.</li><li>União = 1 ÷ 2 + 1 ÷ 3 − 1 ÷ 6 = 2 ÷ 3.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -487,6 +609,17 @@ if __name__=='__main__':
 # ===============================
 # Exemplo: n=10, p=0.3, k=3 → P≈0.26683; E[X]=3.0; Var=2.10
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Binomial</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q11) — Binomial</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Moeda com p=0,3, n=10: P(X=3), E[X], Var(X).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>P(X=3)=C(10,3) × 0,3³ × 0,7⁷ ≈ 0,2668.</li><li>E[X]=10 × 0,3 = 3; Var=10 × 0,3 × 0,7 = 2,1.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -518,6 +651,17 @@ if __name__=='__main__':
 # ===============================
 # Exemplo: xs=[0, 1, 2, 3], ps=[0.1, 0.3, 0.4, 0.2] → E[X]=1.70; E[X^2]=3.70
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Valor Esperado</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q12) — Valor Esperado</p>
+    <p class="enunciado"><strong>Enunciado:</strong> X∈{0,1,2,3} com p={0,1;0,3;0,4;0,2}: E[X] e E[X²].</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>E[X]=0×0,1 + 1×0,3 + 2×0,4 + 3×0,2 = 1,7.</li><li>E[X²]=0²×0,1 + 1²×0,3 + 2²×0,4 + 3²×0,2 = 3,7.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -555,6 +699,17 @@ if __name__=='__main__':
 # Exemplo: mu=170, sigma=10, x=185 → z=1.50; P&gt;=x≈0.0668
 # Intervalo [160,180] → P≈0.6827
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Normal/z-score</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q13) — Normal/z-score</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Normal(170,10²): z para x=185, P(X≥185) e P(160≤X≤180).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>z=(185−170) ÷ 10 = 1,5 ⇒ P(X≥185)≈0,0668 (tabela‑z).</li><li>P(160≤X≤180)≈0,6827.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -574,14 +729,14 @@ TCRIT_DF15 = {90:1.753, 95:2.131, 99:2.947}  # aproximacao para df=15
 def main():
     print('--- z-IC (sigma conhecido) ---')
     xb = float(input('xbar: ')); sigma=float(input('sigma: ')); n=int(input('n: '))
-    conf = int(input('Confianca (90/95/99): ') or '95')
+    conf = int(input('Confianca (90 ÷ 95 ÷ 99): ') or '95')
     z = ZCRIT.get(conf,1.96)
     moe = z*sigma/(n**0.5)
     print(f'IC {conf}%: ({xb-moe:.4f}, {xb+moe:.4f})')
     print('
 --- t-IC (sigma desconhecido, df~15 aproximado) ---')
     xb2=float(input('xbar: ')); s=float(input('s (desvio amostral): ')); n2=int(input('n: '))
-    conf2 = int(input('Confianca (90/95/99): ') or '95')
+    conf2 = int(input('Confianca (90 ÷ 95 ÷ 99): ') or '95')
     t = TCRIT_DF15.get(conf2,2.131)
     moe2 = t*s/(n2**0.5)
     print(f'IC {conf2}%: ({xb2-moe2:.4f}, {xb2+moe2:.4f})')
@@ -595,6 +750,17 @@ if __name__=='__main__':
 # z-IC 95%: x̄=72, σ=12, n=64 → (69.06, 74.94)
 # t-IC 95%: x̄=5.2, s=1.1, n=16, t*≈2.131 → (4.614, 5.786)
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Intervalos de Confiança</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q14) — Intervalos de Confiança</p>
+    <p class="enunciado"><strong>Enunciado:</strong> IC 95% para μ com σ=12, n=64, x̄=72.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Erro=1,96 × 12 ÷ 8 = 2,94.</li><li>IC: (72−2,94; 72+2,94) = (69,06; 74,94).</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -635,6 +801,17 @@ if __name__=='__main__':
 # Média: H0:μ=70, x̄=72, σ=12, n=64 → z≈1.333, p≈0.1824
 # Proporção: n=200, x=130 → p̂=0.650, z≈1.443, p≈0.1489
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Testes de Hipóteses (z)</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q15) — Testes de Hipóteses (z)</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Teste z: H0:μ=70 (σ=12,n=64), x̄=72, α=5% bicaudal.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>z=(72−70) ÷ (12 ÷ 8) = 2 ÷ 1,5 = 1,333.</li><li>|z|<1,96 ⇒ não rejeitar H0.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -669,6 +846,17 @@ if __name__=='__main__':
 # ===============================
 # Entrada: X=[1, 2, 3, 4, 5], Y=[1.5, 2.4, 3.6, 3.8, 5.1] → b1≈0.8600, b0≈0.7000; ŷ(6)≈5.860
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Regressão Linear</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q16) — Regressão Linear</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Regressão: estime b1, b0 e ŷ(6) para X={1..5}, Y≈{1,5;2,4;3,6;3,8;5,1}.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Por somatórios: b1≈0,86; b0≈0,70.</li><li>ŷ(6)=0,70 + 0,86 × 6 ≈ 5,86.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -706,6 +894,17 @@ if __name__=='__main__':
 # Resíduos≈ [-0.06, -0.02, 0.32, -0.34, 0.1]
 # R²≈ 0.9696
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Resíduos e R²</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q17) — Resíduos e R²</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Dado SST=100 e SSE=3,04, calcule R² e interprete.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>R²=1 − SSE ÷ SST = 1 − 3,04 ÷ 100 = 0,9696.</li><li>≈97% da variabilidade explicada.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -738,6 +937,17 @@ if __name__=='__main__':
 # sigma([-2, -1, 0, 1, 2])≈ [0.1192, 0.2689, 0.5, 0.7311, 0.8808]
 # Para x=1: p≈0.731059; odds≈2.718282
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Logística e Odds</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q18) — Logística e Odds</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Logística: calcule odds de p=0,731 e recupere p de odds=2,718.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>odds = p ÷ (1−p). Para p≈0,731 ⇒ odds≈2,718.</li><li>p = odds ÷ (1+odds) ⇒ 2,718 ÷ 3,718 ≈ 0,731.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -770,6 +980,17 @@ if __name__=='__main__':
 # ===============================
 # Exemplo: TP=50, FP=10, FN=8, TN=32 → acc=0.820, prec=0.833, rec=0.862, F1=0.847
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Métricas de Classificação</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q19) — Métricas de Classificação</p>
+    <p class="enunciado"><strong>Enunciado:</strong> TP=50, FP=10, FN=8, TN=32: acurácia, precisão, recall, F1.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Acurácia=(50+32) ÷ 100 = 0,82; Precisão=50 ÷ 60 ≈ 0,833.</li><li>Recall=50 ÷ 58 ≈ 0,862; F1≈0,847.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -804,6 +1025,17 @@ if __name__=='__main__':
 # Exemplo 1: P(A)=0.2, P(B|A)=0.9, P(B|¬A)=0.1 → P(B)=0.26; P(A|B)≈0.692
 # Exemplo 2: prev=0.01, sens=0.98, esp=0.97 → P(+)≈0.0395; PPV≈0.248
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Teorema de Bayes</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q20) — Teorema de Bayes</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Teste médico: sens=98%, esp=97%, prev=1%: P(+) e PPV.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>P(+) = 0,01 × 0,98 + 0,99 × 0,03 = 0,0395.</li><li>PPV = (0,01 × 0,98) ÷ 0,0395 ≈ 0,248.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -846,6 +1078,17 @@ if __name__=='__main__':
 # Exemplo: série=[20, 22, 21, 25, 24, 26, 28] → MA(3)=[21.0, 22.67, 23.33, 25.0, 26.0]
 # Suavização (α=0,3)≈ [20, 20.6, 20.72, 22.0, 22.6, 23.62, 24.94]
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Séries Temporais</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q21) — Séries Temporais</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Série 20,22,21,25,24: MA(3) e SES(α=0,3) com S1=20.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>MA(3): 21,0; 22,67; 23,33.</li><li>SES(α=0,3): 20; 20,6; 20,72; 22,00; 22,6.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -863,7 +1106,7 @@ ZCRIT={90:1.645,95:1.96,99:2.576}
 def main():
     print('--- Margem de erro ---')
     n=int(input('n: ')); phat=float(input('p_hat: '))
-    conf=int(input('Confianca (90/95/99): ') or '95')
+    conf=int(input('Confianca (90 ÷ 95 ÷ 99): ') or '95')
     z=ZCRIT.get(conf,1.96)
     me = z*math.sqrt(phat*(1-phat)/n)
     print('ME =', round(me,6), ' IC: (', round(phat-me,4), ',', round(phat+me,4), ')')
@@ -883,6 +1126,17 @@ if __name__=='__main__':
 # ME (n=1000, p̂=0.52, 95%)≈ 0.0310 → IC≈ (0.489, 0.551)
 # Tamanho para E=0,03 (95%, p=0,5) ≈ 1068
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Amostragem e ME</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q22) — Amostragem e ME</p>
+    <p class="enunciado"><strong>Enunciado:</strong> n=1000, p̂=0,52: ME(95%). Estime n para E=0,03 (95%, p≈0,5).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>ME = 1,96 × √(0,52 × 0,48 ÷ 1000) ≈ 0,031.</li><li>n ≈ (1,96² × 0,25) ÷ 0,03² ≈ 1068.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -898,7 +1152,7 @@ from math import comb
 
 def main():
     print('--- Baralho padrao ---')
-    p_ace = 4/52
+    p_ace = 4 ÷ 52
     total_5 = comb(52,5)
     flush = 4*comb(13,5)/total_5
     print('P(carta As) =', round(p_ace,6))
@@ -910,8 +1164,19 @@ if __name__=='__main__':
 # ===============================
 # GABARITO (exemplo comentado)
 # ===============================
-# P(Ás)=4/52≈0.077;  P(Flush)=4·C(13,5)/C(52,5)≈0.001981
+# P(Ás)=4 ÷ 52≈0.077;  P(Flush)=4 × C(13,5)/C(52,5)≈0.001981
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Combinatória/Baralho</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q23) — Combinatória/Baralho</p>
+    <p class="enunciado"><strong>Enunciado:</strong> Baralho: P(Ás) e P(Flush em 5 cartas).</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>P(Ás)=4 ÷ 52 = 1 ÷ 13 ≈ 0,0769.</li><li>P(Flush)= 4 × C(13,5) ÷ C(52,5) ≈ 0,001981.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -966,6 +1231,17 @@ if __name__=='__main__':
 # Autovalores≈ 6.000, 1.400
 # Variância explicada ≈ 0.811, 0.189
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — PCA 2D</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q24) — PCA 2D</p>
+    <p class="enunciado"><strong>Enunciado:</strong> PCA 2D: matriz de covariância e componente mais explicativa.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Médias: x̄=2,8; ȳ=2,2; covariâncias calculadas à mão ⇒ S≈[[3,700, 2,300],[2,300, 3,700]].</li><li>λ1≈6,0; λ2≈1,4 ⇒ PC1 explica ≈81,1%.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -1004,6 +1280,17 @@ if __name__=='__main__':
 # d_E(P,A)≈2.236, d_E(P,B)≈2.828; d_M(P,A)=3, d_M(P,B)=4
 # Classe k=1 → A
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — Distâncias e kNN</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q25) — Distâncias e kNN</p>
+    <p class="enunciado"><strong>Enunciado:</strong> P=(2,3), A=(1,1), B=(4,5): distâncias e k=1.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>d_E(P,A)=√5≈2,236; d_E(P,B)=√8≈2,828.</li><li>k=1 ⇒ classe A.</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
@@ -1057,33 +1344,38 @@ if __name__=='__main__':
 # Atribuições=[0, 0, 0, 1, 1, 1]
 # Novos centros≈ (1.3333333333333333, 1.3333333333333333) e (5.333333333333333, 5.333333333333333)
 </pre>
+<details class="exam-question">
+  <summary>Questão estilo vestibular (ETEC/FATEC/SENAI) — k-means (1 iteração)</summary>
+  <div class="exam-body booky">
+    <p class="book-title">Questão (Q26) — k-means (1 iteração)</p>
+    <p class="enunciado"><strong>Enunciado:</strong> k-means: pontos (1,1),(1,2),(2,1),(5,5),(6,5),(5,6), centros (1,1),(6,5): 1ª atribuição e novos centros.</p>
+    <hr class="book-sep">
+    <p class="resolucao-titulo"><em>Resolução (passo a passo, sem meios eletrônicos):</em></p>
+    <ol class="book-ol"><li>Grupos: G1={(1,1),(1,2),(2,1)}, G2={(5,5),(6,5),(5,6)}.</li><li>C1=(1,3333,1,3333); C2=(5,3333,5,3333).</li></ol>
+  </div>
+</details>
+
   </div>
 </section>
 
+
+</html>
+
 <script>
-function baixarArquivo(nome, conteudo){
-  const blob = new Blob([conteudo], {type:'text/plain;charset=utf-8'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = nome; a.style.display='none';
-  document.body.appendChild(a); a.click(); a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url), 500);
-}
-
-document.addEventListener('click', function(ev){
-  const b = ev.target.closest('button[data-filename]');
-  if(!b) return;
-  const id = b.getAttribute('data-target');
-  const pre = document.getElementById(id);
-  const fname = b.getAttribute('data-filename') || (pre?.dataset.filename) || 'script.py';
-  const code = pre ? pre.innerText : '';
-  baixarArquivo(fname, code);
-});
-
-document.getElementById('downloadPage')?.addEventListener('click', function(){
-  const html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
-  baixarArquivo('scripts_matematica_1_a_26_gabarito.html', html);
-});
+(function(){
+  function baixarArquivo(nome, conteudo){
+    const blob = new Blob([conteudo], {type:'text/html;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = nome; a.style.display='none';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 500);
+  }
+  document.getElementById('downloadPage')?.addEventListener('click', function(){
+    const html = '<!DOCTYPE html>' + document.documentElement.outerHTML;
+    baixarArquivo('scripts_matematica_1_a_26_passos.html', html);
+  });
+})();
 </script>
 </body>
 </html>
