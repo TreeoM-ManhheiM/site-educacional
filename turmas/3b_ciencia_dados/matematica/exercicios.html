@@ -3,19 +3,149 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Exercícios — Matematica — 3ºB</title>
+  <title>3ºB Ciência de Dados — Portal de Disciplinas</title>
+
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;margin:32px;background:#f6f7fb;color:#111827}
-    a{color:#2563eb;text-decoration:none} a:hover{text-decoration:underline}
-    header{margin-bottom:16px} h1{margin:0 0 4px 0} .crumbs{color:#475569;font-size:0.95rem}
+    :root{
+      --bg:#0f172a;            /* topo */
+      --card:#ffffff;          /* cartão */
+      --text:#111827;          /* texto principal */
+      --muted:#475569;         /* texto secundário */
+      --acc:#2563eb;           /* ação/links */
+      --acc-2:#059669;         /* ação alternativa (se quiser usar) */
+      --ring:#e5e7eb;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;
+      background:#f6f7fb; color:var(--text);
+    }
+    header{
+      background:var(--bg); color:#fff; padding:28px 16px;
+    }
+    header .wrap{
+      max-width:1100px; margin:0 auto;
+    }
+    h1{ margin:0 0 6px 0; font-size: clamp(1.4rem, 2.6vw, 2rem); }
+    p.lead{ margin:0; color:#cbd5e1; font-size:0.95rem; }
+
+    main{ max-width:1100px; margin:28px auto; padding:0 16px; }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:16px;
+    }
+    /* 3 cartões por linha no desktop; 1–2 no mobile/tablet */
+    .col{ grid-column: span 12; }
+    @media (min-width:700px){ .col{ grid-column: span 6; } }
+    @media (min-width:1000px){ .col{ grid-column: span 4; } }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--ring);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 1px 6px rgba(0,0,0,.06);
+      display:flex; flex-direction:column; gap:10px; min-height: 210px;
+    }
+    .card h2{
+      margin:0; font-size:1.15rem; color:#0f172a;
+    }
+    .card p{ margin:0; color:var(--muted); font-size:0.95rem; }
+    .links{ margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+
+    .links a{
+      display:inline-block; text-decoration:none; color:#fff; background:var(--acc);
+      padding:10px 12px; border-radius:8px; font-weight:600;
+      border:1px solid transparent;
+    }
+    .links a.secondary{
+      background:#334155; /* tom neutro */
+    }
+    .links a.ghost{
+      background:#fff; color:var(--acc); border-color:var(--ring);
+    }
+    .links a:hover{ filter:brightness(0.95); }
+
+    footer{
+      max-width:1100px; margin:24px auto 40px; padding:0 16px; color:#475569; font-size:0.95rem;
+      display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
+    }
+    footer a{ color:var(--acc); text-decoration:none; }
+    footer a:hover{ text-decoration:underline; }
   </style>
 </head>
 <body>
+
   <header>
-    <div class="crumbs"><a href='/index.html'>Início</a> / Matematica / geral-exercicios-conteudos</div>
-    <h1>Exercícios — Matematica</h1>
+    <div class="wrap">
+      <h1>3ºB — Ciência de Dados</h1>
+      <p class="lead">Portal das disciplinas com acesso rápido aos conteúdos, exercícios e páginas gerais.</p>
+    </div>
   </header>
-  <p>Conteúdo inicial. Edite este arquivo para colocar as informações da disciplina.</p>
-  <p><a href="/index.html">← Voltar ao índice</a></p>
+
+  <main>
+    <div class="grid">
+
+      <!-- Aprendizado de Máquina -->
+      <section class="col">
+        <div class="card">
+          <h2>Aprendizado de Máquina</h2>
+          <p>Fundamentos, algoritmos supervisionados/ não supervisionados, avaliação e prática aplicada.</p>
+          <div class="links">
+            /aprendizado_maquina/geral.htmlGeral</a>
+            /aprendizado_maquina/exercicios.htmlExercícios</a>
+            /aprendizado_maquina/conteudos.htmlConteúdos</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Inteligência Artificial -->
+      <section class="col">
+        <div class="card">
+          <h2>Inteligência Artificial</h2>
+          <p>Agentes, busca, lógica, raciocínio e aplicações modernas de IA.</p>
+          <div class="links">
+            /inteligencia_artificial/geral.htmlGeral</a>
+            /inteligencia_artificial/exercicios.htmlExercícios</a>
+            /inteligencia_artificial/conteudos.htmlConteúdos</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Matemática -->
+      <section class="col">
+        <div class="card">
+          <h2>Matemática</h2>
+          <p>Base matemática e estatística para Ciência de Dados: álgebra, probabilidade, inferência.</p>
+          <div class="links">
+            /matematica/geral.htmlGeral</a>
+            /matematica/exercicios.htmlExercícios</a>
+            /matematica/conteudos.htmlConteúdos</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- (Opcional) Pasta 4 -->
+      <section class="col">
+        <div class="card">
+          <h2>Pasta 4 (opcional)</h2>
+          <p>Reserve este espaço para uma quarta área do projeto (ex.: Redes, Banco de Dados, etc.).</p>
+          <div class="links">
+            /pasta4/geral.htmlGeral</a>
+            /pasta4/exercicios.htmlExercícios</a>
+            /pasta4/conteudos.htmlConteúdos</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <span>© 3ºB — Ciência de Dados</span>
+    /index.htmlVoltar ao início</a>
+  </footer>
+
 </body>
 </html>
