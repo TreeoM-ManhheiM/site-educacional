@@ -1,389 +1,239 @@
+
 <!DOCTYPE html>
+
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Laboratório de Inteligência Artificial</title>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Laboratório de Algoritmos de ML — versão PRO (Fórmulas + scikit‑learn)</title>
 <style>
-  :root{
-    --bg:#f5f5f5; --card:#ffffff; --text:#222; --muted:#555; --primary:#333;
-    --accent:#2c7be5; --border:#dcdcdc; --code-bg:#f0f2f5;
-    --ok:#1f9d55; --warn:#cc7a00; --error:#c92a2a;
-  }
-  *{ box-sizing: border-box; }
-  body{ font-family: Arial, Helvetica, sans-serif; margin: 32px; background: var(--bg); color: var(--text); line-height: 1.4; }
-  h1,h2,h3{ margin: 0 0 10px }
-  h2{ background: var(--primary); color: #fff; padding: 12px 16px; border-radius: 6px; }
-  .subtle{ color: var(--muted); font-size: .95rem; margin: 6px 0 0 }
-  .box{ background: var(--card); padding: 14px; margin-top: 16px; border: 1px solid var(--border); border-radius: 8px; }
-  .grid{ display: grid; gap: 10px 16px; }
-  .grid-4{ grid-template-columns: repeat(4, minmax(0,1fr)); }
-  @media (max-width: 860px){ .grid-4{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
-  @media (max-width: 520px){ .grid-4{ grid-template-columns: 1fr; } body{ margin: 16px; } }
-  label{ font-weight: bold; display: block; margin: 6px 0 4px; }
-  input, select, button{ padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; width: 100%; font-size: 14px; }
-  input[type="number"]{ width: 100%; }
-  button{ width: auto; background: var(--accent); color: #fff; border: none; cursor: pointer; }
-  button.secondary{ background: transparent; color: var(--accent); border: 1px solid var(--accent); }
-  .row{ display:flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-  .formula, pre{ background: var(--code-bg); padding: 12px; border-radius: 6px; overflow: auto; font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
-  .badge{ display: inline-block; background: #eef5ff; color: #1c5fd4; padding: 2px 8px; border-radius: 999px; font-size: 12px; margin-left: 6px; }
-  .callout{ border-left: 4px solid var(--accent); background: #f5f9ff; padding: 10px 12px; border-radius: 6px; color: #1a3a6d; }
-  .note{ color: var(--muted); font-size: .9rem; }
-  .result-big{ font-size: 1.2rem; }
-  /* Gráficos */
-  #graficoBox { display:none; }
-  canvas{ width:100%; max-width: 900px; height: 480px; border:1px dashed #cfd3d7; border-radius:8px; background:white; }
-  .legend{ font-size:.9rem; color:#666 }
+ :root{ --bg:#f5f5f5; --card:#ffffff; --text:#222; --muted:#555; --primary:#111827; --accent:#2563eb; --border:#dcdcdc; --code:#0d1117; --code-t:#e6edf3; }
+ body{ font-family: Arial, Helvetica, sans-serif; margin: 28px; background: var(--bg); color: var(--text); line-height: 1.5; }
+ h1,h2,h3{ margin:0 0 10px }
+ h2{ background: var(--primary); color:#fff; padding:12px 16px; border-radius:8px }
+ .subtle{ color:var(--muted); font-size:.95rem }
+ .box{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; margin-top:16px }
+ .grid{ display:grid; gap:10px 16px } .grid-4{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+ @media (max-width:860px){ .grid-4{ grid-template-columns: repeat(2,minmax(0,1fr)); } }
+ @media (max-width:520px){ .grid-4{ grid-template-columns:1fr; } body{ margin:16px } }
+ label{ font-weight:bold } input,select,button{ padding:8px 10px; border:1px solid var(--border); border-radius:6px; width:100%; font-size:14px }
+ button{ width:auto; background:var(--accent); color:#fff; border:none; cursor:pointer }
+ button.secondary{ background:transparent; color:var(--accent); border:1px solid var(--accent) }
+ .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+ .formula{ background:#0b1220; color:#e6edf3; padding:12px; border-radius:8px; overflow:auto; border:1px dashed #334155; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px }
+ pre{ background:var(--code); color:var(--code-t); border-radius:8px; padding:16px; overflow:auto; border:1px solid var(--border); font-family:Consolas,Menlo,monospace; font-size:14px; line-height:1.5 }
+ code{ font-family:Consolas,Menlo,monospace }
+ .top-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px }
+ .note{ color:var(--muted); font-size:.9rem }
+ .callout{ border-left:4px solid var(--accent); background:#f5f9ff; padding:10px 12px; border-radius:6px; color:#1a3a6d }
+ .result-big{ font-size:1.15rem }
 </style>
+<script>
+  window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] }, svg: { fontCache: 'global' } };
+</script>
+<script async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
-
-<h2>Laboratório de Algoritmos de Machine Learning <span class="badge">didático</span></h2>
-<p class="subtle">Digite quatro valores (features) e selecione um algoritmo para ver um <b>cálculo demonstrativo</b>, uma <b>explicação didática</b> e um <b>exemplo de como seria com scikit‑learn (Python)</b>.</p>
-
+<h2>Laboratório de Algoritmos de Machine Learning <span class="badge">versão PRO</span></h2>
+<p class="subtle">Selecione um algoritmo para ver a <b>Fórmula</b> e um exemplo de <b>como a biblioteca faria o cálculo (scikit‑learn + Python)</b> com <b>indentação padrão</b>.</p>
+<div class="top-actions">
+<button id="btnDownloadHTML" title="Baixar esta página (.html)">⬇️ Baixar esta página (.html)</button>
+</div>
 <div class="box">
-  <h3>Variáveis do Modelo</h3>
-  <div class="grid grid-4">
-    <div><label id="l1">Variável 1</label><input id="v1" type="number" step="any" placeholder="ex.: 5.5" /></div>
-    <div><label id="l2">Variável 2</label><input id="v2" type="number" step="any" placeholder="ex.: 75" /></div>
-    <div><label id="l3">Variável 3</label><input id="v3" type="number" step="any" placeholder="ex.: 8" /></div>
-    <div><label id="l4">Variável 4</label><input id="v4" type="number" step="any" placeholder="ex.: 60" /></div>
-  </div>
+<h3>Variáveis do Modelo</h3>
+<div class="grid grid-4">
+<div><label id="l1">Variável 1</label><input id="v1" placeholder="ex.: 6" step="any" type="number"/></div>
+<div><label id="l2">Variável 2</label><input id="v2" placeholder="ex.: 85" step="any" type="number"/></div>
+<div><label id="l3">Variável 3</label><input id="v3" placeholder="ex.: 12" step="any" type="number"/></div>
+<div><label id="l4">Variável 4</label><input id="v4" placeholder="ex.: 18" step="any" type="number"/></div>
 </div>
-
+</div>
 <div class="box">
-  <h3>Escolha o Algoritmo</h3>
-  <div class="row">
-    <select id="algoritmo">
-      <option value="regressao">Regressão Linear</option>
-      <option value="logistica">Regressão Logística</option>
-      <option value="knn">KNN</option>
-      <option value="arvore">Árvore de Decisão</option>
-      <option value="svm">SVM</option>
-      <option value="randomforest">Random Forest</option>
-      <option value="kmeans">K-Means</option>
-      <option value="pca">PCA</option>
-    </select>
-    <button id="btnExecutar">Executar Modelo</button>
-    <button id="btnGrafico" class="secondary">Mostrar Gráfico</button>
-    <button id="btnLimpar" class="secondary">Limpar</button>
-  </div>
-  <p class="note">Os resultados numéricos abaixo são apenas uma <b>simulação</b> local para fins de aula. Em scikit‑learn, você <b>treina</b> o modelo antes de prever.</p>
+<h3>Escolha o Algoritmo</h3>
+<div class="row">
+<select id="algoritmo">
+<option value="regressao">Regressão Linear</option>
+<option value="logistica">Regressão Logística</option>
+<option value="knn">KNN</option>
+<option value="arvore">Árvore de Decisão</option>
+<option value="kmeans">K‑Means</option>
+<option value="randomforest">Random Forest</option>
+<option value="svm">SVM</option>
+<option value="naivebayes">Naive Bayes</option>
+<option value="gboost">Gradient Boosting</option>
+<option value="xgboost">XGBoost</option>
+<option value="lightgbm">LightGBM</option>
+<option value="catboost">CatBoost</option>
+</select>
+<button id="btnExecutar">Executar Modelo</button>
+<button class="secondary" id="btnLimpar">Limpar</button>
 </div>
-
-<div class="box" aria-live="polite">
-  <h3>Resultado</h3>
-  <div id="alerta" class="callout" style="display:none;"></div>
-  <div id="resultado" class="result-big">–</div>
+<p class="note">O número abaixo é uma <b>simulação</b> local (somente didática). Para cálculo real, use o Python da seção.</p>
 </div>
-
+<div aria-live="polite" class="box">
+<h3>Resultado</h3>
+<div class="callout" id="alerta" style="display:none;"></div>
+<div class="result-big" id="resultado">–</div>
+</div>
 <div class="box">
-  <h3>Explicação do Algoritmo</h3>
-  <div id="explicacao"></div>
-  <h3>Como a biblioteca faria o cálculo (scikit‑learn + Python)</h3>
-  <div id="matematica"></div>
+<h3>Fórmula</h3>
+<div class="formula" id="explicacao">—</div>
+<h3>Como a biblioteca faria o cálculo (scikit‑learn + Python)</h3>
+<div class="top-actions"><select id="codeFormat"><option value="py">.py (Python)</option><option value="txt">.txt (texto)</option></select><button id="btnDownloadCode">⬇️ Baixar código do modelo</button></div><div id="matematica"></div>
 </div>
-
-<div class="box" id="graficoBox">
-  <h3>Gráfico do Modelo</h3>
-  <p class="note" id="graficoDescricao">—</p>
-  <canvas id="graficoCanvas" width="1000" height="520"></canvas>
-  <div class="legend" id="graficoLegenda"></div>
-</div>
-
 <script>
-/* ==== helpers ==== */
-const el = id => document.getElementById(id);
-const lbl = { l1: el('l1'), l2: el('l2'), l3: el('l3'), l4: el('l4') };
-const inp = { v1: el('v1'), v2: el('v2'), v3: el('v3'), v4: el('v4') };
-const colors = { blue:"#1f77b4", red:"#d62728", green:"#2ca02c", orange:"#ff7f0e", gray:"#808080", black:"#111", purple:"#9467bd" };
+const el = (id)=>document.getElementById(id);
+const lbl = { l1:el('l1'), l2:el('l2'), l3:el('l3'), l4:el('l4') };
+const inp = { v1:el('v1'), v2:el('v2'), v3:el('v3'), v4:el('v4') };
 
-/* ==== conteúdo (limpo) ==== */
+// Conteúdo baseado na "página 2" (código indentado) — adaptado para esta interface
 const content = {
   regressao: {
     labels: ["Horas de Estudo","Presença (%)","Trabalhos Entregues","Nota das Provas"],
-    calc: (a,b,c,d) => 0.25*a + 0.25*b + 0.25*c + 0.25*d,
-    explain: `
-      <p><b>O que é:</b> A Regressão Linear modela a relação entre variáveis de entrada (X) e uma saída numérica (y) por meio de uma <b>combinação linear</b>.</p>
-      <ul>
-        <li><b>Quando usar:</b> Prever valores contínuos (ex.: nota final, preço, vendas).</li>
-        <li><b>Como funciona:</b> Encontra coeficientes <code>β</code> que minimizam o erro quadrático médio (MSE).</li>
-        <li><b>Vantagens:</b> Simples, interpretável.</li>
-        <li><b>Cuidados:</b> Outliers/multicolinearidade podem distorcer coeficientes.</li>
-      </ul>
-      <details><summary>Fórmula</summary>
-        <div class="formula">y = β₀ + β₁x₁ + β₂x₂ + β₃x₃ + β₄x₄</div>
-      </details>
-    `,
-    sklearn: `
-<pre><code class="language-python">from sklearn.linear_model import LinearRegression
-modelo = LinearRegression().fit(X_train, y_train)
-pred = modelo.predict(X_test)</code></pre>`
+    calc: (a,b,c,d)=> 0.25*a + 0.25*b + 0.25*c + 0.25*d,
+    explain: `Modelo: $\\hat y = \\beta_0 + \\sum_j \\beta_j x_j$.\\nEstimativa (MQO): $\\hat{\\boldsymbol\\beta}=(\\tilde X^T\\tilde X)^{-1}\\tilde X^T\\mathbf y$.`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_squared_error, r2_score\n\nX = np.array([[2, 70],[4, 80],[6, 90],[8, 95],[3, 75],[5, 85]], dtype=float)\ny = np.array([5, 6, 7, 9, 6, 8], dtype=float)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.33, random_state=42\n)\n\nmodelo = LinearRegression()\nmodelo.fit(X_train, y_train)\n\ny_pred = modelo.predict(X_test)\nprint("Coeficientes:", modelo.coef_)\nprint("Intercepto:", modelo.intercept_)\nprint("RMSE:", mean_squared_error(y_test, y_pred, squared=False))\nprint("R²:", r2_score(y_test, y_pred))\n\nentrada = np.array([[6.0, 88.0]])\nprint("Nota prevista:", modelo.predict(entrada)[0])\n</code></pre>`
   },
   logistica: {
-    labels: ["Idade","Renda","Histórico de Crédito","Dívidas"],
-    calc: (a,b,c,d) => 100/(1+Math.exp(-((a+b+c+d)/4 - 50)/10)),
-    explain: `
-      <p><b>O que é:</b> Regressão Logística prevê <b>probabilidade</b> de classe (0/1) usando a função <b>sigmoide</b>.</p>
-      <ul>
-        <li><b>Quando usar:</b> Classificação binária/multiclasse.</li>
-        <li><b>Como funciona:</b> p = σ(z), z = β₀ + Σβᵢxᵢ.</li>
-        <li><b>Cuidados:</b> Escalonar ajuda; regularização <code>C</code>.</li>
-      </ul>`,
-    sklearn: `
-<pre><code class="language-python">from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
-pipe = make_pipeline(StandardScaler(), LogisticRegression(max_iter=1000))
-pipe.fit(X_train, y_train)
-proba = pipe.predict_proba(X_test)[:,1]</code></pre>`
+    labels: ["Idade","Renda (R$)","Score de Crédito","Dívidas (R$)"],
+    calc: (a,b,c,d)=> 100/(1+Math.exp(-((a+b+c+d)/4 - 50)/10)),
+    explain: `Prob.: $p(y{=}1|\\mathbf x)=\\sigma(\\beta_0+\\sum_j\\beta_j x_j)$; $\\sigma(z)=1/(1+e^{-z})$.`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score, classification_report\n\nX = np.array([[20,2000],[30,5000],[40,8000],[25,3000],[35,6000]], dtype=float)\ny = np.array([1,0,0,1,0], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("logreg", LogisticRegression(solver="liblinear", random_state=42))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\nprint(classification_report(y_test, y_pred, digits=3))\n\nentrada = np.array([[28.0, 4500.0]])\nproba = pipe.predict_proba(entrada)[0, 1]\nprint("P(y=1|entrada)=", round(proba, 4))\n</code></pre>`
   },
   knn: {
-    labels: ["Altura","Peso","Idade","Pressão Arterial"],
+    labels: ["Altura (cm)","Peso (kg)","Idade (anos)","Pressão (mmHg)"],
     calc: (a,b,c,d)=> (a+b+c+d)/4,
-    explain: `<p><b>O que é:</b> KNN classifica pela <b>proximidade</b> dos k vizinhos mais próximos.</p>`,
-    sklearn: `
-<pre><code class="language-python">from sklearn.neighbors import KNeighborsClassifier
-modelo = KNeighborsClassifier(n_neighbors=5).fit(X_train, y_train)
-pred = modelo.predict(X_test)</code></pre>`
+    explain: `Distância Euclidiana: $d(\\mathbf x,\\mathbf x_i)=\\sqrt{\\sum_j (x_j-x_{ij})^2}$.`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("knn", KNeighborsClassifier(n_neighbors=3))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\n\nentrada = np.array([[172.0, 72.0]])\nprint("Classe prevista:", int(pipe.predict(entrada)[0]))\n</code></pre>`
   },
   arvore: {
-    labels: ["Nota","Presença (%)","Tarefas","Comportamento (0-10)"],
+    labels: ["Nota Média (0–10)","Presença (%)","Tarefas","Comportamento (0–10)"],
     calc: (a,b,c,d)=> (a>6 && b>70 ? 90 : 40),
-    explain: `<p><b>O que é:</b> Árvores aprendem <b>regras if/else</b> (cortes) para decidir.</p>`,
-    sklearn: `
-<pre><code class="language-python">from sklearn.tree import DecisionTreeClassifier
-modelo = DecisionTreeClassifier(max_depth=4).fit(X_train, y_train)
-pred = modelo.predict(X_test)</code></pre>`
-  },
-  svm: {
-    labels: ["Experiência (anos)","Projetos","Cursos","Certificações"],
-    calc: (a,b,c,d)=> 0.25*(a+b+c+d),
-    explain: `<p><b>O que é:</b> SVM encontra um <b>hiperplano</b> que separa classes maximizando a margem.</p>`,
-    sklearn: `
-<pre><code class="language-python">from sklearn.svm import SVC
-modelo = SVC(kernel="rbf", probability=True).fit(X_train, y_train)
-proba = modelo.predict_proba(X_test)[:,1]</code></pre>`
-  },
-  randomforest: {
-    labels: ["Vendas","Investimento em Marketing","Visitas no Site","Campanhas"],
-    calc: (a,b,c,d)=> Math.min(100, (a+b+c+d)/4 + Math.random()*15),
-    explain: `<p><b>O que é:</b> Conjunto de <b>várias árvores</b> com amostragem aleatória; robusto e forte.</p>`,
-    sklearn: `
-<pre><code class="language-python">from sklearn.ensemble import RandomForestClassifier
-modelo = RandomForestClassifier(n_estimators=200).fit(X_train, y_train)
-importancias = modelo.feature_importances_</code></pre>`
+    explain: `Gini: $G=1-\\sum_c p_c^2$; escolher split que maximiza $\\Delta G$.`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier, export_text\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nmodelo = DecisionTreeClassifier(max_depth=3, random_state=42)\nmodelo.fit(X_train, y_train)\n\ny_pred = modelo.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\n\nprint(export_text(modelo, feature_names=["nota_media", "presenca"]))\n\nentrada = np.array([[6.5, 82.0]])\nprint("Classe prevista:", int(modelo.predict(entrada)[0]))\n</code></pre>`
   },
   kmeans: {
-    labels: ["Idade do Cliente","Compras (mês)","Visitas","Tempo no Site (min)"],
-    calc: (a,b,c,d)=> (a+b+c+d)/4,
-    explain: `<p><b>O que é:</b> Agrupamento não supervisionado em <b>k</b> clusters (centróides).</p>`,
-    sklearn: `
-<pre><code class="language-python">from sklearn.cluster import KMeans
-modelo = KMeans(n_clusters=3).fit(X)
-labels = modelo.labels_</code></pre>`
+    labels: ["Feature 1","Feature 2","Feature 3","Feature 4"],
+    calc: (a,b,c,d)=>{ const cent=[[20,40,60,80],[50,50,50,50],[80,60,40,20]]; const x=[a,b,c,d]; let best=0,min=1e18; for(let i=0;i<cent.length;i++){ const u=cent[i]; const d2=(x[0]-u[0])**2+(x[1]-u[1])**2+(x[2]-u[2])**2+(x[3]-u[3])**2; if(d2<min){min=d2;best=i;} } return best; },
+    explain: `Objetivo: minimizar $\\sum_i \\lVert \\mathbf x_i - \\boldsymbol\\mu_{c(i)} \\rVert^2$.`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.cluster import KMeans\n\nX = np.array([[2,70],[4,80],[6,90],[8,95],[3,75],[5,85]], dtype=float)\nmodelo = KMeans(n_clusters=2, random_state=42)\nmodelo.fit(X)\nprint("Centros:", modelo.cluster_centers_)\nprint("Inércia (SSE):", modelo.inertia_)\nprint("Rótulos:", modelo.labels_)\n</code></pre>`
   },
-  pca: {
-    labels: ["Variável 1","Variável 2","Variável 3","Variável 4"],
-    calc: (a,b,c,d)=> 0.7*d + 0.3*a,
-    explain: `<p><b>O que é:</b> PCA cria <b>componentes principais</b> que maximizam a variância explicada.</p>`,
-    sklearn: `
-<pre><code class="language-python">from sklearn.decomposition import PCA
-pca = PCA(n_components=2).fit(X_scaled)
-Z = pca.transform(X_scaled)</code></pre>`
+  randomforest: {
+    labels: ["Horas de Estudo","Presença (%)","Nota das Provas","Tarefas"],
+    calc: (a,b,c,d)=> 0.3*a + 0.3*b + 0.2*c + 0.2*d,
+    explain: `Ensemble de árvores (bagging). Classificação: voto da maioria.`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nrf = RandomForestClassifier(n_estimators=200, random_state=42)\nrf.fit(X_train, y_train)\n\ny_pred = rf.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\nprint("Importâncias:", rf.feature_importances_)\n</code></pre>`
+  },
+  svm: {
+    labels: ["Horas de Estudo","Presença (%)","Nota das Provas","Projetos"],
+    calc: (a,b,c,d)=> 100/(1+Math.exp(-((a+2*b-1*c+0.5*d)/10))),
+    explain: `Class.: $\\operatorname{sign}(\\mathbf w^T\\phi(\\mathbf x)+b)$; margem máxima (kernel RBF opcional).`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("svc", SVC(kernel="rbf", probability=True, random_state=42))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\nprint("p(y=1|[172,72]):", pipe.predict_proba(np.array([[172, 72]]))[0, 1])\n</code></pre>`
+  },
+  naivebayes: {
+    labels: ["Altura (cm)","Peso (kg)","Idade","Pressão"],
+    calc: (a,b,c,d)=> Math.max(0, Math.min(100, (a+b+c+d)/4 )),
+    explain: `$p(y|\\mathbf x) \\propto p(y)\\prod_j p(x_j|y)$ (Gaussiano).`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.naive_bayes import GaussianNB\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nnb = GaussianNB()\nnb.fit(X_train, y_train)\ny_pred = nb.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\nprint("p(y=1|[172,72]):", nb.predict_proba(np.array([[172, 72]]))[0, 1])\n</code></pre>`
+  },
+  gboost: {
+    labels: ["Horas","Presença","Nota","Tarefas"],
+    calc: (a,b,c,d)=> 0.1*a + 0.3*b + 0.2*c + 0.4*d,
+    explain: `Aditivo: $F_m=F_{m-1}+\\nu h_m$ (ajuste do gradiente negativo).`,
+    sklearn: `<pre><code>import numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\ngb = GradientBoostingClassifier(random_state=42)\ngb.fit(X_train, y_train)\ny_pred = gb.predict(X_test)\n\nprint("Acurácia:", accuracy_score(y_test, y_pred))\nprint("Importâncias:", gb.feature_importances_)\n</code></pre>`
+  },
+  xgboost: {
+    labels: ["Horas","Presença","Nota","Tarefas"],
+    calc: (a,b,c,d)=> 0.25*a + 0.25*b + 0.25*c + 0.25*d,
+    explain: `Objetivo: $\\mathcal L=\\sum_i \\ell + \\sum_k \\Omega(f_k)$ (2ª ordem).`,
+    sklearn: `<pre><code># pip install xgboost\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom xgboost import XGBClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nxgb = XGBClassifier(n_estimators=200, max_depth=3, learning_rate=0.1,\n                     subsample=1.0, colsample_bytree=1.0, random_state=42)\n\nxgb.fit(X_train, y_train)\ny_pred = xgb.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\n</code></pre>`
+  },
+  lightgbm: {
+    labels: ["Horas","Presença","Nota","Tarefas"],
+    calc: (a,b,c,d)=> 0.2*a + 0.1*b + 0.3*c + 0.4*d,
+    explain: `Boosting com histogramas; crescimento folha‑a‑folha (GOSS/EFB).`,
+    sklearn: `<pre><code># pip install lightgbm\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom lightgbm import LGBMClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nlgbm = LGBMClassifier(random_state=42)\nlgbm.fit(X_train, y_train)\n\ny_pred = lgbm.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\n</code></pre>`
+  },
+  catboost: {
+    labels: ["Horas","Presença","Nota","Tarefas"],
+    calc: (a,b,c,d)=> 0.15*a + 0.35*b + 0.25*c + 0.25*d,
+    explain: `Ordered boosting + target statistics (categorias).`,
+    sklearn: `<pre><code># pip install catboost\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom catboost import CatBoostClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\ncb = CatBoostClassifier(verbose=False, random_state=42)\ncb.fit(X_train, y_train)\n\ny_pred = cb.predict(X_test)\nprint("Acurácia:", accuracy_score(y_test, y_pred))\n</code></pre>`
   }
 };
 
-/* ==== troca de variáveis e execução ==== */
-function trocarVariaveis(){
-  const alg = el("algoritmo").value;
+function trocar(){
+  const alg = el('algoritmo').value;
   const labels = content[alg].labels;
   [lbl.l1.innerText, lbl.l2.innerText, lbl.l3.innerText, lbl.l4.innerText] = labels;
-  el("explicacao").innerHTML = content[alg].explain;
-  el("matematica").innerHTML = content[alg].sklearn;
-  el("alerta").style.display = "none";
-  el("resultado").innerHTML = "–";
-  el("graficoBox").style.display = "none";
+  el('explicacao').innerHTML = content[alg].explain;
+  el('matematica').innerHTML = content[alg].sklearn;
+  el('resultado').innerHTML = '–';
+  const al = el('alerta'); al.style.display='none'; al.innerHTML='';
+  if(window.MathJax && MathJax.typeset){ MathJax.typeset(); }
 }
+
 function getInputs(){
   const vals = [inp.v1.value, inp.v2.value, inp.v3.value, inp.v4.value].map(parseFloat);
-  return { vals, hasNaN: vals.some(v => Number.isNaN(v)) };
+  return { vals, hasNaN: vals.some(v=>Number.isNaN(v)) };
 }
+
 function executar(){
-  const { vals, hasNaN } = getInputs();
+  const {vals, hasNaN} = getInputs();
   const [a,b,c,d] = vals;
-  const alerta = el("alerta");
-  alerta.style.display = "none";
-  alerta.innerHTML = "";
-  if(hasNaN){
-    alerta.style.display = "block";
-    alerta.innerHTML = "Preencha os quatro valores numéricos para executar a simulação.";
-    el("resultado").innerHTML = "–";
-    return;
-  }
-  const alg = el("algoritmo").value;
-  const fn = content[alg].calc;
-  let r = fn(a,b,c,d);
-  if(!isFinite(r)) r = 0;
-  r = Math.max(-1e6, Math.min(100, r)); // apenas limite visual
-  el("resultado").innerHTML = `Resultado (simulação): <b>${r.toFixed(2)}</b>`;
-  el("explicacao").innerHTML = content[alg].explain;
-  el("matematica").innerHTML = content[alg].sklearn;
-  alerta.style.display = "block";
-  alerta.innerHTML = `Este número é uma simulação local. Em scikit‑learn, treine o modelo e use <code>predict</code>/<code>predict_proba</code>.`;
+  const al = el('alerta'); al.style.display='none'; al.innerHTML='';
+  if(hasNaN){ al.style.display='block'; al.innerHTML='Preencha os quatro valores numéricos para executar a simulação.'; el('resultado').innerHTML='–'; return; }
+  const alg = el('algoritmo').value; const r = content[alg].calc(a,b,c,d);
+  el('resultado').innerHTML = `Resultado (simulação): <b>${Number(r).toFixed(2)}</b>`;
+  al.style.display='block'; al.innerHTML='Número simulado localmente. Para cálculo real, use o código Python acima.';
 }
 
-/* ==== Canvas utilitários ==== */
-const canvas = el('graficoCanvas');
-const ctx = canvas.getContext('2d');
-function clearCanvas(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.fillStyle="#fff"; ctx.fillRect(0,0,canvas.width,canvas.height); }
-function drawAxes(xLabel, yLabel, xmin, xmax, ymin, ymax){
-  const pad=60,W=canvas.width,H=canvas.height;
-  ctx.strokeStyle="#444"; ctx.lineWidth=1.2;
-  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(pad,pad); ctx.stroke();
-  ctx.fillStyle="#111"; ctx.font="14px Arial";
-  ctx.fillText(xLabel, W/2-ctx.measureText(xLabel).width/2, H-20);
-  ctx.save(); ctx.translate(20, H/2); ctx.rotate(-Math.PI/2); ctx.fillText(yLabel, -ctx.measureText(yLabel).width/2, 0); ctx.restore();
-  ctx.fillStyle="#666"; ctx.font="12px Arial";
-  const xt=5, yt=5;
-  for(let i=0;i<=xt;i++){ const x=pad+(i/xt)*(W-2*pad); const v=(xmin+(i/xt)*(xmax-xmin)); ctx.beginPath(); ctx.moveTo(x,H-pad); ctx.lineTo(x,H-pad+6); ctx.stroke(); ctx.fillText(v.toFixed(0), x-8, H-pad+20); }
-  for(let j=0;j<=yt;j++){ const y=H-pad-(j/yt)*(H-2*pad); const v=(ymin+(j/yt)*(ymax-ymin)); ctx.beginPath(); ctx.moveTo(pad-6,y); ctx.lineTo(pad,y); ctx.stroke(); ctx.fillText(v.toFixed(0), pad-40, y+4); }
-  return { mapX:v=>pad+(v-xmin)/(xmax-xmin)*(W-2*pad), mapY:v=>H-pad-(v-ymin)/(ymax-ymin)*(H-2*pad), pad,W,H };
-}
-function drawPoints(points,color,size=4){ ctx.fillStyle=color; points.forEach(([x,y])=>{ ctx.beginPath(); ctx.arc(x,y,size,0,2*Math.PI); ctx.fill(); }); }
-function drawLine(xs,ys,color,width=2){ ctx.strokeStyle=color; ctx.lineWidth=width; ctx.beginPath(); ctx.moveTo(xs[0],ys[0]); for(let i=1;i<xs.length;i++) ctx.lineTo(xs[i],ys[i]); ctx.stroke(); }
-function drawBars(labels,values,color){
-  clearCanvas();
-  const pad=60,W=canvas.width,H=canvas.height,maxV=Math.max(...values)*1.15;
-  ctx.strokeStyle="#444"; ctx.lineWidth=1.2;
-  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(pad,pad); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(pad,H-pad); ctx.lineTo(W-pad,H-pad); ctx.stroke();
-  const n=values.length, bw=(W-2*pad)/(n*1.5), gap=bw*0.5;
-  ctx.font="12px Arial";
-  for(let i=0;i<n;i++){
-    const x=pad+i*(bw+gap)+gap, h=(values[i]/maxV)*(H-2*pad), y=(H-pad)-h;
-    ctx.fillStyle=color; ctx.fillRect(x,y,bw,h);
-    ctx.fillStyle="#111"; const t=labels[i], tw=ctx.measureText(t).width; ctx.fillText(t, x+bw/2-tw/2, H-pad+18);
-    ctx.fillStyle="#333"; ctx.fillText(values[i].toFixed(2), x+bw/2-12, y-6);
-  }
-}
+function limpar(){ Object.values(inp).forEach(i=> i.value=''); el('resultado').innerHTML='–'; const al=el('alerta'); al.style.display='none'; al.innerHTML=''; }
 
-/* ==== gráficos por algoritmo ==== */
-function graficoRegressao(a,b,c,d){
-  const pesos=[0.25,0.25,0.25,0.25];
-  const contrib=[a*pesos[0],b*pesos[1],c*pesos[2],d*pesos[3]];
-  drawBars(["x1","x2","x3","x4"],contrib, "#1f77b4");
-  el("graficoDescricao").innerText="Regressão Linear — contribuição de cada feature.";
-  el("graficoLegenda").innerHTML="Barras = valor×peso (didático).";
-}
-function graficoLogistica(a,b,c,d){
-  clearCanvas(); const {mapX,mapY}=drawAxes("z (0..100 centrado)","Probabilidade (%)",0,100,0,100);
-  const xs=[],ys=[]; for(let x=0;x<=100;x++){ const z=(x-50)/10; const p=100/(1+Math.exp(-z)); xs.push(mapX(x)); ys.push(mapY(p)); } drawLine(xs,ys,"#2ca02c",2);
-  const media=(a+b+c+d)/4, z=(media-50)/10, p=100/(1+Math.exp(-z));
-  ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(mapX(media), mapY(p), 5, 0, 2*Math.PI); ctx.fill(); ctx.fillText(`Seu ponto: p≈${p.toFixed(1)}%`, mapX(media)+8, mapY(p)-8);
-  el("graficoDescricao").innerText="Logística — curva sigmoide e seu ponto."; el("graficoLegenda").innerHTML="σ(z)=1/(1+e^{-z}).";
-}
-function graficoKNN(a,b,c,d){
-  clearCanvas(); const {mapX,mapY}=drawAxes("Horas","Presença (%)",0,12,40,100);
-  function rnd(seed){ let s=seed; return ()=> (s=(s*1664525+1013904223)%4294967296)/4294967296; }
-  const R=rnd(1234), c0=[], c1=[]; for(let i=0;i<40;i++) c0.push([2+3*R(),45+20*R()]); for(let i=0;i<40;i++) c1.push([6+4*R(),75+20*R()]);
-  drawPoints(c0.map(([x,y])=>[mapX(x),mapY(y)]), "#d62728",4); drawPoints(c1.map(([x,y])=>[mapX(x),mapY(y)]), "#1f77b4",4);
-  const px=mapX(Math.max(0,Math.min(12,a))), py=mapY(Math.max(40,Math.min(100,b))); ctx.strokeStyle="#111"; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(px-7,py-7); ctx.lineTo(px+7,py+7); ctx.stroke(); ctx.beginPath(); ctx.moveTo(px-7,py+7); ctx.lineTo(px+7,py-7); ctx.stroke(); ctx.fillText("Você", px+10, py-8);
-  el("graficoDescricao").innerText="KNN — Dispersão (Horas × Presença)."; el("graficoLegenda").innerHTML="Cores = classes (sintéticas).";
-}
-function graficoArvore(a,b,c,d){
-  clearCanvas(); const {mapX,mapY,W,H,pad}=drawAxes("Nota (0–10)","Presença (%)",0,10,0,100);
-  ctx.fillStyle="rgba(214,39,40,0.08)"; ctx.fillRect(mapX(0), mapY(0), mapX(6)-mapX(0), (H-2*pad));
-  ctx.fillRect(mapX(6), mapY(70), (W-2*pad)-(mapX(6)-pad), mapY(0)-mapY(70));
-  ctx.fillStyle="rgba(31,119,180,0.10)"; ctx.fillRect(mapX(6), mapY(100), (W-2*pad)-(mapX(6)-pad), mapY(70)-mapY(100));
-  ctx.strokeStyle="#666"; ctx.setLineDash([6,6]); ctx.beginPath(); ctx.moveTo(mapX(6), H-pad); ctx.lineTo(mapX(6), pad); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pad, mapY(70)); ctx.lineTo(W-pad, mapY(70)); ctx.stroke(); ctx.setLineDash([]);
-  const px=mapX(Math.max(0,Math.min(10,a))), py=mapY(Math.max(0,Math.min(100,b))); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(px,py,5,0,2*Math.PI); ctx.fill(); ctx.fillText("Você", px+8, py-8);
-  el("graficoDescricao").innerText="Árvore — Regiões de decisão (Nota×Presença)."; el("graficoLegenda").innerHTML="Cortes: Nota>6 e Presença>70 ⇒ aprovado.";
-}
-function graficoSVM(a,b,c,d){
-  clearCanvas(); const {mapX,mapY,W,H,pad}=drawAxes("Horas","Presença (%)",0,12,40,100);
-  function rnd(seed){ let s=seed; return ()=> (s=(s*1103515245+12345)%2**31)/2**31; } const R=rnd(99), A=[],B=[];
-  for(let i=0;i<40;i++) A.push([2+3*R(), 50+15*R()]); for(let i=0;i<40;i++) B.push([7+3*R(), 80+15*R()]);
-  drawPoints(A.map(([x,y])=>[mapX(x),mapY(y)]), "#d62728",4); drawPoints(B.map(([x,y])=>[mapX(x),mapY(y)]), "#1f77b4",4);
-  const x1=0, y1=10*x1+20, x2=12, y2=10*x2+20; drawLine([mapX(x1),mapX(x2)],[mapY(Math.max(40,Math.min(100,y1))), mapY(Math.max(40,Math.min(100,y2)))], "#2ca02c",2);
-  const px=mapX(Math.max(0,Math.min(12,a))), py=mapY(Math.max(40,Math.min(100,b))); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(px,py,5,0,2*Math.PI); ctx.fill(); ctx.fillText("Você", px+8, py-8);
-  el("graficoDescricao").innerText="SVM — Dispersão com fronteira linear ilustrativa."; el("graficoLegenda").innerHTML="Fronteira didática (não-treinada).";
-}
-function graficoRandomForest(){
-  drawBars(["x1","x2","x3","x4"], [0.28,0.34,0.16,0.22], "#2ca02c");
-  el("graficoDescricao").innerText="Random Forest — Importância de features (simulação).";
-  el("graficoLegenda").innerHTML="Em scikit‑learn: feature_importances_.";
-}
-function graficoKMeans(a,b,c,d){
-  clearCanvas(); const {mapX,mapY}=drawAxes("Feature 1 (p.ex. Horas)","Feature 2 (p.ex. Presença)",0,12,40,100);
-  const centroids=[[3,55],[7,75],[10,90]];
-  function rnd(seed){ let s=seed; return ()=> (s=(s*1664525+1013904223)%4294967296)/4294967296; } const R=rnd(2024);
-  const clusters=[[],[],[]], cols=["#1f77b4","#ff7f0e","#9467bd"];
-  for(let k=0;k<3;k++){ for(let i=0;i<35;i++){ const x=centroids[k][0]+(R()-0.5)*2.0, y=centroids[k][1]+(R()-0.5)*8.0; clusters[k].push([x,y]); } }
-  for(let k=0;k<3;k++){ drawPoints(clusters[k].map(([x,y])=>[mapX(x),mapY(y)]), cols[k], 4); ctx.fillStyle=cols[k]; ctx.fillRect(mapX(centroids[k][0])-4, mapY(centroids[k][1])-4, 8,8); }
-  const px=mapX(Math.max(0,Math.min(12,a))), py=mapY(Math.max(40,Math.min(100,b))); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(px,py,6,0,2*Math.PI); ctx.fill();
-  const dists=centroids.map(([cx,cy])=> Math.hypot(a-cx, b-cy)); const idx=dists.indexOf(Math.min(...dists)); ctx.fillText(`Seu cluster: ${idx}`, px+10, py-10);
-  el("graficoDescricao").innerText="K-Means — 3 clusters, centróides e seu ponto."; el("graficoLegenda").innerHTML="Quadrado = centróide; ● preto = você.";
-}
-function graficoPCA(){
-  clearCanvas(); const {mapX,mapY}=drawAxes("Componentes","Variância Explicada",0.5,4.5,0,1);
-  const labels=["PC1","PC2","PC3","PC4"], evr=[0.48, 0.27, 0.15, 0.10];
-  const barW=40; ctx.fillStyle="#ff7f0e";
-  for(let i=0;i<4;i++){
-    const x=mapX(i+1)-barW/2, y=mapY(evr[i]), h=(mapY(0)-y);
-    ctx.fillRect(x,y,barW,h);
-    ctx.fillStyle="#111"; ctx.fillText(labels[i], mapX(i+1)-10, mapY(0)+18);
-    ctx.fillStyle="#ff7f0e";
-  }
-  let acc=0; const Xs=[],Ys=[];
-  for(let i=0;i<4;i++){ acc+=evr[i]; Xs.push(mapX(i+1)); Ys.push(mapY(acc)); ctx.fillStyle="#111"; ctx.beginPath(); ctx.arc(Xs[i],Ys[i],3,0,2*Math.PI); ctx.fill(); ctx.fillText((acc*100).toFixed(0)+"%", Xs[i]+6, Ys[i]-6); }
-  drawLine(Xs,Ys,"#111",1.7);
-  el("graficoDescricao").innerText="PCA — Scree plot (variância explicada e acumulada)."; el("graficoLegenda").innerHTML="Barras = variância; Linha = acumulada.";
-}
-
-/* ==== roteador de gráficos ==== */
-function mostrarGrafico(){
-  const { vals, hasNaN } = getInputs();
-  const [a,b,c,d] = vals;
-  el("graficoBox").style.display = "block";
-  if(hasNaN){ el("graficoDescricao").innerText = "Preencha os 4 valores para ver o gráfico."; clearCanvas(); el("graficoLegenda").innerHTML=""; return; }
-  const alg = el("algoritmo").value;
-  if(alg==="regressao") graficoRegressao(a,b,c,d);
-  else if(alg==="logistica") graficoLogistica(a,b,c,d);
-  else if(alg==="knn") graficoKNN(a,b,c,d);
-  else if(alg==="arvore") graficoArvore(a,b,c,d);
-  else if(alg==="svm") graficoSVM(a,b,c,d);
-  else if(alg==="randomforest") graficoRandomForest();
-  else if(alg==="kmeans") graficoKMeans(a,b,c,d);
-  else if(alg==="pca") graficoPCA();
-}
-
-/* ==== init e listeners (CSP-friendly) ==== */
-document.addEventListener('DOMContentLoaded', () => {
-  // listeners sem inline JS
-  const btnExec = document.getElementById('btnExecutar');
-  const btnGraf = document.getElementById('btnGrafico');
-  const btnClear = document.getElementById('btnLimpar');
-  const selAlg  = document.getElementById('algoritmo');
-
-  if (btnExec) btnExec.addEventListener('click', executar);
-  if (btnGraf) btnGraf.addEventListener('click', mostrarGrafico);
-  if (btnClear) btnClear.addEventListener('click', limpar);
-  if (selAlg)  selAlg.addEventListener('change', trocarVariaveis);
-
-  trocarVariaveis(); // popula explicação inicial
+document.addEventListener('DOMContentLoaded', ()=>{
+  el('btnExecutar').addEventListener('click', executar);
+  el('btnLimpar').addEventListener('click', limpar);
+  el('algoritmo').addEventListener('change', trocar);
+  trocar();
 });
 
-function limpar(){
-  Object.values(inp).forEach(i => i.value = "");
-  el("resultado").innerHTML = "–";
-  el("alerta").style.display = "none";
-  el("graficoBox").style.display = "none";
+function baixarHTML(){
+  const doctype='<!DOCTYPE html>\n';
+  const html=document.documentElement.outerHTML;
+  const blob=new Blob([doctype+html],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='laboratorio_algoritmos_ml_pro.html';
+  document.body.appendChild(a); a.click(); a.remove();
 }
-</script>
+const dlBtn = document.getElementById('btnDownloadHTML'); if(dlBtn) dlBtn.addEventListener('click', baixarHTML);
 
+
+// === Download do código do modelo (TXT ou PY) ===
+function baixarCodigoModelo(){
+  const formatSel = document.getElementById('codeFormat');
+  const ext = formatSel ? formatSel.value : 'py';
+  // tenta achar o bloco <pre><code> atualmente exibido
+  const codeEl = document.querySelector('#matematica pre code');
+  let codigo = '';
+  if(codeEl){
+    // usa innerText para manter quebras/indentação
+    codigo = codeEl.innerText;
+  } else {
+    // fallback: pega do content[alg].sklearn removendo tags
+    const alg = document.getElementById('algoritmo').value;
+    const tmp = (content[alg].sklearn || '').replace(/<[^>]+>/g,'');
+    codigo = tmp;
+  }
+  const blob = new Blob([codigo], {type: ext==='py' ? 'text/x-python' : 'text/plain'});
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = (document.getElementById('algoritmo').value || 'modelo') + (ext==='py' ? '.py' : '.txt');
+  document.body.appendChild(link); link.click(); link.remove();
+}
+
+const btnDl = document.getElementById('btnDownloadCode');
+if(btnDl){ btnDl.addEventListener('click', baixarCodigoModelo); }
+</script>
 </body>
 </html>
-``
