@@ -1,27 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>DESENVOLVIMENTO DE SISTEMAS - 2ª SÉRIE A - MANHÃ</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DESENVOLVIMENTO DE SISTEMAS — 2ª SÉRIE A - MANHÃ</title>
+
+  <style>
+    :root{
+      --bg:#0f172a;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#475569;
+      --acc:#2563eb;
+      --ring:#e5e7eb;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;
+      backgroundvar(--text);
+    }
+    header{
+      background:var(--bg);
+      color:#fff;
+      padding:28px 16px;
+    }
+    header .wrap{
+      max-width:1100px;
+      margin:0 auto;
+    }
+    h1{
+      margin:0 0 6px 0;
+      font-size: clamp(1.4rem, 2.6vw, 2rem);
+    }
+    p.lead{
+      margin:0;
+      color:#cbd5e1;
+      font-size:0.95rem;
+    }
+    main{
+      max-width:1100px;
+      margin:28px auto;
+      padding:0 16px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap:16px;
+    }
+    .col{ grid-column: span 12; }
+    @media (min-width:700px){ .col{ grid-column: span 6; } }
+    @media (min-width:1000px){ .col{ grid-column: span 4; } }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--ring);
+      border-radius:12px;
+      padding:16px;
+      box-shadow:0 1px 6px rgba(0,0,0,.06);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height: 210px;
+    }
+    .card h2{
+      margin:0;
+      font-size:1.15rem;
+      color:#0f172a;
+    }
+    .card p{
+      margin:0;
+      color:var(--muted);
+      font-size:0.95rem;
+    }
+    .links{
+      margin-top:8px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    .links a{
+      display:inline-block;
+      text-decoration:none;
+      color:#fff;
+      background:var(--acc);
+      padding:10px 12px;
+      border-radius:8px;
+      font-weight:600;
+    }
+    .links a:hover{ filter:brightness(0.95); }
+
+    footer{
+      max-width:1100px;
+      margin:24px auto 40px;
+      padding:0 16px;
+      color:#475569;
+      font-size:0.95rem;
+      display:flex;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+    footer a{
+      color:var(--acc);
+      text-decoration:none;
+    }
+  </style>
 </head>
+
 <body>
+  <header>
+    <div class="wrap">
+      <h1>DESENVOLVIMENTO DE SISTEMAS</h1>
+      <p class="lead">2ª SÉRIE A - MANHÃ — Portal das disciplinas</p>
+      <p>
+        <a href="./portal_ds_2a_manha.zip" download style="color:#fff;font-weight:600;">
+          ⬇️ Baixar este projeto (.zip)
+        </a>
+      </p>
+    </div>
+  </header>
 
-<h1>DESENVOLVIMENTO DE SISTEMAS</h1>
-<h2>2ª SÉRIE A - MANHÃ</h2>
+  <main>
+    <div class="grid">
 
-<h3>Componentes Curriculares</h3>
+      <!-- Processos e Metodologias -->
+      <section class="col">
+        <div class="card">
+          <h2>Processos de Desenvolvimento de Software e Metodologias Ágeis</h2>
+          <p>Scrum, Kanban, ciclo de vida de software e qualidade.</p>
+          <div class="links">
+            <a href="/turmas/ds_2a/processos_metodologias_ageis/geral.html">Geral</a>
+            <a href="/turmas/ds_2a/processos_metodologias_ageis/exercicios.html">Exercícios</a>
+            <a href="/turmas/ds_2a/processos_metodologias_ageis/conteudos.html">Conteúdos</a>
+          </div>
+        </div>
+      </section>
 
-<ul>
-<li><a href="processos_desenvolvimento_software.html">Processos de Desenvolvimento de Software e Metodologias Ágeis</a></li>
-<li><a href="redes_computadores_seguranca_nuvem.html">Redes de Computadores e Segurança da Informação na Nuvem</a></li>
-<li><a href="logica_linguagem_programacao.html">Lógica e Linguagem de Programação</a></li>
-<li><a href="carreira_competencias_mercado.html">Carreira e Competências para o Mercado de Trabalho</a></li>
-  <br>
-<li><a href="conteudo.html">Sistema Cadastro</a></li>
-</ul>
+      <!-- Redes e Segurança -->
+      <section class="col">
+        <div class="card">
+          <h2>Redes de Computadores e Segurança da Informação na Nuvem</h2>
+          <p>Protocolos, segurança, redes e computação em nuvem.</p>
+          <div class="links">
+            <a href="/turmas/ds_2a/redes_seguranca_nuvem/geral.html">Geral</a>
+            <aranca_nuvem/conteudos.htmlConteúdos</a>
+          </div>
+        </div>
+      </section>
 
-<br>
-<a href="../../index.html">Voltar para página principal</a>
+      <!-- Lógica -->
+      <section class="col">
+        <div class="card">
+          <h2>Lógica e Linguagem de Programação</h2>
+          <p>Algoritmos, lógica computacional e fundamentos da programação.</p>
+          <div class="links">
+            <a href="/turmas/ds_2a/logica_linguagem_programacao/geral.html">Geral</a>
+            <a href="/turmas/ds_2a/logica_linguagem_programacao/exercicios.html">Exercícios</a>
+            <a href="/turmas/ds_2a/logica_linguagem_programacao/conteudos.html">Conteúdos</a>
+          </div>
+        </div>
+      </section>
 
+      <!-- Carreira -->
+      <section class="col">
+        <div class="card">
+          <h2>Carreira e Competências para o Mercado de Trabalho</h2>
+          <p>Soft skills, portfólio, empregabilidade e mundo do trabalho.</p>
+          <div class="links">
+            <a href="/turmas/ds_2a/carreira_competencias_mercado/geral.html">Geral</a>
+            <a href="/turmas/ds_2a/carreira_competencias_mercado/exercicios.html">Exercícios</a>
+            <a href="/turmas/ds_2a/carreira_competencias_mercado/conteudos.html">Conteúdos</a>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <span>© DESENVOLVIMENTO DE SISTEMAS — 2ª SÉRIE A - MANHÃ</span>
+    <a href="/index.html">Voltar ao início</a>
+  </footer>
 </body>
 </html>
