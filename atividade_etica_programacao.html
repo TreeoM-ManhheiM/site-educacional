@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head>
 
+<head>
 <meta charset="UTF-8">
 <title>Laboratório de Algoritmos em Python</title>
 
@@ -10,25 +10,30 @@
 body{
 font-family:Arial;
 margin:40px;
-background:#f4f4f4;
+background:#f2f2f2;
 }
 
 h1{
-background:#333;
+background:#222;
+color:white;
+padding:15px;
+}
+
+h2{
+background:#444;
 color:white;
 padding:10px;
 }
 
-.exercicio{
+.box{
 background:white;
 padding:20px;
 margin-bottom:20px;
 border-radius:10px;
 }
 
-.codigo{
-background:#222;
-color:#00ff90;
+.fluxo{
+background:#f4f4f4;
 padding:15px;
 font-family:monospace;
 }
@@ -36,6 +41,12 @@ font-family:monospace;
 textarea{
 width:100%;
 height:200px;
+font-family:monospace;
+}
+
+.info{
+background:#e8f4ff;
+padding:15px;
 }
 
 </style>
@@ -44,45 +55,277 @@ height:200px;
 
 <body>
 
-<h1>Laboratório Python</h1>
+<h1>Laboratório de Algoritmos em Python</h1>
 
-<div class="exercicio">
+<div class="box info">
 
-<h2>Exercício 1 — Robô do Laboratório</h2>
+<b>Tempo total:</b> 2 horas<br>
+<b>Alunos:</b> 20 pessoas (cada um com seu computador)
+
+<h3>Objetivo</h3>
+
+<ul>
+<li>Pensar em algoritmos</li>
+<li>Tomar decisões usando if / elif / else</li>
+<li>Transformar fluxogramas em código Python</li>
+</ul>
+
+</div>
+
+<div class="box">
+
+<h2>Desvio Condicional Composto</h2>
 
 <p>
-Crie um programa que tome decisões sobre o laboratório.
+Possui duas possibilidades:
 </p>
 
-<p>Use IF / ELSE</p>
+<ul>
+<li>Verdadeiro</li>
+<li>Falso</li>
+</ul>
+
+<p><b>Estrutura em Python</b></p>
+
+<pre>
+if condição:
+    ação
+else:
+    ação
+</pre>
+
+<p><b>Fluxograma</b></p>
+
+<div class="fluxo">
+
+INICIO
+
+  |
+
+condição ?
+
+ /     \
+
+SIM     NÃO
+
+ |       |
+
+ação1   ação2
+
+ |
+
+FIM
+
+</div>
+
+</div>
+
+<div class="box">
+
+<h2>Exercício 1 — Controle de Temperatura</h2>
+
+<p>
+Um sistema verifica a temperatura do laboratório.
+</p>
+
+<p>Regras:</p>
+
+<ul>
+<li>Se temperatura maior que 28 → ligar ar condicionado</li>
+<li>Senão → manter sistema normal</li>
+</ul>
+
+<p><b>Fluxograma</b></p>
+
+<div class="fluxo">
+
+INICIO
+
+ |
+
+ler temperatura
+
+ |
+
+temperatura > 28 ?
+
+ /       \
+
+SIM       NÃO
+
+ |         |
+
+ligar ar   normal
+
+ |
+
+FIM
+
+</div>
+
+<p><b>Escreva o código Python:</b></p>
 
 <textarea placeholder="Digite seu código Python aqui"></textarea>
 
 </div>
 
+<div class="box">
 
-<div class="exercicio">
-
-<h2>Exercício 2 — Cafeteria</h2>
+<h2>Desvio Condicional Encadeado</h2>
 
 <p>
-Sistema de pedidos automatizado.
+Permite múltiplas decisões usando <b>elif</b>.
 </p>
+
+<p><b>Estrutura</b></p>
+
+<pre>
+
+if condição:
+    ação
+
+elif condição:
+    ação
+
+elif condição:
+    ação
+
+else:
+    ação
+
+</pre>
+
+</div>
+
+<div class="box">
+
+<h2>Exercício 2 — Sistema de Notas</h2>
+
+<p>
+Um programa calcula o resultado de um aluno.
+</p>
+
+<p>Regras:</p>
+
+<ul>
+<li>Nota maior ou igual a 7 → Aprovado</li>
+<li>Nota maior ou igual a 5 → Recuperação</li>
+<li>Nota menor que 5 → Reprovado</li>
+</ul>
+
+<p><b>Fluxograma</b></p>
+
+<div class="fluxo">
+
+INICIO
+
+ |
+
+ler nota
+
+ |
+
+nota >= 7 ?
+
+ /        \
+
+SIM        NÃO
+
+ |          |
+
+aprovado  nota >=5 ?
+
+           /      \
+
+         SIM      NÃO
+
+          |        |
+
+     recuperação  reprovado
+
+ |
+
+FIM
+
+</div>
+
+<p><b>Escreva o código Python:</b></p>
 
 <textarea placeholder="Digite seu código Python aqui"></textarea>
 
 </div>
 
+<div class="box">
 
-<div class="exercicio">
-
-<h2>Exercício 3 — Sistema de Acesso</h2>
+<h2>Exercício 3 — Sistema de Acesso ao Laboratório</h2>
 
 <p>
-Controle de entrada no laboratório.
+O sistema verifica quem pode entrar no laboratório.
 </p>
 
+<ul>
+<li>Aluno → entrada liberada</li>
+<li>Professor → entrada liberada</li>
+<li>Visitante → solicitar autorização</li>
+</ul>
+
+<p><b>Fluxograma</b></p>
+
+<div class="fluxo">
+
+INICIO
+
+ |
+
+tipo de pessoa
+
+ |
+
+aluno ?
+
+ /     \
+
+SIM     NÃO
+
+ |       |
+
+liberar  professor ?
+
+         /        \
+
+       SIM        NÃO
+
+        |          |
+
+     liberar   visitante
+
+                 |
+
+           pedir autorização
+
+ |
+
+FIM
+
+</div>
+
+<p><b>Escreva o código Python:</b></p>
+
 <textarea placeholder="Digite seu código Python aqui"></textarea>
+
+</div>
+
+<div class="box">
+
+<h2>Entrega da Atividade</h2>
+
+<p>
+
+1) Escreva o código Python nos campos acima.<br>
+2) Salve o arquivo.<br>
+3) Entregue o arquivo ao professor.
+
+</p>
 
 </div>
 
