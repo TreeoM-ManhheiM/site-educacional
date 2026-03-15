@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Redes de Computadores e Segurança — Plano Semanal com Exercícios</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:40px;background:#f6f7fb;color:#222;}
+h1{background:#1f2937;color:#fff;padding:16px;border-radius:8px;}
+section.week{background:#fff;border-radius:10px;margin:18px 0;padding:18px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+section.week h2{margin-top:0;color:#111}
+.exercise{border:1px solid #e5e7eb;border-radius:8px;padding:12px;margin:12px 0;background:#fafafa}
+.exercise h3{margin:0 0 6px 0}
+.controls{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+button{background:#2563eb;color:#fff;border:none;border-radius:6px;padding:10px 12px;cursor:pointer}
+button.secondary{background:#6b7280}
+pre{white-space:pre-wrap;background:#f0f2f6;padding:10px;border-radius:6px;overflow:auto}
+.small{font-size:12px;color:#555}
+.topbar{display:flex;gap:12px;align-items:center;margin:10px 0 22px 0}
+a.btn{display:inline-block;background:#059669;color:#fff;text-decoration:none;padding:10px 12px;border-radius:6px}
+.alert{background:#fff3cd;border:1px solid #ffeeba;color:#856404;padding:10px;border-radius:6px;margin-bottom:10px}
+</style>
+</head>
+<body>
+<h1>Redes de Computadores e Segurança — Plano Semanal com Exercícios</h1><div class="topbar">
+  <button id="downloadPage">Baixar esta página (.html)</button>
+  <span class="small">Cada semana contém 2 exercícios práticos (~50 min cada). Use apenas sua própria máquina e a rede institucional, com ética e responsabilidade.</span>
+</div><div class="alert small">Observação: Atividades que interagem com a rede devem respeitar as políticas da escola. Evite varrer hosts externos; foque em localhost ou destinos amplamente públicos e permitidos.</div><section class="week" id="semana-1"><h2>Semana 1 — Identificando a Rede Local</h2><div class="exercise"><h3>Ex1: Descobrir IP, Gateway e DNS</h3><pre class="exercise-text">Objetivo: Identificar os principais parâmetros de rede da máquina.
+Tempo: 50 minutos.
+Recursos: CMD/Terminal, acesso à internet.
+Passos:
+  1) Abrir o CMD (Windows) e executar: ipconfig /all
+     (Linux/macOS: ip addr ou ifconfig)
+  2) Anotar: IPv4, Máscara/Prefixo, Gateway padrão e Servidores DNS.
+  3) Validar conectividade com ping 8.8.8.8 e ping www.google.com.
+  4) Tirar prints da tela e salvar em uma pasta da semana.
+Entregáveis: arquivo TXT ou MD com os valores + 2 capturas de tela.
+Criterios de avaliação: completude (IP/gateway/DNS), prints e organização.
+Observação: Use apenas sua própria máquina e rede da escola.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 1 — Identificando a Rede Local" data-ex="Ex1: Descobrir IP, Gateway e DNS">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Tabela de Interfaces de Rede</h3><pre class="exercise-text">Objetivo: Documentar as interfaces de rede ativas e suas funções.
+Tempo: 50 minutos.
+Recursos: CMD/Terminal, Python opcional.
+Passos:
+  1) Listar interfaces: ipconfig (Windows) | ip link / ip addr (Linux/macOS).
+  2) Para cada interface ativa, registrar: nome, IPv4/IPv6 (se houver), MAC e status.
+  3) (Opcional) Usar Python (psutil/netifaces, se disponível) OU parsing do ipconfig
+     para gerar uma tabela simples (CSV ou Markdown).
+  4) Salvar como interfaces_semana01.csv ou .md.
+Entregáveis: tabela com interfaces e campos solicitados.
+Critérios: exatidão dos dados e formatação.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 1 — Identificando a Rede Local" data-ex="Ex2: Tabela de Interfaces de Rede">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-2"><h2>Semana 2 — Testando Conectividade e DNS</h2><div class="exercise"><h3>Ex1: Ping comparativo (nome vs. IP)</h3><pre class="exercise-text">Objetivo: Comparar resolução DNS e latência básica.
+Tempo: 50 minutos.
+Recursos: CMD/Terminal, internet.
+Passos:
+  1) ping www.microsoft.com (10 pacotes).
+  2) Descobrir o IP com nslookup (Windows) ou dig +short (Linux/macOS).
+  3) ping <IP> obtido e comparar tempos médios.
+  4) Explicar se houve diferença e por quê.
+Entregáveis: arquivo MD/TXT com tempos e análise breve (5–8 linhas).
+Critérios: coleta correta, comparação e explicação.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 2 — Testando Conectividade e DNS" data-ex="Ex1: Ping comparativo (nome vs. IP)">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Verificando disponibilidade de 3 sites</h3><pre class="exercise-text">Objetivo: Medir perda de pacotes e tempo de resposta.
+Tempo: 50 minutos.
+Recursos: CMD/Terminal.
+Passos:
+  1) Escolher 3 domínios de grande porte (ex.: www.gov.br, www.uol.com.br, www.wikipedia.org).
+  2) Executar ping -n 20 (Windows) ou ping -c 20 (Linux/macOS) em cada um.
+  3) Registrar perda e média de tempo.
+  4) Discutir fatores que afetam a latência.
+Entregáveis: tabela (CSV/MD) com domínio, perda(%), média(ms) + 1 parágrafo de discussão.
+Critérios: metodologia e clareza.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 2 — Testando Conectividade e DNS" data-ex="Ex2: Verificando disponibilidade de 3 sites">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-3"><h2>Semana 3 — Caminho dos Pacotes (Roteamento)</h2><div class="exercise"><h3>Ex1: traceroute / tracert</h3><pre class="exercise-text">Objetivo: Visualizar saltos até um destino e interpretar o caminho.
+Tempo: 50 minutos.
+Recursos: CMD/Terminal, internet.
+Passos:
+  1) Executar tracert www.github.com (Windows) ou traceroute www.github.com (Linux/macOS).
+  2) Contar a quantidade de hops e identificar o AS/país de 2 roteadores (usando whois online).
+  3) Repetir para www.python.org e comparar.
+Entregáveis: print dos comandos + resumo (5–8 linhas) das diferenças.
+Critérios: execução correta e interpretação.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 3 — Caminho dos Pacotes (Roteamento)" data-ex="Ex1: traceroute / tracert">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: pathping (Windows) / mtr (Linux)</h3><pre class="exercise-text">Objetivo: Medir qualidade de rota (perda/latência por hop).
+Tempo: 50 minutos.
+Recursos: CMD/Terminal.
+Passos:
+  1) Windows: pathping www.cloudflare.com  OU  Linux: mtr -rw www.cloudflare.com (se disponível).
+  2) Resumir perda/tempo por hop e sugerir possíveis gargalos.
+Entregáveis: captura e análise breve.
+Critérios: leitura dos dados e coerência.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 3 — Caminho dos Pacotes (Roteamento)" data-ex="Ex2: pathping (Windows) / mtr (Linux)">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-4"><h2>Semana 4 — Portas e Processos Locais</h2><div class="exercise"><h3>Ex1: netstat e processos</h3><pre class="exercise-text">Objetivo: Mapear portas em uso na máquina local.
+Tempo: 50 minutos.
+Recursos: CMD/Terminal.
+Passos:
+  1) Windows: netstat -ano | findstr LISTENING  |  Linux/macOS: ss -ltnp ou netstat -ltnp.
+  2) Escolher 3 portas em LISTEN e identificar o processo (tasklist /FI "PID eq <pid>" | ps -p <pid> -o comm=).
+  3) Pesquisar (breve) a função de cada serviço.
+Entregáveis: tabela porta→processo→descrição.
+Critérios: completude e clareza.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 4 — Portas e Processos Locais" data-ex="Ex1: netstat e processos">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Bloqueio lógico (simulado) por porta</h3><pre class="exercise-text">Objetivo: Criar lista de portas permitidas e negar outras no script (simulação educativa).
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Em Python, criar uma allowlist (ex.: {80,443,22}).
+  2) Dado um número de porta informado, imprimir "permitido" se estiver na lista; caso contrário, "negado" e registrar em log.
+  3) Demonstrar com 5 portas.
+Entregáveis: script .py e log gerado.
+Critérios: funcionamento e registro.</pre><details><summary>Código base (opcional)</summary><pre class="starter-code" data-filename="simulacao_firewall.py"># simulacao_firewall.py
+                    ALLOW = {80, 443, 22}
+                    import datetime
+                    def decide(porta: int):
+                        permitido = porta in ALLOW
+                        with open("firewall.log", "a", encoding="utf-8") as f:
+                            f.write(f"{datetime.datetime.now()} porta={porta} status={'PERMITIDO' if permitido else 'NEGADO'}
+")
+                        return permitido
+                    if __name__ == "__main__":
+                        for p in [22, 53, 80, 135, 443]:
+                            print(p, '→', 'PERMITIDO' if decide(p) else 'NEGADO')</pre></details><div class="controls"><button data-dl="enunciado" data-week="Semana 4 — Portas e Processos Locais" data-ex="Ex2: Bloqueio lógico (simulado) por porta">Baixar enunciado (.txt)</button><button data-dl="codigo" data-week="Semana 4 — Portas e Processos Locais" data-ex="Ex2: Bloqueio lógico (simulado) por porta">Baixar código base</button></div></div></section><section class="week" id="semana-5"><h2>Semana 5 — Servidor HTTP Local com Python</h2><div class="exercise"><h3>Ex1: Subir http.server</h3><pre class="exercise-text">Objetivo: Servir arquivos locais via HTTP em localhost.
+Tempo: 50 minutos.
+Recursos: Python, navegador.
+Passos:
+  1) Em uma pasta de testes, executar: python -m http.server 8000
+  2) Acessar http://localhost:8000 no navegador.
+  3) Criar index.html simples e validar a listagem/servidor.
+Entregáveis: captura da página e comando usado.
+Critérios: execução correta e organização da pasta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 5 — Servidor HTTP Local com Python" data-ex="Ex1: Subir http.server">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Página com cabeçalhos</h3><pre class="exercise-text">Objetivo: Criar uma página HTML básica e verificar cabeçalhos de resposta.
+Tempo: 50 minutos.
+Recursos: Python, navegador, curl (opcional).
+Passos:
+  1) Criar uma página com título e parágrafo.
+  2) Com o servidor ativo, executar: curl -I http://localhost:8000 (ou usar devtools do navegador) e anotar os cabeçalhos.
+  3) Explicar o significado de Content-Type e Date.
+Entregáveis: HTML e anotação dos cabeçalhos.
+Critérios: página funcional e entendimento dos headers.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 5 — Servidor HTTP Local com Python" data-ex="Ex2: Página com cabeçalhos">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-6"><h2>Semana 6 — Requisições HTTP com Python</h2><div class="exercise"><h3>Ex1: GET em API pública</h3><pre class="exercise-text">Objetivo: Consumir uma API pública e salvar resposta.
+Tempo: 50 minutos.
+Recursos: Python (requests), internet.
+Passos:
+  1) Fazer GET em https://api.github.com (ou outra API pública aberta).
+  2) Salvar JSON em arquivo api.json.
+  3) Extrair e imprimir 3 campos (ex.: current_user_url, rate_limit_url, etc.).
+Entregáveis: script .py e api.json.
+Critérios: funcionamento e extração correta.</pre><details><summary>Código base (opcional)</summary><pre class="starter-code" data-filename="get_api.py"># get_api.py
+import requests, json
+url = "https://api.github.com"
+r = requests.get(url, timeout=10)
+r.raise_for_status()
+data = r.json()
+with open("api.json", "w", encoding="utf-8") as f:
+    json.dump(data, f, ensure_ascii=False, indent=2)
+print(data.get("current_user_url"))
+print(data.get("authorizations_url"))
+print(data.get("rate_limit_url"))</pre></details><div class="controls"><button data-dl="enunciado" data-week="Semana 6 — Requisições HTTP com Python" data-ex="Ex1: GET em API pública">Baixar enunciado (.txt)</button><button data-dl="codigo" data-week="Semana 6 — Requisições HTTP com Python" data-ex="Ex1: GET em API pública">Baixar código base</button></div></div><div class="exercise"><h3>Ex2: Tratando erros e timeouts</h3><pre class="exercise-text">Objetivo: Robustez em requisições HTTP.
+Tempo: 50 minutos.
+Recursos: Python (requests).
+Passos:
+  1) Reutilizar o Ex1 e adicionar try/except para ConnectionError/Timeout.
+  2) Implementar timeout de 5s e re-tentativa simples (máx. 2).
+  3) Registrar erros em log.txt.
+Entregáveis: script .py e log.txt (se houver erro).
+Critérios: tratamento adequado e mensagens claras.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 6 — Requisições HTTP com Python" data-ex="Ex2: Tratando erros e timeouts">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-7"><h2>Semana 7 — DNS na Prática</h2><div class="exercise"><h3>Ex1: Resolução direta</h3><pre class="exercise-text">Objetivo: Converter nomes de domínio em endereços IP.
+Tempo: 50 minutos.
+Recursos: CMD/Terminal, Python.
+Passos:
+  1) Windows: nslookup www.python.org | Linux/macOS: dig +short www.python.org
+  2) Em Python, usar socket.gethostbyname("www.python.org").
+  3) Repetir para 3 domínios e comparar resultados.
+Entregáveis: prints e tabela domínio→IP.
+Critérios: execução e comparação.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 7 — DNS na Prática" data-ex="Ex1: Resolução direta">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Resolução reversa (quando disponível)</h3><pre class="exercise-text">Objetivo: Verificar se há PTR associado a um IP.
+Tempo: 50 minutos.
+Recursos: nslookup/dig, Python.
+Passos:
+  1) Escolher 2 IPs públicos obtidos no Ex1.
+  2) Executar nslookup <IP> e registrar o nome retornado (se houver).
+  3) Em Python, usar socket.gethostbyaddr(IP) com try/except.
+Entregáveis: anotações e código.
+Critérios: método e clareza.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 7 — DNS na Prática" data-ex="Ex2: Resolução reversa (quando disponível)">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-8"><h2>Semana 8 — HTTP vs HTTPS (Conceitos e Certificados)</h2><div class="exercise"><h3>Ex1: Cadeado e certificado no navegador</h3><pre class="exercise-text">Objetivo: Inspecionar certificado digital de um site.
+Tempo: 50 minutos.
+Recursos: Navegador.
+Passos:
+  1) Acessar https://example.com e abrir os detalhes do certificado (cadeado).
+  2) Anotar: Emissor, Válido de/até, Assunto (CN).
+  3) Explicar, em 5–8 linhas, por que HTTPS é mais seguro que HTTP.
+Entregáveis: prints e texto.
+Critérios: coleta correta e explicação.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 8 — HTTP vs HTTPS (Conceitos e Certificados)" data-ex="Ex1: Cadeado e certificado no navegador">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Verificando verificação de certificado com Python</h3><pre class="exercise-text">Objetivo: Observar validação TLS em requests.
+Tempo: 50 minutos.
+Recursos: Python (requests).
+Passos:
+  1) Fazer GET em https://example.com e imprimir status.
+  2) Testar verify=False (apenas para observar o WARNING) e explicar por que não usar em produção.
+  3) Registrar em arquivo MD o que mudou.
+Entregáveis: script .py e relatório curto.
+Critérios: entendimento do risco de desativar verificação.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 8 — HTTP vs HTTPS (Conceitos e Certificados)" data-ex="Ex2: Verificando verificação de certificado com Python">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-9"><h2>Semana 9 — Hash de Senhas (Criptografia de Mão Única)</h2><div class="exercise"><h3>Ex1: Gerar hashes</h3><pre class="exercise-text">Objetivo: Entender hashing como função de mão única.
+Tempo: 50 minutos.
+Recursos: Python (hashlib).
+Passos:
+  1) Gerar SHA-256 para 3 strings distintas.
+  2) Salvar em hashes.csv (string;sha256).
+  3) Explicar por que não é possível reverter o hash de forma prática.
+Entregáveis: script .py e CSV.
+Critérios: execução e explicação.</pre><details><summary>Código base (opcional)</summary><pre class="starter-code" data-filename="hash_senhas.py"># hash_senhas.py
+import hashlib, csv
+entradas = ["senha1", "dados_confidenciais", "projeto_redes"]
+with open("hashes.csv", "w", newline="", encoding="utf-8") as f:
+    w = csv.writer(f, delimiter=';')
+    w.writerow(["texto", "sha256"])
+    for t in entradas:
+        h = hashlib.sha256(t.encode()).hexdigest()
+        w.writerow([t, h])
+print("Gerado hashes.csv")</pre></details><div class="controls"><button data-dl="enunciado" data-week="Semana 9 — Hash de Senhas (Criptografia de Mão Única)" data-ex="Ex1: Gerar hashes">Baixar enunciado (.txt)</button><button data-dl="codigo" data-week="Semana 9 — Hash de Senhas (Criptografia de Mão Única)" data-ex="Ex1: Gerar hashes">Baixar código base</button></div></div><div class="exercise"><h3>Ex2: Salting básico (conceito)</h3><pre class="exercise-text">Objetivo: Demonstrar como um salt altera o hash.
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Criar função que recebe texto e salt, retornando SHA-256(salt||texto).
+  2) Aplicar 2 salts diferentes para a mesma senha e comparar hashes.
+  3) Registrar a importância de salts únicos por usuário.
+Entregáveis: script .py e breve explicação.
+Critérios: compreensão do conceito.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 9 — Hash de Senhas (Criptografia de Mão Única)" data-ex="Ex2: Salting básico (conceito)">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-10"><h2>Semana 10 — Logs de Acesso e Auditoria</h2><div class="exercise"><h3>Ex1: Registrar eventos</h3><pre class="exercise-text">Objetivo: Criar log app.log com timestamps.
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Funções login(usuario) e access(recurso) que escrevem no log.
+  2) Executar algumas chamadas e verificar conteúdo.
+  3) Organizar formato CSV (data;usuario;evento;detalhe).
+Entregáveis: script .py e app.log.
+Critérios: clareza do formato.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 10 — Logs de Acesso e Auditoria" data-ex="Ex1: Registrar eventos">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Leitura e filtro de logs</h3><pre class="exercise-text">Objetivo: Extrair eventos por usuário.
+Tempo: 50 minutos.
+Recursos: Python (csv/pandas opcional).
+Passos:
+  1) Ler app.log e filtrar eventos de um usuário específico.
+  2) Gerar relatório por tipo de evento.
+Entregáveis: script .py e relatório .txt.
+Critérios: filtragem correta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 10 — Logs de Acesso e Auditoria" data-ex="Ex2: Leitura e filtro de logs">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-11"><h2>Semana 11 — Consumindo APIs (Prática)</h2><div class="exercise"><h3>Ex1: API pública (JSON → CSV)</h3><pre class="exercise-text">Objetivo: Transformar JSON em CSV simples.
+Tempo: 50 minutos.
+Recursos: Python (requests), internet.
+Passos:
+  1) Consultar uma API aberta (ex.: https://api.publicapis.org/entries).
+  2) Selecionar 5 campos e salvar CSV com 10 linhas.
+Entregáveis: script .py e CSV.
+Critérios: seleção e formatação.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 11 — Consumindo APIs (Prática)" data-ex="Ex1: API pública (JSON → CSV)">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Cabeçalhos e status HTTP</h3><pre class="exercise-text">Objetivo: Analisar status e headers de respostas.
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Imprimir status_code e 3 cabeçalhos significativos.
+  2) Explicar o papel de Content-Type e Cache-Control.
+Entregáveis: script e relatório curto.
+Critérios: interpretação.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 11 — Consumindo APIs (Prática)" data-ex="Ex2: Cabeçalhos e status HTTP">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-12"><h2>Semana 12 — Arquivos JSON e Persistência</h2><div class="exercise"><h3>Ex1: Gravar e ler JSON</h3><pre class="exercise-text">Objetivo: Persistir dados simples em JSON.
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Salvar uma lista de registros (nome, nota, email) em dados.json.
+  2) Reabrir e imprimir média das notas.
+Entregáveis: script .py e dados.json.
+Critérios: persistência correta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 12 — Arquivos JSON e Persistência" data-ex="Ex1: Gravar e ler JSON">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Validação básica de entrada</h3><pre class="exercise-text">Objetivo: Garantir que emails tenham '@' e notas ∈ [0,10].
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Implementar validações e mensagens de erro amigáveis.
+  2) Registrar erros em log.
+Entregáveis: script e log.
+Critérios: robustez.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 12 — Arquivos JSON e Persistência" data-ex="Ex2: Validação básica de entrada">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-13"><h2>Semana 13 — Políticas de Acesso (Simulação)</h2><div class="exercise"><h3>Ex1: Lista de controle (ACL) por usuário</h3><pre class="exercise-text">Objetivo: Simular política de autorização baseada em papéis.
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Definir usuários com papéis (admin, aluno).
+  2) Implementar função can(user, action) que retorna True/False.
+  3) Salvar decisões em log.
+Entregáveis: script e log.
+Critérios: lógica correta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 13 — Políticas de Acesso (Simulação)" data-ex="Ex1: Lista de controle (ACL) por usuário">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Política de senha (força mínima)</h3><pre class="exercise-text">Objetivo: Validar senhas com requisitos (tamanho, dígitos, maiúsculas, etc.).
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Implementar verificador de força de senha (sem dicionários; foco educativo).
+  2) Testar 5 exemplos e classificar (fraca/média/forte).
+Entregáveis: script e resultados.
+Critérios: critérios claros e feedback útil.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 13 — Políticas de Acesso (Simulação)" data-ex="Ex2: Política de senha (força mínima)">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-14"><h2>Semana 14 — Wireshark/Analisadores (Observação)</h2><div class="exercise"><h3>Ex1: Captura ICMP local</h3><pre class="exercise-text">Objetivo: Capturar e filtrar pacotes ICMP (ping) na própria máquina.
+Tempo: 50 minutos.
+Recursos: Wireshark (ou tcpdump), ping.
+Passos:
+  1) Iniciar captura na interface correta.
+  2) Aplicar filtro icmp e realizar ping para um domínio confiável.
+  3) Salvar .pcapng com 10 pacotes ICMP.
+Entregáveis: arquivo .pcapng e print do filtro.
+Critérios: captura pertinente e organização.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 14 — Wireshark/Analisadores (Observação)" data-ex="Ex1: Captura ICMP local">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: HTTP GET local (com http.server)</h3><pre class="exercise-text">Objetivo: Observar requisições HTTP locais.
+Tempo: 50 minutos.
+Recursos: http.server e Wireshark.
+Passos:
+  1) Subir servidor local (Semana 5).
+  2) Filtrar por tcp.port==8000 e acessar a página.
+  3) Identificar método, status e cabeçalhos.
+Entregáveis: print e breve descrição.
+Critérios: identificação correta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 14 — Wireshark/Analisadores (Observação)" data-ex="Ex2: HTTP GET local (com http.server)">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-15"><h2>Semana 15 — Endereçamento IP e Sub-redes</h2><div class="exercise"><h3>Ex1: Planejamento simples de sub-rede</h3><pre class="exercise-text">Objetivo: Dividir uma rede /24 em 4 sub-redes /26.
+Tempo: 50 minutos.
+Recursos: Python (ipaddress) ou cálculo manual.
+Passos:
+  1) Escolher rede 192.168.10.0/24.
+  2) Listar as 4 sub-redes /26 com ranges e gateways sugeridos.
+  3) Registrar em tabela.
+Entregáveis: tabela e/ou script gerador.
+Critérios: correção dos intervalos.</pre><details><summary>Código base (opcional)</summary><pre class="starter-code" data-filename="subnet_calc.py"># subnet_calc.py
+import ipaddress
+net = ipaddress.ip_network("192.168.10.0/24")
+for i, sub in enumerate(net.subnets(new_prefix=26), 1):
+    hosts = list(sub.hosts())
+    gw = hosts[0] if hosts else None
+    print(f"Subrede {i}: {sub} | Host range: {hosts[0]} - {hosts[-1]} | GW sugerido: {gw}")</pre></details><div class="controls"><button data-dl="enunciado" data-week="Semana 15 — Endereçamento IP e Sub-redes" data-ex="Ex1: Planejamento simples de sub-rede">Baixar enunciado (.txt)</button><button data-dl="codigo" data-week="Semana 15 — Endereçamento IP e Sub-redes" data-ex="Ex1: Planejamento simples de sub-rede">Baixar código base</button></div></div><div class="exercise"><h3>Ex2: CIDR e máscaras equivalentes</h3><pre class="exercise-text">Objetivo: Relacionar notação CIDR a máscaras decimais.
+Tempo: 50 minutos.
+Recursos: Python ou planilha.
+Passos:
+  1) Montar tabela de /24, /25, /26, /27 com suas máscaras decimais.
+  2) Explicar efeito em quantidade de hosts.
+Entregáveis: tabela e explicação.
+Critérios: precisão e clareza.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 15 — Endereçamento IP e Sub-redes" data-ex="Ex2: CIDR e máscaras equivalentes">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-16"><h2>Semana 16 — Ferramentas de Diagnóstico (Windows/Linux)</h2><div class="exercise"><h3>Ex1: ipconfig/ifconfig + route</h3><pre class="exercise-text">Objetivo: Consolidar diagnóstico de rede.
+Tempo: 50 minutos.
+Recursos: CMD/Terminal.
+Passos:
+  1) Registrar ipconfig /all (ou ip a) e route print (ou ip route).
+  2) Explicar o papel do gateway padrão e de rotas estáticas.
+Entregáveis: prints + 5–8 linhas de análise.
+Critérios: entendimento das rotas.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 16 — Ferramentas de Diagnóstico (Windows/Linux)" data-ex="Ex1: ipconfig/ifconfig + route">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Teste de DNS alternativo</h3><pre class="exercise-text">Objetivo: Comparar resolução com outro resolver (somente leitura).
+Tempo: 50 minutos.
+Recursos: nslookup/dig.
+Passos:
+  1) nslookup www.wikipedia.org 8.8.8.8 e depois sem especificar DNS.
+  2) Comparar resposta (latência e IPs retornados).
+Entregáveis: notas e prints.
+Critérios: comparação objetiva.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 16 — Ferramentas de Diagnóstico (Windows/Linux)" data-ex="Ex2: Teste de DNS alternativo">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-17"><h2>Semana 17 — Automação de Rede com Python (Básico)</h2><div class="exercise"><h3>Ex1: Ping múltiplo (lista de hosts)</h3><pre class="exercise-text">Objetivo: Automatizar verificação de disponibilidade.
+Tempo: 50 minutos.
+Recursos: Python (subprocess), ping.
+Passos:
+  1) Criar lista com 5 domínios.
+  2) Para cada um, executar ping (2–4 pacotes) via subprocess e registrar média.
+  3) Salvar CSV de resultados.
+Entregáveis: script e CSV.
+Critérios: automação funcional.</pre><details><summary>Código base (opcional)</summary><pre class="starter-code" data-filename="ping_multi.py"># ping_multi.py
+import subprocess, csv, sys
+hosts = ["www.microsoft.com", "www.github.com", "www.python.org", "www.gov.br", "www.wikipedia.org"]
+def avg_ping(host):
+    # Windows (-n), Linux/Mac (-c)
+    count_flag = "-n" if sys.platform.startswith("win") else "-c"
+    p = subprocess.run(["ping", count_flag, "3", host], capture_output=True, text=True)
+    out = p.stdout
+    # captura simples
+    for line in out.splitlines():
+        if "Average" in line or "avg" in line or "média" in line.lower():
+            return line.strip()
+    return "n/d"
+with open("ping_resultados.csv", "w", newline="", encoding="utf-8") as f:
+    w = csv.writer(f, delimiter=';')
+    w.writerow(["host", "resumo"])
+    for h in hosts:
+        w.writerow([h, avg_ping(h)])</pre></details><div class="controls"><button data-dl="enunciado" data-week="Semana 17 — Automação de Rede com Python (Básico)" data-ex="Ex1: Ping múltiplo (lista de hosts)">Baixar enunciado (.txt)</button><button data-dl="codigo" data-week="Semana 17 — Automação de Rede com Python (Básico)" data-ex="Ex1: Ping múltiplo (lista de hosts)">Baixar código base</button></div></div><div class="exercise"><h3>Ex2: Verificando portas locais (seguras)</h3><pre class="exercise-text">Objetivo: Listar portas TCP abertas apenas na máquina local (sem scan externo).
+Tempo: 50 minutos.
+Recursos: Python (psutil opcional) ou netstat.
+Passos:
+  1) Executar netstat/ss para obter LISTEN locais.
+  2) Em Python, parsear a saída e salvar uma lista estruturada.
+  3) Discutir se os serviços são necessários.
+Entregáveis: script e tabela.
+Critérios: foco ético (somente local) e clareza.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 17 — Automação de Rede com Python (Básico)" data-ex="Ex2: Verificando portas locais (seguras)">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-18"><h2>Semana 18 — Chaves e Autenticação (Conceitos)</h2><div class="exercise"><h3>Ex1: Gerar par de chaves (se disponível)</h3><pre class="exercise-text">Objetivo: Criar um par de chaves para autenticação (uso educacional).
+Tempo: 50 minutos.
+Recursos: ssh-keygen (se instalado) OU Python (cryptography, se disponível).
+Passos:
+  1) Tentar ssh-keygen -t ed25519 -C "aluno@turma" (ou RSA caso ed25519 indisponível).
+  2) Inspecionar o arquivo público (.pub) e identificar o algoritmo.
+  3) Anotar boas práticas de proteção da chave privada.
+Entregáveis: chave pública e notas.
+Critérios: entendimento de chaves.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 18 — Chaves e Autenticação (Conceitos)" data-ex="Ex1: Gerar par de chaves (se disponível)">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Autorização por chave (conceitual)</h3><pre class="exercise-text">Objetivo: Simular arquivo authorized_keys e explicar fluxo.
+Tempo: 50 minutos.
+Recursos: Editor de texto.
+Passos:
+  1) Criar arquivo authorized_keys fictício com sua chave pública.
+  2) Descrever o fluxo simplificado de autenticação por chave.
+Entregáveis: arquivo e explicação (5–8 linhas).
+Critérios: coerência.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 18 — Chaves e Autenticação (Conceitos)" data-ex="Ex2: Autorização por chave (conceitual)">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-19"><h2>Semana 19 — Medições de Rede (Latência e Perda)</h2><div class="exercise"><h3>Ex1: Série temporal de ping</h3><pre class="exercise-text">Objetivo: Medir latência ao longo do tempo.
+Tempo: 50 minutos.
+Recursos: ping, Python opcional.
+Passos:
+  1) Executar ping contínuo por ~3–5 minutos em um domínio estável.
+  2) Registrar média a cada 30s (manual ou script).
+  3) Plot opcional (se permitido) com matplotlib.
+Entregáveis: tabela/plot com análise.
+Critérios: metodologia e leitura.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 19 — Medições de Rede (Latência e Perda)" data-ex="Ex1: Série temporal de ping">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: pathping/mtr — comparação</h3><pre class="exercise-text">Objetivo: Complementar análise do Ex1 por hop.
+Tempo: 50 minutos.
+Recursos: pathping (Windows) ou mtr (Linux).
+Passos:
+  1) Executar ferramenta e salvar saída.
+  2) Relacionar com as variações observadas no Ex1.
+Entregáveis: saída e explicação.
+Critérios: relação consistente.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 19 — Medições de Rede (Latência e Perda)" data-ex="Ex2: pathping/mtr — comparação">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-20"><h2>Semana 20 — Segurança de Aplicações Web (Headers)</h2><div class="exercise"><h3>Ex1: Inspecionar cabeçalhos de segurança</h3><pre class="exercise-text">Objetivo: Verificar presença de headers como HSTS, X-Frame-Options.
+Tempo: 50 minutos.
+Recursos: curl ou Python requests.
+Passos:
+  1) Usar curl -I em 2 sites conhecidos.
+  2) Anotar se possuem Strict-Transport-Security, X-Content-Type-Options, etc.
+  3) Explicar a função de 2 headers.
+Entregáveis: notas e prints.
+Critérios: identificação correta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 20 — Segurança de Aplicações Web (Headers)" data-ex="Ex1: Inspecionar cabeçalhos de segurança">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Simular resposta com headers (local)</h3><pre class="exercise-text">Objetivo: Servir uma resposta local com alguns security headers.
+Tempo: 50 minutos.
+Recursos: Python (http.server + override simples).
+Passos:
+  1) Criar MiniHandler que adiciona cabeçalhos em do_GET.
+  2) Validar com curl -I localhost:8000.
+Entregáveis: script e print.
+Critérios: headers presentes.</pre><details><summary>Código base (opcional)</summary><pre class="starter-code" data-filename="mini_server_headers.py"># mini_server_headers.py
+from http.server import HTTPServer, SimpleHTTPRequestHandler
+class Mini(SimpleHTTPRequestHandler):
+    def end_headers(self):
+        self.send_header('X-Content-Type-Options', 'nosniff')
+        self.send_header('X-Frame-Options', 'DENY')
+        self.send_header('Referrer-Policy', 'no-referrer')
+        super().end_headers()
+HTTPServer(('localhost', 8000), Mini).serve_forever()</pre></details><div class="controls"><button data-dl="enunciado" data-week="Semana 20 — Segurança de Aplicações Web (Headers)" data-ex="Ex2: Simular resposta com headers (local)">Baixar enunciado (.txt)</button><button data-dl="codigo" data-week="Semana 20 — Segurança de Aplicações Web (Headers)" data-ex="Ex2: Simular resposta com headers (local)">Baixar código base</button></div></div></section><section class="week" id="semana-21"><h2>Semana 21 — TLS e Verificação de Certificados</h2><div class="exercise"><h3>Ex1: Inspecionar cadeia de certificados (navegador)</h3><pre class="exercise-text">Objetivo: Ver a cadeia (root → intermediário → site).
+Tempo: 50 minutos.
+Recursos: Navegador.
+Passos:
+  1) Em um site HTTPS, abrir detalhes e listar os certificados na cadeia.
+  2) Anotar emissores e validade.
+Entregáveis: prints + notas.
+Critérios: coleta correta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 21 — TLS e Verificação de Certificados" data-ex="Ex1: Inspecionar cadeia de certificados (navegador)">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Obter certificado via Python</h3><pre class="exercise-text">Objetivo: Conectar a um host HTTPS e imprimir o subject do certificado.
+Tempo: 50 minutos.
+Recursos: Python (ssl, socket).
+Passos:
+  1) Implementar conexão TLS e extrair subject/issuer.
+  2) Registrar saída em txt.
+Entregáveis: script e txt.
+Critérios: execução correta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 21 — TLS e Verificação de Certificados" data-ex="Ex2: Obter certificado via Python">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-22"><h2>Semana 22 — Centralização de Logs (Simulação)</h2><div class="exercise"><h3>Ex1: Gerar logs em JSON</h3><pre class="exercise-text">Objetivo: Padronizar eventos em JSON.
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Registrar eventos com campos: ts, nivel, origem, mensagem.
+  2) Gravar em logs.jsonl (um JSON por linha).
+Entregáveis: script e arquivo.
+Critérios: formato consistente.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 22 — Centralização de Logs (Simulação)" data-ex="Ex1: Gerar logs em JSON">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Consulta simples de logs</h3><pre class="exercise-text">Objetivo: Filtrar eventos por nível ou palavra-chave.
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Ler logs.jsonl e imprimir apenas eventos nivel=="ERROR".
+  2) Contar eventos por origem.
+Entregáveis: script e relatório.
+Critérios: filtros corretos.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 22 — Centralização de Logs (Simulação)" data-ex="Ex2: Consulta simples de logs">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-23"><h2>Semana 23 — Nuvem (Simulada) e Upload/Download</h2><div class="exercise"><h3>Ex1: Cliente local de armazenamento (simulado)</h3><pre class="exercise-text">Objetivo: Implementar PUT/GET em uma pasta "bucket_local".
+Tempo: 50 minutos.
+Recursos: Python, sistema de arquivos.
+Passos:
+  1) Criar pasta bucket_local.
+  2) Implementar funções put(arquivo) e get(nome) que copiam arquivos para/de o bucket.
+  3) Registrar operações em log.
+Entregáveis: script e log.
+Critérios: funções funcionando.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 23 — Nuvem (Simulada) e Upload/Download" data-ex="Ex1: Cliente local de armazenamento (simulado)">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Metadados e versionamento simples</h3><pre class="exercise-text">Objetivo: Manter metadados (tamanho, hash) e versões.
+Tempo: 50 minutos.
+Recursos: Python (hashlib).
+Passos:
+  1) Ao fazer PUT, calcular SHA-256 e registrar em manifest.jsonl.
+  2) Permitir guardar versões com sufixo _v2, _v3...
+Entregáveis: script e manifest.
+Critérios: registro correto.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 23 — Nuvem (Simulada) e Upload/Download" data-ex="Ex2: Metadados e versionamento simples">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-24"><h2>Semana 24 — Backup e Restauração</h2><div class="exercise"><h3>Ex1: Compactar diretório de trabalho</h3><pre class="exercise-text">Objetivo: Criar backup.zip de uma pasta.
+Tempo: 50 minutos.
+Recursos: Python (zipfile, pathlib).
+Passos:
+  1) Selecionar uma pasta de exercícios e compactar.
+  2) Validar integridade listando o conteúdo do zip.
+Entregáveis: script e backup.zip.
+Critérios: funcionamento e integridade.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 24 — Backup e Restauração" data-ex="Ex1: Compactar diretório de trabalho">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Verificação de integridade</h3><pre class="exercise-text">Objetivo: Calcular hash do zip e comparar após cópia.
+Tempo: 50 minutos.
+Recursos: Python (hashlib).
+Passos:
+  1) Gerar SHA-256 do backup.zip e salvar em backup.sha256.
+  2) Simular cópia e revalidar.
+Entregáveis: hash e relatório pequeno.
+Critérios: verificação correta.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 24 — Backup e Restauração" data-ex="Ex2: Verificação de integridade">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-25"><h2>Semana 25 — Lista de Permissões de Saída (Zero Trust básico)</h2><div class="exercise"><h3>Ex1: Allowlist de domínios para HTTP</h3><pre class="exercise-text">Objetivo: Permitir apenas requisições a domínios aprovados (simulado).
+Tempo: 50 minutos.
+Recursos: Python (requests).
+Passos:
+  1) Criar lista de domínios permitidos.
+  2) Função fetch(url) só prossegue se o domínio estiver permitido.
+  3) Registrar bloqueios em log.
+Entregáveis: script e log.
+Critérios: bloqueio correto e registro.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 25 — Lista de Permissões de Saída (Zero Trust básico)" data-ex="Ex1: Allowlist de domínios para HTTP">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Modo justificativa para exceções</h3><pre class="exercise-text">Objetivo: Exigir justificativa de negócio para adicionar um domínio.
+Tempo: 50 minutos.
+Recursos: Python.
+Passos:
+  1) Implementar função add_domain(dom, motivo) que grava no log.
+  2) Demonstrar adição de 1 domínio com motivo claro.
+Entregáveis: script e log.
+Critérios: rastreabilidade.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 25 — Lista de Permissões de Saída (Zero Trust básico)" data-ex="Ex2: Modo justificativa para exceções">Baixar enunciado (.txt)</button></div></div></section><section class="week" id="semana-26"><h2>Semana 26 — Mini-Projeto Integrador</h2><div class="exercise"><h3>Ex1: Ferramenta CLI de diagnóstico</h3><pre class="exercise-text">Objetivo: Criar CLI que ofereça: ping, traceroute (via sistema) e coleta de IP local.
+Tempo: 50 minutos.
+Recursos: Python (argparse, subprocess).
+Passos:
+  1) Implementar comandos: iplocal, ping <host>, trace <host>.
+  2) Registrar saídas em logs/cli.log.
+Entregáveis: script .py e log.
+Critérios: organização e uso de argparse.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 26 — Mini-Projeto Integrador" data-ex="Ex1: Ferramenta CLI de diagnóstico">Baixar enunciado (.txt)</button></div></div><div class="exercise"><h3>Ex2: Relatório final (curto)</h3><pre class="exercise-text">Objetivo: Consolidar aprendizados do semestre.
+Tempo: 50 minutos.
+Recursos: Editor de texto.
+Passos:
+  1) Em 10–15 linhas, descrever 3 habilidades novas e 2 dificuldades.
+  2) Anexar 2 prints de exercícios anteriores.
+Entregáveis: relatório .md ou .pdf simples.
+Critérios: reflexão e evidências.</pre><div class="controls"><button data-dl="enunciado" data-week="Semana 26 — Mini-Projeto Integrador" data-ex="Ex2: Relatório final (curto)">Baixar enunciado (.txt)</button></div></div></section>
+<script>
+function downloadText(filename, text){
+  const blob = new Blob([text], {type: 'text/plain;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.style.display='none';
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{URL.revokeObjectURL(url); a.remove();}, 500);
+}
+
+function cleanText(html){
+  // basic strip of tags
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.innerText.replace(/
+{3,}/g,'\n\n');
+}
+
+document.addEventListener('click', (ev)=>{
+  const btn = ev.target.closest('button[data-dl]');
+  if(!btn) return;
+  const card = btn.closest('.exercise');
+  const weekTitle = btn.getAttribute('data-week');
+  const exTitle = btn.getAttribute('data-ex');
+  const content = card.querySelector('pre.exercise-text');
+  const code = card.querySelector('pre.starter-code');
+  if(btn.dataset.dl==='enunciado'){
+    const txt = `# ${exTitle} ( ${weekTitle} )
+
+` + content.innerText.trim() + "
+";
+    const fname = (exTitle+"_"+weekTitle).toLowerCase().replace(/\s+/g,'_')+".txt";
+    downloadText(fname, txt);
+  }
+  if(btn.dataset.dl==='codigo' && code){
+    const fname = code.getAttribute('data-filename') || 'starter.py';
+    downloadText(fname, code.innerText);
+  }
+});
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  // Download the full page
+  const fullBtn = document.getElementById('downloadPage');
+  if(fullBtn){
+    fullBtn.addEventListener('click', ()=>{
+      const html = '<!DOCTYPE html>'+document.documentElement.outerHTML;
+      downloadText('redes_computadores_seguranca_exercicios_sem1-26.html', html);
+    });
+  }
+});
+</script>
+</body>
+</html>
