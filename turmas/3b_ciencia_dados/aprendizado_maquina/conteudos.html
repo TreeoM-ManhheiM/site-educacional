@@ -1,21 +1,337 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Conteúdos — Aprendizado Maquina — 3ºB</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;margin:32px;background:#f6f7fb;color:#111827}
-    a{color:#2563eb;text-decoration:none} a:hover{text-decoration:underline}
-    header{margin-bottom:16px} h1{margin:0 0 4px 0} .crumbs{color:#475569;font-size:0.95rem}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Laboratório de ML — Bilingue (PT/EN)</title>
+<style>
+ :root{ --bg:#f5f5f5; --card:#ffffff; --text:#222; --muted:#555; --primary:#111827; --accent:#2563eb; --border:#dcdcdc; --code:#0d1117; --code-t:#e6edf3; }
+ body{ font-family: Arial, Helvetica, sans-serif; margin:28px; background:var(--bg); color:var(--text); line-height:1.55 }
+ h2{ background:var(--primary); color:#fff; padding:12px 16px; border-radius:8px; margin:0 0 12px }
+ h3{ margin:0 0 8px }
+ .subtle{ color:var(--muted); font-size:.95rem }
+ .box{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; margin-top:16px }
+ .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
+ .grid{ display:grid; gap:10px 16px } .grid-4{ grid-template-columns: repeat(4, minmax(0,1fr)); }
+ @media (max-width:860px){ .grid-4{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
+ @media (max-width:520px){ .grid-4{ grid-template-columns:1fr; } body{ margin:16px } }
+ label{ font-weight:bold } input,select,button{ padding:8px 10px; border:1px solid var(--border); border-radius:6px; width:auto; font-size:14px }
+ select{ min-width:180px }
+ button{ background:var(--accent); color:#fff; border:none; cursor:pointer }
+ .formula{ background:#0b1220; color:#e6edf3; padding:12px; border-radius:8px; overflow:auto; border:1px dashed #334155; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px }
+ pre{ background:var(--code); color:var(--code-t); border-radius:8px; padding:16px; overflow:auto; border:1px solid var(--border); font-family:Consolas,Menlo,monospace; font-size:14px; line-height:1.5 }
+ .top-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; align-items:center }
+ .note{ color:var(--muted); font-size:.9rem }
+ .callout{ border-left:4px solid var(--accent); background:#f5f9ff; padding:10px 12px; border-radius:6px; color:#1a3a6d }
+ .result-big{ font-size:1.15rem }
+ .col{ display:flex; flex-direction:column; gap:8px }
+ .lang-sel{ margin-left:auto }
+</style>
+<script>
+  window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] }, svg: { fontCache: 'global' } };
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
-  <header>
-    <div class="crumbs"><a href='/index.html'>Início</a> / Aprendizado Maquina / geral-exercicios-conteudos</div>
-    <h1>Conteúdos — Aprendizado Maquina</h1>
-  </header>
-  <p>Conteúdo inicial. Edite este arquivo para colocar as informações da disciplina.</p>
-  <p><a href="/index.html">← Voltar ao índice</a></p>
+<h2 id="title">—</h2>
+<div class="top-actions">
+  <div id="intro" class="subtle">—</div>
+  <div class="lang-sel">
+    <label for="lang" id="langLabel">Idioma</label>
+    <select id="lang">
+      <option value="pt">Português (PT)</option>
+      <option value="en">English (EN)</option>
+    </select>
+  </div>
+  <button id="btnDownloadHTML" title="">⬇️ —</button>
+</div>
+
+<div class="box">
+  <h3 id="inputTitle">—</h3>
+  <div class="grid grid-4">
+    <div class="col"><label id="l1">—</label><input id="v1" type="number" step="any" placeholder="" /></div>
+    <div class="col"><label id="l2">—</label><input id="v2" type="number" step="any" placeholder="" /></div>
+    <div class="col"><label id="l3">—</label><input id="v3" type="number" step="any" placeholder="" /></div>
+    <div class="col"><label id="l4">—</label><input id="v4" type="number" step="any" placeholder="" /></div>
+  </div>
+</div>
+
+<div class="box">
+  <h3 id="modelsTitle">—</h3>
+  <div class="row">
+    <label id="labSup">—</label>
+    <select id="algSup"></select>
+    <button id="btnSup">—</button>
+  </div>
+  <div class="row" style="margin-top:8px">
+    <label id="labUnsup">—</label>
+    <select id="algUnsup"></select>
+    <button id="btnUnsup">—</button>
+  </div>
+  <p class="note" id="simNote">—</p>
+</div>
+
+<div class="box" aria-live="polite">
+  <h3 id="resultTitle">—</h3>
+  <div id="alerta" class="callout" style="display:none;"></div>
+  <div id="resultado" class="result-big">–</div>
+</div>
+
+<div class="box">
+  <h3 id="formulaTitle">—</h3>
+  <div id="explicacao" class="formula">—</div>
+  <h3 id="codeTitle">—</h3>
+  <div class="top-actions">
+    <select id="codeFormat"><option value="py">.py (Python)</option><option value="txt">.txt (text)</option></select>
+    <button id="btnDownloadCode">⬇️ —</button>
+  </div>
+  <div id="matematica"></div>
+</div>
+
+<script>
+const el = id=>document.getElementById(id);
+const inp = { v1:el('v1'), v2:el('v2'), v3:el('v3'), v4:el('v4') };
+let LANG = 'pt';
+
+// ====== I18N STRINGS (UI) ======
+const i18n = {
+  pt: {
+    title: 'Laboratório de ML — Bilingue (PT/EN)',
+    intro: 'Alterne o idioma para ver toda a interface (títulos, botões, rótulos e explicações) em Português ou Inglês. Nos modelos supervisionados, o código inclui blocos de INPUT e PRINT para leitura didática.',
+    downloadPage: 'Baixar esta página (.html)',
+    inputTitle: 'Entrada (4 variáveis)',
+    placeholder: 'ex.:',
+    modelsTitle: 'Modelos',
+    supLabel: '👩‍🏫 Supervisionado',
+    unsupLabel: '🧩 Não supervisionado',
+    execSup: 'Executar (Sup.)',
+    execUnsup: 'Executar (Não sup.)',
+    simNote: 'O número abaixo é uma simulação. Para cálculo real, use o código Python abaixo.',
+    resultTitle: 'Resultado',
+    formulaTitle: 'Fórmula',
+    codeTitle: 'Como a biblioteca faria o cálculo (scikit‑learn + Python)',
+    downloadCode: 'Baixar código do modelo',
+    alertSim: 'Simulação local. Para cálculo real, use o código Python.',
+    models: {
+      regressao: 'Regressão Linear', logistica: 'Regressão Logística', knn: 'KNN', arvore: 'Árvore de Decisão',
+      randomforest: 'Random Forest', svm: 'SVM', naivebayes: 'Naive Bayes', gboost: 'Gradient Boosting',
+      xgboost: 'XGBoost', lightgbm: 'LightGBM', catboost: 'CatBoost', kmeans: 'K‑Means'
+    }
+  },
+  en: {
+    title: 'ML Lab — Bilingual (PT/EN)',
+    intro: 'Switch language to view the whole UI (titles, buttons, labels and explanations) in Portuguese or English. In supervised models, the code includes INPUT and PRINT blocks for didactic reading.',
+    downloadPage: 'Download this page (.html)',
+    inputTitle: 'Input (4 variables)',
+    placeholder: 'e.g.:',
+    modelsTitle: 'Models',
+    supLabel: '👩‍🏫 Supervised',
+    unsupLabel: '🧩 Unsupervised',
+    execSup: 'Run (Sup.)',
+    execUnsup: 'Run (Unsup.)',
+    simNote: 'The number below is a simulation. For real computation, use the Python code below.',
+    resultTitle: 'Result',
+    formulaTitle: 'Formula',
+    codeTitle: 'How the library would compute (scikit‑learn + Python)',
+    downloadCode: 'Download model code',
+    alertSim: 'Local simulation. For real computation, use the Python code.' ,
+    models: {
+      regressao: 'Linear Regression', logistica: 'Logistic Regression', knn: 'KNN', arvore: 'Decision Tree',
+      randomforest: 'Random Forest', svm: 'SVM', naivebayes: 'Naive Bayes', gboost: 'Gradient Boosting',
+      xgboost: 'XGBoost', lightgbm: 'LightGBM', catboost: 'CatBoost', kmeans: 'K‑Means'
+    }
+  }
+};
+
+// ====== CONTENT (Labels + Explain + Code) ======
+const content = {
+  regressao: {
+    labels: {
+      pt: ['Horas de Estudo','Presença (%)','Trabalhos Entregues','Nota das Provas'],
+      en: ['Study Hours','Attendance (%)','Assignments Submitted','Exam Score']
+    },
+    explain: {
+      pt: 'Modelo: $\\hat y = \\beta_0 + \\sum_j \\beta_j x_j$.',
+      en: 'Model: $\\hat y = \\beta_0 + \\sum_j \\beta_j x_j$.'
+    },
+    sklearn: `<pre><code># PT: Exemplo didático com scikit-learn. Execute em Python 3.x.\n# EN: Educational example with scikit-learn. Run on Python 3.x.\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_squared_error, r2_score\n\n# Dados / Data: (horas, presença) -> nota\nX = np.array([[2,70],[4,80],[6,90],[8,95],[3,75],[5,85]], dtype=float)\ny = np.array([5,6,7,9,6,8], dtype=float)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.33, random_state=42\n)\n\nmodelo = LinearRegression()\nmodelo.fit(X_train, y_train)\n\ny_pred = modelo.predict(X_test)\nprint("Coeficientes:", modelo.coef_)\nprint("Intercepto:", modelo.intercept_)\nprint("RMSE:", mean_squared_error(y_test, y_pred, squared=False))\nprint("R2:", r2_score(y_test, y_pred))\n\n# INPUT / ENTRADA (cotidiano / everyday)\nhoras = 6.0\npresenca = 88.0\nentrada = np.array([[horas, presenca]])\nprint("Entrada (horas, presenca):", entrada.tolist())\nprint("Nota prevista / Predicted score:", modelo.predict(entrada)[0])\n</code></pre>`
+  },
+
+  logistica: {
+    labels: {
+      pt: ['Idade (anos)','Renda Mensal (R$)','Score de Crédito (0–1000)','Dívidas (R$)'],
+      en: ['Age (years)','Monthly Income (BRL)','Credit Score (0–1000)','Debt (BRL)']
+    },
+    explain: {
+      pt: 'Prob.: $p(y{=}1|\\mathbf x)=\\sigma(\\beta_0+\\sum_j \\beta_j x_j)$.',
+      en: 'Probability: $p(y{=}1|\\mathbf x)=\\sigma(\\beta_0+\\sum_j \\beta_j x_j)$.'
+    },
+    sklearn: `<pre><code># PT: Exemplo didático com scikit-learn.\n# EN: Educational example with scikit-learn.\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score, classification_report\n\nX = np.array([[20,2000],[30,5000],[40,8000],[25,3000],[35,6000]], dtype=float)\ny = np.array([1,0,0,1,0], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("logreg", LogisticRegression(solver="liblinear", random_state=42))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\nprint(classification_report(y_test, y_pred, digits=3))\n\n# INPUT / ENTRADA (cotidiano / everyday)\nidade = 28.0\nrenda = 4500.0\nentrada = np.array([[idade, renda]])\nprint("Entrada (idade, renda):", entrada.tolist())\nproba = pipe.predict_proba(entrada)[0, 1]\nprint("P(y=1|entrada):", round(proba, 4))\nprint("Classe prevista / Predicted class:", int(pipe.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  knn: {
+    labels: { pt: ['Altura (cm)','Peso (kg)','Idade (anos)','Pressão Arterial (mmHg)'], en: ['Height (cm)','Weight (kg)','Age (years)','Blood Pressure (mmHg)'] },
+    explain: { pt: 'Distância Euclidiana; voto da maioria.', en: 'Euclidean distance; majority vote.' },
+    sklearn: `<pre><code># PT/EN: KNN com padronização (Pipeline)\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("knn", KNeighborsClassifier(n_neighbors=3))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\naltura = 172.0; peso = 72.0\nentrada = np.array([[altura, peso]])\nprint("Entrada (altura, peso):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(pipe.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  arvore: {
+    labels: { pt: ['Nota Média (0–10)','Presença (%)','Tarefas Enviadas','Comportamento (0–10)'], en: ['GPA (0–10)','Attendance (%)','Assignments Submitted','Behavior (0–10)'] },
+    explain: { pt: 'Gini e regras de decisão.', en: 'Gini and decision rules.' },
+    sklearn: `<pre><code># PT/EN: Árvore de decisão\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier, export_text\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nmodelo = DecisionTreeClassifier(max_depth=3, random_state=42)\nmodelo.fit(X_train, y_train)\n\ny_pred = modelo.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\nprint(export_text(modelo, feature_names=["nota_media","presenca"]))\n\n# INPUT / ENTRADA\nnota_media = 6.5; presenca = 82.0\nentrada = np.array([[nota_media, presenca]])\nprint("Entrada (nota_media, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(modelo.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  kmeans: {
+    labels: { pt: ['Horas de Estudo','Presença (%)','Acessos ao AVA','Nota das Provas'], en: ['Study Hours','Attendance (%)','LMS Logins','Exam Score'] },
+    explain: { pt: 'Minimiza a SSE aos centróides.', en: 'Minimizes SSE to centroids.' },
+    sklearn: `<pre><code># PT/EN: K-Means (unsupervised)\nimport numpy as np\nfrom sklearn.cluster import KMeans\n\nX = np.array([[2,70],[4,80],[6,90],[8,95],[3,75],[5,85]], dtype=float)\nmodelo = KMeans(n_clusters=2, random_state=42)\nmodelo.fit(X)\nprint("Centros/Centroids:", modelo.cluster_centers_)\nprint("Inércia/SSE:", modelo.inertia_)\nprint("Rótulos/Labels:", modelo.labels_)\n</code></pre>`
+  },
+
+  randomforest: {
+    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
+    explain: { pt: 'Conjunto de árvores (bagging).', en: 'Ensemble of trees (bagging).' },
+    sklearn: `<pre><code># PT/EN: Random Forest (classification)\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nrf = RandomForestClassifier(n_estimators=200, random_state=42)\nrf.fit(X_train, y_train)\n\ny_pred = rf.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\nprint("Importâncias/Importances:", rf.feature_importances_)\n\n# INPUT / ENTRADA\nhoras = 6.0; presenca = 88.0\nentrada = np.array([[horas, presenca]])\nprint("Entrada (horas, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(rf.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  svm: {
+    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Projetos (nº)'], en: ['Study Hours','Attendance (%)','Exam Score','Projects (#)'] },
+    explain: { pt: 'Máxima margem; kernel RBF.', en: 'Maximum margin; RBF kernel.' },
+    sklearn: `<pre><code># PT/EN: SVM (RBF)\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("svc", SVC(kernel="rbf", probability=True, random_state=42))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\naltura = 172.0; peso = 72.0\nentrada = np.array([[altura, peso]])\nprint("Entrada (altura, peso):", entrada.tolist())\nprint("p(y=1|entrada):", pipe.predict_proba(entrada)[0, 1])\nprint("Classe prevista / Predicted class:", int(pipe.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  naivebayes: {
+    labels: { pt: ['Altura (cm)','Peso (kg)','Idade (anos)','Pressão Arterial (mmHg)'], en: ['Height (cm)','Weight (kg)','Age (years)','Blood Pressure (mmHg)'] },
+    explain: { pt: 'Teorema de Bayes (Gaussiano).', en: 'Bayes theorem (Gaussian).' },
+    sklearn: `<pre><code># PT/EN: Naive Bayes (Gaussian)\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.naive_bayes import GaussianNB\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nnb = GaussianNB()\nnb.fit(X_train, y_train)\ny_pred = nb.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\naltura = 172.0; peso = 72.0\nentrada = np.array([[altura, peso]])\nprint("Entrada (altura, peso):", entrada.tolist())\nprint("p(y=1|entrada):", nb.predict_proba(entrada)[0, 1])\nprint("Classe prevista / Predicted class:", int(nb.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  gboost: {
+    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
+    explain: { pt: 'Modelo aditivo (gradiente da perda).', en: 'Additive model (negative gradient of loss).' },
+    sklearn: `<pre><code># PT/EN: Gradient Boosting\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\ngb = GradientBoostingClassifier(random_state=42)\ngb.fit(X_train, y_train)\ny_pred = gb.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\nprint("Importâncias/Importances:", gb.feature_importances_)\n\n# INPUT / ENTRADA\nnota = 7.5; presenca = 85.0\nentrada = np.array([[nota, presenca]])\nprint("Entrada (nota, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(gb.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  xgboost: {
+    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
+    explain: { pt: 'Boosting com regularização.', en: 'Boosting with regularization.' },
+    sklearn: `<pre><code># PT/EN: XGBoost (sklearn API)\n# pip install xgboost\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom xgboost import XGBClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nxgb = XGBClassifier(n_estimators=200, max_depth=3, learning_rate=0.1,\n                     subsample=1.0, colsample_bytree=1.0, random_state=42)\n\nxgb.fit(X_train, y_train)\ny_pred = xgb.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\nnota = 7.5; presenca = 85.0\nentrada = np.array([[nota, presenca]])\nprint("Entrada (nota, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(xgb.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  lightgbm: {
+    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
+    explain: { pt: 'Boosting por histogramas.', en: 'Histogram-based boosting.' },
+    sklearn: `<pre><code># PT/EN: LightGBM (sklearn API)\n# pip install lightgbm\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom lightgbm import LGBMClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nlgbm = LGBMClassifier(random_state=42)\nlgbm.fit(X_train, y_train)\n\ny_pred = lgbm.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\nnota = 7.5; presenca = 85.0\nentrada = np.array([[nota, presenca]])\nprint("Entrada (nota, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(lgbm.predict(entrada)[0]))\n</code></pre>`
+  },
+
+  catboost: {
+    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
+    explain: { pt: 'Ordered boosting; bom p/ categorias.', en: 'Ordered boosting; good for categorical.' },
+    sklearn: `<pre><code># PT/EN: CatBoost (sklearn-like API)\n# pip install catboost\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom catboost import CatBoostClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\ncb = CatBoostClassifier(verbose=False, random_state=42)\ncb.fit(X_train, y_train)\n\ny_pred = cb.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\nnota = 7.5; presenca = 85.0\nentrada = np.array([[nota, presenca]])\nprint("Entrada (nota, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(cb.predict(entrada)[0]))\n</code></pre>`
+  }
+};
+
+// ====== BUILD SELECTS ======
+function buildModelSelects(){
+  const selSup = el('algSup');
+  const selUns = el('algUnsup');
+  selSup.innerHTML=''; selUns.innerHTML='';
+  const supOrder = ['regressao','logistica','knn','arvore','randomforest','svm','naivebayes','gboost','xgboost','lightgbm','catboost'];
+  const unsOrder = ['kmeans'];
+  supOrder.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=i18n[LANG].models[k]; selSup.appendChild(o); });
+  unsOrder.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=i18n[LANG].models[k]; selUns.appendChild(o); });
+}
+
+// ====== APPLY LANGUAGE ======
+function applyLang(){
+  const t=i18n[LANG];
+  el('title').textContent = t.title;
+  el('intro').textContent = t.intro;
+  el('btnDownloadHTML').textContent = '⬇️ ' + t.downloadPage;
+  el('inputTitle').textContent = t.inputTitle;
+  el('modelsTitle').textContent = t.modelsTitle;
+  el('labSup').textContent = t.supLabel;
+  el('labUnsup').textContent = t.unsupLabel;
+  el('btnSup').textContent = t.execSup;
+  el('btnUnsup').textContent = t.execUnsup;
+  el('simNote').textContent = t.simNote;
+  el('resultTitle').textContent = t.resultTitle;
+  el('formulaTitle').textContent = t.formulaTitle;
+  el('codeTitle').textContent = t.codeTitle;
+  el('btnDownloadCode').textContent = '⬇️ ' + t.downloadCode;
+  buildModelSelects();
+  setView(el('algSup').value); // refresh panel
+}
+
+// ====== LABELS ======
+function setLabelsFor(alg){
+  const L = content[alg].labels;
+  const arr = (L && L[LANG]) ? L[LANG] : ['Var 1','Var 2','Var 3','Var 4'];
+  ['l1','l2','l3','l4'].forEach((id,i)=>{ const lab=document.getElementById(id); if(lab) lab.textContent = arr[i]||`Var ${i+1}`; });
+  const ph = i18n[LANG].placeholder;
+  inp.v1.placeholder = ph + ' 6';
+  inp.v2.placeholder = ph + ' 85';
+  inp.v3.placeholder = ph + ' 12';
+  inp.v4.placeholder = ph + ' 18';
+}
+
+// ====== VIEW/EXEC ======
+function setView(alg){
+  el('explicacao').innerHTML = content[alg].explain[LANG];
+  el('matematica').innerHTML = content[alg].sklearn;
+  setLabelsFor(alg);
+  if(window.MathJax && MathJax.typeset){ MathJax.typeset(); }
+}
+
+function getInputs(){
+  const v = [inp.v1.value, inp.v2.value, inp.v3.value, inp.v4.value].map(parseFloat);
+  return { v, bad: v.some(x=>Number.isNaN(x)) };
+}
+
+function executar(alg){
+  const {v, bad} = getInputs();
+  const [a,b,c,d] = v;
+  const alert = el('alerta');
+  alert.style.display='none'; alert.innerHTML='';
+  if(bad){ alert.style.display='block'; alert.innerHTML=(LANG==='pt'? 'Preencha os quatro valores numéricos.' : 'Fill in the four numeric values.'); el('resultado').innerHTML='–'; return; }
+  const fn = content[alg].calc; let r = fn(a,b,c,d);
+  if(!isFinite(r)) r = 0; r = Math.max(-1e6, Math.min(100, r));
+  el('resultado').innerHTML = (LANG==='pt'? 'Resultado (simulação): ' : 'Result (simulation): ') + `<b>${r.toFixed(2)}</b>`;
+  setView(alg);
+  alert.style.display='block'; alert.innerHTML = (LANG==='pt'? i18n.pt.alertSim : i18n.en.alertSim);
+}
+
+// ====== EVENTS ======
+el('lang').addEventListener('change', (e)=>{ LANG = e.target.value; applyLang(); });
+
+const algSup = el('algSup');
+const algUns = el('algUnsup');
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  applyLang(); // builds selects and sets default view
+  el('btnSup').addEventListener('click', ()=> executar(el('algSup').value));
+  el('btnUnsup').addEventListener('click', ()=> executar(el('algUnsup').value));
+  el('algSup').addEventListener('change', ()=> setView(el('algSup').value));
+  el('algUnsup').addEventListener('change', ()=> setView(el('algUnsup').value));
+});
+
+// ====== DOWNLOADS ======
+function baixarCodigo(){
+  const ext = el('codeFormat').value;
+  const codeEl = document.querySelector('#matematica pre code');
+  const codigo = codeEl ? codeEl.innerText : '';
+  const algAtual = document.getElementById('algSup').value || 'modelo';
+  const blob = new Blob([codigo], {type: ext==='py' ? 'text/x-python' : 'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = algAtual + (ext==='py'?'.py':'.txt');
+  document.body.appendChild(a); a.click(); a.remove();
+}
+
+document.getElementById('btnDownloadCode').addEventListener('click', baixarCodigo);
+
+function baixarHTML(){ const doctype='<!DOCTYPE html>\n'; const html=document.documentElement.outerHTML; const blob=new Blob([doctype+html],{type:'text/html'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='laboratorio_ml_bilingue_pt_en.html'; document.body.appendChild(a); a.click(); a.remove(); }
+document.getElementById('btnDownloadHTML').addEventListener('click', baixarHTML);
+</script>
 </body>
 </html>
