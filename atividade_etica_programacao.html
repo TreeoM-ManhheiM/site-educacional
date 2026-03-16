@@ -1,50 +1,42 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
 <meta charset="UTF-8">
 <title>Laboratório de Algoritmos em Python</title>
-
 <style>
-
 body{
 font-family:Arial;
 margin:40px;
 background:#f2f2f2;
 }
-
 h1{
 background:#222;
 color:white;
 padding:15px;
 }
-
 h2{
 background:#444;
 color:white;
 padding:10px;
 }
-
 .box{
 background:white;
 padding:20px;
 margin-bottom:20px;
 border-radius:10px;
 }
-
 .fluxo{
 background:#f4f4f4;
 padding:15px;
 font-family:monospace;
+white-space:pre;
 }
-
 .info{
 background:#e8f4ff;
 padding:15px;
 }
-
 </style>
-
 </head>
 
 <body>
@@ -52,35 +44,20 @@ padding:15px;
 <h1>Laboratório de Algoritmos em Python</h1>
 
 <div class="box info">
-
 <b>Tempo total:</b> 2 horas<br>
 <b>Alunos:</b> 20 pessoas (cada um com seu computador)
-
 <h3>Objetivo</h3>
-
 <ul>
 <li>Pensar em algoritmos</li>
 <li>Tomar decisões usando if / elif / else</li>
 <li>Transformar fluxogramas em código Python</li>
 </ul>
-
 </div>
 
 <div class="box">
+<h2>Revisão: Estruturas Condicionais</h2>
 
-<h2>Desvio Condicional Composto</h2>
-
-<p>
-Possui duas possibilidades:
-</p>
-
-<ul>
-<li>Verdadeiro</li>
-<li>Falso</li>
-</ul>
-
-<p><b>Estrutura em Python</b></p>
-
+<p><b>Desvio Condicional Composto</b></p>
 <pre>
 if condição:
     ação
@@ -88,234 +65,124 @@ else:
     ação
 </pre>
 
-<p><b>Fluxograma</b></p>
-
-<div class="fluxo">
-
-INICIO
-
-  |
-
-condição ?
-
- /     \
-
-SIM     NÃO
-
- |       |
-
-ação1   ação2
-
- |
-
-FIM
-
-</div>
-
-</div>
-
-<div class="box">
-
-<h2>Exercício 1 — Controle de Temperatura</h2>
-
-<p>
-Um sistema verifica a temperatura do laboratório.
-</p>
-
-<p>Regras:</p>
-
-<ul>
-<li>Se temperatura maior que 28 → ligar ar condicionado</li>
-<li>Senão → manter sistema normal</li>
-</ul>
-
-<p><b>Fluxograma</b></p>
-
-<div class="fluxo">
-
-INICIO
-
- |
-
-ler temperatura
-
- |
-
-temperatura > 28 ?
-
- /       \
-
-SIM       NÃO
-
- |         |
-
-ligar ar   normal
-
- |
-
-FIM
-
-</div>
-
-<p><b>Desafio:</b> Criar um programa em Python que siga esse fluxo.</p>
-
-</div>
-
-<div class="box">
-
-<h2>Desvio Condicional Encadeado</h2>
-
-<p>
-Permite múltiplas decisões usando <b>elif</b>.
-</p>
-
-<p><b>Estrutura</b></p>
-
+<p><b>Desvio Condicional Encadeado</b></p>
 <pre>
-
 if condição:
     ação
-
 elif condição:
     ação
-
-elif condição:
-    ação
-
 else:
     ação
-
 </pre>
-
 </div>
 
 <div class="box">
-
-<h2>Exercício 2 — Sistema de Notas</h2>
-
-<p>
-Um programa calcula o resultado de um aluno.
-</p>
-
-<p>Regras:</p>
-
-<ul>
-<li>Nota maior ou igual a 7 → Aprovado</li>
-<li>Nota maior ou igual a 5 → Recuperação</li>
-<li>Nota menor que 5 → Reprovado</li>
-</ul>
-
-<p><b>Fluxograma</b></p>
-
-<div class="fluxo">
-
-INICIO
-
- |
-
-ler nota
-
- |
-
-nota >= 7 ?
-
- /        \
-
-SIM        NÃO
-
- |          |
-
-aprovado  nota >=5 ?
-
-           /      \
-
-         SIM      NÃO
-
-          |        |
-
-     recuperação  reprovado
-
- |
-
-FIM
-
-</div>
-
-<p><b>Desafio:</b> Criar um programa em Python que implemente esse algoritmo.</p>
-
+<h2>Atividade 1 — Biblioteca</h2>
+<p>Se a pessoa for aluno → entrada liberada. Caso contrário → entrada negada.</p>
 </div>
 
 <div class="box">
-
-<h2>Exercício 3 — Sistema de Acesso ao Laboratório</h2>
-
-<p>
-O sistema verifica quem pode entrar no laboratório.
-</p>
-
-<ul>
-<li>Aluno → entrada liberada</li>
-<li>Professor → entrada liberada</li>
-<li>Visitante → solicitar autorização</li>
-</ul>
-
-<p><b>Fluxograma</b></p>
-
-<div class="fluxo">
-
-INICIO
-
- |
-
-tipo de pessoa
-
- |
-
-aluno ?
-
- /     \
-
-SIM     NÃO
-
- |       |
-
-liberar  professor ?
-
-         /        \
-
-       SIM        NÃO
-
-        |          |
-
-     liberar   visitante
-
-                 |
-
-           pedir autorização
-
- |
-
-FIM
-
-</div>
-
-<p><b>Desafio:</b> Implementar o algoritmo em Python usando <b>if / elif / else</b>.</p>
-
+<h2>Atividade 2 — Classificação de Filme</h2>
+<p>Menor que 12 → infantil. 12 a 17 → adolescente. 18 ou mais → adulto.</p>
 </div>
 
 <div class="box">
+<h2>Atividade 3 — Estacionamento da Faculdade</h2>
+<p>Professor → vaga reservada. Aluno → vaga comum. Visitante → estacionamento externo.</p>
+</div>
 
-<h2>Entrega da Atividade</h2>
+<div class="box">
+<h2>Atividade 4 — Temperatura do Servidor</h2>
+<p>Menor que 40 → normal. 40 a 60 → atenção. Maior que 60 → risco.</p>
+</div>
 
+<div class="box">
+<h2>Atividade 5 — Desconto na Cantina</h2>
+<p>Aluno → 10%. Professor → 15%. Visitante → sem desconto.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 6 — Verificação de Login</h2>
+<p>Senha correta → acesso liberado. Senha incorreta → acesso negado.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 7 — Energia do Laboratório</h2>
+<p>Manhã → ligar computadores. Tarde → modo aula. Noite → economia.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 8 — Sistema de Notas</h2>
+<p>Nota ≥ 9 → excelente. Nota ≥ 7 → aprovado. Nota ≥ 5 → recuperação. Senão → reprovado.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 9 — Radar de Velocidade</h2>
+<p>Até 60 → normal. 61–80 → advertência. Acima de 80 → multa.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 10 — Senha Forte</h2>
+<p>Se a senha tiver 8 ou mais caracteres → válida. Caso contrário → fraca.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 11 — Controle de Estoque</h2>
+<p>Mais de 10 → normal. 5 a 10 → atenção. Menos de 5 → comprar mais.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 12 — Sistema de Clima</h2>
+<p>Frio → usar casaco. Ameno → clima agradável. Quente → ligar ventilador.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 13 — Transporte Escolar</h2>
+<p>Menor que 10 → transporte infantil. 10 a 15 → transporte escolar. Maior que 15 → transporte regular.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 14 — Energia Solar</h2>
+<p>Bateria alta → usar solar. Média → equilibrar consumo. Baixa → usar rede elétrica.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 15 — Sistema de Usuários</h2>
+<p>Admin → acesso total. Professor → acesso parcial. Aluno → acesso limitado.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 16 — Previsão do Tempo</h2>
+<p>Chuva → levar guarda‑chuva. Nublado → atenção. Sol → dia normal.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 17 — Acesso ao Wi‑Fi</h2>
+<p>Usuário registrado → conectar. Caso contrário → solicitar cadastro.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 18 — Bateria do Notebook</h2>
+<p>Acima de 80 → cheia. 30 a 80 → normal. Abaixo de 30 → carregar.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 19 — Pontuação de Jogo</h2>
+<p>≥1000 → avançado. ≥500 → intermediário. Menor que 500 → iniciante.</p>
+</div>
+
+<div class="box">
+<h2>Atividade 20 — Abertura do Laboratório</h2>
+<p>Segunda a sexta → aberto. Sábado ou domingo → fechado.</p>
+</div>
+
+<div class="box">
+<h2>Entrega</h2>
 <p>
-
-1) Criar os programas no Python.<br>
-2) Testar no computador.<br>
-3) Salvar os arquivos <b>.py</b>.<br>
-4) Entregar ao professor.
-
+1. Criar os programas em Python (.py).<br>
+2. Testar no computador.<br>
+3. Entregar os arquivos ao professor.
 </p>
-
 </div>
 
 </body>
