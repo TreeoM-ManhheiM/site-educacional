@@ -1,315 +1,269 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>2048 — Laboratório de Lógica</title>
-  <style>
-    :root{
-      --bg:#111827;           /* slate-900 */
-      --panel:#0b1220;        /* dark panel */
-      --tile:#1f2937;         /* slate-800 */
-      --accent:#22d3ee;       /* cyan-400 */
-      --accent-2:#a78bfa;     /* violet-400 */
-      --good:#4ade80;         /* green-400 */
-      --warn:#f59e0b;         /* amber-500 */
-      --bad:#ef4444;          /* red-500 */
-      --text:#e5e7eb;         /* slate-200 */
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(1200px 800px at 20% 20%, #0b1020 0, #0b1020 40%, #090e1a 70%, #060a14 100%) fixed;
-      color:var(--text); font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-    }
-    .wrap{ width: min(960px, 95vw); }
-    header{ text-align:center; margin-bottom: 18px; }
-    header h1{ margin:0 0 6px; font-weight:700; font-size: clamp(26px, 3vw, 36px); letter-spacing:.4px }
-    header p{ margin:0; opacity:.9 }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EE. Oito de Abril — Arcade Didático (Snake · Tetris · 2048 · Jogo da Velha · Memory)</title>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#0f172a; --ink:#e5e7eb; --muted:#9ca3af; --primary:#60a5fa; --accent:#22d3ee; --good:#34d399; --warn:#f59e0b; --bad:#ef4444;
+  }
+  *{box-sizing:border-box} html,body{height:100%}
+  body{margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; background:radial-gradient(1200px 800px at 10% 10%, #0b1020, #070b18 65%, #050913); color:var(--ink)}
+  header{padding:24px 16px; text-align:center}
+  header h1{margin:0; font-size:clamp(22px,3.2vw,36px); letter-spacing:.2px}
+  header p{margin:.4rem 0 0; color:var(--muted)}
 
-    .topbar{
-      display:flex; gap:12px; align-items:center; justify-content:space-between;
-      margin: 18px 0 12px;
-    }
+  .container{max-width:1100px; margin:0 auto; padding:0 16px 32px}
+  .menu{display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px;}
+  .card{background:linear-gradient(180deg,#101a33,#0d1426); border:1px solid #1f2a44; border-radius:12px; padding:18px; box-shadow:0 12px 28px rgba(0,0,0,.28); display:flex; flex-direction:column; gap:10px}
+  .card h3{margin:0; font-size:18px}
+  .card p{margin:0; color:var(--muted); font-size:14px; line-height:1.5}
+  .btn{appearance:none; border:1px solid #27406d; background:linear-gradient(180deg,#1c2b4a,#12203a); color:var(--ink); padding:10px 12px; border-radius:10px; font-weight:700; cursor:pointer; transition:transform .06s,box-shadow .2s}
+  .btn:hover{transform:translateY(-1px); box-shadow:0 8px 18px rgba(0,0,0,.25)}
+  .hint{color:var(--muted); margin:14px 0 0; font-size:13px}
 
-    .badges{ display:flex; gap:12px; align-items:stretch; }
-    .badge{ background:linear-gradient(180deg, #1a2334, #121a2a); padding:12px 14px; border-radius:10px; min-width:140px; text-align:center; box-shadow:0 8px 20px rgba(0,0,0,.25); }
-    .label{ font-size:12px; opacity:.8 }
-    .value{ font-size:22px; font-weight:800 }
+  .view{display:none}
+  .view.active{display:block}
+  .toolbar{display:flex; gap:8px; align-items:center; justify-content:space-between; margin:8px 0 14px}
+  .toolbar .left{display:flex; gap:8px; align-items:center}
+  .badge{background:#0f172a; border:1px solid #243453; padding:10px 12px; border-radius:10px; min-width:120px; text-align:center}
+  .badge .k{font-size:12px; color:var(--muted)} .badge .v{font-weight:800; font-size:20px}
+  .back{background:linear-gradient(180deg,#243046,#151c2c)}
 
-    .controls{ display:flex; gap:8px; }
-    button{
-      background:linear-gradient(180deg, #243046, #151c2c);
-      color:var(--text); border:1px solid #26334c; border-radius:10px; padding:10px 14px; cursor:pointer;
-      font-weight:600; letter-spacing:.2px; box-shadow:0 6px 16px rgba(0,0,0,.25); transition: transform .06s ease;
-    }
-    button:hover{ transform: translateY(-1px) }
-    button:active{ transform: translateY(0) }
+  /* Boards */
+  .panel{background:linear-gradient(180deg,#0b1220,#0a0f1c); border:1px solid #1f2a44; border-radius:14px; padding:16px; box-shadow:0 10px 26px rgba(0,0,0,.35)}
 
-    .layout{ display:grid; grid-template-columns: 1fr 360px; gap:18px; }
-    @media (max-width: 920px){ .layout{ grid-template-columns: 1fr; } }
+  /* 2048 */
+  .g2048{max-width:520px; margin:auto}
+  .grid2048{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; background:#0f172a; padding:10px; border-radius:12px; box-shadow: inset 0 0 0 1px #1f2a44}
+  .grid2048 .cell{background:#111a2d; border-radius:10px; aspect-ratio:1/1}
+  .tile{display:flex; align-items:center; justify-content:center; font-weight:900; border-radius:10px; box-shadow:0 10px 16px rgba(0,0,0,.25); font-size:clamp(18px,4.5vw,34px)}
+  .v2{background:#e0f2fe; color:#0b1220}.v4{background:#bae6fd; color:#0b1220}.v8{background:#93c5fd}.v16{background:#7dd3fc}.v32{background:#60a5fa}.v64{background:#38bdf8}.v128{background:#34d399}.v256{background:#22c55e}.v512{background:#f59e0b}.v1024{background:#f97316}.v2048{background:#f43f5e; color:#fff}
+  .status{margin-top:12px; padding:10px; border-radius:10px; background:#0f172a; border:1px solid #26334c}
 
-    .board-panel{ background:linear-gradient(180deg, #111827, #0b1220); border:1px solid #1f2a44; border-radius:14px; padding:16px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
-    .board{
-      width:min(88vw,520px); aspect-ratio:1/1; margin:auto; position:relative;
-      display:grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr);
-      gap:10px; padding:10px; background:#0f172a; border-radius:12px; box-shadow: inset 0 0 0 1px #1f2a44;
-    }
-    .cell{ background:#111a2d; border-radius:10px; }
+  /* Snake */
+  .snakeWrap{display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap}
+  canvas.snake{background:#0f172a; border-radius:10px; border:1px solid #1f2a44}
 
-    .tile{
-      position:relative; display:flex; align-items:center; justify-content:center; border-radius:10px;
-      font-weight:900; font-size: clamp(20px, 5vw, 34px); color:#0a0e18; box-shadow: 0 10px 16px rgba(0,0,0,.25);
-      transition: transform .08s ease;
-      user-select:none;
-    }
+  /* Tetris */
+  .tetrisWrap{display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap}
+  canvas.tetris{background:#0f172a; border-radius:10px; border:1px solid #1f2a44}
 
-    /* Color palette for values */
-    .v2  { background:#e0f2fe; color:#0b1220 }
-    .v4  { background:#bae6fd; color:#0b1220 }
-    .v8  { background:#93c5fd; }
-    .v16 { background:#7dd3fc; }
-    .v32 { background:#60a5fa; }
-    .v64 { background:#38bdf8; }
-    .v128{ background:#34d399; }
-    .v256{ background:#22c55e; }
-    .v512{ background:#f59e0b; }
-    .v1024{ background:#f97316; }
-    .v2048{ background:#f43f5e; color:#fff }
+  /* Jogo da Velha */
+  .tttGrid{display:grid; grid-template-columns:repeat(3,100px); grid-template-rows:repeat(3,100px); gap:10px; justify-content:center}
+  .tttCell{display:flex; align-items:center; justify-content:center; background:#0f172a; border:1px solid #1f2a44; border-radius:10px; font-size:42px; font-weight:900; cursor:pointer; width:100px; height:100px}
 
-    .sidebar{ background:linear-gradient(180deg, #0b1220, #0a0f1c); border:1px solid #1f2a44; border-radius:14px; padding:16px; box-shadow: 0 10px 30px rgba(0,0,0,.35); }
-    .sidebar h3{ margin:2px 0 8px; font-size:18px; color:#c7d2fe }
-    .help p{ margin:.4em 0; line-height:1.55 }
-    kbd{ background:#0f172a; border:1px solid #1f2a44; padding:2px 6px; border-radius:6px; font-weight:700; color:#cbd5e1 }
+  /* Memory */
+  .memGrid{display:grid; grid-template-columns:repeat(4,80px); gap:10px; justify-content:center}
+  .cardM{width:80px; height:80px; perspective:800px}
+  .cardInner{position:relative; width:100%; height:100%; transform-style:preserve-3d; transition:transform .4s}
+  .cardM.flipped .cardInner{transform:rotateY(180deg)}
+  .face{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; border-radius:10px}
+  .front{background:#111a2d; border:1px solid #1f2a44}
+  .back{background:#1d2a46; border:1px solid #30476f; transform:rotateY(180deg); font-size:32px}
 
-    .status{ margin-top:12px; padding:12px; border-radius:10px; background:#0f172a; border:1px solid #26334c; }
-    .status.win{ border-color:#22c55e; }
-    .status.lose{ border-color:#ef4444; }
-    .msg{ font-weight:700 }
-
-    .footer{ text-align:center; opacity:.8; margin-top:14px; font-size:12px }
-  </style>
+  .footerHint{color:var(--muted); text-align:center; margin-top:10px; font-size:12px}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <h1>2048 — Laboratório de Lógica</h1>
-      <p>Use as setas do teclado (ou arraste no celular) para combinar valores iguais até chegar em <strong>2048</strong>.</p>
-    </header>
+  <header>
+    <h1>9OD — Arcade Didático</h1>
+    <p>Cinco jogos em <strong>HTML + JavaScript</strong> para treinar lógica e manipular código: <em>Snake, Tetris, 2048, Jogo da Velha e Memory</em>.</p>
+  </header>
+  <div class="container">
+    <section id="menu" class="menu view active">
+      <div class="card"><h3>🐍 Snake</h3><p>Movimente a cobra, coma a maçã e cresça. Lógica de filas, grid e colisão.</p><button class="btn" onclick="showView('snake')">Jogar Snake</button></div>
+      <div class="card"><h3>🧱 Tetris</h3><p>Rotacione peças e complete linhas. Lógica de matriz, rotação e colisão.</p><button class="btn" onclick="showView('tetris')">Jogar Tetris</button></div>
+      <div class="card"><h3>🔢 2048</h3><p>Una blocos iguais para somar. Lógica de deslizamento, fusão e randomness.</p><button class="btn" onclick="showView('g2048')">Jogar 2048</button></div>
+      <div class="card"><h3>❌⭕ Jogo da Velha</h3><p>3×3 em turnos. Verificação de vitória e empate.</p><button class="btn" onclick="showView('ttt')">Jogar Jogo da Velha</button></div>
+      <div class="card"><h3>🧠 Memory</h3><p>Encontre os pares. Aleatoriedade, estado e comparação.</p><button class="btn" onclick="showView('memory')">Jogar Memory</button></div>
+      <p class="hint">Dica: abra o arquivo no navegador e use o DevTools para os alunos explorarem e alterarem o código.</p>
+    </section>
 
-    <div class="topbar">
-      <div class="badges">
-        <div class="badge"><div class="label">Pontuação</div><div id="score" class="value">0</div></div>
-        <div class="badge"><div class="label">Recorde</div><div id="best" class="value">0</div></div>
+    <!-- SNAKE -->
+    <section id="snake" class="view">
+      <div class="toolbar"><div class="left"><button class="btn back" onclick="goHome()">← Menu</button><strong>Snake</strong></div><div class="badge"><div class="k">Pontuação</div><div id="snakeScore" class="v">0</div></div></div>
+      <div class="panel snakeWrap">
+        <canvas id="snakeCanvas" class="snake" width="420" height="420" aria-label="Tabuleiro do Snake"></canvas>
+        <div>
+          <p><strong>Controles:</strong> Setas <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> ou <kbd>WASD</kbd>. Reiniciar: <kbd>R</kbd>.</p>
+          <p><strong>Objetivo:</strong> Comer a maçã. Evite paredes e o próprio corpo.</p>
+        </div>
       </div>
-      <div class="controls">
-        <button id="newGame" title="Reiniciar (N)">Novo Jogo</button>
-        <button id="undoBtn" title="Desfazer (Z)">Desfazer</button>
+      <div class="footerHint">Grid 21×21 — cada passo atualiza a posição da cabeça e move a cauda (fila).</div>
+    </section>
+
+    <!-- TETRIS -->
+    <section id="tetris" class="view">
+      <div class="toolbar"><div class="left"><button class="btn back" onclick="goHome()">← Menu</button><strong>Tetris</strong></div><div style="display:flex; gap:10px">
+        <div class="badge"><div class="k">Pontuação</div><div id="tetrisScore" class="v">0</div></div>
+        <div class="badge"><div class="k">Linhas</div><div id="tetrisLines" class="v">0</div></div>
+      </div></div>
+      <div class="panel tetrisWrap">
+        <canvas id="tetrisCanvas" class="tetris" width="240" height="480" aria-label="Tabuleiro do Tetris"></canvas>
+        <div>
+          <p><strong>Controles:</strong> <kbd>←</kbd>/<kbd>→</kbd> mover, <kbd>↑</kbd> rotacionar, <kbd>↓</kbd> descer, <kbd>Espaço</kbd> queda rápida, <kbd>R</kbd> reiniciar.</p>
+          <p>Peças clássicas <em>(I, O, T, S, Z, J, L)</em>, detecção de linhas e placar simples.</p>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div class="layout">
-      <section class="board-panel">
-        <div id="board" class="board" aria-label="Tabuleiro 2048" role="grid">
-          <!-- Background cells -->
-          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
-        </div>
-        <div id="status" class="status" hidden>
-          <div class="msg" id="statusMsg"></div>
-          <div class="footer">Pressione <kbd>N</kbd> para novo jogo ou continue jogando se quiser superar sua pontuação.</div>
-        </div>
-      </section>
+    <!-- 2048 -->
+    <section id="g2048" class="view">
+      <div class="toolbar"><div class="left"><button class="btn back" onclick="goHome()">← Menu</button><strong>2048</strong></div>
+        <div class="badge"><div class="k">Pontuação</div><div id="score2048" class="v">0</div></div>
+        <div class="badge"><div class="k">Recorde</div><div id="best2048" class="v">0</div></div>
+      </div>
+      <div class="panel g2048">
+        <div id="grid2048" class="grid2048" role="grid" aria-label="Tabuleiro 2048"></div>
+        <div id="status2048" class="status" hidden></div>
+      </div>
+    </section>
 
-      <aside class="sidebar">
-        <h3>Como jogar</h3>
-        <div class="help">
-          <p><strong>Objetivo:</strong> unir blocos com o mesmo número para formar números maiores. Quando dois blocos com o mesmo valor se encontram, eles <em>fundem</em>.</p>
-          <p><strong>Controles:</strong> <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> ou toque e arraste (celular). <br> Atalhos: <kbd>N</kbd> novo jogo, <kbd>Z</kbd> desfazer.</p>
-          <p><strong>Estratégia:</strong> mantenha um canto “fixo” para o maior valor e evite movimentos que desorganizem a sequência dos blocos.</p>
-        </div>
-      </aside>
-    </div>
+    <!-- JOGO DA VELHA -->
+    <section id="ttt" class="view">
+      <div class="toolbar"><div class="left"><button class="btn back" onclick="goHome()">← Menu</button><strong>Jogo da Velha</strong></div>
+        <button class="btn" onclick="tttReset()">Novo Jogo</button>
+      </div>
+      <div class="panel">
+        <div id="tttGrid" class="tttGrid" aria-label="Jogo da Velha"></div>
+        <p id="tttMsg" style="text-align:center; margin-top:10px"></p>
+      </div>
+    </section>
+
+    <!-- MEMORY -->
+    <section id="memory" class="view">
+      <div class="toolbar"><div class="left"><button class="btn back" onclick="goHome()">← Menu</button><strong>Memory</strong></div>
+        <div class="badge"><div class="k">Jogadas</div><div id="memMoves" class="v">0</div></div>
+      </div>
+      <div class="panel">
+        <div id="memGrid" class="memGrid" aria-label="Jogo da Memória"></div>
+        <p id="memMsg" style="text-align:center; margin-top:10px"></p>
+      </div>
+    </section>
   </div>
 
-  <script>
-    // ====== Estado do jogo ======
-    const SIZE = 4;
-    let board = createEmptyBoard();
-    let score = 0;
-    let best = Number(localStorage.getItem('best-2048') || 0);
-    let history = []; // para desfazer
-    const scoreEl = document.getElementById('score');
-    const bestEl = document.getElementById('best');
-    const boardEl = document.getElementById('board');
-    const statusBox = document.getElementById('status');
-    const statusMsg = document.getElementById('statusMsg');
+<script>
+  // Navegação
+  let activeView = 'menu';
+  function showView(id){ document.querySelectorAll('.view').forEach(v=>v.classList.remove('active')); document.getElementById(id).classList.add('active'); activeView=id; if(id==='snake') snakeStart(); if(id==='tetris') tetrisStart(); if(id==='g2048') start2048(); if(id==='ttt') tttReset(); if(id==='memory') memStart(); }
+  function goHome(){ showView('menu'); }
 
-    function createEmptyBoard(){ return Array.from({length:SIZE}, ()=> Array(SIZE).fill(0)); }
+  // ====== SNAKE ======
+  const sCanvas = document.getElementById('snakeCanvas');
+  const sCtx = sCanvas.getContext('2d');
+  const GRID=21; const CELL = Math.floor(sCanvas.width/GRID);
+  let snake, apple, dir, sScore, sTick, sAlive;
+  function snakeInit(){ snake=[{x:10,y:10}]; apple=randApple(); dir={x:1,y:0}; sScore=0; sAlive=true; }
+  function randApple(){
+    while(true){ let a={x:Math.floor(Math.random()*GRID), y:Math.floor(Math.random()*GRID)}; if(!snake || !snake.some(p=>p.x===a.x&&p.y===a.y)) return a; }
+  }
+  function snakeStart(){ snakeInit(); clearInterval(sTick); sTick=setInterval(snakeStep,120); drawSnake(); document.getElementById('snakeScore').textContent=sScore; }
+  function snakeStep(){ if(!sAlive) return; const head={x:snake[0].x+dir.x, y:snake[0].y+dir.y};
+    if(head.x<0||head.y<0||head.x>=GRID||head.y>=GRID||snake.some(p=>p.x===head.x&&p.y===head.y)){ sAlive=false; return; }
+    snake.unshift(head);
+    if(head.x===apple.x&&head.y===apple.y){ sScore+=10; apple=randApple(); } else { snake.pop(); }
+    document.getElementById('snakeScore').textContent=sScore; drawSnake(); }
+  function drawSnake(){ sCtx.clearRect(0,0,sCanvas.width,sCanvas.height); // grid
+    for(let i=0;i<GRID;i++) for(let j=0;j<GRID;j++){ sCtx.fillStyle=(i+j)%2? '#0f172a':'#101a2e'; sCtx.fillRect(i*CELL,j*CELL,CELL,CELL);} 
+    // apple
+    sCtx.fillStyle='#f59e0b'; sCtx.beginPath(); sCtx.arc(apple.x*CELL+CELL/2, apple.y*CELL+CELL/2, CELL*0.35, 0, Math.PI*2); sCtx.fill();
+    // snake
+    sCtx.fillStyle='#34d399'; snake.forEach((p,i)=>{ sCtx.fillRect(p.x*CELL+1, p.y*CELL+1, CELL-2, CELL-2); });
+    if(!sAlive){ sCtx.fillStyle='rgba(0,0,0,.6)'; sCtx.fillRect(0,0,sCanvas.width,sCanvas.height); sCtx.fillStyle='#e5e7eb'; sCtx.font='bold 22px system-ui'; sCtx.fillText('Fim! R para reiniciar', 100, 210); }
+  }
 
-    function saveState(){
-      history.push({ board: board.map(r=>r.slice()), score });
-      if(history.length>40) history.shift();
-    }
+  document.addEventListener('keydown', (e)=>{
+    if(activeView!=='snake') return;
+    const k=e.key.toLowerCase(); if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d','r'].includes(k)) e.preventDefault();
+    if((k==='arrowup'||k==='w')&&dir.y!==1) dir={x:0,y:-1};
+    if((k==='arrowdown'||k==='s')&&dir.y!==-1) dir={x:0,y:1};
+    if((k==='arrowleft'||k==='a')&&dir.x!==1) dir={x:-1,y:0};
+    if((k==='arrowright'||k==='d')&&dir.x!==-1) dir={x:1,y:0};
+    if(k==='r'){ snakeStart(); }
+  });
 
-    function undo(){
-      const last = history.pop();
-      if(!last) return;
-      board = last.board.map(r=>r.slice());
-      score = last.score; updateScore();
-      render();
-      hideStatus();
-    }
+  // ====== TETRIS ======
+  const tCanvas=document.getElementById('tetrisCanvas'); const tCtx=tCanvas.getContext('2d');
+  const COLS=10, ROWS=20, TSIZE=24; tCtx.scale(1,1);
+  let tBoard, tPiece, tX, tY, tRot, tTimer, tScore=0, tLines=0, fallDelay=520, lastTime=0;
+  const SHAPES={
+    I:[[1,1,1,1]], O:[[1,1],[1,1]], T:[[1,1,1],[0,1,0]], S:[[0,1,1],[1,1,0]], Z:[[1,1,0],[0,1,1]], J:[[1,0,0],[1,1,1]], L:[[0,0,1],[1,1,1]]
+  }; const COLORS={I:'#22d3ee',O:'#fde047',T:'#a78bfa',S:'#34d399',Z:'#f87171',J:'#60a5fa',L:'#f59e0b'};
+  function tNewBoard(){ tBoard=Array.from({length:ROWS},()=>Array(COLS).fill(0)); }
+  function tRandomPiece(){ const keys=Object.keys(SHAPES); const k=keys[Math.floor(Math.random()*keys.length)]; return {k, m:SHAPES[k]}; }
+  function tSpawn(){ tPiece=tRandomPiece(); tRot=0; tX=3; tY=0; if(tCollide(0,0,tRot)) { tNewBoard(); tScore=0; tLines=0; }
+  }
+  function tRotate(mat){ const R=mat[0].length, C=mat.length; const out=Array.from({length:R},()=>Array(C).fill(0)); for(let r=0;r<C;r++) for(let c=0;c<R;c++) out[c][C-1-r]=mat[r][c]; return out; }
+  function tShape(){ let m=tPiece.m; for(let i=0;i<tRot;i++) m=tRotate(m); return m; }
+  function tCollide(dx,dy,rot){ let m=tPiece.m; for(let i=0;i<rot;i++) m=tRotate(m); const R=m.length,C=m[0].length; for(let r=0;r<R;r++) for(let c=0;c<C;c++){ if(!m[r][c]) continue; const x=tX+c+dx, y=tY+r+dy; if(x<0||x>=COLS||y>=ROWS|| (y>=0 && tBoard[y][x])) return true; } return false; }
+  function tLock(){ const m=tShape(); for(let r=0;r<m.length;r++) for(let c=0;c<m[0].length;c++){ if(m[r][c]){ if(tY+r>=0) tBoard[tY+r][tX+c]=tPiece.k; } }
+    // clear lines
+    let cleared=0; for(let r=ROWS-1;r>=0;r--){ if(tBoard[r].every(v=>v)){ tBoard.splice(r,1); tBoard.unshift(Array(COLS).fill(0)); cleared++; r++; } }
+    if(cleared){ tLines+=cleared; tScore += [0,40,100,300,1200][cleared]; if(fallDelay>140) fallDelay-=10*cleared; }
+    tSpawn();
+  }
+  function tDraw(){ tCtx.clearRect(0,0,tCanvas.width,tCanvas.height); // board
+    for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){ tCtx.fillStyle = (y+x)%2? '#0f172a':'#0e162b'; tCtx.fillRect(x*TSIZE,y*TSIZE,TSIZE,TSIZE); if(tBoard[y][x]){ tCtx.fillStyle=COLORS[tBoard[y][x]]; tCtx.fillRect(x*TSIZE+1,y*TSIZE+1,TSIZE-2,TSIZE-2);} }
+    const m=tShape(); for(let r=0;r<m.length;r++) for(let c=0;c<m[0].length;c++){ if(m[r][c]){ tCtx.fillStyle=COLORS[tPiece.k]; tCtx.fillRect((tX+c)*TSIZE+1,(tY+r)*TSIZE+1,TSIZE-2,TSIZE-2);} }
+    document.getElementById('tetrisScore').textContent=tScore; document.getElementById('tetrisLines').textContent=tLines;
+  }
+  function tStep(time){ if(activeView!=='tetris') return; if(!lastTime) lastTime=time; const delta=time-lastTime; if(delta>fallDelay){ if(!tCollide(0,1,tRot)) tY++; else tLock(); lastTime=time; } tDraw(); requestAnimationFrame(tStep); }
+  function tetrisStart(){ tNewBoard(); tSpawn(); fallDelay=520; lastTime=0; requestAnimationFrame(tStep); }
+  document.addEventListener('keydown',(e)=>{ if(activeView!=='tetris') return; const k=e.key; if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','r','R'].includes(k)) e.preventDefault();
+    if(k==='ArrowLeft' && !tCollide(-1,0,tRot)) tX--; else if(k==='ArrowRight' && !tCollide(1,0,tRot)) tX++; else if(k==='ArrowDown'){ if(!tCollide(0,1,tRot)) tY++; else tLock(); }
+    else if(k==='ArrowUp'){ let nr=(tRot+1)%4; if(!tCollide(0,0,nr)) tRot=nr; }
+    else if(k===' '){ while(!tCollide(0,1,tRot)) tY++; tLock(); }
+    else if(k==='r'||k==='R'){ tetrisStart(); }
+  });
 
-    function start(){
-      board = createEmptyBoard(); score = 0; history = [];
-      addRandomTile(); addRandomTile(); updateScore(); render(); hideStatus();
-    }
+  // ====== 2048 ======
+  const SIZE=4; let grid=[], score2048=0, best2048=Number(localStorage.getItem('best-2048')||0);
+  const gridEl=document.getElementById('grid2048'), scoreEl2048=document.getElementById('score2048'), bestEl2048=document.getElementById('best2048');
+  const status2048=document.getElementById('status2048');
+  function emptyBoard(){ return Array.from({length:SIZE},()=>Array(SIZE).fill(0)); }
+  function cellsEmpty(){ const out=[]; for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(grid[r][c]===0) out.push([r,c]); return out; }
+  function addRandom(){ const e=cellsEmpty(); if(!e.length) return false; const [r,c]=e[Math.random()*e.length|0]; grid[r][c]=Math.random()<0.9?2:4; return true; }
+  function start2048(){ grid=emptyBoard(); score2048=0; addRandom(); addRandom(); draw2048(); hide2048(); }
+  function draw2048(){ gridEl.innerHTML=''; for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++){ const v=grid[r][c]; const cell=document.createElement('div'); cell.className='cell'; gridEl.appendChild(cell);} // base cells
+    for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++){ const v=grid[r][c]; if(!v) continue; const t=document.createElement('div'); t.className='tile v'+v; t.style.gridRow=(r+1); t.style.gridColumn=(c+1); t.textContent=v; gridEl.appendChild(t); }
+    scoreEl2048.textContent=score2048; best2048=Math.max(best2048,score2048); bestEl2048.textContent=best2048; localStorage.setItem('best-2048',best2048);
+  }
+  function canMove2048(){ if(cellsEmpty().length) return true; for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++){ const v=grid[r][c]; if(r+1<SIZE && grid[r+1][c]===v) return true; if(c+1<SIZE && grid[r][c+1]===v) return true; } return false; }
+  function slideMerge(line){ let arr=line.filter(v=>v); let gain=0; for(let i=0;i<arr.length-1;i++){ if(arr[i]===arr[i+1]){ arr[i]*=2; gain+=arr[i]; arr[i+1]=0; i++; } } arr=arr.filter(v=>v); while(arr.length<SIZE) arr.push(0); return {arr,gain}; }
+  function rotate(times){ for(let t=0;t<times;t++){ const nb=emptyBoard(); for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) nb[c][SIZE-1-r]=grid[r][c]; grid=nb; } }
+  function move2048(dir){ if(activeView!=='g2048') return; let rot=0; if(dir==='up') rot=1; else if(dir==='right') rot=2; else if(dir==='down') rot=3; if(rot) rotate(rot);
+    let moved=false, gainAll=0; for(let r=0;r<SIZE;r++){ const original=grid[r].slice(); const {arr,gain}=slideMerge(original); grid[r]=arr; if(arr.some((v,i)=>v!==original[i])) moved=true; gainAll+=gain; }
+    if(rot) rotate((4-rot)%4); if(moved){ score2048+=gainAll; addRandom(); draw2048(); if(grid.some(row=>row.some(v=>v>=2048))) show2048('Você atingiu 2048!'); else if(!canMove2048()) show2048('Fim de jogo!'); }
+  }
+  function show2048(msg){ status2048.textContent=msg; status2048.hidden=false; }
+  function hide2048(){ status2048.hidden=true; }
+  document.addEventListener('keydown',(e)=>{ if(activeView!=='g2048') return; const k=e.key; if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(k)) e.preventDefault();
+    if(k==='ArrowLeft') move2048('left'); else if(k==='ArrowRight') move2048('right'); else if(k==='ArrowUp') move2048('up'); else if(k==='ArrowDown') move2048('down'); });
 
-    function updateScore(){
-      scoreEl.textContent = score;
-      best = Math.max(best, score); bestEl.textContent = best;
-      localStorage.setItem('best-2048', best);
-    }
+  // ====== JOGO DA VELHA ======
+  let tttBoard, tttTurn, tttOver; const tttGridEl=document.getElementById('tttGrid'), tttMsg=document.getElementById('tttMsg');
+  function tttReset(){ tttBoard=Array(9).fill(''); tttTurn='X'; tttOver=false; tttRender(); tttMsg.textContent='Vez de: '+tttTurn; }
+  function tttRender(){ tttGridEl.innerHTML=''; for(let i=0;i<9;i++){ const d=document.createElement('div'); d.className='tttCell'; d.textContent=tttBoard[i]; d.addEventListener('click',()=>tttPlay(i)); tttGridEl.appendChild(d);} }
+  function tttPlay(i){ if(tttOver||tttBoard[i]) return; tttBoard[i]=tttTurn; tttTurn= tttTurn==='X'?'O':'X'; const w=tttWinner(); tttRender(); if(w){ tttMsg.textContent='Venceu: '+w; tttOver=true; } else if(tttBoard.every(Boolean)){ tttMsg.textContent='Empate!'; tttOver=true; } else { tttMsg.textContent='Vez de: '+tttTurn; } }
+  function tttWinner(){ const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(const [a,b,c] of L){ if(tttBoard[a] && tttBoard[a]===tttBoard[b] && tttBoard[a]===tttBoard[c]) return tttBoard[a]; } return null; }
 
-    function getEmptyCells(){
-      const cells = [];
-      for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) if(board[r][c]===0) cells.push([r,c]);
-      return cells;
-    }
+  // ====== MEMORY ======
+  const memSymbols=['🍎','🍌','🍇','🍉','🍒','🍑','🥝','🍍'];
+  let memDeck=[], memFirst=null, memLock=false, memMoves=0, memMatched=0; const memGrid=document.getElementById('memGrid'), memMovesEl=document.getElementById('memMoves'), memMsg=document.getElementById('memMsg');
+  function memStart(){ const arr=[...memSymbols, ...memSymbols]; memDeck=arr.sort(()=>Math.random()-0.5).map((sym,idx)=>({id:idx, sym, open:false, matched:false})); memFirst=null; memLock=false; memMoves=0; memMatched=0; memRender(); memMsg.textContent=''; memMovesEl.textContent='0'; }
+  function memRender(){ memGrid.innerHTML=''; memDeck.forEach((card,i)=>{ const wrap=document.createElement('div'); wrap.className='cardM'+(card.open||card.matched?' flipped':'');
+      const inner=document.createElement('div'); inner.className='cardInner';
+      const front=document.createElement('div'); front.className='face front'; front.textContent='?';
+      const back=document.createElement('div'); back.className='face back'; back.textContent=card.sym;
+      wrap.appendChild(inner); inner.appendChild(front); inner.appendChild(back);
+      wrap.addEventListener('click',()=>memFlip(i)); memGrid.appendChild(wrap); }); }
+  function memFlip(i){ if(memLock) return; const c=memDeck[i]; if(c.matched||c.open) return; c.open=true; memRender(); if(memFirst==null){ memFirst=i; } else { memMoves++; memMovesEl.textContent=String(memMoves); const a=memDeck[memFirst], b=c; if(a.sym===b.sym){ a.matched=b.matched=true; memFirst=null; memMatched+=2; if(memMatched===memDeck.length){ memMsg.textContent='Parabéns! Você encontrou todos os pares.'; } } else { memLock=true; setTimeout(()=>{ a.open=b.open=false; memFirst=null; memLock=false; memRender(); }, 700); } }
+  }
 
-    function addRandomTile(){
-      const empties = getEmptyCells();
-      if(empties.length===0) return false;
-      const [r,c] = empties[Math.floor(Math.random()*empties.length)];
-      board[r][c] = Math.random()<0.9 ? 2 : 4;
-      return true;
-    }
-
-    function canMove(){
-      if(getEmptyCells().length>0) return true;
-      // verifica vizinhos iguais
-      for(let r=0;r<SIZE;r++){
-        for(let c=0;c<SIZE;c++){
-          const v = board[r][c];
-          if((r+1<SIZE && board[r+1][c]===v) || (c+1<SIZE && board[r][c+1]===v)) return true;
-        }
-      }
-      return false;
-    }
-
-    function has2048(){
-      return board.some(row=>row.some(v=>v>=2048));
-    }
-
-    // ====== Movimentos ======
-    function slideAndMerge(line){
-      // remove zeros
-      let arr = line.filter(v=>v!==0);
-      let gained = 0;
-      for(let i=0;i<arr.length-1;i++){
-        if(arr[i]===arr[i+1]){ arr[i]*=2; gained+=arr[i]; arr[i+1]=0; i++; }
-      }
-      arr = arr.filter(v=>v!==0);
-      while(arr.length<SIZE) arr.push(0);
-      return { line: arr, gained };
-    }
-
-    function rotateBoard(times){ // 90° clockwise per time
-      for(let t=0;t<times;t++){
-        const nb = createEmptyBoard();
-        for(let r=0;r<SIZE;r++) for(let c=0;c<SIZE;c++) nb[c][SIZE-1-r]=board[r][c];
-        board = nb;
-      }
-    }
-
-    function move(dir){
-      // dir: 'left','right','up','down'
-      saveState();
-      let rotated = 0;
-      if(dir==='up'){ rotated=1; }
-      else if(dir==='right'){ rotated=2; }
-      else if(dir==='down'){ rotated=3; }
-      if(rotated) rotateBoard(rotated);
-
-      let moved = false; let gainedAll=0;
-      for(let r=0;r<SIZE;r++){
-        const original = board[r].slice();
-        const {line, gained} = slideAndMerge(original);
-        board[r] = line; gainedAll += gained;
-        if(!arraysEqual(original, line)) moved = true;
-      }
-      if(rotated) rotateBoard((4-rotated)%4);
-
-      if(moved){
-        score += gainedAll; updateScore();
-        addRandomTile(); render();
-        if(has2048()) showStatus('Você atingiu 2048! Continue para superar sua pontuação.', true);
-        else if(!canMove()) showStatus('Fim de jogo! Sem movimentos disponíveis.', false);
-      } else {
-        // não houve movimento: descarta histórico salvo
-        history.pop();
-      }
-    }
-
-    function arraysEqual(a,b){ return a.length===b.length && a.every((v,i)=>v===b[i]); }
-
-    // ====== Renderização ======
-    function render(){
-      // remove tiles existentes e recria
-      [...boardEl.querySelectorAll('.tile')].forEach(n=>n.remove());
-      for(let r=0;r<SIZE;r++){
-        for(let c=0;c<SIZE;c++){
-          const v = board[r][c];
-          if(v===0) continue;
-          const tile = document.createElement('div');
-          tile.className = 'tile v'+v;
-          tile.textContent = v;
-          tile.style.gridRow = (r+1);
-          tile.style.gridColumn = (c+1);
-          boardEl.appendChild(tile);
-        }
-      }
-    }
-
-    function showStatus(text, win){
-      statusMsg.textContent = text; statusBox.hidden = false;
-      statusBox.classList.toggle('win', !!win);
-      statusBox.classList.toggle('lose', !win);
-    }
-    function hideStatus(){ statusBox.hidden = true; statusBox.classList.remove('win','lose'); }
-
-    // ====== Controles ======
-    document.addEventListener('keydown', (e)=>{
-      const key = e.key;
-      if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','n','N','z','Z'].includes(key)) e.preventDefault();
-      if(key==='ArrowLeft') move('left');
-      else if(key==='ArrowRight') move('right');
-      else if(key==='ArrowUp') move('up');
-      else if(key==='ArrowDown') move('down');
-      else if(key==='n' || key==='N') start();
-      else if(key==='z' || key==='Z') undo();
-    });
-
-    // Toque/Swipe para mobile
-    let touchStartX=0, touchStartY=0;
-    boardEl.addEventListener('touchstart', (e)=>{
-      const t=e.changedTouches[0]; touchStartX=t.clientX; touchStartY=t.clientY;
-    }, {passive:true});
-    boardEl.addEventListener('touchend', (e)=>{
-      const t=e.changedTouches[0]; const dx=t.clientX - touchStartX; const dy=t.clientY - touchStartY;
-      const ax=Math.abs(dx), ay=Math.abs(dy); if(Math.max(ax,ay) < 24) return; // ignore toque curto
-      if(ax>ay){ dx>0 ? move('right') : move('left'); } else { dy>0 ? move('down') : move('up'); }
-    });
-
-    document.getElementById('newGame').addEventListener('click', start);
-    document.getElementById('undoBtn').addEventListener('click', undo);
-
-    // ====== Inicialização ======
-    bestEl.textContent = best; start();
-  </script>
+  // Inicial
+  // (menu é a tela inicial)
+</script>
 </body>
 </html>
