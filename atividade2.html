@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Laboratório de Algoritmos em Python — Versão com Código</title>
+<style>
+body{font-family:Arial,Helvetica,sans-serif;margin:40px;background:#f2f2f2;}
+h1{background:#222;color:#fff;padding:15px;border-radius:8px;}
+h2{background:#444;color:#fff;padding:10px;border-radius:6px;}
+.box{background:#fff;padding:20px;margin-bottom:20px;border-radius:10px;}
+.info{background:#e8f4ff;}
+pre.code{background:#0b1020;color:#e6e6e6;padding:14px;border-radius:8px;overflow:auto;}
+pre code{font-family:Consolas,Monaco,'Courier New',monospace;font-size:14px;}
+.small{color:#666;font-size:12px;margin-top:6px}
+</style>
+</head>
+<body>
+<h1>Laboratório de Algoritmos em Python — Versão com Código</h1>
+<div class="box info">
+<b>Tempo total:</b> 2 horas<br>
+<b>Alunos:</b> 20 pessoas (em duplas ou trios)
+<h3>Objetivo</h3>
+<ul>
+<li>Praticar <b>entrada</b> (<code>input()</code>), <b>decisão</b> (<code>if/elif/else</code>) e <b>saída</b> (<code>print()</code>).</li>
+<li>Usar regras de cada enunciado para tomar decisões.</li>
+<li>Organizar raciocínio antes de codar (fluxo → código).</li>
+</ul>
+<p class="small">Dica: normalize a entrada com <code>.strip().lower()</code> para facilitar as comparações.</p>
+</div>
+
+<div class="box">
+<h2>Revisão: Estruturas Condicionais</h2>
+
+<pre class="code"><code>if condicao:  # decisão: testa condição e executa o bloco se for verdadeira
+    acao  # instrução Python
+elif outra_condicao:  # decisão alternativa: testa nova condição quando o if anterior falha
+    acao  # instrução Python
+else:  # caso contrário: executa quando as condições anteriores falham
+    acao  # instrução Python</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 1 — Biblioteca</h2>
+<p>Se a pessoa for aluno → entrada liberada. Caso contrário → entrada negada.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>papel = input(&#x27;Você é aluno? (s/n) &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+if papel in (&#x27;s&#x27;, &#x27;sim&#x27;):  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Entrada liberada (aluno)&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Entrada negada&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 2 — Classificação de Filme</h2>
+<p>Menor que 12 → infantil. 12 a 17 → adolescente. 18 ou mais → adulto.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>idade = int(input(&#x27;Idade: &#x27;))  # entrada: lê texto do usuário
+if idade &lt; 12:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Classificação: infantil&#x27;)  # saída: exibe mensagem/resultado na tela
+elif idade &lt; 18:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Classificação: adolescente&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Classificação: adulto&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 3 — Estacionamento da Faculdade</h2>
+<p>Professor → vaga reservada. Aluno → vaga comum. Visitante → estacionamento externo.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>tipo = input(&#x27;Tipo de usuário (professor/aluno/visitante): &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+if tipo == &#x27;professor&#x27;:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Direcionar para: vaga reservada&#x27;)  # saída: exibe mensagem/resultado na tela
+elif tipo == &#x27;aluno&#x27;:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Direcionar para: vaga comum&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Direcionar para: estacionamento externo&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 4 — Temperatura do Servidor</h2>
+<p>Menor que 40 → normal. 40 a 60 → atenção. Maior que 60 → risco.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>t = float(input(&#x27;Temperatura do servidor (°C): &#x27;).replace(&#x27;,&#x27;, &#x27;.&#x27;))  # entrada: lê texto do usuário
+if t &lt; 40:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Status: normal&#x27;)  # saída: exibe mensagem/resultado na tela
+elif t &lt;= 60:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Status: atenção&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Status: RISCO&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 5 — Desconto na Cantina</h2>
+<p>Aluno → 10%. Professor → 15%. Visitante → sem desconto.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>tipo = input(&#x27;Tipo (aluno/professor/visitante): &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+valor = float(input(&#x27;Valor da compra (R$): &#x27;).replace(&#x27;,&#x27;, &#x27;.&#x27;))  # entrada: lê texto do usuário
+if tipo == &#x27;aluno&#x27;:  # decisão: testa condição e executa o bloco se for verdadeira
+    desc = 0.10  # define a porcentagem de desconto para a condição atual
+elif tipo == &#x27;professor&#x27;:  # decisão alternativa: testa nova condição quando o if anterior falha
+    desc = 0.15  # define a porcentagem de desconto para a condição atual
+else:  # caso contrário: executa quando as condições anteriores falham
+    desc = 0.0  # define a porcentagem de desconto para a condição atual
+total = valor * (1 - desc)  # calcula o total aplicando o desconto
+print(f&#x27;Desconto: {desc*100:.0f}% | Total a pagar: R$ {total:.2f}&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 6 — Verificação de Login</h2>
+<p>Senha correta → acesso liberado. Senha incorreta → acesso negado.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>senha = input(&#x27;Digite a senha: &#x27;).strip()  # entrada: lê texto do usuário; remove espaços extras nas bordas
+if senha == &#x27;python123&#x27;:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Acesso liberado&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Acesso negado&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 7 — Energia do Laboratório</h2>
+<p>Manhã → ligar computadores. Tarde → modo aula. Noite → economia.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>periodo = input(&#x27;Período (manha/tarde/noite): &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+if periodo == &#x27;manha&#x27;:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Ação: ligar computadores&#x27;)  # saída: exibe mensagem/resultado na tela
+elif periodo == &#x27;tarde&#x27;:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Ação: modo aula&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Ação: economia de energia&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 8 — Sistema de Notas</h2>
+<p>Nota ≥ 9 → excelente. Nota ≥ 7 → aprovado. Nota ≥ 5 → recuperação. Senão → reprovado.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>nota = float(input(&#x27;Nota (0-10): &#x27;).replace(&#x27;,&#x27;, &#x27;.&#x27;))  # entrada: lê texto do usuário
+if nota &gt;= 9:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Desempenho: excelente&#x27;)  # saída: exibe mensagem/resultado na tela
+elif nota &gt;= 7:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Situação: aprovado&#x27;)  # saída: exibe mensagem/resultado na tela
+elif nota &gt;= 5:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Situação: recuperação&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Situação: reprovado&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 9 — Radar de Velocidade</h2>
+<p>Até 60 → normal. 61–80 → advertência. Acima de 80 → multa.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>v = int(input(&#x27;Velocidade (km/h): &#x27;))  # entrada: lê texto do usuário
+if v &lt;= 60:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Status: normal&#x27;)  # saída: exibe mensagem/resultado na tela
+elif v &lt;= 80:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Status: advertência&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Status: MULTA&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 10 — Senha Forte</h2>
+<p>Se a senha tiver 8 ou mais caracteres → válida. Caso contrário → fraca.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>s = input(&#x27;Crie uma senha: &#x27;)  # entrada: lê texto do usuário
+if len(s) &gt;= 8:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Senha válida&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Senha fraca&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 11 — Controle de Estoque</h2>
+<p>Mais de 10 → normal. 5 a 10 → atenção. Menos de 5 → comprar mais.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>qtd = int(input(&#x27;Quantidade em estoque: &#x27;))  # entrada: lê texto do usuário
+if qtd &gt; 10:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Estoque: normal&#x27;)  # saída: exibe mensagem/resultado na tela
+elif qtd &gt;= 5:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Estoque: atenção&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Estoque: comprar mais&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 12 — Sistema de Clima</h2>
+<p>Frio → usar casaco. Ameno → clima agradável. Quente → ligar ventilador.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>clima = input(&#x27;Clima (frio/ameno/quente): &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+if clima == &#x27;frio&#x27;:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Sugestão: usar casaco&#x27;)  # saída: exibe mensagem/resultado na tela
+elif clima == &#x27;ameno&#x27;:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Sugestão: clima agradável&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Sugestão: ligar ventilador&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 13 — Transporte Escolar</h2>
+<p>Menor que 10 → transporte infantil. 10 a 15 → transporte escolar. Maior que 15 → transporte regular.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>idade = int(input(&#x27;Idade: &#x27;))  # entrada: lê texto do usuário
+if idade &lt; 10:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Opção: transporte infantil&#x27;)  # saída: exibe mensagem/resultado na tela
+elif idade &lt;= 15:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Opção: transporte escolar&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Opção: transporte regular&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 14 — Energia Solar</h2>
+<p>Bateria alta → usar solar. Média → equilibrar consumo. Baixa → usar rede elétrica.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>nivel = input(&#x27;Nível da bateria (alta/media/baixa): &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+if nivel == &#x27;alta&#x27;:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Acionar: energia solar&#x27;)  # saída: exibe mensagem/resultado na tela
+elif nivel == &#x27;media&#x27;:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Acionar: equilibrar consumo&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Acionar: rede elétrica&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 15 — Sistema de Usuários</h2>
+<p>Admin → acesso total. Professor → acesso parcial. Aluno → acesso limitado.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>perfil = input(&#x27;Perfil (admin/professor/aluno): &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+if perfil == &#x27;admin&#x27;:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Permissão: acesso total&#x27;)  # saída: exibe mensagem/resultado na tela
+elif perfil == &#x27;professor&#x27;:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Permissão: acesso parcial&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Permissão: acesso limitado&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 16 — Previsão do Tempo</h2>
+<p>Chuva → levar guarda‑chuva. Nublado → atenção. Sol → dia normal.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>tempo = input(&#x27;Condição (chuva/nublado/sol): &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+if tempo == &#x27;chuva&#x27;:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Recomendação: levar guarda-chuva&#x27;)  # saída: exibe mensagem/resultado na tela
+elif tempo == &#x27;nublado&#x27;:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Recomendação: atenção ao tempo&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Recomendação: dia normal&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 17 — Acesso ao Wi‑Fi</h2>
+<p>Usuário registrado → conectar. Caso contrário → solicitar cadastro.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>cadastr = input(&#x27;Usuário registrado? (s/n) &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+if cadastr in (&#x27;s&#x27;, &#x27;sim&#x27;):  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Wi‑Fi: conectado&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Wi‑Fi: cadastre-se para acessar&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 18 — Bateria do Notebook</h2>
+<p>Acima de 80 → cheia. 30 a 80 → normal. Abaixo de 30 → carregar.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>p = int(input(&#x27;Bateria (%): &#x27;))  # entrada: lê texto do usuário
+if p &gt; 80:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Bateria: cheia&#x27;)  # saída: exibe mensagem/resultado na tela
+elif p &gt;= 30:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Bateria: normal&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Bateria: carregar&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 19 — Pontuação de Jogo</h2>
+<p>≥1000 → avançado. ≥500 → intermediário. Menor que 500 → iniciante.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>score = int(input(&#x27;Pontuação: &#x27;))  # entrada: lê texto do usuário
+if score &gt;= 1000:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Nível: avançado&#x27;)  # saída: exibe mensagem/resultado na tela
+elif score &gt;= 500:  # decisão alternativa: testa nova condição quando o if anterior falha
+    print(&#x27;Nível: intermediário&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Nível: iniciante&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Atividade 20 — Abertura do Laboratório</h2>
+<p>Segunda a sexta → aberto. Sábado ou domingo → fechado.</p>
+<h3>Código (Python)</h3>
+<pre class="code"><code>dia = input(&#x27;Dia da semana: &#x27;).strip().lower()  # entrada: lê texto do usuário; remove espaços extras nas bordas; converte para minúsculas
+semana = {&#x27;segunda&#x27;,&#x27;terca&#x27;,&#x27;terça&#x27;,&#x27;quarta&#x27;,&#x27;quinta&#x27;,&#x27;sexta&#x27;}  # cria um conjunto com os dias úteis
+if dia in semana:  # decisão: testa condição e executa o bloco se for verdadeira
+    print(&#x27;Laboratório: ABERTO&#x27;)  # saída: exibe mensagem/resultado na tela
+else:  # caso contrário: executa quando as condições anteriores falham
+    print(&#x27;Laboratório: FECHADO&#x27;)  # saída: exibe mensagem/resultado na tela</code></pre>
+</div>
+<div class="box">
+<h2>Entrega</h2>
+<p>Execute cada código no terminal/IDE, teste entradas diferentes e anote os resultados exibidos pelo <code>print()</code>.
+</p>
+</div>
+</body></html>
