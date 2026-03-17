@@ -205,7 +205,7 @@ function updateLink(l,a,b){
   l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);
   l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);
 }
-
+let isDragging = false;
 function drag(d){
   let ox = 0, oy = 0;
   let pressTimer = null;
