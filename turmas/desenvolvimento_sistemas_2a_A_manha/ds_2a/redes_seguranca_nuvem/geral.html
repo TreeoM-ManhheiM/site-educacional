@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de Rede – Laboratório</title>
+<link rel="stylesheet" href="simulador.css">
+</head>
+<body>
+<h1>Simulador de Rede – Laboratório de Pensamento em Redes</h1>
+<div id="toolbar">
+  <button data-add="internet">Internet</button>
+  <button data-add="firewall">Firewall</button>
+  <button data-add="switch">Switch</button>
+  <button data-add="pc">PC</button>
+  <button data-add="server">Servidor</button>
+  <button data-mode="link">Ligar</button>
+  <button data-mode="move">Mover</button>
+  <button data-mode="delete">Deletar</button>
+  <button id="reset">Limpar</button>
+</div>
+<div id="rede"><svg id="cabos"></svg></div>
+<pre id="console">> console iniciado...</pre>
+<script src="simulador.js"></script>
+</body>
+</html>
