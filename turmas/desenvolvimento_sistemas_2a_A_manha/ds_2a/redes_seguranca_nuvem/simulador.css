@@ -1,114 +1,56 @@
-body{
-  font-family:monospace;
-  margin:0;
-  background:#eef2f7
+/* ====== BASE ====== */
+body {
+  font-family: monospace;
+  margin: 0;
+  background: #eef2f7;
 }
 
-h1{
-  background:#0f172a;
-  color:#fff;
-  padding:14px;
-  margin:0;
-  text-align:center
+/* ====== TÍTULO ====== */
+h1 {
+  background: #0f172a;
+  color: #ffffff;
+  padding: 14px;
+  margin: 0;
+  text-align: center;
 }
 
-#toolbar{
-  padding:10px;
-  background:#e5e7eb;
-  display:flex;
-  flex-wrap:wrap;
-  gap:6px;
-  justify-content:center
+/* ====== TOOLBAR ====== */
+#toolbar {
+  padding: 10px;
+  background: #e5e7eb;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
 }
 
-button{
-  padding:6px 10px;
-  font-size:12px;
-  cursor:pointer;
-  border-radius:6px;
-  border:1px solid #999
+button {
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid #888;
+  background: #ffffff;
 }
 
-#rede{
-  width:1400px;
-  height:580px;
-  margin:10px auto;
-  background:#fff;
-  border:2px solid #0f172a;
-  position:relative;
-  overflow:hidden
+button:hover {
+  background: #dbeafe;
 }
 
-svg{
-  position:absolute;
-  top:0;
-  left:0;
-  width:1400px;
-  height:580px
+/* ====== ÁREA DA REDE ====== */
+#rede {
+  width: 1400px;
+  height: 580px;
+  margin: 10px auto;
+  background: #ffffff;
+  border: 2px solid #0f172a;
+  position: relative;
+  overflow: hidden;
 }
 
-.dispositivo{
-  width:140px;
-  height:100px;
-  position:absolute;
-  color:#fff;
-  text-align:center;
-  border-radius:10px;
-  cursor:pointer;
-  font-size:11px;
-  line-height:1.2;
-  padding-top:6px
-}
-
-.internet{background:#000}
-.firewall{background:#111827}
-.switch{background:#2563eb}
-.pc{background:#16a34a}
-.server{background:#ef4444}
-
-.selected{
-  outline:3px dashed red
-}
-
-#console{
-  max-width:1400px;
-  margin:10px auto;
-  background:#020617;
-  color:#22c55e;
-  padding:10px;
-  height:200px;
-  overflow:auto
-}
-
-/* MODAL */
-#cfg{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.6);
-  align-items:center;
-  justify-content:center
-}
-
-#cfgBox{
-  background:#fff;
-  padding:14px;
-  border-radius:8px;
-  width:300px
-}
-
-#cfgBox label{
-  display:block;
-  margin-top:6px
-}
-
-#cfgBox input{
-  width:100%;
-  padding:5px
-}
-
-.cfgBtns{
-  margin-top:10px;
-  text-align:right
-}
-``
+/* SVG dos cabos */
+#cabos {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 
