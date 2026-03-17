@@ -9,30 +9,25 @@
 body{font-family:monospace;margin:0;background:#eef2f7}
 h1{background:#0f172a;color:#fff;padding:14px;margin:0;text-align:center}
 #toolbar{padding:10px;background:#e5e7eb;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-button{padding:8px 14px;font-size:13px;cursor:pointer;border-radius:6px;border:1px solid #888;touch-action:manipulation}
+button{padding:6px 12px;font-size:12px;cursor:pointer;border-radius:6px;border:1px solid #888}
 
-#rede{
-  width:1400px;height:580px;margin:10px auto;
-  background:#fff;border:2px solid #0f172a;
-  position:relative;overflow:hidden;
-  touch-action:none;
-}
+#rede{width:1400px;height:580px;margin:10px auto;background:#fff;border:2px solid #0f172a;position:relative;overflow:hidden}
 svg{position:absolute;top:0;left:0;width:1400px;height:580px}
 
 .dispositivo{
-  width:100px;height:80px;position:absolute;border-radius:6px;
-  color:#fff;text-align:center;font-size:9px;line-height:1.1;
-  padding-top:4px;cursor:pointer;user-select:none;
+  width:180px;height:135px;position:absolute;border-radius:10px;
+  color:#fff;text-align:center;font-size:11px;line-height:1.2;
+  padding-top:6px;cursor:pointer;user-select:none
 }
 
-/* Infra */
+/* INFRA */
 .internet{background:#000}
 .modem{background:#0ea5e9}
 .firewall{background:#111827}
-.router{background:#f59e0b}
 .switch{background:#2563eb}
+.router{background:#f59e0b}
 
-/* Hosts */
+/* HOSTS */
 .pc{background:#16a34a}
 .notebook{background:#22c55e}
 .smartphone{background:#4ade80}
@@ -52,10 +47,9 @@ svg{position:absolute;top:0;left:0;width:1400px;height:580px}
   padding:10px;height:200px;overflow:auto
 }
 
-/* Modal */
-#cfg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
-align-items:center;justify-content:center}
-#cfgBox{background:#fff;padding:15px;border-radius:8px;width:360px}
+/* MODAL */
+#cfg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
+#cfgBox{background:#fff;padding:15px;border-radius:8px;width:350px}
 #cfgBox label{display:block;margin-top:6px}
 #cfgBox input{width:100%}
 .hidden{display:none}
@@ -66,12 +60,14 @@ align-items:center;justify-content:center}
 <h1>Simulador de Rede – Laboratório de Pensamento em Redes</h1>
 
 <div id="toolbar">
+  <!-- Infra -->
   <button data-add="internet">Internet</button>
   <button data-add="modem">Modem</button>
   <button data-add="firewall">Firewall</button>
   <button data-add="router">Roteador</button>
   <button data-add="switch">Switch</button>
 
+  <!-- Hosts -->
   <button data-add="pc">PC</button>
   <button data-add="notebook">Notebook</button>
   <button data-add="smartphone">Smartphone</button>
@@ -83,6 +79,7 @@ align-items:center;justify-content:center}
   <button data-add="iot">IoT</button>
   <button data-add="server">Servidor</button>
 
+  <!-- Ações -->
   <button data-mode="link">Ligar</button>
   <button data-mode="move">Mover</button>
   <button data-mode="delete">Deletar</button>
@@ -99,12 +96,14 @@ align-items:center;justify-content:center}
   <div id="cfgBox">
     <h3 id="cfgTitle">Configuração</h3>
 
+    <!-- LAN (Internet + Hosts) -->
     <div id="lanBlock">
       <label>LAN IP</label><input id="lan_ip">
       <label>LAN Máscara</label><input id="lan_mask">
       <label>LAN Gateway</label><input id="lan_gw">
     </div>
 
+    <!-- WLAN (Modem / Firewall / Router) -->
     <div id="wlanBlock">
       <label>WLAN IP (Público)</label><input id="wlan_ip">
       <label>WLAN Máscara</label><input id="wlan_mask">
@@ -122,11 +121,13 @@ align-items:center;justify-content:center}
 const rede=document.getElementById('rede');
 const svg=document.getElementById('cabos');
 const consoleBox=document.getElementById('console');
+
 let devices=[],links=[],mode='move',origem=null,cfgDevice=null;
 let count={};
 
 document.querySelectorAll('[data-add]').forEach(b=>count[b.dataset.add]=0);
-function log(t){consoleBox.textContent+='\n'+t;}
+
+function log(t){consoleBox.textContent+='\n'+t;consoleBox.scrollTop=consoleBox.scrollHeight;}
 function center(d){return{x:d.offsetLeft+d.offsetWidth/2,y:d.offsetTop+d.offsetHeight/2};}
 
 document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addDev(b.dataset.add));
@@ -138,16 +139,11 @@ function addDev(type){
   d.className='dispositivo '+type;
   d.dataset.type=type;
   d.textContent=type.toUpperCase()+count[type];
+  d.dataset.nomeBase = d.textContent;
   d.style.left=Math.random()*1200+'px';
   d.style.top=Math.random()*450+'px';
   d.onclick=()=>clickDev(d);
   d.ondblclick=()=>openConfig(d);
-
-  // toque longo (mobile)
-  let pressTimer;
-  d.addEventListener('touchstart',()=>pressTimer=setTimeout(()=>openConfig(d),700));
-  d.addEventListener('touchend',()=>clearTimeout(pressTimer));
-
   drag(d);
   rede.appendChild(d);
   devices.push(d);
@@ -161,6 +157,7 @@ function clickDev(d){
   }
 }
 
+/* GRAFO (INALTERADO) */
 function createLink(a,b){
   const l=document.createElementNS('http://www.w3.org/2000/svg','line');
   updateLink(l,a,b);
@@ -174,12 +171,9 @@ function updateLink(l,a,b){
   l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);
   l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);
 }
-
-/* DRAG COM MOUSE E TOQUE */
 function drag(d){
-  let ox=0,oy=0;
-
-  d.addEventListener('mousedown',e=>{
+  let ox,oy;
+  d.onmousedown=e=>{
     if(mode!=='move')return;
     ox=e.offsetX;oy=e.offsetY;
     document.onmousemove=m=>{
@@ -188,26 +182,8 @@ function drag(d){
       links.forEach(x=>updateLink(x.l,x.a,x.b));
     };
     document.onmouseup=()=>document.onmousemove=null;
-  });
-
-  d.addEventListener('touchstart',e=>{
-    if(mode!=='move')return;
-    const t=e.touches[0];
-    const r=d.getBoundingClientRect();
-    ox=t.clientX-r.left;oy=t.clientY-r.top;
-    e.preventDefault();
-  },{passive:false});
-
-  d.addEventListener('touchmove',e=>{
-    if(mode!=='move')return;
-    const t=e.touches[0];
-    d.style.left=(t.clientX-rede.offsetLeft-ox)+'px';
-    d.style.top=(t.clientY-rede.offsetTop-oy)+'px';
-    links.forEach(x=>updateLink(x.l,x.a,x.b));
-    e.preventDefault();
-  },{passive:false});
+  };
 }
-
 function removeDev(d){
   links=links.filter(x=>{if(x.a===d||x.b===d){x.l.remove();return false;}return true;});
   devices=devices.filter(x=>x!==d);d.remove();
@@ -216,35 +192,53 @@ function removeLink(l){links=links.filter(x=>{if(x.l===l){l.remove();return fals
 function clearSelection(){devices.forEach(d=>d.classList.remove('selected'));}
 function resetAll(){svg.innerHTML='';devices.forEach(d=>d.remove());devices=[];links=[];origem=null;consoleBox.textContent='> console iniciado...';for(let k in count)count[k]=0;}
 
+/* CONFIGURAÇÃO */
 function openConfig(d){
   cfgDevice=d;
   cfg.style.display='flex';
   cfgTitle.textContent=d.textContent;
+
   const dual=['modem','firewall','router'].includes(d.dataset.type);
   wlanBlock.classList.toggle('hidden',!dual);
+
   lan_ip.value=d.dataset.lan_ip||'';
   lan_mask.value=d.dataset.lan_mask||'';
   lan_gw.value=d.dataset.lan_gw||'';
+
   wlan_ip.value=d.dataset.wlan_ip||'';
   wlan_mask.value=d.dataset.wlan_mask||'';
   wlan_gw.value=d.dataset.wlan_gw||'';
 }
 function closeConfig(){cfg.style.display='none';}
+
 function saveConfig(){
-  if(!cfgDevice)return;
-  cfgDevice.dataset.lan_ip=lan_ip.value;
-  cfgDevice.dataset.lan_mask=lan_mask.value;
-  cfgDevice.dataset.lan_gw=lan_gw.value;
-  cfgDevice.dataset.wlan_ip=wlan_ip.value;
-  cfgDevice.dataset.wlan_mask=wlan_mask.value;
-  cfgDevice.dataset.wlan_gw=wlan_gw.value;
-  let html=cfgDevice.textContent.split('<')[0];
-  if(wlan_ip.value) html+=`<br>WLAN ${wlan_ip.value}`;
-  if(lan_ip.value) html+=`<br>LAN ${lan_ip.value}`;
-  cfgDevice.innerHTML=html;
+  if(!cfgDevice) return;
+
+  // Salva dados no dataset
+  cfgDevice.dataset.lan_ip   = lan_ip.value   || '';
+  cfgDevice.dataset.lan_mask = lan_mask.value || '';
+  cfgDevice.dataset.lan_gw   = lan_gw.value   || '';
+
+  cfgDevice.dataset.wlan_ip   = wlan_ip.value   || '';
+  cfgDevice.dataset.wlan_mask = wlan_mask.value || '';
+  cfgDevice.dataset.wlan_gw   = wlan_gw.value   || '';
+
+  // Reconstrói o texto do bloco do zero (corrige duplicação)
+  let html = cfgDevice.dataset.nomeBase;
+
+  if (cfgDevice.dataset.wlan_ip) {
+    html += `<br>WLAN ${cfgDevice.dataset.wlan_ip}`;
+  }
+
+  if (cfgDevice.dataset.lan_ip) {
+    html += `<br>LAN ${cfgDevice.dataset.lan_ip}`;
+  }
+
+  cfgDevice.innerHTML = html;
   closeConfig();
 }
 
+/* SALVAR */
 function saveTopo(){
   const data={
     dispositivos:devices.map(d=>({
