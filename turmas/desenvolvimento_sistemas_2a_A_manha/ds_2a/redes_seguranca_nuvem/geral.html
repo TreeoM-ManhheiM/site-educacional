@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Rede – Laboratório</title>
+<title>Simulador de Rede – Laboratório de Pensamento em Redes</title>
 <link rel="stylesheet" href="simulador.css">
 </head>
+
 <body>
 <h1>Simulador de Rede – Laboratório de Pensamento em Redes</h1>
+
 <div id="toolbar">
   <button data-add="internet">Internet</button>
   <button data-add="firewall">Firewall</button>
@@ -19,8 +21,35 @@
   <button data-mode="delete">Deletar</button>
   <button id="reset">Limpar</button>
 </div>
-<div id="rede"><svg id="cabos"></svg></div>
+
+<div id="rede">
+  <svg id="cabos"></svg>
+</div>
+
 <pre id="console">> console iniciado...</pre>
+
+<!-- MODAL CONFIG IP -->
+<div id="cfg">
+  <div id="cfgBox">
+    <h3 id="cfgTitle"></h3>
+
+    <label>IP</label>
+    <input id="cfg_ip">
+
+    <label>Máscara</label>
+    <input id="cfg_mask">
+
+    <label>Gateway</label>
+    <input id="cfg_gw">
+
+    <div class="cfgBtns">
+      <button id="cfgSave">Salvar</button>
+      <button id="cfgCancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <script src="simulador.js"></script>
 </body>
 </html>
+``
