@@ -15,9 +15,9 @@ button{padding:6px 12px;font-size:12px;cursor:pointer;border-radius:6px;border:1
 svg{position:absolute;top:0;left:0;width:1400px;height:580px}
 
 .dispositivo{
-  width:180px;height:135px;position:absolute;border-radius:10px;
-  color:#fff;text-align:center;font-size:11px;line-height:1.2;
-  padding-top:6px;cursor:pointer;user-select:none
+  width:150px;height:110px;position:absolute;border-radius:8px;
+  color:#fff;text-align:center;font-size:9px;line-height:1.1;
+  padding-top:5px;cursor:pointer;user-select:none
 }
 
 /* INFRA */
@@ -86,6 +86,24 @@ svg{pointer-events:none}
     height:100px;
     font-size:11px;
   }
+}
+
+
+
+/* Botão de configuração por bloco (Android-friendly) */
+.cfg-btn{
+  position:absolute;
+  top:3px;
+  right:4px;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  border:none;
+  background:rgba(0,0,0,0.6);
+  color:#fff;
+  font-size:12px;
+  cursor:pointer;
+  z-index:10;
 }
 
 </style>
@@ -173,7 +191,13 @@ function addDev(type){
   const d=document.createElement('div');
   d.className='dispositivo '+type;
   d.dataset.type=type;
-  d.textContent=type.toUpperCase()+count[type];
+  d.dataset.nomeBase = type.toUpperCase()+count[type];
+  d.innerHTML = d.dataset.nomeBase;
+  const cfgBtn = document.createElement('button');
+  cfgBtn.className='cfg-btn';
+  cfgBtn.textContent='⚙';
+  cfgBtn.onclick=e=>{e.stopPropagation();openConfig(d);};
+  d.appendChild(cfgBtn);
   d.style.left=Math.random()*1200+'px';
   d.style.top=Math.random()*450+'px';
   d.onclick=()=>clickDev(d);
@@ -205,74 +229,19 @@ function updateLink(l,a,b){
   l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);
   l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);
 }
-let isDragging = false;
 function drag(d){
-  let ox = 0, oy = 0;
-  let pressTimer = null;
-  let isDragging = false;
-
-  // MOUSE (PC)
-  d.onmousedown = e => {
-    if(mode !== 'move') return;
-    isDragging = true;
-    ox = e.offsetX;
-    oy = e.offsetY;
-
-    document.onmousemove = m => {
-      if (!isDragging) return;
-      d.style.left = (m.pageX - rede.offsetLeft - ox) + 'px';
-      d.style.top  = (m.pageY - rede.offsetTop  - oy) + 'px';
-      links.forEach(x => updateLink(x.l, x.a, x.b));
+  let ox,oy;
+  d.onmousedown=e=>{
+    if(mode!=='move')return;
+    ox=e.offsetX;oy=e.offsetY;
+    document.onmousemove=m=>{
+      d.style.left=(m.pageX-rede.offsetLeft-ox)+'px';
+      d.style.top=(m.pageY-rede.offsetTop-oy)+'px';
+      links.forEach(x=>updateLink(x.l,x.a,x.b));
     };
-
-    document.onmouseup = () => {
-      isDragging = false;
-      document.onmousemove = null;
-    };
+    document.onmouseup=()=>document.onmousemove=null;
   };
-
-  // TOUCH START (Android)
-  d.addEventListener('touchstart', e => {
-    if(mode !== 'move') return;
-
-    const t = e.touches[0];
-    const rect = d.getBoundingClientRect();
-    ox = t.clientX - rect.left;
-    oy = t.clientY - rect.top;
-
-    isDragging = false;
-
-    // TOQUE LONGO → abrir configuração
-    pressTimer = setTimeout(() => {
-      openConfig(d);
-      isDragging = false;
-    }, 600);
-
-    e.preventDefault();
-  }, { passive:false });
-
-  // TOUCH MOVE (arrastar)
-  d.addEventListener('touchmove', e => {
-    if(mode !== 'move') return;
-
-    clearTimeout(pressTimer);
-    isDragging = true;
-
-    const t = e.touches[0];
-    d.style.left = (t.clientX - rede.offsetLeft - ox) + 'px';
-    d.style.top  = (t.clientY - rede.offsetTop  - oy) + 'px';
-    links.forEach(x => updateLink(x.l, x.a, x.b));
-
-    e.preventDefault();
-  }, { passive:false });
-
-  // TOUCH END
-  d.addEventListener('touchend', () => {
-    clearTimeout(pressTimer);
-    isDragging = false;
-  });
 }
-
 function removeDev(d){
   links=links.filter(x=>{if(x.a===d||x.b===d){x.l.remove();return false;}return true;});
   devices=devices.filter(x=>x!==d);d.remove();
