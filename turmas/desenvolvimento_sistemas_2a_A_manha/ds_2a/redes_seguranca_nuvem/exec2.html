@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Laboratório de Redes</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #020617;
+    color: #e5e7eb;
+}
+
+header {
+    text-align: center;
+    padding: 15px;
+    background: #020617;
+    position: sticky;
+    top: 0;
+}
+
+.score {
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+.container {
+    padding: 15px;
+}
+
+.card {
+    background: #1e293b;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+    display: none;
+}
+
+.card.active {
+    display: block;
+}
+
+h2 {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+}
+
+button {
+    margin-top: 12px;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    background: #22c55e;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+button:disabled {
+    background: #475569;
+}
+
+.result {
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.ok { color: #22c55e; }
+.err { color: #f87171; }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Laboratório de Redes</h1>
+    <div class="score">Pontos: <span id="pontos">0</span></div>
+</header>
+
+<div class="container" id="quiz"></div>
+
+<script>
+const perguntas = [
+ {q:"Informe um IP válido da rede 192.168.1.0/24", a:"192.168.1.10"},
+ {q:"Qual é a máscara da rede 192.168.1.0/24?", a:"255.255.255.0"},
+ {q:"Qual é o endereço de broadcast dessa rede?", a:"192.168.1.255"},
+ {q:"Quantos hosts válidos uma rede /24 possui?", a:"254"},
+ {q:"Primeiro IP válido da rede 192.168.1.0/24", a:"192.168.1.1"},
+ {q:"Último IP válido da rede 192.168.1.0/24", a:"192.168.1.254"},
+ {q:"O que significa a sigla IP?", a:"internet protocol"},
+ {q:"Qual protocolo é usado para páginas web?", a:"http"},
+ {q:"Protocolo usado para envio de e-mails?", a:"smtp"},
+ {q:"Porta padrão do HTTP?", a:"80"},
+ {q:"Porta padrão do HTTPS?", a:"443"},
+ {q:"Dispositivo que interliga redes diferentes?", a:"roteador"},
+ {q:"Dispositivo que conecta máquinas na mesma rede?", a:"switch"},
+ {q:"O que é firewall?", a:"segurança"},
+ {q:"O que é nuvem (cloud computing)?", a:"internet"},
+ {q:"CIDR indica o quê em redes?", a:"mascara"},
+ {q:"Classe da rede 192.168.1.0?", a:"c"},
+ {q:"Endereço usado para identificar a rede inteira?", a:"endereco de rede"},
+ {q:"Protocolo que resolve nome em IP?", a:"dns"},
+ {q:"O que significa LAN?", a:"local area network"},
+ {q:"O que significa WAN?", a:"wide area network"}
+];
+
+let pontos = 0;
+
+const quiz = document.getElementById("quiz");
+
+perguntas.forEach((item, i) => {
+    const card = document.createElement("div");
+    card.className = "card" + (i === 0 ? " active" : "");
+    card.id = "q" + i;
+
+    card.innerHTML = `
+        <h2>Missão ${i+1}</h2>
+        <p>${item.q}</p>
+        <input id="inp${i}">
+        <button id="btn${i}">Responder</button>
+        <div class="result" id="res${i}"></div>
+    `;
+
+    quiz.appendChild(card);
+
+    document.getElementById("btn" + i).onclick = () => {
+        const resposta = document.getElementById("inp" + i).value.toLowerCase().trim();
+        const res = document.getElementById("res" + i);
+        const btn = document.getElementById("btn" + i);
+
+        btn.disabled = true;
+        document.getElementById("inp" + i).disabled = true;
+
+        if (resposta === item.a) {
+            pontos += 10;
+            document.getElementById("pontos").innerText = pontos;
+            res.innerHTML = "✅ Correto";
+            res.className = "result ok";
+
+            const prox = document.getElementById("q" + (i+1));
+            if (prox) prox.classList.add("active");
+        } else {
+            res.innerHTML = "❌ Errado (tentativa única)";
+            res.className = "result err";
+        }
+    };
+});
+</script>
+
+</body>
+</html>
