@@ -1,215 +1,106 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-<meta charset="UTF-8">
-<title>Estruturas Condicionais em Python</title>
-
-<style>
-
-body{
-font-family: Arial;
-margin: 40px;
-}
-
-.container{
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 30px;
-margin-bottom: 40px;
-}
-
-pre{
-background:#f4f4f4;
-padding:15px;
-border-radius:5px;
-}
-
-h2{
-color:#2c3e50;
-}
-
-</style>
-
-</head>
-
-<body>
-
-<h1>Estruturas Condicionais em Python</h1>
-
-<!-- 1 DESVIO SIMPLES -->
-
-<div class="container">
-
-<div>
-<h2>1️⃣ Desvio Condicional Simples</h2>
-<p>Executa apenas se a condição for verdadeira.</p>
+<!-- ===================== SIMULADOR ===================== -->
+<div class="simulador">
+  <h2>Simulador de Travessia – Protótipo Lógico do Projeto</h2>
+  <p>
+    Neste espaço é apresentado o <strong>simulador desenvolvido em HTML e JavaScript</strong>,
+    criado durante as aulas como etapa inicial do projeto.<br>
+    Ele representa o <strong>funcionamento lógico do sistema</strong>, servindo como base
+    para a futura implementação física utilizando <strong>Python, OpenCV e ESP8266</strong>.
+  </p>
 </div>
 
-<div>
-<pre>
-if idade >= 18:
-    print("Você é maior de idade")
-</pre>
-</div>
+<!-- ===================== DIAGRAMA ===================== -->
+<h2>📊 Diagrama de Blocos – Visão Técnica do Sistema</h2>
 
-</div>
+<div class="diagrama">
 
+  <div class="bloco">Webcam / Câmera</div>
+  <div class="seta">⬇</div>
 
-<!-- 2 DESVIO COMPOSTO -->
+  <div class="bloco">OpenCV – Visão Computacional</div>
+  <div class="seta">⬇</div>
 
-<div class="container">
+  <div class="linha-horizontal">
+    <div>
+      <div class="bloco">
+        Detecção de Pedestres<br>na Faixa
+      </div>
+    </div>
+    <div>
+      <div class="bloco">
+        Detecção de Veículos<br>na Pista
+      </div>
+    </div>
+  </div>
 
-<div>
-<h2>2️⃣ Desvio Condicional Composto</h2>
-<p>Possui duas possibilidades: verdadeiro ou falso.</p>
-</div>
+  <div class="seta">⬇</div>
 
-<div>
-<pre>
-if idade >= 18:
-    print("Entrada permitida")
-else:
-    print("Entrada proibida")
-</pre>
-</div>
+  <div class="bloco cinza">Lógica de Decisão (IA)</div>
+
+  <div class="linha-horizontal">
+    <div>
+      <div class="bloco cinza">Pedestre na Faixa</div>
+      <div class="seta">⬇</div>
+      <div class="bloco">Sinal Vermelho Piscante</div>
+      <div class="seta">⬇</div>
+      <div class="bloco">ESP8266 – LED</div>
+    </div>
+
+    <div>
+      <div class="bloco cinza">
+        Pedestre na Faixa<br>+ Veículo em Alta Velocidade
+      </div>
+      <div class="seta">⬇</div>
+      <div class="bloco">Ativação da Sirene</div>
+      <div class="seta">⬇</div>
+      <div class="bloco">ESP8266 – Buzzer</div>
+    </div>
+  </div>
 
 </div>
 
+<!-- ===================== EXPLICAÇÃO ===================== -->
+<div class="explicacao">
+  <h2>🧠 Funcionamento Geral do Sistema</h2>
 
-<!-- 3 ENCADEADO -->
+  <p>
+    Este projeto tem como objetivo demonstrar, de forma <strong>prática e educativa</strong>,
+    como conceitos de <strong>Inteligência Artificial</strong> e
+    <strong>Visão Computacional</strong> podem ser aplicados em soluções reais
+    voltadas à <strong>segurança viária e urbana</strong>.
+  </p>
 
-<div class="container">
+  <ul>
+    <li>
+      A <strong>câmera</strong> realiza a captura contínua do ambiente da faixa de pedestres.
+    </li>
+    <li>
+      O <strong>OpenCV</strong> processa os frames do vídeo e define
+      <strong>Regiões de Interesse (ROI)</strong>.
+    </li>
+    <li>
+      O sistema realiza a detecção de:
+      <ul>
+        <li>Pedestres posicionados sobre a faixa.</li>
+        <li>Veículos trafegando na pista.</li>
+      </ul>
+    </li>
+    <li>
+      A <strong>lógica de decisão</strong> analisa o cenário e identifica situações de risco:
+      <ul>
+        <li>Pedestre na faixa → ativação do sinal vermelho piscante.</li>
+        <li>Pedestre + veículo em alta velocidade → acionamento da sirene sonora.</li>
+      </ul>
+    </li>
+    <li>
+      As decisões são enviadas via rede (por exemplo, <strong>MQTT</strong>) para o
+      <strong>ESP8266</strong>, responsável pelo controle de <strong>LEDs e buzzer</strong>.
+    </li>
+  </ul>
 
-<div>
-<h2>3️⃣ Desvio Condicional Encadeado</h2>
-<p>Permite múltiplas decisões usando elif.</p>
+  <p>
+    O simulador em HTML reproduz fielmente esta lógica de funcionamento,
+    facilitando o entendimento dos alunos e servindo como ponte entre o
+    <strong>modelo conceitual</strong> e a <strong>implementação física</strong> do sistema.
+  </p>
 </div>
-
-<div>
-<pre>
-if nota >= 7:
-    print("Aluno aprovado")
-
-elif nota >= 5:
-    print("Aluno em recuperação")
-
-else:
-    print("Aluno reprovado")
-</pre>
-</div>
-
-</div>
-
-
-<!-- 4 OPERADORES LOGICOS -->
-
-<div class="container">
-
-<div>
-<h2>4️⃣ Operadores Lógicos</h2>
-
-<p>
-AND → ambas condições verdadeiras<br>
-OR → apenas uma verdadeira<br>
-NOT → nega a condição
-</p>
-
-</div>
-
-<div>
-<pre>
-if idade >= 18 and carteira == "sim":
-    print("Pode dirigir")
-
-elif idade >= 18 and carteira != "sim":
-    print("Maior de idade, mas não pode dirigir")
-
-else:
-    print("Menor de idade")
-</pre>
-</div>
-
-</div>
-
-
-<!-- 5 IF ANINHADO -->
-
-<div class="container">
-
-<div>
-<h2>5️⃣ Desvio Condicional Aninhado</h2>
-<p>Um IF dentro de outro IF.</p>
-</div>
-
-<div>
-<pre>
-if idade >= 18:
-
-    if nota >= 7:
-        print("Adulto aprovado")
-
-    else:
-        print("Adulto reprovado")
-</pre>
-</div>
-
-</div>
-
-
-<!-- 6 TERNARIO -->
-
-<div class="container">
-
-<div>
-<h2>6️⃣ Condicional em uma linha (Ternário)</h2>
-<p>Forma compacta de escrever um if/else.</p>
-</div>
-
-<div>
-<pre>
-status = "Maior de idade" if idade >= 18 else "Menor de idade"
-
-print("Status:", status)
-</pre>
-</div>
-
-</div>
-
-
-<!-- 7 MATCH CASE -->
-
-<div class="container">
-
-<div>
-<h2>7️⃣ Match Case (Switch do Python)</h2>
-<p>Disponível no Python 3.10 ou superior.</p>
-</div>
-
-<div>
-<pre>
-dia = int(input("Digite um número de 1 a 3: "))
-
-match dia:
-
-    case 1:
-        print("Segunda-feira")
-
-    case 2:
-        print("Terça-feira")
-
-    case 3:
-        print("Quarta-feira")
-
-    case _:
-        print("Dia inválido")
-</pre>
-</div>
-
-<hr>
-
-<a href="index.html">Voltar para a página inicial</a>
-
-</body>
-
-</html>
