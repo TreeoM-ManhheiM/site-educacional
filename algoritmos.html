@@ -10,7 +10,6 @@
         background: #eef;
     }
 
-
     #cenario {
         position: relative;
         width: 800px;
@@ -44,15 +43,17 @@
         font-size: 60px;
         transition: 1s;
     }
-    /* onibus */
+
+    /* Ônibus */
     #onibus {
-    	position: absolute;
-    	left: 480px;   /* ajusta posição horizontal */
-    	top: 280px;    /* alinhado com a rua */
-    	font-size: 90px;
-    	z-index: 2;
-	transform: scaleX(-1);
-}
+        position: absolute;
+        left: 480px;   /* ajusta posição horizontal */
+        top: 280px;    /* alinhado com a rua */
+        font-size: 90px;
+        z-index: 2;
+        transform: scaleX(-1);
+    }
+
     /* Carro */
     #carro {
         position: absolute;
@@ -76,12 +77,18 @@
         color: red;
         display: none;
     }
-	
 
     button {
         margin: 5px;
         padding: 10px;
         font-size: 16px;
+    }
+
+    /* ===== AJUSTE PARA PDF / IMPRESSÃO ===== */
+    @media print {
+        button, audio {
+            display: none;
+        }
     }
 </style>
 </head>
