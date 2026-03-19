@@ -1,108 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Pipeline de IA - Regressão Logística</title>
-
-<style>
-
-body{
-font-family: Arial;
-background:#f4f4f4;
-padding:40px;
-}
-
-.container{
-max-width:900px;
-margin:auto;
-background:white;
-padding:30px;
-border-radius:10px;
-box-shadow:0px 0px 10px #ccc;
-}
-
-pre{
-background:#1e1e1e;
-color:#00ff9c;
-padding:20px;
-border-radius:8px;
-overflow-x:auto;
-}
-
-code{
-font-family: Consolas, monospace;
-font-size:15px;
-}
-
-.pipeline{
-background:#eef7ff;
-padding:15px;
-border-radius:8px;
-margin-bottom:20px;
-font-size:18px;
-}
-
-</style>
+  <meta charset="UTF-8">
+  <title>Download</title>
 </head>
-
 <body>
 
-<div class="container">
+  <h2>Baixar Arquivos</h2>
 
-<h1>Pipeline de Inteligência Artificial</h1>
-
-<p>Os dados coletados na atividade de ética em programação podem ser utilizados para treinar um modelo de <b>Machine Learning</b> usando <b>Regressão Logística</b>.</p>
-
-<div class="pipeline">
-
-<b>Fluxo da atividade:</b>
-
-<br><br>
-
-Atividade HTML (respostas dos alunos)  
-↓  
-Arquivo CSV com resultados  
-↓  
-Python + Pandas  
-↓  
-Regressão Logística (Machine Learning)  
-↓  
-Modelo treinado para análise dos dados
-
-</div>
-
-<h2>Exemplo de Código em Python</h2>
-
-<pre><code>
-import pandas as pd
-from sklearn.linear_model import LogisticRegression
-
-dados = pd.read_csv("resultado_etica_programacao.csv")
-
-X = dados[["P1","P2","P3","P4","P5","P6","P7"]]
-y = dados["Pontuacao"] >= 5
-
-modelo = LogisticRegression()
-modelo.fit(X,y)
-
-print("Modelo treinado!")
-</code></pre>
-
-<p>
-Nesse exemplo:
-</p>
-
-<ul>
-<li><b>P1 a P7</b> representam as respostas dos alunos</li>
-<li><b>Pontuação</b> indica o desempenho na atividade</li>
-<li>O modelo aprende padrões usando <b>Regressão Logística</b></li>
-</ul>
-
-<p>
-Esse processo mostra como uma atividade simples pode gerar dados para estudo em <b>Machine Learning</b>.
-</p>
-
-</div>
+  <a href="https://drive.google.com/drive/folders/164_A_vRNr-YzJfc2iqNwmp2lLZnCsTnz?usp=sharing" target="_blank">
+    Clique aqui para acessar os arquivos no Google Drive
+  </a>
 
 </body>
 </html>
