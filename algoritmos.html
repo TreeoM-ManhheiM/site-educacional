@@ -1,16 +1,235 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <title>Download</title>
+<meta charset="UTF-8">
+<title>Simulador de Travessia – EE 8 de Abril</title>
+
+<style>
+    body {
+        text-align: center;
+        font-family: Arial;
+        background: #eef;
+    }
+
+    #cenario {
+        position: relative;
+        width: 800px;
+        height: 400px;
+        margin: 20px auto;
+        background: #555;
+        overflow: hidden;
+    }
+
+    /* Faixa (vertical) */
+    #faixa {
+        position: absolute;
+        top: 0;
+        left: 350px;
+        width: 100px;
+        height: 100%;
+        background: repeating-linear-gradient(
+            180deg,
+            white 0px,
+            white 40px,
+            transparent 40px,
+            transparent 80px
+        );
+    }
+
+    /* Aluno */
+    #aluno {
+        position: absolute;
+        left: 350px;
+        top: 400px;
+        font-size: 60px;
+        transition: 1s;
+    }
+
+    /* Ônibus */
+    #onibus {
+        position: absolute;
+        left: 480px;
+        top: 280px;
+        font-size: 90px;
+        z-index: 2;
+        transform: scaleX(-1);
+    }
+
+    /* Carro */
+    #carro {
+        position: absolute;
+        left: -100px;
+        top: 170px;
+        font-size: 50px;
+    }
+
+    /* Sinal */
+    #sinal {
+        width: 50px;
+        height: 50px;
+        margin: 10px auto;
+        border-radius: 50%;
+        background: gray;
+    }
+
+    /* Sirene */
+    #sirene {
+        font-size: 30px;
+        color: red;
+        display: none;
+    }
+
+    button {
+        margin: 5px;
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    /* ===== AJUSTE PARA PDF / IMPRESSÃO ===== */
+    @media print {
+        button, audio {
+            display: none;
+        }
+    }
+</style>
 </head>
+
 <body>
 
-  <h2>Baixar Arquivos</h2>
+<h2>🚦 Simulador de Travessia</h2>
+<div id="sinal"></div>
+<div id="sirene">🚨 PERIGO 🚨</div>
 
-  <a href="https://drive.google.com/drive/folders/164_A_vRNr-YzJfc2iqNwmp2lLZnCsTnz?usp=sharing" target="_blank">
-    Clique aqui para acessar os arquivos no Google Drive
-  </a>
+<div id="cenario">
+    <div id="faixa"></div>
+    <div id="aluno">🚶‍♂️</div>
+    <div id="carro">🚗</div>
+    <div id="onibus">🚌</div>
+</div>
+
+<button onclick="chegarFaixa()">Aluno chega na faixa</button>
+<button onclick="atravessar()">Atravessar</button>
+<button onclick="sairFaixa()">Sair da faixa</button>
+<button onclick="carroRapido()">Carro rápido</button>
+
+<audio id="somSirene" src="https://www.soundjay.com/misc/sounds/siren.wav"></audio>
+
+<script>
+let alunoNaFaixa = false;
+let alunoAtravessando = false;
+let carroProximo = false;
+let sireneAtiva = false;
+
+let sinal = document.getElementById("sinal");
+let sirene = document.getElementById("sirene");
+let som = document.getElementById("somSirene");
+let piscaInterval;
+
+function chegarFaixa() {
+    alunoNaFaixa = true;
+    alunoAtravessando = false;
+    document.getElementById("aluno").style.top = "310px";
+    iniciarPisca();
+}
+
+function atravessar() {
+    if (!alunoNaFaixa) return;
+    alunoAtravessando = true;
+    document.getElementById("aluno").style.top = "0px";
+}
+
+function sairFaixa() {
+    alunoNaFaixa = false;
+    alunoAtravessando = false;
+    document.getElementById("aluno").style.top = "-100px";
+    pararSirene();
+    pararPisca();
+}
+
+function carroRapido() {
+    let carro = document.getElementById("carro");
+    carro.style.left = "800px";
+    let pos = 800;
+
+    let intervalo = setInterval(() => {
+        pos -= 15;
+        carro.style.left = pos + "px";
+
+        if (pos > 250 && pos < 550) {
+            carroProximo = true;
+            verificarPerigo();
+        } else {
+            carroProximo = false;
+        }
+
+        if (pos < -100) {
+            clearInterval(intervalo);
+            carroProximo = false;
+            pararSirene();
+        }
+    }, 50);
+}
+
+function verificarPerigo() {
+    if ((alunoNaFaixa || alunoAtravessando) && carroProximo) {
+        ativarSirene();
+    }
+}
+
+function ativarSirene() {
+    if (!sireneAtiva) {
+        sireneAtiva = true;
+        sirene.style.display = "block";
+        som.loop = true;
+        som.play();
+    }
+}
+
+function pararSirene() {
+    sireneAtiva = false;
+    sirene.style.display = "none";
+    som.pause();
+    som.currentTime = 0;
+}
+
+function iniciarPisca() {
+    let cor = false;
+    piscaInterval = setInterval(() => {
+        sinal.style.background = cor ? "red" : "yellow";
+        cor = !cor;
+    }, 500);
+}
+
+function pararPisca() {
+    clearInterval(piscaInterval);
+    sinal.style.background = "gray";
+}
+</script>
+
+<hr>
+<h2>📥 Download da Página</h2>
+
+<button onclick="downloadHTML()">⬇️ Baixar HTML</button>
+<button onclick="downloadPDF()">⬇️ Baixar PDF</button>
+
+<script>
+function downloadHTML() {
+    const html = document.documentElement.outerHTML;
+    const blob = new Blob([html], { type: "text/html" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "55.html";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+}
+
+function downloadPDF() {
+    window.print();
+}
+</script>
 
 </body>
 </html>
+``
