@@ -222,6 +222,34 @@ function pararPisca() {
 </script>
 <h1>🚦 Projeto Educacional – Faixa Inteligente</h1>
 <h3>Inteligência Artificial, Visão Computacional e IoT</h3>
+	<!-- ===================== DOWNLOAD ===================== -->
+<hr>
+<h2>📥 Download do Projeto</h2>
+
+<div style="margin:20px;">
+  <!-- Download HTML -->
+  <button onclick="baixarHTML()">⬇️ Baixar página em HTML</button>
+
+  <!-- Download PDF -->
+  <button onclick="baixarPDF()">⬇️ Baixar página em PDF</button>
+</div>
+
+<script>
+/* ===== Download do próprio HTML ===== */
+function baixarHTML() {
+  const link = document.createElement("a");
+  link.href = window.location.href;
+  link.download = "Simulador_Faixa_Inteligente.html";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+/* ===== Download em PDF (via impressão do navegador) ===== */
+function baixarPDF() {
+  window.print();
+}
+</script>
 
 <!-- ===================== SIMULADOR ===================== -->
 <div class="simulador">
