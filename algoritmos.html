@@ -235,6 +235,117 @@ function baixarPDF() {
   window.print();
 }
 </script>
+<h1>🚦 Projeto Educacional – Faixa Inteligente</h1>
+<h3>Inteligência Artificial, Visão Computacional e IoT</h3>
+
+<!-- ===================== SIMULADOR ===================== -->
+<div class="simulador">
+  <h2>Simulador de Travessia – Protótipo Lógico do Projeto</h2>
+  <p>
+    Neste espaço é apresentado o <strong>simulador desenvolvido em HTML e JavaScript</strong>,
+    criado durante as aulas como etapa inicial do projeto.<br>
+    Ele representa o <strong>funcionamento lógico do sistema</strong>, servindo como base
+    para a futura implementação física utilizando <strong>Python, OpenCV e ESP8266</strong>.
+  </p>
+</div>
+
+<!-- ===================== DIAGRAMA ===================== -->
+<h2>📊 Diagrama de Blocos – Visão Técnica do Sistema</h2>
+
+<div class="diagrama">
+
+  <div class="bloco">Webcam / Câmera</div>
+  <div class="seta">⬇</div>
+
+  <div class="bloco">OpenCV – Visão Computacional</div>
+  <div class="seta">⬇</div>
+
+  <div class="linha-horizontal">
+    <div>
+      <div class="bloco">
+        Detecção de Pedestres<br>na Faixa
+      </div>
+    </div>
+    <div>
+      <div class="bloco">
+        Detecção de Veículos<br>na Pista
+      </div>
+    </div>
+  </div>
+
+  <div class="seta">⬇</div>
+
+  <div class="bloco cinza">Lógica de Decisão (IA)</div>
+
+  <div class="linha-horizontal">
+    <div>
+      <div class="bloco cinza">Pedestre na Faixa</div>
+      <div class="seta">⬇</div>
+      <div class="bloco">Sinal Vermelho Piscante</div>
+      <div class="seta">⬇</div>
+      <div class="bloco">ESP8266 – LED</div>
+    </div>
+
+    <div>
+      <div class="bloco cinza">
+        Pedestre na Faixa<br>+ Veículo em Alta Velocidade
+      </div>
+      <div class="seta">⬇</div>
+      <div class="bloco">Ativação da Sirene</div>
+      <div class="seta">⬇</div>
+      <div class="bloco">ESP8266 – Buzzer</div>
+    </div>
+  </div>
+
+    
+</div>
+
+    
+<!-- ===================== EXPLICAÇÃO ===================== -->
+<div class="explicacao">
+  <h2>🧠 Funcionamento Geral do Sistema</h2>
+
+  <p>
+    Este projeto tem como objetivo demonstrar, de forma <strong>prática e educativa</strong>,
+    como conceitos de <strong>Inteligência Artificial</strong> e
+    <strong>Visão Computacional</strong> podem ser aplicados em soluções reais
+    voltadas à <strong>segurança viária e urbana</strong>.
+  </p>
+
+  <ul>
+    <li>
+      A <strong>câmera</strong> realiza a captura contínua do ambiente da faixa de pedestres.
+    </li>
+    <li>
+      O <strong>OpenCV</strong> processa os frames do vídeo e define
+      <strong>Regiões de Interesse (ROI)</strong>.
+    </li>
+    <li>
+      O sistema realiza a detecção de:
+      <ul>
+        <li>Pedestres posicionados sobre a faixa.</li>
+        <li>Veículos trafegando na pista.</li>
+      </ul>
+    </li>
+    <li>
+      A <strong>lógica de decisão</strong> analisa o cenário e identifica situações de risco:
+      <ul>
+        <li>Pedestre na faixa → ativação do sinal vermelho piscante.</li>
+        <li>Pedestre + veículo em alta velocidade → acionamento da sirene sonora.</li>
+      </ul>
+    </li>
+    <li>
+      As decisões são enviadas via rede (por exemplo, <strong>MQTT</strong>) para o
+      <strong>ESP8266</strong>, responsável pelo controle de <strong>LEDs e buzzer</strong>.
+    </li>
+  </ul>
+
+  <p>
+    O simulador em HTML reproduz fielmente esta lógica de funcionamento,
+    facilitando o entendimento dos alunos e servindo como ponte entre o
+    <strong>modelo conceitual</strong> e a <strong>implementação física</strong> do sistema.
+  </p>
+</div>
 </body>
 </html>
 ``
