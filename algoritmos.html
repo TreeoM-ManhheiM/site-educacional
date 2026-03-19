@@ -1,3 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Simulados de Travessia inteligente Todos Direitos Reservados EE> 8 de Abril-2026</title>
+<style>
+    body {
+        text-align: center;
+        font-family: Arial;
+        background: #eef;
+    }
+
+    #cenario {
+        position: relative;
+        width: 800px;
+        height: 400px;
+        margin: 20px auto;
+        background: #555;
+        overflow: hidden;
+    }
+
+    /* Faixa (AGORA VERTICAL) */
+    #faixa {
+        position: absolute;
+        top: 0;
+        left: 350px;
+        width: 100px;
+        height: 100%;
+        background: repeating-linear-gradient(
+            180deg,
+            white 0px,
+            white 40px,
+            transparent 40px,
+            transparent 80px
+        );
+    }
+
+    /* Aluno */
+    #aluno {
+        position: absolute;
+        left: 350px;
+        top: 400px;
+        font-size: 60px;
+        transition: 1s;
+    }
+    /* onibus */
+    #onibus {
+    	position: absolute;
+    	left: 480px;   /* ajusta posição horizontal */
+    	top: 280px;    /* alinhado com a rua */
+    	font-size: 90px;
+    	z-index: 2;
+	transform: scaleX(-1);
+}
+    /* Carro */
+    #carro {
+        position: absolute;
+        left: -100px;
+        top: 170px;
+        font-size: 50px;
+    }
+
+    /* Sinal */
+    #sinal {
+        width: 50px;
+        height: 50px;
+        margin: 10px auto;
+        border-radius: 50%;
+        background: gray;
+    }
+
+    /* Sirene */
+    #sirene {
+        font-size: 30px;
+        color: red;
+        display: none;
+    }
+
+    button {
+        margin: 5px;
+        padding: 10px;
+        font-size: 16px;
+    }
+</style>
+</head>
+<body>
+
+<h2>🚦 Simulador de Travessia</h2>
+
+<div id="sinal"></div>
+<div id="sirene">🚨 PERIGO 🚨</div>
+
+<div id="cenario">
+    <div id="faixa"></div>
+    <div id="aluno">🚶‍♂️</div>
+    <div id="carro">🚗</div>
+    <div id="onibus">🚌</div>
+</div>
+
+<button onclick="chegarFaixa()">Aluno chega na faixa</button>
+<button onclick="atravessar()">Atravessar</button>
+<button onclick="sairFaixa()">Sair da faixa</button>
+<button onclick="carroRapido()">Carro rápido</button>
+
+<audio id="somSirene" src="https://www.soundjay.com/misc/sounds/siren.wav"></audio>
+
+<script>
+let alunoNaFaixa = false;
+let alunoAtravessando = false;
+let carroProximo = false;
+let sireneAtiva = false;
+
+let sinal = document.getElementById("sinal");
+let sirene = document.getElementById("sirene");
+let som = document.getElementById("somSirene");
+
+let piscaInterval;
+
+// 🚶‍♂️ Chega na faixa
+function chegarFaixa() {
+    alunoNaFaixa = true;
+    alunoAtravessando = false;
+
+    document.getElementById("aluno").style.top = "310px";
+
+    iniciarPisca();
+}
+
+// 🚶‍♂️ Atravessar
+function atravessar() {
+    if (!alunoNaFaixa) return;
+
+    alunoAtravessando = true;
+    document.getElementById("aluno").style.top = "0px";
+}
+
+// 🚶‍♂️ Sai da faixa
+function sairFaixa() {
+    alunoNaFaixa = false;
+    alunoAtravessando = false;
+
+    document.getElementById("aluno").style.top = "-100px";
+
+    pararSirene();
+    pararPisca();
+}
+
+// 🚗 Carro rápido
+function carroRapido() {
+    let carro = document.getElementById("carro");
+    carro.style.left = "800px";
+
+    let pos = 800;
+
+    let intervalo = setInterval(() => {
+        pos -= 15; // ← CORRIGIDO
+        carro.style.left = pos + "px";
+
+        // 🚨 Só é perigo quando está próximo da faixa
+        if (pos > 250 && pos < 550) {
+            carroProximo = true;
+            verificarPerigo();
+        } else {
+            carroProximo = false;
+        }
+
+        // Passou
+        if (pos < -100) {
+            clearInterval(intervalo);
+            carroProximo = false;
+
+            pararSirene();
+
+            return;
+            
+        }
+
+    }, 50);
+}
+// 🚨 Verifica regras EXATAS
+function verificarPerigo() {
+    if ((alunoNaFaixa || alunoAtravessando) && carroProximo) {
+        ativarSirene();
+    }
+}
+
+// 🚨 Ativar sirene
+function ativarSirene() {
+    if (!sireneAtiva) {
+        sireneAtiva = true;
+        sirene.style.display = "block";
+        som.loop = true;
+        som.play();
+    }
+}
+
+// 🚨 Parar sirene
+function pararSirene() {
+    sireneAtiva = false;
+    sirene.style.display = "none";
+    som.pause();
+    som.currentTime = 0;
+}
+
+// 🚦 Pisca alerta vermelho ↔ amarelo
+function iniciarPisca() {
+    let cor = false;
+
+    piscaInterval = setInterval(() => {
+        sinal.style.background = cor ? "red" : "yellow";
+        cor = !cor;
+    }, 500);
+}
+
+// 🚦 Para pisca
+function pararPisca() {
+    clearInterval(piscaInterval);
+    sinal.style.background = "gray";
+}
+
+
+</script>
+<h1>🚦 Projeto Educacional – Faixa Inteligente</h1>
+<h3>Inteligência Artificial, Visão Computacional e IoT</h3>
+
 <!-- ===================== SIMULADOR ===================== -->
 <div class="simulador">
   <h2>Simulador de Travessia – Protótipo Lógico do Projeto</h2>
@@ -104,3 +329,5 @@
     <strong>modelo conceitual</strong> e a <strong>implementação física</strong> do sistema.
   </p>
 </div>
+</body>
+</html>
