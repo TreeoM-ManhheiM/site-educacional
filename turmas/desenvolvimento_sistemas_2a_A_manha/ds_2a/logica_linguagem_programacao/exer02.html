@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Quiz Operadores Python - FATEC — V8 (Envio simples: Nome + Série, destinatário fixo)</title>
+<style>
+  :root{ --bg:#0f172a; --panel:#0b1220; --line:#1e293b; --fg:#e5e7eb; --muted:#9aa4b2; --ok:#22c55e; --bad:#ef4444; --acc:#38bdf8; --warn:#f59e0b; --code:#020617; --inbg:#0b1220; --inbd:#334155; }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--fg)}
+  .container{max-width:1000px;margin:auto;padding:18px}
+  h1{margin:4px 0 10px 0;font-size:1.15rem}
+  .topbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .pill{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:#cbd5e1}
+  select.mode{background:#0b1220;border:1px solid var(--line);color:#dbeafe;padding:6px 8px;border-radius:8px}
+  .progress{flex:1;height:10px;background:#0a1223;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .progress>span{display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#22c55e);width:0%}
+  .codeWrap{position:relative;background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .codeHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:.9rem}
+  .code{white-space:pre-wrap;font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;line-height:1.42}
+  .lines{position:absolute;left:0;top:40px;width:42px;bottom:0;color:#6b7280;border-right:1px solid #0f1a31;padding:12px 6px;text-align:right;user-select:none;pointer-events:none}
+  .codeInner{margin-left:48px}
+  input.slot{ --ch:5; width:calc(var(--ch)*1ch); min-width:48px; text-align:center;font-size:16px;line-height:1.2; margin:0 2px; padding:2px 4px; border-radius:6px; border:1px solid var(--inbd); background:var(--inbg); color:var(--fg); outline:none; vertical-align:baseline; transition:all .12s ease }
+  input.slot::placeholder{color:#64748b;opacity:.7}
+  input.slot:focus{border-color:var(--acc);box-shadow:0 0 0 2px rgba(56,189,248,.25)}
+  input.slot.ok{border-color:var(--ok);background:#0c1f14}
+  input.slot.no{border-color:var(--bad);background:#1a0e11}
+  input.slot[data-len="2"]{--ch:5} input.slot[data-len="3"]{--ch:6} input.slot[data-len="4"]{--ch:7}
+  .ops{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+  .ops button{background:#0b1220;border:1px solid var(--line);color:#dbeafe;padding:6px 10px;border-radius:8px;cursor:pointer}
+  .ops button:hover{border-color:#3b82f6;background:#0d1730}
+  .ops .title{color:#9aa4b2;font-size:.9rem;margin-right:4px;align-self:center}
+  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  button.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#1f2a45;color:#e5e7eb;cursor:pointer}
+  button.primary{background:#22c55e;color:#052e13;border-color:#0d5e34}
+  button.ghost{background:#0b1220}
+  button.warn{background:#f59e0b;color:#221000;border-color:#7a4d03}
+  button[disabled]{opacity:.5;cursor:not-allowed}
+  .feedback{min-height:26px;margin-top:8px}
+  .correct{color:var(--ok)} .wrong{color:var(--bad)} .muted{color:var(--muted)}
+  .scoreBig{font-size:1.15rem;margin-top:8px}
+  .footer{color:#93a0b5;font-size:.86rem;margin-top:14px}
+  .hints{margin-top:8px;padding:10px;border-radius:10px;border:1px dashed #21406b;background:#0a152b}
+  .hintStep{margin:6px 0}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .chip{background:#0b1220;border:1px solid var(--line);color:#e5e7eb;padding:4px 8px;border-radius:999px;cursor:pointer}
+  .chip:hover{border-color:#38bdf8}
+  .send{margin-top:12px;background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:12px}
+  .send h3{margin:0 0 8px 0;font-size:1rem;color:#dbeafe}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  .row label{display:flex;flex-direction:column;gap:4px;font-size:.9rem}
+  .row input[type=text]{background:#0a1325;border:1px solid #22314f;color:#e5e7eb;padding:8px 10px;border-radius:8px;min-width:220px}
+  #sendStatus{display:inline-block;margin-left:8px}
+  @media (max-width:640px){ input.slot{width:56px} .lines{display:none} .codeInner{margin-left:0} }
+</style>
+<!-- EmailJS SDK via CDN -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+  // Chave pública do EmailJS
+  document.addEventListener('DOMContentLoaded', function(){
+    if (window.emailjs) { emailjs.init({ publicKey: 'ikG65_WxFRdkk2Gqr' }); }
+  });
+</script>
+</head>
+<body>
+<div class="container">
+  <h1>🧠 Quiz Operadores Python (Nível FATEC)</h1>
+
+  <div class="topbar">
+    <span class="pill">Modo:
+      <select id="modeSel" class="mode">
+        <option value="treino" selected>Treino (com dicas)</option>
+        <option value="prova">Prova (sem dicas)</option>
+      </select>
+    </span>
+    <span class="pill">Questão <b id="qNow">1</b>/<b id="qTotal">-</b></span>
+    <span class="pill">Acertos: <b id="qScore">0</b></span>
+    <span class="pill">Tempo: <b id="qTime">00:00</b></span>
+    <div class="progress"><span id="qProg"></span></div>
+  </div>
+
+  <div class="codeWrap">
+    <div class="codeHeader">
+      <span class="muted">Complete os espaços com operadores/keywords de Python</span>
+      <div><button class="btn ghost" id="btnReset" title="Reiniciar">↺ Reiniciar</button></div>
+    </div>
+    <div class="lines" id="lineNums"></div>
+    <div id="code" class="code codeInner" aria-live="polite"></div>
+  </div>
+
+  <div class="ops" aria-label="Paleta de operadores">
+    <span class="title">Operadores:</span>
+    <div class="group" id="opBtns"></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn primary" id="btnCheck">✔ Confirmar (Enter)</button>
+    <button class="btn" id="btnNext" title="Próxima (Ctrl+→)" disabled>Próxima ▶</button>
+    <button class="btn" id="btnPrev" title="Anterior (Ctrl+←)" disabled>◀ Anterior</button>
+  </div>
+
+  <!-- Dicas (Treino) -->
+  <div id="hintPanel" class="hints" style="display:none">
+    <div class="hintStep" id="hint1"></div>
+    <div class="hintStep" id="hint2"></div>
+    <div class="hintStep" id="hint3"></div>
+    <div class="actions" style="margin-top:8px">
+      <button class="btn" id="btnHint">💡 Próxima dica</button>
+    </div>
+  </div>
+
+  <!-- Envio por e-mail (fixo) -->
+  <div class="send">
+    <h3>📧 Enviar atividade (destinatário fixo)</h3>
+    <div class="row">
+      <label>Nome do aluno
+        <input type="text" id="alunoNome" placeholder="Seu nome" required />
+      </label>
+      <label>Série/Turma
+        <input type="text" id="alunoSerie" placeholder="Ex.: 2º A" required />
+      </label>
+    </div>
+    <div class="actions" style="margin-top:10px">
+      <button class="btn" id="btnSend" disabled>✉ Enviar atividade</button>
+      <span id="sendStatus" class="muted"></span>
+    </div>
+    <p class="muted" style="margin-top:6px">
+      <b>Importante:</b> no EmailJS, defina o <b>To email</b> do template <code>template_kvt866g</code> com o e‑mail fixo do professor.
+      (Como o destinatário é fixo no template, aqui pedimos apenas <b>Nome</b> e <b>Série</b>.)
+    </p>
+  </div>
+
+  <div id="feedback" class="feedback" aria-live="polite"></div>
+  <h2 id="score" class="scoreBig"></h2>
+  <p class="footer">Campos no código são clicáveis; Enter confere; Ctrl+→/Ctrl+← navega. Progresso salvo.</p>
+</div>
+
+<script>
+// ===== Banco de questões (mesmo conjunto) =====
+const quiz = [
+{ code:`nome = input("Nome: ")\nn1 = float(input("Nota 1: "))\nn2 = float(input("Nota 2: "))\nmedia = (n1 __ n2) __ 2\n\nif media __ 6:\n    print("Aprovado")\nelse:\n    print("Reprovado")`, answers:["+","/",">="] },
+{ code:`salario = 2000\nbonus = 500\n\ntotal = salario __ bonus\n\nif total __ 2500:\n    print("Alto")\nelse:\n    print("Normal")`, answers:["+",">"] },
+{ code:`num = 7\n\nif num __ 2 __ 0:\n    print("Par")\nelse:\n    print("Ímpar")`, answers:["%","=="] },
+{ code:`idade = 18\n\nif idade __ 18:\n    print("Maior")\nelse:\n    print("Menor")`, answers:[">="] },
+{ code:`x = 15\n\nif x __ 10 and x __ 20:\n    print("Dentro")\nelse:\n    print("Fora")`, answers:[">","<"] },
+{ code:`user = "admin"\n\nif user __ "admin":\n    print("OK")\nelse:\n    print("Erro")`, answers:["=="] },
+{ code:`n = -5\n\nif n __ 0:\n    print("Negativo")\nelse:\n    print("Positivo")`, answers:["<"] },
+{ code:`preco = 100\n\nif preco __ 100:\n    print("Desconto")\nelse:\n    print("Normal")`, answers:[">="] },
+{ code:`ativo = False\n\nif __ ativo:\n    print("Inativo")\nelse:\n    print("Ativo")`, answers:["not"] },
+{ code:`temp = 35\n\nif temp __ 30 or temp < 10:\n    print("Extremo")\nelse:\n    print("Normal")`, answers:[">"] },
+{ code:`a = 3\nb = 4\n\nres = a __ b\n\nif res __ 12:\n    print("OK")\nelse:\n    print("Erro")`, answers:["*","=="] },
+{ code:`a = 10\nb = 2\n\nres = a __ b\n\nif res __ 5:\n    print("Certo")\nelse:\n    print("Errado")`, answers:["/","=="] },
+{ code:`a = 5\nb = 3\n\nif a __ b:\n    print("Diferente")\nelse:\n    print("Igual")`, answers:["!="] },
+{ code:`a = 2\nb = 3\n\nres = a __ b\n\nif res __ 8:\n    print("OK")\nelse:\n    print("Erro")`, answers:["**","=="] },
+{ code:`a = 9\nb = 2\n\nres = a __ b\n\nif res __ 4:\n    print("OK")\nelse:\n    print("Erro")`, answers:["//","=="] },
+{ code:`nota = 7\n\nif nota __ 9:\n    print("A")\nelif nota __ 7:\n    print("B")\nelse:\n    print("C")`, answers:[">=",">="] },
+{ code:`x = 5\n\nif x __ 0 and x __ 10:\n    print("OK")\nelse:\n    print("Erro")`, answers:[">=","<="] },
+{ code:`a = 5\nb = 5\n\nif a __ b __ 10:\n    print("OK")\nelse:\n    print("Erro")`, answers:["+","=="] },
+{ code:`a = 10\n\nif a > 5 __ a < 20:\n    print("OK")\nelse:\n    print("Erro")`, answers:["and"] },
+{ code:`x = 1\n\nif x == 0 __ x == 1:\n    print("Binário")\nelse:\n    print("Outro")`, answers:["or"] }
+];
+
+const OP_GROUPS = [["+","-","*","/","//","%","**"],["==","!=","<",">","<=",">="],["and","or","not"]];
+const el = {
+  code: document.getElementById('code'), lines: document.getElementById('lineNums'), feedback: document.getElementById('feedback'), score: document.getElementById('score'),
+  qNow: document.getElementById('qNow'), qTotal: document.getElementById('qTotal'), qScore: document.getElementById('qScore'), qTime: document.getElementById('qTime'), qProg: document.getElementById('qProg'),
+  btnCheck: document.getElementById('btnCheck'), btnNext: document.getElementById('btnNext'), btnPrev: document.getElementById('btnPrev'), btnReset: document.getElementById('btnReset'), modeSel: document.getElementById('modeSel'),
+  opBtns: document.getElementById('opBtns'), hintPanel: document.getElementById('hintPanel'), btnHint: document.getElementById('btnHint'), hint1: document.getElementById('hint1'), hint2: document.getElementById('hint2'), hint3: document.getElementById('hint3'),
+  alunoNome: document.getElementById('alunoNome'), alunoSerie: document.getElementById('alunoSerie'), btnSend: document.getElementById('btnSend'), sendStatus: document.getElementById('sendStatus')
+};
+const LSKEY = 'quiz_ops_state_v8_fixed';
+let order=[], idx=0, score=0, startedAt=Date.now(), mode='treino';
+let attempts={}, hintLevel={}, locked={};
+const MAX_WRONG=3; let focusInput=null; let notaAtual=0;
+
+const fmtTime=ms=>{const s=Math.floor(ms/1000),mm=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');return `${mm}:${ss}`};
+const shuffle=a=>{const arr=a.slice();for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr};
+const normalize=v=>(v||'').trim().toLowerCase();
+const FAM={Aritmético:new Set(["+","-","*","/","//","%","**"]),Comparação:new Set(["==","!=","<",">","<=",">="]),Lógico:new Set(["and","or","not"])};
+const familyOf=ans=>{for(const [n,s] of Object.entries(FAM)){if(s.has(ans))return n}return'Operador'};
+
+function buildPalette(){ el.opBtns.innerHTML=''; OP_GROUPS.flat().forEach(op=>{ const b=document.createElement('button'); b.textContent=op; b.onclick=()=>{ const t=focusInput||document.querySelector('input.slot:not(.ok)'); if(t){ t.value=op; t.dispatchEvent(new Event('input')); t.focus(); } }; el.opBtns.appendChild(b); }); }
+function renderLines(text){ const n=text.split('\n').length; el.lines.innerHTML=Array.from({length:n},(_,i)=>String(i+1)).join('<br>'); }
+
+function render(){ const q=quiz[order[idx]]; const raw=q.code; const esc=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); let index=0; const html=esc.replace(/__+/g, m=>`<input class="slot" id="op${index++}" data-len="${m.length}" placeholder="…" autocomplete="off" spellcheck="false" />`); el.code.innerHTML=`<div class="codeInner">${html}</div>`; renderLines(raw);
+  el.feedback.textContent=''; el.score.textContent=''; el.qNow.textContent=(idx+1); el.qTotal.textContent=quiz.length; el.qScore.textContent=score; el.qProg.style.width=Math.round((idx)/quiz.length*100)+'%';
+  const inputs=Array.from(document.querySelectorAll('input.slot'));
+  inputs.forEach((inp,i)=>{ inp.addEventListener('focus',()=> focusInput=inp); inp.addEventListener('input',()=>{ inp.classList.remove('ok','no'); resizeSlot(inp); }); inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); } if(e.ctrlKey&&e.key==='ArrowRight'){ e.preventDefault(); goNext(); } if(e.ctrlKey&&e.key==='ArrowLeft'){ e.preventDefault(); goPrev(); } if(e.key==='ArrowRight'){ const n=inputs[i+1]; if(n){ n.focus(); } } if(e.key==='ArrowLeft'){ const p=inputs[i-1]; if(p){ p.focus(); } } }); resizeSlot(inp); });
+  el.btnCheck.disabled=false; inputs.forEach(inp=> inp.readOnly=false );
+  el.code.onclick=e=>{ if(e.target.tagName!=='INPUT'){ (document.querySelector('input.slot:not(.ok)')||inputs[0])?.focus(); } };
+  setTimeout(()=> inputs[0]?.focus(), 10);
+  toggleHintsUI(mode==='treino'); hintLevel[idx]=hintLevel[idx]||0; buildHints();
+  if(locked[idx]){ inputs.forEach(inp=>{ inp.readOnly=true; inp.classList.remove('no'); }); el.btnCheck.disabled=true; el.feedback.innerHTML='Questão bloqueada após 3 tentativas. Avance para a próxima.'; el.btnNext.disabled=false; }
+}
+function resizeSlot(inp){ const v=inp.value||inp.getAttribute('placeholder')||''; const len=Math.max(2,Math.min(6,v.length)); inp.style.setProperty('--ch',String(len+3)); }
+function toggleHintsUI(show){ el.hintPanel.style.display=show?'block':'none'; el.btnCheck.textContent=show?'✔ Verificar (Enter)':'✔ Confirmar (Enter)'; }
+function buildHints(){ const level=hintLevel[idx]||0; const q=quiz[order[idx]]; const fams=q.answers.map(a=>familyOf(a)); el.hint1.innerHTML=(level>=1)? 'Dica 1 — família por campo: '+fams.map((f,i)=>`<b>[${i+1}] ${f}</b>`).join(' • ') : '<span class="muted">Dica 1 — família por campo</span>'; if(level>=2){ const block=document.createElement('div'); block.innerHTML='Dica 2 — candidatos por família (clique para preencher):'; const wrap=document.createElement('div'); wrap.className='chips'; const addChip=txt=>{ const s=document.createElement('span'); s.className='chip'; s.textContent=txt; s.onclick=()=>{ const t=focusInput||document.querySelector('input.slot:not(.ok)'); if(t){ t.value=txt; t.dispatchEvent(new Event('input')); t.focus(); } }; wrap.appendChild(s); }; fams.forEach(f=>{ if(f==='Aritmético')FAM.Aritmético.forEach(x=>addChip(x)); if(f==='Comparação')FAM.Comparação.forEach(x=>addChip(x)); if(f==='Lógico')FAM.Lógico.forEach(x=>addChip(x)); }); el.hint2.innerHTML=''; el.hint2.appendChild(block); el.hint2.appendChild(wrap); } else { el.hint2.innerHTML='<span class="muted">Dica 2 — candidatos por família</span>'; } if(level>=3){ el.hint3.innerHTML=contextHints(q.code); } else { el.hint3.innerHTML='<span class="muted">Dica 3 — pistas pelo contexto</span>'; } }
+function contextHints(code){ const lines=code.split('\n'); const hints=[]; let k=0; for(let li=0; li<lines.length; li++){ const line=lines[li]; let m; const re=/__+/g; while((m=re.exec(line))){ k++; let msg=`[${k}] Linha ${li+1}: `; if(/^\s*if\b/.test(line)){ if(/\band\b|\bor\b/.test(line)) msg+='expressão booleana (and/or).'; else msg+='geralmente comparação (==, !=, >, <, >=, <=).'; } else if(/=\s*\(/.test(line)||/res\s*=/.test(line)||/media\s*=/.test(line)){ msg+='expressão aritmética (+, -, *, /, //, %, **).'; } else { msg+='entre valores: comparação; em contas: aritmético; antes de booleano: not.'; } hints.push(msg); } } return '<div>'+hints.map(h=>'• '+h).join('<br>')+'</div>'; }
+
+function check(){ const q=quiz[order[idx]]; const inputs=Array.from(document.querySelectorAll('input.slot')); if(inputs.some(inp=>!inp.value.trim())){ el.feedback.innerHTML='<span class="muted">Preencha todos os campos.</span>'; return; } let okAll=true; inputs.forEach((inp,i)=>{ const user=normalize(inp.value); const target=normalize(q.answers[i]); const pass=(user===target); inp.classList.toggle('ok',pass); inp.classList.toggle('no',!pass); if(!pass) okAll=false; }); attempts[idx]=(attempts[idx]||0)+1; if(mode==='treino'){ if(okAll){ el.feedback.innerHTML='<span class="correct">✔ Correto! Pode avançar.</span>'; el.btnNext.disabled=false; score++; el.qScore.textContent=score; } else { if(attempts[idx]>=MAX_WRONG){ locked[idx]=true; el.feedback.innerHTML='<span class="wrong">✖ 3 tentativas. Questão bloqueada.</span>'; el.btnCheck.disabled=true; el.btnNext.disabled=false; saveState(); setTimeout(()=>{ goNext(); }, 900); return; } else { el.feedback.innerHTML='<span class="wrong">✖ Ainda há erro(s). Use as Dicas ou a paleta.</span>'; el.btnNext.disabled=true; } } } else { if(okAll){ score++; el.qScore.textContent=score; el.feedback.innerHTML='<span class="correct">✔ Correto</span>'; } else { if(attempts[idx]>=MAX_WRONG){ locked[idx]=true; el.feedback.innerHTML='<span class="wrong">✖ 3 tentativas. Questão bloqueada.</span>'; el.btnCheck.disabled=true; el.btnNext.disabled=false; saveState(); setTimeout(()=>{ goNext(); }, 900); return; } else { el.feedback.innerHTML='<span class="wrong">✖ Errado</span>'; } } el.btnNext.disabled=false; }
+  saveState(); }
+
+function goNext(){ if(idx<quiz.length-1){ idx++; render(); navButtons(); saveState(); } else finish(); }
+function goPrev(){ if(idx>0){ idx--; render(); navButtons(); saveState(); } }
+function navButtons(){ el.btnPrev.disabled=(idx===0); el.btnNext.disabled=(mode==='treino')&&!locked[idx]; el.btnCheck.disabled=!!locked[idx]; }
+
+function finish(){ el.code.innerHTML=''; el.lines.innerHTML=''; el.feedback.innerHTML=''; notaAtual=+((score/quiz.length)*10).toFixed(1); el.score.textContent=`Pontuação final: ${score} / ${quiz.length} — Nota: ${notaAtual} — Tempo: ${fmtTime(Date.now()-startedAt)} — Modo: ${mode.toUpperCase()}`; el.qProg.style.width='100%'; el.btnCheck.disabled=true; el.btnNext.disabled=true; el.btnPrev.disabled=true; el.btnSend.disabled=false; el.sendStatus.textContent=`Pronto para enviar.`; }
+
+async function sendEmail(){ const nome=(el.alunoNome.value||'').trim(); const serie=(el.alunoSerie.value||'').trim(); if(!nome||!serie){ el.sendStatus.innerHTML='<span class="wrong">Preencha Nome e Série.</span>'; return; }
+  // IMPORTANTE: Configure o "To email" do template no painel EmailJS com o e‑mail fixo do professor.
+  // Aqui só enviamos os parâmetros que o template usa no corpo/assunto.
+  const params={ nome, serie, nota: String(notaAtual) };
+  try{ el.btnSend.disabled=true; el.sendStatus.innerHTML='<span class="muted">Enviando…</span>';
+    await emailjs.send('service_94cnpvm','template_kvt866g', params);
+    el.sendStatus.innerHTML='<span class="correct">✔ Enviado!</span>';
+    localStorage.setItem('aluno_nome', nome); localStorage.setItem('aluno_serie', serie);
+  }catch(err){ el.sendStatus.innerHTML='<span class="wrong">Falhou: '+(err && (err.text||err.message) || 'erro')+'</span>'; el.btnSend.disabled=false; }
+}
+
+function saveState(){ const data={order,idx,score,attempts,startedAt,mode,hintLevel,locked}; localStorage.setItem(LSKEY, JSON.stringify(data)); }
+function loadStateOrInit(){ let data=null; try{ data=JSON.parse(localStorage.getItem(LSKEY)||'null'); }catch{}
+  order = data?.order?.length===quiz.length ? data.order : shuffle([...Array(quiz.length).keys()]);
+  idx = Number.isFinite(data?.idx) ? data.idx : 0; score = Number.isFinite(data?.score) ? data.score : 0;
+  attempts=data?.attempts||{}; hintLevel=data?.hintLevel||{}; locked=data?.locked||{}; startedAt=data?.startedAt||Date.now(); mode=data?.mode||'treino'; el.modeSel.value=mode;
+  el.alunoNome.value = localStorage.getItem('aluno_nome') || ''; el.alunoSerie.value = localStorage.getItem('aluno_serie') || '';
+}
+setInterval(()=> el.qTime.textContent=fmtTime(Date.now()-startedAt), 1000);
+function buildPaletteUI(){ el.opBtns.innerHTML=''; OP_GROUPS.flat().forEach(op=>{ const b=document.createElement('button'); b.textContent=op; b.onclick=()=>{ const t=focusInput||document.querySelector('input.slot:not(.ok)'); if(t){ t.value=op; t.dispatchEvent(new Event('input')); t.focus(); } }; el.opBtns.appendChild(b); }); }
+
+el.btnCheck.onclick=check; el.btnNext.onclick=goNext; el.btnPrev.onclick=goPrev;
+el.btnReset.onclick=()=>{ localStorage.removeItem(LSKEY); order=shuffle([...Array(quiz.length).keys()]); idx=0; score=0; attempts={}; startedAt=Date.now(); hintLevel={}; locked={}; render(); navButtons(); el.qScore.textContent=0; el.qTime.textContent='00:00'; el.btnSend.disabled=true; el.sendStatus.textContent=''; };
+el.modeSel.onchange=()=>{ mode=el.modeSel.value; el.feedback.innerHTML='<span class="muted">Modo alterado para <b>'+mode.toUpperCase()+'</b>.</span>'; toggleHintsUI(mode==='treino'); navButtons(); saveState(); };
+el.btnHint.onclick=()=>{ hintLevel[idx]=Math.min(3,(hintLevel[idx]||0)+1); buildHints(); saveState(); };
+el.btnSend.onclick=sendEmail;
+
+function init(){ buildPaletteUI(); loadStateOrInit(); el.qTotal.textContent=quiz.length; el.qScore.textContent=score; render(); navButtons(); }
+init();
+</script>
+</body>
+</html>
