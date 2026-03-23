@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>IA com Webcam – Estável</title>
+<title>IA 8 Abril – Treinar e Rodar</title>
 
 <style>
 body {
@@ -87,3 +87,64 @@ button {
   border: none;
   font-size: 15px;
   background: #334155;
+  color: white;
+}
+button.primary { background: #22c55e; color:#052e13; }
+button.warn { background: #f59e0b; color:#1b1202; }
+button.bad { background: #ef4444; }
+
+.status {
+  text-align: center;
+  font-size: 14px;
+  opacity: 0.85;
+  margin-top: 6px;
+}
+</style>
+
+<!-- ✅ SCRIPTS CORRETOS (OBRIGATÓRIO) -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier@1.2.6"></script>
+</head>
+
+<body>
+
+<header>
+  <b>IA com Webcam</b><br>
+  <small>Treinar → Rodar</small>
+</header>
+
+<main>
+
+<section class="panel">
+  <video id="video" autoplay playsinline muted></video>
+
+  <div class="train-buttons">
+    <button data-cls="0">Classe 0<span id="n0" class="counter">n=0</span></button>
+    <button data-cls="1">Classe 1<span id="n1" class="counter">n=0</span></button>
+    <button data-cls="2">Classe 2<span id="n2" class="counter">n=0</span></button>
+    <button data-cls="3">Classe 3<span id="n3" class="counter">n=0</span></button>
+  </div>
+
+  <div id="status" class="status">Aguardando câmera…</div>
+
+  <button id="startCam" class="primary">📷 Ativar câmera</button>
+  <button id="toggleCam">🔄 Trocar câmera</button>
+</section>
+
+<section class="panel">
+  <button id="run" class="warn">▶ Rodar IA</button>
+  <button id="stop">⏹ Parar IA</button>
+  <button id="clear" class="bad">🗑️ Limpar treino</button>
+</section>
+
+<section class="panel">
+  <div class="label">Classe 0 – <b id="t0">0%</b></div>
+  <div class="bar"><span id="p0"></span></div>
+
+  <div class="label">Classe 1 – <b id="t1">0%</b></div>
+  <div class="bar"><span id="p1"></span></div>
+
+  <div class="label">Classe 2 – <b id="t2">0%</b></div>
+  <div class="bar"><span id="p2"></span></div>
+
