@@ -1,23 +1,309 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Exercícios — Processos de Desenvolvimento de Software e Metodologias Ágeis — 3ºB</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;margin:32px;background:#f6f7fb;color:#111827}
-    a{color:#2563eb;text-decoration:none} a:hover{text-decoration:underline}
-    header{margin-bottom:16px} h1{margin:0 0 4px 0} .crumbs{color:#475569;font-size:0.95rem}
-    .box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Laboratório: Login com Bugs Configuráveis</title>
+<style>
+  :root{
+    --bg:#0f172a; --panel:#111827; --text:#e5e7eb; --muted:#94a3b8; --border:#1f2937;
+    --ok:#10b981; --warn:#f59e0b; --err:#ef4444; --brand:#22d3ee; --violet:#a78bfa;
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:linear-gradient(180deg,#0b1224 0%, #0f172a 100%); color:var(--text);
+       font:15px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";}
+  header{position:sticky; top:0; z-index:10; background:rgba(2,6,23,.8); border-bottom:1px solid var(--border);
+         backdrop-filter:saturate(1.15) blur(6px)}
+  .wrap{max-width:1100px; margin:0 auto; padding:14px 16px}
+  h1{margin:4px 0 2px; font-size: clamp(20px, 3vw, 28px)}
+  .muted{color:var(--muted)}
+  .grid{display:grid; gap:16px}
+  @media(min-width:980px){ .cols-2{grid-template-columns: 1fr 1fr} }
+  .card{background:rgba(17,24,39,.8); border:1px solid var(--border); border-radius:16px; padding:16px}
+  .card h2{margin:.2rem 0 .6rem; font-size: clamp(16px, 2.2vw, 22px)}
+  .row{display:flex; gap:8px; align-items:center; flex-wrap:wrap}
+  label{display:flex; gap:8px; align-items:center}
+  input,button,textarea,select{
+    background:#0b1224; color:var(--text); border:1px solid var(--border); border-radius:10px; padding:10px 12px; outline:none
+  }
+  button{cursor:pointer; font-weight:700}
+  .btn{background: linear-gradient(180deg,#15223f,#0e1730)}
+  .btn:hover{filter:brightness(1.07)}
+  .btn.ok{background:linear-gradient(180deg,#0f3b33,#0a2d26); border-color:#135e4f}
+  .btn.warn{background:linear-gradient(180deg,#3f2c15,#2b1f0d); border-color:#6a4b1b}
+  .btn.err{background:linear-gradient(180deg,#3f1515,#2b0d0d); border-color:#6a1b1b}
+  .kbd{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:12px;
+       padding:2px 6px; background:#0b1224; border:1px solid var(--border); border-radius:6px}
+  .pill{display:inline-block; padding:6px 10px; border-radius:999px; background:#0b1224; border:1px solid var(--border); font-size:12px}
+  .log{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size:13px; background:#060b19; border:1px solid var(--border); border-radius:10px; padding:10px; max-height:260px; overflow:auto}
+  .ok{color:var(--ok)} .warn{color:var(--warn)} .err{color:var(--err)}
+  table{width:100%; border-collapse:collapse}
+  th, td{border-bottom:1px dashed #1e293b; padding:8px; text-align:left; vertical-align:top}
+  th{color:#cbd5e1}
+  small{color:var(--muted)}
+</style>
 </head>
 <body>
-  <header>
-    <div class="crumbs"><a href="/index.html">Início</a> / Processos de Desenvolvimento de Software e Metodologias Ágeis</div>
-    <h1>Exercícios — Processos de Desenvolvimento de Software e Metodologias Ágeis</h1>
-  </header>
-  <div class="box">
-    <p>Página inicial de <strong>Exercícios — Processos de Desenvolvimento de Software e Metodologias Ágeis</strong>. Substitua este conteúdo pelos materiais da disciplina.</p>
+<header>
+  <div class="wrap">
+    <h1>Laboratório: Sistema de Login (com bugs configuráveis)</h1>
+    <div class="muted">Altere os <strong>bugs simulados</strong>, tente logar e observe os resultados no console ao lado.</div>
   </div>
+</header>
+
+<main class="wrap">
+  <div class="grid cols-2">
+    <!-- ======= Lado Esquerdo: Config + Tela de Login ======= -->
+    <div class="card">
+      <h2>🧪 Bugs simulados</h2>
+      <div class="grid" style="gap:10px">
+        <div class="row">
+          <label><input type="checkbox" id="bugIgnoreCase"> Bug: senha ignora maiúsc./minúsc.</label>
+          <label><input type="checkbox" id="bugBlankPassword"> Bug: permite senha em branco</label>
+        </div>
+        <div class="row">
+          <label><input type="checkbox" id="bugNoLock"> Bug: não bloqueia após 3 falhas</label>
+          <label><input type="checkbox" id="bugUserNotChecked"> Bug: não valida usuário inexistente</label>
+        </div>
+        <!-- Extras opcionais (pode ligar/desligar para mais discussões em aula) -->
+        <details>
+          <summary class="muted">➕ Bugs extras (opcionais)</summary>
+          <div style="margin-top:8px" class="grid">
+            <label><input type="checkbox" id="bugUserEnumeration"> Mensagem entrega se o usuário existe</label>
+            <label><input type="checkbox" id="bugPasswordTruncate8"> Trunca senha para 8 chars</label>
+            <label><input type="checkbox" id="bugTrimPassword"> Remove espaços da senha antes de validar</label>
+            <label><input type="checkbox" id="bugNoDelay"> Sem atraso/entropia (facilita brute force)</label>
+            <label><input type="checkbox" id="bugAdminBypass"> Backdoor didático: "admin/admin" sempre entra</label>
+            <label><input type="checkbox" id="bugNoPersistLock"> Bloqueio não persiste (reinicia ao recarregar)</label>
+          </div>
+        </details>
+      </div>
+
+      <hr style="border-color:#1f2937; margin:14px 0">
+
+      <h2>🔐 Tela de Login</h2>
+      <div class="grid" style="gap:10px">
+        <input id="loginEmail" type="email" placeholder="email@exemplo.com" aria-label="E-mail">
+        <input id="loginPass" type="password" placeholder="senha" aria-label="Senha">
+        <div class="row">
+          <button class="btn" id="btnLogin">Entrar</button>
+          <button class="btn warn" id="btnReset">Resetar tentativas</button>
+          <button class="btn" id="btnAna">Preencher Ana</button>
+          <button class="btn" id="btnBob">Preencher Bob</button>
+          <button class="btn" id="btnTresFalhas">Simular 3 falhas</button>
+        </div>
+        <small class="muted">
+          Usuários de teste: <span class="kbd">ana@ex.com / Ana12345</span>,
+          <span class="kbd">bob@ex.com / Bob12345</span> (Bob bloqueia após 3 tentativas)
+        </small>
+      </div>
+
+      <div style="margin-top:14px">
+        <h3>Estado dos usuários (demo)</h3>
+        <table id="tblUsers" aria-live="polite">
+          <thead><tr><th>E-mail</th><th>Tentativas</th><th>Bloqueado?</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ======= Lado Direito: Console ======= -->
+    <div class="card">
+      <h2>🧾 Console</h2>
+      <div id="log" class="log" aria-live="polite"></div>
+      <div class="row" style="margin-top:10px">
+        <button class="btn ok" id="btnExport">Exportar console (.txt)</button>
+        <button class="btn err" id="btnClearLog">Limpar console</button>
+        <span class="pill">Persistência: <span class="kbd">localStorage</span></span>
+      </div>
+      <p class="muted" style="margin-top:8px">
+        Dica de discussão: compare mensagens de erro com e sem <em>enumeração de usuários</em>;
+        ative/desative o <em>bloqueio</em>; teste <em>truncagem</em> e <em>ignorar caixa</em>.
+      </p>
+    </div>
+  </div>
+</main>
+
+<script>
+/* ===================== Utilidades ===================== */
+const $ = (s) => document.querySelector(s);
+const $all = (s) => Array.from(document.querySelectorAll(s));
+const now = () => new Date().toLocaleString();
+
+function log(msg, cls=""){ const el = $('#log'); el.innerHTML += `<div class="${cls}">[${now()}] ${msg}</div>`; el.scrollTop = el.scrollHeight; }
+function saveLS(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+function loadLS(k,f){ try{ return JSON.parse(localStorage.getItem(k)) ?? f; }catch(e){ return f; } }
+
+/* ===================== Dados base ===================== */
+let users = loadLS('labUsers', {
+  "ana@ex.com": {pass:"Ana12345", attempts:0, locked:false},
+  "bob@ex.com": {pass:"Bob12345", attempts:0, locked:false}
+});
+function persistUsers(){ saveLS('labUsers', users); }
+function renderUsers(){
+  const tb = $('#tblUsers tbody'); tb.innerHTML = "";
+  Object.entries(users).forEach(([email, u])=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${email}</td><td>${u.attempts||0}</td><td>${u.locked?"Sim":"Não"}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+/* ===================== Motor de Login ===================== */
+async function tryLogin(email, pass){
+  // Bugs principais
+  const bugIgnoreCase = $('#bugIgnoreCase').checked;
+  const bugBlankPassword = $('#bugBlankPassword').checked;
+  const bugNoLock = $('#bugNoLock').checked;
+  const bugUserNotChecked = $('#bugUserNotChecked').checked;
+
+  // Extras
+  const bugUserEnumeration = $('#bugUserEnumeration').checked;
+  const bugPasswordTruncate8 = $('#bugPasswordTruncate8').checked;
+  const bugTrimPassword = $('#bugTrimPassword').checked;
+  const bugNoDelay = $('#bugNoDelay').checked;
+  const bugAdminBypass = $('#bugAdminBypass').checked;
+  const bugNoPersistLock = $('#bugNoPersistLock').checked;
+
+  // Atraso simulando custo de hash (se a proteção estiver "correta")
+  if(!bugNoDelay){
+    const jitter = 200 + Math.floor(Math.random()*300); // 200-500ms
+    await new Promise(r=>setTimeout(r,jitter));
+  }
+
+  // Backdoor didático (NÃO FAÇA EM PRODUÇÃO)
+  if(bugAdminBypass && email==="admin@ex.com" && pass==="admin"){
+    log("⚠️ Backdoor aceitou admin/admin. (Demonstração do que não fazer)", "warn");
+    return {ok:true, reason:"Backdoor"};
+  }
+
+  // Senha em branco
+  if(!bugBlankPassword && (!pass || pass.trim()==="")){
+    log("❌ Senha vazia bloqueada.", "err");
+    return {ok:false, reason:"Senha vazia"};
+  }
+
+  // Usuário inexistente
+  const exists = !!users[email];
+  if(!bugUserNotChecked && !exists){
+    if(bugUserEnumeration){ log("❌ Usuário não encontrado.", "err"); }
+    else { log("❌ Credenciais inválidas.", "err"); }
+    return {ok:false, reason:"Usuário inexistente"};
+  }
+
+  // Carrega usuário (ou fantasma quando bugUserNotChecked está ligado)
+  const u = exists ? users[email] : {pass:"", attempts:0, locked:false};
+
+  // Bloqueio anterior
+  if(u.locked && !bugNoLock){
+    if(bugUserEnumeration){ log("🚫 Conta bloqueada por tentativas anteriores.", "err"); }
+    else { log("🚫 Acesso temporariamente indisponível.", "err"); }
+    return {ok:false, reason:"Bloqueado"};
+  }
+
+  // Transformações defeituosas de senha (aplicadas na ENTRADA do usuário)
+  let inputPass = pass ?? "";
+  if(bugTrimPassword) inputPass = inputPass.trim();           // ignora espaços indevidos
+  if(bugPasswordTruncate8) inputPass = inputPass.slice(0,8);  // trunca para 8 chars
+
+  // Comparação (com ou sem case-insensitive)
+  const expected = u.pass;
+  const ok = bugIgnoreCase
+      ? expected.toLowerCase() === inputPass.toLowerCase()
+      : expected === inputPass;
+
+  if(ok){
+    // Sucesso: zera tentativas
+    u.attempts = 0;
+    // (mantém bloqueio = false)
+    users[email] = u;
+    if(!bugNoPersistLock) persistUsers();
+    log("✅ Login bem-sucedido.", "ok");
+    renderUsers();
+    return {ok:true};
+  }else{
+    // Falha: incrementa tentativas e avalia bloqueio
+    u.attempts = (u.attempts||0)+1;
+
+    // Decide mensagem
+    if(bugUserEnumeration && exists){
+      log(`❌ Senha incorreta. Tentativas = ${u.attempts}`, "warn");
+    } else {
+      log("❌ Credenciais inválidas.", "warn");
+    }
+
+    if(!bugNoLock && exists && u.attempts>=3){
+      u.locked = true;
+      log("🚫 Excedeu 3 tentativas. Conta bloqueada.", "err");
+    }
+
+    users[email] = u;
+    if(!bugNoPersistLock) persistUsers();
+    renderUsers();
+    return {ok:false, reason:"Senha incorreta"};
+  }
+}
+
+/* ===================== UI Bindings ===================== */
+$('#btnAna').addEventListener('click', ()=>{
+  $('#loginEmail').value = "ana@ex.com";
+  $('#loginPass').value = "Ana12345";
+});
+$('#btnBob').addEventListener('click', ()=>{
+  $('#loginEmail').value = "bob@ex.com";
+  $('#loginPass').value = "Bob12345";
+});
+
+$('#btnLogin').addEventListener('click', async ()=>{
+  const email = $('#loginEmail').value.trim();
+  const pass = $('#loginPass').value;
+  if(!email){ log("Informe um e-mail.", "warn"); return; }
+  const res = await tryLogin(email, pass);
+  if(res.ok){
+    log(`Sessão iniciada para ${email}.`, "ok");
+  } else {
+    // nada extra
+  }
+});
+
+$('#btnReset').addEventListener('click', ()=>{
+  Object.values(users).forEach(u=>{ u.attempts=0; u.locked=false; });
+  persistUsers();
+  renderUsers();
+  log("🔄 Estado resetado (tentativas=0, bloqueio=false).", "ok");
+});
+
+$('#btnTresFalhas').addEventListener('click', async ()=>{
+  const email = $('#loginEmail').value.trim() || "bob@ex.com";
+  $('#loginEmail').value = email;
+  log(`▶️ Simulando 3 falhas para ${email}...`, "warn");
+  for(let i=1;i<=3;i++){
+    await tryLogin(email, "senhaErrada"+i);
+  }
+});
+
+$('#btnClearLog').addEventListener('click', ()=>{ $('#log').innerHTML=""; });
+$('#btnExport').addEventListener('click', ()=>{
+  const text = $('#log').innerText || "";
+  const blob = new Blob([text], {type:"text/plain;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `console_login_${Date.now()}.txt`; a.click();
+  URL.revokeObjectURL(url);
+});
+
+/* ===================== Inicialização ===================== */
+renderUsers();
+log("💡 Dica: ative/desative bugs e teste diferentes credenciais.", "muted");
+log("👥 Demos: ana@ex.com/Ana12345, bob@ex.com/Bob12345", "muted");
+
+// Acessibilidade simples via Enter
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' && (document.activeElement.id==='loginEmail' || document.activeElement.id==='loginPass')){
+    $('#btnLogin').click();
+  }
+});
+</script>
 </body>
 </html>
+``
