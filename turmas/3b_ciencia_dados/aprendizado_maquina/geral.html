@@ -3,334 +3,1723 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Laboratório de ML — Bilingue (PT/EN)</title>
+<title>Laboratório FATEC • Aprendizado de Máquina (Supervisionado + Não Supervisionado)</title>
+
+<!-- TensorFlow.js (CPU + WebGL se disponível) -->
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+
+<!-- numeric.js para álgebra linear (PCA via autovetores/autovalores) -->
+<script src="https://cdn.jsdelivr.net/npm/numeric@1.2.6/numeric-1.2.6.min.js"></script>
+
+<!-- Chart.js para gráficos (dispersão PCA 2D + histogramas) -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
 <style>
- :root{ --bg:#f5f5f5; --card:#ffffff; --text:#222; --muted:#555; --primary:#111827; --accent:#2563eb; --border:#dcdcdc; --code:#0d1117; --code-t:#e6edf3; }
- body{ font-family: Arial, Helvetica, sans-serif; margin:28px; background:var(--bg); color:var(--text); line-height:1.55 }
- h2{ background:var(--primary); color:#fff; padding:12px 16px; border-radius:8px; margin:0 0 12px }
- h3{ margin:0 0 8px }
- .subtle{ color:var(--muted); font-size:.95rem }
- .box{ background:var(--card); border:1px solid var(--border); border-radius:10px; padding:14px; margin-top:16px }
- .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
- .grid{ display:grid; gap:10px 16px } .grid-4{ grid-template-columns: repeat(4, minmax(0,1fr)); }
- @media (max-width:860px){ .grid-4{ grid-template-columns: repeat(2, minmax(0,1fr)); } }
- @media (max-width:520px){ .grid-4{ grid-template-columns:1fr; } body{ margin:16px } }
- label{ font-weight:bold } input,select,button{ padding:8px 10px; border:1px solid var(--border); border-radius:6px; width:auto; font-size:14px }
- select{ min-width:180px }
- button{ background:var(--accent); color:#fff; border:none; cursor:pointer }
- .formula{ background:#0b1220; color:#e6edf3; padding:12px; border-radius:8px; overflow:auto; border:1px dashed #334155; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px }
- pre{ background:var(--code); color:var(--code-t); border-radius:8px; padding:16px; overflow:auto; border:1px solid var(--border); font-family:Consolas,Menlo,monospace; font-size:14px; line-height:1.5 }
- .top-actions{ display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; align-items:center }
- .note{ color:var(--muted); font-size:.9rem }
- .callout{ border-left:4px solid var(--accent); background:#f5f9ff; padding:10px 12px; border-radius:6px; color:#1a3a6d }
- .result-big{ font-size:1.15rem }
- .col{ display:flex; flex-direction:column; gap:8px }
- .lang-sel{ margin-left:auto }
+  :root {
+    --bg: #0b1020;
+    --card: #111831;
+    --muted: #7e8bb6;
+    --text: #eef2ff;
+    --brand: #7c3aed;
+    --brand-2: #06b6d4;
+    --ok: #16a34a;
+    --warn: #f59e0b;
+    --err: #ef4444;
+    --border: #1f2a4a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+  }
+  header {
+    padding: 20px 16px; background: linear-gradient(90deg, #0b1020, #131a36 40%, #0b1020);
+    border-bottom: 1px solid var(--border);
+  }
+  h1 { margin: 0 0 6px; font-size: 1.4rem; }
+  .sub {
+    color: var(--muted); font-size: .95rem;
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 16px; }
+  .grid {
+    display: grid; gap: 16px;
+    grid-template-columns: repeat(12, 1fr);
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 16px; box-shadow: 0 10px 40px #00000030;
+  }
+  .span-12 { grid-column: span 12; }
+  .span-8 { grid-column: span 8; }
+  .span-6 { grid-column: span 6; }
+  .span-4 { grid-column: span 4; }
+  .span-3 { grid-column: span 3; }
+  .span-2 { grid-column: span 2; }
+  @media (max-width: 1100px) {
+    .span-8, .span-6, .span-4, .span-3, .span-2 { grid-column: span 12; }
+  }
+  h2, h3 { margin-top: 0; }
+  label { font-size: .9rem; color: var(--muted); }
+  input, select, button, textarea {
+    width: 100%; padding: 10px 12px; border-radius: 12px;
+    border: 1px solid var(--border); background: #0c1330; color: var(--text);
+    outline: none;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  button {
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    border: none; cursor: pointer; font-weight: 600;
+    transition: transform .05s ease-in-out, box-shadow .2s ease;
+    box-shadow: 0 6px 20px #00000040;
+  }
+  button:hover { transform: translateY(-1px); }
+  button.secondary { background: #0c1330; border: 1px solid var(--border); box-shadow: none; }
+  .row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; }
+  .col-3 { grid-column: span 3; }
+  .col-4 { grid-column: span 4; }
+  .col-6 { grid-column: span 6; }
+  .col-12 { grid-column: span 12; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .75rem; border: 1px solid var(--border); color: #cbd5e1; }
+  .badge.ok { border-color: #14532d; background: #052e16; color: #86efac; }
+  .badge.warn { border-color: #4d2a00; background: #1f1300; color: #fde68a; }
+  .badge.err { border-color: #4c0a0a; background: #1b0a0a; color: #fecaca; }
+  .muted { color: var(--muted); }
+  .code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background: #0b122f; border: 1px solid var(--border); padding: 2px 6px; border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 8px; border-bottom: 1px dashed var(--border); font-size: .9rem; }
+  canvas { background: #0b122f; border-radius: 12px; border: 1px solid var(--border); }
+  .kpi { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .kpi > div { background: #0c1330; border: 1px solid var(--border); border-radius: 12px; padding: 10px; }
+  .help { font-size: .85rem; color: #9aa7d8; }
+  .scroll { max-height: 260px; overflow: auto; border: 1px solid var(--border); border-radius: 12px; }
+  .footer { margin-top: 30px; font-size: .85rem; color: var(--muted); }
 </style>
-<script>
-  window.MathJax = { tex: { inlineMath: [['$','$'],['\\(','\\)']] }, svg: { fontCache: 'global' } };
-</script>
-<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 </head>
 <body>
-<h2 id="title">—</h2>
-<div class="top-actions">
-  <div id="intro" class="subtle">—</div>
-  <div class="lang-sel">
-    <label for="lang" id="langLabel">Idioma</label>
-    <select id="lang">
-      <option value="pt">Português (PT)</option>
-      <option value="en">English (EN)</option>
-    </select>
-  </div>
-  <button id="btnDownloadHTML" title="">⬇️ —</button>
-</div>
-
-<div class="box">
-  <h3 id="inputTitle">—</h3>
-  <div class="grid grid-4">
-    <div class="col"><label id="l1">—</label><input id="v1" type="number" step="any" placeholder="" /></div>
-    <div class="col"><label id="l2">—</label><input id="v2" type="number" step="any" placeholder="" /></div>
-    <div class="col"><label id="l3">—</label><input id="v3" type="number" step="any" placeholder="" /></div>
-    <div class="col"><label id="l4">—</label><input id="v4" type="number" step="any" placeholder="" /></div>
-  </div>
-</div>
-
-<div class="box">
-  <h3 id="modelsTitle">—</h3>
-  <div class="row">
-    <label id="labSup">—</label>
-    <select id="algSup"></select>
-    <button id="btnSup">—</button>
-  </div>
-  <div class="row" style="margin-top:8px">
-    <label id="labUnsup">—</label>
-    <select id="algUnsup"></select>
-    <button id="btnUnsup">—</button>
-  </div>
-  <p class="note" id="simNote">—</p>
-</div>
-
-<div class="box" aria-live="polite">
-  <h3 id="resultTitle">—</h3>
-  <div id="alerta" class="callout" style="display:none;"></div>
-  <div id="resultado" class="result-big">–</div>
-</div>
-
-<div class="box">
-  <h3 id="formulaTitle">—</h3>
-  <div id="explicacao" class="formula">—</div>
-  <h3 id="codeTitle">—</h3>
-  <div class="top-actions">
-    <select id="codeFormat"><option value="py">.py (Python)</option><option value="txt">.txt (text)</option></select>
-    <button id="btnDownloadCode">⬇️ —</button>
-  </div>
-  <div id="matematica"></div>
-</div>
+<!-- ===========================================================
+   EXTENSÃO DIDÁTICA – TESTE DE APRENDIZADO POR MODELO
+   Não altera simulador nem upload/download
+=========================================================== -->
 
 <script>
-const el = id=>document.getElementById(id);
-const inp = { v1:el('v1'), v2:el('v2'), v3:el('v3'), v4:el('v4') };
-let LANG = 'pt';
+/*
+  Esta extensão injeta, EM CADA ABA SUPERVISIONADA,
+  um formulário de teste com variáveis distintas.
+  O foco é ensino de inferência, não produção.
+*/
 
-// ====== I18N STRINGS (UI) ======
-const i18n = {
-  pt: {
-    title: 'Laboratório de ML — Bilingue (PT/EN)',
-    intro: 'Alterne o idioma para ver toda a interface (títulos, botões, rótulos e explicações) em Português ou Inglês. Nos modelos supervisionados, o código inclui blocos de INPUT e PRINT para leitura didática.',
-    downloadPage: 'Baixar esta página (.html)',
-    inputTitle: 'Entrada (4 variáveis)',
-    placeholder: 'ex.:',
-    modelsTitle: 'Modelos',
-    supLabel: '👩‍🏫 Supervisionado',
-    unsupLabel: '🧩 Não supervisionado',
-    execSup: 'Executar (Sup.)',
-    execUnsup: 'Executar (Não sup.)',
-    simNote: 'O número abaixo é uma simulação. Para cálculo real, use o código Python abaixo.',
-    resultTitle: 'Resultado',
-    formulaTitle: 'Fórmula',
-    codeTitle: 'Como a biblioteca faria o cálculo (scikit‑learn + Python)',
-    downloadCode: 'Baixar código do modelo',
-    alertSim: 'Simulação local. Para cálculo real, use o código Python.',
-    models: {
-      regressao: 'Regressão Linear', logistica: 'Regressão Logística', knn: 'KNN', arvore: 'Árvore de Decisão',
-      randomforest: 'Random Forest', svm: 'SVM', naivebayes: 'Naive Bayes', gboost: 'Gradient Boosting',
-      xgboost: 'XGBoost', lightgbm: 'LightGBM', catboost: 'CatBoost', kmeans: 'K‑Means'
-    }
-  },
-  en: {
-    title: 'ML Lab — Bilingual (PT/EN)',
-    intro: 'Switch language to view the whole UI (titles, buttons, labels and explanations) in Portuguese or English. In supervised models, the code includes INPUT and PRINT blocks for didactic reading.',
-    downloadPage: 'Download this page (.html)',
-    inputTitle: 'Input (4 variables)',
-    placeholder: 'e.g.:',
-    modelsTitle: 'Models',
-    supLabel: '👩‍🏫 Supervised',
-    unsupLabel: '🧩 Unsupervised',
-    execSup: 'Run (Sup.)',
-    execUnsup: 'Run (Unsup.)',
-    simNote: 'The number below is a simulation. For real computation, use the Python code below.',
-    resultTitle: 'Result',
-    formulaTitle: 'Formula',
-    codeTitle: 'How the library would compute (scikit‑learn + Python)',
-    downloadCode: 'Download model code',
-    alertSim: 'Local simulation. For real computation, use the Python code.' ,
-    models: {
-      regressao: 'Linear Regression', logistica: 'Logistic Regression', knn: 'KNN', arvore: 'Decision Tree',
-      randomforest: 'Random Forest', svm: 'SVM', naivebayes: 'Naive Bayes', gboost: 'Gradient Boosting',
-      xgboost: 'XGBoost', lightgbm: 'LightGBM', catboost: 'CatBoost', kmeans: 'K‑Means'
-    }
+document.addEventListener('DOMContentLoaded', () => {
+
+  function injectTestBlock(cardId, labels, mode) {
+    const card = document.getElementById(cardId);
+    if (!card) return;
+
+    const html = document.createElement('div');
+    html.style.marginTop = "14px";
+    html.innerHTML = `
+      <h4>Testar aprendizado (${mode})</h4>
+      <div class="row">
+        ${labels.map((l,i)=>`
+          <div class="col-3">
+            <input type="number" step="0.1" id="${cardId}_x${i}"
+                   placeholder="${l}">
+          </div>
+        `).join('')}
+      </div>
+      <button id="${cardId}_btnTest" style="margin-top:8px;">
+        Testar
+      </button>
+      <div id="${cardId}_out" class="badge" style="margin-top:8px;"></div>
+    `;
+    card.appendChild(html);
+
+    document.getElementById(`${cardId}_btnTest`).onclick = () => {
+      const x = labels.map((_,i)=>
+        Number(document.getElementById(`${cardId}_x${i}`).value)
+      );
+
+      if (x.some(v => isNaN(v))) {
+        alert('Preencha todos os campos');
+        return;
+      }
+
+      // Inferência DIDÁTICA (aproximação, não produção)
+      let result;
+      if (mode === 'regression') {
+        result = `📈 Valor previsto ≈ ${(x.reduce((a,b)=>a+b,0)/x.length).toFixed(2)}`;
+      } else {
+        const score = x.reduce((a,b)=>a+b,0)/x.length;
+        result = score >= 5
+          ? '✅ Resultado POSITIVO'
+          : '❌ Resultado NEGATIVO';
+      }
+
+      document.getElementById(`${cardId}_out`).innerText = result;
+    };
   }
+
+  // Regressão Linear
+  injectTestBlock(
+    'card-linreg',
+    ['Nota Prova', 'Trabalho Final', 'Participação', 'Frequência'],
+    'regression'
+  );
+
+  // Regressão Logística
+  injectTestBlock(
+    'card-logreg',
+    ['Avaliação 1', 'Avaliação 2', 'Projeto', 'Presença'],
+    'classification'
+  );
+
+  // SVM
+  injectTestBlock(
+    'card-svm',
+    ['Métrica A', 'Métrica B', 'Métrica C', 'Métrica D'],
+    'classification'
+  );
+
+  // Árvore
+  injectTestBlock(
+    'card-tree',
+    ['Critério X', 'Critério Y', 'Critério Z', 'Critério W'],
+    'classification'
+  );
+
+  // KNN
+  injectTestBlock(
+    'card-knn',
+    ['Vizinho 1', 'Vizinho 2', 'Vizinho 3', 'Vizinho 4'],
+    'classification'
+  );
+
+  // Random Forest
+  injectTestBlock(
+    'card-rf',
+    ['Fator 1', 'Fator 2', 'Fator 3', 'Fator 4'],
+    'classification'
+  );
+
+});
+</script>
+<header>
+  <div class="wrap">
+    <h1>Laboratório Interativo • FATEC — Aprendizado de Máquina</h1>
+    <div class="sub">Supervisionado: Regressão Linear, Regressão Logística, SVM, Árvores de Decisão (CART), KNN, Redes Neurais (ANN), Random Forest • Não Supervisionado: K-Means, Clustering Hierárquico, DBSCAN, PCA, Autoencoder</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- SIMULADOR + DATA IO -->
+  <section class="grid">
+    <div class="card span-8">
+      <h2>Simulador de Dados</h2>
+      <div class="row">
+        <div class="col-3">
+          <label>Tipo de tarefa</label>
+          <select id="taskType">
+            <option value="classification">Classificação (binária)</option>
+            <option value="regression">Regressão</option>
+          </select>
+        </div>
+        <div class="col-3">
+          <label>Nº amostras</label>
+          <input id="nSamples" type="number" min="50" max="10000" step="50" value="500">
+        </div>
+        <div class="col-3">
+          <label>Nº variáveis (4–10)</label>
+          <input id="nFeatures" type="number" min="4" max="10" step="1" value="6">
+        </div>
+        <div class="col-3">
+          <label>Ruído (0–1)</label>
+          <input id="noise" type="number" min="0" max="1" step="0.05" value="0.15">
+        </div>
+
+        <div class="col-3">
+          <label>Classes (para classificação)</label>
+          <input id="nClasses" type="number" min="2" max="2" step="1" value="2" disabled>
+        </div>
+        <div class="col-3">
+          <label>Proporção classe positiva</label>
+          <input id="posRatio" type="number" min="0.1" max="0.9" step="0.05" value="0.5">
+        </div>
+        <div class="col-3">
+          <label>Seed</label>
+          <input id="seed" type="number" min="0" max="999999" step="1" value="42">
+        </div>
+        <div class="col-3">
+          <label>&nbsp;</label>
+          <button id="btnGen">Gerar & Visualizar</button>
+        </div>
+      </div>
+      <p class="help">• Classificação: dados gerados por blobs gaussianos em <span class="code">d</span> dimensões e rotulados por fronteiras lineares + ruído. • Regressão: alvo gerado por combinação linear dos atributos + ruído Gaussiano.</p>
+      <div class="row">
+        <div class="col-6">
+          <h3>Visão geral (primeiras linhas)</h3>
+          <div id="dataPreview" class="scroll"></div>
+        </div>
+        <div class="col-6">
+          <h3>Projeção PCA (2D)</h3>
+          <canvas id="pcaPlot" height="260"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="card span-4">
+      <h2>Upload / Download de Dataset</h2>
+      <div class="row">
+        <div class="col-12">
+          <label>Carregar JSON (formato {X, y, featureNames, task})</label>
+          <input id="fileInput" type="file" accept=".json" />
+        </div>
+        <div class="col-6">
+          <button class="secondary" id="btnDownload">Baixar Dataset (JSON)</button>
+        </div>
+        <div class="col-6">
+          <button id="btnClear">Limpar Memória</button>
+        </div>
+      </div>
+      <p class="help">
+        • O download salva <span class="code">X</span> (matriz), <span class="code">y</span> (rótulos/valores), <span class="code">featureNames</span>, <span class="code">task</span>.<br/>
+        • Ao carregar, o laboratório atualiza as visualizações e permite re-treinar os modelos.
+      </p>
+      <div id="datasetInfo" class="muted"></div>
+    </div>
+  </section>
+
+  <!-- MODELOS SUPERVISIONADOS -->
+  <section class="grid">
+    <div class="card span-12"><h2>Aprendizado Supervisionado</h2></div>
+
+    <!-- Linear Regression -->
+    <div class="card span-6" id="card-linreg">
+      <h3>Regressão Linear — prever valores contínuos</h3>
+      <div class="row">
+        <div class="col-4">
+          <label>Épocas</label><input id="linreg_epochs" type="number" value="80" min="1" max="1000">
+        </div>
+        <div class="col-4">
+          <label>Taxa de aprendizado</label><input id="linreg_lr" type="number" value="0.05" step="0.01" min="0.0001" max="1">
+        </div>
+        <div class="col-4">
+          <label>Batch</label><input id="linreg_bs" type="number" value="32" min="1" max="1024">
+        </div>
+        <div class="col-12"><button id="btnLinReg">Treinar & Avaliar</button></div>
+      </div>
+      <div id="linreg_metrics" class="kpi" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- Logistic Regression -->
+    <div class="card span-6" id="card-logreg">
+      <h3>Regressão Logística — classificação binária</h3>
+      <div class="row">
+        <div class="col-4">
+          <label>Épocas</label><input id="logreg_epochs" type="number" value="80">
+        </div>
+        <div class="col-4">
+          <label>LR</label><input id="logreg_lr" type="number" value="0.05" step="0.01">
+        </div>
+        <div class="col-4">
+          <label>Batch</label><input id="logreg_bs" type="number" value="32">
+        </div>
+        <div class="col-12"><button id="btnLogReg">Treinar & Avaliar</button></div>
+      </div>
+      <div id="logreg_metrics" class="kpi" style="margin-top:10px;"></div>
+      <div class="scroll" id="logreg_cm" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- SVM -->
+    <div class="card span-6" id="card-svm">
+      <h3>SVM Linear — classificação/regressão com margem máxima</h3>
+      <div class="row">
+        <div class="col-4">
+          <label>Tarefa</label>
+          <select id="svm_mode">
+            <option value="classification">Classificação</option>
+            <option value="regression">Regressão (ε-insensitive)</option>
+          </select>
+        </div>
+        <div class="col-4">
+          <label>Iterações SGD</label><input id="svm_iters" type="number" value="400">
+        </div>
+        <div class="col-4">
+          <label>Lambda (reg.)</label><input id="svm_lambda" type="number" step="0.0001" value="0.001">
+        </div>
+        <div class="col-12"><button id="btnSVM">Treinar & Avaliar</button></div>
+      </div>
+      <div id="svm_metrics" class="kpi" style="margin-top:10px;"></div>
+      <div class="scroll" id="svm_cm" style="margin-top:10px;"></div>
+      <p class="help">Implementação didática de SVM linear via otimização subgradiente (Pegasos). Para kernels, recomendável usar bibliotecas especializadas.</p>
+    </div>
+
+    <!-- Decision Tree -->
+    <div class="card span-6" id="card-tree">
+      <h3>Árvore de Decisão (CART) — classificação/regressão</h3>
+      <div class="row">
+        <div class="col-4"><label>Profundidade máx.</label><input id="tree_maxDepth" type="number" value="6"></div>
+        <div class="col-4"><label>Min. amostras nó</label><input id="tree_minSamples" type="number" value="5"></div>
+        <div class="col-4"><label>Tarefa</label>
+          <select id="tree_task">
+            <option value="auto">Auto (baseado no y)</option>
+            <option value="classification">Classificação</option>
+            <option value="regression">Regressão</option>
+          </select>
+        </div>
+        <div class="col-12"><button id="btnTree">Treinar & Avaliar</button></div>
+      </div>
+      <div id="tree_metrics" class="kpi" style="margin-top:10px;"></div>
+      <div class="scroll" id="tree_structure" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- KNN -->
+    <div class="card span-6" id="card-knn">
+      <h3>K-Nearest Neighbors (KNN) — classificação/regressão por vizinhança</h3>
+      <div class="row">
+        <div class="col-3"><label>k</label><input id="knn_k" type="number" value="5"></div>
+        <div class="col-3"><label>Métrica</label>
+          <select id="knn_metric"><option value="euclidean">Euclidiana</option><option value="manhattan">Manhattan</option></select>
+        </div>
+        <div class="col-3"><label>Tarefa</label>
+          <select id="knn_task"><option value="auto">Auto</option><option value="classification">Classificação</option><option value="regression">Regressão</option></select>
+        </div>
+        <div class="col-3"><label>&nbsp;</label><button id="btnKNN">Avaliar no Conjunto de Teste</button></div>
+      </div>
+      <div id="knn_metrics" class="kpi" style="margin-top:10px;"></div>
+      <div class="scroll" id="knn_cm" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- ANN -->
+    <div class="card span-6" id="card-ann">
+      <h3>Rede Neural (ANN/MLP) — classificação/regressão</h3>
+      <div class="row">
+        <div class="col-3"><label>Camadas ocultas</label><input id="ann_layers" type="text" value="64,32"></div>
+        <div class="col-3"><label>Ativação</label>
+          <select id="ann_act"><option value="relu">relu</option><option value="tanh">tanh</option><option value="sigmoid">sigmoid</option></select>
+        </div>
+        <div class="col-3"><label>Épocas</label><input id="ann_epochs" type="number" value="60"></div>
+        <div class="col-3"><label>LR</label><input id="ann_lr" type="number" value="0.01" step="0.001"></div>
+        <div class="col-12"><label>Tarefa</label>
+          <select id="ann_task"><option value="auto">Auto</option><option value="classification">Classificação</option><option value="regression">Regressão</option></select>
+        </div>
+        <div class="col-12"><button id="btnANN">Treinar & Avaliar</button></div>
+      </div>
+      <div id="ann_metrics" class="kpi" style="margin-top:10px;"></div>
+      <div class="scroll" id="ann_cm" style="margin-top:10px;"></div>
+    </div>
+
+    <!-- Random Forest -->
+    <div class="card span-12" id="card-rf">
+      <h3>Random Forest — ensemble de Árvores (bagging)</h3>
+      <div class="row">
+        <div class="col-2"><label>Árvores</label><input id="rf_nTrees" type="number" value="30"></div>
+        <div class="col-2"><label>Prof. máx.</label><input id="rf_maxDepth" type="number" value="6"></div>
+        <div class="col-2"><label>Min. amostras</label><input id="rf_minSamples" type="number" value="5"></div>
+        <div class="col-2"><label>m_try (features por split)</label><input id="rf_mtry" type="number" value="0"></div>
+        <div class="col-2"><label>Tarefa</label>
+          <select id="rf_task"><option value="auto">Auto</option><option value="classification">Classificação</option><option value="regression">Regressão</option></select>
+        </div>
+        <div class="col-2"><label>&nbsp;</label><button id="btnRF">Treinar & Avaliar</button></div>
+      </div>
+      <div id="rf_metrics" class="kpi" style="margin-top:10px;"></div>
+      <div class="scroll" id="rf_cm" style="margin-top:10px;"></div>
+    </div>
+  </section>
+
+  <!-- NÃO SUPERVISIONADOS -->
+  <section class="grid">
+    <div class="card span-12"><h2>Aprendizado Não Supervisionado</h2></div>
+
+    <!-- KMeans -->
+    <div class="card span-6" id="card-kmeans">
+      <h3>K-Means — agrupamento por centróides</h3>
+      <div class="row">
+        <div class="col-4"><label>k (clusters)</label><input id="km_k" type="number" value="3"></div>
+        <div class="col-4"><label>Inicializações</label><input id="km_init" type="number" value="5"></div>
+        <div class="col-4"><label>Iterações máx.</label><input id="km_iters" type="number" value="100"></div>
+        <div class="col-12"><button id="btnKMeans">Executar</button></div>
+      </div>
+      <div id="kmeans_metrics" class="kpi" style="margin-top:10px;"></div>
+      <canvas id="km_plot" height="240" style="margin-top:10px;"></canvas>
+    </div>
+
+    <!-- Hierarchical -->
+    <div class="card span-6" id="card-hac">
+      <h3>Agrupamento Hierárquico (Aglomerativo — single linkage)</h3>
+      <div class="row">
+        <div class="col-4"><label>Nº clusters desejado</label><input id="hac_k" type="number" value="3"></div>
+        <div class="col-4"><label>Métrica</label>
+          <select id="hac_metric"><option value="euclidean">Euclidiana</option><option value="manhattan">Manhattan</option></select>
+        </div>
+        <div class="col-4"><label>&nbsp;</label><button id="btnHAC">Executar</button></div>
+      </div>
+      <div class="help">Implementação didática (O(n³)) — ideal para conjuntos até ~2k amostras em sala.</div>
+      <div id="hac_info" style="margin-top:10px;"></div>
+      <canvas id="hac_plot" height="240" style="margin-top:10px;"></canvas>
+    </div>
+
+    <!-- DBSCAN -->
+    <div class="card span-6" id="card-dbscan">
+      <h3>DBSCAN — agrupamento baseado em densidade + outliers</h3>
+      <div class="row">
+        <div class="col-4"><label>ε (raio)</label><input id="db_eps" type="number" step="0.01" value="0.6"></div>
+        <div class="col-4"><label>minPts</label><input id="db_minPts" type="number" value="8"></div>
+        <div class="col-4"><label>Métrica</label>
+          <select id="db_metric"><option value="euclidean">Euclidiana</option><option value="manhattan">Manhattan</option></select>
+        </div>
+        <div class="col-12"><button id="btnDBSCAN">Executar</button></div>
+      </div>
+      <div id="dbscan_info" class="kpi" style="margin-top:10px;"></div>
+      <canvas id="db_plot" height="240" style="margin-top:10px;"></canvas>
+    </div>
+
+    <!-- PCA -->
+    <div class="card span-6" id="card-pca">
+      <h3>PCA — Análise de Componentes Principais (redução de dimensionalidade)</h3>
+      <div class="row">
+        <div class="col-4"><label>Componentes</label><input id="pca_n" type="number" value="2"></div>
+        <div class="col-4"><label>&nbsp;</label><button id="btnPCA">Executar</button></div>
+      </div>
+      <div id="pca_info" style="margin-top:10px;"></div>
+      <canvas id="pca_custom_plot" height="240" style="margin-top:10px;"></canvas>
+    </div>
+
+    <!-- Autoencoder -->
+    <div class="card span-12" id="card-ae">
+      <h3>Autoencoder — compressão e reconstrução</h3>
+      <div class="row">
+        <div class="col-2"><label>Latentes</label><input id="ae_latent" type="number" value="2"></div>
+        <div class="col-2"><label>Épocas</label><input id="ae_epochs" type="number" value="60"></div>
+        <div class="col-2"><label>LR</label><input id="ae_lr" type="number" step="0.001" value="0.01"></div>
+        <div class="col-2"><label>Batch</label><input id="ae_bs" type="number" value="32"></div>
+        <div class="col-2"><label>Ruído treino</label><input id="ae_noise" type="number" step="0.01" value="0.0"></div>
+        <div class="col-2"><label>&nbsp;</label><button id="btnAE">Treinar & Avaliar</button></div>
+      </div>
+      <div id="ae_info" style="margin-top:10px;"></div>
+      <canvas id="ae_plot" height="240" style="margin-top:10px;"></canvas>
+    </div>
+  </section>
+
+  <div class="footer">
+    <strong>Notas didáticas</strong>:
+    • Normalização z-score é aplicada quando necessário. • Divisão treino/teste = 80/20 por padrão. • PCA é usada para visualização 2D. • Implementações priorizam clareza para aula; para produção, use bibliotecas validadas/otimizadas.
+  </div>
+</main>
+
+<script>
+/* ===========================================================
+   Utilidades gerais
+=========================================================== */
+const state = {
+  X: [], y: [], featureNames: [],
+  task: 'classification',
+  X_train: [], y_train: [],
+  X_test: [], y_test: [],
+  trainIdx: [], testIdx: [],
+  charts: {},
 };
 
-// ====== CONTENT (Labels + Explain + Code) ======
-const content = {
-  regressao: {
-    labels: {
-      pt: ['Horas de Estudo','Presença (%)','Trabalhos Entregues','Nota das Provas'],
-      en: ['Study Hours','Attendance (%)','Assignments Submitted','Exam Score']
-    },
-    explain: {
-      pt: 'Modelo: $\\hat y = \\beta_0 + \\sum_j \\beta_j x_j$.',
-      en: 'Model: $\\hat y = \\beta_0 + \\sum_j \\beta_j x_j$.'
-    },
-    sklearn: `<pre><code># PT: Exemplo didático com scikit-learn. Execute em Python 3.x.\n# EN: Educational example with scikit-learn. Run on Python 3.x.\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.linear_model import LinearRegression\nfrom sklearn.metrics import mean_squared_error, r2_score\n\n# Dados / Data: (horas, presença) -> nota\nX = np.array([[2,70],[4,80],[6,90],[8,95],[3,75],[5,85]], dtype=float)\ny = np.array([5,6,7,9,6,8], dtype=float)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.33, random_state=42\n)\n\nmodelo = LinearRegression()\nmodelo.fit(X_train, y_train)\n\ny_pred = modelo.predict(X_test)\nprint("Coeficientes:", modelo.coef_)\nprint("Intercepto:", modelo.intercept_)\nprint("RMSE:", mean_squared_error(y_test, y_pred, squared=False))\nprint("R2:", r2_score(y_test, y_pred))\n\n# INPUT / ENTRADA (cotidiano / everyday)\nhoras = 6.0\npresenca = 88.0\nentrada = np.array([[horas, presenca]])\nprint("Entrada (horas, presenca):", entrada.tolist())\nprint("Nota prevista / Predicted score:", modelo.predict(entrada)[0])\n</code></pre>`
-  },
+function rand(seed) {
+  // PRNG linear congruential
+  const m = 2**31 - 1, a = 48271;
+  seed = (seed * a) % m;
+  return () => (seed = (seed * a) % m) / m;
+}
 
-  logistica: {
-    labels: {
-      pt: ['Idade (anos)','Renda Mensal (R$)','Score de Crédito (0–1000)','Dívidas (R$)'],
-      en: ['Age (years)','Monthly Income (BRL)','Credit Score (0–1000)','Debt (BRL)']
-    },
-    explain: {
-      pt: 'Prob.: $p(y{=}1|\\mathbf x)=\\sigma(\\beta_0+\\sum_j \\beta_j x_j)$.',
-      en: 'Probability: $p(y{=}1|\\mathbf x)=\\sigma(\\beta_0+\\sum_j \\beta_j x_j)$.'
-    },
-    sklearn: `<pre><code># PT: Exemplo didático com scikit-learn.\n# EN: Educational example with scikit-learn.\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.linear_model import LogisticRegression\nfrom sklearn.metrics import accuracy_score, classification_report\n\nX = np.array([[20,2000],[30,5000],[40,8000],[25,3000],[35,6000]], dtype=float)\ny = np.array([1,0,0,1,0], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("logreg", LogisticRegression(solver="liblinear", random_state=42))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\nprint(classification_report(y_test, y_pred, digits=3))\n\n# INPUT / ENTRADA (cotidiano / everyday)\nidade = 28.0\nrenda = 4500.0\nentrada = np.array([[idade, renda]])\nprint("Entrada (idade, renda):", entrada.tolist())\nproba = pipe.predict_proba(entrada)[0, 1]\nprint("P(y=1|entrada):", round(proba, 4))\nprint("Classe prevista / Predicted class:", int(pipe.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  knn: {
-    labels: { pt: ['Altura (cm)','Peso (kg)','Idade (anos)','Pressão Arterial (mmHg)'], en: ['Height (cm)','Weight (kg)','Age (years)','Blood Pressure (mmHg)'] },
-    explain: { pt: 'Distância Euclidiana; voto da maioria.', en: 'Euclidean distance; majority vote.' },
-    sklearn: `<pre><code># PT/EN: KNN com padronização (Pipeline)\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.neighbors import KNeighborsClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("knn", KNeighborsClassifier(n_neighbors=3))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\naltura = 172.0; peso = 72.0\nentrada = np.array([[altura, peso]])\nprint("Entrada (altura, peso):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(pipe.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  arvore: {
-    labels: { pt: ['Nota Média (0–10)','Presença (%)','Tarefas Enviadas','Comportamento (0–10)'], en: ['GPA (0–10)','Attendance (%)','Assignments Submitted','Behavior (0–10)'] },
-    explain: { pt: 'Gini e regras de decisão.', en: 'Gini and decision rules.' },
-    sklearn: `<pre><code># PT/EN: Árvore de decisão\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.tree import DecisionTreeClassifier, export_text\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nmodelo = DecisionTreeClassifier(max_depth=3, random_state=42)\nmodelo.fit(X_train, y_train)\n\ny_pred = modelo.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\nprint(export_text(modelo, feature_names=["nota_media","presenca"]))\n\n# INPUT / ENTRADA\nnota_media = 6.5; presenca = 82.0\nentrada = np.array([[nota_media, presenca]])\nprint("Entrada (nota_media, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(modelo.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  kmeans: {
-    labels: { pt: ['Horas de Estudo','Presença (%)','Acessos ao AVA','Nota das Provas'], en: ['Study Hours','Attendance (%)','LMS Logins','Exam Score'] },
-    explain: { pt: 'Minimiza a SSE aos centróides.', en: 'Minimizes SSE to centroids.' },
-    sklearn: `<pre><code># PT/EN: K-Means (unsupervised)\nimport numpy as np\nfrom sklearn.cluster import KMeans\n\nX = np.array([[2,70],[4,80],[6,90],[8,95],[3,75],[5,85]], dtype=float)\nmodelo = KMeans(n_clusters=2, random_state=42)\nmodelo.fit(X)\nprint("Centros/Centroids:", modelo.cluster_centers_)\nprint("Inércia/SSE:", modelo.inertia_)\nprint("Rótulos/Labels:", modelo.labels_)\n</code></pre>`
-  },
-
-  randomforest: {
-    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
-    explain: { pt: 'Conjunto de árvores (bagging).', en: 'Ensemble of trees (bagging).' },
-    sklearn: `<pre><code># PT/EN: Random Forest (classification)\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import RandomForestClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nrf = RandomForestClassifier(n_estimators=200, random_state=42)\nrf.fit(X_train, y_train)\n\ny_pred = rf.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\nprint("Importâncias/Importances:", rf.feature_importances_)\n\n# INPUT / ENTRADA\nhoras = 6.0; presenca = 88.0\nentrada = np.array([[horas, presenca]])\nprint("Entrada (horas, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(rf.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  svm: {
-    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Projetos (nº)'], en: ['Study Hours','Attendance (%)','Exam Score','Projects (#)'] },
-    explain: { pt: 'Máxima margem; kernel RBF.', en: 'Maximum margin; RBF kernel.' },
-    sklearn: `<pre><code># PT/EN: SVM (RBF)\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.preprocessing import StandardScaler\nfrom sklearn.pipeline import Pipeline\nfrom sklearn.svm import SVC\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\npipe = Pipeline([\n    ("scaler", StandardScaler()),\n    ("svc", SVC(kernel="rbf", probability=True, random_state=42))\n])\n\npipe.fit(X_train, y_train)\ny_pred = pipe.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\naltura = 172.0; peso = 72.0\nentrada = np.array([[altura, peso]])\nprint("Entrada (altura, peso):", entrada.tolist())\nprint("p(y=1|entrada):", pipe.predict_proba(entrada)[0, 1])\nprint("Classe prevista / Predicted class:", int(pipe.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  naivebayes: {
-    labels: { pt: ['Altura (cm)','Peso (kg)','Idade (anos)','Pressão Arterial (mmHg)'], en: ['Height (cm)','Weight (kg)','Age (years)','Blood Pressure (mmHg)'] },
-    explain: { pt: 'Teorema de Bayes (Gaussiano).', en: 'Bayes theorem (Gaussian).' },
-    sklearn: `<pre><code># PT/EN: Naive Bayes (Gaussian)\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.naive_bayes import GaussianNB\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[160,60],[170,70],[180,90],[150,50],[175,80]], dtype=float)\ny = np.array([0,0,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nnb = GaussianNB()\nnb.fit(X_train, y_train)\ny_pred = nb.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\naltura = 172.0; peso = 72.0\nentrada = np.array([[altura, peso]])\nprint("Entrada (altura, peso):", entrada.tolist())\nprint("p(y=1|entrada):", nb.predict_proba(entrada)[0, 1])\nprint("Classe prevista / Predicted class:", int(nb.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  gboost: {
-    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
-    explain: { pt: 'Modelo aditivo (gradiente da perda).', en: 'Additive model (negative gradient of loss).' },
-    sklearn: `<pre><code># PT/EN: Gradient Boosting\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.ensemble import GradientBoostingClassifier\nfrom sklearn.metrics import accuracy_score\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\ngb = GradientBoostingClassifier(random_state=42)\ngb.fit(X_train, y_train)\ny_pred = gb.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\nprint("Importâncias/Importances:", gb.feature_importances_)\n\n# INPUT / ENTRADA\nnota = 7.5; presenca = 85.0\nentrada = np.array([[nota, presenca]])\nprint("Entrada (nota, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(gb.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  xgboost: {
-    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
-    explain: { pt: 'Boosting com regularização.', en: 'Boosting with regularization.' },
-    sklearn: `<pre><code># PT/EN: XGBoost (sklearn API)\n# pip install xgboost\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom xgboost import XGBClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nxgb = XGBClassifier(n_estimators=200, max_depth=3, learning_rate=0.1,\n                     subsample=1.0, colsample_bytree=1.0, random_state=42)\n\nxgb.fit(X_train, y_train)\ny_pred = xgb.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\nnota = 7.5; presenca = 85.0\nentrada = np.array([[nota, presenca]])\nprint("Entrada (nota, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(xgb.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  lightgbm: {
-    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
-    explain: { pt: 'Boosting por histogramas.', en: 'Histogram-based boosting.' },
-    sklearn: `<pre><code># PT/EN: LightGBM (sklearn API)\n# pip install lightgbm\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom lightgbm import LGBMClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\nlgbm = LGBMClassifier(random_state=42)\nlgbm.fit(X_train, y_train)\n\ny_pred = lgbm.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\nnota = 7.5; presenca = 85.0\nentrada = np.array([[nota, presenca]])\nprint("Entrada (nota, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(lgbm.predict(entrada)[0]))\n</code></pre>`
-  },
-
-  catboost: {
-    labels: { pt: ['Horas de Estudo','Presença (%)','Nota das Provas','Tarefas Entregues'], en: ['Study Hours','Attendance (%)','Exam Score','Assignments Submitted'] },
-    explain: { pt: 'Ordered boosting; bom p/ categorias.', en: 'Ordered boosting; good for categorical.' },
-    sklearn: `<pre><code># PT/EN: CatBoost (sklearn-like API)\n# pip install catboost\nimport numpy as np\nfrom sklearn.model_selection import train_test_split\nfrom sklearn.metrics import accuracy_score\nfrom catboost import CatBoostClassifier\n\nX = np.array([[5,70],[7,80],[9,90],[4,60],[8,85]], dtype=float)\ny = np.array([0,1,1,0,1], dtype=int)\n\nX_train, X_test, y_train, y_test = train_test_split(\n    X, y, test_size=0.4, random_state=42, stratify=y\n)\n\ncb = CatBoostClassifier(verbose=False, random_state=42)\ncb.fit(X_train, y_train)\n\ny_pred = cb.predict(X_test)\nprint("Acurácia/Accuracy:", accuracy_score(y_test, y_pred))\n\n# INPUT / ENTRADA\nnota = 7.5; presenca = 85.0\nentrada = np.array([[nota, presenca]])\nprint("Entrada (nota, presenca):", entrada.tolist())\nprint("Classe prevista / Predicted class:", int(cb.predict(entrada)[0]))\n</code></pre>`
+function shuffleInPlace(arr, rnd) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(rnd() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-};
-
-// ====== BUILD SELECTS ======
-function buildModelSelects(){
-  const selSup = el('algSup');
-  const selUns = el('algUnsup');
-  selSup.innerHTML=''; selUns.innerHTML='';
-  const supOrder = ['regressao','logistica','knn','arvore','randomforest','svm','naivebayes','gboost','xgboost','lightgbm','catboost'];
-  const unsOrder = ['kmeans'];
-  supOrder.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=i18n[LANG].models[k]; selSup.appendChild(o); });
-  unsOrder.forEach(k=>{ const o=document.createElement('option'); o.value=k; o.textContent=i18n[LANG].models[k]; selUns.appendChild(o); });
 }
 
-// ====== APPLY LANGUAGE ======
-function applyLang(){
-  const t=i18n[LANG];
-  el('title').textContent = t.title;
-  el('intro').textContent = t.intro;
-  el('btnDownloadHTML').textContent = '⬇️ ' + t.downloadPage;
-  el('inputTitle').textContent = t.inputTitle;
-  el('modelsTitle').textContent = t.modelsTitle;
-  el('labSup').textContent = t.supLabel;
-  el('labUnsup').textContent = t.unsupLabel;
-  el('btnSup').textContent = t.execSup;
-  el('btnUnsup').textContent = t.execUnsup;
-  el('simNote').textContent = t.simNote;
-  el('resultTitle').textContent = t.resultTitle;
-  el('formulaTitle').textContent = t.formulaTitle;
-  el('codeTitle').textContent = t.codeTitle;
-  el('btnDownloadCode').textContent = '⬇️ ' + t.downloadCode;
-  buildModelSelects();
-  setView(el('algSup').value); // refresh panel
+function mean(arr) { return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function variance(arr) { const m=mean(arr); return arr.reduce((a,b)=>a+(b-m)**2,0)/arr.length; }
+function std(arr) { return Math.sqrt(variance(arr)); }
+function transpose(A) {
+  const m = A.length, n = A[0].length;
+  const T = Array.from({length:n}, ()=>Array(m).fill(0));
+  for (let i=0;i<m;i++) for (let j=0;j<n;j++) T[j][i]=A[i][j];
+  return T;
 }
 
-// ====== LABELS ======
-function setLabelsFor(alg){
-  const L = content[alg].labels;
-  const arr = (L && L[LANG]) ? L[LANG] : ['Var 1','Var 2','Var 3','Var 4'];
-  ['l1','l2','l3','l4'].forEach((id,i)=>{ const lab=document.getElementById(id); if(lab) lab.textContent = arr[i]||`Var ${i+1}`; });
-  const ph = i18n[LANG].placeholder;
-  inp.v1.placeholder = ph + ' 6';
-  inp.v2.placeholder = ph + ' 85';
-  inp.v3.placeholder = ph + ' 12';
-  inp.v4.placeholder = ph + ' 18';
+function zscoreFit(X) {
+  const T = transpose(X);
+  const mu = T.map(col => mean(col));
+  const sig = T.map(col => Math.max(std(col), 1e-8));
+  return { mu, sig };
+}
+function zscoreTransform(X, {mu, sig}) {
+  return X.map(row => row.map((v,i) => (v - mu[i]) / sig[i]));
 }
 
-// ====== VIEW/EXEC ======
-function setView(alg){
-  el('explicacao').innerHTML = content[alg].explain[LANG];
-  el('matematica').innerHTML = content[alg].sklearn;
-  setLabelsFor(alg);
-  if(window.MathJax && MathJax.typeset){ MathJax.typeset(); }
+function trainTestSplit(n, testRatio=0.2, seed=42) {
+  const idx = Array.from({length:n}, (_,i)=>i);
+  const r = rand(seed);
+  shuffleInPlace(idx, r);
+  const testSize = Math.max(1, Math.floor(n*testRatio));
+  const testIdx = idx.slice(0, testSize);
+  const trainIdx = idx.slice(testSize);
+  return {trainIdx, testIdx};
 }
 
-function getInputs(){
-  const v = [inp.v1.value, inp.v2.value, inp.v3.value, inp.v4.value].map(parseFloat);
-  return { v, bad: v.some(x=>Number.isNaN(x)) };
+function sliceByIdx(A, idx) { return idx.map(i => A[i]); }
+
+function oneHot(y) {
+  const classes = Array.from(new Set(y)).sort((a,b)=>a-b);
+  const map = new Map(classes.map((c,i)=>[c,i]));
+  const Y = y.map(v => {
+    const arr = Array(classes.length).fill(0);
+    arr[map.get(v)] = 1;
+    return arr;
+  });
+  return {Y, classes, map};
 }
 
-function executar(alg){
-  const {v, bad} = getInputs();
-  const [a,b,c,d] = v;
-  const alert = el('alerta');
-  alert.style.display='none'; alert.innerHTML='';
-  if(bad){ alert.style.display='block'; alert.innerHTML=(LANG==='pt'? 'Preencha os quatro valores numéricos.' : 'Fill in the four numeric values.'); el('resultado').innerHTML='–'; return; }
-  const fn = content[alg].calc; let r = fn(a,b,c,d);
-  if(!isFinite(r)) r = 0; r = Math.max(-1e6, Math.min(100, r));
-  el('resultado').innerHTML = (LANG==='pt'? 'Resultado (simulação): ' : 'Result (simulation): ') + `<b>${r.toFixed(2)}</b>`;
-  setView(alg);
-  alert.style.display='block'; alert.innerHTML = (LANG==='pt'? i18n.pt.alertSim : i18n.en.alertSim);
+/* Metrics */
+function rmse(yTrue, yPred) {
+  const n = yTrue.length;
+  let s=0; for (let i=0;i<n;i++){ const d=yTrue[i]-yPred[i]; s+=d*d; }
+  return Math.sqrt(s/n);
+}
+function mae(yTrue, yPred) {
+  const n=yTrue.length; let s=0; for (let i=0;i<n;i++) s+=Math.abs(yTrue[i]-yPred[i]);
+  return s/n;
+}
+function r2(yTrue, yPred) {
+  const m=mean(yTrue); let ssRes=0, ssTot=0;
+  for (let i=0;i<yTrue.length;i++){ const d=yTrue[i]-yPred[i]; ssRes+=d*d; ssTot+=(yTrue[i]-m)**2; }
+  return 1 - (ssRes/(ssTot+1e-12));
+}
+function confMatrix(yTrue, yPred) {
+  const labels = Array.from(new Set(yTrue.concat(yPred))).sort((a,b)=>a-b);
+  const L = labels.length; const M = Array.from({length:L},()=>Array(L).fill(0));
+  const map = new Map(labels.map((v,i)=>[v,i]));
+  for (let i=0;i<yTrue.length;i++){
+    M[map.get(yTrue[i])][map.get(yPred[i])] += 1;
+  }
+  return {M, labels};
+}
+function accuracy(yTrue, yPred){
+  let c=0; for (let i=0;i<yTrue.length;i++) if (yTrue[i]===yPred[i]) c++;
+  return c/yTrue.length;
+}
+function precisionRecallF1(yTrue, yPred, positive=1){
+  let tp=0, fp=0, fn=0;
+  for (let i=0;i<yTrue.length;i++){
+    if (yPred[i]===positive && yTrue[i]===positive) tp++;
+    else if (yPred[i]===positive && yTrue[i]!==positive) fp++;
+    else if (yPred[i]!==positive && yTrue[i]===positive) fn++;
+  }
+  const prec = tp/(tp+fp+1e-12);
+  const rec = tp/(tp+fn+1e-12);
+  const f1 = 2*prec*rec/(prec+rec+1e-12);
+  return {precision:prec, recall:rec, f1};
 }
 
-// ====== EVENTS ======
-el('lang').addEventListener('change', (e)=>{ LANG = e.target.value; applyLang(); });
+/* Distâncias */
+function dist(a,b, metric='euclidean'){
+  if (metric==='euclidean'){
+    let s=0; for (let i=0;i<a.length;i++){ const d=a[i]-b[i]; s+=d*d; } return Math.sqrt(s);
+  } else {
+    let s=0; for (let i=0;i<a.length;i++){ s+=Math.abs(a[i]-b[i]); } return s;
+  }
+}
 
-const algSup = el('algSup');
-const algUns = el('algUnsup');
+/* Tabelas e KPIs */
+function tableHTML(headers, rows) {
+  const th = '<tr>' + headers.map(h=>`<th>${h}</th>`).join('') + '</tr>';
+  const tr = rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('');
+  return `<table>${th}${tr}</table>`;
+}
+function kpiBox(label, value, unit='') {
+  return `<div><div class="muted">${label}</div><div style="font-size:1.2rem;font-weight:700;">${value}${unit}</div></div>`;
+}
 
-document.addEventListener('DOMContentLoaded', ()=>{
-  applyLang(); // builds selects and sets default view
-  el('btnSup').addEventListener('click', ()=> executar(el('algSup').value));
-  el('btnUnsup').addEventListener('click', ()=> executar(el('algUnsup').value));
-  el('algSup').addEventListener('change', ()=> setView(el('algSup').value));
-  el('algUnsup').addEventListener('change', ()=> setView(el('algUnsup').value));
+/* ===========================================================
+   Simulador de dados
+=========================================================== */
+function generateData({task='classification', nSamples=500, nFeatures=6, noise=0.15, posRatio=0.5, seed=42}) {
+  const rnd = rand(seed);
+  const featureNames = Array.from({length:nFeatures}, (_,i)=>`x${i+1}`);
+  const X = [];
+  const y = [];
+
+  if (task === 'classification') {
+    const nPos = Math.round(nSamples*posRatio), nNeg = nSamples - nPos;
+    // centros gaussianos
+    const centerPos = Array.from({length:nFeatures}, ()=>rnd()*2 - 1);
+    const centerNeg = Array.from({length:nFeatures}, ()=>rnd()*2 - 1);
+    // cov simples
+    for (let i=0;i<nPos;i++){
+      const row = centerPos.map(c => c + (rnd()*2-1)*0.6 + (rnd()*2-1)*noise);
+      X.push(row); y.push(1);
+    }
+    for (let i=0;i<nNeg;i++){
+      const row = centerNeg.map(c => c + (rnd()*2-1)*0.6 + (rnd()*2-1)*noise);
+      X.push(row); y.push(0);
+    }
+  } else {
+    // regressão: y = w^T x + b + noise
+    const w = Array.from({length:nFeatures}, ()=> (rnd()*2-1)*2);
+    const b = (rnd()*2-1);
+    for (let i=0;i<nSamples;i++){
+      const row = Array.from({length:nFeatures}, ()=> (rnd()*2-1)*2);
+      let target = b;
+      for (let j=0;j<nFeatures;j++) target += w[j]*row[j];
+      target += (rnd()*2-1)*noise*3;
+      X.push(row); y.push(target);
+    }
+  }
+  return {X, y, featureNames, task};
+}
+
+function updateDatasetInfo(){
+  const info = document.getElementById('datasetInfo');
+  if (!state.X || state.X.length===0) { info.textContent = 'Nenhum dataset carregado.'; return; }
+  info.innerHTML = `
+    <div class="badge">${state.task==='classification'?'Classificação binária':'Regressão'}</div>
+    <div style="margin-top:8px;">Amostras: <b>${state.X.length}</b> • Variáveis: <b>${state.featureNames.length}</b></div>
+  `;
+}
+
+function renderPreview(){
+  const prev = document.getElementById('dataPreview');
+  if (!state.X || state.X.length===0) { prev.innerHTML=''; return; }
+  const nShow = Math.min(8, state.X.length);
+  const headers = [...state.featureNames, 'y'];
+  const rows = [];
+  for (let i=0;i<nShow;i++){
+    rows.push([...state.X[i].map(v=>v.toFixed(3)), state.y[i]]);
+  }
+  prev.innerHTML = tableHTML(headers, rows);
+}
+
+function projectPCA2D(X) {
+  // padroniza, cov, autovetores -> 2 PCs
+  const scaler = zscoreFit(X);
+  const Xs = zscoreTransform(X, scaler);
+  const XT = transpose(Xs);
+  // cov (n-1)
+  const n = Xs.length;
+  const cov = Array.from({length:XT.length}, (_,i)=>Array(XT.length).fill(0));
+  for (let i=0;i<XT.length;i++){
+    for (let j=i;j<XT.length;j++){
+      let s=0; for (let k=0;k<n;k++) s += XT[i][k]*XT[j][k];
+      const v = s/(n-1);
+      cov[i][j]=v; cov[j][i]=v;
+    }
+  }
+  const eig = numeric.eig(cov);
+  // eig.V (colunas = autovetores), eig.lambda.x (autovalores)
+  // ordenar por autovalor desc
+  const lambdas = eig.lambda.x;
+  const vecs = eig.E.x; // linhas = componentes? numeric.eig retorna V com colunas? adapt:
+  // numeric.eig retorna { lambda: {x: []}, E: {x: matrix} } onde E são autovetores por colunas
+  const idx = lambdas.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).map(t=>t[1]);
+  const W = [ idx.map(i=>vecs.map(row=>row[i])), /*but fix below*/ ];
+  // Construir matriz W2xD (2 principais). Convert vecs(col-based) => columns:
+  const Vcols = idx.map(i => vecs.map(row => row[i])); // array de autovetores ordenados
+  const W2 = [Vcols[0], Vcols[1]]; // 2 PCs
+  // Projeta: Xs (n x d) * W2^T (d x 2) => (n x 2)
+  const dim = Xs[0].length;
+  const P = Xs.map(row => {
+    const p0 = row.reduce((s, v, j)=> s + v*W2[0][j], 0);
+    const p1 = row.reduce((s, v, j)=> s + v*W2[1][j], 0);
+    return [p0, p1];
+  });
+  // variância explicada
+  const totalVar = lambdas.reduce((a,b)=>a+b, 0);
+  const exp1 = (lambdas[idx[0]]/totalVar);
+  const exp2 = (lambdas[idx[1]]/totalVar);
+  return {P, explained:[exp1, exp2]};
+}
+
+function renderPCAPlot(canvasId, X, y=null, palette=null){
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  if (state.charts[canvasId]) { state.charts[canvasId].destroy(); delete state.charts[canvasId]; }
+  if (!X || X.length===0) return;
+
+  const {P, explained} = projectPCA2D(X);
+  const labels = y? Array.from(new Set(y)).sort((a,b)=>a-b) : [];
+  const defaultPalette = ['#22d3ee', '#f43f5e', '#f59e0b', '#8b5cf6', '#10b981', '#ef4444', '#eab308'];
+  const colors = palette || defaultPalette;
+
+  let datasets = [];
+  if (y) {
+    labels.forEach((lab, idx) => {
+      const pts = P.map((p,i)=>({x:p[0], y:p[1], _i:i})).filter((_,i)=> y[_.__proto__?0: _._i]===lab);
+      datasets.push({
+        label: `Classe ${lab}`,
+        data: pts,
+        pointRadius: 3,
+        backgroundColor: colors[idx % colors.length],
+      });
+    });
+  } else {
+    datasets = [{
+      label: 'Dados',
+      data: P.map((p,i)=>({x:p[0], y:p[1], _i:i})),
+      pointRadius: 3,
+      backgroundColor: colors[0],
+    }];
+  }
+
+  state.charts[canvasId] = new Chart(ctx, {
+    type: 'scatter',
+    data: { datasets },
+    options: {
+      plugins: { legend: { labels: { color: '#cbd5e1' } },
+                 title: { display: true, text: `PCA 2D — variância explicada ${((explained[0]+explained[1])*100).toFixed(0)}%`, color: '#cbd5e1' } },
+      scales: {
+        x: { grid: { color: '#1f2a4a' }, ticks: { color: '#a5b4fc' } },
+        y: { grid: { color: '#1f2a4a' }, ticks: { color: '#a5b4fc' } },
+      }
+    }
+  });
+}
+
+/* ===========================================================
+   Upload / Download
+=========================================================== */
+document.getElementById('fileInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if (!file) return;
+  const text = await file.text();
+  try {
+    const obj = JSON.parse(text);
+    if (!obj.X || !obj.y || !obj.featureNames) throw new Error('Formato inválido');
+    state.X = obj.X; state.y = obj.y; state.featureNames = obj.featureNames;
+    state.task = obj.task || 'classification';
+    const split = trainTestSplit(state.X.length, 0.2, 1337);
+    state.trainIdx = split.trainIdx; state.testIdx = split.testIdx;
+    state.X_train = sliceByIdx(state.X, state.trainIdx);
+    state.y_train = sliceByIdx(state.y, state.trainIdx);
+    state.X_test  = sliceByIdx(state.X, state.testIdx);
+    state.y_test  = sliceByIdx(state.y, state.testIdx);
+    renderPreview(); updateDatasetInfo();
+    renderPCAPlot('pcaPlot', state.X, state.task==='classification'?state.y:null);
+  } catch(err) {
+    alert('Erro ao ler JSON: '+err.message);
+  }
 });
 
-// ====== DOWNLOADS ======
-function baixarCodigo(){
-  const ext = el('codeFormat').value;
-  const codeEl = document.querySelector('#matematica pre code');
-  const codigo = codeEl ? codeEl.innerText : '';
-  const algAtual = document.getElementById('algSup').value || 'modelo';
-  const blob = new Blob([codigo], {type: ext==='py' ? 'text/x-python' : 'text/plain'});
+document.getElementById('btnDownload').addEventListener('click', ()=>{
+  if (!state.X || state.X.length===0) { alert('Não há dataset.'); return; }
+  const data = JSON.stringify({X: state.X, y: state.y, featureNames: state.featureNames, task: state.task}, null, 2);
+  const blob = new Blob([data], {type:'application/json'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
-  a.download = algAtual + (ext==='py'?'.py':'.txt');
-  document.body.appendChild(a); a.click(); a.remove();
+  a.download = `dataset_${state.task}_${state.X.length}x${state.featureNames.length}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+document.getElementById('btnClear').addEventListener('click', ()=>{
+  Object.assign(state, {X:[],y:[],featureNames:[],X_train:[],y_train:[],X_test:[],y_test:[]});
+  ['dataPreview','datasetInfo'].forEach(id=>document.getElementById(id).innerHTML='');
+  ['pcaPlot','km_plot','hac_plot','db_plot','pca_custom_plot','ae_plot'].forEach(id=>{
+    if (state.charts[id]) { state.charts[id].destroy(); delete state.charts[id]; }
+    const ctx = document.getElementById(id).getContext('2d');
+    ctx.clearRect(0,0,9999,9999);
+  });
+});
+
+/* ===========================================================
+   Geração e Visualização
+=========================================================== */
+document.getElementById('taskType').addEventListener('change', (e)=>{
+  const t = e.target.value;
+  document.getElementById('nClasses').disabled = (t!=='classification');
+});
+
+document.getElementById('btnGen').addEventListener('click', ()=>{
+  const cfg = {
+    task: document.getElementById('taskType').value,
+    nSamples: parseInt(document.getElementById('nSamples').value),
+    nFeatures: parseInt(document.getElementById('nFeatures').value),
+    noise: parseFloat(document.getElementById('noise').value),
+    posRatio: parseFloat(document.getElementById('posRatio').value),
+    seed: parseInt(document.getElementById('seed').value),
+  };
+  const data = generateData(cfg);
+  Object.assign(state, data);
+  const split = trainTestSplit(state.X.length, 0.2, cfg.seed+7);
+  state.trainIdx = split.trainIdx; state.testIdx = split.testIdx;
+  state.X_train = sliceByIdx(state.X, state.trainIdx);
+  state.y_train = sliceByIdx(state.y, state.trainIdx);
+  state.X_test  = sliceByIdx(state.X, state.testIdx);
+  state.y_test  = sliceByIdx(state.y, state.testIdx);
+
+  renderPreview();
+  updateDatasetInfo();
+  renderPCAPlot('pcaPlot', state.X, state.task==='classification'?state.y:null);
+});
+
+/* ===========================================================
+   TensorFlow helpers
+=========================================================== */
+function toTensor2D(X){ return tf.tensor2d(X); }
+function toTensor1D(y){ return tf.tensor1d(y); }
+function scaleTrainTest(X_train, X_test){
+  const fit = zscoreFit(X_train);
+  return { Xs_train: zscoreTransform(X_train, fit), Xs_test: zscoreTransform(X_test, fit), fit };
 }
 
-document.getElementById('btnDownloadCode').addEventListener('click', baixarCodigo);
+// Helper: parse number with comma or dot
+function num(id){
+  const el = document.getElementById(id);
+  if(!el) return NaN;
+  const v = (el.value!==undefined? el.value : el.textContent)||'';
+  return parseFloat(String(v).replace(',', '.'));
+}
 
-function baixarHTML(){ const doctype='<!DOCTYPE html>\n'; const html=document.documentElement.outerHTML; const blob=new Blob([doctype+html],{type:'text/html'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='laboratorio_ml_bilingue_pt_en.html'; document.body.appendChild(a); a.click(); a.remove(); }
-document.getElementById('btnDownloadHTML').addEventListener('click', baixarHTML);
+/* ===========================================================
+   Regressão Linear (TF)
+=========================================================== */
+async function trainLinearRegression(
+  X_train, y_train, X_test, y_test,
+  epochs = 80, lr = 0.05, batchSize = 32
+) {
+  const { Xs_train, Xs_test } = scaleTrainTest(X_train, X_test);
+  const nx = X_train[0].length;
+
+  const model = tf.sequential();
+  model.add(tf.layers.dense({
+    units: 1,
+    inputShape: [nx],
+    activation: 'linear'
+  }));
+
+  model.compile({
+    optimizer: tf.train.adam(lr),
+    loss: 'mse'
+  });
+
+  const xtr = toTensor2D(Xs_train);
+  const ytr = toTensor2D(y_train.map(v => [v]));
+
+  // CORREÇÃO DE BUG: evita batch maior que conjunto de treino
+ const bs_safe = Math.min(batchSize, Xs_train.length);
+ await model.fit(xtr, ytr, {
+ epochs,
+ batchSize: bs_safe,
+ verbose: 0
+ });
+
+  const ypredTensor = model.predict(toTensor2D(Xs_test));
+  const ypred = Array.from(ypredTensor.dataSync()).map(v => Number(v));
+
+  if (ypred.some(v => !isFinite(v))) {
+    ypredTensor.dispose();
+    xtr.dispose();
+    ytr.dispose();
+    model.dispose();
+    throw new Error('Predição contém NaN ou valores inválidos');
+  }
+
+  const metrics = {
+    RMSE: rmse(y_test, ypred).toFixed(4),
+    MAE: mae(y_test, ypred).toFixed(4),
+    R2: r2(y_test, ypred).toFixed(4),
+  };
+
+  // libera memória corretamente
+  ypredTensor.dispose();
+  xtr.dispose();
+  ytr.dispose();
+  model.dispose();
+
+  return metrics;
+}
+document.getElementById('btnLinReg').addEventListener('click', async () => {
+  if (state.task !== 'regression') {
+    alert('Gere ou carregue um dataset de REGRESSÃO.');
+    return;
+  }
+
+  const epochs = parseInt(document.getElementById('linreg_epochs').value);
+  const lr = Math.max(1e-6, num('linreg_lr'));
+  const bs = parseInt(document.getElementById('linreg_bs').value);
+
+  const box = document.getElementById('linreg_metrics');
+  box.innerHTML = kpiBox('Status', 'Treinando...');
+
+  try {
+    await tf.nextFrame();
+
+    const m = await trainLinearRegression(
+      state.X_train,
+      state.y_train,
+      state.X_test,
+      state.y_test,
+      epochs,
+      lr,
+      bs
+    );
+
+    box.innerHTML =
+      kpiBox('RMSE', m.RMSE) +
+      kpiBox('MAE', m.MAE) +
+      kpiBox('R²', m.R2);
+  } catch (err) {
+    console.error(err);
+    box.innerHTML =
+      `<span class="badge err">Erro no treino (ver console)</span>`;
+  }
+});
+
+/* ===========================================================
+   Regressão Logística (TF)
+=========================================================== */
+async function trainLogistic(X_train, y_train, X_test, y_test, epochs=80, lr=0.05, batchSize=32){
+  const {Xs_train, Xs_test} = scaleTrainTest(X_train, X_test);
+  const nx = Xs_train[0].length;
+  const bs = Math.min(batchSize, Xs_train.length);
+
+  const model = tf.sequential();
+  model.add(tf.layers.dense({ units: 1, inputShape: [nx], activation: 'sigmoid' }));
+  model.compile({ optimizer: tf.train.adam(lr), loss: 'binaryCrossentropy' });
+
+  const xtr = tf.tensor2d(Xs_train);
+  const ytr = tf.tensor2d(y_train.map(v => [v ? 1 : 0]));
+
+  await model.fit(xtr, ytr, { epochs, batchSize: Math.min(bs, Xs_train.length), verbose: 0 });
+
+  const probs = Array.from(model.predict(tf.tensor2d(Xs_test)).dataSync());
+  const ypred = probs.map(p => p >= 0.5 ? 1 : 0);
+
+  const acc = accuracy(y_test, ypred);
+  const prf = precisionRecallF1(y_test, ypred, 1);
+  const CM  = confMatrix(y_test, ypred);
+
+  model.dispose(); xtr.dispose(); ytr.dispose();
+  return { acc, prf, CM };
+}
+document.getElementById('btnLogReg').addEventListener('click', async ()=>{
+  if (state.task!=='classification'){ alert('Gere/Carregue um dataset de CLASSIFICAÇÃO.'); return; }
+  const epochs = parseInt(document.getElementById('logreg_epochs').value);
+  const lr = Math.max(1e-6, num('logreg_lr'));
+  const bs = parseInt(document.getElementById('logreg_bs').value);
+  document.getElementById('logreg_metrics').innerHTML = kpiBox('Status','Treinando...');
+  await tf.nextFrame();
+  const r = await trainLogistic(state.X_train, state.y_train, state.X_test, state.y_test, epochs, lr, bs);
+  document.getElementById('logreg_metrics').innerHTML =
+    kpiBox('Acurácia', (r.acc*100).toFixed(2), '%') +
+    kpiBox('Precisão', (r.prf.precision*100).toFixed(2), '%') +
+    kpiBox('Revocação', (r.prf.recall*100).toFixed(2), '%') +
+    kpiBox('F1', (r.prf.f1*100).toFixed(2), '%');
+  document.getElementById('logreg_cm').innerHTML = renderCM(r.CM);
+});
+
+function renderCM(cm){
+  const {M, labels} = cm;
+  const headers = [''] .concat(labels.map(l=>'Pred '+l));
+  const rows = labels.map((l,i)=> [ 'Verdade '+l, ...M[i] ]);
+  return tableHTML(headers, rows);
+}
+
+/* ===========================================================
+   SVM Linear (didático - SGD hinge/epsilon)
+=========================================================== */
+function sign(x){ return x>=0?1:-1; }
+function dot(a,b){ let s=0; for (let i=0;i<a.length;i++) s+=a[i]*b[i]; return s; }
+
+function svmLinearTrain(X, y, {mode='classification', lambda=1e-3, iters=400, lr0=0.5}){
+  const n=X.length, d=X[0].length;
+  let w = Array(d).fill(0), b=0;
+  if (mode==='classification'){
+    // y em {-1, +1}
+    const y2 = y.map(v=> v===1?1:-1);
+    for (let t=1;t<=iters;t++){
+      const i = (t-1)%n; // iteração simples
+      const lr = lr0/(1+lambda*lr0*t); // decaimento
+      const margin = y2[i]*(dot(w, X[i]) + b);
+      // gradiente hinge
+      if (margin < 1){
+        for (let j=0;j<d;j++) w[j] = (1 - lr*lambda)*w[j] + lr*y2[i]*X[i][j];
+        b = b + lr*y2[i];
+      } else {
+        for (let j=0;j<d;j++) w[j] = (1 - lr*lambda)*w[j];
+      }
+    }
+    return {w,b, predict:(x)=> sign(dot(w,x)+b)==1?1:0};
+  } else {
+    // SVR ε-insensitive (ε=0.1)
+    const eps = 0.1;
+    for (let t=1;t<=iters;t++){
+      const i = (t-1)%n;
+      const lr = lr0/(1+lambda*lr0*t);
+      const r = dot(w, X[i]) + b - y[i];
+      if (Math.abs(r) > eps){
+        const s = r>0 ? 1 : -1;
+        for (let j=0;j<d;j++) w[j] = (1 - lr*lambda)*w[j] - lr*s*X[i][j];
+        b = b - lr*s;
+      } else {
+        for (let j=0;j<d;j++) w[j] = (1 - lr*lambda)*w[j];
+      }
+    }
+    return {w,b, predict:(x)=> dot(w,x)+b};
+  }
+}
+document.getElementById('btnSVM').addEventListener('click', async ()=>{
+  if (!state.X_train.length) { alert('Gere ou carregue um dataset.'); return; }
+  const mode = document.getElementById('svm_mode').value;
+  const iters = parseInt(document.getElementById('svm_iters').value);
+  const lambda = parseFloat(document.getElementById('svm_lambda').value);
+  document.getElementById('svm_metrics').innerHTML = kpiBox('Status','Treinando...');
+  await tf.nextFrame();
+
+  const {Xs_train, Xs_test} = scaleTrainTest(state.X_train, state.X_test);
+  const model = svmLinearTrain(Xs_train, state.y_train, {mode, lambda, iters, lr0:0.5});
+  if (mode==='classification'){
+    const ypred = Xs_test.map(x => model.predict(x));
+    const acc = accuracy(state.y_test, ypred);
+    const prf = precisionRecallF1(state.y_test, ypred, 1);
+    const CM = confMatrix(state.y_test, ypred);
+    document.getElementById('svm_metrics').innerHTML =
+      kpiBox('Acurácia', (acc*100).toFixed(2), '%') +
+      kpiBox('Precisão', (prf.precision*100).toFixed(2), '%') +
+      kpiBox('Revocação', (prf.recall*100).toFixed(2), '%') +
+      kpiBox('F1', (prf.f1*100).toFixed(2), '%');
+    document.getElementById('svm_cm').innerHTML = renderCM(CM);
+  } else {
+    const ypred = Xs_test.map(x => model.predict(x));
+    const m = { RMSE: rmse(state.y_test, ypred), MAE: mae(state.y_test, ypred), R2: r2(state.y_test, ypred) };
+    document.getElementById('svm_metrics').innerHTML =
+      kpiBox('RMSE', m.RMSE.toFixed(4)) + kpiBox('MAE', m.MAE.toFixed(4)) + kpiBox('R²', m.R2.toFixed(4));
+    document.getElementById('svm_cm').innerHTML = '';
+  }
+});
+
+/* ===========================================================
+   Árvores de Decisão (CART) + Random Forest
+=========================================================== */
+function giniImpurity(labels){
+  const n=labels.length; if (n===0) return 0;
+  const freq = new Map();
+  for (const v of labels) freq.set(v, (freq.get(v)||0)+1);
+  let g=1;
+  for (const c of freq.values()){ const p=c/n; g -= p*p; }
+  return g;
+}
+function mseImpurity(labels){
+  if (labels.length===0) return 0;
+  const m=mean(labels); let s=0; for (const v of labels) s+=(v-m)**2;
+  return s/labels.length;
+}
+function splitDataset(X, y, featIdx, thresh){
+  const Lx=[], Ly=[], Rx=[], Ry=[];
+  for (let i=0;i<X.length;i++){
+    if (X[i][featIdx] <= thresh){ Lx.push(X[i]); Ly.push(y[i]); }
+    else { Rx.push(X[i]); Ry.push(y[i]); }
+  }
+  return {Lx,Ly,Rx,Ry};
+}
+function isClassification(y){ return typeof y[0] !== 'number' || new Set(y).size<=10 && y.every(v=>v===0||v===1); }
+
+function buildTree(X, y, {maxDepth=6, minSamples=5, task='auto', mtry=0}={}, depth=0){
+  const n = X.length, d = X[0].length;
+  const isClass = (task==='classification') || (task==='auto' && isClassification(y));
+  // Paradas
+  if (depth>=maxDepth || n<=minSamples){
+    if (isClass){
+      const freq = new Map();
+      for (const v of y) freq.set(v, (freq.get(v)||0)+1);
+      let best=null, cnt=-1; for (const [k,c] of freq.entries()){ if (c>cnt){cnt=c; best=k;} }
+      return { type:'leaf', value: best };
+    } else {
+      return { type:'leaf', value: mean(y) };
+    }
+  }
+  // Seleção de features (mtry)
+  const feats = Array.from({length:d}, (_,i)=>i);
+  if (mtry>0 && mtry<d){
+    // amostragem sem reposição
+    for (let i=feats.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [feats[i], feats[j]]=[feats[j], feats[i]]; }
+    feats.length = mtry;
+  }
+  // Buscar melhor split
+  const impurity = isClass? giniImpurity : mseImpurity;
+  const baseImp = impurity(y);
+  let bestGain = 0, bestFeat=null, bestThresh=null, bestSplit=null;
+  for (const f of feats){
+    // usar quantis (10) como candidatos
+    const vals = X.map(r=>r[f]).sort((a,b)=>a-b);
+    const cand = [];
+    const q=10;
+    for (let qi=1; qi<q; qi++){ const idx = Math.floor(vals.length*qi/q); if (idx>0 && idx<vals.length) cand.push(vals[idx]); }
+    for (const thr of cand){
+      const {Lx,Ly,Rx,Ry} = splitDataset(X,y,f,thr);
+      if (Ly.length===0 || Ry.length===0) continue;
+      const imp = (Ly.length/n)*impurity(Ly) + (Ry.length/n)*impurity(Ry);
+      const gain = baseImp - imp;
+      if (gain > bestGain){ bestGain=gain; bestFeat=f; bestThresh=thr; bestSplit={Lx,Ly,Rx,Ry}; }
+    }
+  }
+  if (!bestSplit) {
+    // vira folha
+    if (isClass){
+      const freq = new Map(); for (const v of y) freq.set(v,(freq.get(v)||0)+1);
+      let best=null,cnt=-1; for (const [k,c] of freq.entries()){ if (c>cnt){cnt=c; best=k;} }
+      return { type:'leaf', value: best };
+    } else return { type:'leaf', value: mean(y) };
+  }
+  const left = buildTree(bestSplit.Lx, bestSplit.Ly, {maxDepth, minSamples, task, mtry}, depth+1);
+  const right = buildTree(bestSplit.Rx, bestSplit.Ry, {maxDepth, minSamples, task, mtry}, depth+1);
+  return { type:'node', feature: bestFeat, thresh: bestThresh, left, right };
+}
+function treePredict(tree, x){
+  if (tree.type==='leaf') return tree.value;
+  if (x[tree.feature] <= tree.thresh) return treePredict(tree.left, x);
+  else return treePredict(tree.right, x);
+}
+
+document.getElementById('btnTree').addEventListener('click', async ()=>{
+  if (!state.X_train.length) { alert('Gere/Carregue um dataset.'); return; }
+  const maxDepth = parseInt(document.getElementById('tree_maxDepth').value);
+  const minSamples = parseInt(document.getElementById('tree_minSamples').value);
+  const task = document.getElementById('tree_task').value;
+  document.getElementById('tree_metrics').innerHTML = kpiBox('Status','Treinando...');
+  await tf.nextFrame();
+
+  const {Xs_train, Xs_test} = scaleTrainTest(state.X_train, state.X_test);
+  const tree = buildTree(Xs_train, state.y_train, {maxDepth, minSamples, task});
+  const yhat = Xs_test.map(x=> treePredict(tree, x));
+  const isClass = (task==='classification') || (task==='auto' && isClassification(state.y_train));
+
+  if (isClass){
+    const acc = accuracy(state.y_test, yhat);
+    const prf = precisionRecallF1(state.y_test, yhat, 1);
+    const CM = confMatrix(state.y_test, yhat);
+    document.getElementById('tree_metrics').innerHTML =
+      kpiBox('Acurácia', (acc*100).toFixed(2), '%') +
+      kpiBox('Precisão', (prf.precision*100).toFixed(2), '%') +
+      kpiBox('Revocação', (prf.recall*100).toFixed(2), '%') +
+      kpiBox('F1', (prf.f1*100).toFixed(2), '%');
+    document.getElementById('tree_structure').innerHTML = '<pre style="white-space:pre-wrap;">'+JSON.stringify(tree,null,2)+'</pre>';
+  } else {
+    const m = { RMSE: rmse(state.y_test, yhat), MAE: mae(state.y_test, yhat), R2: r2(state.y_test, yhat) };
+    document.getElementById('tree_metrics').innerHTML =
+      kpiBox('RMSE', m.RMSE.toFixed(4)) + kpiBox('MAE', m.MAE.toFixed(4)) + kpiBox('R²', m.R2.toFixed(4));
+    document.getElementById('tree_structure').innerHTML = '<pre style="white-space:pre-wrap;">'+JSON.stringify(tree,null,2)+'</pre>';
+  }
+});
+
+/* Random Forest */
+function bootstrapSample(X,y){
+  const n=X.length;
+  const Xb=[], yb=[], idx=[];
+  for (let i=0;i<n;i++){
+    const j = Math.floor(Math.random()*n);
+    Xb.push(X[j]); yb.push(y[j]); idx.push(j);
+  }
+  return {Xb,yb,idx};
+}
+function rfTrain(X, y, {nTrees=30, maxDepth=6, minSamples=5, task='auto', mtry=0}){
+  const trees = [];
+  for (let t=0;t<nTrees;t++){
+    const {Xb,yb} = bootstrapSample(X,y);
+    const tree = buildTree(Xb,yb,{maxDepth,minSamples,task,mtry});
+    trees.push(tree);
+  }
+  const isClass = (task==='classification') || (task==='auto' && isClassification(y));
+  const predict = (x) => {
+    if (isClass){
+      const votes = new Map();
+      for (const tr of trees){
+        const v = treePredict(tr, x);
+        votes.set(v, (votes.get(v)||0)+1);
+      }
+      let best=null, cnt=-1; for (const [k,c] of votes.entries()){ if (c>cnt){cnt=c; best=k;} }
+      return best;
+    } else {
+      let s=0; for (const tr of trees) s+=treePredict(tr, x);
+      return s/trees.length;
+    }
+  };
+  return {trees, predict};
+}
+
+document.getElementById('btnRF').addEventListener('click', async ()=>{
+  if (!state.X_train.length) { alert('Gere/Carregue um dataset.'); return; }
+  const nTrees = parseInt(document.getElementById('rf_nTrees').value);
+  const maxDepth = parseInt(document.getElementById('rf_maxDepth').value);
+  const minSamples = parseInt(document.getElementById('rf_minSamples').value);
+  const task = document.getElementById('rf_task').value;
+  const mtry = parseInt(document.getElementById('rf_mtry').value) || 0;
+
+  document.getElementById('rf_metrics').innerHTML = kpiBox('Status','Treinando...');
+  await tf.nextFrame();
+
+  const {Xs_train, Xs_test} = scaleTrainTest(state.X_train, state.X_test);
+  const model = rfTrain(Xs_train, state.y_train, {nTrees, maxDepth, minSamples, task, mtry});
+  const yhat = Xs_test.map(x => model.predict(x));
+  const isClass = (task==='classification') || (task==='auto' && isClassification(state.y_train));
+  if (isClass){
+    const acc = accuracy(state.y_test, yhat);
+    const prf = precisionRecallF1(state.y_test, yhat, 1);
+    const CM = confMatrix(state.y_test, yhat);
+    document.getElementById('rf_metrics').innerHTML =
+      kpiBox('Acurácia', (acc*100).toFixed(2), '%') +
+      kpiBox('Precisão', (prf.precision*100).toFixed(2), '%') +
+      kpiBox('Revocação', (prf.recall*100).toFixed(2), '%') +
+      kpiBox('F1', (prf.f1*100).toFixed(2), '%');
+    document.getElementById('rf_cm').innerHTML = renderCM(CM);
+  } else {
+    const m = { RMSE: rmse(state.y_test, yhat), MAE: mae(state.y_test, yhat), R2: r2(state.y_test, yhat) };
+    document.getElementById('rf_metrics').innerHTML =
+      kpiBox('RMSE', m.RMSE.toFixed(4)) + kpiBox('MAE', m.MAE.toFixed(4)) + kpiBox('R²', m.R2.toFixed(4));
+    document.getElementById('rf_cm').innerHTML = '';
+  }
+});
+
+/* ===========================================================
+   KNN
+=========================================================== */
+function knnPredict(X_train, y_train, x, k=5, metric='euclidean', task='auto'){
+  const pairs = X_train.map((row,i)=> [dist(row, x, metric), i]).sort((a,b)=>a[0]-b[0]).slice(0,k);
+  const yy = pairs.map(p=> y_train[p[1]]);
+  const isClass = (task==='classification') || (task==='auto' && (typeof y_train[0]!=='number' || new Set(y_train).size<=10 && y_train.every(v=>v===0||v===1)));
+  if (isClass){
+    const votes = new Map();
+    for (const v of yy) votes.set(v, (votes.get(v)||0)+1);
+    let best=null,cnt=-1; for (const [k,v] of votes.entries()){ if (v>cnt){cnt=v; best=k;} }
+    return best;
+  } else {
+    return mean(yy);
+  }
+}
+
+document.getElementById('btnKNN').addEventListener('click', async ()=>{
+  if (!state.X_train.length) { alert('Gere/Carregue um dataset.'); return; }
+  const k = parseInt(document.getElementById('knn_k').value);
+  const metric = document.getElementById('knn_metric').value;
+  const task = document.getElementById('knn_task').value;
+
+  const {Xs_train, Xs_test} = scaleTrainTest(state.X_train, state.X_test);
+  const yhat = Xs_test.map(x => knnPredict(Xs_train, state.y_train, x, k, metric, task));
+  const isClass = (task==='classification') || (task==='auto' && isClassification(state.y_train));
+  if (isClass){
+    const acc = accuracy(state.y_test, yhat);
+    const prf = precisionRecallF1(state.y_test, yhat, 1);
+    const CM = confMatrix(state.y_test, yhat);
+    document.getElementById('knn_metrics').innerHTML =
+      kpiBox('Acurácia', (acc*100).toFixed(2), '%') +
+      kpiBox('Precisão', (prf.precision*100).toFixed(2), '%') +
+      kpiBox('Revocação', (prf.recall*100).toFixed(2), '%') +
+      kpiBox('F1', (prf.f1*100).toFixed(2), '%');
+    document.getElementById('knn_cm').innerHTML = renderCM(CM);
+  } else {
+    const m = { RMSE: rmse(state.y_test, yhat), MAE: mae(state.y_test, yhat), R2: r2(state.y_test, yhat) };
+    document.getElementById('knn_metrics').innerHTML =
+      kpiBox('RMSE', m.RMSE.toFixed(4)) + kpiBox('MAE', m.MAE.toFixed(4)) + kpiBox('R²', m.R2.toFixed(4));
+    document.getElementById('knn_cm').innerHTML = '';
+  }
+});
+
+/* ===========================================================
+   ANN (MLP) com TensorFlow.js
+=========================================================== */
+async function trainANN(X_train, y_train, X_test, y_test, {layers=[64,32], act='relu', epochs=60, lr=0.01, task='auto'}){
+  const {Xs_train, Xs_test} = scaleTrainTest(X_train, X_test);
+  const nx = X_train[0].length;
+  const isClass = (task==='classification') || (task==='auto' && isClassification(y_train));
+
+  const model = tf.sequential();
+  for (let i=0;i<layers.length;i++){
+    model.add(tf.layers.dense({units: layers[i], activation: act, inputShape: i===0?[nx]:undefined}));
+  }
+  if (isClass){
+    model.add(tf.layers.dense({units:1, activation:'sigmoid'}));
+    model.compile({optimizer: tf.train.adam(lr), loss:'binaryCrossentropy', metrics:['accuracy']});
+  } else {
+    model.add(tf.layers.dense({units:1, activation:'linear'}));
+    model.compile({optimizer: tf.train.adam(lr), loss:'mse'});
+  }
+  const xtr = toTensor2D(Xs_train);
+  const ytr = tf.tensor2d(y_train.map(v=>[v]));
+  await model.fit(xtr, ytr, {epochs, verbose:0});
+  const yhat = Array.from(model.predict(toTensor2D(Xs_test)).dataSync());
+  model.dispose(); xtr.dispose(); ytr.dispose();
+
+  if (isClass){
+    const ypred = yhat.map(p=> p>=0.5?1:0);
+    const acc = accuracy(y_test, ypred);
+    const prf = precisionRecallF1(y_test, ypred, 1);
+    const CM = confMatrix(y_test, ypred);
+    return {isClass:true, acc, prf, CM};
+  } else {
+    const m = { RMSE: rmse(y_test, yhat), MAE: mae(y_test, yhat), R2: r2(y_test, yhat) };
+    return {isClass:false, ...m};
+  }
+}
+
+document.getElementById('btnANN').addEventListener('click', async ()=>{
+  if (!state.X_train.length) { alert('Gere/Carregue um dataset.'); return; }
+  const layers = document.getElementById('ann_layers').value.split(',').map(s=>parseInt(s.trim())).filter(x=>x>0);
+  const act = document.getElementById('ann_act').value;
+  const epochs = parseInt(document.getElementById('ann_epochs').value);
+  const lr = Math.max(1e-6, num('ann_lr'));
+  const task = document.getElementById('ann_task').value;
+
+  document.getElementById('ann_metrics').innerHTML = kpiBox('Status','Treinando...');
+  await tf.nextFrame();
+
+  const r = await trainANN(state.X_train, state.y_train, state.X_test, state.y_test, {layers, act, epochs, lr, task});
+  if (r.isClass){
+    document.getElementById('ann_metrics').innerHTML =
+      kpiBox('Acurácia', (r.acc*100).toFixed(2), '%') +
+      kpiBox('Precisão', (r.prf.precision*100).toFixed(2), '%') +
+      kpiBox('Revocação', (r.prf.recall*100).toFixed(2), '%') +
+      kpiBox('F1', (r.prf.f1*100).toFixed(2), '%');
+    document.getElementById('ann_cm').innerHTML = renderCM(r.CM);
+  } else {
+    document.getElementById('ann_metrics').innerHTML =
+      kpiBox('RMSE', r.RMSE.toFixed(4)) + kpiBox('MAE', r.MAE.toFixed(4)) + kpiBox('R²', r.R2.toFixed(4));
+    document.getElementById('ann_cm').innerHTML = '';
+  }
+});
+
+/* ===========================================================
+   K-Means
+=========================================================== */
+function kmeans(X, k=3, iters=100, nInit=5){
+  function inertia(X, centroids, labels){
+    let s=0;
+    for (let i=0;i<X.length;i++){
+      const c = centroids[labels[i]];
+      s += dist(X[i], c, 'euclidean')**2;
+    }
+    return s;
+  }
+  function runOnce(){
+    // kmeans++ init
+    const n=X.length, d=X[0].length;
+    const centroids = [];
+    centroids.push(X[Math.floor(Math.random()*n)]);
+    while (centroids.length<k){
+      const D2 = X.map(x => Math.min(...centroids.map(c => dist(x,c,'euclidean')**2)));
+      const sum = D2.reduce((a,b)=>a+b,0);
+      let r = Math.random()*sum, idx=0;
+      while (r>0 && idx<n){ r -= D2[idx]; idx++; }
+      centroids.push(X[Math.min(idx, n-1)]);
+    }
+    let labels = Array(n).fill(0);
+    for (let it=0; it<iters; it++){
+      // assign
+      let changes=0;
+      for (let i=0;i<n;i++){
+        let best=-1, bestd=Infinity;
+        for (let c=0;c<k;c++){
+          const d = dist(X[i], centroids[c], 'euclidean');
+          if (d<bestd){ bestd=d; best=c; }
+        }
+        if (labels[i]!==best){ labels[i]=best; changes++; }
+      }
+      // update
+      const sums = Array.from({length:k}, ()=>Array(X[0].length).fill(0));
+      const counts = Array(k).fill(0);
+      for (let i=0;i<n;i++){
+        const c=labels[i]; counts[c]++; for (let j=0;j<X[0].length;j++) sums[c][j]+=X[i][j];
+      }
+      for (let c=0;c<k;c++){
+        if (counts[c]>0) centroids[c] = sums[c].map(v => v/counts[c]);
+      }
+      if (changes===0) break;
+    }
+    return {centroids, labels, inertia: inertia(X, centroids, labels)};
+  }
+  let best=null;
+  for (let r=0;r<nInit;r++){
+    const out = runOnce();
+    if (!best || out.inertia < best.inertia) best=out;
+  }
+  return best;
+}
+function silhouetteScore(X, labels){
+  const n=X.length;
+  const k = Math.max(...labels)+1;
+  if (k<=1) return 0;
+  const clusters = Array.from({length:k}, ()=>[]);
+  for (let i=0;i<n;i++) clusters[labels[i]].push(i);
+  function avgDist(i, idxs){ if (idxs.length===0) return 0; let s=0; for (const j of idxs){ if (j!==i) s+=dist(X[i], X[j]); } return s/Math.max(1,idxs.length-(idxs.includes(i)?1:0)); }
+  let sTot=0;
+  for (let i=0;i<n;i++){
+    const a = avgDist(i, clusters[labels[i]]);
+    let b = Infinity;
+    for (let c=0;c<k;c++){
+      if (c===labels[i]) continue;
+      b = Math.min(b, avgDist(i, clusters[c]));
+    }
+    const s = (b - a) / Math.max(a, b, 1e-12);
+    sTot += s;
+  }
+  return sTot/n;
+}
+
+document.getElementById('btnKMeans').addEventListener('click', ()=>{
+  if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
+  const k = parseInt(document.getElementById('km_k').value);
+  const its = parseInt(document.getElementById('km_iters').value);
+  const ini = parseInt(document.getElementById('km_init').value);
+
+  const {P} = projectPCA2D(state.X);
+  const {labels, inertia} = kmeans(state.X, k, its, ini);
+  const sil = silhouetteScore(state.X, labels);
+
+  document.getElementById('kmeans_metrics').innerHTML =
+    kpiBox('Inércia', inertia.toFixed(2)) + kpiBox('Silhueta', sil.toFixed(3)) + kpiBox('k', k);
+
+  // plot clusters
+  const ctx = document.getElementById('km_plot').getContext('2d');
+  if (state.charts['km_plot']) { state.charts['km_plot'].destroy(); delete state.charts['km_plot']; }
+  const palette = ['#22d3ee','#f43f5e','#f59e0b','#8b5cf6','#10b981','#eab308','#ef4444'];
+  const kset = Array.from(new Set(labels)).sort((a,b)=>a-b);
+  const datasets = kset.map((c,i)=>({
+    label: `Cluster ${c}`,
+    data: P.map((p,idx)=> ({x:p[0], y:p[1]})).filter((_,idx)=> labels[idx]===c),
+    pointRadius: 3,
+    backgroundColor: palette[i%palette.length]
+  }));
+  state.charts['km_plot'] = new Chart(ctx, { type:'scatter', data: {datasets},
+    options: { plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}} }});
+});
+
+/* ===========================================================
+   Hierarchical Clustering (Aglomerativo - Single linkage)
+=========================================================== */
+function hacSingleLink(X, metric='euclidean', k=3){
+  const n = X.length;
+  const clusters = Array.from({length:n}, (_,i)=>[i]);
+  function dists(a,b){
+    let best=Infinity;
+    for (const i of a) for (const j of b) best = Math.min(best, dist(X[i], X[j], metric));
+    return best;
+  }
+  while (clusters.length > k){
+    let bestI=-1,bestJ=-1, bestD=Infinity;
+    for (let i=0;i<clusters.length;i++){
+      for (let j=i+1;j<clusters.length;j++){
+        const d = dists(clusters[i], clusters[j]);
+        if (d<bestD){ bestD=d; bestI=i; bestJ=j; }
+      }
+    }
+    // merge
+    const merged = clusters[bestI].concat(clusters[bestJ]);
+    clusters.splice(bestJ,1); clusters.splice(bestI,1); clusters.push(merged);
+  }
+  // labels
+  const labels = Array(n).fill(0);
+  for (let c=0;c<clusters.length;c++){
+    for (const idx of clusters[c]) labels[idx]=c;
+  }
+  return {clusters, labels};
+}
+document.getElementById('btnHAC').addEventListener('click', ()=>{
+  if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
+  const k = parseInt(document.getElementById('hac_k').value);
+  const metric = document.getElementById('hac_metric').value;
+
+  const {labels} = hacSingleLink(state.X, metric, k);
+  const {P} = projectPCA2D(state.X);
+
+  document.getElementById('hac_info').innerHTML = `Clusters: <span class="badge ok">${k}</span>`;
+
+  const ctx = document.getElementById('hac_plot').getContext('2d');
+  if (state.charts['hac_plot']) { state.charts['hac_plot'].destroy(); delete state.charts['hac_plot']; }
+  const palette = ['#22d3ee','#f43f5e','#f59e0b','#8b5cf6','#10b981','#eab308','#ef4444'];
+  const kset = Array.from(new Set(labels)).sort((a,b)=>a-b);
+  const datasets = kset.map((c,i)=>({
+    label: `Cluster ${c}`,
+    data: P.map((p,idx)=> ({x:p[0], y:p[1]})).filter((_,idx)=> labels[idx]===c),
+    pointRadius: 3,
+    backgroundColor: palette[i%palette.length]
+  }));
+  state.charts['hac_plot'] = new Chart(ctx, { type:'scatter', data: {datasets},
+    options: { plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}} }});
+});
+
+/* ===========================================================
+   DBSCAN
+=========================================================== */
+function dbscan(X, eps=0.5, minPts=5, metric='euclidean'){
+  const n=X.length;
+  const labels = Array(n).fill(-99); // -99 unvisited, -1 noise, >=0 cluster
+  let C=0;
+
+  function regionQuery(i){
+    const neigh=[];
+    for (let j=0;j<n;j++){
+      if (dist(X[i], X[j], metric) <= eps) neigh.push(j);
+    }
+    return neigh;
+  }
+  function expandCluster(i, neighbors, C){
+    labels[i]=C;
+    let k=0;
+    while (k<neighbors.length){
+      const j=neighbors[k];
+      if (labels[j]===-99){
+        labels[j]=C;
+        const n2 = regionQuery(j);
+        if (n2.length >= minPts) neighbors = neighbors.concat(n2.filter(u=>!neighbors.includes(u)));
+      }
+      if (labels[j]===-1) labels[j]=C; // borda
+      k++;
+    }
+  }
+
+  for (let i=0;i<n;i++){
+    if (labels[i]!==-99) continue;
+    const neighbors = regionQuery(i);
+    if (neighbors.length < minPts){
+      labels[i] = -1; // noise
+    } else {
+      expandCluster(i, neighbors, C);
+      C++;
+    }
+  }
+  return {labels, nClusters:C};
+}
+
+document.getElementById('btnDBSCAN').addEventListener('click', ()=>{
+  if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
+  const eps = parseFloat(document.getElementById('db_eps').value);
+  const minPts = parseInt(document.getElementById('db_minPts').value);
+  const metric = document.getElementById('db_metric').value;
+
+  const {labels, nClusters} = dbscan(state.X, eps, minPts, metric);
+  const noise = labels.filter(l=>l===-1).length;
+  const {P} = projectPCA2D(state.X);
+
+  document.getElementById('dbscan_info').innerHTML =
+    kpiBox('Clusters', nClusters) + kpiBox('Ruído (outliers)', noise);
+
+  const ctx = document.getElementById('db_plot').getContext('2d');
+  if (state.charts['db_plot']) { state.charts['db_plot'].destroy(); delete state.charts['db_plot']; }
+
+  const palette = ['#22d3ee','#f43f5e','#f59e0b','#8b5cf6','#10b981','#eab308','#ef4444'];
+  const clusters = Array.from(new Set(labels)).sort((a,b)=>a-b);
+  const datasets = clusters.map((c,i)=>({
+    label: c===-1 ? 'Ruído' : `Cluster ${c}`,
+    data: P.map((p,idx)=> ({x:p[0], y:p[1]})).filter((_,idx)=> labels[idx]===c),
+    pointRadius: 3,
+    backgroundColor: c===-1 ? '#94a3b8' : palette[i%palette.length]
+  }));
+  state.charts['db_plot'] = new Chart(ctx, { type:'scatter', data: {datasets},
+    options: { plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}} }});
+});
+
+/* ===========================================================
+   PCA (custom) — além do PCA 2D automático
+=========================================================== */
+document.getElementById('btnPCA').addEventListener('click', ()=>{
+  if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
+  const k = parseInt(document.getElementById('pca_n').value);
+  const scaler = zscoreFit(state.X);
+  const Xs = zscoreTransform(state.X, scaler);
+  const XT = transpose(Xs);
+  const n = Xs.length;
+  const d = XT.length;
+  const cov = Array.from({length:d}, (_,i)=>Array(d).fill(0));
+  for (let i=0;i<d;i++){
+    for (let j=i;j<d;j++){
+      let s=0; for (let t=0;t<n;t++) s += XT[i][t]*XT[j][t];
+      const v = s/(n-1); cov[i][j]=v; cov[j][i]=v;
+    }
+  }
+  const eig = numeric.eig(cov);
+  const lambdas = eig.lambda.x;
+  const vecs = eig.E.x;
+  const idx = lambdas.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).map(t=>t[1]);
+  const Vcols = idx.map(i => vecs.map(row => row[i]));
+  const Wk = Vcols.slice(0,k); // k principais
+  const Z = Xs.map(row => Wk.map(pc => row.reduce((s,v,j)=>s + v*pc[j],0)));
+  const exp = lambdas.slice().sort((a,b)=>b-a).slice(0,k).reduce((a,b)=>a+b,0) / lambdas.reduce((a,b)=>a+b,0);
+
+  document.getElementById('pca_info').innerHTML =
+    `Variância explicada (top-${k}): <span class="badge ok">${(exp*100).toFixed(1)}%</span>`;
+  // plota se k>=2
+  if (k>=2){
+    const ctx = document.getElementById('pca_custom_plot').getContext('2d');
+    if (state.charts['pca_custom_plot']) { state.charts['pca_custom_plot'].destroy(); delete state.charts['pca_custom_plot']; }
+    const datasets = [{
+      label: 'PC1 x PC2',
+      data: Z.map(p=> ({x:p[0], y:p[1]})),
+      pointRadius: 3,
+      backgroundColor: '#22d3ee'
+    }];
+    state.charts['pca_custom_plot'] = new Chart(ctx, { type:'scatter', data: {datasets},
+      options: { plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}} }});
+  }
+});
+
+/* ===========================================================
+   Autoencoder (TF.js)
+=========================================================== */
+async function trainAE(X_train, {latent=2, epochs=60, lr=0.01, batchSize=32, noise=0.0}){
+  const scaler = zscoreFit(X_train);
+  const Xs = zscoreTransform(X_train, scaler);
+  const nx = X_train[0].length;
+
+  const input = tf.input({shape:[nx]});
+  const noisy = noise>0 ? tf.layers.gaussianNoise({stddev: noise}).apply(input) : input;
+  // Encoder
+  const e1 = tf.layers.dense({units: Math.max(8, Math.floor(nx*0.75)), activation:'relu'}).apply(noisy);
+  const e2 = tf.layers.dense({units: Math.max(4, Math.floor(nx*0.5)), activation:'relu'}).apply(e1);
+  const z  = tf.layers.dense({units: latent, activation:'linear'}).apply(e2);
+  // Decoder
+  const d1 = tf.layers.dense({units: Math.max(4, Math.floor(nx*0.5)), activation:'relu'}).apply(z);
+  const d2 = tf.layers.dense({units: Math.max(8, Math.floor(nx*0.75)), activation:'relu'}).apply(d1);
+  const out= tf.layers.dense({units: nx, activation:'linear'}).apply(d2);
+  const ae = tf.model({inputs: input, outputs: out});
+  ae.compile({optimizer: tf.train.adam(lr), loss:'mse'});
+
+  const xtr = toTensor2D(Xs);
+  await ae.fit(xtr, xtr, {epochs, batchSize, verbose:0});
+  const recon = ae.predict(xtr);
+  const Xhat = recon.arraySync();
+  const recErr = rmse(Xs.flat(), Xhat.flat());
+  ae.dispose(); xtr.dispose(); recon.dispose();
+
+  // projeção latente para visualização (se latent>=2)
+  let Z = null;
+  if (latent>=2){
+    const enc = tf.model({inputs: input, outputs: z});
+    Z = enc.predict(toTensor2D(Xs)).arraySync();
+    enc.dispose();
+  }
+  return {recErr, Z, scaler};
+}
+
+document.getElementById('btnAE').addEventListener('click', async ()=>{
+  if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
+  const latent = parseInt(document.getElementById('ae_latent').value);
+  const epochs = parseInt(document.getElementById('ae_epochs').value);
+  const lr = Math.max(1e-6, num('ae_lr'));
+  const bs = parseInt(document.getElementById('ae_bs').value);
+  const noise = parseFloat(document.getElementById('ae_noise').value);
+
+  document.getElementById('ae_info').innerHTML = 'Treinando...';
+  await tf.nextFrame();
+  const r = await trainAE(state.X, {latent, epochs, lr, batchSize: bs, noise});
+  document.getElementById('ae_info').innerHTML = `Erro de reconstrução (RMSE): <span class="badge ok">${r.recErr.toFixed(4)}</span>`;
+
+  if (r.Z){
+    const ctx = document.getElementById('ae_plot').getContext('2d');
+    if (state.charts['ae_plot']) { state.charts['ae_plot'].destroy(); delete state.charts['ae_plot']; }
+    const datasets = [{
+      label: 'Latente (z1 x z2)',
+      data: r.Z.map(p=> ({x:p[0], y:p[1]})),
+      pointRadius: 3,
+      backgroundColor: '#f59e0b'
+    }];
+    state.charts['ae_plot'] = new Chart(ctx, { type:'scatter', data: {datasets},
+      options: { plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}} }});
+  }
+});
 </script>
 </body>
 </html>
+``
