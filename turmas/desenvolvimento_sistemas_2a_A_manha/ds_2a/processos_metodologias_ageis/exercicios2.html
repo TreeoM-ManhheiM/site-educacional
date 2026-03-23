@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Simulador Educacional - API RESTful</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f8;
+    margin: 0;
+    padding: 20px;
+}
+h1, h2 {
+    color: #003366;
+}
+.container {
+    max-width: 1000px;
+    margin: auto;
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+}
+.section {
+    border-left: 5px solid #003366;
+    padding-left: 15px;
+    margin-bottom: 25px;
+}
+label {
+    font-weight: bold;
+}
+select, input, button {
+    padding: 8px;
+    margin-top: 5px;
+    width: 100%;
+}
+button {
+    background: #003366;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+button:hover {
+    background: #0055aa;
+}
+pre {
+    background: #eef2f5;
+    padding: 15px;
+    border-radius: 5px;
+}
+.alert {
+    color: red;
+    font-weight: bold;
+}
+.success {
+    color: green;
+    font-weight: bold;
+}
+.diagram {
+    display: flex;
+    justify-content: space-around;
+    margin: 10px 0;
+}
+.box {
+    background: #eef2f5;
+    padding: 10px;
+    border-radius: 5px;
+    width: 30%;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>Simulador Educacional – Consumo de API RESTful</h1>
+
+<!-- Situação-Problema -->
+<div class="section">
+<h2>1️⃣ Situação-Problema: Previsão do Tempo</h2>
+<p>Você está desenvolvendo um aplicativo mobile que consulta a previsão do tempo por meio de uma API RESTful.</p>
+
+<div class="diagram">
+<div class="box">📱 Aplicativo (Cliente)</div>
+<div class="box">🌐 API REST</div>
+<div class="box">🖥️ Servidor (Dados Climáticos)</div>
+</div>
+
+<label>Cidade:</label>
+<input type="text" id="cidade" placeholder="Ex: São Paulo">
+
+<label>Método HTTP:</label>
+<select id="metodo">
+    <option>GET</option>
+    <option>POST</option>
+    <option>PUT</option>
+</select>
+
+<label>HTTPS Ativado?</label>
+<select id="https">
+    <option value="sim">Sim</option>
+    <option value="nao">Não</option>
+</select>
+
+<label>Token de autenticação:</label>
+<input type="text" id="token" placeholder="Ex: abc123token">
+
+<button onclick="simularClima()">Enviar Requisição</button>
+
+<p id="mensagemClima"></p>
+
+<pre id="resultadoClima"></pre>
+</div>
+
+<!-- Aplicação Profissional -->
+<div class="section">
+<h2>2️⃣ Cenário Profissional: Logística em Tempo Real</h2>
+
+<p>Uma empresa de logística precisa sincronizar dados entre motoristas e o sistema central.</p>
+
+<label>Ação:</label>
+<select id="acaoLogistica">
+    <option value="get">Consultar localização (GET)</option>
+    <option value="post">Enviar nova entrega (POST)</option>
+    <option value="put">Atualizar status (PUT)</option>
+</select>
+
+<button onclick="simularLogistica()">Executar Ação</button>
+
+<pre id="resultadoLogistica"></pre>
+</div>
+
+<!-- Síntese -->
+<div class="section">
+<h2>3️⃣ Síntese Conceitual</h2>
+<ul>
+<li>API é a ponte de comunicação entre sistemas.</li>
+<li>RESTful é leve, simples e usa JSON.</li>
+<li>GET consulta dados.</li>
+<li>POST e PUT enviam ou atualizam dados.</li>
+<li>HTTPS e token garantem segurança.</li>
+</ul>
+</div>
+
+</div>
+
+<script>
+function simularClima() {
+    const cidade = document.getElementById("cidade").value;
+    const metodo = document.getElementById("metodo").value;
+    const https = document.getElementById("https").value;
+    const token = document.getElementById("token").value;
+    const mensagem = document.getElementById("mensagemClima");
+    const resultado = document.getElementById("resultadoClima");
+
+    if (https === "nao" || token === "") {
+        mensagem.innerHTML = "⚠️ Falha de segurança! HTTPS ou token ausente.";
+        mensagem.className = "alert";
+        resultado.textContent = "";
+        return;
+    }
+
+    mensagem.innerHTML = "✅ Requisição realizada com sucesso!";
+    mensagem.className = "success";
+
+    resultado.textContent = JSON.stringify({
+        metodo: metodo,
+        endpoint: "/api/clima?cidade=" + cidade,
+        resposta: {
+            cidade: cidade,
+            temperatura: "26°C",
+            condicao: "Parcialmente nublado"
+        }
+    }, null, 4);
+}
+
+function simularLogistica() {
+    const acao = document.getElementById("acaoLogistica").value;
+    const resultado = document.getElementById("resultadoLogistica");
+
+    let resposta;
+
+    if (acao === "get") {
+        resposta = {
+            metodo: "GET",
+            dados: "Localização atual do motorista",
+            lat: "-23.67",
+            long: "-46.53"
+        };
+    } else if (acao === "post") {
+        resposta = {
+            metodo: "POST",
+            status: "Nova entrega registrada com sucesso"
+        };
+    } else {
+        resposta = {
+            metodo: "PUT",
+            status: "Status da entrega atualizado"
+        };
+    }
+
+    resultado.textContent = JSON.stringify(resposta, null, 4);
+}
+</script>
+
+</body>
+</html>
