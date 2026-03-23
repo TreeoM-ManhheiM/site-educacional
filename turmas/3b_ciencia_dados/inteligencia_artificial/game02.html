@@ -12,26 +12,22 @@ body {
   background: #0f172a;
   color: #e5e7eb;
 }
-
 header {
   padding: 10px;
   text-align: center;
   border-bottom: 1px solid #1f2937;
 }
-
 main {
   padding: 12px;
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
-
 .panel {
   background: #111827;
   border-radius: 14px;
   padding: 10px;
 }
-
 video {
   width: 100%;
   max-height: 40vh;
@@ -46,7 +42,6 @@ video {
   gap: 8px;
   margin-top: 8px;
 }
-
 .train-buttons button {
   padding: 14px 4px;
   font-size: 14px;
@@ -55,12 +50,10 @@ video {
   border: none;
   color: white;
 }
-
 .train-buttons button:active {
   background: #4ade80;
   color: #052e13;
 }
-
 .counter {
   display: block;
   font-size: 12px;
@@ -75,13 +68,12 @@ video {
   overflow: hidden;
   margin-bottom: 6px;
 }
-
 .bar span {
   height: 100%;
   display: block;
   width: 0%;
   background: linear-gradient(90deg, #22c55e, #4ade80);
-  transition: width 0.25s ease;
+  transition: width 0.3s ease;
 }
 
 .label {
@@ -95,93 +87,3 @@ button {
   border: none;
   font-size: 15px;
   background: #334155;
-  color: white;
-}
-
-button.primary { background: #22c55e; color:#052e13; }
-button.warn { background: #f59e0b; color:#1b1202; }
-button.bad { background: #ef4444; }
-
-.status {
-  text-align: center;
-  font-size: 14px;
-  opacity: 0.85;
-  margin-top: 6px;
-}
-</style>
-
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1"></script>
-<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier@1.2.6"></script>
-</head>
-
-<body>
-
-<header>
-  <b>IA com Webcam</b><br>
-  <small>Treinar ➜ Rodar (estável)</small>
-</header>
-
-<main>
-
-<section class="panel">
-  <video id="video" autoplay playsinline muted></video>
-
-  <div class="train-buttons">
-    <button data-cls="0">Classe 0<span id="n0" class="counter">n=0</span></button>
-    <button data-cls="1">Classe 1<span id="n1" class="counter">n=0</span></button>
-    <button data-cls="2">Classe 2<span id="n2" class="counter">n=0</span></button>
-    <button data-cls="3">Classe 3<span id="n3" class="counter">n=0</span></button>
-  </div>
-
-  <div class="status" id="status">Aguardando câmera…</div>
-
-  <button id="startCam" class="primary">📷 Ativar câmera</button>
-  <button id="toggleCam">🔄 Trocar câmera</button>
-</section>
-
-<section class="panel">
-  <button id="run" class="warn">▶ Rodar IA</button>
-  <button id="stop">⏹ Parar IA</button>
-  <button id="clear" class="bad">🗑️ Limpar treino</button>
-</section>
-
-<section class="panel">
-  <div class="label">Classe 0 – <b id="t0">0%</b></div>
-  <div class="bar"><span id="p0"></span></div>
-
-  <div class="label">Classe 1 – <b id="t1">0%</b></div>
-  <div class="bar"><span id="p1"></span></div>
-
-  <div class="label">Classe 2 – <b id="t2">0%</b></div>
-  <div class="bar"><span id="p2"></span></div>
-
-  <div class="label">Classe 3 – <b id="t3">0%</b></div>
-  <div class="bar"><span id="p3"></span></div>
-</section>
-
-</main>
-
-<script>
-(async () => {
-
-const $ = s => document.querySelector(s);
-const video = $('#video');
-const statusEl = $('#status');
-
-const bars = [$('#p0'), $('#p1'), $('#p2'), $('#p3')];
-const texts = [$('#t0'), $('#t1'), $('#t2'), $('#t3')];
-const counters = [$('#n0'), $('#n1'), $('#n2'), $('#n3')];
-
-let net, classifier;
-let stream = null;
-let running = false;
-let loopActive = false;
-let useFrontCamera = false;
-let counts = [0,0,0,0];
-
-async function startCamera() {
-  if (stream) stream.getTracks().forEach(t => t.stop());
-  stream = await navigator.mediaDevices.getUserMedia({
-
-                                                     
