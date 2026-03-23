@@ -1,223 +1,147 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Situações‑Problema – Projeto de Redes (FATEC)</title>
-
+<meta charset="UTF-8" />
+<title>Simulador Avançado de Redes</title>
 <style>
-body{
-  font-family: Arial, Helvetica, sans-serif;
-  background:#f4f6fb;
-  margin:0;
-  padding:24px;
-}
-h1,h2,h3{color:#0f172a}
-.situacao{
-  background:#ffffff;
-  border:1px solid #ccc;
-  border-radius:8px;
-  padding:20px;
-  margin-bottom:30px;
-}
-pre{
-  background:#eef2f7;
-  padding:14px;
-  border-radius:6px;
-  font-size:14px;
-}
-ul{margin-top:10px}
-.dados{
-  margin-top:12px;
-  padding:12px;
-  background:#f9fafc;
-  border-left:4px solid #2563eb;
-}
+body { font-family: Arial, sans-serif; background:#eef2f7; padding:20px; }
+h1,h2 { text-align:center; }
+.container { max-width:1000px; margin:auto; background:#fff; padding:20px; border-radius:10px; box-shadow:0 2px 10px rgba(0,0,0,.15); }
+.top { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
+.pc { width:160px; height:120px; border:2px solid #2563eb; border-radius:10px; text-align:center; padding-top:35px; font-weight:bold; }
+.network { position:relative; flex:1; height:120px; margin:0 20px; border-top:2px dashed #9ca3af; }
+.packet { position:absolute; top:50%; width:14px; height:14px; background:#22c55e; border-radius:50%; transform:translateY(-50%); animation: move linear; }
+.lost { background:#ef4444; }
+@keyframes move { from { left:0; } to { left:100%; } }
+.controls { display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px; }
+label { font-weight:bold; }
+select, input, button { padding:10px; width:100%; }
+button { background:#2563eb; color:#fff; border:none; border-radius:6px; cursor:pointer; }
+button:hover { background:#1e40af; }
+.stats { background:#f9fafb; padding:15px; border-radius:6px; margin-top:20px; }
+.warn { background:#fee2e2; color:#991b1b; padding:15px; border-radius:6px; margin-top:20px; border:1px solid #fecaca; }
+canvas { background:#fff; border:1px solid #d1d5db; border-radius:6px; margin-top:20px; }
 </style>
 </head>
-
 <body>
+<div class="container">
+<h1>📡 Simulador Avançado de Redes</h1>
+<h2>2°A 2026 😄</h2>
 
-<h1>Situações‑Problema de Projeto e Dimensionamento de Redes</h1>
-<p><b>Curso:</b> Desenvolvimento de Sistemas – FATEC<br>
-<b>Orientação:</b> Todas as situações abaixo devem ser <u>desenhadas e configuradas manualmente</u> no simulador de redes.</p>
-
-<hr>
-
-<!-- 1 -->
-<div class="situacao">
-<h2>1️⃣ Laboratório de Informática Escolar</h2>
-<pre>
-Internet → Firewall → Switch
-                     |-- PC (15 unidades)
-                     |-- Impressora
-                     |-- Servidor de arquivos
-</pre>
-<div class="dados">
-IP da rede: 192.168.10.0/24<br>
-Firewall LAN: 192.168.10.1<br>
-PCs: 192.168.10.10–192.168.10.24<br>
-Servidor: 192.168.10.100<br>
-Impressora: 192.168.10.50
-</div>
-<ul>
-<li>Desenhar a arquitetura no simulador</li>
-<li>Configurar TODOS os IPs fixos</li>
-<li>Garantir gateway correto em todos os hosts</li>
-</ul>
+<div class="top">
+  <div class="pc">💻 Servidor</div>
+  <div class="network" id="net"></div>
+  <div class="pc">💻 Cliente</div>
 </div>
 
-<!-- 2 -->
-<div class="situacao">
-<h2>2️⃣ Sistema Administrativo de Escola</h2>
-<pre>
-Internet → Firewall → Switch
-                     |-- PC (8 unidades)
-                     |-- Notebook (2 unidades)
-                     |-- Servidor administrativo
-</pre>
-<div class="dados">
-Rede: 192.168.20.0/24<br>
-Gateway: 192.168.20.1<br>
-Servidor: 192.168.20.10
-</div>
-<ul>
-<li>Dimensionar rede para crescimento futuro</li>
-<li>Atribuir IP fixo a servidores e notebooks</li>
-</ul>
-</div>
-
-<!-- 3 -->
-<div class="situacao">
-<h2>3️⃣ Escola com Dois Laboratórios</h2>
-<pre>
-Internet → Firewall → Switch
-           |-- Lab A (10 PCs)
-           |-- Lab B (12 PCs)
-           |-- Impressora compartilhada
-</pre>
-<div class="dados">
-Lab A: 192.168.30.0/24<br>
-Lab B: 192.168.40.0/24<br>
-Firewall LAN: 192.168.30.1 / 192.168.40.1
-</div>
-<ul>
-<li>Definir endereçamento sem conflito</li>
-<li>Configurar gateways corretamente</li>
-</ul>
+<div class="controls">
+  <div>
+    <label>Meio de Comunicação</label>
+    <select id="meio" onchange="ajustarDistancia()">
+      <option value="utp">UTP (até 100 m)</option>
+      <option value="coaxial">Coaxial (até 500 m)</option>
+      <option value="fibra">Fibra Óptica (até 100 km)</option>
+      <option value="wifi">Wi‑Fi (até 100 m)</option>
+      <option value="bluetooth">Bluetooth (até 10 m)</option>
+      <option value="satelite">Satélite (até 36.000 km)</option>
+    </select>
+  </div>
+  <div>
+    <label>Distância</label>
+    <input type="range" min="1" max="100" step="1" id="distancia" value="1" oninput="distLabel.innerText=this.value+' '+unidade">
+    <div id="distLabel">1 m</div>
+  </div>
 </div>
 
-<!-- 4 -->
-<div class="situacao">
-<h2>4️⃣ Datacenter Acadêmico Simplificado</h2>
-<pre>
-Internet → Firewall → Switch Core
-                     |-- Servidor WEB
-                     |-- Servidor DB
-                     |-- Servidor Backup
-                     |-- PCs de Administração (6)
-</pre>
-<div class="dados">
-Rede: 10.0.0.0/24<br>
-Firewall LAN: 10.0.0.1<br>
-Servidores: 10.0.0.10 – 10.0.0.12
-</div>
+<button onclick="iniciar()">▶ Iniciar Simulação</button>
+
+<div id="mensagem"></div>
+<div class="stats" id="stats"></div>
+<canvas id="grafico" width="960" height="240"></canvas>
 </div>
 
-<!-- 5 -->
-<div class="situacao">
-<h2>5️⃣ CFTV Escolar</h2>
-<pre>
-Switch
- |-- Câmera IP (8)
- |-- Servidor CFTV
- |-- PC Monitoramento (2)
-</pre>
-<div class="dados">
-Rede: 192.168.50.0/24<br>
-Servidor: 192.168.50.10
-</div>
-</div>
+<script>
+const meios = {
+  utp:{vel:100, lat:2, perda:0.02, max:100, unidade:'m'},
+  coaxial:{vel:120, lat:3, perda:0.01, max:500, unidade:'m'},
+  fibra:{vel:1000, lat:1, perda:0.001, max:100, unidade:'km'},
+  wifi:{vel:300, lat:10, perda:0.08, max:100, unidade:'m'},
+  bluetooth:{vel:3, lat:25, perda:0.12, max:10, unidade:'m'},
+  satelite:{vel:80, lat:600, perda:0.05, max:36000, unidade:'km'}
+};
 
-<!-- 6 -->
-<div class="situacao">
-<h2>6️⃣ Rede Corporativa Pequena Empresa</h2>
-<pre>
-Internet → Firewall → Switch
-                     |-- PCs (12)
-                     |-- Notebook (4)
-                     |-- Impressora
-                     |-- Servidor ERP
-</pre>
-<div class="dados">
-Rede: 192.168.60.0/24<br>
-Gateway: 192.168.60.1
-</div>
-</div>
+let timer;
+let tempo=0;
+let baixado=0;
+let unidade='m';
+const total=500;
+const ctx=document.getElementById('grafico').getContext('2d');
 
-<!-- 7 -->
-<div class="situacao">
-<h2>7️⃣ Ambiente de Testes de Software</h2>
-<pre>
-Switch
- |-- Servidor Teste
- |-- Servidor Homologação
- |-- PCs Desenvolvedores (8)
-</pre>
-<div class="dados">
-Rede: 10.1.1.0/24
-</div>
-</div>
+function ajustarDistancia(){
+  const meio=document.getElementById('meio').value;
+  const d=document.getElementById('distancia');
+  unidade = meios[meio].unidade;
+  d.max = meios[meio].max;
+  d.value = 1;
+  document.getElementById('mensagem').innerHTML='';
+  d.oninput();
+}
 
-<!-- 8 -->
-<div class="situacao">
-<h2>8️⃣ Escola com IoT Educacional</h2>
-<pre>
-Firewall → Switch
-          |-- IoT (10 dispositivos)
-          |-- PC Professor
-          |-- Notebook
-</pre>
-<div class="dados">
-IoT Rede: 10.20.0.0/24
-</div>
-</div>
+ajustarDistancia();
 
-<!-- 9 -->
-<div class="situacao">
-<h2>9️⃣ Empresa com Home Office (conceitual)</h2>
-<pre>
-Firewall → Switch
-          |-- PCs (10)
-          |-- Servidor
-</pre>
-<div class="dados">
-Rede: 192.168.70.0/24
-</div>
-</div>
+function iniciar(){
+  clearInterval(timer);
+  ctx.clearRect(0,0,960,240);
+  document.getElementById('net').innerHTML='';
+  document.getElementById('stats').innerHTML='';
 
-<!-- 10 -->
-<div class="situacao">
-<h2>1️⃣0️⃣ Projeto de Escola Completa</h2>
-<pre>
-Internet → Firewall → Switch
-                     |-- Laboratório (15 PCs)
-                     |-- Secretaria (5 PCs)
-                     |-- Servidor Geral
-                     |-- Impressoras (3)
-                     |-- Android (5)
-</pre>
-<div class="dados">
-Planejamento livre, porém IP fixo obrigatório em todos os dispositivos críticos
-</div>
-</div>
+  const meio=document.getElementById('meio').value;
+  const dist=parseInt(document.getElementById('distancia').value);
+  const m=meios[meio];
 
-<p><b>As situações 11 a 20 seguem o mesmo nível de complexidade, exigindo:</b></p>
-<ul>
-<li>Planejamento de faixa IP</li>
-<li>Configuração manual de todos os dispositivos</li>
-<li>Justificativa implícita na arquitetura escolhida</li>
-</ul>
+  // BLOQUEIO SE DISTÂNCIA FOR INVIÁVEL
+  if(dist > m.max){
+    document.getElementById('mensagem').innerHTML = `
+      <div class="warn">⚠️ <strong>Sinal não chega ao destino.</strong><br>
+      O meio <b>${meio.toUpperCase()}</b> suporta no máximo <b>${m.max} ${m.unidade}</b>.
+      </div>`;
+    return;
+  }
 
+  document.getElementById('mensagem').innerHTML='';
+  tempo=0; baixado=0;
+
+  const distKm = (m.unidade==='m') ? dist/1000 : dist;
+  const fatorDist = Math.max(0.3, 1 - distKm/150);
+  const velEf = m.vel * fatorDist;
+  const latEf = m.lat + distKm*2;
+
+  timer=setInterval(()=>{
+    tempo++;
+    const perda=Math.random()<m.perda;
+    const p=document.createElement('div');
+    p.className='packet'+(perda?' lost':'');
+    p.style.animationDuration=`${0.8+latEf/200}s`;
+    document.getElementById('net').appendChild(p);
+    setTimeout(()=>p.remove(),2000);
+
+    if(!perda) baixado += velEf/8;
+    if(baixado>total) baixado=total;
+
+    ctx.fillStyle='#3b82f6';
+    ctx.fillRect(tempo*8,240-(velEf/4),6,velEf/4);
+
+    document.getElementById('stats').innerHTML=`
+      <h3>📊 Estatísticas</h3>
+      <p><b>Meio:</b> ${meio.toUpperCase()}</p>
+      <p><b>Distância:</b> ${dist} ${unidade}</p>
+      <p><b>Velocidade efetiva:</b> ${velEf.toFixed(1)} Mbps</p>
+      <p><b>Latência:</b> ${latEf.toFixed(1)} ms</p>
+      <p><b>Baixado:</b> ${baixado.toFixed(1)} MB</p>`;
+
+    if(baixado>=total) clearInterval(timer);
+  },1000);
+}
+</script>
 </body>
 </html>
-``
