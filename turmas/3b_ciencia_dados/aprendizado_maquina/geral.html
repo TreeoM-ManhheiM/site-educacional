@@ -95,6 +95,10 @@
   .scroll { max-height: 260px; overflow: auto; border: 1px solid var(--border); border-radius: 12px; }
   .footer { margin-top: 30px; font-size: .85rem; color: var(--muted); }
 </style>
+
+<style>
+#debugHUD{position:fixed;right:16px;bottom:16px;width:420px;max-height:45vh;z-index:99999;background:#0b122f;color:#e2e8f0;border:1px solid #1f2a4a;border-radius:12px;box-shadow:0 8px 28px #0009;display:none;overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;}
+#debugHUD header{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;background:#0f172a;border-bottom:1px solid #1f2a4a;border-radius:12px 12px 0 0}#debugHUD pre{margin:0;padding:10px;white-space:pre-wrap}#debugHUD .btn{background:#0c1330;color:#93c5fd;border:1px solid #1f2a4a;border-radius:8px;padding:4px 8px;cursor:pointer}#debugHUD.show{display:block}#debugToggle{position:fixed;right:16px;bottom:16px;z-index:99998;background:#0c1330;color:#93c5fd;border:1px solid #1f2a4a;border-radius:999px;padding:6px 10px;cursor:pointer}</style>
 </head>
 <body>
 <!-- ===========================================================
@@ -770,7 +774,7 @@ function renderPCAPlot(canvasId, X, y=null, palette=null){
     data: { datasets },
     options: {
       plugins: { legend: { labels: { color: '#cbd5e1' } },
-                 title: { display: true, text: `PCA 2D — variância explicada ${((explained[0]+explained[1])*100).toFixed(0)}%`, color: '#cbd5e1' } },
+                 title: { display: true, text: `PCA 2D — variância explicada ${(explained[0]+explained[1])*100|0}%`, color: '#cbd5e1' } },
       scales: {
         x: { grid: { color: '#1f2a4a' }, ticks: { color: '#a5b4fc' } },
         y: { grid: { color: '#1f2a4a' }, ticks: { color: '#a5b4fc' } },
@@ -900,7 +904,7 @@ async function trainLinearRegression(
   const ytr = toTensor2D(y_train.map(v => [v]));
 
   // CORREÇÃO DE BUG: evita batch maior que conjunto de treino
- const bs_safe = Math.min(batchSize, Xs_train.length);
+ const bs_safe = Math.min(batchSize, Xs_train.length); dbgBatch('Linear', bs_safe, Xs_train.length);
  await model.fit(xtr, ytr, {
  epochs,
  batchSize: bs_safe,
@@ -939,7 +943,7 @@ document.getElementById('btnLinReg').addEventListener('click', async () => {
   }
 
   const epochs = parseInt(document.getElementById('linreg_epochs').value);
-  const lr = Math.max(1e-6, num('linreg_lr'));
+  const lr = Math.max(1e-6, num('linreg_lr')); if(!isFinite(lr)||lr<=0){ throw new Error('LR_invalida_linear:'+lr); }
   const bs = parseInt(document.getElementById('linreg_bs').value);
 
   const box = document.getElementById('linreg_metrics');
@@ -975,7 +979,7 @@ document.getElementById('btnLinReg').addEventListener('click', async () => {
 async function trainLogistic(X_train, y_train, X_test, y_test, epochs=80, lr=0.05, batchSize=32){
   const {Xs_train, Xs_test} = scaleTrainTest(X_train, X_test);
   const nx = Xs_train[0].length;
-  const bs = Math.min(batchSize, Xs_train.length);
+  const bs = Math.min(batchSize, Xs_train.length); dbgBatch('Logistic', bs, Xs_train.length);
 
   const model = tf.sequential();
   model.add(tf.layers.dense({ units: 1, inputShape: [nx], activation: 'sigmoid' }));
@@ -984,7 +988,7 @@ async function trainLogistic(X_train, y_train, X_test, y_test, epochs=80, lr=0.0
   const xtr = tf.tensor2d(Xs_train);
   const ytr = tf.tensor2d(y_train.map(v => [v ? 1 : 0]));
 
-  await model.fit(xtr, ytr, { epochs, batchSize: Math.min(bs, Xs_train.length), verbose: 0 });
+  await model.fit(xtr, ytr, { epochs, batchSize: bs, verbose: 0 });
 
   const probs = Array.from(model.predict(tf.tensor2d(Xs_test)).dataSync());
   const ypred = probs.map(p => p >= 0.5 ? 1 : 0);
@@ -999,7 +1003,7 @@ async function trainLogistic(X_train, y_train, X_test, y_test, epochs=80, lr=0.0
 document.getElementById('btnLogReg').addEventListener('click', async ()=>{
   if (state.task!=='classification'){ alert('Gere/Carregue um dataset de CLASSIFICAÇÃO.'); return; }
   const epochs = parseInt(document.getElementById('logreg_epochs').value);
-  const lr = Math.max(1e-6, num('logreg_lr'));
+  const lr = Math.max(1e-6, num('logreg_lr')); if(!isFinite(lr)||lr<=0){ throw new Error('LR_invalida_logistica:'+lr); }
   const bs = parseInt(document.getElementById('logreg_bs').value);
   document.getElementById('logreg_metrics').innerHTML = kpiBox('Status','Treinando...');
   await tf.nextFrame();
@@ -1360,7 +1364,7 @@ document.getElementById('btnANN').addEventListener('click', async ()=>{
   const layers = document.getElementById('ann_layers').value.split(',').map(s=>parseInt(s.trim())).filter(x=>x>0);
   const act = document.getElementById('ann_act').value;
   const epochs = parseInt(document.getElementById('ann_epochs').value);
-  const lr = Math.max(1e-6, num('ann_lr'));
+  const lr = Math.max(1e-6, num('ann_lr')); if(!isFinite(lr)||lr<=0){ throw new Error('LR_invalida_ann:'+lr); }
   const task = document.getElementById('ann_task').value;
 
   document.getElementById('ann_metrics').innerHTML = kpiBox('Status','Treinando...');
@@ -1697,7 +1701,7 @@ document.getElementById('btnAE').addEventListener('click', async ()=>{
   if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
   const latent = parseInt(document.getElementById('ae_latent').value);
   const epochs = parseInt(document.getElementById('ae_epochs').value);
-  const lr = Math.max(1e-6, num('ae_lr'));
+  const lr = Math.max(1e-6, num('ae_lr')); if(!isFinite(lr)||lr<=0){ throw new Error('LR_invalida_ae:'+lr); }
   const bs = parseInt(document.getElementById('ae_bs').value);
   const noise = parseFloat(document.getElementById('ae_noise').value);
 
@@ -1719,6 +1723,29 @@ document.getElementById('btnAE').addEventListener('click', async ()=>{
       options: { plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}} }});
   }
 });
+</script>
+<button id="debugToggle">🛠️ Debug</button><div id="debugHUD">
+<header><strong>Debug</strong><div><button class="btn" id="dbgClear">Limpar</button> <button class="btn" id="dbgClose">Fechar</button></div></header>
+<pre id="dbgLog"></pre>
+</div>
+
+<script>
+(function(){
+  const hud=document.createElement('div');
+})();
+function dbg(){ const p=document.getElementById('dbgLog'); if(!p) return; p.textContent += Array.from(arguments).join(' ')+'
+'; }
+function dbgShow(){ document.getElementById('debugHUD').classList.add('show'); }
+function dbgHide(){ document.getElementById('debugHUD').classList.remove('show'); }
+window.addEventListener('error', e=>{ dbg('[window.error]', e.message); dbgShow(); });
+window.addEventListener('unhandledrejection', e=>{ dbg('[unhandledrejection]', (e.reason&&e.reason.stack)||e.reason); dbgShow(); });
+document.addEventListener('DOMContentLoaded', ()=>{
+      const t=document.getElementById('debugToggle'); if(t){ t.onclick=()=>{ const hud=document.getElementById('debugHUD'); hud.classList.toggle('show'); }; }
+      const c=document.getElementById('dbgClose'); if(c){ c.onclick=dbgHide; }
+      const cl=document.getElementById('dbgClear'); if(cl){ cl.onclick=()=>{ const p=document.getElementById('dbgLog'); p.textContent=''; }; }
+    });
+// Log sizes before each training
+    function dbgBatch(modelName, bs, nTrain){ dbg(`[${modelName}] batch=${bs} train_size=${nTrain}`); }
 </script>
 </body>
 </html>
