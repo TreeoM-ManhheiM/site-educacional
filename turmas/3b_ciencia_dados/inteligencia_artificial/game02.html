@@ -43,15 +43,25 @@ button {
   border: none;
   background: #334155;
   color: white;
+  transition: transform 0.1s, background 0.2s;
+}
+button:active {
+  transform: scale(0.97);
 }
 button.primary { background: #22c55e; color: #052e13; }
 button.warn { background: #f59e0b; color:#1b1202; }
 button.bad { background: #ef4444; }
+
+button.flash {
+  background: #4ade80 !important;
+}
+
 .pill {
   padding: 6px 10px;
   border-radius: 999px;
   background: #0b1220;
   text-align: center;
+  margin-bottom: 6px;
 }
 .bar {
   height: 12px;
@@ -64,6 +74,9 @@ button.bad { background: #ef4444; }
   height:100%;
   width:0%;
   background:#22c55e;
+}
+small {
+  opacity: 0.85;
 }
 pre {
   background:#0b1220;
@@ -98,10 +111,12 @@ pre {
 
 <section class="panel">
   <h4>1️⃣ Treinamento</h4>
-  <button data-add="0">➕ Classe 0</button>
-  <button data-add="1">➕ Classe 1</button>
-  <button data-add="2">➕ Classe 2</button>
-  <button data-add="3">➕ Classe 3</button>
+
+  <button data-add="0">➕ Classe 0 (n = <span id="c0">0</span>)</button>
+  <button data-add="1">➕ Classe 1 (n = <span id="c1">0</span>)</button>
+  <button data-add="2">➕ Classe 2 (n = <span id="c2">0</span>)</button>
+  <button data-add="3">➕ Classe 3 (n = <span id="c3">0</span>)</button>
+
   <button id="clear" class="bad">🗑️ Limpar treino</button>
 </section>
 
@@ -130,12 +145,14 @@ pre {
 (async () => {
 
 const $ = s => document.querySelector(s);
+
 const video = $('#video');
 const statusEl = $('#status');
 const predEl = $('#pred');
 const confEl = $('#conf');
 const logEl = $('#log');
 const bars = [$('#p0'), $('#p1'), $('#p2'), $('#p3')];
+const counters = [$('#c0'), $('#c1'), $('#c2'), $('#c3')];
 
 let net, classifier;
 let running = false;
@@ -169,20 +186,31 @@ $('#toggleCam').onclick = async () => {
   await startCamera();
 };
 
-async function addExample(cls) {
+function flashButton(btn) {
+  btn.classList.add('flash');
+  setTimeout(() => btn.classList.remove('flash'), 200);
+}
+
+async function addExample(cls, btn) {
   const img = capture();
   const emb = net.infer(img, true);
   classifier.addExample(emb, cls);
   img.dispose(); emb.dispose();
-  statusEl.textContent = 'Amostra adicionada classe ' + cls;
+
+  const count = classifier.getClassExampleCount()[cls] || 0;
+  counters[cls].textContent = count;
+
+  flashButton(btn);
+  statusEl.textContent = `✅ Amostra adicionada na Classe ${cls} (n = ${count})`;
 }
 
-document.querySelectorAll('[data-add]').forEach(b =>
-  b.onclick = () => addExample(Number(b.dataset.add))
-);
+document.querySelectorAll('[data-add]').forEach(btn => {
+  btn.onclick = () => addExample(Number(btn.dataset.add), btn);
+});
 
 $('#clear').onclick = () => {
   classifier.clearAllClasses();
+  counters.forEach(c => c.textContent = '0');
   statusEl.textContent = 'Treino limpo';
 };
 
