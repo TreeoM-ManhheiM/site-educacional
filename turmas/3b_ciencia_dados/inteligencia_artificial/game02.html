@@ -1,1 +1,248 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 
+<title>IA com Webcam – Mobile</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  background: #0f172a;
+  color: #e5e7eb;
+}
+
+header {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #1f2937;
+}
+
+main {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.panel {
+  background: #111827;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+video {
+  width: 100%;
+  max-height: 45vh;
+  background: black;
+  border-radius: 12px;
+}
+
+button {
+  width: 100%;
+  padding: 14px;
+  margin-top: 6px;
+  font-size: 16px;
+  border-radius: 12px;
+  border: none;
+  background: #334155;
+  color: white;
+}
+
+button.primary { background: #22c55e; color: #052e13; }
+button.bad { background: #ef4444; }
+
+.row {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #0b1220;
+  text-align: center;
+}
+
+.bar {
+  height: 12px;
+  background: #1f2937;
+  border-radius: 999px;
+  overflow: hidden;
+}
+.bar span {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: #22c55e;
+}
+
+small { opacity: 0.8; }
+pre {
+  background: #0b1220;
+  padding: 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  max-height: 140px;
+  overflow: auto;
+}
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier@1.2.6"></script>
+</head>
+
+<body>
+
+<header>
+  <h3>IA com Webcam (Mobile)</h3>
+  <small>Treinamento por exemplos</small>
+</header>
+
+<main>
+
+<section class="panel">
+  <video id="video" autoplay playsinline muted></video>
+
+  <div class="pill">Estado: <b id="status">inicializando…</b></div>
+
+  <button id="startCam" class="primary">📷 Ativar câmera</button>
+</section>
+
+<section class="panel">
+  <button data-add="0">➕ Amostra Classe 0</button>
+  <button data-add="1">➕ Amostra Classe 1</button>
+  <button data-add="2">➕ Amostra Classe 2</button>
+  <button data-add="3">➕ Amostra Classe 3</button>
+
+  <button id="clear" class="bad">🗑️ Limpar Treinamento</button>
+</section>
+
+<section class="panel">
+  <div class="pill">Predição: <b id="pred">—</b></div>
+  <div class="pill">Confiança: <b id="conf">—</b></div>
+
+  <small>Classe 0</small>
+  <div class="bar"><span id="p0"></span></div>
+  <small>Classe 1</small>
+  <div class="bar"><span id="p1"></span></div>
+  <small>Classe 2</small>
+  <div class="bar"><span id="p2"></span></div>
+  <small>Classe 3</small>
+  <div class="bar"><span id="p3"></span></div>
+</section>
+
+<section class="panel">
+  <pre id="log"></pre>
+</section>
+
+</main>
+
+<script>
+(async () => {
+
+const $ = s => document.querySelector(s);
+
+const video = $('#video');
+const statusEl = $('#status');
+const predEl = $('#pred');
+const confEl = $('#conf');
+const logEl = $('#log');
+const bars = [$('#p0'), $('#p1'), $('#p2'), $('#p3')];
+
+let net, classifier, running = false;
+
+async function startCamera() {
+  const stream = await navigator.mediaDevices.getUserMedia({
+    video: { facingMode: { ideal: "environment" } },
+    audio: false
+  });
+  video.srcObject = stream;
+  await new Promise(r => video.onloadedmetadata = r);
+}
+
+function capture() {
+  return tf.tidy(() => tf.browser.fromPixels(video));
+}
+
+function saveData() {
+  const ds = classifier.getClassifierDataset();
+  const obj = {};
+  Object.keys(ds).forEach(k => obj[k] = Array.from(ds[k].dataSync()));
+  localStorage.setItem('knn-mobile', JSON.stringify(obj));
+}
+
+function loadData() {
+  const raw = localStorage.getItem('knn-mobile');
+  if (!raw) return;
+  const parsed = JSON.parse(raw);
+  const tensors = {};
+  Object.keys(parsed).forEach(k => {
+    const arr = parsed[k];
+    tensors[k] = tf.tensor(arr, [arr.length / 1024, 1024]);
+  });
+  classifier.setClassifierDataset(tensors);
+}
+
+$('#startCam').onclick = async () => {
+  statusEl.textContent = 'Carregando modelo…';
+  await startCamera();
+  net = await mobilenet.load();
+  classifier = knnClassifier.create();
+  loadData();
+  running = true;
+  statusEl.textContent = 'Pronto para treinar';
+  loop();
+};
+
+async function addExample(cls) {
+  const img = capture();
+  const emb = net.infer(img, true);
+  classifier.addExample(emb, cls);
+  img.dispose(); emb.dispose();
+  saveData();
+}
+
+document.querySelectorAll('[data-add]').forEach(b =>
+  b.onclick = () => addExample(Number(b.dataset.add))
+);
+
+$('#clear').onclick = () => {
+  classifier.clearAllClasses();
+  localStorage.removeItem('knn-mobile');
+};
+
+async function loop() {
+  while (running) {
+    try {
+      const img = capture();
+      const emb = net.infer(img, true);
+      const res = await classifier.predictClass(emb);
+
+      predEl.textContent = res.label;
+      confEl.textContent =
+        (res.confidences[res.label] * 100).toFixed(1) + '%';
+
+      for (let i = 0; i < 4; i++) {
+        const p = res.confidences[i] || 0;
+        bars[i].style.width = Math.round(p * 100) + '%';
+      }
+
+      img.dispose(); emb.dispose();
+    } catch (e) {
+      logEl.textContent = e.message;
+    }
+
+    await new Promise(r => requestAnimationFrame(r));
+  }
+}
+
+})();
+</script>
+
+</body>
+</html>
