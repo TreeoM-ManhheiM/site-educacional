@@ -3,201 +3,209 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Webcam Transfer Learning — HTML Único (KNN + MobileNet)</title>
+  <title>Webcam Transfer Learning — KNN + MobileNet</title>
+
   <style>
-    :root{
-      --bg:#0f172a; --panel:#111827; --fg:#e5e7eb; --muted:#94a3b8; --primary:#22c55e; --warn:#f59e0b; --bad:#ef4444;
-    }
-    *{box-sizing:border-box} body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--fg)}
-    header{padding:14px 16px;border-bottom:1px solid #1f2937}
-    h1{margin:0;font-size:1.1rem}
-    main{padding:16px;display:grid;gap:14px}
-    .grid{display:grid;gap:14px}
-    @media(min-width:980px){ .grid{grid-template-columns: 1.1fr .9fr} }
-    .panel{background:var(--panel);border:1px solid #1f2937;border-radius:12px;padding:12px}
-    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-    button{background:#334155;border:1px solid #243049;color:#e5e7eb;padding:8px 10px;border-radius:10px;cursor:pointer}
-    button.primary{background:var(--primary);border-color:#155e35;color:#052e13}
-    button.warn{background:var(--warn);border-color:#915f04;color:#1b1202}
-    button.bad{background:var(--bad);border-color:#7a1d1d}
-    .kbtn{min-width:150px}
-    .pill{display:inline-flex;gap:6px;align-items:center;padding:2px 8px;border-radius:999px;background:#0b1220;border:1px solid #243049;color:#cbd5e1}
-    .muted{color:var(--muted)}
-    #video{width:100%;max-width:520px;background:#000;border-radius:10px}
-    #view{width:100%;max-width:520px;height:40px;border-radius:8px;background:#0b1220;border:1px solid #243049;display:flex;align-items:center;padding:0 10px;justify-content:space-between}
-    #log{white-space:pre-wrap;background:#0b1220;border:1px solid #243049;border-radius:8px;padding:10px;max-height:200px;overflow:auto}
-    .bar{height:10px;background:#1f2937;border-radius:999px;overflow:hidden;flex:1;margin-left:8px}
-    .bar>span{display:block;height:100%;background:#22c55e;width:0%}
-    .clsCard{display:flex;align-items:center;gap:10px;background:#0b1220;border:1px solid #243049;border-radius:10px;padding:8px 10px}
-    .clsLabel{font-weight:600}
-    .count{font-variant-numeric:tabular-nums}
-    .footer{font-size:12px;color:#a3aab7}
-    .kbd{background:#0b1220;border:1px solid #374151;border-bottom-width:2px;padding:1px 6px;border-radius:6px;font-family:ui-monospace;}
+    body { margin:0; font-family:system-ui; background:#0f172a; color:#e5e7eb }
+    header { padding:12px; border-bottom:1px solid #1f2937 }
+    main { padding:16px; display:grid; gap:16px }
+    .panel { background:#111827; border:1px solid #1f2937; border-radius:12px; padding:12px }
+    video { width:100%; max-width:480px; border-radius:10px; background:black }
+    button { padding:8px 10px; border-radius:8px; cursor:pointer }
+    .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center }
+    .pill { padding:4px 8px; border-radius:999px; background:#0b1220; border:1px solid #243049 }
+    .bar { height:10px; background:#1f2937; border-radius:999px; overflow:hidden; flex:1 }
+    .bar span { display:block; height:100%; width:0%; background:#22c55e }
+    pre { background:#0b1220; padding:8px; border-radius:8px; max-height:180px; overflow:auto }
   </style>
-  <!-- TensorFlow.js + Models (via CDN) -->
+
+  <!-- TensorFlow.js -->
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/knn-classifier@1.2.6"></script>
 </head>
+
 <body>
+
 <header>
-  <h1>Webcam Transfer Learning — KNN + MobileNet (HTML único)</h1>
+  <h2>Webcam Transfer Learning – IA Educacional</h2>
 </header>
-<main class="grid">
+
+<main>
   <section class="panel">
-    <h2 style="margin-top:0">Webcam</h2>
+    <h3>Webcam</h3>
     <video id="video" autoplay playsinline muted></video>
-    <div id="view" class="muted">
-      <div>Estado: <b id="status">inicializando…</b></div>
-      <div class="pill">FPS <span id="fps">0</span></div>
+
+    <div class="row">
+      <span class="pill">Estado: <b id="status">inicializando…</b></span>
+      <span class="pill">FPS: <b id="fps">0</b></span>
     </div>
+
     <div class="row" style="margin-top:8px">
-      <button id="btnStart" class="primary">▶ Iniciar predição</button>
+      <button id="btnStart">▶ Iniciar</button>
       <button id="btnStop">■ Parar</button>
-      <button id="btnClear" class="bad">🗑️ Limpar dataset</button>
-      <label class="pill">k <input id="kVal" type="number" min="1" step="1" value="3" style="width:64px;margin-left:6px"></label>
+      <button id="btnClear">🗑️ Limpar</button>
+      <span class="pill">k <input id="kVal" type="number" value="3" min="1" style="width:50px"></span>
     </div>
-    <p class="muted">Dica: adicione ~15–30 amostras por classe com variação de posição/luz. Depois clique em <b>Iniciar predição</b>.</p>
-    <h3>Classes</h3>
-    <div class="row" style="gap:10px">
-      <div class="clsCard"><span class="pill">0</span><span class="clsLabel">Esquerda</span>
-        <button class="kbtn" data-add="0">➕ Amostra (0)</button>
-        <span class="pill count">n=<span id="c0">0</span></span>
-      </div>
-      <div class="clsCard"><span class="pill">1</span><span class="clsLabel">Centro</span>
-        <button class="kbtn" data-add="1">➕ Amostra (1)</button>
-        <span class="pill count">n=<span id="c1">0</span></span>
-      </div>
-      <div class="clsCard"><span class="pill">2</span><span class="clsLabel">Direita</span>
-        <button class="kbtn" data-add="2">➕ Amostra (2)</button>
-        <span class="pill count">n=<span id="c2">0</span></span>
-      </div>
-      <div class="clsCard"><span class="pill">3</span><span class="clsLabel">Outro</span>
-        <button class="kbtn" data-add="3">➕ Amostra (3)</button>
-        <span class="pill count">n=<span id="c3">0</span></span>
-      </div>
+
+    <h4>Classes</h4>
+    <div class="row">
+      <button data-add="0">Classe 0</button> n=<span id="c0">0</span>
+      <button data-add="1">Classe 1</button> n=<span id="c1">0</span>
+      <button data-add="2">Classe 2</button> n=<span id="c2">0</span>
+      <button data-add="3">Classe 3</button> n=<span id="c3">0</span>
     </div>
   </section>
+
   <section class="panel">
-    <h2 style="margin-top:0">Saída</h2>
+    <h3>Saída</h3>
     <div class="row">
-      <div class="pill">Predição: <b id="pred">—</b></div>
-      <div class="pill">Confiança: <b id="conf">—</b></div>
+      <span class="pill">Predição: <b id="pred">—</b></span>
+      <span class="pill">Confiança: <b id="conf">—</b></span>
     </div>
-    <div class="row" style="margin-top:8px">
-      <div style="min-width:120px">Classe 0</div><div class="bar"><span id="p0"></span></div><div style="width:50px;text-align:right" id="t0">0%</div>
-    </div>
-    <div class="row"><div style="min-width:120px">Classe 1</div><div class="bar"><span id="p1"></span></div><div style="width:50px;text-align:right" id="t1">0%</div></div>
-    <div class="row"><div style="min-width:120px">Classe 2</div><div class="bar"><span id="p2"></span></div><div style="width:50px;text-align:right" id="t2">0%</div></div>
-    <div class="row"><div style="min-width:120px">Classe 3</div><div class="bar"><span id="p3"></span></div><div style="width:50px;text-align:right" id="t3">0%</div></div>
-    <h3>Log</h3>
+
+    <div class="row">Classe 0<div class="bar"><span id="p0"></span></div><span id="t0">0%</span></div>
+    <div class="row">Classe 1<div class="bar"><span id="p1"></span></div><span id="t1">0%</span></div>
+    <div class="row">Classe 2<div class="bar"><span id="p2"></span></div><span id="t2">0%</span></div>
+    <div class="row">Classe 3<div class="bar"><span id="p3"></span></div><span id="t3">0%</span></div>
+
+    <h4>Log</h4>
     <pre id="log"></pre>
-    <p class="footer">Baseado no exemplo oficial de <b>Webcam Transfer Learning</b> com <b>MobileNet</b> + <b>KNN Classifier</b>. Veja referências em:
-      <a href="#refs">rodapé</a>.
-    </p>
   </section>
 </main>
-<footer class="footer" id="refs" style="padding:12px 16px;border-top:1px solid #1f2937">
-  Referências: Exemplo oficial do TensorFlow.js (webcam-transfer-learning), MobileNet e KNN Classifier.
-</footer>
+
 <script>
-(async function(){
+(async () => {
   const $ = s => document.querySelector(s);
+
   const video = $('#video');
   const statusEl = $('#status');
   const fpsEl = $('#fps');
   const predEl = $('#pred');
   const confEl = $('#conf');
   const logEl = $('#log');
+
   const bars = [$('#p0'), $('#p1'), $('#p2'), $('#p3')];
-  const tids = [$('#t0'), $('#t1'), $('#t2'), $('#t3')];
+  const texts = [$('#t0'), $('#t1'), $('#t2'), $('#t3')];
   const counts = [$('#c0'), $('#c1'), $('#c2'), $('#c3')];
   const kInp = $('#kVal');
 
-  // Webcam
-  async function setupWebcam(){
-    try{
-      const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user', width:{ideal:640}, height:{ideal:480}}, audio:false});
-      video.srcObject = stream; await new Promise(r => video.onloadedmetadata = r);
-    }catch(err){
-      statusEl.textContent = 'Erro ao acessar webcam';
-      throw err;
-    }
+  async function setupWebcam() {
+    const stream = await navigator.mediaDevices.getUserMedia({ video:true, audio:false });
+    video.srcObject = stream;
+    await new Promise(r => video.onloadedmetadata = r);
   }
 
-  statusEl.textContent = 'Carregando MobileNet…';
-  await setupWebcam();
-  const net = await mobilenet.load({version:2, alpha:0.50});
-  const classifier = knnClassifier.create();
-  statusEl.textContent = 'Pronto (adicione amostras)';
-
-  // Captura frame atual como tensor
-  function capture(){
+  function capture() {
     return tf.tidy(() => tf.browser.fromPixels(video));
   }
 
-  // Adicionar amostra de uma classe
-  async function addExample(cls){
-    const img = capture();
-    const logits = net.infer(img, true); // embeddings
-    classifier.addExample(logits, cls);
-    img.dispose(); logits.dispose();
+  statusEl.textContent = 'Carregando modelo...';
+  await setupWebcam();
+  const net = await mobilenet.load();
+  const classifier = knnClassifier.create();
+
+  // ======= Persistência =======
+  function saveDataset() {
+    const ds = classifier.getClassifierDataset();
+    const obj = {};
+    Object.keys(ds).forEach(k => obj[k] = Array.from(ds[k].dataSync()));
+    localStorage.setItem('knn-data', JSON.stringify(obj));
+  }
+
+  function loadDataset() {
+    const raw = localStorage.getItem('knn-data');
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    const tensors = {};
+    Object.keys(parsed).forEach(k => {
+      const arr = parsed[k];
+      tensors[k] = tf.tensor(arr, [arr.length / 1024, 1024]);
+    });
+    classifier.setClassifierDataset(tensors);
+  }
+
+  loadDataset();
+  updateCounts();
+
+  function updateCounts() {
     const c = classifier.getClassExampleCount();
-    [0,1,2,3].forEach(i => counts[i].textContent = (c[i]||0));
+    for (let i = 0; i < 4; i++) {
+      counts[i].textContent = c[i] || 0;
+    }
+  }
+
+  async function addExample(cls) {
+    const img = capture();
+    const emb = net.infer(img, true);
+    classifier.addExample(emb, cls);
+    img.dispose();
+    emb.dispose();
+    saveDataset();
+    updateCounts();
+    statusEl.textContent = 'Amostra adicionada: ' + cls;
   }
 
   document.querySelectorAll('[data-add]')
-    .forEach(btn => btn.addEventListener('click', () => {
-      const cls = Number(btn.getAttribute('data-add'));
-      addExample(cls); statusEl.textContent = 'Amostra adicionada na classe '+cls;
-    }));
+    .forEach(b => b.onclick = () => addExample(Number(b.dataset.add)));
 
-  $('#btnClear').addEventListener('click', ()=>{
+  $('#btnClear').onclick = () => {
     classifier.clearAllClasses();
-    [0,1,2,3].forEach(i => counts[i].textContent = '0');
+    localStorage.removeItem('knn-data');
+    updateCounts();
     statusEl.textContent = 'Dataset limpo';
-  });
+  };
 
-  let running = false; let last = performance.now(); let frames = 0;
+  let running = false, frames = 0, last = performance.now();
 
-  function updateFPS(){
-    const now = performance.now(); frames++;
-    if(now - last > 1000){ fpsEl.textContent = String(frames); frames = 0; last = now; }
-  }
-
-  async function predictLoop(){
-    while(running){
-      const c = classifier.getNumClasses();
-      if(c > 0){
+  async function loop() {
+    while (running) {
+      try {
         const img = capture();
-        const logits = net.infer(img, true);
-        const k = Math.max(1, Math.floor(Number(kInp.value)||3));
-        try{
-          const res = await classifier.predictClass(logits, k);
-          const conf = res.confidences; const label = res.label; // label é string do índice
-          predEl.textContent = label; confEl.textContent = (conf[label]*100).toFixed(1)+'%';
-          for(let i=0;i<4;i++){
-            const p = (conf[i]||0); bars[i].style.width = Math.round(p*100)+'%'; tids[i].textContent = Math.round(p*100)+'%';
-          }
-        }catch(e){
-          logEl.textContent = 'Aguardando amostras suficientes…';
-        }finally{ img.dispose(); logits.dispose(); }
+        const emb = net.infer(img, true);
+        const k = Math.max(1, Number(kInp.value) || 3);
+
+        const res = await classifier.predictClass(emb, k);
+        predEl.textContent = res.label;
+        confEl.textContent = (res.confidences[res.label] * 100).toFixed(1) + '%';
+
+        for (let i = 0; i < 4; i++) {
+          const p = res.confidences[i] || 0;
+          bars[i].style.width = Math.round(p * 100) + '%';
+          texts[i].textContent = Math.round(p * 100) + '%';
+        }
+
+        img.dispose();
+        emb.dispose();
+      } catch (e) {
+        logEl.textContent = e.message;
       }
-      updateFPS();
+
+      frames++;
+      const now = performance.now();
+      if (now - last > 1000) {
+        fpsEl.textContent = frames;
+        frames = 0;
+        last = now;
+      }
       await new Promise(r => requestAnimationFrame(r));
     }
   }
 
-  $('#btnStart').addEventListener('click', ()=>{ if(!running){ running = true; statusEl.textContent = 'Predizendo…'; predictLoop(); }});
-  $('#btnStop').addEventListener('click', ()=>{ running = false; statusEl.textContent = 'Parado'; });
+  $('#btnStart').onclick = () => {
+    running = true;
+    statusEl.textContent = 'Predizendo...';
+    loop();
+  };
 
-  // Ações de teclado para coleta rápida: 0/1/2/3
-  window.addEventListener('keydown', e => {
-    if(['0','1','2','3'].includes(e.key)){
-      addExample(Number(e.key));
-    }
-  });
+  $('#btnStop').onclick = () => {
+    running = false;
+    statusEl.textContent = 'Parado';
+  };
+
 })();
 </script>
+
 </body>
 </html>
+``
