@@ -1562,5 +1562,81 @@ function trainRF_mljs(X_train, y_train, X_test, y_test, task='classification'){
 })();
 </script>
 
+
+<script>
+// ===================== ANN/MLP (TF.js) — classificação/regressão =====================
+(function(){
+  function getVal(id, dflt){ const el=document.getElementById(id); if(!el) return dflt; return el.value; }
+  function getInt(id, dflt=0){ const v=parseInt(getVal(id,dflt)); return isNaN(v)?dflt:v; }
+  function getLR(id, dflt=0.01){ const raw=(getVal(id,dflt)||'').toString().replace(',','.'); const x=parseFloat(raw); return (isFinite(x)&&x>0)?x:dflt; }
+  function parseLayers(str){
+    try{ const arr=(str||'').split(',').map(s=>parseInt(s.trim(),10)).filter(n=>Number.isFinite(n)&&n>0); return arr.length?arr:[64,32]; }
+    catch(e){ return [64,32]; }
+  }
+  async function trainANN_SAFE(){
+    const box='ann_metrics'; const cmBox='ann_cm';
+    const layersStr = getVal('ann_layers','64,32');
+    const act = getVal('ann_act','relu');
+    const epochs = getInt('ann_epochs',60);
+    const lr = getLR('ann_lr',0.01);
+    const taskSel = getVal('ann_task','auto');
+
+    document.getElementById(box).innerHTML = kpiBox('Status','Treinando...');
+    await tf.nextFrame();
+    try{
+      const { Xs_train, Xs_test } = scaleTrainTest(state.X_train, state.X_test);
+      const nx = state.X_train[0].length;
+      const model = tf.sequential();
+      const hidden = parseLayers(layersStr);
+      // input layer
+      model.add(tf.layers.dense({ units:hidden[0], inputShape:[nx], activation: act }));
+      for (let i=1;i<hidden.length;i++){
+        model.add(tf.layers.dense({ units:hidden[i], activation: act }));
+      }
+      // Decide tarefa
+      const isClass = (taskSel==='classification') || (taskSel==='auto' && (new Set(state.y_train)).size<=10 && state.y_train.every(v=>v===0||v===1));
+      if (isClass){
+        model.add(tf.layers.dense({ units:1, activation:'sigmoid' }));
+        model.compile({ optimizer: tf.train.adam(lr), loss:'binaryCrossentropy', metrics:['accuracy'] });
+      } else {
+        model.add(tf.layers.dense({ units:1, activation:'linear' }));
+        model.compile({ optimizer: tf.train.adam(lr), loss:'meanSquaredError' });
+      }
+      const xtr = tf.tensor2d(Xs_train);
+      const ytr = tf.tensor2d(state.y_train.map(v=>[v]));
+      const bs = Math.min(32, Xs_train.length);
+      await model.fit(xtr, ytr, { epochs, batchSize: bs, verbose:0 });
+
+      if (isClass){
+        const proba = Array.from(model.predict(tf.tensor2d(Xs_test)).dataSync());
+        const yhat = proba.map(p=> p>=0.5?1:0);
+        const acc = accuracy(state.y_test, yhat);
+        const prf = precisionRecallF1(state.y_test, yhat, 1);
+        const CM  = confMatrix(state.y_test, yhat);
+        document.getElementById(box).innerHTML =
+          kpiBox('Acurácia',(acc*100).toFixed(2),'%')+
+          kpiBox('Precisão',(prf.precision*100).toFixed(2),'%')+
+          kpiBox('Revocação',(prf.recall*100).toFixed(2),'%')+
+          kpiBox('F1',(prf.f1*100).toFixed(2),'%');
+        document.getElementById(cmBox).innerHTML = renderCM(CM);
+      } else {
+        const yhat = Array.from(model.predict(tf.tensor2d(Xs_test)).dataSync());
+        const RMSE = rmse(state.y_test, yhat).toFixed(4);
+        const MAE  = mae(state.y_test, yhat).toFixed(4);
+        const R2   = r2(state.y_test, yhat).toFixed(4);
+        document.getElementById(box).innerHTML = kpiBox('RMSE',RMSE)+kpiBox('MAE',MAE)+kpiBox('R²',R2);
+        document.getElementById(cmBox).innerHTML = '';
+      }
+      xtr.dispose(); ytr.dispose(); model.dispose();
+    }catch(err){ console.error(err); document.getElementById(box).innerHTML = '<span class="badge err">Erro no treino (ver console)</span>'; }
+  }
+  function replaceButtonListener(btnId, handler){ const btn=document.getElementById(btnId); if(!btn) return; const clone=btn.cloneNode(true); btn.parentNode.replaceChild(clone, btn); clone.addEventListener('click', handler); }
+  document.addEventListener('DOMContentLoaded', ()=>{
+    replaceButtonListener('btnANN', async()=>{ if (!state.X_train.length){ alert('Gere/Carregue um dataset.'); return; } await trainANN_SAFE(); });
+  });
+})();
+</script>
+
 </body>
 </html>
+``
