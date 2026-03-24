@@ -778,7 +778,7 @@ function renderPCAPlot(canvasId, X, y=null, palette=null){
     data: { datasets },
     options: {
       plugins: { legend: { labels: { color: '#cbd5e1' } },
-                 title: { display: true, text: `PCA 2D — variância explicada ${(explained[0]+explained[1])*100|0}%`, color: '#cbd5e1' } },
+                 title: { display: true, text: `PCA 2D — variância explicada ${((explained[0]+explained[1])*100).toFixed(1)}%`, color: '#cbd5e1' } },
       scales: {
         x: { grid: { color: '#1f2a4a' }, ticks: { color: '#a5b4fc' } },
         y: { grid: { color: '#1f2a4a' }, ticks: { color: '#a5b4fc' } },
@@ -901,7 +901,7 @@ async function trainLinearRegression(
 
   model.compile({
     optimizer: tf.train.adam(lr),
-    loss: 'mse'
+    loss: 'meanSquaredError'
   });
 
   const xtr = toTensor2D(Xs_train);
@@ -1376,7 +1376,7 @@ async function trainAE(X_train, {latent=2, epochs=60, lr=0.01, batchSize=32, noi
   const d2 = tf.layers.dense({units: Math.max(8, Math.floor(nx*0.75)), activation:'relu'}).apply(d1);
   const out= tf.layers.dense({units: nx, activation:'linear'}).apply(d2);
   const ae = tf.model({inputs: input, outputs: out});
-  ae.compile({optimizer: tf.train.adam(lr), loss:'mse'});
+  ae.compile({optimizer: tf.train.adam(lr), loss: 'meanSquaredError'});
 
   const xtr = toTensor2D(Xs);
   await ae.fit(xtr, xtr, {epochs, batchSize, verbose:0});
@@ -1463,6 +1463,163 @@ function trainRF_mljs(X_train, y_train, X_test, y_test, task='classification'){
   }
 }
 </script>
+
+<script>
+/* ============================================================
+   PATCH UNIFICADO (scikitjs/mljs com fallback automático)
+   ============================================================ */
+(function(){
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = src; s.async = true; s.onload = () => resolve(true);
+      s.onerror = () => reject(new Error('Falha ao carregar: '+src));
+      document.head.appendChild(s);
+    });
+  }
+  async function ensureLibs() {
+    try { if (!window.scikitjs) await loadScript('https://cdn.jsdelivr.net/npm/scikitjs@1.24.0/dist/es5/index.min.js'); } catch(e){ console.warn('scikitjs CDN indisponível'); }
+    try { if (!window.mlRandomForest) await loadScript('https://cdn.jsdelivr.net/npm/ml-random-forest@2.1.0/dist/ml-random-forest.min.js'); } catch(e){ console.warn('ml-random-forest CDN indisponível'); }
+    try { if (window.scikitjs && window.tf) window.scikitjs.setBackend(window.tf); } catch(e){}
+  }
+  function setBox(id, html){ const el = document.getElementById(id); if (el) el.innerHTML = html; }
+  function getInt(id){ const v = document.getElementById(id); return v ? parseInt(v.value,10) : NaN; }
+  function getLR(id){ return Math.max(1e-6, (typeof num==='function') ? num(id) : parseFloat((document.getElementById(id)?.value||'').replace(',', '.')) ); }
+
+  async function trainLinearUnified(){
+    const boxId = 'linreg_metrics';
+    setBox(boxId, kpiBox('Status','Treinando...'));
+    try{
+      await ensureLibs(); await tf.nextFrame();
+      let R = null;
+      if (window.scikitjs){
+        const sk = window.scikitjs;
+        const lr = new sk.LinearRegression({ fitIntercept: true });
+        await lr.fit(state.X_train, state.y_train);
+        const yhat = lr.predict(state.X_test);
+        R = { RMSE: rmse(state.y_test, yhat).toFixed(4), MAE: mae(state.y_test, yhat).toFixed(4), R2: r2(state.y_test, yhat).toFixed(4) };
+      } else {
+        const out = await trainLinearRegression(
+          state.X_train, state.y_train, state.X_test, state.y_test,
+          getInt('linreg_epochs')||80, getLR('linreg_lr')||0.05, getInt('linreg_bs')||32
+        );
+        R = out;
+      }
+      setBox(boxId, kpiBox('RMSE', R.RMSE) + kpiBox('MAE', R.MAE) + kpiBox('R²', R.R2));
+    }catch(err){ console.error(err); setBox(boxId, '<span class="badge err">Erro no treino (ver console)</span>'); }
+  }
+
+  async function trainLogisticUnified(){
+    const boxId='logreg_metrics';
+    setBox(boxId, kpiBox('Status','Treinando...'));
+    try{
+      await ensureLibs(); await tf.nextFrame();
+      let r=null;
+      if (window.scikitjs){
+        const sk = window.scikitjs;
+        let clf = null;
+        if (sk.LogisticRegression){
+          clf = new sk.LogisticRegression({ fitIntercept: true, maxIter: getInt('logreg_epochs')||80, tol: 1e-4 });
+        } else if (sk.SGDClassifier){
+          clf = new sk.SGDClassifier({ loss:'log', maxIter:getInt('logreg_epochs')||80, learningRate:'constant', eta0:getLR('logreg_lr')||0.05, penalty:'l2' });
+        }
+        if (clf){
+          await clf.fit(state.X_train, state.y_train);
+          const yhat = clf.predict(state.X_test);
+          const acc = accuracy(state.y_test, yhat);
+          const prf = precisionRecallF1(state.y_test, yhat, 1);
+          const CM  = confMatrix(state.y_test, yhat);
+          r = { acc, prf, CM };
+        }
+      }
+      if (!r){
+        r = await trainLogistic(
+          state.X_train, state.y_train, state.X_test, state.y_test,
+          getInt('logreg_epochs')||80, getLR('logreg_lr')||0.05, getInt('logreg_bs')||32
+        );
+      }
+      setBox(boxId,
+        kpiBox('Acurácia', (r.acc*100).toFixed(2), '%') +
+        kpiBox('Precisão', (r.prf.precision*100).toFixed(2), '%') +
+        kpiBox('Revocação', (r.prf.recall*100).toFixed(2), '%') +
+        kpiBox('F1', (r.prf.f1*100).toFixed(2), '%')
+      );
+      document.getElementById('logreg_cm').innerHTML = renderCM(r.CM);
+    }catch(err){ console.error(err); setBox(boxId, '<span class="badge err">Erro no treino (ver console)</span>'); }
+  }
+
+  async function trainRFUnified(){
+    const boxId='rf_metrics';
+    setBox(boxId, kpiBox('Status','Treinando...'));
+    await tf.nextFrame();
+    const taskSel = document.getElementById('rf_task')?.value || 'auto';
+    const isClass = (taskSel==='classification') || (taskSel==='auto' && isClassification(state.y_train));
+    try{
+      await ensureLibs();
+      let r=null;
+      if (window.mlRandomForest){
+        const RFNS = window.mlRandomForest;
+        if (isClass){
+          const rf = new RFNS.RandomForestClassifier({ nEstimators: 50, maxFeatures: 0.8, seed: 3, replacement: true });
+          rf.train(state.X_train, state.y_train); const yhat = rf.predict(state.X_test);
+          const acc = accuracy(state.y_test, yhat); const prf = precisionRecallF1(state.y_test, yhat, 1); const CM  = confMatrix(state.y_test, yhat);
+          r = { acc, prf, CM };
+        } else {
+          const rf = new RFNS.RandomForestRegression({ nEstimators: 100, maxFeatures: 2, seed: 3, replacement: false });
+          rf.train(state.X_train, state.y_train); const yhat = rf.predict(state.X_test);
+          r = { RMSE: rmse(state.y_test, yhat), MAE: mae(state.y_test, yhat), R2: r2(state.y_test, yhat) };
+        }
+      }
+      if (!r){
+        const {Xs_train, Xs_test} = scaleTrainTest(state.X_train, state.X_test);
+        const model = rfTrain(Xs_train, state.y_train, { nTrees: 30, maxDepth: 6, minSamples: 5, task: taskSel, mtry: 0 });
+        const yhat = Xs_test.map(x => model.predict(x));
+        if (isClass){
+          const acc = accuracy(state.y_test, yhat); const prf = precisionRecallF1(state.y_test, yhat, 1); const CM = confMatrix(state.y_test, yhat); r = { acc, prf, CM };
+        } else {
+          r = { RMSE: rmse(state.y_test, yhat), MAE: mae(state.y_test, yhat), R2: r2(state.y_test, yhat) };
+        }
+      }
+      if (isClass){
+        setBox(boxId,
+          kpiBox('Acurácia', (r.acc*100).toFixed(2), '%') +
+          kpiBox('Precisão', (r.prf.precision*100).toFixed(2), '%') +
+          kpiBox('Revocação', (r.prf.recall*100).toFixed(2), '%') +
+          kpiBox('F1', (r.prf.f1*100).toFixed(2), '%')
+        );
+        document.getElementById('rf_cm').innerHTML = renderCM(r.CM);
+      } else {
+        setBox(boxId, kpiBox('RMSE', r.RMSE.toFixed(4)) + kpiBox('MAE', r.MAE.toFixed(4)) + kpiBox('R²', r.R2.toFixed(4)));
+        document.getElementById('rf_cm').innerHTML = '';
+      }
+    }catch(err){ console.error(err); setBox(boxId, '<span class="badge err">Erro no treino (ver console)</span>'); }
+  }
+
+  function replaceButtonListener(btnId, handler){
+    const btn = document.getElementById(btnId);
+    if (!btn) return;
+    const clone = btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone, btn);
+    clone.addEventListener('click', handler);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    replaceButtonListener('btnLinReg', async () => {
+      if (state.task !== 'regression'){ alert('Gere ou carregue um dataset de REGRESSÃO.'); return; }
+      await trainLinearUnified();
+    });
+    replaceButtonListener('btnLogReg', async () => {
+      if (state.task !== 'classification'){ alert('Gere/Carregue um dataset de CLASSIFICAÇÃO.'); return; }
+      await trainLogisticUnified();
+    });
+    replaceButtonListener('btnRF', async () => {
+      if (!state.X_train.length){ alert('Gere/Carregue um dataset.'); return; }
+      await trainRFUnified();
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
 ``
