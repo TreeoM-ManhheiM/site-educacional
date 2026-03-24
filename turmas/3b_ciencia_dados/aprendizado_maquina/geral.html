@@ -209,6 +209,14 @@ document.addEventListener('DOMContentLoaded', () => {
     <div class="sub">Supervisionado: Regressão Linear, Regressão Logística, SVM, Árvores de Decisão (CART), KNN, Redes Neurais (ANN), Random Forest • Não Supervisionado: K-Means, Clustering Hierárquico, DBSCAN, PCA, Autoencoder</div>
   </div>
 </header>
+<script>
+(async ()=>{
+  try {
+    if (window.scikitjs && window.tf) { window.scikitjs.setBackend(window.tf); }
+  } catch(e){}
+})();
+</script>
+
 
 <main class="wrap">
   <!-- SIMULADOR + DATA IO -->
@@ -770,7 +778,7 @@ function renderPCAPlot(canvasId, X, y=null, palette=null){
     data: { datasets },
     options: {
       plugins: { legend: { labels: { color: '#cbd5e1' } },
-                 title: { display: true, text: `PCA 2D — variância explicada ${((explained[0]+explained[1])*100).toFixed(0)}%`, color: '#cbd5e1' } },
+                 title: { display: true, text: `PCA 2D — variância explicada ${(explained[0]+explained[1])*100|0}%`, color: '#cbd5e1' } },
       scales: {
         x: { grid: { color: '#1f2a4a' }, ticks: { color: '#a5b4fc' } },
         y: { grid: { color: '#1f2a4a' }, ticks: { color: '#a5b4fc' } },
@@ -870,7 +878,7 @@ function scaleTrainTest(X_train, X_test){
 function num(id){
   const el = document.getElementById(id);
   if(!el) return NaN;
-  const v = (el.value!==undefined ? el.value : el.textContent) || '';
+  const v = (el.value!==undefined? el.value : el.textContent)||'';
   return parseFloat(String(v).replace(',', '.'));
 }
 
@@ -893,7 +901,7 @@ async function trainLinearRegression(
 
   model.compile({
     optimizer: tf.train.adam(lr),
-    loss: 'meanSquaredError'
+    loss: 'mse'
   });
 
   const xtr = toTensor2D(Xs_train);
@@ -933,83 +941,11 @@ async function trainLinearRegression(
   return metrics;
 }
 document.getElementById('btnLinReg').addEventListener('click', async () => {
-  if (state.task !== 'regression') {
-    alert('Gere ou carregue um dataset de REGRESSÃO.');
-    return;
-  }
-
-  const epochs = parseInt(document.getElementById('linreg_epochs').value);
-  const lr = Math.max(1e-6, num('linreg_lr'));
-  const bs = parseInt(document.getElementById('linreg_bs').value);
-
-  const box = document.getElementById('linreg_metrics');
-  box.innerHTML = kpiBox('Status', 'Treinando...');
-
-  try {
-    await tf.nextFrame();
-
-    const m = await trainLinearRegression(
-      state.X_train,
-      state.y_train,
-      state.X_test,
-      state.y_test,
-      epochs,
-      lr,
-      bs
-    );
-
-    box.innerHTML =
-      kpiBox('RMSE', m.RMSE) +
-      kpiBox('MAE', m.MAE) +
-      kpiBox('R²', m.R2);
-  } catch (err) {
-    console.error(err);
-    box.innerHTML =
-      `<span class="badge err">Erro no treino (ver console)</span>`;
-  }
-});
-
-/* ===========================================================
-   Regressão Logística (TF)
-=========================================================== */
-async function trainLogistic(X_train, y_train, X_test, y_test, epochs=80, lr=0.05, batchSize=32){
-  const {Xs_train, Xs_test} = scaleTrainTest(X_train, X_test);
-  const nx = Xs_train[0].length;
-  const bs = Math.min(batchSize, Xs_train.length);
-
-  const model = tf.sequential();
-  model.add(tf.layers.dense({ units: 1, inputShape: [nx], activation: 'sigmoid' }));
-  model.compile({ optimizer: tf.train.adam(lr), loss: 'binaryCrossentropy' });
-
-  const xtr = tf.tensor2d(Xs_train);
-  const ytr = tf.tensor2d(y_train.map(v => [v ? 1 : 0]));
-
-  await model.fit(xtr, ytr, { epochs, batchSize: bs, verbose: 0 });
-
-  const probs = Array.from(model.predict(tf.tensor2d(Xs_test)).dataSync());
-  const ypred = probs.map(p => p >= 0.5 ? 1 : 0);
-
-  const acc = accuracy(y_test, ypred);
-  const prf = precisionRecallF1(y_test, ypred, 1);
-  const CM  = confMatrix(y_test, ypred);
-
-  model.dispose(); xtr.dispose(); ytr.dispose();
-  return { acc, prf, CM };
-}
-document.getElementById('btnLogReg').addEventListener('click', async ()=>{
-  if (state.task!=='classification'){ alert('Gere/Carregue um dataset de CLASSIFICAÇÃO.'); return; }
-  const epochs = parseInt(document.getElementById('logreg_epochs').value);
-  const lr = Math.max(1e-6, num('logreg_lr'));
-  const bs = parseInt(document.getElementById('logreg_bs').value);
-  document.getElementById('logreg_metrics').innerHTML = kpiBox('Status','Treinando...');
-  await tf.nextFrame();
-  const r = await trainLogistic(state.X_train, state.y_train, state.X_test, state.y_test, epochs, lr, bs);
-  document.getElementById('logreg_metrics').innerHTML =
-    kpiBox('Acurácia', (r.acc*100).toFixed(2), '%') +
-    kpiBox('Precisão', (r.prf.precision*100).toFixed(2), '%') +
-    kpiBox('Revocação', (r.prf.recall*100).toFixed(2), '%') +
-    kpiBox('F1', (r.prf.f1*100).toFixed(2), '%');
-  document.getElementById('logreg_cm').innerHTML = renderCM(r.CM);
+  if (state.task !== 'regression') { alert('Gere ou carregue um dataset de REGRESSÃO.'); return; }
+  const box = document.getElementById('linreg_metrics'); box.innerHTML = kpiBox('Status','Treinando...');
+  try { await tf.nextFrame(); const r = await trainLinear_scikitjs(state.X_train, state.y_train, state.X_test, state.y_test);
+    box.innerHTML = kpiBox('RMSE', r.RMSE) + kpiBox('MAE', r.MAE) + kpiBox('R²', r.R2); }
+  catch(err){ console.error(err); box.innerHTML = `<span class="badge err">Erro no treino (ver console)</span>`; }
 });
 
 function renderCM(cm){
@@ -1241,249 +1177,15 @@ function rfTrain(X, y, {nTrees=30, maxDepth=6, minSamples=5, task='auto', mtry=0
   return {trees, predict};
 }
 
-document.getElementById('btnRF').addEventListener('click', async ()=>{
+document.getElementById('btnRF').addEventListener('click', async () => {
   if (!state.X_train.length) { alert('Gere/Carregue um dataset.'); return; }
-  const nTrees = parseInt(document.getElementById('rf_nTrees').value);
-  const maxDepth = parseInt(document.getElementById('rf_maxDepth').value);
-  const minSamples = parseInt(document.getElementById('rf_minSamples').value);
   const task = document.getElementById('rf_task').value;
-  const mtry = parseInt(document.getElementById('rf_mtry').value) || 0;
-
-  document.getElementById('rf_metrics').innerHTML = kpiBox('Status','Treinando...');
-  await tf.nextFrame();
-
-  const {Xs_train, Xs_test} = scaleTrainTest(state.X_train, state.X_test);
-  const model = rfTrain(Xs_train, state.y_train, {nTrees, maxDepth, minSamples, task, mtry});
-  const yhat = Xs_test.map(x => model.predict(x));
+  document.getElementById('rf_metrics').innerHTML = kpiBox('Status','Treinando...'); await tf.nextFrame();
   const isClass = (task==='classification') || (task==='auto' && isClassification(state.y_train));
-  if (isClass){
-    const acc = accuracy(state.y_test, yhat);
-    const prf = precisionRecallF1(state.y_test, yhat, 1);
-    const CM = confMatrix(state.y_test, yhat);
-    document.getElementById('rf_metrics').innerHTML =
-      kpiBox('Acurácia', (acc*100).toFixed(2), '%') +
-      kpiBox('Precisão', (prf.precision*100).toFixed(2), '%') +
-      kpiBox('Revocação', (prf.recall*100).toFixed(2), '%') +
-      kpiBox('F1', (prf.f1*100).toFixed(2), '%');
-    document.getElementById('rf_cm').innerHTML = renderCM(CM);
-  } else {
-    const m = { RMSE: rmse(state.y_test, yhat), MAE: mae(state.y_test, yhat), R2: r2(state.y_test, yhat) };
-    document.getElementById('rf_metrics').innerHTML =
-      kpiBox('RMSE', m.RMSE.toFixed(4)) + kpiBox('MAE', m.MAE.toFixed(4)) + kpiBox('R²', m.R2.toFixed(4));
-    document.getElementById('rf_cm').innerHTML = '';
-  }
-});
-
-/* ===========================================================
-   KNN
-=========================================================== */
-function knnPredict(X_train, y_train, x, k=5, metric='euclidean', task='auto'){
-  const pairs = X_train.map((row,i)=> [dist(row, x, metric), i]).sort((a,b)=>a[0]-b[0]).slice(0,k);
-  const yy = pairs.map(p=> y_train[p[1]]);
-  const isClass = (task==='classification') || (task==='auto' && (typeof y_train[0]!=='number' || new Set(y_train).size<=10 && y_train.every(v=>v===0||v===1)));
-  if (isClass){
-    const votes = new Map();
-    for (const v of yy) votes.set(v, (votes.get(v)||0)+1);
-    let best=null,cnt=-1; for (const [k,v] of votes.entries()){ if (v>cnt){cnt=v; best=k;} }
-    return best;
-  } else {
-    return mean(yy);
-  }
-}
-
-document.getElementById('btnKNN').addEventListener('click', async ()=>{
-  if (!state.X_train.length) { alert('Gere/Carregue um dataset.'); return; }
-  const k = parseInt(document.getElementById('knn_k').value);
-  const metric = document.getElementById('knn_metric').value;
-  const task = document.getElementById('knn_task').value;
-
-  const {Xs_train, Xs_test} = scaleTrainTest(state.X_train, state.X_test);
-  const yhat = Xs_test.map(x => knnPredict(Xs_train, state.y_train, x, k, metric, task));
-  const isClass = (task==='classification') || (task==='auto' && isClassification(state.y_train));
-  if (isClass){
-    const acc = accuracy(state.y_test, yhat);
-    const prf = precisionRecallF1(state.y_test, yhat, 1);
-    const CM = confMatrix(state.y_test, yhat);
-    document.getElementById('knn_metrics').innerHTML =
-      kpiBox('Acurácia', (acc*100).toFixed(2), '%') +
-      kpiBox('Precisão', (prf.precision*100).toFixed(2), '%') +
-      kpiBox('Revocação', (prf.recall*100).toFixed(2), '%') +
-      kpiBox('F1', (prf.f1*100).toFixed(2), '%');
-    document.getElementById('knn_cm').innerHTML = renderCM(CM);
-  } else {
-    const m = { RMSE: rmse(state.y_test, yhat), MAE: mae(state.y_test, yhat), R2: r2(state.y_test, yhat) };
-    document.getElementById('knn_metrics').innerHTML =
-      kpiBox('RMSE', m.RMSE.toFixed(4)) + kpiBox('MAE', m.MAE.toFixed(4)) + kpiBox('R²', m.R2.toFixed(4));
-    document.getElementById('knn_cm').innerHTML = '';
-  }
-});
-
-/* ===========================================================
-   ANN (MLP) com TensorFlow.js
-=========================================================== */
-async function trainANN(X_train, y_train, X_test, y_test, {layers=[64,32], act='relu', epochs=60, lr=0.01, task='auto'}){
-  const {Xs_train, Xs_test} = scaleTrainTest(X_train, X_test);
-  const nx = X_train[0].length;
-  const isClass = (task==='classification') || (task==='auto' && isClassification(y_train));
-
-  const model = tf.sequential();
-  for (let i=0;i<layers.length;i++){
-    model.add(tf.layers.dense({units: layers[i], activation: act, inputShape: i===0?[nx]:undefined}));
-  }
-  if (isClass){
-    model.add(tf.layers.dense({units:1, activation:'sigmoid'}));
-    model.compile({optimizer: tf.train.adam(lr), loss:'binaryCrossentropy', metrics:['accuracy']});
-  } else {
-    model.add(tf.layers.dense({units:1, activation:'linear'}));
-    model.compile({optimizer: tf.train.adam(lr), loss: 'meanSquaredError'});
-  }
-  const xtr = toTensor2D(Xs_train);
-  const ytr = tf.tensor2d(y_train.map(v=>[v]));
-  await model.fit(xtr, ytr, {epochs, verbose:0});
-  const yhat = Array.from(model.predict(toTensor2D(Xs_test)).dataSync());
-  model.dispose(); xtr.dispose(); ytr.dispose();
-
-  if (isClass){
-    const ypred = yhat.map(p=> p>=0.5?1:0);
-    const acc = accuracy(y_test, ypred);
-    const prf = precisionRecallF1(y_test, ypred, 1);
-    const CM = confMatrix(y_test, ypred);
-    return {isClass:true, acc, prf, CM};
-  } else {
-    const m = { RMSE: rmse(y_test, yhat), MAE: mae(y_test, yhat), R2: r2(y_test, yhat) };
-    return {isClass:false, ...m};
-  }
-}
-
-document.getElementById('btnANN').addEventListener('click', async ()=>{
-  if (!state.X_train.length) { alert('Gere/Carregue um dataset.'); return; }
-  const layers = document.getElementById('ann_layers').value.split(',').map(s=>parseInt(s.trim())).filter(x=>x>0);
-  const act = document.getElementById('ann_act').value;
-  const epochs = parseInt(document.getElementById('ann_epochs').value);
-  const lr = Math.max(1e-6, num('ann_lr'));
-  const task = document.getElementById('ann_task').value;
-
-  document.getElementById('ann_metrics').innerHTML = kpiBox('Status','Treinando...');
-  await tf.nextFrame();
-
-  const r = await trainANN(state.X_train, state.y_train, state.X_test, state.y_test, {layers, act, epochs, lr, task});
-  if (r.isClass){
-    document.getElementById('ann_metrics').innerHTML =
-      kpiBox('Acurácia', (r.acc*100).toFixed(2), '%') +
-      kpiBox('Precisão', (r.prf.precision*100).toFixed(2), '%') +
-      kpiBox('Revocação', (r.prf.recall*100).toFixed(2), '%') +
-      kpiBox('F1', (r.prf.f1*100).toFixed(2), '%');
-    document.getElementById('ann_cm').innerHTML = renderCM(r.CM);
-  } else {
-    document.getElementById('ann_metrics').innerHTML =
-      kpiBox('RMSE', r.RMSE.toFixed(4)) + kpiBox('MAE', r.MAE.toFixed(4)) + kpiBox('R²', r.R2.toFixed(4));
-    document.getElementById('ann_cm').innerHTML = '';
-  }
-});
-
-/* ===========================================================
-   K-Means
-=========================================================== */
-function kmeans(X, k=3, iters=100, nInit=5){
-  function inertia(X, centroids, labels){
-    let s=0;
-    for (let i=0;i<X.length;i++){
-      const c = centroids[labels[i]];
-      s += dist(X[i], c, 'euclidean')**2;
-    }
-    return s;
-  }
-  function runOnce(){
-    // kmeans++ init
-    const n=X.length, d=X[0].length;
-    const centroids = [];
-    centroids.push(X[Math.floor(Math.random()*n)]);
-    while (centroids.length<k){
-      const D2 = X.map(x => Math.min(...centroids.map(c => dist(x,c,'euclidean')**2)));
-      const sum = D2.reduce((a,b)=>a+b,0);
-      let r = Math.random()*sum, idx=0;
-      while (r>0 && idx<n){ r -= D2[idx]; idx++; }
-      centroids.push(X[Math.min(idx, n-1)]);
-    }
-    let labels = Array(n).fill(0);
-    for (let it=0; it<iters; it++){
-      // assign
-      let changes=0;
-      for (let i=0;i<n;i++){
-        let best=-1, bestd=Infinity;
-        for (let c=0;c<k;c++){
-          const d = dist(X[i], centroids[c], 'euclidean');
-          if (d<bestd){ bestd=d; best=c; }
-        }
-        if (labels[i]!==best){ labels[i]=best; changes++; }
-      }
-      // update
-      const sums = Array.from({length:k}, ()=>Array(X[0].length).fill(0));
-      const counts = Array(k).fill(0);
-      for (let i=0;i<n;i++){
-        const c=labels[i]; counts[c]++; for (let j=0;j<X[0].length;j++) sums[c][j]+=X[i][j];
-      }
-      for (let c=0;c<k;c++){
-        if (counts[c]>0) centroids[c] = sums[c].map(v => v/counts[c]);
-      }
-      if (changes===0) break;
-    }
-    return {centroids, labels, inertia: inertia(X, centroids, labels)};
-  }
-  let best=null;
-  for (let r=0;r<nInit;r++){
-    const out = runOnce();
-    if (!best || out.inertia < best.inertia) best=out;
-  }
-  return best;
-}
-function silhouetteScore(X, labels){
-  const n=X.length;
-  const k = Math.max(...labels)+1;
-  if (k<=1) return 0;
-  const clusters = Array.from({length:k}, ()=>[]);
-  for (let i=0;i<n;i++) clusters[labels[i]].push(i);
-  function avgDist(i, idxs){ if (idxs.length===0) return 0; let s=0; for (const j of idxs){ if (j!==i) s+=dist(X[i], X[j]); } return s/Math.max(1,idxs.length-(idxs.includes(i)?1:0)); }
-  let sTot=0;
-  for (let i=0;i<n;i++){
-    const a = avgDist(i, clusters[labels[i]]);
-    let b = Infinity;
-    for (let c=0;c<k;c++){
-      if (c===labels[i]) continue;
-      b = Math.min(b, avgDist(i, clusters[c]));
-    }
-    const s = (b - a) / Math.max(a, b, 1e-12);
-    sTot += s;
-  }
-  return sTot/n;
-}
-
-document.getElementById('btnKMeans').addEventListener('click', ()=>{
-  if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
-  const k = parseInt(document.getElementById('km_k').value);
-  const its = parseInt(document.getElementById('km_iters').value);
-  const ini = parseInt(document.getElementById('km_init').value);
-
-  const {P} = projectPCA2D(state.X);
-  const {labels, inertia} = kmeans(state.X, k, its, ini);
-  const sil = silhouetteScore(state.X, labels);
-
-  document.getElementById('kmeans_metrics').innerHTML =
-    kpiBox('Inércia', inertia.toFixed(2)) + kpiBox('Silhueta', sil.toFixed(3)) + kpiBox('k', k);
-
-  // plot clusters
-  const ctx = document.getElementById('km_plot').getContext('2d');
-  if (state.charts['km_plot']) { state.charts['km_plot'].destroy(); delete state.charts['km_plot']; }
-  const palette = ['#22d3ee','#f43f5e','#f59e0b','#8b5cf6','#10b981','#eab308','#ef4444'];
-  const kset = Array.from(new Set(labels)).sort((a,b)=>a-b);
-  const datasets = kset.map((c,i)=>({
-    label: `Cluster ${c}`,
-    data: P.map((p,idx)=> ({x:p[0], y:p[1]})).filter((_,idx)=> labels[idx]===c),
-    pointRadius: 3,
-    backgroundColor: palette[i%palette.length]
-  }));
-  state.charts['km_plot'] = new Chart(ctx, { type:'scatter', data: {datasets},
-    options: { plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}} }});
+  try{ const r = trainRF_mljs(state.X_train, state.y_train, state.X_test, state.y_test, isClass? 'classification':'regression');
+    if (isClass){ document.getElementById('rf_metrics').innerHTML = kpiBox('Acurácia', (r.acc*100).toFixed(2), '%') + kpiBox('Precisão', (r.prf.precision*100).toFixed(2), '%') + kpiBox('Revocação', (r.prf.recall*100).toFixed(2), '%') + kpiBox('F1', (r.prf.f1*100).toFixed(2), '%'); document.getElementById('rf_cm').innerHTML = renderCM(r.CM); }
+    else { document.getElementById('rf_metrics').innerHTML = kpiBox('RMSE', r.RMSE.toFixed(4)) + kpiBox('MAE', r.MAE.toFixed(4)) + kpiBox('R²', r.R2.toFixed(4)); document.getElementById('rf_cm').innerHTML = ''; } }
+  catch(err){ console.error(err); document.getElementById('rf_metrics').innerHTML = `<span class="badge err">Erro no treino (ver console)</span>`; }
 });
 
 /* ===========================================================
@@ -1674,7 +1376,7 @@ async function trainAE(X_train, {latent=2, epochs=60, lr=0.01, batchSize=32, noi
   const d2 = tf.layers.dense({units: Math.max(8, Math.floor(nx*0.75)), activation:'relu'}).apply(d1);
   const out= tf.layers.dense({units: nx, activation:'linear'}).apply(d2);
   const ae = tf.model({inputs: input, outputs: out});
-  ae.compile({optimizer: tf.train.adam(lr), loss: 'meanSquaredError'});
+  ae.compile({optimizer: tf.train.adam(lr), loss:'mse'});
 
   const xtr = toTensor2D(Xs);
   await ae.fit(xtr, xtr, {epochs, batchSize, verbose:0});
@@ -1719,6 +1421,47 @@ document.getElementById('btnAE').addEventListener('click', async ()=>{
       options: { plugins:{legend:{labels:{color:'#cbd5e1'}}}, scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}} }});
   }
 });
+
+// ==================== MODELOS "REAIS" (scikitjs / mljs) ====================
+async function trainLinear_scikitjs(X_train, y_train, X_test, y_test){
+  if (!window.scikitjs) throw new Error('scikitjs não carregado');
+  const sk = window.scikitjs; sk.setBackend(tf);
+  const lr = new sk.LinearRegression({ fitIntercept: true });
+  await lr.fit(X_train, y_train);
+  const yhat = lr.predict(X_test);
+  return { RMSE: rmse(y_test, yhat).toFixed(4), MAE: mae(y_test, yhat).toFixed(4), R2: r2(y_test, yhat).toFixed(4), model: lr };
+}
+
+async function trainLogistic_scikitjs(X_train, y_train, X_test, y_test, epochs=200, lr0=0.05){
+  if (!window.scikitjs) throw new Error('scikitjs não carregado');
+  const sk = window.scikitjs; sk.setBackend(tf);
+  let clf;
+  if (sk.LogisticRegression){
+    clf = new sk.LogisticRegression({ fitIntercept: true, maxIter: epochs, tol: 1e-4 });
+  } else if (sk.SGDClassifier){
+    clf = new sk.SGDClassifier({ loss: 'log', maxIter: epochs, learningRate: 'constant', eta0: lr0, penalty: 'l2' });
+  } else { throw new Error('Nenhum classificador logístico disponível no scikitjs'); }
+  await clf.fit(X_train, y_train);
+  const yhat = clf.predict(X_test);
+  const acc = accuracy(y_test, yhat);
+  const prf = precisionRecallF1(y_test, yhat, 1);
+  const CM  = confMatrix(y_test, yhat);
+  return { acc, prf, CM };
+}
+
+function trainRF_mljs(X_train, y_train, X_test, y_test, task='classification'){
+  const RFNS = window.mlRandomForest; if (!RFNS) throw new Error('ml-random-forest não carregado');
+  if (task==='classification'){
+    const rf = new RFNS.RandomForestClassifier({ nEstimators: 50, maxFeatures: 0.8, seed: 3, replacement: true });
+    rf.train(X_train, y_train); const yhat = rf.predict(X_test);
+    const acc = accuracy(y_test, yhat); const prf = precisionRecallF1(y_test, yhat, 1); const CM  = confMatrix(y_test, yhat);
+    return { acc, prf, CM };
+  } else {
+    const rf = new RFNS.RandomForestRegression({ nEstimators: 100, maxFeatures: 2, seed: 3, replacement: false });
+    rf.train(X_train, y_train); const yhat = rf.predict(X_test);
+    return { RMSE: rmse(y_test, yhat), MAE: mae(y_test, yhat), R2: r2(y_test, yhat) };
+  }
+}
 </script>
 </body>
 </html>
