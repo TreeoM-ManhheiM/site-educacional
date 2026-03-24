@@ -1,220 +1,305 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Laboratório NumPy - Python</title>
-
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>MLP 2–2–1 • Simulador Visual (XOR/AND/OR)</title>
 <style>
-body{
-font-family:Arial;
-margin:40px;
-background:#f4f4f4;
-}
-
-h1{
-color:#333;
-}
-
-pre{
-background:#1e1e1e;
-color:#00ff9c;
-padding:20px;
-border-radius:8px;
-overflow:auto;
-}
-
-button{
-padding:10px 20px;
-font-size:16px;
-background:#333;
-color:white;
-border:none;
-border-radius:5px;
-cursor:pointer;
-}
-
-button:hover{
-background:#555;
-}
+  :root{
+    --bg:#0b1020; --card:#111831; --muted:#7e8bb6; --text:#eef2ff;
+    --brand:#7c3aed; --brand2:#06b6d4; --ok:#16a34a; --err:#ef4444; --border:#1f2a4a;
+  }
+  *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);
+     font-family: ui-sans-serif,system-ui,Segoe UI,Roboto}
+  .wrap{max-width:1100px;margin:0 auto;padding:16px}
+  .row{display:grid;grid-template-columns: 1.3fr 1fr;gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;box-shadow:0 10px 40px #0005}
+  h1{margin:.2rem 0 1rem;font-size:1.3rem}
+  label{color:var(--muted);font-size:.9rem}
+  input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--border);background:#0c1330;color:var(--text);outline:none}
+  button{background:linear-gradient(135deg,var(--brand),var(--brand2));border:none;font-weight:700;cursor:pointer;box-shadow:0 6px 20px #0007}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+  .kpi>div{background:#0c1330;border:1px solid var(--border);border-radius:12px;padding:10px}
+  canvas{background:#0b122f;border:1px solid var(--border);border-radius:12px;width:100%;height:auto}
+  .muted{color:var(--muted)}
+  .small{font-size:.86rem}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.8rem;border:1px solid var(--border);color:#cbd5e1}
+  .ok{border-color:#14532d;background:#052e16;color:#86efac}
+  .err{border-color:#4c0a0a;background:#1b0a0a;color:#fecaca}
+  .row2{display:grid;grid-template-columns:repeat(12,1fr);gap:8px}
+  .col-3{grid-column:span 3} .col-4{grid-column:span 4} .col-6{grid-column:span 6} .col-12{grid-column:span 12}
+  @media(max-width:980px){.row{grid-template-columns:1fr}}
 </style>
+</head>
+<body>
+<div class="wrap">
+  <h1>MLP 2–2–1 • Simulador Visual (XOR/AND/OR)</h1>
+  <div class="row">
+    <div class="card">
+      <canvas id="plot" width="640" height="640"></canvas>
+      <div class="small muted" style="margin-top:8px">
+        O plano mostra os pontos (classes 0 e 1), as <b>duas retas</b> dos neurônios ocultos (onde z=0), e a <b>região de decisão</b> (fundo).
+      </div>
+    </div>
+    <div class="card">
+      <div class="row2">
+        <div class="col-6">
+          <label>Dataset</label>
+          <select id="ds">
+            <option value="xor">XOR (não linear)</option>
+            <option value="and">AND</option>
+            <option value="or">OR</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <label>Ruído (±)</label>
+          <input id="noise" type="number" step="0.01" value="0.06"/>
+        </div>
+
+        <div class="col-6">
+          <label>Ativação oculta</label>
+          <select id="act">
+            <option value="tanh">tanh</option>
+            <option value="sigmoid">sigmoid</option>
+          </select>
+        </div>
+        <div class="col-6">
+          <label>LR (learning rate)</label>
+          <input id="lr" type="number" step="0.001" value="0.05"/>
+        </div>
+
+        <div class="col-4">
+          <label>Batch</label>
+          <input id="bs" type="number" value="32"/>
+        </div>
+        <div class="col-4">
+          <label>Épocas/auto</label>
+          <input id="epochsAuto" type="number" value="500"/>
+        </div>
+        <div class="col-4">
+          <label>Threshold decisão</label>
+          <input id="thr" type="number" step="0.01" value="0.5"/>
+        </div>
+
+        <div class="col-12 grid-2" style="margin-top:6px">
+          <button id="btnGen">Gerar dados</button>
+          <button id="btnReset">Reset pesos</button>
+        </div>
+        <div class="col-12 grid-2" style="margin-top:6px">
+          <button id="btnStep">Treinar (1 passo)</button>
+          <button id="btnAuto">Treinar (auto)</button>
+        </div>
+
+        <div class="col-12 kpi">
+          <div><div class="muted">Perda</div><div id="lossBox" style="font-weight:800">-</div></div>
+          <div><div class="muted">Acurácia</div><div id="accBox" style="font-weight:800">-</div></div>
+          <div><div class="muted">Época</div><div id="epBox" style="font-weight:800">0</div></div>
+        </div>
+
+        <div class="col-12" style="margin-top:10px">
+          <div class="muted small">Pesos (mostra as linhas ocultas z=0):</div>
+          <div id="wBox" class="small" style="white-space:pre; background:#0c1330;border:1px solid var(--border);border-radius:8px;padding:8px"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-function copiarCodigo(){
-let texto=document.getElementById("codigo").innerText;
-navigator.clipboard.writeText(texto);
-alert("Código copiado!");
+/* =================== Utilidades =================== */
+const rnd = (min,max)=>min+Math.random()*(max-min);
+const sigmoid = x=>1/(1+Math.exp(-x));
+const dsigmoid = y=> y*(1-y);         // y = sigmoid(x)
+const tanh = x=>Math.tanh(x);
+const dtanh = y=> 1 - y*y;            // y = tanh(x)
+
+/* =================== Estado =================== */
+const state = {
+  data: [],        // [{x:[x1,x2], y:0/1}]
+  W1: [[0,0],[0,0]], b1: [0,0], // 2x2 e 2x1 (oculta)
+  W2: [0,0], b2: 0,             // 1x2 e 1x1 (saída)
+  act: 'tanh',
+  lr: 0.05,
+  thr: 0.5,
+  bs: 32,
+  epoch: 0,
+  running: false
+};
+
+/* =================== Dados (XOR/AND/OR) =================== */
+function genData(kind='xor', noise=0.06, N=200){
+  const pts = [];
+  // base nos cantos (0/1)
+  const seeds = [
+    {x:[0,0], y: kind==='or' ? 0 : 0}, // (0,0)
+    {x:[0,1], y: kind==='xor' ? 1 : 0},// (0,1)
+    {x:[1,0], y: kind==='xor' ? 1 : 0},// (1,0)
+    {x:[1,1], y: (kind==='xor'||kind==='or') ? 0 : 1} // xor->0, or->0, and->1
+  ];
+  // Ajuste para OR: (0,1) e (1,0) são 1; (1,1) também 1
+  if (kind==='or'){ seeds[1].y=1; seeds[2].y=1; seeds[3].y=1; }
+  // Gera nuvens ao redor
+  for (const s of seeds){
+    const reps = Math.floor(N/4);
+    for (let i=0;i<reps;i++){
+      const nx = Math.min(1, Math.max(0, s.x[0] + rnd(-noise,noise)));
+      const ny = Math.min(1, Math.max(0, s.x[1] + rnd(-noise,noise)));
+      pts.push({x:[nx,ny], y:s.y});
+    }
+  }
+  state.data = pts;
 }
-</script>
 
-</head>
+/* =================== MLP 2–2–1 (forward/backprop) =================== */
+function resetWeights(){
+  // inicialização pequena para estabilidade
+  state.W1 = [[rnd(-0.5,0.5), rnd(-0.5,0.5)],
+              [rnd(-0.5,0.5), rnd(-0.5,0.5)]];
+  state.b1 = [rnd(-0.2,0.2), rnd(-0.2,0.2)];
+  state.W2 = [rnd(-0.5,0.5), rnd(-0.5,0.5)];
+  state.b2 = rnd(-0.2,0.2);
+  state.epoch = 0;
+}
 
-<body>
+function actF(x, use=state.act){
+  return use==='tanh'? tanh(x) : sigmoid(x);
+}
+function dactF(y, use=state.act){
+  return use==='tanh'? dtanh(y) : dsigmoid(y);
+}
 
-<h1>Laboratório de Python - Biblioteca NumPy</h1>
+function forward(x1,x2){
+  // camada oculta (2 neurônios)
+  const z1 = state.W1[0][0]*x1 + state.W1[0][1]*x2 + state.b1[0];
+  const z2 = state.W1[1][0]*x1 + state.W1[1][1]*x2 + state.b1[1];
+  const h1 = actF(z1), h2 = actF(z2);
+  // saída
+  const z3 = state.W2[0]*h1 + state.W2[1]*h2 + state.b2;
+  const yhat = sigmoid(z3); // saída para binário
+  return {h:[h1,h2], z:[z1,z2,z3], yhat};
+}
 
-<p>Exemplo completo de métodos da biblioteca <b>NumPy</b>.</p>
+function stepSGD(batch){
+  // Acumula gradientes no batch
+  let dW1 = [[0,0],[0,0]], db1=[0,0], dW2=[0,0], db2=0;
+  let loss=0, acc=0;
 
-<button onclick="copiarCodigo()">Copiar Código</button>
+  for (const s of batch){
+    const {x:[x1,x2], y} = s;
+    const {h:[h1,h2], z:[z1,z2,z3], yhat} = forward(x1,x2);
 
-<pre id="codigo">
+    // loss: BCE
+    loss += -(y*Math.log(yhat+1e-9) + (1-y)*Math.log(1-yhat+1e-9));
+    // accuracy
+    acc += ((yhat>=state.thr)?1:0) === y ? 1 : 0;
 
-# ==========================================
-# DEFINIÇÃO DO MÉTODO
-# ==========================================
+    // backprop
+    const dL_dz3 = (yhat - y); // BCE com sigmoid
+    // para W2, b2
+    dW2[0] += dL_dz3 * h1;
+    dW2[1] += dL_dz3 * h2;
+    db2    += dL_dz3;
+    // grad nos h's
+    const dL_dh1 = dL_dz3 * state.W2[0];
+    const dL_dh2 = dL_dz3 * state.W2[1];
+    // ativações ocultas
+    const gh1 = dL_dh1 * dactF(h1);
+    const gh2 = dL_dh2 * dactF(h2);
+    // para W1 e b1
+    dW1[0][0] += gh1 * x1; dW1[0][1] += gh1 * x2; db1[0] += gh1;
+    dW1[1][0] += gh2 * x1; dW1[1][1] += gh2 * x2; db1[1] += gh2;
+  }
 
-#def calcular_media(lista):
-#    media = sum(lista) / len(lista)
-#    return media
+  const m = batch.length;
+  const lr = state.lr;
+  // atualiza
+  state.W2[0] -= lr*(dW2[0]/m);
+  state.W2[1] -= lr*(dW2[1]/m);
+  state.b2    -= lr*(db2/m);
 
-# ==========================================
-# DADOS DE EXEMPLO
-# ==========================================
+  state.W1[0][0] -= lr*(dW1[0][0]/m);
+  state.W1[0][1] -= lr*(dW1[0][1]/m);
+  state.b1[0]    -= lr*(db1[0]/m);
 
-#numeros = [10, 20, 30, 40, 50]
+  state.W1[1][0] -= lr*(dW1[1][0]/m);
+  state.W1[1][1] -= lr*(dW1[1][1]/m);
+  state.b1[1]    -= lr*(db1[1]/m);
 
-# ==========================================
-# INVOCANDO O MÉTODO
-# ==========================================
+  return {loss:loss/m, acc:acc/m};
+}
 
-#resultado = calcular_media(numeros)
-#print("Média da lista:", resultado)
+/* =================== Visualização =================== */
+const canvas = document.getElementById('plot');
+const ctx = canvas.getContext('2d');
+const PAD = 36;           // margem para eixos
+const W = canvas.width, H = canvas.height;
 
-# ==========================================
-# IMPORTAR BIBLIOTECA
-# ==========================================
+// mapeia [0,1]x[0,1] -> canvas
+function X(u){ return PAD + u*(W-2*PAD); }
+function Y(v){ return H - (PAD + v*(H-2*PAD)); }
 
-import numpy as np
+function drawAxes(){
+  ctx.strokeStyle = '#1f2a4a'; ctx.lineWidth = 1;
+  // retângulo
+  ctx.strokeRect(PAD, PAD, W-2*PAD, H-2*PAD);
+  // ticks 0 e 1
+  ctx.fillStyle = '#9aa7d8'; ctx.font='12px system-ui';
+  ctx.fillText('0', X(0)-8, Y(0)+14);
+  ctx.fillText('1', X(1)-2, Y(0)+14);
+  ctx.fillText('0', X(0)-18, Y(0)+4);
+  ctx.fillText('1', X(0)-18, Y(1)+4);
+}
 
-# ==========================================
-# CRIAÇÃO DE ARRAYS
-# ==========================================
+function drawData(){
+  for (const s of state.data){
+    const c = s.y===1 ? '#f59e0b' : '#22d3ee';
+    ctx.fillStyle = c; ctx.beginPath();
+    ctx.arc(X(s.x[0]), Y(s.x[1]), 4, 0, Math.PI*2);
+    ctx.fill();
+  }
+}
 
-a = np.array([1,2,3,4])
-b = np.zeros(4)
-c = np.ones(4)
-d = np.empty(4)
+function drawRegion(){
+  // grade 100x100
+  const nx=100, ny=100;
+  const img = ctx.createImageData(W-2*PAD, H-2*PAD);
+  let k=0;
+  for (let j=0;j<ny;j++){
+    const v = j/(ny-1);
+    for (let i=0;i<nx;i++){
+      const u = i/(nx-1);
+      const {yhat} = forward(u,v);
+      // blend entre azul (0) e laranja (1)
+      const t = yhat;                 // 0..1
+      const col0 = [34,211,238];      // #22d3ee
+      const col1 = [245,158,11];      // #f59e0b
+      const r = Math.round(col0[0]*(1-t)+col1[0]*t);
+      const g = Math.round(col0[1]*(1-t)+col1[1]*t);
+      const b = Math.round(col0[2]*(1-t)+col1[2]*t);
+      // pinta bloco proporcional
+      const px = Math.floor(i*(W-2*PAD)/(nx-1));
+      const py = Math.floor(j*(H-2*PAD)/(ny-1));
+      const idx = (py*(W-2*PAD) + px)*4;
+      img.data[idx]=r; img.data[idx+1]=g; img.data[idx+2]=b; img.data[idx+3]=38; // alpha baixo
+    }
+  }
+  ctx.putImageData(img, PAD, PAD);
+}
 
-print(np.arange(0,10,2))
-print(np.linspace(0,10,5))
-print(np.logspace(1,3,3))
-
-print(np.eye(3))
-print(np.identity(3))
-
-# ==========================================
-# INFORMAÇÕES SOBRE ARRAY
-# ==========================================
-
-print(a.shape)
-print(a.size)
-print(a.ndim)
-print(a.dtype)
-print(a.itemsize)
-
-# ==========================================
-# OPERAÇÕES MATEMÁTICAS
-# ==========================================
-
-print(np.add(a,c))
-print(np.subtract(a,c))
-print(np.multiply(a,c))
-print(np.divide(a,c))
-
-print(np.power(a,2))
-print(np.sqrt(a))
-print(np.abs([-1,-2,-3]))
-print(np.exp(a))
-print(np.log(a))
-print(np.log10(a))
-
-# ==========================================
-# ESTATÍSTICA
-# ==========================================
-
-print(np.mean(a))
-print(np.median(a))
-print(np.std(a))
-print(np.var(a))
-
-print(np.sum(a))
-print(np.min(a))
-print(np.max(a))
-
-print(np.argmin(a))
-print(np.argmax(a))
-
-print(np.percentile(a,50))
-
-# ==========================================
-# MANIPULAÇÃO DE ARRAYS
-# ==========================================
-
-print(np.reshape(a,(2,2)))
-print(np.resize(a,(2,3)))
-
-print(np.append(a,5))
-print(np.insert(a,1,10))
-print(np.delete(a,2))
-
-print(np.concatenate((a,c)))
-print(np.split(a,2))
-
-print(np.vstack((a,c)))
-print(np.hstack((a,c)))
-
-# ==========================================
-# ORDENAÇÃO E BUSCA
-# ==========================================
-
-print(np.sort(a))
-print(np.argsort(a))
-
-print(np.where(a>2))
-print(np.searchsorted(a,3))
-
-# ==========================================
-# ÁLGEBRA LINEAR
-# ==========================================
-
-A = np.array([[1,2],[3,4]])
-B = np.array([[5,6],[7,8]])
-
-print(np.dot(A,B))
-print(np.matmul(A,B))
-
-print(np.linalg.inv(A))
-print(np.linalg.det(A))
-
-print(np.linalg.eig(A))
-
-b2 = np.array([5,11])
-print(np.linalg.solve(A,b2))
-
-# ==========================================
-# NÚMEROS ALEATÓRIOS
-# ==========================================
-
-print(np.random.rand(3))
-print(np.random.randn(3))
-print(np.random.randint(1,10,3))
-
-print(np.random.choice(a))
-np.random.shuffle(a)
-print(a)
-
-# ==========================================
-# FUNÇÕES TRIGONOMÉTRICAS
-# ==========================================
-
-print(np.sin(a))
-print(np.cos(a))
-print(np.tan(a))
-
-print(np.arcsin(np.sin(1)))
-print(np.arccos(np.cos(1)))
-print(np.arctan(np.tan(1)))
-
-</pre>
-
-</body>
-</html>
+function drawHiddenLines(){
+  // Cada neurônio oculto define z = w1*x + w2*y + b = 0
+  const lines = [
+    {w1:state.W1[0][0], w2:state.W1[0][1], b:state.b1[0], col:'#a78bfa'}, // lilás
+    {w1:state.W1[1][0], w2:state.W1[1][1], b:state.b1[1], col:'#10b981'}  // verde
+  ];
+  for (const L of lines){
+    // Achamos duas interseções no quadrado [0,1]^2
+    const pts = [];
+    // x=0 -> w2*y + b = 0 => y = -b/w2
+    if (Math.abs(L.w2)>1e-8){
+      const y0 = -L.b/L.w2; if (y0>=0 && y0<=1) pts.push([0,y0]);
+    }
+    // x=1 -> w1 + w2*y + b = 0 => y = -(w1+b)/w2
+    if (Math.abs(L.w2)>1e-8){
+      const y1 = -(L.w1 + L.b)/L.w2; if (y1>=0 && y1<=1) pts.push([1,y1]);
