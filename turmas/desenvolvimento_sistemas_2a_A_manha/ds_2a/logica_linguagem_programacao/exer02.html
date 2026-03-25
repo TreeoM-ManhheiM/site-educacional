@@ -1,240 +1,251 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Quiz Operadores Python - FATEC — V8 (Envio simples: Nome + Série, destinatário fixo)</title>
-<style>
-  :root{ --bg:#0f172a; --panel:#0b1220; --line:#1e293b; --fg:#e5e7eb; --muted:#9aa4b2; --ok:#22c55e; --bad:#ef4444; --acc:#38bdf8; --warn:#f59e0b; --code:#020617; --inbg:#0b1220; --inbd:#334155; }
-  *{box-sizing:border-box}
-  body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--fg)}
-  .container{max-width:1000px;margin:auto;padding:18px}
-  h1{margin:4px 0 10px 0;font-size:1.15rem}
-  .topbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
-  .pill{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid var(--line);background:var(--panel);color:#cbd5e1}
-  select.mode{background:#0b1220;border:1px solid var(--line);color:#dbeafe;padding:6px 8px;border-radius:8px}
-  .progress{flex:1;height:10px;background:#0a1223;border:1px solid var(--line);border-radius:999px;overflow:hidden}
-  .progress>span{display:block;height:100%;background:linear-gradient(90deg,#38bdf8,#22c55e);width:0%}
-  .codeWrap{position:relative;background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px}
-  .codeHeader{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;color:var(--muted);font-size:.9rem}
-  .code{white-space:pre-wrap;font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;line-height:1.42}
-  .lines{position:absolute;left:0;top:40px;width:42px;bottom:0;color:#6b7280;border-right:1px solid #0f1a31;padding:12px 6px;text-align:right;user-select:none;pointer-events:none}
-  .codeInner{margin-left:48px}
-  input.slot{ --ch:5; width:calc(var(--ch)*1ch); min-width:48px; text-align:center;font-size:16px;line-height:1.2; margin:0 2px; padding:2px 4px; border-radius:6px; border:1px solid var(--inbd); background:var(--inbg); color:var(--fg); outline:none; vertical-align:baseline; transition:all .12s ease }
-  input.slot::placeholder{color:#64748b;opacity:.7}
-  input.slot:focus{border-color:var(--acc);box-shadow:0 0 0 2px rgba(56,189,248,.25)}
-  input.slot.ok{border-color:var(--ok);background:#0c1f14}
-  input.slot.no{border-color:var(--bad);background:#1a0e11}
-  input.slot[data-len="2"]{--ch:5} input.slot[data-len="3"]{--ch:6} input.slot[data-len="4"]{--ch:7}
-  .ops{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
-  .ops button{background:#0b1220;border:1px solid var(--line);color:#dbeafe;padding:6px 10px;border-radius:8px;cursor:pointer}
-  .ops button:hover{border-color:#3b82f6;background:#0d1730}
-  .ops .title{color:#9aa4b2;font-size:.9rem;margin-right:4px;align-self:center}
-  .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
-  button.btn{padding:10px 14px;border-radius:10px;border:1px solid var(--line);background:#1f2a45;color:#e5e7eb;cursor:pointer}
-  button.primary{background:#22c55e;color:#052e13;border-color:#0d5e34}
-  button.ghost{background:#0b1220}
-  button.warn{background:#f59e0b;color:#221000;border-color:#7a4d03}
-  button[disabled]{opacity:.5;cursor:not-allowed}
-  .feedback{min-height:26px;margin-top:8px}
-  .correct{color:var(--ok)} .wrong{color:var(--bad)} .muted{color:var(--muted)}
-  .scoreBig{font-size:1.15rem;margin-top:8px}
-  .footer{color:#93a0b5;font-size:.86rem;margin-top:14px}
-  .hints{margin-top:8px;padding:10px;border-radius:10px;border:1px dashed #21406b;background:#0a152b}
-  .hintStep{margin:6px 0}
-  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-  .chip{background:#0b1220;border:1px solid var(--line);color:#e5e7eb;padding:4px 8px;border-radius:999px;cursor:pointer}
-  .chip:hover{border-color:#38bdf8}
-  .send{margin-top:12px;background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:12px}
-  .send h3{margin:0 0 8px 0;font-size:1rem;color:#dbeafe}
-  .row{display:flex;gap:8px;flex-wrap:wrap}
-  .row label{display:flex;flex-direction:column;gap:4px;font-size:.9rem}
-  .row input[type=text]{background:#0a1325;border:1px solid #22314f;color:#e5e7eb;padding:8px 10px;border-radius:8px;min-width:220px}
-  #sendStatus{display:inline-block;margin-left:8px}
-  @media (max-width:640px){ input.slot{width:56px} .lines{display:none} .codeInner{margin-left:0} }
-</style>
-<!-- EmailJS SDK via CDN -->
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script>
-  // Chave pública do EmailJS
-  document.addEventListener('DOMContentLoaded', function(){
-    if (window.emailjs) { emailjs.init({ publicKey: 'ikG65_WxFRdkk2Gqr' }); }
+<meta charset="utf-8">
+<title>FluxoGame Python Pro — 20 Exercícios (DEBUGADO)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ 
+    startOnLoad: false, 
+    theme: "dark", 
+    securityLevel: "loose",
+    fontFamily: "monospace"
   });
+  window.mermaid = mermaid;
 </script>
+
+<style>
+  :root { --primary: #6366f1; --success: #22c55e; --bg: #0b0f17; --card-bg: #111827; --border: #1f2937; --text: #e5e7eb; }
+  body{margin:0;font-family:system-ui,Arial;background:var(--bg);color:var(--text);overflow-x:hidden}
+  header{padding: 12px 20px; border-bottom: 1px solid var(--border); background: #0f172a; display: flex; flex-wrap: wrap; align-items: center; gap: 20px; position: sticky; top: 0; z-index: 100;}
+  .stats-container { display: flex; gap: 15px; align-items: center; background: #1e293b; padding: 6px 15px; border-radius: 20px; font-size: 14px; border: 1px solid var(--primary); }
+  .xp-bar-bg { width: 120px; height: 10px; background: #334155; border-radius: 5px; overflow: hidden; }
+  #xp-fill { width: 0%; height: 100%; background: var(--primary); transition: width 0.5s ease; }
+  select{padding:8px;border-radius:8px;background:#020617;color:var(--text);border:1px solid #334155;cursor:pointer}
+  .grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;padding:16px;min-height:80vh}
+  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;flex-direction:column}
+  h2{margin-top:0;font-size:16px;color:#94a3b8;display:flex;justify-content:space-between}
+  pre{background:#020617;padding:15px;border-radius:8px;overflow:auto;font-family:'Fira Code',monospace;font-size:14px;border:1px solid #1e293b;flex-grow:1;min-height: 400px; white-space: pre-wrap;}
+  #mmd{background:#020617;border-radius:8px;padding:10px;cursor:pointer;min-height:450px;display:flex;justify-content:center;align-items:flex-start}
+  .hint{color:#9ca3af;font-size:13px;margin-top:12px;padding:8px;background:#1e293b;border-radius:6px}
+  button{background:#334155;border:none;color:white;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600;transition: 0.2s}
+  button:hover{background:var(--primary)}
+  .badge { width: 35px; height: 35px; border-radius: 50%; background: #1f2937; display: flex; align-items: center; justify-content: center; filter: grayscale(1); opacity: 0.3; transition: 0.3s; border: 1px solid #374151; font-size: 18px; }
+  .badge.earned { filter: grayscale(0); opacity: 1; background: #1e1b4b; border-color: var(--primary); box-shadow: 0 0 10px rgba(99, 102, 241, 0.3); }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+</style>
 </head>
 <body>
-<div class="container">
-  <h1>🧠 Quiz Operadores Python (Nível FATEC)</h1>
 
-  <div class="topbar">
-    <span class="pill">Modo:
-      <select id="modeSel" class="mode">
-        <option value="treino" selected>Treino (com dicas)</option>
-        <option value="prova">Prova (sem dicas)</option>
-      </select>
-    </span>
-    <span class="pill">Questão <b id="qNow">1</b>/<b id="qTotal">-</b></span>
-    <span class="pill">Acertos: <b id="qScore">0</b></span>
-    <span class="pill">Tempo: <b id="qTime">00:00</b></span>
-    <div class="progress"><span id="qProg"></span></div>
+<header>
+  <strong>FluxoGame 🔄 Master</strong>
+  <div class="stats-container">
+    <span id="lvl-display">Nível 1</span>
+    <div class="xp-bar-bg"><div id="xp-fill"></div></div>
+    <span id="xp-text">0 / 500 XP</span>
   </div>
-
-  <div class="codeWrap">
-    <div class="codeHeader">
-      <span class="muted">Complete os espaços com operadores/keywords de Python</span>
-      <div><button class="btn ghost" id="btnReset" title="Reiniciar">↺ Reiniciar</button></div>
-    </div>
-    <div class="lines" id="lineNums"></div>
-    <div id="code" class="code codeInner" aria-live="polite"></div>
+  <select id="sel"></select>
+  <div class="badges-row" id="badge-list" style="display:flex; gap:8px">
+    <div class="badge" title="Iniciante" id="b1">🎯</div>
+    <div class="badge" title="Lógico" id="b2">🧠</div>
+    <div class="badge" title="Ciclo" id="b3">🔄</div>
+    <div class="badge" title="Mestre" id="b4">🏆</div>
   </div>
+  <button onclick="resetar()" style="margin-left:auto">Limpar Tela</button>
+</header>
 
-  <div class="ops" aria-label="Paleta de operadores">
-    <span class="title">Operadores:</span>
-    <div class="group" id="opBtns"></div>
-  </div>
-
-  <div class="actions">
-    <button class="btn primary" id="btnCheck">✔ Confirmar (Enter)</button>
-    <button class="btn" id="btnNext" title="Próxima (Ctrl+→)" disabled>Próxima ▶</button>
-    <button class="btn" id="btnPrev" title="Anterior (Ctrl+←)" disabled>◀ Anterior</button>
-  </div>
-
-  <!-- Dicas (Treino) -->
-  <div id="hintPanel" class="hints" style="display:none">
-    <div class="hintStep" id="hint1"></div>
-    <div class="hintStep" id="hint2"></div>
-    <div class="hintStep" id="hint3"></div>
-    <div class="actions" style="margin-top:8px">
-      <button class="btn" id="btnHint">💡 Próxima dica</button>
-    </div>
-  </div>
-
-  <!-- Envio por e-mail (fixo) -->
-  <div class="send">
-    <h3>📧 Enviar atividade (destinatário fixo)</h3>
-    <div class="row">
-      <label>Nome do aluno
-        <input type="text" id="alunoNome" placeholder="Seu nome" required />
-      </label>
-      <label>Série/Turma
-        <input type="text" id="alunoSerie" placeholder="Ex.: 2º A" required />
-      </label>
-    </div>
-    <div class="actions" style="margin-top:10px">
-      <button class="btn" id="btnSend" disabled>✉ Enviar atividade</button>
-      <span id="sendStatus" class="muted"></span>
-    </div>
-    <p class="muted" style="margin-top:6px">
-      <b>Importante:</b> no EmailJS, defina o <b>To email</b> do template <code>template_kvt866g</code> com o e‑mail fixo do professor.
-      (Como o destinatário é fixo no template, aqui pedimos apenas <b>Nome</b> e <b>Série</b>.)
-    </p>
-  </div>
-
-  <div id="feedback" class="feedback" aria-live="polite"></div>
-  <h2 id="score" class="scoreBig"></h2>
-  <p class="footer">Campos no código são clicáveis; Enter confere; Ctrl+→/Ctrl+← navega. Progresso salvo.</p>
-</div>
+<main class="grid">
+  <section class="card">
+    <h2>Fluxograma Iterativo <span id="exercise-status" style="font-size:12px"></span></h2>
+    <div id="mmd"></div>
+    <div class="hint">🚀 <b>Como jogar:</b> Clique nos blocos do fluxograma na ordem lógica para construir o código Python ao lado.</div>
+  </section>
+  <section class="card">
+    <h2>Código Python (Modo Loop)</h2>
+    <pre id="code"></pre>
+  </section>
+</main>
 
 <script>
-// ===== Banco de questões (mesmo conjunto) =====
-const quiz = [
-{ code:`nome = input("Nome: ")\nn1 = float(input("Nota 1: "))\nn2 = float(input("Nota 2: "))\nmedia = (n1 __ n2) __ 2\n\nif media __ 6:\n    print("Aprovado")\nelse:\n    print("Reprovado")`, answers:["+","/",">="] },
-{ code:`salario = 2000\nbonus = 500\n\ntotal = salario __ bonus\n\nif total __ 2500:\n    print("Alto")\nelse:\n    print("Normal")`, answers:["+",">"] },
-{ code:`num = 7\n\nif num __ 2 __ 0:\n    print("Par")\nelse:\n    print("Ímpar")`, answers:["%","=="] },
-{ code:`idade = 18\n\nif idade __ 18:\n    print("Maior")\nelse:\n    print("Menor")`, answers:[">="] },
-{ code:`x = 15\n\nif x __ 10 and x __ 20:\n    print("Dentro")\nelse:\n    print("Fora")`, answers:[">","<"] },
-{ code:`user = "admin"\n\nif user __ "admin":\n    print("OK")\nelse:\n    print("Erro")`, answers:["=="] },
-{ code:`n = -5\n\nif n __ 0:\n    print("Negativo")\nelse:\n    print("Positivo")`, answers:["<"] },
-{ code:`preco = 100\n\nif preco __ 100:\n    print("Desconto")\nelse:\n    print("Normal")`, answers:[">="] },
-{ code:`ativo = False\n\nif __ ativo:\n    print("Inativo")\nelse:\n    print("Ativo")`, answers:["not"] },
-{ code:`temp = 35\n\nif temp __ 30 or temp < 10:\n    print("Extremo")\nelse:\n    print("Normal")`, answers:[">"] },
-{ code:`a = 3\nb = 4\n\nres = a __ b\n\nif res __ 12:\n    print("OK")\nelse:\n    print("Erro")`, answers:["*","=="] },
-{ code:`a = 10\nb = 2\n\nres = a __ b\n\nif res __ 5:\n    print("Certo")\nelse:\n    print("Errado")`, answers:["/","=="] },
-{ code:`a = 5\nb = 3\n\nif a __ b:\n    print("Diferente")\nelse:\n    print("Igual")`, answers:["!="] },
-{ code:`a = 2\nb = 3\n\nres = a __ b\n\nif res __ 8:\n    print("OK")\nelse:\n    print("Erro")`, answers:["**","=="] },
-{ code:`a = 9\nb = 2\n\nres = a __ b\n\nif res __ 4:\n    print("OK")\nelse:\n    print("Erro")`, answers:["//","=="] },
-{ code:`nota = 7\n\nif nota __ 9:\n    print("A")\nelif nota __ 7:\n    print("B")\nelse:\n    print("C")`, answers:[">=",">="] },
-{ code:`x = 5\n\nif x __ 0 and x __ 10:\n    print("OK")\nelse:\n    print("Erro")`, answers:[">=","<="] },
-{ code:`a = 5\nb = 5\n\nif a __ b __ 10:\n    print("OK")\nelse:\n    print("Erro")`, answers:["+","=="] },
-{ code:`a = 10\n\nif a > 5 __ a < 20:\n    print("OK")\nelse:\n    print("Erro")`, answers:["and"] },
-{ code:`x = 1\n\nif x == 0 __ x == 1:\n    print("Binário")\nelse:\n    print("Outro")`, answers:["or"] }
-];
-
-const OP_GROUPS = [["+","-","*","/","//","%","**"],["==","!=","<",">","<=",">="],["and","or","not"]];
-const el = {
-  code: document.getElementById('code'), lines: document.getElementById('lineNums'), feedback: document.getElementById('feedback'), score: document.getElementById('score'),
-  qNow: document.getElementById('qNow'), qTotal: document.getElementById('qTotal'), qScore: document.getElementById('qScore'), qTime: document.getElementById('qTime'), qProg: document.getElementById('qProg'),
-  btnCheck: document.getElementById('btnCheck'), btnNext: document.getElementById('btnNext'), btnPrev: document.getElementById('btnPrev'), btnReset: document.getElementById('btnReset'), modeSel: document.getElementById('modeSel'),
-  opBtns: document.getElementById('opBtns'), hintPanel: document.getElementById('hintPanel'), btnHint: document.getElementById('btnHint'), hint1: document.getElementById('hint1'), hint2: document.getElementById('hint2'), hint3: document.getElementById('hint3'),
-  alunoNome: document.getElementById('alunoNome'), alunoSerie: document.getElementById('alunoSerie'), btnSend: document.getElementById('btnSend'), sendStatus: document.getElementById('sendStatus')
+const EX = {
+  "01": {
+    nome: "01. Par ou Ímpar",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Leia N"]\n B --> C{"N % 2 == 0?"}\n C -- "Sim" --> D["Par"]\n C -- "Não" --> E["Ímpar"]\n D --> F{"Sair?"}\n E --> F\n F -- "Não" --> L\n F -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("d")\n click D call passo("p")\n click E call passo("i")\n click F call passo("q")\n click Z call passo("f")`,
+    blocos: { s: '# Par ou Ímpar\n', w: 'while True:\n', l: '    n = int(input("N: "))\n', d: '    if n % 2 == 0:\n', p: '        print("Par")\n', i: '    else:\n        print("Ímpar")\n', q: '    if input("Sair? (s/n)") == "s": break\n', f: '# Fim' }
+  },
+  "02": {
+    nome: "02. Positivo ou Negativo",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Leia X"]\n B --> C{"X > 0?"}\n C -- "Sim" --> D["Positivo"]\n C -- "Não" --> E{"X == 0?"}\n E -- "Sim" --> F["Zero"]\n E -- "Não" --> G["Negativo"]\n D --> H{"Sair?"}\n F --> H\n G --> H\n H -- "Não" --> L\n H -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("d1")\n click D call passo("pos")\n click E call passo("d2")\n click F call passo("zer")\n click G call passo("neg")\n click H call passo("q")\n click Z call passo("f")`,
+    blocos: { s: '# Positivo/Negativo/Zero\n', w: 'while True:\n', l: '    x = float(input("X: "))\n', d1: '    if x > 0:\n', pos: '        print("Positivo")\n', d2: '    elif x == 0:\n', zer: '        print("Zero")\n', neg: '    else:\n        print("Negativo")\n', q: '    if input("Sair? (s/n)") == "s": break\n', f: '# Fim' }
+  },
+  "03": {
+    nome: "03. Maior de Dois",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Leia A, B"]\n B --> C{"A > B?"}\n C -- "Sim" --> D["A maior"]\n C -- "Não" --> E{"A == B?"}\n E -- "Sim" --> F["Iguais"]\n E -- "Não" --> G["B maior"]\n D --> H{"Sair?"}\n F --> H\n G --> H\n H -- "Não" --> L\n H -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("d1")\n click D call passo("am")\n click E call passo("d2")\n click F call passo("ig")\n click G call passo("bm")\n click H call passo("q")\n click Z call passo("f")`,
+    blocos: { s: '# Maior de dois\n', w: 'while True:\n', l: '    a = float(input("A: "))\n    b = float(input("B: "))\n', d1: '    if a > b:\n', am: '        print("A maior")\n', d2: '    elif a == b:\n', ig: '        print("Iguais")\n', bm: '    else:\n        print("B maior")\n', q: '    if input("Sair? (s/n)") == "s": break\n', f: '# Fim' }
+  },
+  "04": {
+    nome: "04. Maior de Três",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Leia A, B, C"]\n B --> C{"A >= B e A >= C?"}\n C -- "Sim" --> D["A maior"]\n C -- "Não" --> E{"B >= C?"}\n E -- "Sim" --> F["B maior"]\n E -- "Não" --> G["C maior"]\n D --> H{"Sair?"}\n F --> H\n G --> H\n H -- "Não" --> L\n H -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("d")\n click D call passo("p")\n click E call passo("e")\n click F call passo("f_code")\n click G call passo("g")\n click H call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Maior de três\n', w: 'while True:\n', l: '    a=float(input("A: ")); b=float(input("B: ")); c=float(input("C: "))\n', d: '    if a >= b and a >= c:\n', p: '        print("A é o maior")\n', e: '    elif b >= c:\n', f_code: '        print("B é o maior")\n', g: '    else:\n        print("C é o maior")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "05": {
+    nome: "05. Média Escolar",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Leia Notas"]\n B --> C["Média >= 7?"]\n C -- "Sim" --> D["Aprovado"]\n C -- "Não" --> E["Média >= 5?"]\n E -- "Sim" --> F["Recuperação"]\n E -- "Não" --> G["Reprovado"]\n D --> H{"Sair?"}\n F --> H\n G --> H\n H -- "Não" --> L\n H -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("f_code")\n click G call passo("g")\n click H call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Média\n', w: 'while True:\n', l: '    n1=float(input("N1: ")); n2=float(input("N2: "))\n    m = (n1+n2)/2\n', c: '    if m >= 7:\n', d: '        print("Aprovado")\n', e: '    elif m >= 5:\n', f_code: '        print("Recuperação")\n', g: '    else:\n        print("Reprovado")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "06": {
+    nome: "06. Multa Radar",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Velocidade?"]\n B --> C{"V > 80?"}\n C -- "Sim" --> D["Multa = (V-80)*5"]\n C -- "Não" --> E["Sem multa"]\n D --> F{"Sair?"}\n E --> F\n F -- "Não" --> L\n F -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Radar\n', w: 'while True:\n', l: '    v = float(input("Velocidade: "))\n', c: '    if v > 80:\n', d: '        m = (v - 80) * 5\n        print(f"Multa: R$ {m:.2f}")\n', e: '    else:\n        print("Ok")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "07": {
+    nome: "07. Ano Bissexto",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Ano?"]\n B --> C{"É Bissexto?"}\n C -- "Sim" --> D["Sim"]\n C -- "Não" --> E["Não"]\n D --> F{"Sair?"}\n E --> F\n F -- "Não" --> L\n F -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Bissexto\n', w: 'while True:\n', l: '    a = int(input("Ano: "))\n', c: '    if (a%400==0) or (a%4==0 and a%100!=0):\n', d: '        print("Bissexto")\n', e: '    else:\n        print("Normal")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "08": {
+    nome: "08. Triângulos",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Lados A, B, C"]\n B --> C{"É Triângulo?"}\n C -- "Sim" --> D{"Lados Iguais?"}\n C -- "Não" --> E["Inválido"]\n D -- "3" --> F["Equilátero"]\n D -- "2" --> G["Isósceles"]\n D -- "0" --> H["Escaleno"]\n F --> I{"Sair?"}\n G --> I\n H --> I\n E --> I\n I -- "Não" --> L\n I -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("f_code")\n click G call passo("g")\n click H call passo("h")\n click I call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Triângulos\n', w: 'while True:\n', l: '    a=float(input("A: ")); b=float(input("B: ")); c=float(input("C: "))\n', c: '    if a < b+c and b < a+c and c < a+b:\n', d: '        if a==b==c: print("Equilátero")\n', e: '    else:\n        print("Não forma triângulo")\n', f_code: '        elif a==b or a==c or b==c: print("Isósceles")\n', g: '        else: print("Escaleno")\n', h: '# Verificado\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "09": {
+    nome: "09. IMC",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Peso e Altura"]\n B --> C["IMC = P / H²"]\n C --> D{"IMC?"}\n D -- "<18.5" --> E["Magro"]\n D -- "<25" --> F["Ideal"]\n D -- ">=25" --> G["Sobrepeso"]\n E --> H{"Sair?"}\n F --> H\n G --> H\n H -- "Não" --> L\n H -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("f_code")\n click G call passo("g")\n click H call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# IMC\n', w: 'while True:\n', l: '    p=float(input("Peso: ")); h=float(input("Altura: "))\n    imc = p/(h**2)\n', c: '    if imc < 18.5:\n', d: '        print("Baixo peso")\n', e: '    elif imc < 25: print("Normal")\n', f_code: '    else: print("Sobrepeso")\n', g: '# Fim do IMC\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "10": {
+    nome: "10. Calculadora",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Num1, Oper, Num2"]\n B --> C{"Operação?"}\n C --> D["Calcula e Exibe"]\n D --> E{"Sair?"}\n E -- "Não" --> L\n E -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Calc\n', w: 'while True:\n', l: '    n1=float(input("N1: ")); op=input("op: "); n2=float(input("N2: "))\n', c: '    if op=="+": print(n1+n2)\n    elif op=="-": print(n1-n2)\n    elif op=="*": print(n1*n2)\n    elif op=="/" and n2!=0: print(n1/n2)\n', d: '    else: print("Erro")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "11": {
+    nome: "11. Tarifa por Idade",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Idade?"]\n B --> C{"Idade?"}\n C --> D["Tarifa"]\n D --> E{"Sair?"}\n E -- "Não" --> L\n E -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Tarifa\n', w: 'while True:\n', l: '    i = int(input("Idade: "))\n', c: '    if i < 6: print("Grátis")\n    elif i >= 60: print("Meia")\n', d: '    else: print("Inteira")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "12": {
+    nome: "12. Pagamento",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Preço e Forma"]\n B --> C{"À Vista?"}\n C -- "Sim" --> D["-10%"]\n C -- "Não" --> E["Preço Normal"]\n D --> F{"Sair?"}\n E --> F\n F -- "Não" --> L\n F -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Pagamento\n', w: 'while True:\n', l: '    p = float(input("Preço: ")); f = input("Vista? (s/n): ")\n', c: '    if f == "s":\n', d: '        print(f"Total: {p*0.9:.2f}")\n', e: '    else: print(f"Total: {p:.2f}")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "13": {
+    nome: "13. Conversor Moeda",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Valor R$"]\n B --> C["Dólar = R$ / 5.20"]\n C --> D{"Sair?"}\n D -- "Não" --> L\n D -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Câmbio\n', w: 'while True:\n', l: '    v = float(input("Reais: "))\n', c: '    d = v / 5.20\n    print(f"USD: {d:.2f}")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "14": {
+    nome: "14. Aumento Salarial",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Salário?"]\n B --> C{"S < 2000?"}\n C -- "Sim" --> D["+15%"]\n C -- "Não" --> E["+10%"]\n D --> F{"Sair?"}\n E --> F\n F -- "Não" --> L\n F -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Aumento\n', w: 'while True:\n', l: '    s = float(input("Salário: "))\n', c: '    if s < 2000: novo = s * 1.15\n', d: '    else: novo = s * 1.10\n', e: '    print(f"Novo: {novo:.2f}")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "15": {
+    nome: "15. Juros Simples",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["C, I, T"]\n B --> C["J = C*I*T"]\n C --> D{"Sair?"}\n D -- "Não" --> L\n D -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Juros\n', w: 'while True:\n', l: '    c=float(input("Capital: ")); i=float(input("Taxa: ")); t=float(input("Tempo: "))\n', c: '    j = c * i * t\n    print(f"Juros: {j:.2f}")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "16": {
+    nome: "16. Média Ponderada",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["N1(2) e N2(3)"]\n B --> C["M = (N1*2+N2*3)/5"]\n C --> D{"Sair?"}\n D -- "Não" --> L\n D -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Média Pond\n', w: 'while True:\n', l: '    n1=float(input("N1: ")); n2=float(input("N2: "))\n', c: '    m = (n1*2 + n2*3) / 5\n    print(f"Média: {m:.1f}")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "17": {
+    nome: "17. Login Simples",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Senha?"]\n B --> C{"Senha == 123?"}\n C -- "Sim" --> D["Acesso OK"]\n C -- "Não" --> E["Erro"]\n D --> F{"Sair?"}\n E --> F\n F -- "Não" --> L\n F -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Login\n', w: 'while True:\n', l: '    s = input("Senha: ")\n', c: '    if s == "123": print("Bem-vindo!")\n', d: '    else: print("Senha incorreta")\n', e: '# Login OK\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "18": {
+    nome: "18. Clima",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Temp?"]\n B --> C{"T < 15?"}\n C -- "Sim" --> D["Frio"]\n C -- "Não" --> E["Calor"]\n D --> F{"Sair?"}\n E --> F\n F -- "Não" --> L\n F -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Clima\n', w: 'while True:\n', l: '    t = float(input("Temp: "))\n', c: '    if t < 15: print("Frio")\n', d: '    else: print("Quente")\n', e: '# Verificado\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "19": {
+    nome: "19. Metros para KM",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["Metros?"]\n B --> C["KM = M / 1000"]\n C --> D{"Sair?"}\n D -- "Não" --> L\n D -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Conversor\n', w: 'while True:\n', l: '    m = float(input("Metros: "))\n', c: '    k = m / 1000\n    print(f"{k} km")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  },
+  "20": {
+    nome: "20. Conta de Luz",
+    fluxo: `flowchart TD\n A(["Início"]) --> L["while True:"]\n L --> B["kWh e Bandeira"]\n B --> C{"Verde?"}\n C -- "Sim" --> D["Preço base"]\n C -- "Não" --> E["Acréscimo"]\n D --> F{"Sair?"}\n E --> F\n F -- "Não" --> L\n F -- "Sim" --> Z(["Fim"])\n click A call passo("s")\n click L call passo("w")\n click B call passo("l")\n click C call passo("c")\n click D call passo("d")\n click E call passo("e")\n click F call passo("q")\n click Z call passo("z")`,
+    blocos: { s: '# Luz\n', w: 'while True:\n', l: '    k=float(input("kWh: ")); b=input("Cor: ")\n', c: '    if b=="verde": t=0.50\n', d: '    else: t=0.65\n', e: '    print(f"Total: {k*t:.2f}")\n', q: '    if input("Sair? (s/n)") == "s": break\n', z: '# Fim' }
+  }
 };
-const LSKEY = 'quiz_ops_state_v8_fixed';
-let order=[], idx=0, score=0, startedAt=Date.now(), mode='treino';
-let attempts={}, hintLevel={}, locked={};
-const MAX_WRONG=3; let focusInput=null; let notaAtual=0;
 
-const fmtTime=ms=>{const s=Math.floor(ms/1000),mm=String(Math.floor(s/60)).padStart(2,'0'),ss=String(s%60).padStart(2,'0');return `${mm}:${ss}`};
-const shuffle=a=>{const arr=a.slice();for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr};
-const normalize=v=>(v||'').trim().toLowerCase();
-const FAM={Aritmético:new Set(["+","-","*","/","//","%","**"]),Comparação:new Set(["==","!=","<",">","<=",">="]),Lógico:new Set(["and","or","not"])};
-const familyOf=ans=>{for(const [n,s] of Object.entries(FAM)){if(s.has(ans))return n}return'Operador'};
+// =================== LÓGICA DE JOGO ===================
+let game = JSON.parse(localStorage.getItem('flowgame_vDebug')) || { xp: 0, concluidos: [] };
 
-function buildPalette(){ el.opBtns.innerHTML=''; OP_GROUPS.flat().forEach(op=>{ const b=document.createElement('button'); b.textContent=op; b.onclick=()=>{ const t=focusInput||document.querySelector('input.slot:not(.ok)'); if(t){ t.value=op; t.dispatchEvent(new Event('input')); t.focus(); } }; el.opBtns.appendChild(b); }); }
-function renderLines(text){ const n=text.split('\n').length; el.lines.innerHTML=Array.from({length:n},(_,i)=>String(i+1)).join('<br>'); }
+function updateStats() {
+  const lvl = Math.floor(game.xp / 500) + 1;
+  const xpAtual = game.xp % 500;
+  document.getElementById('lvl-display').innerText = `Nível ${lvl}`;
+  document.getElementById('xp-text').innerText = `${xpAtual} / 500 XP`;
+  document.getElementById('xp-fill').style.width = (xpAtual / 5) + "%";
+  
+  if(game.concluidos.length >= 1) document.getElementById('b1').classList.add('earned');
+  if(game.concluidos.length >= 10) document.getElementById('b2').classList.add('earned');
+  if(game.concluidos.length >= 20) document.getElementById('b4').classList.add('earned');
+  if(game.xp >= 1000) document.getElementById('b3').classList.add('earned');
 
-function render(){ const q=quiz[order[idx]]; const raw=q.code; const esc=raw.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); let index=0; const html=esc.replace(/__+/g, m=>`<input class="slot" id="op${index++}" data-len="${m.length}" placeholder="…" autocomplete="off" spellcheck="false" />`); el.code.innerHTML=`<div class="codeInner">${html}</div>`; renderLines(raw);
-  el.feedback.textContent=''; el.score.textContent=''; el.qNow.textContent=(idx+1); el.qTotal.textContent=quiz.length; el.qScore.textContent=score; el.qProg.style.width=Math.round((idx)/quiz.length*100)+'%';
-  const inputs=Array.from(document.querySelectorAll('input.slot'));
-  inputs.forEach((inp,i)=>{ inp.addEventListener('focus',()=> focusInput=inp); inp.addEventListener('input',()=>{ inp.classList.remove('ok','no'); resizeSlot(inp); }); inp.addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); check(); } if(e.ctrlKey&&e.key==='ArrowRight'){ e.preventDefault(); goNext(); } if(e.ctrlKey&&e.key==='ArrowLeft'){ e.preventDefault(); goPrev(); } if(e.key==='ArrowRight'){ const n=inputs[i+1]; if(n){ n.focus(); } } if(e.key==='ArrowLeft'){ const p=inputs[i-1]; if(p){ p.focus(); } } }); resizeSlot(inp); });
-  el.btnCheck.disabled=false; inputs.forEach(inp=> inp.readOnly=false );
-  el.code.onclick=e=>{ if(e.target.tagName!=='INPUT'){ (document.querySelector('input.slot:not(.ok)')||inputs[0])?.focus(); } };
-  setTimeout(()=> inputs[0]?.focus(), 10);
-  toggleHintsUI(mode==='treino'); hintLevel[idx]=hintLevel[idx]||0; buildHints();
-  if(locked[idx]){ inputs.forEach(inp=>{ inp.readOnly=true; inp.classList.remove('no'); }); el.btnCheck.disabled=true; el.feedback.innerHTML='Questão bloqueada após 3 tentativas. Avance para a próxima.'; el.btnNext.disabled=false; }
-}
-function resizeSlot(inp){ const v=inp.value||inp.getAttribute('placeholder')||''; const len=Math.max(2,Math.min(6,v.length)); inp.style.setProperty('--ch',String(len+3)); }
-function toggleHintsUI(show){ el.hintPanel.style.display=show?'block':'none'; el.btnCheck.textContent=show?'✔ Verificar (Enter)':'✔ Confirmar (Enter)'; }
-function buildHints(){ const level=hintLevel[idx]||0; const q=quiz[order[idx]]; const fams=q.answers.map(a=>familyOf(a)); el.hint1.innerHTML=(level>=1)? 'Dica 1 — família por campo: '+fams.map((f,i)=>`<b>[${i+1}] ${f}</b>`).join(' • ') : '<span class="muted">Dica 1 — família por campo</span>'; if(level>=2){ const block=document.createElement('div'); block.innerHTML='Dica 2 — candidatos por família (clique para preencher):'; const wrap=document.createElement('div'); wrap.className='chips'; const addChip=txt=>{ const s=document.createElement('span'); s.className='chip'; s.textContent=txt; s.onclick=()=>{ const t=focusInput||document.querySelector('input.slot:not(.ok)'); if(t){ t.value=txt; t.dispatchEvent(new Event('input')); t.focus(); } }; wrap.appendChild(s); }; fams.forEach(f=>{ if(f==='Aritmético')FAM.Aritmético.forEach(x=>addChip(x)); if(f==='Comparação')FAM.Comparação.forEach(x=>addChip(x)); if(f==='Lógico')FAM.Lógico.forEach(x=>addChip(x)); }); el.hint2.innerHTML=''; el.hint2.appendChild(block); el.hint2.appendChild(wrap); } else { el.hint2.innerHTML='<span class="muted">Dica 2 — candidatos por família</span>'; } if(level>=3){ el.hint3.innerHTML=contextHints(q.code); } else { el.hint3.innerHTML='<span class="muted">Dica 3 — pistas pelo contexto</span>'; } }
-function contextHints(code){ const lines=code.split('\n'); const hints=[]; let k=0; for(let li=0; li<lines.length; li++){ const line=lines[li]; let m; const re=/__+/g; while((m=re.exec(line))){ k++; let msg=`[${k}] Linha ${li+1}: `; if(/^\s*if\b/.test(line)){ if(/\band\b|\bor\b/.test(line)) msg+='expressão booleana (and/or).'; else msg+='geralmente comparação (==, !=, >, <, >=, <=).'; } else if(/=\s*\(/.test(line)||/res\s*=/.test(line)||/media\s*=/.test(line)){ msg+='expressão aritmética (+, -, *, /, //, %, **).'; } else { msg+='entre valores: comparação; em contas: aritmético; antes de booleano: not.'; } hints.push(msg); } } return '<div>'+hints.map(h=>'• '+h).join('<br>')+'</div>'; }
-
-function check(){ const q=quiz[order[idx]]; const inputs=Array.from(document.querySelectorAll('input.slot')); if(inputs.some(inp=>!inp.value.trim())){ el.feedback.innerHTML='<span class="muted">Preencha todos os campos.</span>'; return; } let okAll=true; inputs.forEach((inp,i)=>{ const user=normalize(inp.value); const target=normalize(q.answers[i]); const pass=(user===target); inp.classList.toggle('ok',pass); inp.classList.toggle('no',!pass); if(!pass) okAll=false; }); attempts[idx]=(attempts[idx]||0)+1; if(mode==='treino'){ if(okAll){ el.feedback.innerHTML='<span class="correct">✔ Correto! Pode avançar.</span>'; el.btnNext.disabled=false; score++; el.qScore.textContent=score; } else { if(attempts[idx]>=MAX_WRONG){ locked[idx]=true; el.feedback.innerHTML='<span class="wrong">✖ 3 tentativas. Questão bloqueada.</span>'; el.btnCheck.disabled=true; el.btnNext.disabled=false; saveState(); setTimeout(()=>{ goNext(); }, 900); return; } else { el.feedback.innerHTML='<span class="wrong">✖ Ainda há erro(s). Use as Dicas ou a paleta.</span>'; el.btnNext.disabled=true; } } } else { if(okAll){ score++; el.qScore.textContent=score; el.feedback.innerHTML='<span class="correct">✔ Correto</span>'; } else { if(attempts[idx]>=MAX_WRONG){ locked[idx]=true; el.feedback.innerHTML='<span class="wrong">✖ 3 tentativas. Questão bloqueada.</span>'; el.btnCheck.disabled=true; el.btnNext.disabled=false; saveState(); setTimeout(()=>{ goNext(); }, 900); return; } else { el.feedback.innerHTML='<span class="wrong">✖ Errado</span>'; } } el.btnNext.disabled=false; }
-  saveState(); }
-
-function goNext(){ if(idx<quiz.length-1){ idx++; render(); navButtons(); saveState(); } else finish(); }
-function goPrev(){ if(idx>0){ idx--; render(); navButtons(); saveState(); } }
-function navButtons(){ el.btnPrev.disabled=(idx===0); el.btnNext.disabled=(mode==='treino')&&!locked[idx]; el.btnCheck.disabled=!!locked[idx]; }
-
-function finish(){ el.code.innerHTML=''; el.lines.innerHTML=''; el.feedback.innerHTML=''; notaAtual=+((score/quiz.length)*10).toFixed(1); el.score.textContent=`Pontuação final: ${score} / ${quiz.length} — Nota: ${notaAtual} — Tempo: ${fmtTime(Date.now()-startedAt)} — Modo: ${mode.toUpperCase()}`; el.qProg.style.width='100%'; el.btnCheck.disabled=true; el.btnNext.disabled=true; el.btnPrev.disabled=true; el.btnSend.disabled=false; el.sendStatus.textContent=`Pronto para enviar.`; }
-
-async function sendEmail(){ const nome=(el.alunoNome.value||'').trim(); const serie=(el.alunoSerie.value||'').trim(); if(!nome||!serie){ el.sendStatus.innerHTML='<span class="wrong">Preencha Nome e Série.</span>'; return; }
-  // IMPORTANTE: Configure o "To email" do template no painel EmailJS com o e‑mail fixo do professor.
-  // Aqui só enviamos os parâmetros que o template usa no corpo/assunto.
-  const params={ nome, serie, nota: String(notaAtual) };
-  try{ el.btnSend.disabled=true; el.sendStatus.innerHTML='<span class="muted">Enviando…</span>';
-    await emailjs.send('service_94cnpvm','template_kvt866g', params);
-    el.sendStatus.innerHTML='<span class="correct">✔ Enviado!</span>';
-    localStorage.setItem('aluno_nome', nome); localStorage.setItem('aluno_serie', serie);
-  }catch(err){ el.sendStatus.innerHTML='<span class="wrong">Falhou: '+(err && (err.text||err.message) || 'erro')+'</span>'; el.btnSend.disabled=false; }
+  localStorage.setItem('flowgame_vDebug', JSON.stringify(game));
 }
 
-function saveState(){ const data={order,idx,score,attempts,startedAt,mode,hintLevel,locked}; localStorage.setItem(LSKEY, JSON.stringify(data)); }
-function loadStateOrInit(){ let data=null; try{ data=JSON.parse(localStorage.getItem(LSKEY)||'null'); }catch{}
-  order = data?.order?.length===quiz.length ? data.order : shuffle([...Array(quiz.length).keys()]);
-  idx = Number.isFinite(data?.idx) ? data.idx : 0; score = Number.isFinite(data?.score) ? data.score : 0;
-  attempts=data?.attempts||{}; hintLevel=data?.hintLevel||{}; locked=data?.locked||{}; startedAt=data?.startedAt||Date.now(); mode=data?.mode||'treino'; el.modeSel.value=mode;
-  el.alunoNome.value = localStorage.getItem('aluno_nome') || ''; el.alunoSerie.value = localStorage.getItem('aluno_serie') || '';
+const sel = document.getElementById('sel');
+const mmd = document.getElementById('mmd');
+const code = document.getElementById('code');
+let atual = null; let usados = new Set();
+
+for(const k in EX){
+  const opt = document.createElement('option');
+  opt.value = k; opt.textContent = EX[k].nome; sel.appendChild(opt);
 }
-setInterval(()=> el.qTime.textContent=fmtTime(Date.now()-startedAt), 1000);
-function buildPaletteUI(){ el.opBtns.innerHTML=''; OP_GROUPS.flat().forEach(op=>{ const b=document.createElement('button'); b.textContent=op; b.onclick=()=>{ const t=focusInput||document.querySelector('input.slot:not(.ok)'); if(t){ t.value=op; t.dispatchEvent(new Event('input')); t.focus(); } }; el.opBtns.appendChild(b); }); }
 
-el.btnCheck.onclick=check; el.btnNext.onclick=goNext; el.btnPrev.onclick=goPrev;
-el.btnReset.onclick=()=>{ localStorage.removeItem(LSKEY); order=shuffle([...Array(quiz.length).keys()]); idx=0; score=0; attempts={}; startedAt=Date.now(); hintLevel={}; locked={}; render(); navButtons(); el.qScore.textContent=0; el.qTime.textContent='00:00'; el.btnSend.disabled=true; el.sendStatus.textContent=''; };
-el.modeSel.onchange=()=>{ mode=el.modeSel.value; el.feedback.innerHTML='<span class="muted">Modo alterado para <b>'+mode.toUpperCase()+'</b>.</span>'; toggleHintsUI(mode==='treino'); navButtons(); saveState(); };
-el.btnHint.onclick=()=>{ hintLevel[idx]=Math.min(3,(hintLevel[idx]||0)+1); buildHints(); saveState(); };
-el.btnSend.onclick=sendEmail;
+async function render() {
+  const k = sel.value; 
+  atual = EX[k]; 
+  usados.clear();
+  code.textContent = "";
+  
+  const statusEl = document.getElementById('exercise-status');
+  statusEl.textContent = game.concluidos.includes(k) ? "✅ Concluído" : "⏳ Pendente";
+  statusEl.style.color = game.concluidos.includes(k) ? "#22c55e" : "#94a3b8";
 
-function init(){ buildPaletteUI(); loadStateOrInit(); el.qTotal.textContent=quiz.length; el.qScore.textContent=score; render(); navButtons(); }
-init();
+  mmd.innerHTML = atual.fluxo;
+  mmd.removeAttribute('data-processed');
+  if(window.mermaid) await mermaid.run({ nodes: [mmd] });
+}
+
+window.passo = function(id) {
+  if(!atual || usados.has(id)) return;
+  const snippet = atual.blocos[id];
+  if(snippet) {
+    code.textContent += snippet;
+    usados.add(id);
+    // Rolagem automática do código
+    code.scrollTop = code.scrollHeight;
+    
+    if(usados.size === Object.keys(atual.blocos).length) {
+      if(!game.concluidos.includes(sel.value)) {
+        game.xp += 100;
+        game.concluidos.push(sel.value);
+        updateStats();
+        alert("Parabéns! Código construído com sucesso! +100 XP");
+      }
+      render();
+    }
+  }
+};
+
+window.resetar = () => {
+    usados.clear();
+    code.textContent = "";
+    render();
+};
+
+sel.onchange = () => render();
+
+updateStats();
+setTimeout(render, 500);
 </script>
 </body>
 </html>
