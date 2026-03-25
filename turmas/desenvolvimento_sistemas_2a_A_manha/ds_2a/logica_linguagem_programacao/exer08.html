@@ -1,361 +1,557 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Exer02 — 20 Fluxogramas (Mermaid) | v3 robusta</title>
-  <meta name="description" content="Versão robusta: todos os rótulos entre aspas, apenas ASCII, sem HTML nos rótulos, usando <pre class='mermaid'>." />
-  <style>
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial;background:#0b0f17;color:#e5e7eb}
-    .container{max-width:1100px;margin:0 auto;padding:16px 20px}
-    header{position:sticky;top:0;background:#0b0f17cc;border-bottom:1px solid #1f2937;backdrop-filter:blur(8px)}
-    h1{font-size:22px;margin:10px 0}
-    .muted{color:#9ca3af}
-    .toc{margin:20px 0;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px}
-    .toc ol{columns:2;gap:16px;margin:0;padding-left:18px}
-    section{margin:22px 0 28px;padding:16px;border:1px solid #1f2937;border-radius:12px;background:#111827}
-    pre.mermaid{border-radius:8px;white-space:pre-wrap}
-  </style>
+<meta charset="utf-8">
+<title>Fluxograma → Código (20 exercícios interativos)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ 
+    startOnLoad: false, 
+    theme: "dark", 
+    securityLevel: "loose",
+    fontFamily: "monospace"
+  });
+  window.mermaid = mermaid;
+</script>
+
+<style>
+  body{margin:0;font-family:system-ui,Arial;background:#0b0f17;color:#e5e7eb;overflow-x:hidden}
+  header{padding:12px 16px;border-bottom:1px solid #1f2937;background:#0f172a;display:flex;align-items:center;gap:12px}
+  select{padding:8px;border-radius:8px;background:#020617;color:#e5e7eb;border:1px solid #334155;cursor:pointer}
+  .grid{display:grid;grid-template-columns:1.2fr 0.8fr;gap:16px;padding:16px;min-height:85vh}
+  .card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;display:flex;flex-direction:column}
+  h2{margin-top:0;font-size:18px;color:#94a3b8}
+  pre{background:#020617;padding:15px;border-radius:8px;overflow:auto;font-family:'Fira Code',monospace;font-size:14px;border:1px solid #1e293b;flex-grow:1}
+  #mmd{background:#020617;border-radius:8px;padding:10px;cursor:pointer;min-height:400px;display:flex;justify-content:center;align-items:flex-start}
+  .hint{color:#9ca3af;font-size:13px;margin-top:12px;padding:8px;background:#1e293b;border-radius:6px}
+  button{background:#334155;border:none;color:white;padding:8px 16px;border-radius:8px;cursor:pointer;font-weight:600}
+  button:hover{background:#475569}
+  @media (max-width:800px){ .grid{grid-template-columns:1fr} }
+</style>
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1> Fluxogramas em Mermaid (v3)</h1>
-          </div>
-  </header>
-  <main class="container">
-    <div class="toc">
-      <h2>Sumário</h2>
-      <ol>
-        <li><a href="#atv01">01. Par ou Ímpar</a></li>
-        <li><a href="#atv02">02. Positivo, Negativo ou Zero</a></li>
-        <li><a href="#atv03">03. Maior de dois números</a></li>
-        <li><a href="#atv04">04. Maior de três números</a></li>
-        <li><a href="#atv05">05. Média e Status</a></li>
-        <li><a href="#atv06">06. Multa de Velocidade</a></li>
-        <li><a href="#atv07">07. Ano Bissexto</a></li>
-        <li><a href="#atv08">08. Triângulo + Tipo</a></li>
-        <li><a href="#atv09">09. IMC + Classificação</a></li>
-        <li><a href="#atv10">10. Calculadora (opções)</a></li>
-        <li><a href="#atv11">11. Tarifa por Idade</a></li>
-        <li><a href="#atv12">12. Desconto por Pagamento</a></li>
-        <li><a href="#atv13">13. Faixa Etária</a></li>
-        <li><a href="#atv14">14. Login Simples</a></li>
-        <li><a href="#atv15">15. Dia Útil vs Fim de Semana</a></li>
-        <li><a href="#atv16">16. Conceito por Nota</a></li>
-        <li><a href="#atv17">17. Elegibilidade para Votar</a></li>
-        <li><a href="#atv18">18. Temperatura — Alertas</a></li>
-        <li><a href="#atv19">19. Múltiplos (3/5)</a></li>
-        <li><a href="#atv20">20. Bandeira Tarifária</a></li>
-      </ol>
-    </div>
 
-    <section id="atv01"><h3>01) Par ou Ímpar</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia N (inteiro)"]
-  B --> C{"N % 2 == 0?"}
-  C -- "Sim" --> D["Imprima Par"]
-  C -- "Não" --> E["Imprima Ímpar"]
-  D --> Z(["Fim"]) 
-  E --> Z
-</pre>
-    </section>
+<header>
+  <strong>Fluxograma → Código (20 exercícios)</strong>
+  <select id="sel"></select>
+  <button onclick="resetar()">Reiniciar</button>
+</header>
 
-    <section id="atv02"><h3>02) Positivo, Negativo ou Zero</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia X (número)"]
-  B --> C{"X > 0?"}
-  C -- "Sim" --> D["Imprima Positivo"]
-  C -- "Não" --> E{"X == 0?"}
-  E -- "Sim" --> F["Imprima Zero"]
-  E -- "Não" --> G["Imprima Negativo"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  G --> Z
-</pre>
-    </section>
+<main class="grid">
+  <section class="card">
+    <h2>Fluxograma</h2>
+    <div id="mmd"></div>
+    <div class="hint">Dica: clique de cima para baixo (Início → ... → Fim). Cliques repetidos são ignorados.</div>
+  </section>
 
-    <section id="atv03"><h3>03) Maior de dois números</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia A, B"]
-  B --> C{"A > B?"}
-  C -- "Sim" --> D["Imprima A é maior"]
-  C -- "Não" --> E{"A == B?"}
-  E -- "Sim" --> F["Imprima Iguais"]
-  E -- "Não" --> G["Imprima B é maior"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  G --> Z
-</pre>
-    </section>
+  <section class="card">
+    <h2>Código Python</h2>
+    <pre id="code"></pre>
+  </section>
+</main>
 
-    <section id="atv04"><h3>04) Maior de três números</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia A, B, C"]
-  B --> C1{"A >= B e A >= C?"}
-  C1 -- "Sim" --> D["A é o maior"]
-  C1 -- "Não" --> C2{"B >= A e B >= C?"}
-  C2 -- "Sim" --> E["B é o maior"]
-  C2 -- "Não" --> F["C é o maior"]
-  D --> Z(["Fim"]) 
-  E --> Z
-  F --> Z
-</pre>
-    </section>
+<script>
+// =================== BANCO DE DADOS DOS 20 EXERCÍCIOS ===================
+const EX = {
+  "01": {
+    nome: "01. Par ou Ímpar",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia N"]
+      B --> C{"N % 2 == 0?"}
+      C -- "Sim" --> D["Imprima Par"]
+      C -- "Não" --> E["Imprima Ímpar"]
+      D --> Z(["Fim"]) 
+      E --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d")
+      click D call passo("p")
+      click E call passo("i")
+      click Z call passo("f")`,
+    blocos: { s: '# 01. Par ou Ímpar\n', l: 'n = int(input("N: "))\n', d: 'if n % 2 == 0:\n', p: '    print("Par")\n', i: 'else:\n    print("Ímpar")\n', f: '# Fim\n' }
+  },
+  "02": {
+    nome: "02. Positivo, Negativo ou Zero",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia X"]
+      B --> C{"X > 0?"}
+      C -- "Sim" --> D["Imprima Positivo"]
+      C -- "Não" --> E{"X == 0?"}
+      E -- "Sim" --> F["Imprima Zero"]
+      E -- "Não" --> G["Imprima Negativo"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      G --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("pos")
+      click E call passo("d2")
+      click F call passo("zer")
+      click G call passo("neg")
+      click Z call passo("f")`,
+    blocos: { s: '# 02. Positivo / Negativo / Zero\n', l: 'x = float(input("X: "))\n', d1: 'if x > 0:\n', pos: '    print("Positivo")\n', d2: 'elif x == 0:\n', zer: '    print("Zero")\n', neg: 'else:\n    print("Negativo")\n', f: '# Fim\n' }
+  },
+  "03": {
+    nome: "03. Maior de dois números",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia A, B"]
+      B --> C{"A > B?"}
+      C -- "Sim" --> D["Imprima A maior"]
+      C -- "Não" --> E{"A == B?"}
+      E -- "Sim" --> F["Imprima Iguais"]
+      E -- "Não" --> G["Imprima B maior"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      G --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("am")
+      click E call passo("d2")
+      click F call passo("ig")
+      click G call passo("bm")
+      click Z call passo("f")`,
+    blocos: { s: '# 03. Maior de dois\n', l: 'a = float(input("A: "))\nb = float(input("B: "))\n', d1: 'if a > b:\n', am: '    print("A é maior")\n', d2: 'elif a == b:\n', ig: '    print("Iguais")\n', bm: 'else:\n    print("B é maior")\n', f: '# Fim\n' }
+  },
+  "04": {
+    nome: "04. Maior de três números",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia A, B, C"]
+      B --> C1{"A >= B e A >= C?"}
+      C1 -- "Sim" --> D["A é o maior"]
+      C1 -- "Não" --> C2{"B >= A e B >= C?"}
+      C2 -- "Sim" --> E["B é o maior"]
+      C2 -- "Não" --> F["C é o maior"]
+      D --> Z(["Fim"]) 
+      E --> Z
+      F --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C1 call passo("d1")
+      click D call passo("pa")
+      click C2 call passo("d2")
+      click E call passo("pb")
+      click F call passo("pc")
+      click Z call passo("f")`,
+    blocos: { s: '# 04. Maior de três\n', l: 'a=float(input("A: "))\nb=float(input("B: "))\nc=float(input("C: "))\n', d1: 'if a >= b and a >= c:\n', pa: '    print("A é o maior")\n', d2: 'elif b >= a and b >= c:\n', pb: '    print("B é o maior")\n', pc: 'else:\n    print("C é o maior")\n', f: '# Fim\n' }
+  },
+  "05": {
+    nome: "05. Média e Status",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia N1, N2"]
+      B --> C["M = (N1+N2)/2"]
+      C --> D{"M >= 7?"}
+      D -- "Sim" --> E["Aprovado"]
+      D -- "Não" --> F{"M >= 5?"}
+      F -- "Sim" --> G["Recuperação"]
+      F -- "Não" --> H["Reprovado"]
+      E --> Z(["Fim"]) 
+      G --> Z
+      H --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("m")
+      click D call passo("d1")
+      click E call passo("ap")
+      click F call passo("d2")
+      click G call passo("rc")
+      click H call passo("rp")
+      click Z call passo("f")`,
+    blocos: { s: '# 05. Média Escolar\n', l: 'n1=float(input("N1: "))\nn2=float(input("N2: "))\n', m: 'm = (n1 + n2) / 2\n', d1: 'if m >= 7:\n', ap: '    print("Aprovado")\n', d2: 'elif m >= 5:\n', rc: '    print("Recuperação")\n', rp: 'else:\n    print("Reprovado")\n', f: '# Fim\n' }
+  },
+  "06": {
+    nome: "06. Multa de Velocidade",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia vel"]
+      B --> C{"vel > 80?"}
+      C -- "Sim" --> D["Calcule multa"]
+      C -- "Não" --> E["Sem multa"]
+      D --> Z(["Fim"]) 
+      E --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d")
+      click D call passo("mu")
+      click E call passo("sm")
+      click Z call passo("f")`,
+    blocos: { s: '# 06. Radar\n', l: 'vel = float(input("Velocidade: "))\n', d: 'if vel > 80:\n', mu: '    multa = (vel - 80) * 5\n    print(f"Multa: R$ {multa:.2f}")\n', sm: 'else:\n    print("Sem multa")\n', f: '# Fim\n' }
+  },
+  "07": {
+    nome: "07. Ano Bissexto",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia ano"]
+      B --> C{"É Bissexto?"}
+      C -- "Sim" --> D["Imprima Sim"]
+      C -- "Não" --> E["Imprima Não"]
+      D --> Z(["Fim"]) 
+      E --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d")
+      click D call passo("si")
+      click E call passo("no")
+      click Z call passo("f")`,
+    blocos: { s: '# 07. Ano Bissexto\n', l: 'ano = int(input("Ano: "))\n', d: 'if (ano % 400 == 0) or (ano % 4 == 0 and ano % 100 != 0):\n', si: '    print("Bissexto")\n', no: 'else:\n    print("Não bissexto")\n', f: '# Fim\n' }
+  },
+  "08": {
+    nome: "08. Triângulo + Tipo",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia a, b, c"]
+      B --> C{"É triângulo?"}
+      C -- "Não" --> D["Não forma"]
+      C -- "Sim" --> E{"Equilátero?"}
+      E -- "Sim" --> F["Equilátero"]
+      E -- "Não" --> G{"Isósceles?"}
+      G -- "Sim" --> H["Isósceles"]
+      G -- "Não" --> I["Escaleno"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      H --> Z
+      I --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("v")
+      click D call passo("nt")
+      click E call passo("d1")
+      click F call passo("eq")
+      click G call passo("d2")
+      click H call passo("is")
+      click I call passo("es")
+      click Z call passo("f")`,
+    blocos: { s: '# 08. Triângulos\n', l: 'a=float(input("a: "))\nb=float(input("b: "))\nc=float(input("c: "))\n', v: 'if a < b + c and b < a + c and c < a + b:\n', d1: '    if a == b == c:\n', eq: '        print("Equilátero")\n', d2: '    elif a == b or a == c or b == c:\n', is: '        print("Isósceles")\n', es: '    else:\n        print("Escaleno")\n', nt: 'else:\n    print("Não forma triângulo")\n', f: '# Fim\n' }
+  },
+  "09": {
+    nome: "09. IMC + Classificação",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia peso, altura"]
+      B --> C["IMC = p/h²"]
+      C --> D{"IMC < 18.5?"}
+      D -- "Sim" --> E["Abaixo"]
+      D -- "Não" --> F{"IMC < 25?"}
+      F -- "Sim" --> G["Normal"]
+      F -- "Não" --> H{"IMC < 30?"}
+      H -- "Sim" --> I["Sobrepeso"]
+      H -- "Não" --> J["Obesidade"]
+      E --> Z(["Fim"]) 
+      G --> Z
+      I --> Z
+      J --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("c")
+      click D call passo("d1")
+      click E call passo("ab")
+      click F call passo("d2")
+      click G call passo("no")
+      click H call passo("d3")
+      click I call passo("sp")
+      click J call passo("ob")
+      click Z call passo("f")`,
+    blocos: { s: '# 09. IMC\n', l: 'p=float(input("Peso: "))\nh=float(input("Altura: "))\n', c: 'imc = p / (h ** 2)\n', d1: 'if imc < 18.5:\n', ab: '    print("Abaixo do peso")\n', d2: 'elif imc < 25:\n', no: '    print("Normal")\n', d3: 'elif imc < 30:\n', sp: '    print("Sobrepeso")\n', ob: 'else:\n    print("Obesidade")\n', f: '# Fim\n' }
+  },
+  "10": {
+    nome: "10. Calculadora",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia op, X, Y"]
+      B --> C{"Y == 0 e op == 4?"}
+      C -- "Sim" --> D["Erro div/0"]
+      C -- "Não" --> E["Calcula op"]
+      D --> Z(["Fim"]) 
+      E --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d")
+      click D call passo("err")
+      click E call passo("res")
+      click Z call passo("f")`,
+    blocos: { s: '# 10. Calculadora\n', l: 'op=int(input("1:+, 2:-, 3:*, 4:/ : "))\nx=float(input("X: "))\ny=float(input("Y: "))\n', d: 'if op == 4 and y == 0:\n', err: '    print("Erro: Divisão por zero")\n', res: 'else:\n    if op==1: print(x+y)\n    elif op==2: print(x-y)\n    elif op==3: print(x*y)\n    elif op==4: print(x/y)\n', f: '# Fim\n' }
+  },
+  "11": {
+    nome: "11. Tarifa por Idade",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia idade"]
+      B --> C{"idade < 6?"}
+      C -- "Sim" --> D["Isento"]
+      C -- "Não" --> E{"idade >= 60?"}
+      E -- "Sim" --> F["Meia"]
+      E -- "Não" --> G["Inteira"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      G --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("is")
+      click E call passo("d2")
+      click F call passo("me")
+      click G call passo("in")
+      click Z call passo("f")`,
+    blocos: { s: '# 11. Tarifas\n', l: 'id = int(input("Idade: "))\n', d1: 'if id < 6:\n', is: '    print("Isento")\n', d2: 'elif id >= 60:\n', me: '    print("Meia")\n', in: 'else:\n    print("Inteira")\n', f: '# Fim\n' }
+  },
+  "12": {
+    nome: "12. Desconto por Pagamento",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia preço e forma"]
+      B --> C{"forma == 'vista'?"}
+      C -- "Sim" --> D["-10% de desconto"]
+      C -- "Não" --> E["Preço normal"]
+      D --> F["Imprime Total"]
+      E --> F
+      F --> Z(["Fim"]) 
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d")
+      click D call passo("de")
+      click E call passo("no")
+      click F call passo("p")
+      click Z call passo("f")`,
+    blocos: { s: '# 12. Pagamento\n', l: 'p = float(input("Preço: "))\nf = input("Forma (vista/cartao): ")\n', d: 'if f == "vista":\n', de: '    total = p * 0.9\n', no: '    total = p\n', p: 'print(f"Total: {total}")\n', f: '# Fim\n' }
+  },
+  "13": {
+    nome: "13. Faixa Etária",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia idade"]
+      B --> C{"idade < 12?"}
+      C -- "Sim" --> D["Criança"]
+      C -- "Não" --> E{"idade < 18?"}
+      E -- "Sim" --> F["Adolescente"]
+      E -- "Não" --> G{"idade < 60?"}
+      G -- "Sim" --> H["Adulto"]
+      G -- "Não" --> I["Idoso"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      H --> Z
+      I --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("cr")
+      click E call passo("d2")
+      click F call passo("ad")
+      click G call passo("du")
+      click H call passo("adu")
+      click I call passo("id")
+      click Z call passo("f")`,
+    blocos: { s: '# 13. Idades\n', l: 'i = int(input("Idade: "))\n', d1: 'if i < 12:\n', cr: '    print("Criança")\n', d2: 'elif i < 18:\n', ad: '    print("Adolescente")\n', du: 'elif i < 60:\n', adu: '    print("Adulto")\n', id: 'else:\n    print("Idoso")\n', f: '# Fim\n' }
+  },
+  "14": {
+    nome: "14. Login Simples",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia usuário, senha"]
+      B --> C{"admin e 1234?"}
+      C -- "Sim" --> D["Acesso OK"]
+      C -- "Não" --> E["Negado"]
+      D --> Z(["Fim"]) 
+      E --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d")
+      click D call passo("ok")
+      click E call passo("no")
+      click Z call passo("f")`,
+    blocos: { s: '# 14. Login\n', l: 'u = input("Usuário: ")\ns = input("Senha: ")\n', d: 'if u == "admin" and s == "1234":\n', ok: '    print("Acesso Concedido")\n', no: 'else:\n    print("Acesso Negado")\n', f: '# Fim\n' }
+  },
+  "15": {
+    nome: "15. Dia Útil vs Fim de Semana",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia dia"]
+      B --> C{"Sáb ou Dom?"}
+      C -- "Sim" --> D["Fim de semana"]
+      C -- "Não" --> E["Dia útil"]
+      D --> Z(["Fim"]) 
+      E --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d")
+      click D call passo("fs")
+      click E call passo("du")
+      click Z call passo("f")`,
+    blocos: { s: '# 15. Calendário\n', l: 'dia = input("Dia: ").lower()\n', d: 'if dia in ["sab", "dom", "sábado", "domingo"]:\n', fs: '    print("Fim de semana")\n', du: 'else:\n    print("Dia útil")\n', f: '# Fim\n' }
+  },
+  "16": {
+    nome: "16. Conceito por Nota (A–E)",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia M"]
+      B --> C{"M >= 9?"}
+      C -- "Sim" --> D["A"]
+      C -- "Não" --> E{"M >= 7?"}
+      E -- "Sim" --> F["B"]
+      E -- "Não" --> G{"M >= 5?"}
+      G -- "Sim" --> H["C"]
+      G -- "Não" --> I{"M >= 3?"}
+      I -- "Sim" --> J["D"]
+      I -- "Não" --> K["E"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      H --> Z
+      J --> Z
+      K --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("a")
+      click E call passo("d2")
+      click F call passo("b")
+      click G call passo("d3")
+      click H call passo("c")
+      click I call passo("d4")
+      click J call passo("d_con")
+      click K call passo("e")
+      click Z call passo("f")`,
+    blocos: { s: '# 16. Conceitos\n', l: 'm = float(input("Nota: "))\n', d1: 'if m >= 9:\n', a: '    print("Conceito A")\n', d2: 'elif m >= 7:\n', b: '    print("Conceito B")\n', d3: 'elif m >= 5:\n', c: '    print("Conceito C")\n', d4: 'elif m >= 3:\n', d_con: '    print("Conceito D")\n', e: 'else:\n    print("Conceito E")\n', f: '# Fim\n' }
+  },
+  "17": {
+    nome: "17. Elegibilidade para Votar",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia idade"]
+      B --> C{"idade < 16?"}
+      C -- "Sim" --> D["Não vota"]
+      C -- "Não" --> E{"Facultativo?"}
+      E -- "Sim" --> F["Facultativo"]
+      E -- "Não" --> G["Obrigatório"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      G --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("no")
+      click E call passo("d2")
+      click F call passo("fa")
+      click G call passo("ob")
+      click Z call passo("f")`,
+    blocos: { s: '# 17. Eleitor\n', l: 'id = int(input("Idade: "))\n', d1: 'if id < 16:\n', no: '    print("Não pode votar")\n', d2: 'elif (16 <= id < 18) or (id >= 70):\n', fa: '    print("Voto facultativo")\n', ob: 'else:\n    print("Voto obrigatório")\n', f: '# Fim\n' }
+  },
+  "18": {
+    nome: "18. Temperatura — Alertas",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia T"]
+      B --> C{"T < 35?"}
+      C -- "Sim" --> D["Hipotermia"]
+      C -- "Não" --> E{"T > 37.8?"}
+      E -- "Sim" --> F["Febre"]
+      E -- "Não" --> G["Normal"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      G --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("hi")
+      click E call passo("d2")
+      click F call passo("fe")
+      click G call passo("no")
+      click Z call passo("f")`,
+    blocos: { s: '# 18. Saúde\n', l: 't = float(input("Temp: "))\n', d1: 'if t < 35:\n', hi: '    print("Alerta: Hipotermia")\n', d2: 'elif t > 37.8:\n', fe: '    print("Alerta: Febre")\n', no: 'else:\n    print("Temperatura Normal")\n', f: '# Fim\n' }
+  },
+  "19": {
+    nome: "19. Múltiplos de 3 e/ou 5",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia N"]
+      B --> C{"N % 3 e 5 == 0?"}
+      C -- "Sim" --> D["Múltiplo de Ambos"]
+      C -- "Não" --> E{"N % 3 == 0?"}
+      E -- "Sim" --> F["Múltiplo de 3"]
+      E -- "Não" --> G{"N % 5 == 0?"}
+      G -- "Sim" --> H["Múltiplo de 5"]
+      G -- "Não" --> I["Nenhum"]
+      D --> Z(["Fim"]) 
+      F --> Z
+      H --> Z
+      I --> Z
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("am")
+      click E call passo("d2")
+      click F call passo("m3")
+      click G call passo("d3")
+      click H call passo("m5")
+      click I call passo("ne")
+      click Z call passo("f")`,
+    blocos: { s: '# 19. Múltiplos\n', l: 'n = int(input("N: "))\n', d1: 'if n % 3 == 0 and n % 5 == 0:\n', am: '    print("Múltiplo de 3 e 5")\n', d2: 'elif n % 3 == 0:\n', m3: '    print("Múltiplo de 3")\n', d3: 'elif n % 5 == 0:\n', m5: '    print("Múltiplo de 5")\n', ne: 'else:\n    print("Não é múltiplo de 3 nem 5")\n', f: '# Fim\n' }
+  },
+  "20": {
+    nome: "20. Bandeira Tarifária",
+    fluxo: `flowchart TD
+      A(["Início"]) --> B["Leia cons, band"]
+      B --> C{"Verde?"}
+      C -- "Sim" --> D["Tarifa Base"]
+      C -- "Não" --> E{"Amarela?"}
+      E -- "Sim" --> F["Base + 0.018"]
+      E -- "Não" --> G["Base + 0.039"]
+      D --> H["Total = cons * tarifa"]
+      F --> H
+      G --> H
+      H --> Z(["Fim"]) 
+      click A call passo("s")
+      click B call passo("l")
+      click C call passo("d1")
+      click D call passo("tv")
+      click E call passo("d2")
+      click F call passo("ta")
+      click G call passo("tr")
+      click H call passo("tot")
+      click Z call passo("f")`,
+    blocos: { s: '# 20. Conta de Luz\n', l: 'c = float(input("kWh: "))\nb = input("Bandeira: ").lower()\nbase = 0.50\n', d1: 'if b == "verde":\n', tv: '    t = base\n', d2: 'elif b == "amarela":\n', ta: '    t = base + 0.018\n', tr: 'else:\n    t = base + 0.039\n', tot: 'print(f"Total: R$ {c * t:.2f}")\n', f: '# Fim\n' }
+  }
+};
 
-    <section id="atv05"><h3>05) Média e Status</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia N1, N2"]
-  B --> C["Calcule M = (N1+N2)/2"]
-  C --> D{"M >= 7?"}
-  D -- "Sim" --> E["Imprima Aprovado"]
-  D -- "Não" --> F{"M >= 5?"}
-  F -- "Sim" --> G["Imprima Recuperação"]
-  F -- "Não" --> H["Imprima Reprovado"]
-  E --> Z(["Fim"]) 
-  G --> Z
-  H --> Z
-</pre>
-    </section>
+// =================== LÓGICA DE FUNCIONAMENTO ===================
+const sel = document.getElementById('sel');
+const mmd = document.getElementById('mmd');
+const code = document.getElementById('code');
+let atual = null;
+let usados = new Set();
 
-    <section id="atv06"><h3>06) Multa de Velocidade</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia vel (km/h)"]
-  B --> C{"vel > 80?"}
-  C -- "Sim" --> D["Calcule multa = (vel-80) * 5 e imprima"]
-  C -- "Não" --> E["Imprima Sem multa"]
-  D --> Z(["Fim"]) 
-  E --> Z
-</pre>
-    </section>
+// Preencher o select
+for(const k in EX){
+  const opt = document.createElement('option');
+  opt.value = k;
+  opt.textContent = EX[k].nome;
+  sel.appendChild(opt);
+}
 
-    <section id="atv07"><h3>07) Ano Bissexto</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia ano"]
-  B --> C{"(ano % 400 == 0) ou ((ano % 4 == 0) e (ano % 100 != 0))?"}
-  C -- "Sim" --> D["Imprima Bissexto"]
-  C -- "Não" --> E["Imprima Não bissexto"]
-  D --> Z(["Fim"]) 
-  E --> Z
-</pre>
-    </section>
+// Função para renderizar o fluxograma
+async function render() {
+  const k = sel.value;
+  atual = EX[k];
+  usados.clear();
+  code.textContent = "";
+  
+  mmd.innerHTML = atual.fluxo;
+  mmd.removeAttribute('data-processed');
+  
+  if(window.mermaid) {
+    await mermaid.run({ nodes: [mmd] });
+  }
+}
 
-    <section id="atv08"><h3>08) Triângulo + Tipo</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia a, b, c"]
-  B --> C{"a < b+c e b < a+c e c < a+b?"}
-  C -- "Não" --> D["Imprima Não forma triângulo"]
-  C -- "Sim" --> E{"a == b e b == c?"}
-  E -- "Sim" --> F["Imprima Equilátero"]
-  E -- "Não" --> G{"a == b ou a == c ou b == c?"}
-  G -- "Sim" --> H["Imprima Isósceles"]
-  G -- "Não" --> I["Imprima Escaleno"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  H --> Z
-  I --> Z
-</pre>
-    </section>
+// Função chamada pelo clique no Mermaid
+window.passo = function(id) {
+  if(!atual || usados.has(id)) return;
+  
+  const snippet = atual.blocos[id];
+  if(snippet) {
+    code.textContent += snippet;
+    usados.add(id);
+    // Auto-scroll do código
+    code.scrollTop = code.scrollHeight;
+  }
+};
 
-    <section id="atv09"><h3>09) IMC + Classificação</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia peso (kg) e altura (m)"]
-  B --> C["IMC = peso / (altura^2)"]
-  C --> D{"IMC < 18.5?"}
-  D -- "Sim" --> E["Abaixo do peso"]
-  D -- "Não" --> F{"IMC < 25?"}
-  F -- "Sim" --> G["Normal"]
-  F -- "Não" --> H{"IMC < 30?"}
-  H -- "Sim" --> I["Sobrepeso"]
-  H -- "Não" --> J["Obesidade"]
-  E --> Z(["Fim"]) 
-  G --> Z
-  I --> Z
-  J --> Z
-</pre>
-    </section>
+function resetar() {
+  render();
+}
 
-    <section id="atv10"><h3>10) Calculadora (opções 1–4)</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia op (1:+ 2:- 3:* 4:/)"]
-  B --> C["Leia X, Y"]
-  C --> D{"op == 4 e Y == 0?"}
-  D -- "Sim" --> E["Erro: divisão por zero"]
-  D -- "Não" --> F["Execute operação e imprima resultado"]
-  E --> Z(["Fim"]) 
-  F --> Z
-</pre>
-    </section>
+sel.addEventListener('change', render);
 
-    <section id="atv11"><h3>11) Tarifa de Ônibus por Idade</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia idade"]
-  B --> C{"idade < 6?"}
-  C -- "Sim" --> D["Isento"]
-  C -- "Não" --> E{"idade >= 60?"}
-  E -- "Sim" --> F["Meia"]
-  E -- "Não" --> G["Inteira"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  G --> Z
-</pre>
-    </section>
+// Inicialização atrasada para garantir que o Mermaid carregou
+setTimeout(render, 500);
 
-    <section id="atv12"><h3>12) Desconto por Forma de Pagamento</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia preço e forma (vista/cartão)"]
-  B --> C{"forma == 'vista'?"}
-  C -- "Sim" --> D["total = preço * 0.9"]
-  C -- "Não" --> E["total = preço"]
-  D --> F["Imprima total"]
-  E --> F
-  F --> Z(["Fim"]) 
-</pre>
-    </section>
-
-    <section id="atv13"><h3>13) Faixa Etária</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia idade"]
-  B --> C{"idade < 12?"}
-  C -- "Sim" --> D["Criança"]
-  C -- "Não" --> E{"idade < 18?"}
-  E -- "Sim" --> F["Adolescente"]
-  E -- "Não" --> G{"idade < 60?"}
-  G -- "Sim" --> H["Adulto"]
-  G -- "Não" --> I["Idoso"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  H --> Z
-  I --> Z
-</pre>
-    </section>
-
-    <section id="atv14"><h3>14) Login Simples</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia usuário e senha"]
-  B --> C{"usu == 'admin' e senha == '1234'?"}
-  C -- "Sim" --> D["Acesso concedido"]
-  C -- "Não" --> E["Acesso negado"]
-  D --> Z(["Fim"]) 
-  E --> Z
-</pre>
-    </section>
-
-    <section id="atv15"><h3>15) Dia Útil vs Fim de Semana</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia dia (seg...dom)"]
-  B --> C{"dia == 'sab' ou dia == 'dom'?"}
-  C -- "Sim" --> D["Fim de semana"]
-  C -- "Não" --> E["Dia útil"]
-  D --> Z(["Fim"]) 
-  E --> Z
-</pre>
-    </section>
-
-    <section id="atv16"><h3>16) Conceito por Nota (A–E)</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia M (0..10)"]
-  B --> C{"M >= 9?"}
-  C -- "Sim" --> D["A"]
-  C -- "Não" --> E{"M >= 7?"}
-  E -- "Sim" --> F["B"]
-  E -- "Não" --> G{"M >= 5?"}
-  G -- "Sim" --> H["C"]
-  G -- "Não" --> I{"M >= 3?"}
-  I -- "Sim" --> J["D"]
-  I -- "Não" --> K["E"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  H --> Z
-  J --> Z
-  K --> Z
-</pre>
-    </section>
-
-    <section id="atv17"><h3>17) Elegibilidade para Votar</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia idade"]
-  B --> C{"idade < 16?"}
-  C -- "Sim" --> D["Não eleitor"]
-  C -- "Não" --> E{"idade < 18 ou idade >= 70?"}
-  E -- "Sim" --> F["Voto facultativo"]
-  E -- "Não" --> G["Voto obrigatório"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  G --> Z
-</pre>
-    </section>
-
-    <section id="atv18"><h3>18) Temperatura — Alertas</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia T (°C)"]
-  B --> C{"T < 35?"}
-  C -- "Sim" --> D["Alerta: hipotermia"]
-  C -- "Não" --> E{"T > 37.8?"}
-  E -- "Sim" --> F["Alerta: febre"]
-  E -- "Não" --> G["Normal"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  G --> Z
-</pre>
-    </section>
-
-    <section id="atv19"><h3>19) Múltiplos de 3 e/ou 5</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia N"]
-  B --> C{"N % 3 == 0 e N % 5 == 0?"}
-  C -- "Sim" --> D["Imprima Múltiplo de 3 e 5"]
-  C -- "Não" --> E{"N % 3 == 0?"}
-  E -- "Sim" --> F["Imprima Múltiplo de 3"]
-  E -- "Não" --> G{"N % 5 == 0?"}
-  G -- "Sim" --> H["Imprima Múltiplo de 5"]
-  G -- "Não" --> I["Imprima Nenhum"]
-  D --> Z(["Fim"]) 
-  F --> Z
-  H --> Z
-  I --> Z
-</pre>
-    </section>
-
-    <section id="atv20"><h3>20) Energia — Bandeira Tarifária</h3>
-<pre class="mermaid">
-flowchart TD
-  A(["Início"]) --> B["Leia consumo (kWh) e bandeira (verde/amarela/vermelha)"]
-  B --> C{"bandeira == 'verde'?"}
-  C -- "Sim" --> D["tarifa = base"]
-  C -- "Não" --> E{"bandeira == 'amarela'?"}
-  E -- "Sim" --> F["tarifa = base + 0,018/kWh"]
-  E -- "Não" --> G["tarifa = base + 0,039/kWh"]
-  D --> H["total = consumo * tarifa; imprima total"]
-  F --> H
-  G --> H
-  H --> Z(["Fim"]) 
-</pre>
-    </section>
-  </main>
-
-  <script type="module">
-    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
-  </script>
+</script>
 </body>
 </html>
