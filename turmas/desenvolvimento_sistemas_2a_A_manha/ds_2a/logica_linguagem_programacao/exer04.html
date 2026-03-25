@@ -2,227 +2,105 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<title>Fluxograma → Código (12 exemplos)</title>
+<title>Fluxograma → Código</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script type="module">
-import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
-mermaid.initialize({ startOnLoad:false, theme:"dark", securityLevel:"loose" });
-window.mermaid = mermaid;
+<!-- ✅ Mermaid GLOBAL -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: false,
+    theme: "dark",
+    securityLevel: "loose"
+  });
 </script>
 
 <style>
 body{margin:0;font-family:system-ui;background:#0b0f17;color:#e5e7eb}
-header{padding:12px 16px;border-bottom:1px solid #1f2937}
-select{padding:8px;border-radius:8px;background:#020617;color:#e5e7eb}
+header{padding:12px;border-bottom:1px solid #1f2937}
 .container{display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:16px}
-.card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px}
-pre{background:#020617;padding:12px;border-radius:8px;overflow:auto;font-size:14px}
+.card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:12px}
+pre{background:#020617;padding:12px;border-radius:8px}
 </style>
 </head>
 
 <body>
 
 <header>
-<strong>Fluxograma → Código (12 exercícios)</strong><br>
-<label>Exercício:</label>
-<select id="sel"></select>
+<select id="sel">
+  <option value="01">01. Par ou Ímpar</option>
+  <option value="02">02. Positivo / Negativo</option>
+</select>
 </header>
 
 <div class="container">
   <div class="card">
-    <h3>Fluxograma</h3>
     <pre class="mermaid" id="mmd"></pre>
   </div>
   <div class="card">
-    <h3>Código Python</h3>
-    <pre id="code"># Clique no fluxograma para começar</pre>
+    <pre id="code"># clique no fluxograma</pre>
   </div>
 </div>
 
 <script>
 const EX = {
 
-"01":{
-nome:"01. Par ou Ímpar",
-fluxo:`flowchart TD
+"01": `
+flowchart TD
 A(["Início"])-->B["Leia N"]
 B-->C{"N é par?"}
-C--"Sim"-->D["Imprima Par"]
-C--"Não"-->E["Imprima Ímpar"]
+C--"Sim"-->D["Par"]
+C--"Não"-->E["Ímpar"]
 D-->F(["Fim"])
 E-->F
-click A call passo("s")
-click B call passo("l")
-click C call passo("d")
-click D call passo("p")
-click E call passo("i")
-click F call passo("f")`,
-blocos:{
-s:"# Início\n",
-l:'n = int(input("N: "))\n',
-d:"if n % 2 == 0:\n",
-p:'    print("Par")\n',
-i:'else:\n    print("Ímpar")\n',
-f:"# Fim\n"
-}
-},
 
-"02":{
-nome:"02. Positivo ou Negativo",
-fluxo:`flowchart TD
+click A call passo("a")
+click B call passo("b")
+click C call passo("c")
+click D call passo("d")
+click E call passo("e")
+click F call passo("f")
+`,
+
+"02": `
+flowchart TD
 A(["Início"])-->B["Leia X"]
 B-->C{"X é positivo?"}
-C--"Sim"-->D["Imprima Positivo"]
-C--"Não"-->E["Imprima Negativo"]
+C--"Sim"-->D["Positivo"]
+C--"Não"-->E["Negativo"]
 D-->F(["Fim"])
 E-->F
-click A call passo("s")
-click B call passo("l")
-click C call passo("d")
-click D call passo("p")
-click E call passo("n")
-click F call passo("f")`,
-blocos:{
-s:"# Início\n",
-l:'x = int(input("X: "))\n',
-d:"if x > 0:\n",
-p:'    print("Positivo")\n',
-n:'else:\n    print("Negativo")\n',
-f:"# Fim\n"
-}
-},
 
-"03":{
-nome:"03. Maior de Dois",
-fluxo:`flowchart TD
-A(["Início"])-->B["Leia A e B"]
-B-->C{"A é maior que B?"}
-C--"Sim"-->D["A maior"]
-C--"Não"-->E["B maior"]
-D-->F(["Fim"])
-E-->F
-click A call passo("s")
-click B call passo("l")
-click C call passo("d")
-click D call passo("a")
-click E call passo("b")
-click F call passo("f")`,
-blocos:{
-s:"# Início\n",
-l:'a=int(input("A: "))\nb=int(input("B: "))\n',
-d:"if a > b:\n",
-a:'    print("A é maior")\n',
-b:'else:\n    print("B é maior")\n',
-f:"# Fim\n"
-}
-},
-
-"04":{
-nome:"04. Aprovado ou Reprovado",
-fluxo:`flowchart TD
-A(["Início"])-->B["Leia Nota"]
-B-->C{"Nota suficiente?"}
-C--"Sim"-->D["Aprovado"]
-C--"Não"-->E["Reprovado"]
-D-->F(["Fim"])
-E-->F
-click A call passo("s")
-click B call passo("l")
-click C call passo("d")
-click D call passo("a")
-click E call passo("r")
-click F call passo("f")`,
-blocos:{
-s:"# Início\n",
-l:'nota=float(input("Nota: "))\n',
-d:"if nota >= 5:\n",
-a:'    print("Aprovado")\n',
-r:'else:\n    print("Reprovado")\n',
-f:"# Fim\n"
-}
-},
-
-"05":{
-nome:"05. Pode Dirigir?",
-fluxo:`flowchart TD
-A(["Início"])-->B["Leia Idade"]
-B-->C{"Pode dirigir?"}
-C--"Sim"-->D["Pode dirigir"]
-C--"Não"-->E["Não pode dirigir"]
-D-->F(["Fim"])
-E-->F
-click A call passo("s")
-click B call passo("l")
-click C call passo("d")
-click D call passo("p")
-click E call passo("n")
-click F call passo("f")`,
-blocos:{
-s:"# Início\n",
-l:'idade=int(input("Idade: "))\n',
-d:"if idade >= 18:\n",
-p:'    print("Pode dirigir")\n',
-n:'else:\n    print("Não pode dirigir")\n',
-f:"# Fim\n"
-}
-},
-
-"06":{
-nome:"06. Número Maior que 10",
-fluxo:`flowchart TD
-A(["Início"])-->B["Leia N"]
-B-->C{"Maior que 10?"}
-C--"Sim"-->D["Maior"]
-C--"Não"-->E["Menor ou igual"]
-D-->F(["Fim"])
-E-->F
-click A call passo("s")
-click B call passo("l")
-click C call passo("d")
-click D call passo("m")
-click E call passo("o")
-click F call passo("f")`,
-blocos:{
-s:"# Início\n",
-l:'n=int(input("N: "))\n',
-d:"if n > 10:\n",
-m:'    print("Maior que 10")\n',
-o:'else:\n    print("Menor ou igual a 10")\n',
-f:"# Fim\n"
-}
-}
-
+click A call passo("a")
+click B call passo("b")
+click C call passo("c")
+click D call passo("d")
+click E call passo("e")
+click F call passo("f")
+`
 };
 
-const sel=document.getElementById("sel");
-const mmd=document.getElementById("mmd");
-const code=document.getElementById("code");
-let atual=null, usados=new Set();
+const codeBox = document.getElementById("code");
+const mmd = document.getElementById("mmd");
+const used = new Set();
 
-for(const k in EX){
-  const o=document.createElement("option");
-  o.value=k; o.textContent=EX[k].nome;
-  sel.appendChild(o);
-}
-
-window.passo=function(id){
-  if(usados.has(id)) return;
-  usados.add(id);
-  code.textContent+=atual.blocos[id];
+window.passo = function(id){
+  if(used.has(id)) return;
+  used.add(id);
+  codeBox.textContent += `# passo ${id}\n`;
 };
 
 function carregar(id){
-  atual=EX[id];
-  usados.clear();
-  code.textContent="# "+atual.nome+"\n\n";
-  mmd.textContent=atual.fluxo;
-  mermaid.run({querySelector:"#mmd"});
+  used.clear();
+  codeBox.textContent="# exercício "+id+"\n\n";
+  mmd.textContent = EX[id];
+  mermaid.run({ querySelector:"#mmd" });
 }
 
-sel.onchange=()=>carregar(sel.value);
+document.getElementById("sel").onchange = e => carregar(e.target.value);
 carregar("01");
 </script>
 
 </body>
 </html>
+``
