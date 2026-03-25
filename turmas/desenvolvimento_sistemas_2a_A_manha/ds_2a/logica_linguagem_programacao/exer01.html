@@ -3,21 +3,360 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Exercícios — Lógica e Linguagem de Programação — 3ºB</title>
+  <title>Exer02 — 20 Fluxogramas (Mermaid) | v3 robusta</title>
+  <meta name="description" content="Versão robusta: todos os rótulos entre aspas, apenas ASCII, sem HTML nos rótulos, usando <pre class='mermaid'>." />
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;margin:32px;background:#f6f7fb;color:#111827}
-    a{color:#2563eb;text-decoration:none} a:hover{text-decoration:underline}
-    header{margin-bottom:16px} h1{margin:0 0 4px 0} .crumbs{color:#475569;font-size:0.95rem}
-    .box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial;background:#0b0f17;color:#e5e7eb}
+    .container{max-width:1100px;margin:0 auto;padding:16px 20px}
+    header{position:sticky;top:0;background:#0b0f17cc;border-bottom:1px solid #1f2937;backdrop-filter:blur(8px)}
+    h1{font-size:22px;margin:10px 0}
+    .muted{color:#9ca3af}
+    .toc{margin:20px 0;background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px}
+    .toc ol{columns:2;gap:16px;margin:0;padding-left:18px}
+    section{margin:22px 0 28px;padding:16px;border:1px solid #1f2937;border-radius:12px;background:#111827}
+    pre.mermaid{border-radius:8px;white-space:pre-wrap}
   </style>
 </head>
 <body>
   <header>
-    <div class="crumbs"><a href="/index.html">Início</a> / Lógica e Linguagem de Programação</div>
-    <h1>Exercícios — Lógica e Linguagem de Programação</h1>
+    <div class="container">
+      <h1>Exer02 — 20 Fluxogramas em Mermaid (v3)</h1>
+      <p class="muted">Correções: uso de <code>&lt;pre class="mermaid"&gt;</code>, rótulos sempre entre aspas, operadores ASCII (<code>&lt;, &gt;, &gt;=, &lt;=</code>), sem HTML nos rótulos.</p>
+    </div>
   </header>
-  <div class="box">
-    <p>Página inicial de <strong>Exercícios — Lógica e Linguagem de Programação</strong>. Substitua este conteúdo pelos materiais da disciplina.</p>
-  </div>
+  <main class="container">
+    <div class="toc">
+      <h2>Sumário</h2>
+      <ol>
+        <li><a href="#atv01">01. Par ou Ímpar</a></li>
+        <li><a href="#atv02">02. Positivo, Negativo ou Zero</a></li>
+        <li><a href="#atv03">03. Maior de dois números</a></li>
+        <li><a href="#atv04">04. Maior de três números</a></li>
+        <li><a href="#atv05">05. Média e Status</a></li>
+        <li><a href="#atv06">06. Multa de Velocidade</a></li>
+        <li><a href="#atv07">07. Ano Bissexto</a></li>
+        <li><a href="#atv08">08. Triângulo + Tipo</a></li>
+        <li><a href="#atv09">09. IMC + Classificação</a></li>
+        <li><a href="#atv10">10. Calculadora (opções)</a></li>
+        <li><a href="#atv11">11. Tarifa por Idade</a></li>
+        <li><a href="#atv12">12. Desconto por Pagamento</a></li>
+        <li><a href="#atv13">13. Faixa Etária</a></li>
+        <li><a href="#atv14">14. Login Simples</a></li>
+        <li><a href="#atv15">15. Dia Útil vs Fim de Semana</a></li>
+        <li><a href="#atv16">16. Conceito por Nota</a></li>
+        <li><a href="#atv17">17. Elegibilidade para Votar</a></li>
+        <li><a href="#atv18">18. Temperatura — Alertas</a></li>
+        <li><a href="#atv19">19. Múltiplos (3/5)</a></li>
+        <li><a href="#atv20">20. Bandeira Tarifária</a></li>
+      </ol>
+    </div>
+
+    <section id="atv01"><h3>01) Par ou Ímpar</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia N (inteiro)"]
+  B --> C{"N % 2 == 0?"}
+  C -- "Sim" --> D["Imprima Par"]
+  C -- "Não" --> E["Imprima Ímpar"]
+  D --> Z(["Fim"]) 
+  E --> Z
+</pre>
+    </section>
+
+    <section id="atv02"><h3>02) Positivo, Negativo ou Zero</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia X (número)"]
+  B --> C{"X > 0?"}
+  C -- "Sim" --> D["Imprima Positivo"]
+  C -- "Não" --> E{"X == 0?"}
+  E -- "Sim" --> F["Imprima Zero"]
+  E -- "Não" --> G["Imprima Negativo"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  G --> Z
+</pre>
+    </section>
+
+    <section id="atv03"><h3>03) Maior de dois números</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia A, B"]
+  B --> C{"A > B?"}
+  C -- "Sim" --> D["Imprima A é maior"]
+  C -- "Não" --> E{"A == B?"}
+  E -- "Sim" --> F["Imprima Iguais"]
+  E -- "Não" --> G["Imprima B é maior"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  G --> Z
+</pre>
+    </section>
+
+    <section id="atv04"><h3>04) Maior de três números</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia A, B, C"]
+  B --> C1{"A >= B e A >= C?"}
+  C1 -- "Sim" --> D["A é o maior"]
+  C1 -- "Não" --> C2{"B >= A e B >= C?"}
+  C2 -- "Sim" --> E["B é o maior"]
+  C2 -- "Não" --> F["C é o maior"]
+  D --> Z(["Fim"]) 
+  E --> Z
+  F --> Z
+</pre>
+    </section>
+
+    <section id="atv05"><h3>05) Média e Status</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia N1, N2"]
+  B --> C["Calcule M = (N1+N2)/2"]
+  C --> D{"M >= 7?"}
+  D -- "Sim" --> E["Imprima Aprovado"]
+  D -- "Não" --> F{"M >= 5?"}
+  F -- "Sim" --> G["Imprima Recuperação"]
+  F -- "Não" --> H["Imprima Reprovado"]
+  E --> Z(["Fim"]) 
+  G --> Z
+  H --> Z
+</pre>
+    </section>
+
+    <section id="atv06"><h3>06) Multa de Velocidade</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia vel (km/h)"]
+  B --> C{"vel > 80?"}
+  C -- "Sim" --> D["Calcule multa = (vel-80) * 5 e imprima"]
+  C -- "Não" --> E["Imprima Sem multa"]
+  D --> Z(["Fim"]) 
+  E --> Z
+</pre>
+    </section>
+
+    <section id="atv07"><h3>07) Ano Bissexto</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia ano"]
+  B --> C{"(ano % 400 == 0) ou ((ano % 4 == 0) e (ano % 100 != 0))?"}
+  C -- "Sim" --> D["Imprima Bissexto"]
+  C -- "Não" --> E["Imprima Não bissexto"]
+  D --> Z(["Fim"]) 
+  E --> Z
+</pre>
+    </section>
+
+    <section id="atv08"><h3>08) Triângulo + Tipo</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia a, b, c"]
+  B --> C{"a < b+c e b < a+c e c < a+b?"}
+  C -- "Não" --> D["Imprima Não forma triângulo"]
+  C -- "Sim" --> E{"a == b e b == c?"}
+  E -- "Sim" --> F["Imprima Equilátero"]
+  E -- "Não" --> G{"a == b ou a == c ou b == c?"}
+  G -- "Sim" --> H["Imprima Isósceles"]
+  G -- "Não" --> I["Imprima Escaleno"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  H --> Z
+  I --> Z
+</pre>
+    </section>
+
+    <section id="atv09"><h3>09) IMC + Classificação</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia peso (kg) e altura (m)"]
+  B --> C["IMC = peso / (altura^2)"]
+  C --> D{"IMC < 18.5?"}
+  D -- "Sim" --> E["Abaixo do peso"]
+  D -- "Não" --> F{"IMC < 25?"}
+  F -- "Sim" --> G["Normal"]
+  F -- "Não" --> H{"IMC < 30?"}
+  H -- "Sim" --> I["Sobrepeso"]
+  H -- "Não" --> J["Obesidade"]
+  E --> Z(["Fim"]) 
+  G --> Z
+  I --> Z
+  J --> Z
+</pre>
+    </section>
+
+    <section id="atv10"><h3>10) Calculadora (opções 1–4)</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia op (1:+ 2:- 3:* 4:/)"]
+  B --> C["Leia X, Y"]
+  C --> D{"op == 4 e Y == 0?"}
+  D -- "Sim" --> E["Erro: divisão por zero"]
+  D -- "Não" --> F["Execute operação e imprima resultado"]
+  E --> Z(["Fim"]) 
+  F --> Z
+</pre>
+    </section>
+
+    <section id="atv11"><h3>11) Tarifa de Ônibus por Idade</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia idade"]
+  B --> C{"idade < 6?"}
+  C -- "Sim" --> D["Isento"]
+  C -- "Não" --> E{"idade >= 60?"}
+  E -- "Sim" --> F["Meia"]
+  E -- "Não" --> G["Inteira"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  G --> Z
+</pre>
+    </section>
+
+    <section id="atv12"><h3>12) Desconto por Forma de Pagamento</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia preço e forma (vista/cartão)"]
+  B --> C{"forma == 'vista'?"}
+  C -- "Sim" --> D["total = preço * 0.9"]
+  C -- "Não" --> E["total = preço"]
+  D --> F["Imprima total"]
+  E --> F
+  F --> Z(["Fim"]) 
+</pre>
+    </section>
+
+    <section id="atv13"><h3>13) Faixa Etária</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia idade"]
+  B --> C{"idade < 12?"}
+  C -- "Sim" --> D["Criança"]
+  C -- "Não" --> E{"idade < 18?"}
+  E -- "Sim" --> F["Adolescente"]
+  E -- "Não" --> G{"idade < 60?"}
+  G -- "Sim" --> H["Adulto"]
+  G -- "Não" --> I["Idoso"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  H --> Z
+  I --> Z
+</pre>
+    </section>
+
+    <section id="atv14"><h3>14) Login Simples</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia usuário e senha"]
+  B --> C{"usu == 'admin' e senha == '1234'?"}
+  C -- "Sim" --> D["Acesso concedido"]
+  C -- "Não" --> E["Acesso negado"]
+  D --> Z(["Fim"]) 
+  E --> Z
+</pre>
+    </section>
+
+    <section id="atv15"><h3>15) Dia Útil vs Fim de Semana</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia dia (seg...dom)"]
+  B --> C{"dia == 'sab' ou dia == 'dom'?"}
+  C -- "Sim" --> D["Fim de semana"]
+  C -- "Não" --> E["Dia útil"]
+  D --> Z(["Fim"]) 
+  E --> Z
+</pre>
+    </section>
+
+    <section id="atv16"><h3>16) Conceito por Nota (A–E)</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia M (0..10)"]
+  B --> C{"M >= 9?"}
+  C -- "Sim" --> D["A"]
+  C -- "Não" --> E{"M >= 7?"}
+  E -- "Sim" --> F["B"]
+  E -- "Não" --> G{"M >= 5?"}
+  G -- "Sim" --> H["C"]
+  G -- "Não" --> I{"M >= 3?"}
+  I -- "Sim" --> J["D"]
+  I -- "Não" --> K["E"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  H --> Z
+  J --> Z
+  K --> Z
+</pre>
+    </section>
+
+    <section id="atv17"><h3>17) Elegibilidade para Votar</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia idade"]
+  B --> C{"idade < 16?"}
+  C -- "Sim" --> D["Não eleitor"]
+  C -- "Não" --> E{"idade < 18 ou idade >= 70?"}
+  E -- "Sim" --> F["Voto facultativo"]
+  E -- "Não" --> G["Voto obrigatório"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  G --> Z
+</pre>
+    </section>
+
+    <section id="atv18"><h3>18) Temperatura — Alertas</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia T (°C)"]
+  B --> C{"T < 35?"}
+  C -- "Sim" --> D["Alerta: hipotermia"]
+  C -- "Não" --> E{"T > 37.8?"}
+  E -- "Sim" --> F["Alerta: febre"]
+  E -- "Não" --> G["Normal"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  G --> Z
+</pre>
+    </section>
+
+    <section id="atv19"><h3>19) Múltiplos de 3 e/ou 5</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia N"]
+  B --> C{"N % 3 == 0 e N % 5 == 0?"}
+  C -- "Sim" --> D["Imprima Múltiplo de 3 e 5"]
+  C -- "Não" --> E{"N % 3 == 0?"}
+  E -- "Sim" --> F["Imprima Múltiplo de 3"]
+  E -- "Não" --> G{"N % 5 == 0?"}
+  G -- "Sim" --> H["Imprima Múltiplo de 5"]
+  G -- "Não" --> I["Imprima Nenhum"]
+  D --> Z(["Fim"]) 
+  F --> Z
+  H --> Z
+  I --> Z
+</pre>
+    </section>
+
+    <section id="atv20"><h3>20) Energia — Bandeira Tarifária</h3>
+<pre class="mermaid">
+flowchart TD
+  A(["Início"]) --> B["Leia consumo (kWh) e bandeira (verde/amarela/vermelha)"]
+  B --> C{"bandeira == 'verde'?"}
+  C -- "Sim" --> D["tarifa = base"]
+  C -- "Não" --> E{"bandeira == 'amarela'?"}
+  E -- "Sim" --> F["tarifa = base + 0,018/kWh"]
+  E -- "Não" --> G["tarifa = base + 0,039/kWh"]
+  D --> H["total = consumo * tarifa; imprima total"]
+  F --> H
+  G --> H
+  H --> Z(["Fim"]) 
+</pre>
+    </section>
+  </main>
+
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script>
 </body>
 </html>
