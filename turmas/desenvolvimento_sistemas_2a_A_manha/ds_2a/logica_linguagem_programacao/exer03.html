@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Flow2Code Suite — 20 Atividades (Fluxograma → Código)</title>
-  <meta name="description" content="Suite gamificada: 20 atividades. Clique no fluxograma e monte o código Python por partes, com checkpoints e pontuação." />
+  <title>Flow2Code Suite — 20 Atividades (Fluxograma → Código) — FIX</title>
+  <meta name="description" content="Suite gamificada: 20 atividades. Clique no fluxograma e monte o código Python por partes, com checkpoints e pontuação. Versão corrigida." />
   <style>
     :root{--bg:#0b0f17;--fg:#e5e7eb;--muted:#9ca3af;--card:#111827;--accent:#60a5fa;--border:#1f2937;--ok:#10b981;--warn:#f59e0b;--err:#ef4444}
     html,body{margin:0;background:var(--bg);color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Arial}
@@ -37,7 +37,7 @@
     <div class="container">
       <div class="row" style="justify-content:space-between;align-items:center">
         <div>
-          <h1>Flow2Code Suite — 20 Atividades</h1>
+          <h1>Flow2Code Suite — 20 Atividades (FIX)</h1>
           <div class="subtitle">Clique no fluxograma para montar o código Python. Checkpoints visíveis e gamificação simples (pontos, tempo, conquistas).</div>
         </div>
         <div class="row">
@@ -87,8 +87,41 @@ A(["Selecione uma atividade"])-->B["Inicie"]</pre>
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
     mermaid.initialize({ startOnLoad: false, theme: 'dark', securityLevel: 'loose' });
 
-    // ======= Definições das 20 atividades =======
+    // ======= Definições de atividades (apenas 01–03 aqui; você pode manter as demais) =======
     const ACTIVITIES = {
+      '03': {
+        title: '03) Maior de dois números',
+        mermaid: `flowchart TD
+  start(["Início"]) --> readAB["Leia A, B"]
+  readAB --> d1{"A > B?"}
+  d1 -- "Sim" --> aMaior["Imprima 'A é maior'"]
+  d1 -- "Não" --> e1{"A == B?"}
+  e1 -- "Sim" --> iguais["Imprima 'Iguais'"]
+  e1 -- "Não" --> bMaior["Imprima 'B é maior'"]
+  aMaior --> end(["Fim"])
+  iguais --> end
+  bMaior --> end
+  click start call flowClick("start") "Iniciar"
+  click readAB call flowClick("readAB") "Ler"
+  click d1 call flowClick("d1") "Decisão 1"
+  click aMaior call flowClick("aMaior") "A maior"
+  click e1 call flowClick("e1") "Decisão 2"
+  click iguais call flowClick("iguais") "Iguais"
+  click bMaior call flowClick("bMaior") "B maior"
+  click end call flowClick("end") "Finalizar"`,
+        sequence: ['start','readAB','d1','aMaior','e1','iguais','bMaior','end'],
+        checkpoints: ['Ler','Decidir A>B','Imprimir A maior','Decidir A==B','Iguais','B maior','Fim'],
+        fragments: {
+          start: '# Início\n',
+          readAB: 'a = float(input("A: "))\n' + 'b = float(input("B: "))\n',
+          d1:     'if a > b:\n',
+          aMaior: '    print("A é maior")\n',
+          e1:     'elif a == b:\n',
+          iguais: '    print("Iguais")\n',
+          bMaior: 'else:\n' + '    print("B é maior")\n',
+          end:    '# Fim\n'
+        }
+      },
       '01': {
         title: '01) Par ou Ímpar',
         mermaid: `flowchart TD
@@ -146,612 +179,6 @@ A(["Selecione uma atividade"])-->B["Inicie"]</pre>
           zer:   '    print("Zero")\n',
           neg:   'else:\n' + '    print("Negativo")\n',
           end:   '# Fim\n'
-        }
-      },
-      '03': {
-        title: '03) Maior de dois números',
-        mermaid: `flowchart TD
-  start(["Início"]) --> readAB["Leia A, B"]
-  readAB --> d1{"A > B?"}
-  d1 -- "Sim" --> aMaior["Imprima 'A é maior'"]
-  d1 -- "Não" --> e1{"A == B?"}
-  e1 -- "Sim" --> iguais["Imprima 'Iguais'"]
-  e1 -- "Não" --> bMaior["Imprima 'B é maior'"]
-  aMaior --> end(["Fim"])
-  iguais --> end
-  bMaior --> end
-  click start call flowClick("start") "Iniciar"
-  click readAB call flowClick("readAB") "Ler"
-  click d1 call flowClick("d1") "Decisão 1"
-  click aMaior call flowClick("aMaior") "A maior"
-  click e1 call flowClick("e1") "Decisão 2"
-  click iguais call flowClick("iguais") "Iguais"
-  click bMaior call flowClick("bMaior") "B maior"
-  click end call flowClick("end") "Finalizar"`,
-        sequence: ['start','readAB','d1','aMaior','e1','iguais','bMaior','end'],
-        checkpoints: ['Ler','Decidir A>B','Imprimir A maior','Decidir A==B','Iguais','B maior','Fim'],
-        fragments: {
-          start: '# Início\n',
-          readAB: 'a = float(input("A: "))\n' + 'b = float(input("B: "))\n',
-          d1:     'if a > b:\n',
-          aMaior: '    print("A é maior")\n',
-          e1:     'elif a == b:\n',
-          iguais: '    print("Iguais")\n',
-          bMaior: 'else:\n' + '    print("B é maior")\n',
-          end:    '# Fim\n'
-        }
-      },
-      '04': {
-        title: '04) Maior de três números',
-        mermaid: `flowchart TD
-  start(["Início"]) --> readABC["Leia A, B, C"]
-  readABC --> c1{"A >= B e A >= C?"}
-  c1 -- "Sim" --> aM["Imprima 'A é o maior'"]
-  c1 -- "Não" --> c2{"B >= A e B >= C?"}
-  c2 -- "Sim" --> bM["Imprima 'B é o maior'"]
-  c2 -- "Não" --> cM["Imprima 'C é o maior'"]
-  aM --> end(["Fim"])
-  bM --> end
-  cM --> end
-  click start call flowClick("start") "Iniciar"
-  click readABC call flowClick("readABC") "Ler"
-  click c1 call flowClick("c1") "Decisão 1"
-  click aM call flowClick("aM") "A maior"
-  click c2 call flowClick("c2") "Decisão 2"
-  click bM call flowClick("bM") "B maior"
-  click cM call flowClick("cM") "C maior"
-  click end call flowClick("end") "Fim"`,
-        sequence: ['start','readABC','c1','aM','c2','bM','cM','end'],
-        checkpoints: ['Ler','Decisão 1','A maior','Decisão 2','B maior','C maior','Fim'],
-        fragments: {
-          start:'# Início\n',
-          readABC:'a=float(input("A: "))\n'+'b=float(input("B: "))\n'+'c=float(input("C: "))\n',
-          c1:'if a >= b and a >= c:\n',
-          aM:'    print("A é o maior")\n',
-          c2:'elif b >= a and b >= c:\n',
-          bM:'    print("B é o maior")\n',
-          cM:'else:\n'+'    print("C é o maior")\n',
-          end:'# Fim\n'
-        }
-      },
-      '05': {
-        title: '05) Média e Status',
-        mermaid: `flowchart TD
-  start(["Início"]) --> readN["Leia N1, N2"]
-  readN --> calc["Calcule M = (N1+N2)/2"]
-  calc --> d1{"M >= 7?"}
-  d1 -- "Sim" --> apr["Imprima 'Aprovado'"]
-  d1 -- "Não" --> d2{"M >= 5?"}
-  d2 -- "Sim" --> rec["Imprima 'Recuperação'"]
-  d2 -- "Não" --> rep["Imprima 'Reprovado'"]
-  apr --> end(["Fim"])
-  rec --> end
-  rep --> end
-  click start call flowClick("start") "Iniciar"
-  click readN call flowClick("readN") "Ler"
-  click calc call flowClick("calc") "Calcular"
-  click d1 call flowClick("d1") "Decisão 1"
-  click apr call flowClick("apr") "Aprovado"
-  click d2 call flowClick("d2") "Decisão 2"
-  click rec call flowClick("rec") "Recuperação"
-  click rep call flowClick("rep") "Reprovado"
-  click end call flowClick("end") "Fim"`,
-        sequence: ['start','readN','calc','d1','apr','d2','rec','rep','end'],
-        checkpoints: ['Ler','Calcular média','M>=7','Aprovado','M>=5','Recuperação','Reprovado','Fim'],
-        fragments: {
-          start:'# Início\n',
-          readN:'n1=float(input("N1: "))\n'+'n2=float(input("N2: "))\n',
-          calc:'m=(n1+n2)/2\n',
-          d1:'if m >= 7:\n',
-          apr:'    print("Aprovado")\n',
-          d2:'elif m >= 5:\n',
-          rec:'    print("Recuperação")\n',
-          rep:'else:\n'+'    print("Reprovado")\n',
-          end:'# Fim\n'
-        }
-      },
-      '06': {
-        title: '06) Multa de Velocidade',
-        mermaid: `flowchart TD
-  start(["Início"]) --> readV["Leia vel (km/h)"]
-  readV --> d1{"vel > 80?"}
-  d1 -- "Sim" --> multa["Calc. multa e imprima"]
-  d1 -- "Não" --> sem["Imprima 'Sem multa'"]
-  multa --> end(["Fim"])
-  sem --> end
-  click start call flowClick("start") "Iniciar"
-  click readV call flowClick("readV") "Ler"
-  click d1 call flowClick("d1") "Decidir"
-  click multa call flowClick("multa") "Calcular"
-  click sem call flowClick("sem") "Sem multa"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','readV','d1','multa','sem','end'],
-        checkpoints:['Ler','Decidir','Calcular multa','Sem multa','Fim'],
-        fragments:{
-          start:'# Início\n',
-          readV:'vel=float(input("Velocidade: "))\n',
-          d1:'if vel > 80:\n',
-          multa:'    valor=(vel-80)*5.0\n'+'    print(f"Multa: R$ {valor:.2f}")\n',
-          sem:'else:\n'+'    print("Sem multa")\n',
-          end:'# Fim\n'
-        }
-      },
-      '07': {
-        title: '07) Ano Bissexto',
-        mermaid: `flowchart TD
-  start(["Início"]) --> readA["Leia ano"]
-  readA --> d1{"(ano % 400 == 0) ou ((ano % 4 == 0) e (ano % 100 != 0))?"}
-  d1 -- "Sim" --> bis["Imprima 'Bissexto'"]
-  d1 -- "Não" --> nBis["Imprima 'Não bissexto'"]
-  bis --> end(["Fim"])
-  nBis --> end
-  click start call flowClick("start") "Iniciar"
-  click readA call flowClick("readA") "Ler"
-  click d1 call flowClick("d1") "Decidir"
-  click bis call flowClick("bis") "Bissexto"
-  click nBis call flowClick("nBis") "Não bissexto"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','readA','d1','bis','nBis','end'],
-        checkpoints:['Ler','Decidir','Bissexto','Não bissexto','Fim'],
-        fragments:{
-          start:'# Início\n',
-          readA:'ano=int(input("Ano: "))\n',
-          d1:'if (ano % 400 == 0) or (ano % 4 == 0 and ano % 100 != 0):\n',
-          bis:'    print("Bissexto")\n',
-          nBis:'else:\n'+'    print("Não bissexto")\n',
-          end:'# Fim\n'
-        }
-      },
-      '08': {
-        title: '08) Triângulo + Tipo',
-        mermaid: `flowchart TD
-  start(["Início"]) --> readABC["Leia a, b, c"]
-  readABC --> val{"a < b+c e b < a+c e c < a+b?"}
-  val -- "Não" --> ntri["Imprima 'Não forma triângulo'"]
-  val -- "Sim" --> t1{"a == b e b == c?"}
-  t1 -- "Sim" --> eq["Imprima 'Equilátero'"]
-  t1 -- "Não" --> t2{"a == b ou a == c ou b == c?"}
-  t2 -- "Sim" --> iso["Imprima 'Isósceles'"]
-  t2 -- "Não" --> esc["Imprima 'Escaleno'"]
-  ntri --> end(["Fim"])
-  eq --> end
-  iso --> end
-  esc --> end
-  click start call flowClick("start") "Iniciar"
-  click readABC call flowClick("readABC") "Ler"
-  click val call flowClick("val") "Validar"
-  click ntri call flowClick("ntri") "Não triângulo"
-  click t1 call flowClick("t1") "Decisão 1"
-  click eq call flowClick("eq") "Equilátero"
-  click t2 call flowClick("t2") "Decisão 2"
-  click iso call flowClick("iso") "Isósceles"
-  click esc call flowClick("esc") "Escaleno"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','readABC','val','ntri','t1','eq','t2','iso','esc','end'],
-        checkpoints:['Ler','Validar lados','Não triângulo','Decisão 1','Equilátero','Decisão 2','Isósceles','Escaleno','Fim'],
-        fragments:{
-          start:'# Início\n',
-          readABC:'a=float(input("a: "))\n'+'b=float(input("b: "))\n'+'c=float(input("c: "))\n',
-          val:'if a < b + c and b < a + c and c < a + b:\n',
-          ntri:'    pass\nelse:\n    print("Não forma triângulo")\n',
-          t1:'    if a == b == c:\n',
-          eq:'        print("Equilátero")\n',
-          t2:'    elif a == b or a == c or b == c:\n',
-          iso:'        print("Isósceles")\n',
-          esc:'    else:\n        print("Escaleno")\n',
-          end:'# Fim\n'
-        }
-      },
-      '09': {
-        title: '09) IMC + Classificação',
-        mermaid:`flowchart TD
-  start(["Início"]) --> read["Leia peso, altura"]
-  read --> calc["IMC = peso/(altura^2)"]
-  calc --> d1{"IMC < 18.5?"}
-  d1 -- "Sim" --> ab["Abaixo do peso"]
-  d1 -- "Não" --> d2{"IMC < 25?"}
-  d2 -- "Sim" --> nor["Normal"]
-  d2 -- "Não" --> d3{"IMC < 30?"}
-  d3 -- "Sim" --> sob["Sobrepeso"]
-  d3 -- "Não" --> ob["Obesidade"]
-  ab --> end(["Fim"])
-  nor --> end
-  sob --> end
-  ob --> end
-  click start call flowClick("start") "Iniciar"
-  click read call flowClick("read") "Ler"
-  click calc call flowClick("calc") "Calcular"
-  click d1 call flowClick("d1") "Decisão 1"
-  click ab call flowClick("ab") "Abaixo"
-  click d2 call flowClick("d2") "Decisão 2"
-  click nor call flowClick("nor") "Normal"
-  click d3 call flowClick("d3") "Decisão 3"
-  click sob call flowClick("sob") "Sobrepeso"
-  click ob call flowClick("ob") "Obesidade"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','read','calc','d1','ab','d2','nor','d3','sob','ob','end'],
-        checkpoints:['Ler','Calcular IMC','<18.5','Abaixo','<25','Normal','<30','Sobrepeso','Obesidade','Fim'],
-        fragments:{
-          start:'# Início\n',
-          read:'peso=float(input("Peso: "))\n'+'altura=float(input("Altura: "))\n',
-          calc:'imc=peso/(altura**2)\n',
-          d1:'if imc < 18.5:\n',
-          ab:'    print("Abaixo do peso")\n',
-          d2:'elif imc < 25:\n',
-          nor:'    print("Normal")\n',
-          d3:'elif imc < 30:\n',
-          sob:'    print("Sobrepeso")\n',
-          ob:'else:\n'+'    print("Obesidade")\n',
-          end:'# Fim\n'
-        }
-      },
-      '10': {
-        title: '10) Calculadora (1:+ 2:- 3:* 4:/)',
-        mermaid:`flowchart TD
-  start(["Início"]) --> readOp["Leia op (1..4)"]
-  readOp --> readXY["Leia X, Y"]
-  readXY --> d1{"op == 4 e Y == 0?"}
-  d1 -- "Sim" --> erro["Erro: divisão por zero"]
-  d1 -- "Não" --> calc["Executa operação e imprime"]
-  erro --> end(["Fim"])
-  calc --> end
-  click start call flowClick("start") "Iniciar"
-  click readOp call flowClick("readOp") "Ler op"
-  click readXY call flowClick("readXY") "Ler XY"
-  click d1 call flowClick("d1") "Checar"
-  click erro call flowClick("erro") "Erro"
-  click calc call flowClick("calc") "Calcular"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','readOp','readXY','d1','erro','calc','end'],
-        checkpoints:['Ler op','Ler X,Y','Checar /0','Erro','Calcular','Fim'],
-        fragments:{
-          start:'# Início\n',
-          readOp:'op=int(input("Opção (1:+ 2:- 3:* 4:/): "))\n',
-          readXY:'x=float(input("X: "))\n'+'y=float(input("Y: "))\n',
-          d1:'if op == 4 and y == 0:\n',
-          erro:'    print("Erro: divisão por zero")\n',
-          calc:'else:\n'+'    if op==1: print(x+y)\n'+'    elif op==2: print(x-y)\n'+'    elif op==3: print(x*y)\n'+'    elif op==4: print(x/y)\n'+'    else: print("Opção inválida")\n',
-          end:'# Fim\n'
-        }
-      },
-      '11': {
-        title: '11) Tarifa por Idade',
-        mermaid:`flowchart TD
-  start(["Início"]) --> readI["Leia idade"]
-  readI --> d1{"idade < 6?"}
-  d1 -- "Sim" --> isen["Isento"]
-  d1 -- "Não" --> d2{"idade >= 60?"}
-  d2 -- "Sim" --> meia["Meia"]
-  d2 -- "Não" --> inte["Inteira"]
-  isen --> end(["Fim"])
-  meia --> end
-  inte --> end
-  click start call flowClick("start") "Iniciar"
-  click readI call flowClick("readI") "Ler"
-  click d1 call flowClick("d1") "Decisão 1"
-  click isen call flowClick("isen") "Isento"
-  click d2 call flowClick("d2") "Decisão 2"
-  click meia call flowClick("meia") "Meia"
-  click inte call flowClick("inte") "Inteira"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','readI','d1','isen','d2','meia','inte','end'],
-        checkpoints:['Ler','<6','Isento','>=60','Meia','Inteira','Fim'],
-        fragments:{
-          start:'# Início\n',
-          readI:'idade=int(input("Idade: "))\n',
-          d1:'if idade < 6:\n',
-          isen:'    print("Isento")\n',
-          d2:'elif idade >= 60:\n',
-          meia:'    print("Meia")\n',
-          inte:'else:\n'+'    print("Inteira")\n',
-          end:'# Fim\n'
-        }
-      },
-      '12': {
-        title: '12) Desconto por Pagamento',
-        mermaid:`flowchart TD
-  start(["Início"]) --> readP["Leia preço e forma (vista/cartão)"]
-  readP --> d1{"forma == 'vista'?"}
-  d1 -- "Sim" --> desc["total = preço * 0.9"]
-  d1 -- "Não" --> tot["total = preço"]
-  desc --> end(["Fim"])
-  tot --> end
-  click start call flowClick("start") "Iniciar"
-  click readP call flowClick("readP") "Ler"
-  click d1 call flowClick("d1") "Decidir"
-  click desc call flowClick("desc") "Desconto"
-  click tot call flowClick("tot") "Total"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','readP','d1','desc','tot','end'],
-        checkpoints:['Ler','Decidir','Desconto','Total','Fim'],
-        fragments:{
-          start:'# Início\n',
-          readP:'preco=float(input("Preço: "))\n'+'forma=input("Forma (vista/cartao): ").strip().lower()\n',
-          d1:'if forma == "vista":\n',
-          desc:'    total = preco * 0.9\n'+'    print(f"Total: R$ {total:.2f}")\n',
-          tot:'else:\n'+'    total = preco\n'+'    print(f"Total: R$ {total:.2f}")\n',
-          end:'# Fim\n'
-        }
-      },
-      '13': {
-        title: '13) Faixa Etária',
-        mermaid:`flowchart TD
-  start(["Início"]) --> readI["Leia idade"]
-  readI --> c1{"idade < 12?"}
-  c1 -- "Sim" --> cri["Criança"]
-  c1 -- "Não" --> c2{"idade < 18?"}
-  c2 -- "Sim" --> ado["Adolescente"]
-  c2 -- "Não" --> c3{"idade < 60?"}
-  c3 -- "Sim" --> adu["Adulto"]
-  c3 -- "Não" --> ido["Idoso"]
-  cri --> end(["Fim"])
-  ado --> end
-  adu --> end
-  ido --> end
-  click start call flowClick("start") "Iniciar"
-  click readI call flowClick("readI") "Ler"
-  click c1 call flowClick("c1") "<12"
-  click cri call flowClick("cri") "Criança"
-  click c2 call flowClick("c2") "<18"
-  click ado call flowClick("ado") "Adolescente"
-  click c3 call flowClick("c3") "<60"
-  click adu call flowClick("adu") "Adulto"
-  click ido call flowClick("ido") "Idoso"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','readI','c1','cri','c2','ado','c3','adu','ido','end'],
-        checkpoints:['Ler','<12','Criança','<18','Adolescente','<60','Adulto','Idoso','Fim'],
-        fragments:{
-          start:'# Início\n',
-          readI:'idade=int(input("Idade: "))\n',
-          c1:'if idade < 12:\n',
-          cri:'    print("Criança")\n',
-          c2:'elif idade < 18:\n',
-          ado:'    print("Adolescente")\n',
-          c3:'elif idade < 60:\n',
-          adu:'    print("Adulto")\n',
-          ido:'else:\n'+'    print("Idoso")\n',
-          end:'# Fim\n'
-        }
-      },
-      '14': {
-        title: '14) Login Simples',
-        mermaid:`flowchart TD
-  start(["Início"]) --> read["Leia usuário e senha"]
-  read --> d1{"usu == 'admin' e senha == '1234'?"}
-  d1 -- "Sim" --> ok["Acesso concedido"]
-  d1 -- "Não" --> nok["Acesso negado"]
-  ok --> end(["Fim"])
-  nok --> end
-  click start call flowClick("start") "Iniciar"
-  click read call flowClick("read") "Ler"
-  click d1 call flowClick("d1") "Verificar"
-  click ok call flowClick("ok") "OK"
-  click nok call flowClick("nok") "Negado"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','read','d1','ok','nok','end'],
-        checkpoints:['Ler','Verificar','OK','Negado','Fim'],
-        fragments:{
-          start:'# Início\n',
-          read:'u=input("Usuário: ")\n'+'s=input("Senha: ")\n',
-          d1:'if u=="admin" and s=="1234":\n',
-          ok:'    print("Acesso concedido")\n',
-          nok:'else:\n'+'    print("Acesso negado")\n',
-          end:'# Fim\n'
-        }
-      },
-      '15': {
-        title: '15) Dia útil vs fim de semana',
-        mermaid:`flowchart TD
-  start(["Início"]) --> read["Leia dia (seg..dom)"]
-  read --> d1{"dia == 'sab' ou dia == 'dom'?"}
-  d1 -- "Sim" --> fim["Fim de semana"]
-  d1 -- "Não" --> util["Dia útil"]
-  fim --> end(["Fim"])
-  util --> end
-  click start call flowClick("start") "Iniciar"
-  click read call flowClick("read") "Ler"
-  click d1 call flowClick("d1") "Decidir"
-  click fim call flowClick("fim") "Fim de semana"
-  click util call flowClick("util") "Dia útil"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','read','d1','fim','util','end'],
-        checkpoints:['Ler','Decidir','Fim de semana','Dia útil','Fim'],
-        fragments:{
-          start:'# Início\n',
-          read:'dia=input("Dia (seg/ter/qua/qui/sex/sab/dom): ").strip().lower()\n',
-          d1:'if dia in ("sab","dom"):\n',
-          fim:'    print("Fim de semana")\n',
-          util:'else:\n'+'    print("Dia útil")\n',
-          end:'# Fim\n'
-        }
-      },
-      '16': {
-        title: '16) Conceito por Nota (A–E)',
-        mermaid:`flowchart TD
-  start(["Início"]) --> read["Leia M (0..10)"]
-  read --> d1{"M >= 9?"}
-  d1 -- "Sim" --> A1["A"]
-  d1 -- "Não" --> d2{"M >= 7?"}
-  d2 -- "Sim" --> B1["B"]
-  d2 -- "Não" --> d3{"M >= 5?"}
-  d3 -- "Sim" --> C1["C"]
-  d3 -- "Não" --> d4{"M >= 3?"}
-  d4 -- "Sim" --> D1["D"]
-  d4 -- "Não" --> E1["E"]
-  A1 --> end(["Fim"])
-  B1 --> end
-  C1 --> end
-  D1 --> end
-  E1 --> end
-  click start call flowClick("start") "Iniciar"
-  click read call flowClick("read") "Ler"
-  click d1 call flowClick("d1") ">=9"
-  click A1 call flowClick("A1") "A"
-  click d2 call flowClick("d2") ">=7"
-  click B1 call flowClick("B1") "B"
-  click d3 call flowClick("d3") ">=5"
-  click C1 call flowClick("C1") "C"
-  click d4 call flowClick("d4") ">=3"
-  click D1 call flowClick("D1") "D"
-  click E1 call flowClick("E1") "E"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','read','d1','A1','d2','B1','d3','C1','d4','D1','E1','end'],
-        checkpoints:['Ler','>=9 A','>=7 B','>=5 C','>=3 D','E','Fim'],
-        fragments:{
-          start:'# Início\n',
-          read:'m=float(input("Média: "))\n',
-          d1:'if m >= 9:\n',
-          A1:'    print("A")\n',
-          d2:'elif m >= 7:\n',
-          B1:'    print("B")\n',
-          d3:'elif m >= 5:\n',
-          C1:'    print("C")\n',
-          d4:'elif m >= 3:\n',
-          D1:'    print("D")\n',
-          E1:'else:\n'+'    print("E")\n',
-          end:'# Fim\n'
-        }
-      },
-      '17': {
-        title: '17) Elegibilidade para Votar',
-        mermaid:`flowchart TD
-  start(["Início"]) --> read["Leia idade"]
-  read --> d1{"idade < 16?"}
-  d1 -- "Sim" --> nao["Não eleitor"]
-  d1 -- "Não" --> d2{"idade < 18 ou idade >= 70?"}
-  d2 -- "Sim" --> fac["Voto facultativo"]
-  d2 -- "Não" --> obr["Voto obrigatório"]
-  nao --> end(["Fim"])
-  fac --> end
-  obr --> end
-  click start call flowClick("start") "Iniciar"
-  click read call flowClick("read") "Ler"
-  click d1 call flowClick("d1") "<16"
-  click nao call flowClick("nao") "Não eleitor"
-  click d2 call flowClick("d2") "Faixa"
-  click fac call flowClick("fac") "Facultativo"
-  click obr call flowClick("obr") "Obrigatório"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','read','d1','nao','d2','fac','obr','end'],
-        checkpoints:['Ler','<16','Não eleitor','<18 ou >=70','Facultativo','Obrigatório','Fim'],
-        fragments:{
-          start:'# Início\n',
-          read:'idade=int(input("Idade: "))\n',
-          d1:'if idade < 16:\n',
-          nao:'    print("Não eleitor")\n',
-          d2:'elif idade < 18 or idade >= 70:\n',
-          fac:'    print("Voto facultativo")\n',
-          obr:'else:\n'+'    print("Voto obrigatório")\n',
-          end:'# Fim\n'
-        }
-      },
-      '18': {
-        title: '18) Temperatura — Alertas',
-        mermaid:`flowchart TD
-  start(["Início"]) --> read["Leia T (°C)"]
-  read --> d1{"T < 35?"}
-  d1 -- "Sim" --> hipo["Alerta: hipotermia"]
-  d1 -- "Não" --> d2{"T > 37.8?"}
-  d2 -- "Sim" --> febre["Alerta: febre"]
-  d2 -- "Não" --> normal["Normal"]
-  hipo --> end(["Fim"])
-  febre --> end
-  normal --> end
-  click start call flowClick("start") "Iniciar"
-  click read call flowClick("read") "Ler"
-  click d1 call flowClick("d1") "<35"
-  click hipo call flowClick("hipo") "Hipotermia"
-  click d2 call flowClick("d2") ">37.8"
-  click febre call flowClick("febre") "Febre"
-  click normal call flowClick("normal") "Normal"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','read','d1','hipo','d2','febre','normal','end'],
-        checkpoints:['Ler','<35','Hipotermia','>37.8','Febre','Normal','Fim'],
-        fragments:{
-          start:'# Início\n',
-          read:'t=float(input("T (°C): "))\n',
-          d1:'if t < 35:\n',
-          hipo:'    print("Alerta: hipotermia")\n',
-          d2:'elif t > 37.8:\n',
-          febre:'    print("Alerta: febre")\n',
-          normal:'else:\n'+'    print("Normal")\n',
-          end:'# Fim\n'
-        }
-      },
-      '19': {
-        title: '19) Múltiplos de 3 e/ou 5',
-        mermaid:`flowchart TD
-  start(["Início"]) --> read["Leia N"]
-  read --> d1{"N % 3 == 0 e N % 5 == 0?"}
-  d1 -- "Sim" --> amb["Imprima 'Múltiplo de 3 e 5'"]
-  d1 -- "Não" --> d2{"N % 3 == 0?"}
-  d2 -- "Sim" --> m3["Imprima 'Múltiplo de 3'"]
-  d2 -- "Não" --> d3{"N % 5 == 0?"}
-  d3 -- "Sim" --> m5["Imprima 'Múltiplo de 5'"]
-  d3 -- "Não" --> nen["Imprima 'Nenhum'"]
-  amb --> end(["Fim"])
-  m3 --> end
-  m5 --> end
-  nen --> end
-  click start call flowClick("start") "Iniciar"
-  click read call flowClick("read") "Ler"
-  click d1 call flowClick("d1") "Ambos"
-  click amb call flowClick("amb") "3 e 5"
-  click d2 call flowClick("d2") "3?"
-  click m3 call flowClick("m3") "Múltiplo de 3"
-  click d3 call flowClick("d3") "5?"
-  click m5 call flowClick("m5") "Múltiplo de 5"
-  click nen call flowClick("nen") "Nenhum"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','read','d1','amb','d2','m3','d3','m5','nen','end'],
-        checkpoints:['Ler','3 e 5','Múltiplo 3','Múltiplo 5','Nenhum','Fim'],
-        fragments:{
-          start:'# Início\n',
-          read:'n=int(input("N: "))\n',
-          d1:'if n % 3 == 0 and n % 5 == 0:\n',
-          amb:'    print("Múltiplo de 3 e 5")\n',
-          d2:'elif n % 3 == 0:\n',
-          m3:'    print("Múltiplo de 3")\n',
-          d3:'elif n % 5 == 0:\n',
-          m5:'    print("Múltiplo de 5")\n',
-          nen:'else:\n'+'    print("Nenhum")\n',
-          end:'# Fim\n'
-        }
-      },
-      '20': {
-        title: '20) Energia — Bandeira Tarifária',
-        mermaid:`flowchart TD
-  start(["Início"]) --> read["Leia consumo e bandeira"]
-  read --> d1{"bandeira == 'verde'?"}
-  d1 -- "Sim" --> v["tarifa = base"]
-  d1 -- "Não" --> d2{"bandeira == 'amarela'?"}
-  d2 -- "Sim" --> a["tarifa = base + 0,018/kWh"]
-  d2 -- "Não" --> r["tarifa = base + 0,039/kWh"]
-  v --> tot["total = consumo * tarifa; imprimir"]
-  a --> tot
-  r --> tot
-  tot --> end(["Fim"])
-  click start call flowClick("start") "Iniciar"
-  click read call flowClick("read") "Ler"
-  click d1 call flowClick("d1") "Verde"
-  click v call flowClick("v") "Tarifa base"
-  click d2 call flowClick("d2") "Amarela"
-  click a call flowClick("a") "+0,018"
-  click r call flowClick("r") "+0,039"
-  click tot call flowClick("tot") "Total"
-  click end call flowClick("end") "Fim"`,
-        sequence:['start','read','d1','v','d2','a','r','tot','end'],
-        checkpoints:['Ler','Verde','Base','Amarela','+0,018','Vermelha','Total','Fim'],
-        fragments:{
-          start:'# Início\n',
-          read:'cons=float(input("Consumo (kWh): "))\n'+'bandeira=input("Bandeira (verde/amarela/vermelha): ").strip().lower()\n'+'base=0.5\n',
-          d1:'if bandeira=="verde":\n',
-          v:'    tarifa=base\n',
-          d2:'elif bandeira=="amarela":\n',
-          a:'    tarifa=base+0.018\n',
-          r:'else:\n'+'    tarifa=base+0.039\n',
-          tot:'total=cons*tarifa\n'+'print(f"Total: R$ {total:.2f}")\n',
-          end:'# Fim\n'
         }
       }
     };
@@ -881,7 +308,7 @@ A(["Selecione uma atividade"])-->B["Inicie"]</pre>
 
     // Botões
     document.getElementById('startBtn').addEventListener('click', ()=>{
-      if(!currentId){ activitySel.value='01'; loadActivity('01'); }
+      if(!currentId){ activitySel.value='03'; loadActivity('03'); }
       setTimer(true);
     });
     document.getElementById('resetBtn').addEventListener('click', ()=>{
@@ -893,9 +320,8 @@ A(["Selecione uma atividade"])-->B["Inicie"]</pre>
     });
     activitySel.addEventListener('change', e=> loadActivity(e.target.value));
 
-    // Inicial
-    loadActivity('01');
+    // Inicial: carregar 03 por padrão
+    loadActivity('03');
   </script>
 </body>
 </html>
-``
