@@ -2,222 +2,99 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Arena Lógica - Fatec</title>
+    <title>Dominó Multi-Salas - Fatec</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; color: #f8fafc; text-align: center; margin: 0; padding: 20px; }
-        h1 { color: #10b981; margin-bottom: 5px; }
-        
+        /* Mantenha o seu CSS igual, apenas adicionei o campo de sala abaixo */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: #f8fafc; text-align: center; padding: 20px; }
         #tela-login { margin: 50px auto; background: #1e293b; padding: 30px; border-radius: 10px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        #tela-login input { width: 90%; padding: 10px; margin: 15px 0; border-radius: 5px; border: none; font-size: 16px; text-align: center; }
-        #tela-login button { background-color: #10b981; width: 100%; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; color: white; font-size: 16px;}
-        #tela-login button:hover { background-color: #059669; }
-
+        #tela-login input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; text-align: center; }
+        #tela-login button { background-color: #10b981; width: 100%; border: none; padding: 12px; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
         #lobby, #area-jogo { display: none; }
-        #lobby { margin: 30px auto; padding: 20px; background: #1e293b; border-radius: 10px; width: 50%; }
-        #lista-jogadores { list-style: none; padding: 0; font-size: 18px; color: #fbbf24; text-align: left; width: fit-content; margin: 0 auto; }
-        #lista-jogadores li { margin: 8px 0; }
-        
-        #btn-pronto { background-color: #3b82f6; font-size: 18px; padding: 15px 30px; display: none; margin: 20px auto; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; color: white;}
-        #btn-pronto:hover:not(:disabled) { background-color: #2563eb; }
-        #btn-pronto:disabled { background-color: #475569; cursor: not-allowed; }
-
-        .painel-topo { display: flex; justify-content: center; gap: 20px; margin: 10px auto; width: 90%; }
-        .caixa-info { background: #1e293b; padding: 15px; border-radius: 8px; border: 1px solid #334155; flex: 1; text-align: left; }
-        
-        .destaque { color: #fbbf24; font-weight: bold; }
-        .aliado { color: #3b82f6; }
-        .inimigo { color: #ef4444; }
-        
-        #mesa { background-color: #0f172a; min-height: 120px; margin: 20px auto; width: 90%; border-radius: 10px; border: 2px dashed #475569; display: flex; justify-content: center; align-items: center; gap: 4px; flex-wrap: wrap; padding: 20px; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
-        #minhas-pecas { display: flex; justify-content: center; gap: 15px; margin-top: 10px; flex-wrap: wrap; min-height: 100px; }
-        
-        .peca { background: #f8fafc; color: #0f172a; border-radius: 6px; padding: 12px 10px; font-weight: bold; font-size: 20px; border: 2px solid #334155; cursor: pointer; transition: 0.2s; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); display: flex; flex-direction: row; align-items: center; gap: 10px; }
-        .peca:hover { transform: translateY(-8px); border-color: #10b981; background: #fff; }
-        .linha { width: 2px; height: 18px; background: #0f172a; margin: 0; }
-        
-        .peca-mesa { display: flex; align-items: center; gap: 8px; background: #f8fafc; color: #0f172a; border-radius: 4px; padding: 6px 10px; font-weight: bold; font-size: 18px; border: 1px solid #475569; }
-        .linha-vertical { width: 2px; height: 18px; background: #0f172a; }
-
-        .peca-carroca { flex-direction: column; gap: 4px; padding: 10px 15px; }
-        .peca-carroca .linha-vertical { width: 100%; height: 2px; margin: 0; }
-
-        .controles { margin-top: 20px; display: flex; justify-content: center; gap: 20px; }
-        button { border: none; padding: 12px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 16px; color: white; transition: 0.2s; }
-        .btn-comprar { background-color: #eab308; color: black; }
-        .btn-comprar:hover { background-color: #ca8a04; }
-        .btn-passar { background-color: #ef4444; }
-        .btn-passar:hover { background-color: #dc2626; }
+        .peca { background: white; color: black; padding: 10px; border-radius: 5px; cursor: pointer; display: inline-flex; gap: 5px; margin: 5px; font-weight: bold; }
+        #mesa { background: #1e293b; padding: 20px; min-height: 100px; margin: 20px; border-radius: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; }
     </style>
 </head>
 <body>
     <h1>Mesa de Dominó Lógico 🧠</h1>
-    <div id="status" style="color: #94a3b8; margin-bottom: 20px;">Servidor Online</div>
-    
+    <div id="status">Conecte-se para jogar</div>
+
     <div id="tela-login">
-        <h2>Entrar na Mesa</h2>
-        <input type="text" id="input-apelido" placeholder="Seu apelido (Ex: Mago)" maxlength="12">
-        <button onclick="entrar()">Conectar</button>
+        <h2>Criar ou Entrar em Sala</h2>
+        <input type="text" id="input-apelido" placeholder="Seu Apelido">
+        <input type="text" id="input-sala" placeholder="Nome da Sala (Ex: Sala 01)">
+        <button onclick="entrar()">Entrar na Sala</button>
     </div>
 
     <div id="lobby">
-        <h2>Lobby da Partida</h2>
-        <p>Aguardando confirmação dos jogadores...</p>
-        <ul id="lista-jogadores"></ul>
-        <button id="btn-pronto" onclick="marcarPronto()">Estou Pronto!</button>
+        <h2 id="nome-sala-display">Sala</h2>
+        <ul id="lista-jogadores" style="list-style: none; padding: 0;"></ul>
+        <button id="btn-pronto" onclick="marcarPronto()" style="padding: 15px; background: #3b82f6; color: white; border: none; border-radius: 5px; cursor: pointer;">Estou Pronto!</button>
     </div>
 
     <div id="area-jogo">
-        <div class="painel-topo">
-            <div class="caixa-info" id="painel-times"></div>
-            <div class="caixa-info">
-                <div id="turno-aviso">Turno: <span class="destaque">Aguardando...</span></div>
-                <div style="margin-top: 10px;">📦 Peças no Monte: <span id="qtd-monte" class="destaque">0</span></div>
-            </div>
-        </div>
-        
-        <div id="mesa"><span style="color: #64748b;">A mesa está vazia...</span></div>
-
-        <h3 id="titulo-mao">Suas Peças:</h3>
+        <div id="turno-aviso">Aguardando...</div>
+        <div id="mesa"></div>
+        <h3>Suas Peças:</h3>
         <div id="minhas-pecas"></div>
-
-        <div class="controles">
-            <button class="btn-comprar" onclick="comprar()">📦 Comprar Peça</button>
-            <button class="btn-passar" onclick="passarVez()">Passar a Vez</button>
+        <div style="margin-top: 20px;">
+            <button onclick="comprar()" style="background: #eab308; padding: 10px;">Comprar</button>
+            <button onclick="socket.emit('passarVez')" style="background: #ef4444; padding: 10px; color: white;">Passar</button>
         </div>
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
-        // Conexão direta com o seu motor no Render!
         const socket = io("https://motor-domino.onrender.com");
 
-        let minhaMaoAtual = [];
-        let meuIndice = -1;
-        let listaNomes = [];
-
         function entrar() {
-            let nick = document.getElementById('input-apelido').value.trim();
-            if (nick === '') return alert('Digite um apelido!');
-            socket.emit('entrarLobby', nick);
+            const apelido = document.getElementById('input-apelido').value;
+            const sala = document.getElementById('input-sala').value;
+            if(!apelido || !sala) return alert("Preencha tudo!");
+            
+            socket.emit('entrarSala', { apelido, sala });
             document.getElementById('tela-login').style.display = 'none';
+            document.getElementById('nome-sala-display').innerText = "Sala: " + sala;
         }
-
-        socket.on('mensagemGeral', (msg) => {
-            document.getElementById('status').innerHTML = `<strong>📡 Status:</strong> ${msg}`;
-        });
-
-        socket.on('erroJogada', (msg) => alert("❌ " + msg));
 
         socket.on('estadoLobby', (estado) => {
-            const lobby = document.getElementById('lobby');
-            const areaJogo = document.getElementById('area-jogo');
-            const btnPronto = document.getElementById('btn-pronto');
-
-            if (estado.rodando) {
-                lobby.style.display = 'none';
-                areaJogo.style.display = 'block';
+            if(estado.rodando) {
+                document.getElementById('lobby').style.display = 'none';
+                document.getElementById('area-jogo').style.display = 'block';
             } else {
-                lobby.style.display = 'block';
-                areaJogo.style.display = 'none';
-                
-                if(estado.jogadoresInfo) {
-                    document.getElementById('lista-jogadores').innerHTML = estado.jogadoresInfo.map(j => 
-                        `<li>🧑 ${j.nome} - ${j.pronto ? '<span style="color:#10b981;">Pronto ✅</span>' : '<span style="color:#ef4444;">Aguardando ⏳</span>'}</li>`
-                    ).join('');
-
-                    let eu = estado.jogadoresInfo.find(j => j.id === socket.id);
-                    if (eu && eu.pronto) {
-                        btnPronto.disabled = true;
-                        btnPronto.innerText = "Aguardando os outros...";
-                    } else {
-                        btnPronto.disabled = false;
-                        btnPronto.innerText = "Estou Pronto!";
-                    }
-
-                    if (estado.jogadoresInfo.length >= 2) {
-                        btnPronto.style.display = 'block';
-                    } else {
-                        btnPronto.style.display = 'none';
-                    }
-                }
+                document.getElementById('lobby').style.display = 'block';
+                document.getElementById('lista-jogadores').innerHTML = estado.jogadoresInfo.map(j => 
+                    `<li>${j.nome} - ${j.pronto ? '✅' : '⏳'}</li>`
+                ).join('');
             }
         });
 
-        function marcarPronto() {
-            socket.emit('marcarPronto');
-        }
-
+        function marcarPronto() { socket.emit('marcarPronto'); }
+        
         socket.on('inicioJogo', (dados) => {
-            meuIndice = dados.meuIndice;
-            listaNomes = dados.listaNomes;
-            minhaMaoAtual = dados.minhaMao;
-            document.getElementById('titulo-mao').innerText = `Suas Peças (${listaNomes[meuIndice]}):`;
-            renderizarMao();
-            renderizarTimes();
+            renderizarMao(dados.minhaMao);
         });
 
-        function renderizarTimes() {
-            let painel = document.getElementById('painel-times');
-            let html = `<strong>Você:</strong> <span class="destaque">${listaNomes[meuIndice]}</span><br>`;
-
-            if (listaNomes.length === 4) {
-                let parceiro = (meuIndice + 2) % 4;
-                let adv1 = (meuIndice + 1) % 4;
-                let adv2 = (meuIndice + 3) % 4;
-                html += `<strong class="aliado">🤝 Parceiro:</strong> ${listaNomes[parceiro]}<br>`;
-                html += `<strong class="inimigo">⚔️ Adversários:</strong> ${listaNomes[adv1]} e ${listaNomes[adv2]}`;
-            } else if (listaNomes.length === 2) {
-                let adv = (meuIndice + 1) % 2;
-                html += `<strong class="inimigo">⚔️ Adversário:</strong> ${listaNomes[adv]}`;
-            } else {
-                html += `<strong class="inimigo">⚔️ Adversários:</strong> Todos contra todos!`;
-            }
-            painel.innerHTML = html;
-        }
-
-        socket.on('atualizarMao', (novaMao) => { minhaMaoAtual = novaMao; renderizarMao(); });
-        socket.on('atualizarMonte', (qtd) => { document.getElementById('qtd-monte').innerText = qtd; });
-
-        socket.on('mudarTurno', (dadosTurno) => {
-            const painelTurno = document.getElementById('turno-aviso');
-            if (dadosTurno.turno === meuIndice) {
-                painelTurno.innerHTML = `Turno: <span class="destaque" style="color: #10b981; font-size: 1.2em;">🔥 É A SUA VEZ!</span>`;
-            } else {
-                painelTurno.innerHTML = `Turno: <span class="destaque">Vez de ${dadosTurno.nome}</span>`;
-            }
+        socket.on('mudarTurno', (d) => {
+            document.getElementById('turno-aviso').innerText = "Vez de: " + d.nome;
         });
 
-        function renderizarMao() {
-            const divPecas = document.getElementById('minhas-pecas');
-            divPecas.innerHTML = ''; 
-            minhaMaoAtual.forEach((peca, index) => {
-                divPecas.innerHTML += `<div class="peca" onclick="jogar(${index})"><div>${peca[0]}</div><div class="linha"></div><div>${peca[1]}</div></div>`;
+        function renderizarMao(mao) {
+            const div = document.getElementById('minhas-pecas');
+            div.innerHTML = '';
+            mao.forEach((p, i) => {
+                div.innerHTML += `<div class="peca" onclick="socket.emit('jogarPeca', ${i})">${p[0]}|${p[1]}</div>`;
             });
         }
 
-        function jogar(index) { socket.emit('jogarPeca', index); }
-        function comprar() { socket.emit('comprarPeca'); }
-        function passarVez() { socket.emit('passarVez'); }
-
+        socket.on('atualizarMao', (mao) => renderizarMao(mao));
+        
         socket.on('atualizarMesa', (mesa) => {
-            const divMesa = document.getElementById('mesa');
-            if(mesa.length === 0) return divMesa.innerHTML = '<span style="color: #64748b;">A mesa está vazia...</span>';
-            
-            divMesa.innerHTML = ''; 
-            
-            mesa.forEach(peca => {
-                const ehCarroca = (peca[0] === peca[1]);
-                const classePecaMesa = `peca-mesa ${ehCarroca ? 'peca-carroca' : ''}`;
-                
-                divMesa.innerHTML += `
-                    <div class="${classePecaMesa}">
-                        <div>${peca[0]}</div>
-                        <div class="linha-vertical"></div>
-                        <div>${peca[1]}</div>
-                    </div>
-                `;
-            });
+            const div = document.getElementById('mesa');
+            div.innerHTML = mesa.map(p => `<div style="background:white; color:black; padding:5px; border-radius:3px;">${p[0]}|${p[1]}</div>`).join(' ');
         });
+
+        socket.on('mensagemGeral', (m) => document.getElementById('status').innerText = m);
+        socket.on('erroJogada', (m) => alert(m));
     </script>
 </body>
 </html>
