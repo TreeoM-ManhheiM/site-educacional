@@ -2,55 +2,65 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Dominó Lógico</title>
+    <title>Dominó Lógico - Fatec</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: #f8fafc; text-align: center; padding: 20px; }
+        /* Visual Modern Dark conforme image_5bb9c1.png */
+        body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: #f8fafc; text-align: center; padding: 20px; margin: 0; }
         h1 { color: #10b981; margin-bottom: 5px; }
         
-        #tela-login, #lobby, #area-jogo { max-width: 800px; margin: 20px auto; }
+        #tela-login, #area-jogo { max-width: 850px; margin: 20px auto; }
 
-        /* Painel de Info (Igual à imagem) */
-        .painel-info { background: #1e293b; padding: 15px; border-radius: 10px; display: inline-block; min-width: 250px; margin-bottom: 20px; }
+        /* Painel de Informações Superiores */
+        .painel-info { background: #1e293b; padding: 15px; border-radius: 10px; display: inline-block; min-width: 280px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
         .destaque { color: #fbbf24; font-weight: bold; }
 
-        /* Mesa de Jogo */
+        /* Mesa de Jogo (Área Central) */
         #mesa { 
-            background: #1e293b; padding: 40px; min-height: 120px; margin: 20px 0; 
+            background: #1e293b; padding: 40px; min-height: 150px; margin: 20px 0; 
             border-radius: 12px; display: flex; flex-wrap: wrap; justify-content: center; 
-            gap: 10px; border: 2px dashed #334155; 
+            gap: 12px; border: 2px dashed #334155; 
         }
 
-        /* Peças */
+        /* Peças Estilizadas */
         .peca { 
-            background: white; color: black; padding: 10px 15px; border-radius: 8px; 
+            background: white; color: black; padding: 12px 18px; border-radius: 8px; 
             display: inline-flex; align-items: center; gap: 8px; font-weight: bold; 
             font-size: 24px; cursor: pointer; border-bottom: 4px solid #cbd5e1;
+            transition: transform 0.1s;
         }
+        .peca:hover { transform: translateY(-3px); }
 
-        /* Botões de Comando (Cores da Imagem) */
-        button { padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
-        .btn-privacidade { background: #ef4444; margin-bottom: 20px; }
-        .btn-comprar { background: #eab308; color: black; margin-right: 10px; }
+        /* Botões de Comando (Cores da image_5aef49.png) */
+        button { padding: 12px 28px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; font-size: 16px; }
+        .btn-privacidade { background: #ef4444; margin-bottom: 25px; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-comprar { background: #eab308; color: black; margin-right: 15px; }
         .btn-passar { background: #ef4444; }
         
-        .escondido { filter: blur(15px); opacity: 0.2; pointer-events: none; }
+        /* Efeito de Esconder Peças para Sala de Aula */
+        .escondido { filter: blur(18px); opacity: 0.15; pointer-events: none; }
 
-        /* Modal de Escolha */
+        /* Modal de Escolha de Lado (O dilema do 2 e 5) */
         #modal-lado { 
             display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #1e293b; padding: 25px; border: 2px solid #10b981; border-radius: 15px; z-index: 100;
+            background: #1e293b; padding: 30px; border: 2px solid #10b981; border-radius: 15px; 
+            z-index: 1000; box-shadow: 0 0 50px rgba(0,0,0,0.9);
         }
+
+        input { padding: 12px; border-radius: 6px; border: 1px solid #334155; background: #1e293b; color: white; width: 200px; margin: 5px; }
     </style>
 </head>
 <body>
 
     <h1>Mesa de Dominó Lógico 🧠</h1>
-    <div id="status" style="color: #94a3b8; margin-bottom: 10px;">Aguardando Conexão...</div>
+    <div id="status" style="color: #94a3b8; margin-bottom: 15px; font-size: 14px;">Aguardando Conexão...</div>
 
     <div id="tela-login">
-        <input type="text" id="input-apelido" placeholder="Seu Nome" style="padding:10px; border-radius:5px;">
-        <input type="text" id="input-sala" placeholder="Sala" style="padding:10px; border-radius:5px;">
-        <button onclick="entrar()" style="background:#10b981;">Conectar</button>
+        <div style="background: #1e293b; padding: 30px; border-radius: 12px; display: inline-block;">
+            <input type="text" id="input-apelido" placeholder="Nome do Aluno">
+            <input type="text" id="input-sala" placeholder="Número da Sala">
+            <br><br>
+            <button onclick="entrar()" style="background:#10b981; width: 100%;">ENTRAR NO JOGO</button>
+        </div>
     </div>
 
     <div id="area-jogo" style="display:none;">
@@ -62,21 +72,24 @@
         <div id="mesa"></div>
 
         <div id="modal-lado">
-            <h3 style="margin-top:0;">Onde deseja jogar?</h3>
-            <button onclick="confirmarLado('esq')" style="background:#6366f1;">⬅️ Esquerda</button>
-            <button onclick="confirmarLado('dir')" style="background:#10b981;">Direita ➡️</button>
+            <h3 style="margin-top:0; color: #10b981;">Estratégia: Onde jogar?</h3>
+            <p>Esta peça encaixa em ambas as extremidades.</p>
+            <button onclick="confirmarLado('esq')" style="background:#6366f1;">⬅️ ESQUERDA</button>
+            <button onclick="confirmarLado('dir')" style="background:#10b981;">DIREITA ➡️</button>
         </div>
 
-        <button id="btn-olho" class="btn-privacidade" onclick="togglePrivacidade()">🙈 Esconder Peças</button>
+        <button id="btn-olho" class="btn-privacidade" onclick="togglePrivacidade()">
+            <span id="txt-olho">🙈 Esconder Peças</span>
+        </button>
         
         <div id="container-pecas">
-            <h3 style="margin-bottom:10px;">Suas Peças:</h3>
+            <h3 style="margin-bottom:15px; color: #94a3b8;">Suas Peças:</h3>
             <div id="minhas-pecas"></div>
         </div>
 
-        <div style="margin-top:30px;">
-            <button class="btn-comprar" onclick="socket.emit('comprarPeca')">📦 Comprar</button>
-            <button class="btn-passar" onclick="socket.emit('passarVez')">⏭️ Passar</button>
+        <div style="margin-top:40px; border-top: 1px solid #334155; padding-top: 20px;">
+            <button class="btn-comprar" onclick="socket.emit('comprarPeca')">📦 COMPRAR</button>
+            <button class="btn-passar" onclick="socket.emit('passarVez')">⏭️ PASSAR VEZ</button>
         </div>
     </div>
 
@@ -87,37 +100,49 @@
         let pecaSelecionadaIdx = null;
         let visivel = true;
 
+        // Função para entrar e já avisar ao servidor que está pronto
         function entrar() {
             const apelido = document.getElementById('input-apelido').value;
             const sala = document.getElementById('input-sala').value;
             if(apelido && sala) {
                 socket.emit('entrarSala', { apelido, sala });
+                // Envia sinal de pronto automaticamente para o jogo começar logo
+                setTimeout(() => { socket.emit('marcarPronto'); }, 600); 
+                
                 document.getElementById('tela-login').style.display = 'none';
                 document.getElementById('area-jogo').style.display = 'block';
+            } else {
+                alert("Por favor, preencha o seu nome e a sala.");
             }
         }
 
+        // Sistema de esconder peças (Pedagógico)
         function togglePrivacidade() {
             visivel = !visivel;
             document.getElementById('container-pecas').className = visivel ? "" : "escondido";
-            document.getElementById('btn-olho').innerText = visivel ? "🙈 Esconder Peças" : "👁️ Mostrar Peças";
+            document.getElementById('txt-olho').innerText = visivel ? "🙈 Esconder Peças" : "👁️ Mostrar Peças";
             document.getElementById('btn-olho').style.background = visivel ? "#ef4444" : "#6366f1";
         }
 
+        // Lógica de validação de jogada (Esquerda vs Direita)
         function validarJogada(index, mao) {
             const peca = mao[index];
             if (mesaAtual.length === 0) return socket.emit('jogarPeca', { index, lado: 'dir' });
             
             const pEsq = mesaAtual[0][0];
             const pDir = mesaAtual[mesaAtual.length - 1][1];
+            
             const serveEsq = (peca[0] === pEsq || peca[1] === pEsq);
             const serveDir = (peca[0] === pDir || peca[1] === pDir);
 
             if (serveEsq && serveDir) {
+                // Se servir nos dois lados, abre o modal de escolha
                 pecaSelecionadaIdx = index;
                 document.getElementById('modal-lado').style.display = 'block';
-            } else {
+            } else if (serveEsq || serveDir) {
                 socket.emit('jogarPeca', { index, lado: serveEsq ? 'esq' : 'dir' });
+            } else {
+                alert("Esta peça não serve em nenhuma das pontas!");
             }
         }
 
@@ -126,6 +151,7 @@
             document.getElementById('modal-lado').style.display = 'none';
         }
 
+        // Sincronização em tempo real com o servidor
         socket.on('atualizarMesa', (m) => {
             mesaAtual = m;
             document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca" style="cursor:default;">${p[0]} | ${p[1]}</div>`).join('');
@@ -137,9 +163,16 @@
             `).join('');
         });
 
-        socket.on('mudarTurno', (d) => document.getElementById('vez-nome').innerText = d.nome);
+        socket.on('mudarTurno', (d) => {
+            document.getElementById('vez-nome').innerText = d.nome;
+            document.getElementById('status').innerText = "Vez de " + d.nome;
+        });
+
         socket.on('atualizarMonte', (q) => document.getElementById('qtd-monte').innerText = q);
         socket.on('mensagemGeral', (m) => alert(m));
+        socket.on('erroJogada', (m) => alert(m));
+
+        socket.on('connect', () => { document.getElementById('status').innerText = "Conectado ao Servidor!"; });
     </script>
 </body>
 </html>
