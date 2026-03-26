@@ -2,131 +2,144 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Arena Lógica - Fatec</title>
+    <title>Dominó Lógico</title>
     <style>
         body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: #f8fafc; text-align: center; padding: 20px; }
-        h1 { color: #10b981; }
-        #tela-login { margin: 50px auto; background: #1e293b; padding: 30px; border-radius: 10px; width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
-        #tela-login input { width: 90%; padding: 10px; margin: 10px 0; border-radius: 5px; border: none; text-align: center; }
-        #tela-login button { background-color: #10b981; width: 100%; border: none; padding: 12px; border-radius: 5px; cursor: pointer; color: white; font-weight: bold; }
-        #lobby, #area-jogo { display: none; }
+        h1 { color: #10b981; margin-bottom: 5px; }
         
-        /* Estilo da Mesa e Peças */
-        #mesa { background: #1e293b; padding: 25px; min-height: 120px; margin: 20px auto; border-radius: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; border: 2px dashed #334155; }
-        .peca { background: white; color: black; padding: 12px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: bold; font-size: 20px; box-shadow: 2px 2px 5px rgba(0,0,0,0.3); transition: 0.2s; }
-        .peca:hover { transform: translateY(-5px); }
-        .linha-v { width: 2px; height: 20px; background: #0f172a; }
-        
-        .info-game { background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px; display: inline-block; min-width: 200px; }
+        #tela-login, #lobby, #area-jogo { max-width: 800px; margin: 20px auto; }
+
+        /* Painel de Info (Igual à imagem) */
+        .painel-info { background: #1e293b; padding: 15px; border-radius: 10px; display: inline-block; min-width: 250px; margin-bottom: 20px; }
         .destaque { color: #fbbf24; font-weight: bold; }
 
-        /* Botão de Privacidade */
-        #btn-olho { background: #6366f1; color: white; border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; margin-bottom: 10px; transition: 0.3s; }
-        #btn-olho:hover { background: #4f46e5; }
-        #container-pecas { transition: 0.3s; }
-        .escondido { filter: blur(15px); pointer-events: none; opacity: 0.3; }
+        /* Mesa de Jogo */
+        #mesa { 
+            background: #1e293b; padding: 40px; min-height: 120px; margin: 20px 0; 
+            border-radius: 12px; display: flex; flex-wrap: wrap; justify-content: center; 
+            gap: 10px; border: 2px dashed #334155; 
+        }
+
+        /* Peças */
+        .peca { 
+            background: white; color: black; padding: 10px 15px; border-radius: 8px; 
+            display: inline-flex; align-items: center; gap: 8px; font-weight: bold; 
+            font-size: 24px; cursor: pointer; border-bottom: 4px solid #cbd5e1;
+        }
+
+        /* Botões de Comando (Cores da Imagem) */
+        button { padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
+        .btn-privacidade { background: #ef4444; margin-bottom: 20px; }
+        .btn-comprar { background: #eab308; color: black; margin-right: 10px; }
+        .btn-passar { background: #ef4444; }
+        
+        .escondido { filter: blur(15px); opacity: 0.2; pointer-events: none; }
+
+        /* Modal de Escolha */
+        #modal-lado { 
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #1e293b; padding: 25px; border: 2px solid #10b981; border-radius: 15px; z-index: 100;
+        }
     </style>
 </head>
 <body>
+
     <h1>Mesa de Dominó Lógico 🧠</h1>
-    <div id="status" style="color: #94a3b8; margin-bottom: 15px;">Aguardando Conexão...</div>
+    <div id="status" style="color: #94a3b8; margin-bottom: 10px;">Aguardando Conexão...</div>
 
     <div id="tela-login">
-        <h2>Entrar no Jogo</h2>
-        <input type="text" id="input-apelido" placeholder="Seu Apelido">
-        <input type="text" id="input-sala" placeholder="Nome da Sala">
-        <button onclick="entrar()">Conectar</button>
+        <input type="text" id="input-apelido" placeholder="Seu Nome" style="padding:10px; border-radius:5px;">
+        <input type="text" id="input-sala" placeholder="Sala" style="padding:10px; border-radius:5px;">
+        <button onclick="entrar()" style="background:#10b981;">Conectar</button>
     </div>
 
-    <div id="lobby">
-        <h2 id="nome-sala-display">Sala</h2>
-        <ul id="lista-jogadores" style="list-style: none; padding: 0; font-size: 18px;"></ul>
-        <button onclick="socket.emit('marcarPronto')" style="padding: 15px 30px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Estou Pronto!</button>
-    </div>
-
-    <div id="area-jogo">
-        <div class="info-game">
-            <div id="turno-aviso">Vez de: <span class="destaque">---</span></div>
+    <div id="area-jogo" style="display:none;">
+        <div class="painel-info">
+            <div>Vez de: <span id="vez-nome" class="destaque">---</span></div>
             <div>📦 Monte: <span id="qtd-monte" class="destaque">0</span> peças</div>
         </div>
-        
+
         <div id="mesa"></div>
 
-        <div style="border-top: 1px solid #334155; padding-top: 20px;">
-            <button id="btn-olho" onclick="togglePrivacidade()">👁️ Mostrar Peças</button>
-            <div id="container-pecas" class="escondido">
-                <h3>Suas Peças:</h3>
-                <div id="minhas-pecas"></div>
-            </div>
+        <div id="modal-lado">
+            <h3 style="margin-top:0;">Onde deseja jogar?</h3>
+            <button onclick="confirmarLado('esq')" style="background:#6366f1;">⬅️ Esquerda</button>
+            <button onclick="confirmarLado('dir')" style="background:#10b981;">Direita ➡️</button>
         </div>
 
-        <div style="margin-top: 30px;">
-            <button onclick="socket.emit('comprarPeca')" style="background: #eab308; padding: 12px 25px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; margin-right: 10px;">📦 Comprar</button>
-            <button onclick="socket.emit('passarVez')" style="background: #ef4444; padding: 12px 25px; border: none; border-radius: 5px; color: white; font-weight: bold; cursor: pointer;">⏭️ Passar</button>
+        <button id="btn-olho" class="btn-privacidade" onclick="togglePrivacidade()">🙈 Esconder Peças</button>
+        
+        <div id="container-pecas">
+            <h3 style="margin-bottom:10px;">Suas Peças:</h3>
+            <div id="minhas-pecas"></div>
+        </div>
+
+        <div style="margin-top:30px;">
+            <button class="btn-comprar" onclick="socket.emit('comprarPeca')">📦 Comprar</button>
+            <button class="btn-passar" onclick="socket.emit('passarVez')">⏭️ Passar</button>
         </div>
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
         const socket = io("https://motor-domino.onrender.com");
-        let cartasVisiveis = false;
+        let mesaAtual = [];
+        let pecaSelecionadaIdx = null;
+        let visivel = true;
 
         function entrar() {
             const apelido = document.getElementById('input-apelido').value;
             const sala = document.getElementById('input-sala').value;
-            if(!apelido || !sala) return alert("Preencha tudo!");
-            socket.emit('entrarSala', { apelido, sala });
-            document.getElementById('tela-login').style.display = 'none';
+            if(apelido && sala) {
+                socket.emit('entrarSala', { apelido, sala });
+                document.getElementById('tela-login').style.display = 'none';
+                document.getElementById('area-jogo').style.display = 'block';
+            }
         }
 
-        // FUNÇÃO DE MOSTRAR/ESCONDER
         function togglePrivacidade() {
-            cartasVisiveis = !cartasVisiveis;
-            const container = document.getElementById('container-pecas');
-            const btn = document.getElementById('btn-olho');
+            visivel = !visivel;
+            document.getElementById('container-pecas').className = visivel ? "" : "escondido";
+            document.getElementById('btn-olho').innerText = visivel ? "🙈 Esconder Peças" : "👁️ Mostrar Peças";
+            document.getElementById('btn-olho').style.background = visivel ? "#ef4444" : "#6366f1";
+        }
+
+        function validarJogada(index, mao) {
+            const peca = mao[index];
+            if (mesaAtual.length === 0) return socket.emit('jogarPeca', { index, lado: 'dir' });
             
-            if(cartasVisiveis) {
-                container.classList.remove('escondido');
-                btn.innerText = "🙈 Esconder Peças";
-                btn.style.background = "#ef4444";
+            const pEsq = mesaAtual[0][0];
+            const pDir = mesaAtual[mesaAtual.length - 1][1];
+            const serveEsq = (peca[0] === pEsq || peca[1] === pEsq);
+            const serveDir = (peca[0] === pDir || peca[1] === pDir);
+
+            if (serveEsq && serveDir) {
+                pecaSelecionadaIdx = index;
+                document.getElementById('modal-lado').style.display = 'block';
             } else {
-                container.classList.add('escondido');
-                btn.innerText = "👁️ Mostrar Peças";
-                btn.style.background = "#6366f1";
+                socket.emit('jogarPeca', { index, lado: serveEsq ? 'esq' : 'dir' });
             }
         }
 
-        socket.on('estadoLobby', (estado) => {
-            document.getElementById('lobby').style.display = estado.rodando ? 'none' : 'block';
-            document.getElementById('area-jogo').style.display = estado.rodando ? 'block' : 'none';
-            if(!estado.rodando) {
-                document.getElementById('lista-jogadores').innerHTML = estado.jogadoresInfo.map(j => 
-                    `<li>🧑 ${j.nome} ${j.pronto ? '✅' : '⏳'}</li>`
-                ).join('');
-            }
-        });
-
-        socket.on('inicioJogo', (dados) => renderizarMao(dados.minhaMao));
-        socket.on('atualizarMao', (mao) => renderizarMao(mao));
-        socket.on('atualizarMonte', (qtd) => document.getElementById('qtd-monte').innerText = qtd);
-        socket.on('mudarTurno', (d) => document.getElementById('turno-aviso').innerHTML = `Vez de: <span class="destaque">${d.nome}</span>`);
-        socket.on('mensagemGeral', (m) => document.getElementById('status').innerText = m);
-        socket.on('erroJogada', (m) => alert(m));
-
-        function renderizarMao(mao) {
-            const div = document.getElementById('minhas-pecas');
-            div.innerHTML = mao.map((p, i) => `
-                <div class="peca" onclick="socket.emit('jogarPeca', ${i})">
-                    <span>${p[0]}</span><div class="linha-v"></div><span>${p[1]}</span>
-                </div>`).join('');
+        function confirmarLado(lado) {
+            socket.emit('jogarPeca', { index: pecaSelecionadaIdx, lado });
+            document.getElementById('modal-lado').style.display = 'none';
         }
 
-        socket.on('atualizarMesa', (mesa) => {
-            document.getElementById('mesa').innerHTML = mesa.map(p => `
-                <div class="peca" style="cursor:default;">
-                    <span>${p[0]}</span><div class="linha-v"></div><span>${p[1]}</span>
-                </div>`).join('');
+        socket.on('atualizarMesa', (m) => {
+            mesaAtual = m;
+            document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca" style="cursor:default;">${p[0]} | ${p[1]}</div>`).join('');
         });
+
+        socket.on('atualizarMao', (mao) => {
+            document.getElementById('minhas-pecas').innerHTML = mao.map((p, i) => `
+                <div class="peca" onclick="validarJogada(${i}, ${JSON.stringify(mao)})">${p[0]} | ${p[1]}</div>
+            `).join('');
+        });
+
+        socket.on('mudarTurno', (d) => document.getElementById('vez-nome').innerText = d.nome);
+        socket.on('atualizarMonte', (q) => document.getElementById('qtd-monte').innerText = q);
+        socket.on('mensagemGeral', (m) => alert(m));
     </script>
 </body>
 </html>
