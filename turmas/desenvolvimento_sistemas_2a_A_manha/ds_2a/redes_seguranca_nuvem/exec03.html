@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NetSim Master - Pilha OSI & Protocolos (Versão Estável)</title>
+    <title>NetSim Master - Pilha OSI & Protocolos</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap');
 
@@ -22,25 +22,36 @@
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         header h1 { font-size: 1.4rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 10px; }
         
-        .controls-grid { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 15px; align-items: end; }
+        .controls-grid { display: flex; gap: 15px; align-items: end; justify-content: space-between; flex-wrap: wrap; }
         .control-item { display: flex; flex-direction: column; gap: 5px; }
         .control-item label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
         select, button { background: #1f2937; color: white; border: 1px solid #374151; padding: 8px 10px; border-radius: 6px; font-family: 'Inter'; font-weight: 600; outline: none; cursor: pointer; font-size: 0.85rem;}
-        button.primary { background: var(--success); color: #000; border: none; transition: 0.3s; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); height: 40px; padding: 0 20px; font-size: 1rem; font-weight: 800; }
-        button.primary:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(16, 185, 129, 0.7); }
+        
+        /* Botões Novos */
+        .btn-group { display: flex; gap: 8px; }
+        button.primary { background: var(--success); color: #000; border: none; transition: 0.3s; height: 40px; padding: 0 15px; font-weight: 800; }
+        button.primary:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 0 20px rgba(16, 185, 129, 0.6); }
+        button.primary:disabled { background: #374151; color: #9ca3af; cursor: not-allowed; }
+        
+        button.warning { background: #eab308; color: #000; border: none; transition: 0.3s; height: 40px; padding: 0 15px; font-weight: 800; }
+        button.warning:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 0 20px rgba(234, 179, 8, 0.6); }
+        button.warning:disabled { background: #374151; color: #9ca3af; cursor: not-allowed; }
+
+        button.danger { background: var(--danger); color: #fff; border: none; transition: 0.3s; height: 40px; padding: 0 15px; font-weight: 800; }
+        button.danger:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(239, 68, 68, 0.6); }
         
         .toggle-container { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--danger); font-weight: 600; height: 40px; }
         input[type="checkbox"] { accent-color: var(--danger); width: 18px; height: 18px; cursor: pointer; }
 
         /* --- Dashboard Area --- */
-        #dashboard { display: flex; padding: 10px 30px; background: #0f172a; border-bottom: 1px solid #1e293b; gap: 20px; align-items: center; }
+        #dashboard { display: flex; padding: 10px 30px; background: #0f172a; border-bottom: 1px solid #1e293b; gap: 20px; align-items: center; flex-wrap: wrap; }
         .stat-box { display: flex; flex-direction: column; min-width: 110px; background: #1e293b; padding: 8px 15px; border-radius: 6px; border: 1px solid #334155; }
         .stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
         .stat-box strong { font-size: 0.95rem; color: var(--accent-cyan); font-family: 'Fira Code', monospace; margin-top: 3px; }
         .stat-box.ping strong { color: var(--accent-orange); transition: color 0.2s; }
         
         /* Progress Bar */
-        .progress-container { flex: 1; display: flex; flex-direction: column; justify-content: center; background: #1e293b; padding: 8px 20px; border-radius: 8px; border: 1px solid #334155; margin-left: 10px; }
+        .progress-container { flex: 1; display: flex; flex-direction: column; justify-content: center; background: #1e293b; padding: 8px 20px; border-radius: 8px; border: 1px solid #334155; min-width: 250px; }
         .progress-bar-bg { width: 100%; height: 12px; background: #0f172a; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #000; }
         .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.1s linear; }
 
@@ -53,6 +64,10 @@
         .line-fiber { stroke: var(--accent-cyan); stroke-width: 4; filter: drop-shadow(0 0 5px var(--accent-cyan)); }
         .line-isp { stroke: #9333ea; stroke-width: 3; stroke-dasharray: 8 4; opacity: 0.9; }
         .line-data-flow { stroke: #fff; stroke-width: 2; stroke-dasharray: 10 20; animation: dataFlow 1s linear infinite; }
+        
+        /* Pause Animation class */
+        .paused-animation { animation-play-state: paused !important; }
+
         @keyframes dataFlow { to { stroke-dashoffset: -30; } }
 
         /* Nodes */
@@ -128,8 +143,10 @@
             <input type="checkbox" id="packetLossToggle">
             <label for="packetLossToggle">Simular Tempestade (Perda L3/L4)</label>
         </div>
-        <div class="control-item" style="justify-content: flex-end;">
-            <button class="primary" onclick="iniciarSimulacao()">► EXECUTAR TRÁFEGO</button>
+        <div class="control-item btn-group" style="align-items: flex-end;">
+            <button class="primary" id="btn-start" onclick="iniciarSimulacao()">► INICIAR</button>
+            <button class="warning" id="btn-pause" onclick="togglePause()" disabled>⏸ PAUSAR</button>
+            <button class="danger" id="btn-reset" onclick="resetSimulacao()">↺ RESET</button>
         </div>
     </div>
 </header>
@@ -163,9 +180,13 @@
     const mapContainer = document.getElementById('map-container');
     const svgBase = document.getElementById('connectionsSvg');
     const svgFlow = document.getElementById('dataFlowSvg');
+    const btnStart = document.getElementById('btn-start');
+    const btnPause = document.getElementById('btn-pause');
+    
+    // Controlo de Estado da Simulação
     let isRunning = false;
+    let isPaused = false;
 
-    // Dicionário de Protocolos
     const dictProtocolos = {
         'HTTP':  { transp: 'TCP', port: 80,   sizeMB: 100,  dir: 'down', desc: 'Transferência de Dados Web', cmdReq: 'GET /arquivo.zip HTTP/1.1', cmdRes: '200 OK (text/html)' },
         'HTTPS': { transp: 'TCP', port: 443,  sizeMB: 500,  dir: 'down', desc: 'Sessão Web Segura', cmdReq: 'ClientHello TLS 1.3', cmdRes: 'ServerHello, Certificate, TLS Tunnel Established' },
@@ -196,14 +217,12 @@
         { id: 'server', icon: '🗄️', name: 'Servidor Alvo', ip: '54.239.28.85', x: 92, y: 75 }
     ];
 
-    // Limpa o SVG de forma segura (evita bug de innerHTML no SVG)
     function clearSVG(svgElement) {
         while (svgElement.firstChild) {
             svgElement.removeChild(svgElement.firstChild);
         }
     }
 
-    // Cria as linhas do mapa de forma nativa e à prova de falhas
     function drawSVGLine(svg, id, cls, d) {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         if(id) path.setAttribute('id', id);
@@ -214,13 +233,11 @@
     }
 
     function initMap() {
-        // Limpar Nós antigos
         mapContainer.querySelectorAll('.node').forEach(n => n.remove());
         clearSVG(svgBase);
         clearSVG(svgFlow);
 
         nodesData.forEach((node, index) => {
-            // Renderizar Ícones
             const el = document.createElement('div');
             el.className = 'node'; 
             el.id = `node-${node.id}`;
@@ -229,7 +246,6 @@
             el.innerHTML = `<div class="node-icon" id="icon-${node.id}">${node.icon}</div><span class="name">${node.name}</span><span class="ip">${node.ip}</span>`;
             mapContainer.appendChild(el);
 
-            // Renderizar Cabos Base
             if (index > 0) {
                 const prev = nodesData[index - 1];
                 let lineClass = 'line-fiber'; 
@@ -250,7 +266,6 @@
         }
     }
 
-    // Inicialização ao carregar a página
     window.onload = () => {
         initMap();
         document.getElementById('meioSelect').addEventListener('change', updateLocalLine);
@@ -265,8 +280,51 @@
         terminal.scrollTop = terminal.scrollHeight;
     }
     
-    function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
     function getJitter(basePing) { return Math.max(1, Math.floor(basePing + (basePing * ((Math.random() * 0.35) - 0.10)))); }
+
+    // --- NOVO SISTEMA DE TEMPO COM SUPORTE A PAUSA ---
+    function wait(ms) { 
+        return new Promise(resolve => {
+            let remaining = ms;
+            const step = 20;
+            const timer = setInterval(() => {
+                if (!isRunning) {
+                    clearInterval(timer);
+                    resolve();
+                    return;
+                }
+                if (!isPaused) {
+                    remaining -= step;
+                    if (remaining <= 0) {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }
+            }, step);
+        }); 
+    }
+
+    // --- FUNÇÕES DOS BOTÕES ---
+    function togglePause() {
+        if (!isRunning) return;
+        isPaused = !isPaused;
+        if (isPaused) {
+            btnPause.innerHTML = '▶ CONTINUAR';
+            btnPause.style.background = 'var(--accent-orange)';
+            logMsg(null, "Simulação PAUSADA pelo utilizador.", "warn");
+            svgFlow.classList.add('paused-animation');
+        } else {
+            btnPause.innerHTML = '⏸ PAUSAR';
+            btnPause.style.background = '#eab308';
+            logMsg(null, "Simulação RETOMADA.", "succ");
+            svgFlow.classList.remove('paused-animation');
+        }
+    }
+
+    function resetSimulacao() {
+        // Recarrega a página para garantir que toda a memória e processos sejam limpos
+        location.reload();
+    }
 
     async function shootPacket(startIdx, endIdx, typeClass, baseDelay = 100, isUDP = false) {
         if (!isRunning) return;
@@ -288,7 +346,6 @@
             let hopDelay = baseDelay;
             const meioLocal = meiosFisicos[document.getElementById('meioSelect').value];
 
-            // Local Delay & Loss (Camada 1 e 2)
             if ((currentNode.id === 'pc' && nextNode.id === 'router') || (currentNode.id === 'router' && nextNode.id === 'pc')) {
                 hopDelay = baseDelay + (meioLocal.latenciaMs * 1.5); 
                 if (hopDelay > 800) hopDelay = 800; 
@@ -302,7 +359,6 @@
                 pkt.style.transition = `top ${baseDelay/1000}s linear, left ${baseDelay/1000}s linear`;
             }
 
-            // Backbone Loss (Camada 3)
             const stormLossRate = isUDP ? 0.60 : 0.25; 
             if (document.getElementById('packetLossToggle').checked && (currentNode.id === 'backbone_int' || nextNode.id === 'backbone_int') && Math.random() < stormLossRate) {
                 pkt.className = 'packet pkt-err'; await wait(hopDelay); pkt.remove();
@@ -325,11 +381,20 @@
         let pathD = ""; 
         nodesData.forEach((n, i) => { pathD += i === 0 ? `M ${n.x}% ${n.y}% ` : `L ${n.x}% ${n.y}% `; });
         drawSVGLine(svgFlow, null, 'line-data-flow', pathD);
+        if (isPaused) svgFlow.classList.add('paused-animation');
     }
 
     async function iniciarSimulacao() {
         if (isRunning) return;
         isRunning = true;
+        isPaused = false;
+        
+        // Atualização da UI dos Botões
+        btnStart.disabled = true;
+        btnPause.disabled = false;
+        btnPause.innerHTML = '⏸ PAUSAR';
+        btnPause.style.background = '#eab308';
+        
         terminal.innerHTML = ''; 
         setFlowAnimation(false);
         document.getElementById('progress-bar').style.width = '0%';
@@ -342,7 +407,7 @@
         
         const isTCP = proto.transp === 'TCP';
         const maxMBps = (meio.velMbps / 8) * 0.9; 
-        const basePingReal = (meio.latenciaMs + 110) * 2; // 110ms é o backbone base
+        const basePingReal = (meio.latenciaMs + 110) * 2; 
 
         document.getElementById('dash-vel').innerText = `${maxMBps.toFixed(1)} MB/s`;
         document.getElementById('dash-proto').innerText = `${protoKey} (${proto.transp})`;
@@ -350,7 +415,6 @@
         try {
             logMsg(null, `Iniciando Pilha OSI. Alvo: ${proto.desc} via porta ${proto.port}/${proto.transp}`, "warn");
 
-            // --- CAMADA 2 & 3: ENLACE E INTERNET ---
             logMsg('Enlace/L2', `Negociando conexão física. MAC Address resolvido via ARP.`, "info");
             await wait(500);
             
@@ -364,7 +428,6 @@
             logMsg('Internet/L3', `ICMP Echo Reply recebido. Roteamento BGP confirmou caminho.`, "succ");
             await wait(500);
 
-            // --- CAMADA 4: TRANSPORTE ---
             document.getElementById('transfer-status').innerText = `Negociando C4 (${proto.transp})...`;
             if (isTCP) {
                 logMsg('Transp/L4', `Iniciando 3-Way Handshake TCP (SYN, SYN-ACK, ACK).`, "info");
@@ -376,7 +439,6 @@
                 logMsg('Transp/L4', `Protocolo UDP selecionado. Pulando Handshake TCP.`, "warn");
             }
 
-            // --- CAMADA 7: APLICAÇÃO ---
             logMsg('Aplic/L7', `Injetando payload do protocolo ${protoKey}...`, "warn");
             await wait(400);
             logMsg('Aplic/L7', `>>> ${proto.cmdReq}`, "succ");
@@ -384,7 +446,6 @@
             logMsg('Aplic/L7', `<<< ${proto.cmdRes}`, "succ");
             await shootPacket(6, 0, 'pkt-ctrl', 80, !isTCP); 
             
-            // --- TRANSFERÊNCIA DE DADOS ---
             document.getElementById('transfer-status').innerText = `Executando ${protoKey}...`;
             setFlowAnimation(true);
             
@@ -401,7 +462,6 @@
                 else document.querySelector('.stat-box.ping strong').style.color = 'var(--accent-orange)';
 
                 try {
-                    // Direção correta do tiro
                     if(proto.dir === 'down') { await shootPacket(6, 0, 'pkt-data', 80, !isTCP); }
                     else { await shootPacket(0, 6, 'pkt-data', 80, !isTCP); }
 
@@ -442,7 +502,6 @@
                 document.getElementById('transfer-pct').innerText = `${displayDown} / ${displayTotal} (${Math.floor(pct)}%)`;
             }
 
-            // --- ENCERRAMENTO ---
             if (isRunning) {
                 setFlowAnimation(false);
                 document.querySelector('.stat-box.ping strong').style.color = 'var(--accent-orange)';
@@ -461,6 +520,12 @@
                         logMsg('Aplic/L7', `Transação ${protoKey} via UDP resolvida instantaneamente.`, "succ");
                     }
                 }
+                
+                // Finaliza botões
+                btnStart.disabled = false;
+                btnPause.disabled = true;
+                btnPause.innerHTML = '⏸ PAUSAR';
+                btnPause.style.background = '#eab308';
             }
         } finally {
             isRunning = false;
