@@ -25,6 +25,24 @@
         header h1 { margin: 0; font-size: 28px; }
         header p { font-size: 14px; margin-top: 5px; opacity: 0.9; }
 
+        /* ESTILO DO BOTÃO DE REGRAS NO TOPO */
+        .btn-header-regras {
+            display: inline-block;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 18px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
+        }
+        .btn-header-regras:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
         main {
             max-width: 1000px;
             margin: auto;
@@ -96,7 +114,7 @@
         .btn-pronto { background: #3b82f6; color: white; width: 100%; }
         .btn-comprar { background: #eab308; color: black; }
         .btn-passar { background: #ef4444; color: white; }
-        .btn-olho { background: #ef4444; color: white; margin-bottom: 15px; }
+        .btn-olho { background: #64748b; color: white; margin-bottom: 15px; }
 
         #modal-lado { 
             display: none; 
@@ -110,17 +128,6 @@
         .escondido { filter: blur(15px); opacity: 0.2; pointer-events: none; }
         input { padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; margin: 5px; }
         li { list-style: none; background: #f1f5f9; margin: 5px; padding: 10px; border-radius: 5px; text-align: left; }
-        
-        /* LINK DE REGRAS */
-        .link-regras {
-            display: block;
-            margin-top: 15px;
-            color: #2563eb;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 14px;
-        }
-        .link-regras:hover { text-decoration: underline; }
     </style>
 </head>
 
@@ -129,6 +136,7 @@
 <header>
     <h1>Dominó Lógico 🧠</h1>
     <p>Projeto Integrado — Laboratório de Computação</p>
+    <a href="regras.html" class="btn-header-regras">📖 VER REGRAS DO JOGO</a>
 </header>
 
 <main>
@@ -140,8 +148,6 @@
         <input type="text" id="input-sala" placeholder="Sala">
         <br><br>
         <button onclick="entrar()" class="btn-conectar">CONECTAR AO SERVIDOR</button>
-        
-        <a href="regras.html" class="link-regras">📖 Ler as regras antes de jogar</a>
     </div>
 
     <div id="lobby" class="game-container" style="display:none;">
