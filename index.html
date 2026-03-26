@@ -3,9 +3,10 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Todos Juntos e Misturados</title>
+    <title>Dominó Lógico — Laboratório de Computação</title>
 
     <style>
+        /* PADRÃO TODOS JUNTOS E MISTURADOS */
         body {
             margin: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -16,17 +17,17 @@
         header {
             background: linear-gradient(135deg, #1e293b, #334155);
             color: white;
-            padding: 40px 20px;
+            padding: 30px 20px;
             text-align: center;
         }
 
         header h1 {
             margin: 0;
-            font-size: 40px;
+            font-size: 32px;
         }
 
         header p {
-            font-size: 18px;
+            font-size: 16px;
             margin-top: 10px;
             opacity: 0.9;
         }
@@ -34,78 +35,122 @@
         main {
             max-width: 1100px;
             margin: auto;
-            padding: 40px 20px;
+            padding: 20px;
         }
 
-        h2 {
-            margin-top: 0;
-            color: #1e293b;
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 50px;
-        }
-
-        .card {
+        /* ÁREA DO JOGO */
+        .game-container {
             background: white;
             padding: 25px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            transition: transform 0.2s, box-shadow 0.2s;
+            margin-bottom: 30px;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
+        #status {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 10px;
         }
 
-        .card a {
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            color: #2563eb;
-        }
-
-        .card p {
-            margin-top: 10px;
-            font-size: 15px;
-            color: #555;
-        }
-
-        .menu {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            margin-bottom: 50px;
-        }
-
-        .menu ul {
-            list-style: none;
-            padding: 0;
+        /* PAINEL DE INFORMAÇÕES */
+        .painel-info {
+            background: #e5edff;
+            padding: 15px;
+            border-radius: 8px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 15px;
-        }
-
-        .menu li a {
-            display: block;
-            padding: 15px;
-            background: #e5edff;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: bold;
-            text-decoration: none;
+            margin-bottom: 20px;
+            border: 1px solid #c7d2fe;
             color: #1e3a8a;
-            transition: background 0.2s;
+            font-weight: bold;
         }
 
-        .menu li a:hover {
-            background: #c7d2fe;
+        .destaque { color: #2563eb; }
+
+        /* MESA DE JOGO */
+        #mesa { 
+            background: #f8fafc; 
+            padding: 30px; 
+            min-height: 120px; 
+            margin: 20px 0; 
+            border-radius: 12px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 10px; 
+            border: 2px dashed #cbd5e1; 
         }
+
+        /* PEÇAS */
+        .peca { 
+            background: white; 
+            color: #1e293b; 
+            padding: 12px 18px; 
+            border-radius: 8px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-weight: bold; 
+            font-size: 24px; 
+            cursor: pointer; 
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.2s; 
+        }
+
+        .peca:hover {
+            transform: translateY(-3px);
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        /* BOTÕES */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button { 
+            padding: 12px 24px; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        .btn-principal { background: #2563eb; color: white; }
+        .btn-principal:hover { background: #1d4ed8; }
+
+        .btn-comprar { background: #10b981; color: white; }
+        .btn-comprar:hover { background: #059669; }
+
+        .btn-passar { background: #ef4444; color: white; }
+
+        .btn-privacidade { background: #64748b; color: white; margin-bottom: 15px; }
+
+        /* MODAL */
+        #modal-lado { 
+            display: none; 
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            background: white; 
+            padding: 30px; 
+            border-radius: 15px; 
+            z-index: 100; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            text-align: center;
+            border: 1px solid #cbd5e1;
+        }
+
+        .escondido { filter: blur(12px); opacity: 0.3; pointer-events: none; }
 
         footer {
             background: #1e293b;
@@ -114,14 +159,14 @@
             text-align: center;
         }
 
-        footer h3 {
-            margin-top: 0;
-            color: white;
-        }
+        footer h3 { margin-top: 0; color: white; }
 
-        footer p {
-            margin: 5px 0;
-            font-size: 14px;
+        input {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            margin: 5px;
+            width: 200px;
         }
     </style>
 </head>
@@ -130,86 +175,113 @@
 
 <header>
     <h1>Laboratório de Computação</h1>
-    <p>Todos Juntos e Misturados — Compartilhando conhecimento em programação</p>
+    <p>Dominó Lógico — Desenvolvendo o raciocínio matemático</p>
 </header>
 
 <main>
-    <section class="dica-pedagogica">
-    <h2>Educação & Programação</h2>
+    <div id="status">Conectando ao servidor...</div>
 
-    <p>
-        <strong>Paulo Freire</strong> defendia que a alfabetização deve partir do 
-        <strong>todo</strong> — o contexto, a realidade e a vivência do aluno —
-        para depois chegar às <strong>partes</strong>, como letras, palavras
-        e conceitos formais.
-    </p>
-
-    <p>
-        Seu método utiliza uma abordagem <strong>sociocultural</strong>, em que
-        o aprendizado nasce da <strong>vida, da cultura e da experiência</strong>
-        do estudante.
-    </p>
-
-    <p>
-        Neste laboratório, a programação é ensinada da mesma forma:
-        começamos por <strong>problemas reais</strong> e do cotidiano do aluno,
-        para então compreender os <strong>algoritmos, estruturas e códigos</strong>.
-    </p>
-</section>
-
-    <h2>Turmas</h2>
-
-    <section class="cards">
-        <div class="card">
-            <a href="turmas/desenvolvimento_sistemas_2a_A_manha/">
-                Desenvolvimento de Sistemas
-            </a>
-            <p>2ª Série A — Manhã</p>
-        </div>
-
-        <div class="card">
-            <a href="turmas/3b_ciencia_dados/index.html">
-                Ciência de Dados
-            </a>
-            <p>3ª Série B — Manhã</p>
-        </div>
-       
-        <div class="card">
-             <a href="algoritmos.html">
-                 Projeto Travessia Inteligente
-             </a>
-            <p>3ª Série B — PROJETOS</p>
-        </div>
-        
+    <section id="tela-login" class="game-container">
+        <h2>Entrar na Partida</h2>
+        <input type="text" id="input-apelido" placeholder="Seu Nome">
+        <input type="text" id="input-sala" placeholder="Número da Sala">
+        <button onclick="entrar()" class="btn-principal">CONECTAR</button>
     </section>
 
-    <h2>Conteúdos</h2>
-
-    <section class    
-        </ul>
-            <li><a href="123.html">Link Drive</a></li>
-            <li><a href="python.html">Python</a></li>
-            <li><a href="desafios.html">Desafios</a></li>
-            <li><a href="atividade1.html">Atividades de Lógica</a></li>
-            <li><a href="loboratorio_redes.html"> Laboratório de Jogos de Lógica</a></li>
-            </a>
-            </a>
-            </a>
-            <a href="domino/" style="display: inline-block; padding: 12px 24px; background-color: #10b981; color: white; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;">
-    🎮 Dominó Lógico 
-            </a>
-            </a>
-        </ul>
+    <section id="lobby" class="game-container" style="display:none;">
+        <h2>Aguardando Jogadores</h2>
+        <div id="lista-alunos" style="margin-bottom:20px;"></div>
+        <button onclick="socket.emit('marcarPronto')" class="btn-principal" style="width:100%">ESTOU PRONTO / INICIAR</button>
     </section>
 
+    <section id="area-jogo" style="display:none;">
+        <div class="painel-info">
+            <div>Turno de: <span id="vez-nome" class="destaque">---</span></div>
+            <div id="display-parceiro">🤝 Parceiro: ---</div>
+            <div>📦 Monte: <span id="qtd-monte" class="destaque">0</span></div>
+        </div>
+
+        <div id="mesa"></div>
+
+        <div id="modal-lado">
+            <h3 style="color:#1e293b">Em qual ponta jogar?</h3>
+            <button onclick="confirmarLado('esq')" class="btn-principal">⬅️ ESQUERDA</button>
+            <button onclick="confirmarLado('dir')" class="btn-principal" style="margin-left:10px;">DIREITA ➡️</button>
+        </div>
+
+        <div class="game-container">
+            <button id="btn-olho" class="btn-privacidade" onclick="togglePrivacidade()">🙈 Esconder Minhas Peças</button>
+            <div id="minhas-pecas"></div>
+            
+            <div class="controls">
+                <button class="btn-comprar" onclick="socket.emit('comprarPeca')">📦 COMPRAR PEÇA</button>
+                <button class="btn-passar" onclick="socket.emit('passarVez')">⏭️ PASSAR VEZ</button>
+            </div>
+        </div>
+    </section>
 </main>
 
 <footer>
     <h3>OITO DE ABRIL</h3>
-    <p>6082 — Desenvolvimento de Sistemas — 2ª Série A — Manhã</p>
-    <p>0000 — Ciência de Dados — 3ª Série B — Manhã</p>
+    <p>Projeto Integrado — Lógica e Programação</p>
     <p>© Todos os Direitos Reservados</p>
 </footer>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+    // Mantenha o MESMO script das versões anteriores aqui
+    const socket = io("https://motor-domino.onrender.com");
+    let mesaAtual = [], pecaSelecionadaIdx = null, visivel = true;
+
+    function entrar() {
+        const apelido = document.getElementById('input-apelido').value;
+        const sala = document.getElementById('input-sala').value;
+        if(apelido && sala) {
+            socket.emit('entrarSala', { apelido, sala });
+            document.getElementById('tela-login').style.display = 'none';
+        }
+    }
+
+    socket.on('infoParceiro', (n) => document.getElementById('display-parceiro').innerText = "🤝 Parceiro: " + n);
+
+    socket.on('estadoLobby', (dados) => {
+        const lobby = document.getElementById('lobby'), jogo = document.getElementById('area-jogo');
+        if (dados.rodando) { lobby.style.display = 'none'; jogo.style.display = 'block'; }
+        else { 
+            lobby.style.display = 'block'; 
+            document.getElementById('lista-alunos').innerHTML = dados.jogadoresInfo.map(j => 
+                `<div style="padding:10px; border-bottom:1px solid #eee;">👤 ${j.nome} ${j.pronto ? '<b style="color:#10b981;">(OK)</b>' : '<b style="color:#ef4444;">(Aguardando)</b>'}</div>`
+            ).join(''); 
+        }
+    });
+
+    socket.on('resetJogo', () => { alert("Fim de jogo! Sala reiniciada."); location.reload(); });
+
+    function togglePrivacidade() {
+        visivel = !visivel;
+        document.getElementById('minhas-pecas').className = visivel ? "" : "escondido";
+        document.getElementById('btn-olho').innerText = visivel ? "🙈 Esconder Peças" : "👁️ Mostrar Peças";
+    }
+
+    function validarJogada(index, mao) {
+        const peca = mao[index];
+        if (mesaAtual.length === 0) return socket.emit('jogarPeca', { index, lado: 'dir' });
+        const pEsq = mesaAtual[0][0], pDir = mesaAtual[mesaAtual.length - 1][1];
+        const serveEsq = (peca[0] === pEsq || peca[1] === pEsq), serveDir = (peca[0] === pDir || peca[1] === pDir);
+        if (serveEsq && serveDir) { pecaSelecionadaIdx = index; document.getElementById('modal-lado').style.display = 'block'; }
+        else if (serveEsq || serveDir) socket.emit('jogarPeca', { index, lado: serveEsq ? 'esq' : 'dir' });
+        else alert("Esta peça não encaixa!");
+    }
+
+    function confirmarLado(lado) { socket.emit('jogarPeca', { index: pecaSelecionadaIdx, lado }); document.getElementById('modal-lado').style.display = 'none'; }
+    socket.on('atualizarMesa', (m) => { mesaAtual = m; document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca" style="cursor:default;">${p[0]} | ${p[1]}</div>`).join(''); });
+    socket.on('atualizarMao', (m) => { document.getElementById('minhas-pecas').innerHTML = m.map((p, i) => `<div class="peca" onclick="validarJogada(${i}, ${JSON.stringify(m)})">${p[0]} | ${p[1]}</div>`).join(''); });
+    socket.on('erro', (m) => alert(m));
+    socket.on('mudarTurno', (d) => document.getElementById('vez-nome').innerText = d.nome);
+    socket.on('atualizarMonte', (q) => document.getElementById('qtd-monte').innerText = q);
+    socket.on('mensagemGeral', (m) => alert(m));
+    socket.on('connect', () => document.getElementById('status').innerText = "✅ Conectado ao Laboratório");
+</script>
 
 </body>
 </html>
