@@ -3,258 +3,525 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de Rede – Laboratório</title>
-
+<title>NetSim Pro: Topologia & TCP/IP Builder</title>
 <style>
-body{font-family:monospace;margin:0;background:#eef2f7}
-h1{background:#0f172a;color:#fff;padding:14px;margin:0;text-align:center}
-#toolbar{padding:10px;background:#e5e7eb;display:flex;flex-wrap:wrap;gap:6px;justify-content:center}
-button{padding:6px 12px;font-size:12px;cursor:pointer;border-radius:6px;border:1px solid #888}
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap');
 
-#rede{width:1400px;height:580px;margin:10px auto;background:#fff;border:2px solid #0f172a;position:relative;overflow:hidden}
-svg{position:absolute;top:0;left:0;width:1400px;height:580px}
+    :root {
+        --bg-color: #0b1120; --panel-bg: #1e293b; --accent: #06b6d4; 
+        --accent-wlan: #3b82f6; --danger: #ef4444; --success: #10b981; --text-light: #f8fafc;
+    }
 
-.dispositivo{
-  width:90px;height:80px;position:absolute;border-radius:7px;
-  color:#fff;text-align:center;font-size:7px;line-height:10.8;
-  padding-top:4px;cursor:pointer;user-select:none
-}
+    body { font-family: 'Inter', sans-serif; margin: 0; background: var(--bg-color); color: var(--text-light); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+    
+    /* Toolbar */
+    #header { background: #020617; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--accent); z-index: 100; }
+    #header h1 { margin: 0; font-size: 1.3rem; font-family: 'Fira Code', monospace; color: var(--accent); }
+    
+    #toolbar { background: var(--panel-bg); padding: 10px 20px; display: flex; gap: 15px; flex-wrap: wrap; z-index: 99; border-bottom: 1px solid #334155; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+    .tool-group { display: flex; gap: 6px; border-right: 2px solid #334155; padding-right: 15px; align-items: center; flex-wrap: wrap;}
+    .tool-group span { color: #94a3b8; font-size: 0.7rem; font-weight: bold; text-transform: uppercase; margin-right: 5px; letter-spacing: 1px; }
+    
+    button { background: #334155; color: white; border: 1px solid #475569; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-family: 'Inter'; font-size: 0.8rem; font-weight: 600; transition: 0.2s; }
+    button:hover { background: #475569; border-color: var(--accent); }
+    button.active { background: var(--accent); color: #000; border-color: var(--accent); }
+    button.danger { background: var(--danger); border-color: var(--danger); }
+    
+    /* Workspace */
+    #workspace { flex: 1; position: relative; background-image: radial-gradient(rgba(255,255,255,0.05) 1.5px, transparent 1.5px); background-size: 25px 25px; overflow: hidden; cursor: crosshair; }
+    svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+    
+    /* Cabos (Lógica Física) */
+    .cable-lan { stroke: #cbd5e1; stroke-width: 3; } /* Cabo de Rede Cobre */
+    .cable-wan { stroke: #ef4444; stroke-width: 3; stroke-dasharray: 10 5; } /* Fibra/Link Externo */
+    .cable-wlan { stroke: var(--accent-wlan); stroke-width: 2.5; stroke-dasharray: 4 6; animation: wlanPulse 1s linear infinite; } /* Wi-Fi */
+    @keyframes wlanPulse { to { stroke-dashoffset: -10; } }
 
-/* INFRA */
-.internet{background:#000}
-.modem{background:#0ea5e9}
-.firewall{background:#111827}
-.switch{background:#2563eb}
-.router{background:#f59e0b}
+    .port-label { font-family: 'Fira Code', monospace; font-size: 10px; fill: #fbbf24; font-weight: bold; background: rgba(0,0,0,0.8); }
 
-/* HOSTS */
-.pc{background:#16a34a}
-.notebook{background:#22c55e}
-.smartphone{background:#4ade80}
-.tablet{background:#2dd4bf}
-.printer{background:#64748b}
-.camera{background:#ef4444}
-.tv{background:#9333ea}
-.console{background:#be185d}
-.iot{background:#a16207}
-.server{background:#dc2626}
+    /* Nodes (Devices) */
+    .node { position: absolute; width: 65px; height: 65px; background: #1e293b; border: 2px solid #475569; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: grab; z-index: 20; box-shadow: 0 5px 15px rgba(0,0,0,0.4); user-select: none; transition: 0.2s; }
+    .node:active { cursor: grabbing; transform: scale(0.95); }
+    .node:hover { border-color: var(--accent); }
+    .node.selected { border-color: var(--success); box-shadow: 0 0 15px var(--success); }
+    .node-icon { font-size: 26px; pointer-events: none; margin-bottom: 2px; }
+    .node-label { font-size: 9px; font-weight: bold; font-family: 'Fira Code'; color: #cbd5e1; pointer-events: none; text-align: center; line-height: 1.2; background: rgba(0,0,0,0.6); padding: 2px 4px; border-radius: 4px; position: absolute; bottom: -25px; white-space: nowrap; }
 
-.selected{outline:3px dashed red}
+    /* Modal System */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
+    .modal { background: #0f172a; padding: 25px; border-radius: 12px; width: 480px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #334155; color: white; }
+    .modal h2 { margin-top: 0; font-size: 1.2rem; color: var(--accent); border-bottom: 2px solid #334155; padding-bottom: 10px; font-family: 'Fira Code'; }
+    
+    /* Port Selection Menu */
+    .port-list { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; max-height: 300px; overflow-y: auto; }
+    .port-item { background: #1e293b; padding: 10px; border: 1px solid #334155; border-radius: 6px; cursor: pointer; font-family: 'Fira Code'; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; }
+    .port-item:hover { background: #334155; border-color: var(--accent); }
+    .port-item.used { background: rgba(239, 68, 68, 0.1); color: #fca5a5; cursor: not-allowed; border-color: #7f1d1d; }
+    .port-type-badge { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; background: #000; text-transform: uppercase; }
 
-#console{
-  max-width:1400px;margin:10px auto;
-  background:#020617;color:#22c55e;
-  padding:10px;height:200px;overflow:auto
-}
-
-/* MODAL */
-#cfg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);align-items:center;justify-content:center}
-#cfgBox{background:#fff;padding:15px;border-radius:8px;width:350px}
-#cfgBox label{display:block;margin-top:6px}
-#cfgBox input{width:100%}
-.hidden{display:none}
+    /* IP Config Table */
+    .config-interfaces { max-height: 60vh; overflow-y: auto; padding-right: 5px; }
+    .interface-block { border: 1px solid #334155; background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 15px; }
+    .interface-title { font-weight: bold; color: var(--accent); margin-bottom: 12px; font-size: 1rem; border-bottom: 1px solid #334155; padding-bottom: 5px; display: flex; justify-content: space-between; font-family: 'Fira Code'; }
+    
+    .config-row { display: flex; gap: 10px; margin-bottom: 8px; align-items: center; font-family: 'Fira Code'; font-size: 0.8rem; }
+    .config-row label { width: 90px; color: #94a3b8; }
+    .config-row input[type="text"] { flex: 1; padding: 6px; background: #0f172a; color: #fff; border: 1px solid #475569; border-radius: 4px; font-family: 'Fira Code'; outline: none; }
+    .config-row input[type="text"]:focus { border-color: var(--accent); }
+    .config-row input[type="text"]:disabled { background: #334155; color: #94a3b8; cursor: not-allowed; font-style: italic; }
+    
+    .dhcp-toggle { display: flex; gap: 15px; background: #0f172a; padding: 8px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #334155; }
+    .dhcp-toggle label { display: flex; align-items: center; gap: 5px; cursor: pointer; color: #cbd5e1; width: auto; font-weight: bold;}
+    .dhcp-toggle input[type="radio"] { accent-color: var(--accent); }
 </style>
 </head>
-
 <body>
-<h1>Simulador de Rede – Laboratório de Pensamento em Redes</h1>
 
-<div id="toolbar">
-  <!-- Infra -->
-  <button data-add="internet">Internet</button>
-  <button data-add="modem">Modem</button>
-  <button data-add="firewall">Firewall</button>
-  <button data-add="router">Roteador</button>
-  <button data-add="switch">Switch</button>
-
-  <!-- Hosts -->
-  <button data-add="pc">PC</button>
-  <button data-add="notebook">Notebook</button>
-  <button data-add="smartphone">Smartphone</button>
-  <button data-add="tablet">Tablet</button>
-  <button data-add="printer">Impressora</button>
-  <button data-add="camera">Câmera IP</button>
-  <button data-add="tv">Smart TV</button>
-  <button data-add="console">Console</button>
-  <button data-add="iot">IoT</button>
-  <button data-add="server">Servidor</button>
-
-  <!-- Ações -->
-  <button data-mode="link">Ligar</button>
-  <button data-mode="move">Mover</button>
-  <button data-mode="delete">Deletar</button>
-
-  <button onclick="saveTopo()">Salvar topologia.json</button>
-  <button onclick="resetAll()">Limpar</button>
+<div id="header">
+    <h1>📡 NetSim Pro: TCP/IP & WLAN Architect</h1>
+    <div>
+        <button onclick="clearWorkspace()" class="danger">Limpar Laboratório</button>
+        <button onclick="exportJSON()" style="background: var(--success); color: #000;">Salvar Topologia .json</button>
+    </div>
 </div>
 
-<div id="rede"><svg id="cabos"></svg></div>
-<pre id="console">> console iniciado...</pre>
+<div id="toolbar">
+    <div class="tool-group">
+        <span>Ação</span>
+        <button id="btn-move" class="active" onclick="setMode('move')">Mover / IP Config</button>
+        <button id="btn-connect" onclick="setMode('connect')">🔗 Cabear / Parear Wi-Fi</button>
+        <button id="btn-delete" onclick="setMode('delete')">❌ Deletar</button>
+    </div>
+    <div class="tool-group">
+        <span>End Devices</span>
+        <button onclick="addDevice('PC', '💻')">PC</button>
+        <button onclick="addDevice('Notebook', '💻')">Notebook</button>
+        <button onclick="addDevice('Smartphone', '📱')">Smartphone</button>
+    </div>
+    <div class="tool-group">
+        <span>Infra / Rede</span>
+        <button onclick="addDevice('Switch', '🔀')">Switch</button>
+        <button onclick="addDevice('Roteador', '📡')">Roteador NAT</button>
+        <button onclick="addDevice('AccessPoint', '📶')">Acess Point (Wi-Fi)</button>
+        <button onclick="addDevice('Internet', '☁️')">Internet (WAN)</button>
+    </div>
+    <div class="tool-group">
+        <span>Servidores</span>
+        <button onclick="addDevice('Servidor_DHCP', '🗄️')">Srv DHCP</button>
+        <button onclick="addDevice('Servidor_Web', '🌍')">Srv Web / DNS</button>
+    </div>
+</div>
 
-<!-- MODAL CONFIG -->
-<div id="cfg">
-  <div id="cfgBox">
-    <h3 id="cfgTitle">Configuração</h3>
-
-    <!-- LAN (Internet + Hosts) -->
-    <div id="lanBlock">
-      <label>LAN IP</label><input id="lan_ip">
-      <label>LAN Máscara</label><input id="lan_mask">
-      <label>LAN Gateway</label><input id="lan_gw">
+<div id="workspace" onmousedown="onWorkspaceDown(event)" onmousemove="onWorkspaceMove(event)" onmouseup="onWorkspaceUp(event)">
+    <svg id="cables-layer"></svg>
     </div>
 
-    <!-- WLAN (Modem / Firewall / Router) -->
-    <div id="wlanBlock">
-      <label>WLAN IP (Público)</label><input id="wlan_ip">
-      <label>WLAN Máscara</label><input id="wlan_mask">
-      <label>WLAN Gateway</label><input id="wlan_gw">
+<div id="port-modal" class="modal-overlay">
+    <div class="modal">
+        <h2 id="port-modal-title">Ligar em qual Interface?</h2>
+        <div id="port-list" class="port-list"></div>
+        <button onclick="closeModals()" style="margin-top: 15px; width: 100%; background: #334155;">Cancelar Ligação</button>
     </div>
+</div>
 
-    <div style="margin-top:10px;text-align:right">
-      <button onclick="saveConfig()">Salvar</button>
-      <button onclick="closeConfig()">Cancelar</button>
+<div id="config-modal" class="modal-overlay">
+    <div class="modal" style="width: 550px;">
+        <h2 id="config-modal-title">Configuração TCP/IP</h2>
+        <div class="config-row" style="margin-bottom: 15px;">
+            <label style="width: 120px;">Hostname do Disp.:</label>
+            <input type="text" id="cfg-hostname" style="font-weight: bold; color: var(--accent);">
+        </div>
+        <div id="config-interfaces" class="config-interfaces"></div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+            <button onclick="saveConfig()" style="flex: 1; background: var(--success); color: #000; font-size: 1rem;">Salvar Configurações</button>
+            <button onclick="closeModals()" style="flex: 1;">Cancelar</button>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-const rede=document.getElementById('rede');
-const svg=document.getElementById('cabos');
-const consoleBox=document.getElementById('console');
-
-let devices=[],links=[],mode='move',origem=null,cfgDevice=null;
-let count={};
-
-document.querySelectorAll('[data-add]').forEach(b=>count[b.dataset.add]=0);
-
-function log(t){consoleBox.textContent+='\n'+t;consoleBox.scrollTop=consoleBox.scrollHeight;}
-function center(d){return{x:d.offsetLeft+d.offsetWidth/2,y:d.offsetTop+d.offsetHeight/2};}
-
-document.querySelectorAll('[data-add]').forEach(b=>b.onclick=()=>addDev(b.dataset.add));
-document.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;origem=null;clearSelection();log('> modo: '+mode);});
-
-function addDev(type){
-  count[type]++;
-  const d=document.createElement('div');
-  d.className='dispositivo '+type;
-  d.dataset.type=type;
-  d.textContent=type.toUpperCase()+count[type];
-  d.dataset.nomeBase = d.textContent;
-  d.style.left=Math.random()*1200+'px';
-  d.style.top=Math.random()*450+'px';
-  d.onclick=()=>clickDev(d);
-  d.ondblclick=()=>openConfig(d);
-  drag(d);
-  rede.appendChild(d);
-  devices.push(d);
-}
-
-function clickDev(d){
-  if(mode==='delete'){removeDev(d);return;}
-  if(mode==='link'){
-    if(!origem){origem=d;d.classList.add('selected');}
-    else if(origem!==d){createLink(origem,d);origem.classList.remove('selected');origem=null;}
-  }
-}
-
-/* GRAFO (INALTERADO) */
-function createLink(a,b){
-  const l=document.createElementNS('http://www.w3.org/2000/svg','line');
-  updateLink(l,a,b);
-  l.setAttribute('stroke','#000');
-  l.setAttribute('stroke-width','2');
-  l.onclick=e=>{e.stopPropagation();if(mode==='delete')removeLink(l);};
-  svg.appendChild(l);links.push({a,b,l});
-}
-function updateLink(l,a,b){
-  const p1=center(a),p2=center(b);
-  l.setAttribute('x1',p1.x);l.setAttribute('y1',p1.y);
-  l.setAttribute('x2',p2.x);l.setAttribute('y2',p2.y);
-}
-function drag(d){
-  let ox,oy;
-  d.onmousedown=e=>{
-    if(mode!=='move')return;
-    ox=e.offsetX;oy=e.offsetY;
-    document.onmousemove=m=>{
-      d.style.left=(m.pageX-rede.offsetLeft-ox)+'px';
-      d.style.top=(m.pageY-rede.offsetTop-oy)+'px';
-      links.forEach(x=>updateLink(x.l,x.a,x.b));
+    // --- TEMPLATES DE HARDWARE AVANÇADOS (Interfaces LAN, WLAN, WAN) ---
+    // type: 'LAN' (Cabo), 'WLAN' (Wi-Fi), 'WAN' (Internet externa)
+    const deviceTemplates = {
+        'PC': { ports: [{name: 'FastEthernet0', type: 'LAN'}] },
+        'Notebook': { ports: [{name: 'FastEthernet0', type: 'LAN'}, {name: 'Wlan0', type: 'WLAN'}] },
+        'Smartphone': { ports: [{name: 'Wlan0', type: 'WLAN'}] },
+        
+        'Servidor_DHCP': { ports: [{name: 'GigabitEthernet0', type: 'LAN'}] },
+        'Servidor_Web': { ports: [{name: 'GigabitEthernet0', type: 'LAN'}] },
+        
+        'Switch': { ports: [
+            {name: 'Fa0/1', type: 'LAN'}, {name: 'Fa0/2', type: 'LAN'}, 
+            {name: 'Fa0/3', type: 'LAN'}, {name: 'Fa0/4', type: 'LAN'}, 
+            {name: 'Gi0/1 (Uplink)', type: 'LAN'}
+        ]},
+        
+        'Roteador': { ports: [
+            {name: 'Gi0/0 (Gateway LAN)', type: 'LAN'}, 
+            {name: 'Gi0/1 (WAN/Internet)', type: 'WAN'}
+        ]},
+        
+        'AccessPoint': { ports: [
+            {name: 'Porta0 (LAN)', type: 'LAN'}, 
+            {name: 'Antena-WLAN', type: 'WLAN'} // Permite múltiplas conexões visuais
+        ]},
+        
+        'Internet': { ports: [{name: 'Link-ISP-01', type: 'WAN'}, {name: 'Link-ISP-02', type: 'WAN'}] }
     };
-    document.onmouseup=()=>document.onmousemove=null;
-  };
-}
-function removeDev(d){
-  links=links.filter(x=>{if(x.a===d||x.b===d){x.l.remove();return false;}return true;});
-  devices=devices.filter(x=>x!==d);d.remove();
-}
-function removeLink(l){links=links.filter(x=>{if(x.l===l){l.remove();return false;}return true;});}
-function clearSelection(){devices.forEach(d=>d.classList.remove('selected'));}
-function resetAll(){svg.innerHTML='';devices.forEach(d=>d.remove());devices=[];links=[];origem=null;consoleBox.textContent='> console iniciado...';for(let k in count)count[k]=0;}
 
-/* CONFIGURAÇÃO */
-function openConfig(d){
-  cfgDevice=d;
-  cfg.style.display='flex';
-  cfgTitle.textContent=d.textContent;
+    let mode = 'move'; 
+    let devices = {}; 
+    let links = []; 
+    let idCounter = 1;
+    
+    let draggedNodeId = null;
+    let offsetX = 0, offsetY = 0;
+    
+    let pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
+    let activeConfigDeviceId = null;
 
-  const dual=['modem','firewall','router'].includes(d.dataset.type);
-  wlanBlock.classList.toggle('hidden',!dual);
+    const workspace = document.getElementById('workspace');
+    const svgLayer = document.getElementById('cables-layer');
 
-  lan_ip.value=d.dataset.lan_ip||'';
-  lan_mask.value=d.dataset.lan_mask||'';
-  lan_gw.value=d.dataset.lan_gw||'';
+    function setMode(newMode) {
+        mode = newMode;
+        document.querySelectorAll('#toolbar .tool-group:first-child button').forEach(b => b.classList.remove('active'));
+        document.getElementById(`btn-${newMode}`).classList.add('active');
+        workspace.style.cursor = mode === 'connect' ? 'crosshair' : mode === 'delete' ? 'not-allowed' : 'default';
+        pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
+        renderDevices(); 
+    }
 
-  wlan_ip.value=d.dataset.wlan_ip||'';
-  wlan_mask.value=d.dataset.wlan_mask||'';
-  wlan_gw.value=d.dataset.wlan_gw||'';
-}
-function closeConfig(){cfg.style.display='none';}
+    function generateMAC() {
+        return "XX:XX:XX:XX:XX:XX".replace(/X/g, () => "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16)));
+    }
 
-function saveConfig(){
-  if(!cfgDevice) return;
+    function addDevice(type, icon) {
+        const id = `dev_${idCounter++}`;
+        const template = deviceTemplates[type];
+        
+        let interfaces = {};
+        template.ports.forEach(port => {
+            interfaces[port.name] = { 
+                type: port.type,
+                dhcp: type === 'PC' || type === 'Notebook' || type === 'Smartphone', // Devices clients nascem com DHCP ligado
+                ip: '', mask: '', gateway: '', dns: '', 
+                mac: generateMAC(), connectedToLink: [] // Array to support AP multi-connections
+            };
+        });
 
-  // Salva dados no dataset
-  cfgDevice.dataset.lan_ip   = lan_ip.value   || '';
-  cfgDevice.dataset.lan_mask = lan_mask.value || '';
-  cfgDevice.dataset.lan_gw   = lan_gw.value   || '';
+        devices[id] = {
+            id, type, icon, name: `${type}_${idCounter-1}`,
+            x: window.innerWidth/2 - 50 + (Math.random() * 100 - 50), 
+            y: window.innerHeight/2 - 50 + (Math.random() * 100 - 50),
+            interfaces: interfaces
+        };
+        
+        setMode('move');
+        renderDevices();
+    }
 
-  cfgDevice.dataset.wlan_ip   = wlan_ip.value   || '';
-  cfgDevice.dataset.wlan_mask = wlan_mask.value || '';
-  cfgDevice.dataset.wlan_gw   = wlan_gw.value   || '';
+    function renderDevices() {
+        workspace.querySelectorAll('.node').forEach(n => n.remove());
+        
+        Object.values(devices).forEach(dev => {
+            const el = document.createElement('div');
+            el.className = `node ${pendingConnection.sourceId === dev.id ? 'selected' : ''}`;
+            el.id = dev.id;
+            el.style.left = `${dev.x}px`; el.style.top = `${dev.y}px`;
+            
+            // Cria um sumário dos IPs para exibir abaixo do ícone
+            let ipSummary = '';
+            Object.values(dev.interfaces).forEach(intf => {
+                if(intf.ip && intf.ip !== 'Auto (DHCP)') {
+                    ipSummary += `<br><span style="color:var(--success)">${intf.ip}</span>`;
+                } else if (intf.dhcp && intf.connectedToLink.length > 0) {
+                    ipSummary += `<br><span style="color:var(--accent-wlan)">DHCP Request...</span>`;
+                }
+            });
 
-  // Reconstrói o texto do bloco do zero (corrige duplicação)
-  let html = cfgDevice.dataset.nomeBase;
+            el.innerHTML = `
+                <div class="node-icon">${dev.icon}</div>
+                <div class="node-label">${dev.name}${ipSummary}</div>
+            `;
+            
+            el.addEventListener('mousedown', (e) => onDeviceDown(e, dev.id));
+            el.addEventListener('dblclick', (e) => onDeviceDblClick(e, dev.id));
+            workspace.appendChild(el);
+        });
+        renderLinks();
+    }
 
-  if (cfgDevice.dataset.wlan_ip) {
-    html += `<br>WLAN ${cfgDevice.dataset.wlan_ip}`;
-  }
+    function renderLinks() {
+        svgLayer.innerHTML = '';
+        links.forEach(link => {
+            const src = devices[link.sourceId];
+            const tgt = devices[link.targetId];
+            if (!src || !tgt) return;
 
-  if (cfgDevice.dataset.lan_ip) {
-    html += `<br>LAN ${cfgDevice.dataset.lan_ip}`;
-  }
+            const x1 = src.x + 32, y1 = src.y + 32;
+            const x2 = tgt.x + 32, y2 = tgt.y + 32;
 
-  cfgDevice.innerHTML = html;
-  closeConfig();
-}
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            
+            // Estilização do cabo baseada no tipo de interface
+            let cableClass = 'cable-lan';
+            if (link.portType === 'WLAN') cableClass = 'cable-wlan';
+            if (link.portType === 'WAN') cableClass = 'cable-wan';
+            line.setAttribute('class', cableClass);
+            
+            svgLayer.appendChild(line);
 
-/* SALVAR */
-function saveTopo(){
-  const data={
-    dispositivos:devices.map(d=>({
-      tipo:d.dataset.type,nome:d.textContent,
-      x:d.style.left,y:d.style.top,
-      lan:{ip:d.dataset.lan_ip||'',mask:d.dataset.lan_mask||'',gw:d.dataset.lan_gw||''},
-      wlan:{ip:d.dataset.wlan_ip||'',mask:d.dataset.wlan_mask||'',gw:d.dataset.wlan_gw||''}
-    })),
-    ligacoes:links.map(l=>({de:devices.indexOf(l.a),para:devices.indexOf(l.b)}))
-  };
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='topologia.json';
-  a.click();
-}
+            // Desenha Labels de porta apenas para cabos físicos (WLAN não mostra "fio")
+            if(link.portType !== 'WLAN') {
+                const drawLabel = (px, py, cx, cy, text) => {
+                    const angle = Math.atan2(cy - py, cx - px);
+                    const lx = px + Math.cos(angle) * 45; 
+                    const ly = py + Math.sin(angle) * 45;
+                    
+                    const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    txt.setAttribute('x', lx); txt.setAttribute('y', ly);
+                    txt.setAttribute('class', 'port-label');
+                    txt.setAttribute('text-anchor', 'middle');
+                    txt.textContent = text.split(' ')[0]; // Pega só o "Fa0/1" e omite descrições longas
+                    svgLayer.appendChild(txt);
+                };
+                drawLabel(x1, y1, x2, y2, link.sourcePort);
+                drawLabel(x2, y2, x1, y1, link.targetPort);
+            }
+        });
+    }
+
+    function onDeviceDown(e, devId) {
+        e.stopPropagation();
+        if (mode === 'delete') { deleteDevice(devId); return; }
+        if (mode === 'connect') { handleConnectionClick(devId); return; }
+
+        if (mode === 'move') {
+            draggedNodeId = devId;
+            const dev = devices[devId];
+            const rect = document.getElementById(devId).getBoundingClientRect();
+            offsetX = e.clientX - rect.left;
+            offsetY = e.clientY - rect.top;
+        }
+    }
+
+    function onWorkspaceMove(e) {
+        if (draggedNodeId && mode === 'move') {
+            const dev = devices[draggedNodeId];
+            const rect = workspace.getBoundingClientRect();
+            dev.x = e.clientX - rect.left - offsetX;
+            dev.y = e.clientY - rect.top - offsetY;
+            renderDevices(); 
+        }
+    }
+
+    function onWorkspaceUp() { draggedNodeId = null; }
+    function onWorkspaceDown(e) {
+        if (mode === 'connect' && pendingConnection.step === 1) {
+            pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
+            renderDevices();
+        }
+    }
+
+    // --- LÓGICA DE CONEXÃO (Respeitando Tipos de Mídia) ---
+    function handleConnectionClick(devId) {
+        const dev = devices[devId];
+        
+        if (pendingConnection.step === 0) {
+            openPortSelector(dev, null, (selectedPort, portType) => {
+                pendingConnection = { step: 1, sourceId: devId, sourcePort: selectedPort, portType: portType };
+                renderDevices(); 
+            });
+        } else if (pendingConnection.step === 1) {
+            if (devId === pendingConnection.sourceId) return; 
+            
+            // Força a escolher uma porta compatível com a mídia de origem (ex: WLAN só conecta com WLAN)
+            openPortSelector(dev, pendingConnection.portType, (selectedPort) => {
+                const linkId = `link_${Date.now()}`;
+                links.push({
+                    id: linkId,
+                    sourceId: pendingConnection.sourceId, sourcePort: pendingConnection.sourcePort,
+                    targetId: devId, targetPort: selectedPort,
+                    portType: pendingConnection.portType
+                });
+
+                devices[pendingConnection.sourceId].interfaces[pendingConnection.sourcePort].connectedToLink.push(linkId);
+                devices[devId].interfaces[selectedPort].connectedToLink.push(linkId);
+
+                pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
+                renderDevices();
+            });
+        }
+    }
+
+    function openPortSelector(dev, restrictType, onSelectCallback) {
+        document.getElementById('port-modal-title').innerText = `Ligar em qual Interface?`;
+        const listDiv = document.getElementById('port-list');
+        listDiv.innerHTML = '';
+        let hasOptions = false;
+
+        Object.keys(dev.interfaces).forEach(portName => {
+            const intf = dev.interfaces[portName];
+            // Se restringir tipo (ex: conectando WLAN, só mostra WLAN no destino)
+            if (restrictType && restrictType !== intf.type) return; 
+            
+            // APs podem ter múltiplas conexões WLAN na mesma "Antena". O resto é porta física (1 por 1)
+            const isUsed = intf.connectedToLink.length > 0 && !(dev.type === 'AccessPoint' && intf.type === 'WLAN');
+            
+            let colorCode = intf.type === 'WLAN' ? '#3b82f6' : intf.type === 'WAN' ? '#ef4444' : '#10b981';
+
+            const btn = document.createElement('div');
+            btn.className = `port-item ${isUsed ? 'used' : ''}`;
+            btn.innerHTML = `
+                <div>
+                    <span class="port-type-badge" style="background:${colorCode}">${intf.type}</span>
+                    <strong style="margin-left: 5px;">${portName}</strong>
+                </div>
+                <span>${isUsed ? 'Ocupada' : 'Livre'}</span>
+            `;
+            
+            if (!isUsed) {
+                btn.onclick = () => { closeModals(); onSelectCallback(portName, intf.type); };
+            }
+            listDiv.appendChild(btn);
+            hasOptions = true;
+        });
+
+        if(!hasOptions) {
+            listDiv.innerHTML = `<div style="color:var(--danger); padding:10px; text-align:center;">Nenhuma interface compatível ou livre neste aparelho.</div>`;
+        }
+        document.getElementById('port-modal').style.display = 'flex';
+    }
+
+    // --- PAINEL TCP/IP (DHCP vs STATIC) ---
+    function onDeviceDblClick(e, devId) {
+        if (mode !== 'move') return;
+        activeConfigDeviceId = devId;
+        const dev = devices[devId];
+        
+        document.getElementById('cfg-hostname').value = dev.name;
+        const container = document.getElementById('config-interfaces');
+        container.innerHTML = '';
+
+        Object.keys(dev.interfaces).forEach(portName => {
+            const intf = dev.interfaces[portName];
+            const isUp = intf.connectedToLink.length > 0;
+            const statusTxt = isUp ? '<span style="color:var(--success)">UP (Conectado)</span>' : '<span style="color:var(--danger)">DOWN (Desconectado)</span>';
+            const disableAttr = intf.dhcp ? 'disabled' : '';
+
+            container.innerHTML += `
+                <div class="interface-block">
+                    <div class="interface-title">
+                        <span>${portName} <small style="color:#94a3b8; font-weight:normal;">[MAC: ${intf.mac}]</small></span>
+                        <span>${statusTxt}</span>
+                    </div>
+                    
+                    <div class="dhcp-toggle">
+                        <label><input type="radio" name="dhcp_${portName}" value="static" ${!intf.dhcp ? 'checked' : ''} onchange="toggleDHCP('${portName}', false)"> Estático (Fixo)</label>
+                        <label><input type="radio" name="dhcp_${portName}" value="dhcp" ${intf.dhcp ? 'checked' : ''} onchange="toggleDHCP('${portName}', true)"> Obter via DHCP</label>
+                    </div>
+
+                    <div class="cfg-group-${portName}">
+                        <div class="config-row">
+                            <label>Endereço IPv4:</label>
+                            <input type="text" id="cfg-ip-${portName}" placeholder="192.168.1.10" value="${intf.dhcp ? 'Auto (DHCP)' : intf.ip}" ${disableAttr}>
+                        </div>
+                        <div class="config-row">
+                            <label>Máscara Sub-rede:</label>
+                            <input type="text" id="cfg-mask-${portName}" placeholder="255.255.255.0" value="${intf.dhcp ? 'Auto (DHCP)' : intf.mask}" ${disableAttr}>
+                        </div>
+                        <div class="config-row">
+                            <label>Gateway Padrão:</label>
+                            <input type="text" id="cfg-gw-${portName}" placeholder="192.168.1.1" value="${intf.dhcp ? 'Auto (DHCP)' : intf.gateway}" ${disableAttr}>
+                        </div>
+                        <div class="config-row">
+                            <label>Servidor DNS:</label>
+                            <input type="text" id="cfg-dns-${portName}" placeholder="8.8.8.8" value="${intf.dhcp ? 'Auto (DHCP)' : intf.dns}" ${disableAttr}>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        document.getElementById('config-modal').style.display = 'flex';
+    }
+
+    // Alterna bloqueio dos inputs se o usuário escolher DHCP
+    function toggleDHCP(portName, isDHCP) {
+        const inputs = document.querySelectorAll(`.cfg-group-${portName} input[type="text"]`);
+        inputs.forEach(input => {
+            input.disabled = isDHCP;
+            if(isDHCP) {
+                input.dataset.oldValue = input.value !== 'Auto (DHCP)' ? input.value : '';
+                input.value = "Auto (DHCP)";
+            } else {
+                input.value = input.dataset.oldValue || "";
+            }
+        });
+    }
+
+    function saveConfig() {
+        if (!activeConfigDeviceId) return;
+        const dev = devices[activeConfigDeviceId];
+        dev.name = document.getElementById('cfg-hostname').value;
+
+        Object.keys(dev.interfaces).forEach(portName => {
+            const isDHCP = document.querySelector(`input[name="dhcp_${portName}"][value="dhcp"]`).checked;
+            dev.interfaces[portName].dhcp = isDHCP;
+
+            if (!isDHCP) {
+                dev.interfaces[portName].ip = document.getElementById(`cfg-ip-${portName}`).value.trim();
+                dev.interfaces[portName].mask = document.getElementById(`cfg-mask-${portName}`).value.trim();
+                dev.interfaces[portName].gateway = document.getElementById(`cfg-gw-${portName}`).value.trim();
+                dev.interfaces[portName].dns = document.getElementById(`cfg-dns-${portName}`).value.trim();
+            } else {
+                // Em um simulador real, aqui dispararíamos um broadcast DHCP para o Servidor DHCP.
+                // Para design visual, limpamos os valores manuais.
+                dev.interfaces[portName].ip = '';
+                dev.interfaces[portName].mask = '';
+            }
+        });
+        closeModals();
+        renderDevices();
+    }
+
+    function deleteDevice(devId) {
+        links = links.filter(link => {
+            if (link.sourceId === devId || link.targetId === devId) {
+                const otherDevId = link.sourceId === devId ? link.targetId : link.sourceId;
+                const otherPort = link.sourceId === devId ? link.targetPort : link.sourcePort;
+                if (devices[otherDevId]) {
+                    // Remove o linkId da array de conexões
+                    devices[otherDevId].interfaces[otherPort].connectedToLink = devices[otherDevId].interfaces[otherPort].connectedToLink.filter(id => id !== link.id);
+                }
+                return false; 
+            }
+            return true;
+        });
+        delete devices[devId];
+        renderDevices();
+    }
+
+    function closeModals() {
+        document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
+        activeConfigDeviceId = null;
+    }
+
+    function clearWorkspace() {
+        if(confirm("Apagar toda a topologia? Isso não pode ser desfeito.")) {
+            devices = {}; links = []; idCounter = 1; renderDevices();
+        }
+    }
+
+    function exportJSON() {
+        const topology = { metadata: { software: "NetSim Pro", timestamp: new Date().toISOString() }, nodes: devices, connections: links };
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(topology, null, 2));
+        const a = document.createElement('a');
+        a.setAttribute("href", dataStr); a.setAttribute("download", "laboratorio-tcpip.json");
+        document.body.appendChild(a); a.click(); a.remove();
+    }
 </script>
 </body>
 </html>
