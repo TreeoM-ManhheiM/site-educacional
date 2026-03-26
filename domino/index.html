@@ -1,113 +1,237 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <title>Dominó Lógico 🧠</title>
+    <title> EE 8 de Abril Lógico 🧠 — Laboratório de Computação</title>
+
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: #f8fafc; text-align: center; padding: 20px; }
-        h1 { color: #10b981; }
-        #tela-login, #lobby, #area-jogo { max-width: 800px; margin: 20px auto; }
-        .painel-info { background: #1e293b; padding: 15px; border-radius: 10px; display: inline-block; min-width: 300px; }
-        .destaque { color: #fbbf24; font-weight: bold; }
-        #mesa { background: #1e293b; padding: 40px; min-height: 120px; margin: 20px 0; border-radius: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; border: 2px dashed #334155; }
-        .peca { background: white; color: black; padding: 10px 15px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; font-weight: bold; font-size: 24px; cursor: pointer; border-bottom: 4px solid #cbd5e1; }
-        button { padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; }
-        #modal-lado { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #1e293b; padding: 25px; border: 2px solid #10b981; border-radius: 15px; z-index: 100; box-shadow: 0 0 30px black; }
+        /* ESTILO PADRÃO: LABORATÓRIO DE COMPUTAÇÃO */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+            text-align: center;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 { margin: 0; font-size: 28px; }
+        header p { font-size: 14px; margin-top: 5px; opacity: 0.9; }
+
+        main {
+            max-width: 1000px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        /* PAINEL DO JOGO */
+        .game-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        #status { color: #64748b; font-size: 13px; margin-bottom: 10px; }
+
+        /* PAINEL DE INFO (AZUL CLARO) */
+        .painel-info {
+            background: #e5edff;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 1px solid #c7d2fe;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+
+        .destaque { color: #2563eb; }
+
+        /* MESA DE JOGO */
+        #mesa { 
+            background: #f8fafc; 
+            padding: 40px; 
+            min-height: 120px; 
+            margin: 20px 0; 
+            border-radius: 12px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 10px; 
+            border: 2px dashed #cbd5e1; 
+        }
+
+        /* PEÇAS */
+        .peca { 
+            background: white; 
+            color: #1e293b; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 8px; 
+            font-weight: bold; 
+            font-size: 22px; 
+            cursor: pointer; 
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+
+        .peca:hover { transform: translateY(-3px); border-color: #2563eb; }
+
+        /* BOTÕES */
+        button { 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.2s;
+        }
+
+        .btn-conectar { background: #10b981; color: white; }
+        .btn-pronto { background: #3b82f6; color: white; width: 100%; }
+        .btn-comprar { background: #eab308; color: black; }
+        .btn-passar { background: #ef4444; color: white; }
+        .btn-olho { background: #64748b; color: white; margin-bottom: 15px; }
+
+        /* MODAL DE LADO */
+        #modal-lado { 
+            display: none; 
+            position: fixed; 
+            top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            background: white; padding: 30px; border-radius: 15px; 
+            z-index: 100; box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border: 1px solid #cbd5e1;
+        }
+
         .escondido { filter: blur(15px); opacity: 0.2; pointer-events: none; }
-        li { list-style: none; background: #334155; margin: 5px; padding: 10px; border-radius: 5px; }
+
+        input { padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; margin: 5px; }
+        
+        li { list-style: none; background: #f1f5f9; margin: 5px; padding: 10px; border-radius: 5px; color: #1e293b; border-left: 4px solid #3b82f6; text-align: left; }
     </style>
 </head>
+
 <body>
 
-    <h1>Projeto "2°A Desenvolvimento de Sistemas" e "3°b Ciências de Dados" 2026 v.0.02 🧠</h1>
-    <div id="status" style="color: #94a3b8; margin-bottom: 10px;">Conectando...</div>
+<header>
+    <h1>Dominó Lógico 🧠</h1>
+    <p>Projeto "2°A DS" e "3°B CD" — Versão 2026</p>
+</header>
 
-    <div id="tela-login">
-        <input type="text" id="input-apelido" placeholder="Seu Nome" style="padding:10px; border-radius:5px;">
-        <input type="text" id="input-sala" placeholder="Sala" style="padding:10px; border-radius:5px;">
-        <button onclick="entrar()" style="background:#10b981;">Conectar</button>
+<main>
+    <div id="status">Conectando...</div>
+
+    <div id="tela-login" class="game-container">
+        <h2>Entrar na Sala</h2>
+        <input type="text" id="input-apelido" placeholder="Seu Nome">
+        <input type="text" id="input-sala" placeholder="Sala">
+        <button onclick="entrar()" class="btn-conectar">CONECTAR</button>
     </div>
 
-    <div id="lobby" style="display:none;">
-        <div style="background: #1e293b; padding: 20px; border-radius: 12px;">
-            <h3>Aguardando:</h3>
-            <ul id="lista-alunos" style="padding:0;"></ul>
-            <button onclick="socket.emit('marcarPronto')" style="background: #3b82f6; width: 100%;">ESTOU PRONTO / INICIAR</button>
-        </div>
+    <div id="lobby" class="game-container" style="display:none;">
+        <h3>Aguardando Jogadores:</h3>
+        <ul id="lista-alunos" style="padding:0;"></ul>
+        <button onclick="socket.emit('marcarPronto')" class="btn-pronto">ESTOU PRONTO / INICIAR</button>
     </div>
 
     <div id="area-jogo" style="display:none;">
         <div class="painel-info">
-            <div>Vez de: <span id="vez-nome" class="destaque">---</span></div>
-            <div id="display-parceiro" style="color:#6366f1; font-size:0.9em;">🤝 Parceiro: ---</div>
-            <div style="margin-top:5px;">📦 Monte: <span id="qtd-monte" class="destaque">0</span></div>
+            <div>Turno: <span id="vez-nome" class="destaque">---</span></div>
+            <div id="display-parceiro">🤝 Parceiro: ---</div>
+            <div>📦 Monte: <span id="qtd-monte" class="destaque">0</span></div>
         </div>
-        <div id="mesa"></div>
+
+        <div class="game-container">
+            <div id="mesa"></div>
+        </div>
+
         <div id="modal-lado">
-            <h3>Onde jogar?</h3>
-            <button onclick="confirmarLado('esq')" style="background:#6366f1;">⬅️ Esquerda</button>
-            <button onclick="confirmarLado('dir')" style="background:#10b981; margin-left:10px;">Direita ➡️</button>
+            <h3>Onde deseja jogar?</h3>
+            <button onclick="confirmarLado('esq')" style="background:#6366f1; color:white;">⬅️ Esquerda</button>
+            <button onclick="confirmarLado('dir')" style="background:#10b981; color:white; margin-left:10px;">Direita ➡️</button>
         </div>
-        <button id="btn-olho" style="background:#ef4444; margin-bottom:20px;" onclick="togglePrivacidade()">🙈 Esconder Peças</button>
-        <div id="minhas-pecas"></div>
-        <div style="margin-top:30px;">
-            <button onclick="socket.emit('comprarPeca')" style="background:#eab308; color:black; margin-right:10px;">📦 Comprar</button>
-            <button onclick="socket.emit('passarVez')" style="background:#ef4444;">⏭️ Passar</button>
+
+        <div class="game-container">
+            <button id="btn-olho" class="btn-olho" onclick="togglePrivacidade()">🙈 Esconder Peças</button>
+            <div id="minhas-pecas"></div>
+            
+            <div style="margin-top:25px;">
+                <button onclick="socket.emit('comprarPeca')" class="btn-comprar">📦 COMPRAR</button>
+                <button onclick="socket.emit('passarVez')" class="btn-passar" style="margin-left:10px;">⏭️ PASSAR</button>
+            </div>
         </div>
     </div>
+</main>
 
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script>
-        const socket = io("https://motor-domino.onrender.com");
-        let mesaAtual = [], pecaSelecionadaIdx = null, visivel = true;
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+    const socket = io("https://motor-domino.onrender.com");
+    let mesaAtual = [], pecaSelecionadaIdx = null, visivel = true;
 
-        function entrar() {
-            const apelido = document.getElementById('input-apelido').value;
-            const sala = document.getElementById('input-sala').value;
-            if(apelido && sala) {
-                socket.emit('entrarSala', { apelido, sala });
-                document.getElementById('tela-login').style.display = 'none';
-            }
+    function entrar() {
+        const apelido = document.getElementById('input-apelido').value;
+        const sala = document.getElementById('input-sala').value;
+        if(apelido && sala) {
+            socket.emit('entrarSala', { apelido, sala });
+            document.getElementById('tela-login').style.display = 'none';
         }
+    }
 
-        socket.on('resetJogo', () => {
-            alert("Partida Encerrada! A sala foi limpa.");
-            location.reload(); // Recarrega para voltar à tela inicial
-        });
+    socket.on('resetJogo', () => {
+        alert("Partida Encerrada! A sala foi limpa.");
+        location.reload();
+    });
 
-        socket.on('infoParceiro', (n) => document.getElementById('display-parceiro').innerText = "🤝 Parceiro: " + n);
+    socket.on('infoParceiro', (n) => document.getElementById('display-parceiro').innerText = "🤝 Parceiro: " + n);
 
-        socket.on('estadoLobby', (dados) => {
-            const lobby = document.getElementById('lobby'), jogo = document.getElementById('area-jogo');
-            if (dados.rodando) { lobby.style.display = 'none'; jogo.style.display = 'block'; }
-            else { lobby.style.display = 'block'; document.getElementById('lista-alunos').innerHTML = dados.jogadoresInfo.map(j => `<li>👤 ${j.nome} ${j.pronto ? '✅' : '⏳'}</li>`).join(''); }
-        });
-
-        function togglePrivacidade() {
-            visivel = !visivel;
-            document.getElementById('minhas-pecas').className = visivel ? "" : "escondido";
-            document.getElementById('btn-olho').innerText = visivel ? "🙈 Esconder Peças" : "👁️ Mostrar Peças";
-            document.getElementById('btn-olho').style.background = visivel ? "#ef4444" : "#6366f1";
+    socket.on('estadoLobby', (dados) => {
+        const lobby = document.getElementById('lobby'), jogo = document.getElementById('area-jogo');
+        if (dados.rodando) { lobby.style.display = 'none'; jogo.style.display = 'block'; }
+        else { 
+            lobby.style.display = 'block'; 
+            document.getElementById('lista-alunos').innerHTML = dados.jogadoresInfo.map(j => `<li>👤 ${j.nome} ${j.pronto ? '✅' : '⏳'}</li>`).join(''); 
         }
+    });
 
-        function validarJogada(index, mao) {
-            const peca = mao[index];
-            if (mesaAtual.length === 0) return socket.emit('jogarPeca', { index, lado: 'dir' });
-            const pEsq = mesaAtual[0][0], pDir = mesaAtual[mesaAtual.length - 1][1];
-            const serveEsq = (peca[0] === pEsq || peca[1] === pEsq), serveDir = (peca[0] === pDir || peca[1] === pDir);
-            if (serveEsq && serveDir) { pecaSelecionadaIdx = index; document.getElementById('modal-lado').style.display = 'block'; }
-            else if (serveEsq || serveDir) socket.emit('jogarPeca', { index, lado: serveEsq ? 'esq' : 'dir' });
-            else alert("Não serve!");
-        }
+    function togglePrivacidade() {
+        visivel = !visivel;
+        document.getElementById('minhas-pecas').className = visivel ? "" : "escondido";
+        document.getElementById('btn-olho').innerText = visivel ? "🙈 Esconder Peças" : "👁️ Mostrar Peças";
+    }
 
-        function confirmarLado(lado) { socket.emit('jogarPeca', { index: pecaSelecionadaIdx, lado }); document.getElementById('modal-lado').style.display = 'none'; }
-        socket.on('atualizarMesa', (m) => { mesaAtual = m; document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca" style="cursor:default;">${p[0]} | ${p[1]}</div>`).join(''); });
-        socket.on('atualizarMao', (m) => { document.getElementById('minhas-pecas').innerHTML = m.map((p, i) => `<div class="peca" onclick="validarJogada(${i}, ${JSON.stringify(m)})">${p[0]} | ${p[1]}</div>`).join(''); });
-        socket.on('erro', (m) => alert("❌ " + m));
-        socket.on('mudarTurno', (d) => document.getElementById('vez-nome').innerText = d.nome);
-        socket.on('atualizarMonte', (q) => document.getElementById('qtd-monte').innerText = q);
-        socket.on('mensagemGeral', (m) => alert(m));
-        socket.on('connect', () => document.getElementById('status').innerText = "✅ Conectado");
-    </script>
+    function validarJogada(index, mao) {
+        const peca = mao[index];
+        if (mesaAtual.length === 0) return socket.emit('jogarPeca', { index, lado: 'dir' });
+        const pEsq = mesaAtual[0][0], pDir = mesaAtual[mesaAtual.length - 1][1];
+        const serveEsq = (peca[0] === pEsq || peca[1] === pEsq), serveDir = (peca[0] === pDir || peca[1] === pDir);
+        if (serveEsq && serveDir) { pecaSelecionadaIdx = index; document.getElementById('modal-lado').style.display = 'block'; }
+        else if (serveEsq || serveDir) socket.emit('jogarPeca', { index, lado: serveEsq ? 'esq' : 'dir' });
+        else alert("Essa peça não serve!");
+    }
+
+    function confirmarLado(lado) { socket.emit('jogarPeca', { index: pecaSelecionadaIdx, lado }); document.getElementById('modal-lado').style.display = 'none'; }
+    socket.on('atualizarMesa', (m) => { mesaAtual = m; document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca" style="cursor:default;">${p[0]} | ${p[1]}</div>`).join(''); });
+    socket.on('atualizarMao', (m) => { document.getElementById('minhas-pecas').innerHTML = m.map((p, i) => `<div class="peca" onclick="validarJogada(${i}, ${JSON.stringify(m)})">${p[0]} | ${p[1]}</div>`).join(''); });
+    socket.on('erro', (m) => alert("❌ " + m));
+    socket.on('mudarTurno', (d) => document.getElementById('vez-nome').innerText = d.nome);
+    socket.on('atualizarMonte', (q) => document.getElementById('qtd-monte').innerText = q);
+    socket.on('mensagemGeral', (m) => alert(m));
+    socket.on('connect', () => document.getElementById('status').innerText = "✅ Conectado ao Servidor");
+</script>
+
 </body>
 </html>
