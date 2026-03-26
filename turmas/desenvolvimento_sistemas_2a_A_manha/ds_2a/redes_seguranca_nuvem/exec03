@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetSim Master - Pilha OSI & Protocolos (Versão Estável)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap');
+
+        :root {
+            --bg-base: #030712; --bg-panel: #111827;
+            --accent-cyan: #06b6d4; --accent-purple: #8b5cf6;
+            --accent-orange: #f97316; --danger: #ef4444; --success: #10b981;
+            --text-main: #f3f4f6; --text-muted: #9ca3af;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        /* --- Header & Controls --- */
+        header { padding: 15px 30px; background: rgba(17, 24, 39, 0.95); border-bottom: 1px solid #1f2937; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        header h1 { font-size: 1.4rem; color: var(--accent-cyan); display: flex; align-items: center; gap: 10px; }
+        
+        .controls-grid { display: grid; grid-template-columns: repeat(4, 1fr) auto; gap: 15px; align-items: end; }
+        .control-item { display: flex; flex-direction: column; gap: 5px; }
+        .control-item label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+        select, button { background: #1f2937; color: white; border: 1px solid #374151; padding: 8px 10px; border-radius: 6px; font-family: 'Inter'; font-weight: 600; outline: none; cursor: pointer; font-size: 0.85rem;}
+        button.primary { background: var(--success); color: #000; border: none; transition: 0.3s; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); height: 40px; padding: 0 20px; font-size: 1rem; font-weight: 800; }
+        button.primary:hover { transform: scale(1.05); box-shadow: 0 0 25px rgba(16, 185, 129, 0.7); }
+        
+        .toggle-container { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: var(--danger); font-weight: 600; height: 40px; }
+        input[type="checkbox"] { accent-color: var(--danger); width: 18px; height: 18px; cursor: pointer; }
+
+        /* --- Dashboard Area --- */
+        #dashboard { display: flex; padding: 10px 30px; background: #0f172a; border-bottom: 1px solid #1e293b; gap: 20px; align-items: center; }
+        .stat-box { display: flex; flex-direction: column; min-width: 110px; background: #1e293b; padding: 8px 15px; border-radius: 6px; border: 1px solid #334155; }
+        .stat-box span { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+        .stat-box strong { font-size: 0.95rem; color: var(--accent-cyan); font-family: 'Fira Code', monospace; margin-top: 3px; }
+        .stat-box.ping strong { color: var(--accent-orange); transition: color 0.2s; }
+        
+        /* Progress Bar */
+        .progress-container { flex: 1; display: flex; flex-direction: column; justify-content: center; background: #1e293b; padding: 8px 20px; border-radius: 8px; border: 1px solid #334155; margin-left: 10px; }
+        .progress-bar-bg { width: 100%; height: 12px; background: #0f172a; border-radius: 6px; overflow: hidden; position: relative; border: 1px solid #000; }
+        .progress-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.1s linear; }
+
+        /* --- Map Area --- */
+        main { display: flex; flex: 1; position: relative; background: #030712; min-height: 250px; }
+        #map-container { flex: 1; position: relative; background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px); background-size: 30px 30px; }
+        svg.connections { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        
+        .line-local { stroke: var(--accent-orange); stroke-width: 3; stroke-dasharray: 5 5; opacity: 0.8; transition: stroke 0.5s; }
+        .line-fiber { stroke: var(--accent-cyan); stroke-width: 4; filter: drop-shadow(0 0 5px var(--accent-cyan)); }
+        .line-isp { stroke: #9333ea; stroke-width: 3; stroke-dasharray: 8 4; opacity: 0.9; }
+        .line-data-flow { stroke: #fff; stroke-width: 2; stroke-dasharray: 10 20; animation: dataFlow 1s linear infinite; }
+        @keyframes dataFlow { to { stroke-dashoffset: -30; } }
+
+        /* Nodes */
+        .node { position: absolute; text-align: center; z-index: 10; transform: translate(-50%, -50%); width: 120px; }
+        .node-icon { width: 50px; height: 50px; background: #1f2937; border: 2px solid #4b5563; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 20px; margin: 0 auto 5px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); transition: 0.3s; position: relative; }
+        .node.active .node-icon { border-color: var(--success); box-shadow: 0 0 25px rgba(16, 185, 129, 0.5); transform: scale(1.1); }
+        .node .name { font-size: 0.75rem; font-weight: bold; color: #f3f4f6; display: block; background: rgba(0,0,0,0.7); padding: 2px 5px; border-radius: 4px; }
+        .node .ip { font-size: 0.6rem; font-family: 'Fira Code'; color: var(--accent-cyan); display: block; margin-top: 3px; }
+        
+        /* Flash effect */
+        .flash-receive { animation: flashGreen 0.5s ease-out; }
+        @keyframes flashGreen { 0% { box-shadow: 0 0 40px var(--success); border-color: var(--success); background: #064e3b; } 100% { box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5); border-color: #4b5563; background: #1f2937; } }
+
+        /* Packets */
+        .packet { position: absolute; width: 14px; height: 14px; border-radius: 4px; z-index: 999; transform: translate(-50%, -50%); transition: top 0.2s linear, left 0.2s linear; box-shadow: 0 0 10px currentColor; }
+        .pkt-ping { background: #fff; color: #fff; border-radius: 50%; box-shadow: 0 0 15px #fff; width: 10px; height: 10px; }
+        .pkt-ctrl { background: var(--accent-purple); color: var(--accent-purple); border-radius: 50%; }
+        .pkt-data { background: var(--success); color: var(--success); width: 18px; height: 12px; }
+        .pkt-err { background: var(--danger); color: var(--danger); animation: explode 0.5s forwards; }
+        @keyframes explode { 0% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(3); opacity: 0; } }
+
+        /* --- Terminal Log --- */
+        #terminal { height: 260px; background: #000; border-top: 2px solid #1f2937; padding: 15px 20px; font-family: 'Fira Code', monospace; font-size: 0.85rem; overflow-y: auto; color: #a1a1aa; z-index: 10; line-height: 1.4; }
+        .log-time { color: #6b7280; margin-right: 15px; }
+        .log-layer { color: #8b5cf6; font-weight: bold; margin-right: 10px; display: inline-block; width: 90px; }
+        .log-info { color: #e5e7eb; } 
+        .log-err { color: #f87171; } 
+        .log-warn { color: #fbbf24; } 
+        .log-succ { color: #34d399; font-weight: bold; }
+        .log-drop { color: #ff0055; background: rgba(255, 0, 85, 0.15); padding: 2px 8px; border-left: 4px solid #ff0055; display: inline-block; width: 100%; font-weight: bold; margin: 2px 0;}
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-top">
+        <h1>🌍 NetSim OSI: Protocol Explorer</h1>
+    </div>
+    <div class="controls-grid">
+        <div class="control-item">
+            <label>1. Acesso à Rede (C2)</label>
+            <select id="meioSelect">
+                <option value="fibra">Fibra Óptica / PPPoE (Gigabit)</option>
+                <option value="wifi">Rede Wi-Fi 5 / WPA2</option>
+                <option value="satelite">Satélite / PPP (Lento)</option>
+            </select>
+        </div>
+        <div class="control-item">
+            <label>2. Camada Aplicação (C7) & Transporte (C4)</label>
+            <select id="protocolSelect">
+                <optgroup label="Web & Arquivos (TCP)">
+                    <option value="HTTPS">HTTPS (Porta 443) - Transferência Segura</option>
+                    <option value="HTTP">HTTP (Porta 80) - Transferência em Texto Claro</option>
+                    <option value="FTP">FTP (Porta 21/20) - Download de Arquivos</option>
+                    <option value="SFTP">SFTP (Porta 22) - Transferência via SSH</option>
+                </optgroup>
+                <optgroup label="Infraestrutura & Controle (UDP/TCP)">
+                    <option value="DNS">DNS (Porta 53 UDP) - Resolução de Nomes</option>
+                    <option value="DHCP">DHCP (Porta 67 UDP) - Alocação de IP</option>
+                    <option value="SSH">SSH (Porta 22 TCP) - Acesso Remoto Seguro</option>
+                </optgroup>
+                <optgroup label="E-mail (TCP)">
+                    <option value="SMTP">SMTP (Porta 25) - Envio de E-mail</option>
+                    <option value="IMAP">IMAP (Porta 143) - Recebimento de E-mail</option>
+                </optgroup>
+                <optgroup label="Tempo Real & Streaming (UDP)">
+                    <option value="RTP">RTP/RTSP (Porta 5004) - Streaming de Vídeo/Jogo</option>
+                    <option value="SIP">SIP (Porta 5060) - Chamada de Voz (VoIP)</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="control-item toggle-container">
+            <input type="checkbox" id="packetLossToggle">
+            <label for="packetLossToggle">Simular Tempestade (Perda L3/L4)</label>
+        </div>
+        <div class="control-item" style="justify-content: flex-end;">
+            <button class="primary" onclick="iniciarSimulacao()">► EXECUTAR TRÁFEGO</button>
+        </div>
+    </div>
+</header>
+
+<div id="dashboard">
+    <div class="stat-box ping"><span>Jitter (Ping)</span><strong id="dash-ping">-- ms</strong></div>
+    <div class="stat-box"><span>Banda Lib.</span><strong id="dash-vel">-- MB/s</strong></div>
+    <div class="stat-box"><span>Protocolo</span><strong id="dash-proto">--</strong></div>
+    
+    <div class="progress-container">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+            <span style="font-size: 0.8rem; font-weight: 600; color: #f3f4f6;" id="transfer-status">Aguardando inicialização...</span>
+            <span style="font-size: 0.8rem; font-family: 'Fira Code'; color: var(--success);" id="transfer-pct">0 / 0 MB (0%)</span>
+        </div>
+        <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
+    </div>
+</div>
+
+<main>
+    <div id="map-container">
+        <svg class="connections" id="connectionsSvg"></svg>
+        <svg class="connections" id="dataFlowSvg"></svg>
+    </div>
+</main>
+
+<div id="terminal"></div>
+
+<script>
+    // Seletores do DOM
+    const terminal = document.getElementById('terminal');
+    const mapContainer = document.getElementById('map-container');
+    const svgBase = document.getElementById('connectionsSvg');
+    const svgFlow = document.getElementById('dataFlowSvg');
+    let isRunning = false;
+
+    // Dicionário de Protocolos
+    const dictProtocolos = {
+        'HTTP':  { transp: 'TCP', port: 80,   sizeMB: 100,  dir: 'down', desc: 'Transferência de Dados Web', cmdReq: 'GET /arquivo.zip HTTP/1.1', cmdRes: '200 OK (text/html)' },
+        'HTTPS': { transp: 'TCP', port: 443,  sizeMB: 500,  dir: 'down', desc: 'Sessão Web Segura', cmdReq: 'ClientHello TLS 1.3', cmdRes: 'ServerHello, Certificate, TLS Tunnel Established' },
+        'FTP':   { transp: 'TCP', port: 21,   sizeMB: 1024, dir: 'down', desc: 'File Transfer Protocol', cmdReq: 'USER admin -> PASV -> RETR bigdata.iso', cmdRes: '150 Opening BINARY mode data connection.' },
+        'SFTP':  { transp: 'TCP', port: 22,   sizeMB: 250,  dir: 'down', desc: 'Secure File Transfer via SSH', cmdReq: 'SSH_FXP_INIT', cmdRes: 'SSH_FXP_VERSION' },
+        'SMTP':  { transp: 'TCP', port: 25,   sizeMB: 5,    dir: 'up',   desc: 'Envio de E-mail Simples', cmdReq: 'EHLO, MAIL FROM:<user@me.com>, DATA', cmdRes: '250 Message accepted for delivery' },
+        'IMAP':  { transp: 'TCP', port: 143,  sizeMB: 15,   dir: 'down', desc: 'Sincronização de Caixa de Inbox', cmdReq: 'A01 LOGIN user pass -> A02 FETCH 1:* (BODY)', cmdRes: 'A02 OK FETCH completed' },
+        'DNS':   { transp: 'UDP', port: 53,   sizeMB: 0.05, dir: 'down', desc: 'Domain Name System', cmdReq: 'Query: A record for www.aws.com', cmdRes: 'Answer: 54.239.28.85 (TTL 300)' },
+        'DHCP':  { transp: 'UDP', port: 67,   sizeMB: 0.05, dir: 'up',   desc: 'Dynamic Host Configuration', cmdReq: 'DHCP Discover (Broadcast 255.255.255.255)', cmdRes: 'DHCP Offer (IP: 192.168.0.15)' },
+        'SSH':   { transp: 'TCP', port: 22,   sizeMB: 1,    dir: 'up',   desc: 'Secure Shell (Remote Access)', cmdReq: 'SSH-2.0-OpenSSH_8.9p1', cmdRes: 'Access Granted. user@server:~$' },
+        'RTP':   { transp: 'UDP', port: 5004, sizeMB: 2048, dir: 'down', desc: 'Real-time Transport (Streaming)', cmdReq: 'RTSP PLAY /livestream/ch1', cmdRes: 'Sending RTP UDP Packets (H.264/AAC)' },
+        'SIP':   { transp: 'UDP', port: 5060, sizeMB: 0.2,  dir: 'up',   desc: 'Session Initiation Protocol (VoIP)', cmdReq: 'INVITE sip:professor@escola.com SIP/2.0', cmdRes: '180 Ringing -> 200 OK' }
+    };
+
+    const meiosFisicos = {
+        fibra:    { velMbps: 1000, latenciaMs: 2,   perda: 0.0001, cor: 'var(--accent-orange)' },
+        wifi:     { velMbps: 54,   latenciaMs: 35,  perda: 0.05,   cor: '#3b82f6' },
+        satelite: { velMbps: 15,   latenciaMs: 450, perda: 0.15,   cor: '#ef4444' }
+    };
+
+    const nodesData = [
+        { id: 'pc', icon: '💻', name: 'Meu PC', ip: '192.168.0.15', x: 8, y: 35 },
+        { id: 'router', icon: '📡', name: 'Roteador NAT', ip: '187.34.12.9', x: 20, y: 35 },
+        { id: 'isp', icon: '🏢', name: 'Provedor ISP', ip: '200.10.20.30', x: 33, y: 45 },
+        { id: 'backbone_br', icon: '🛣️', name: 'Backbone Nac.', ip: '100.120.40.1', x: 48, y: 30 },
+        { id: 'ix', icon: '🖧', name: 'IX.br (PTT)', ip: '200.160.0.1', x: 62, y: 50 },
+        { id: 'backbone_int', icon: '🌊', name: 'Cabo Submarino', ip: '154.34.22.1', x: 78, y: 65 },
+        { id: 'server', icon: '🗄️', name: 'Servidor Alvo', ip: '54.239.28.85', x: 92, y: 75 }
+    ];
+
+    // Limpa o SVG de forma segura (evita bug de innerHTML no SVG)
+    function clearSVG(svgElement) {
+        while (svgElement.firstChild) {
+            svgElement.removeChild(svgElement.firstChild);
+        }
+    }
+
+    // Cria as linhas do mapa de forma nativa e à prova de falhas
+    function drawSVGLine(svg, id, cls, d) {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        if(id) path.setAttribute('id', id);
+        path.setAttribute('class', cls);
+        path.setAttribute('d', d);
+        path.setAttribute('fill', 'none');
+        svg.appendChild(path);
+    }
+
+    function initMap() {
+        // Limpar Nós antigos
+        mapContainer.querySelectorAll('.node').forEach(n => n.remove());
+        clearSVG(svgBase);
+        clearSVG(svgFlow);
+
+        nodesData.forEach((node, index) => {
+            // Renderizar Ícones
+            const el = document.createElement('div');
+            el.className = 'node'; 
+            el.id = `node-${node.id}`;
+            el.style.left = `${node.x}%`; 
+            el.style.top = `${node.y}%`;
+            el.innerHTML = `<div class="node-icon" id="icon-${node.id}">${node.icon}</div><span class="name">${node.name}</span><span class="ip">${node.ip}</span>`;
+            mapContainer.appendChild(el);
+
+            // Renderizar Cabos Base
+            if (index > 0) {
+                const prev = nodesData[index - 1];
+                let lineClass = 'line-fiber'; 
+                if (index === 1) lineClass = 'line-local'; 
+                if (index === 2) lineClass = 'line-isp';   
+                drawSVGLine(svgBase, `line-${index}`, lineClass, `M ${prev.x}% ${prev.y}% L ${node.x}% ${node.y}%`);
+            }
+        });
+        updateLocalLine();
+    }
+    
+    function updateLocalLine() {
+        const line = document.getElementById('line-1');
+        const meio = meiosFisicos[document.getElementById('meioSelect').value];
+        if(line) { 
+            line.style.stroke = meio.cor; 
+            line.style.strokeDasharray = meio.velMbps < 100 ? '10 10' : 'none'; 
+        }
+    }
+
+    // Inicialização ao carregar a página
+    window.onload = () => {
+        initMap();
+        document.getElementById('meioSelect').addEventListener('change', updateLocalLine);
+        window.addEventListener('resize', initMap);
+        logMsg(null, "NetSim OS carregado. Motor gráfico e protocolos prontos.", "succ");
+    };
+
+    function logMsg(layer, msg, type = "info") {
+        const time = new Date().toLocaleTimeString();
+        const layerStr = layer ? `<span class="log-layer">[${layer}]</span>` : `<span class="log-layer">[Sistema]</span>`;
+        terminal.innerHTML += `<div><span class="log-time">[${time}]</span>${layerStr}<span class="log-${type}">${msg}</span></div>`;
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+    
+    function wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+    function getJitter(basePing) { return Math.max(1, Math.floor(basePing + (basePing * ((Math.random() * 0.35) - 0.10)))); }
+
+    async function shootPacket(startIdx, endIdx, typeClass, baseDelay = 100, isUDP = false) {
+        if (!isRunning) return;
+        const pkt = document.createElement('div');
+        pkt.className = `packet ${typeClass}`;
+        mapContainer.appendChild(pkt);
+        
+        pkt.style.left = `${nodesData[startIdx].x}%`; pkt.style.top = `${nodesData[startIdx].y}%`;
+        await wait(20);
+        
+        const step = startIdx < endIdx ? 1 : -1;
+        
+        for (let i = startIdx; i !== endIdx; i += step) {
+            if (!isRunning) break;
+            const currentNode = nodesData[i];
+            const nextNode = nodesData[i + step];
+            
+            pkt.style.left = `${nextNode.x}%`; pkt.style.top = `${nextNode.y}%`;
+            let hopDelay = baseDelay;
+            const meioLocal = meiosFisicos[document.getElementById('meioSelect').value];
+
+            // Local Delay & Loss (Camada 1 e 2)
+            if ((currentNode.id === 'pc' && nextNode.id === 'router') || (currentNode.id === 'router' && nextNode.id === 'pc')) {
+                hopDelay = baseDelay + (meioLocal.latenciaMs * 1.5); 
+                if (hopDelay > 800) hopDelay = 800; 
+                pkt.style.transition = `top ${hopDelay/1000}s linear, left ${hopDelay/1000}s linear`;
+                
+                if (Math.random() < meioLocal.perda) {
+                    pkt.className = 'packet pkt-err'; await wait(hopDelay); pkt.remove();
+                    throw new Error("Loss_Local");
+                }
+            } else {
+                pkt.style.transition = `top ${baseDelay/1000}s linear, left ${baseDelay/1000}s linear`;
+            }
+
+            // Backbone Loss (Camada 3)
+            const stormLossRate = isUDP ? 0.60 : 0.25; 
+            if (document.getElementById('packetLossToggle').checked && (currentNode.id === 'backbone_int' || nextNode.id === 'backbone_int') && Math.random() < stormLossRate) {
+                pkt.className = 'packet pkt-err'; await wait(hopDelay); pkt.remove();
+                throw new Error("Loss_Ocean");
+            }
+
+            await wait(hopDelay);
+            
+            if (nextNode.id === 'pc' || nextNode.id === 'server') {
+                const icon = document.getElementById(`icon-${nextNode.id}`);
+                icon.classList.remove('flash-receive'); void icon.offsetWidth; icon.classList.add('flash-receive');
+            }
+        }
+        pkt.remove();
+    }
+
+    function setFlowAnimation(active) {
+        clearSVG(svgFlow);
+        if (!active) return;
+        let pathD = ""; 
+        nodesData.forEach((n, i) => { pathD += i === 0 ? `M ${n.x}% ${n.y}% ` : `L ${n.x}% ${n.y}% `; });
+        drawSVGLine(svgFlow, null, 'line-data-flow', pathD);
+    }
+
+    async function iniciarSimulacao() {
+        if (isRunning) return;
+        isRunning = true;
+        terminal.innerHTML = ''; 
+        setFlowAnimation(false);
+        document.getElementById('progress-bar').style.width = '0%';
+        document.getElementById('progress-bar').style.background = 'linear-gradient(90deg, #10b981, #34d399)';
+        
+        const meioKey = document.getElementById('meioSelect').value;
+        const meio = meiosFisicos[meioKey];
+        const protoKey = document.getElementById('protocolSelect').value;
+        const proto = dictProtocolos[protoKey];
+        
+        const isTCP = proto.transp === 'TCP';
+        const maxMBps = (meio.velMbps / 8) * 0.9; 
+        const basePingReal = (meio.latenciaMs + 110) * 2; // 110ms é o backbone base
+
+        document.getElementById('dash-vel').innerText = `${maxMBps.toFixed(1)} MB/s`;
+        document.getElementById('dash-proto').innerText = `${protoKey} (${proto.transp})`;
+        
+        try {
+            logMsg(null, `Iniciando Pilha OSI. Alvo: ${proto.desc} via porta ${proto.port}/${proto.transp}`, "warn");
+
+            // --- CAMADA 2 & 3: ENLACE E INTERNET ---
+            logMsg('Enlace/L2', `Negociando conexão física. MAC Address resolvido via ARP.`, "info");
+            await wait(500);
+            
+            logMsg('Internet/L3', `Construindo cabeçalho IPv4. Origem: ${nodesData[0].ip} -> Destino: ${nodesData[6].ip}`, "info");
+            logMsg('Internet/L3', `Disparando ICMP Echo Request para calcular MTU e Latência.`, "info");
+            
+            await shootPacket(0, 6, 'pkt-ping', 50); 
+            await shootPacket(6, 0, 'pkt-ping', 50);
+            
+            document.getElementById('dash-ping').innerText = `${basePingReal} ms`;
+            logMsg('Internet/L3', `ICMP Echo Reply recebido. Roteamento BGP confirmou caminho.`, "succ");
+            await wait(500);
+
+            // --- CAMADA 4: TRANSPORTE ---
+            document.getElementById('transfer-status').innerText = `Negociando C4 (${proto.transp})...`;
+            if (isTCP) {
+                logMsg('Transp/L4', `Iniciando 3-Way Handshake TCP (SYN, SYN-ACK, ACK).`, "info");
+                await shootPacket(0, 6, 'pkt-ctrl', 60); 
+                await shootPacket(6, 0, 'pkt-ctrl', 60); 
+                await shootPacket(0, 6, 'pkt-ctrl', 60); 
+                logMsg('Transp/L4', `Conexão TCP Estabelecida. Controle de Janela Ativo.`, "succ");
+            } else {
+                logMsg('Transp/L4', `Protocolo UDP selecionado. Pulando Handshake TCP.`, "warn");
+            }
+
+            // --- CAMADA 7: APLICAÇÃO ---
+            logMsg('Aplic/L7', `Injetando payload do protocolo ${protoKey}...`, "warn");
+            await wait(400);
+            logMsg('Aplic/L7', `>>> ${proto.cmdReq}`, "succ");
+            await shootPacket(0, 6, 'pkt-ctrl', 80, !isTCP); 
+            logMsg('Aplic/L7', `<<< ${proto.cmdRes}`, "succ");
+            await shootPacket(6, 0, 'pkt-ctrl', 80, !isTCP); 
+            
+            // --- TRANSFERÊNCIA DE DADOS ---
+            document.getElementById('transfer-status').innerText = `Executando ${protoKey}...`;
+            setFlowAnimation(true);
+            
+            let downloadedMB = 0;
+            const totalSizeMB = proto.sizeMB;
+            let lastLogTime = Date.now();
+            let lostDataMB = 0; 
+            const isSmallPayload = totalSizeMB < 2;
+
+            while (downloadedMB < totalSizeMB && isRunning) {
+                let jitterPing = getJitter(basePingReal);
+                document.getElementById('dash-ping').innerText = `${jitterPing} ms`;
+                if(jitterPing > 300) document.querySelector('.stat-box.ping strong').style.color = 'var(--danger)';
+                else document.querySelector('.stat-box.ping strong').style.color = 'var(--accent-orange)';
+
+                try {
+                    // Direção correta do tiro
+                    if(proto.dir === 'down') { await shootPacket(6, 0, 'pkt-data', 80, !isTCP); }
+                    else { await shootPacket(0, 6, 'pkt-data', 80, !isTCP); }
+
+                    await wait(isSmallPayload ? 100 : 400); 
+                    
+                    let added = isSmallPayload ? totalSizeMB : (maxMBps / 2.5); 
+                    downloadedMB += added;
+                    
+                    if (!isSmallPayload && (Date.now() - lastLogTime > 1200)) {
+                        logMsg('Física/L1', `Modulação ativa. Status: ${Math.floor(downloadedMB)}MB transferidos.`, "info");
+                        lastLogTime = Date.now();
+                    }
+                    
+                } catch (e) { 
+                    if (e.message === "Loss_Local") {
+                        logMsg('Enlace/L2', `[DROP] FCS Checksum falhou no Wi-Fi/Satélite local!`, "drop");
+                    } else if (e.message === "Loss_Ocean") {
+                        logMsg('Internet/L3', `[DROP] TTL Exceeded / Descartes de pacote no backbone.`, "drop");
+                    }
+                    
+                    if (isTCP) {
+                        setFlowAnimation(false);
+                        logMsg('Transp/L4', `[TCP] Ausência de ACK. Retransmissão Rápida iniciada.`, "warn");
+                        await wait(basePingReal + 300); 
+                        setFlowAnimation(true);
+                        downloadedMB += (maxMBps * 0.1); 
+                    } else {
+                        lostDataMB += (maxMBps / 2);
+                    }
+                }
+
+                if(downloadedMB > totalSizeMB) downloadedMB = totalSizeMB;
+                let pct = (downloadedMB / totalSizeMB) * 100;
+                document.getElementById('progress-bar').style.width = `${pct}%`;
+                
+                let displayDown = totalSizeMB < 1 ? (downloadedMB*1024).toFixed(0) + " KB" : Math.floor(downloadedMB) + " MB";
+                let displayTotal = totalSizeMB < 1 ? (totalSizeMB*1024).toFixed(0) + " KB" : Math.floor(totalSizeMB) + " MB";
+                document.getElementById('transfer-pct').innerText = `${displayDown} / ${displayTotal} (${Math.floor(pct)}%)`;
+            }
+
+            // --- ENCERRAMENTO ---
+            if (isRunning) {
+                setFlowAnimation(false);
+                document.querySelector('.stat-box.ping strong').style.color = 'var(--accent-orange)';
+                
+                if (isTCP) {
+                    document.getElementById('transfer-status').innerText = `Operação Concluída!`;
+                    logMsg('Aplic/L7', `Transação ${protoKey} validada com sucesso.`, "succ");
+                    logMsg('Transp/L4', `Tear-down connection (Enviando FIN, ACK).`, "info");
+                } else {
+                    if (lostDataMB > 0 && !isSmallPayload) {
+                        document.getElementById('transfer-status').innerText = `Stream Corrompido`;
+                        document.getElementById('progress-bar').style.background = 'var(--danger)';
+                        logMsg('Aplic/L7', `[UDP FATAL] ${Math.floor(lostDataMB)} MB de perda em ${protoKey}! Artefatos na tela.`, "drop");
+                    } else {
+                        document.getElementById('transfer-status').innerText = `Operação Concluída`;
+                        logMsg('Aplic/L7', `Transação ${protoKey} via UDP resolvida instantaneamente.`, "succ");
+                    }
+                }
+            }
+        } finally {
+            isRunning = false;
+            setFlowAnimation(false);
+        }
+    }
+</script>
+
+</body>
+</html>
