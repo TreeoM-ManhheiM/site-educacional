@@ -7,8 +7,9 @@
         body { font-family: 'Segoe UI', sans-serif; background-color: #0f172a; color: #f8fafc; text-align: center; padding: 20px; }
         h1 { color: #10b981; margin-bottom: 5px; }
         #tela-login, #lobby, #area-jogo { max-width: 800px; margin: 20px auto; }
-        .painel-info { background: #1e293b; padding: 15px; border-radius: 10px; display: inline-block; min-width: 250px; margin-bottom: 20px; }
+        .painel-info { background: #1e293b; padding: 15px; border-radius: 10px; display: inline-block; min-width: 300px; margin-bottom: 20px; }
         .destaque { color: #fbbf24; font-weight: bold; }
+        .parceiro-box { color: #6366f1; font-size: 0.9em; margin-top: 5px; font-weight: bold; }
         #mesa { background: #1e293b; padding: 40px; min-height: 120px; margin: 20px 0; border-radius: 12px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; border: 2px dashed #334155; }
         .peca { background: white; color: black; padding: 10px 15px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; font-weight: bold; font-size: 24px; cursor: pointer; border-bottom: 4px solid #cbd5e1; }
         button { padding: 12px 25px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; color: white; transition: 0.2s; }
@@ -42,23 +43,20 @@
     <div id="area-jogo" style="display:none;">
         <div class="painel-info">
             <div>Vez de: <span id="vez-nome" class="destaque">---</span></div>
-            <div>📦 Monte: <span id="qtd-monte" class="destaque">0</span> peças</div>
+            <div id="display-parceiro" class="parceiro-box">🤝 Parceiro: ---</div>
+            <div style="margin-top:5px;">📦 Monte: <span id="qtd-monte" class="destaque">0</span> peças</div>
         </div>
 
         <div id="mesa"></div>
 
         <div id="modal-lado">
-            <h3 style="margin-top:0;">Onde deseja jogar?</h3>
+            <h3 style="margin-top:0;">Onde jogar?</h3>
             <button onclick="confirmarLado('esq')" style="background:#6366f1;">⬅️ Esquerda</button>
             <button onclick="confirmarLado('dir')" style="background:#10b981; margin-left:10px;">Direita ➡️</button>
         </div>
 
         <button id="btn-olho" class="btn-privacidade" onclick="togglePrivacidade()">🙈 Esconder Peças</button>
-        
-        <div id="container-pecas">
-            <h3 style="margin-bottom:10px;">Suas Peças:</h3>
-            <div id="minhas-pecas"></div>
-        </div>
+        <div id="minhas-pecas"></div>
 
         <div style="margin-top:30px;">
             <button class="btn-comprar" onclick="socket.emit('comprarPeca')">📦 Comprar</button>
@@ -82,6 +80,10 @@
             }
         }
 
+        socket.on('infoParceiro', (nome) => {
+            document.getElementById('display-parceiro').innerText = "🤝 Parceiro: " + nome;
+        });
+
         socket.on('estadoLobby', (dados) => {
             const lobby = document.getElementById('lobby');
             const jogo = document.getElementById('area-jogo');
@@ -98,7 +100,7 @@
 
         function togglePrivacidade() {
             visivel = !visivel;
-            document.getElementById('container-pecas').className = visivel ? "" : "escondido";
+            document.getElementById('minhas-pecas').className = visivel ? "" : "escondido";
             document.getElementById('btn-olho').innerText = visivel ? "🙈 Esconder Peças" : "👁️ Mostrar Peças";
             document.getElementById('btn-olho').style.background = visivel ? "#ef4444" : "#6366f1";
         }
@@ -106,9 +108,7 @@
         function validarJogada(index, mao) {
             const peca = mao[index];
             if (mesaAtual.length === 0) return socket.emit('jogarPeca', { index, lado: 'dir' });
-            
-            const pEsq = mesaAtual[0][0];
-            const pDir = mesaAtual[mesaAtual.length - 1][1];
+            const pEsq = mesaAtual[0][0], pDir = mesaAtual[mesaAtual.length - 1][1];
             const serveEsq = (peca[0] === pEsq || peca[1] === pEsq);
             const serveDir = (peca[0] === pDir || peca[1] === pDir);
 
@@ -117,9 +117,7 @@
                 document.getElementById('modal-lado').style.display = 'block';
             } else if (serveEsq || serveDir) {
                 socket.emit('jogarPeca', { index, lado: serveEsq ? 'esq' : 'dir' });
-            } else {
-                alert("Essa peça não serve na mesa!");
-            }
+            } else alert("Peça não serve!");
         }
 
         function confirmarLado(lado) {
@@ -138,11 +136,11 @@
             `).join('');
         });
 
-        socket.on('erro', (msg) => alert("❌ Erro: " + msg));
+        socket.on('erro', (msg) => alert("❌ " + msg));
         socket.on('mudarTurno', (d) => document.getElementById('vez-nome').innerText = d.nome);
         socket.on('atualizarMonte', (q) => document.getElementById('qtd-monte').innerText = q);
         socket.on('mensagemGeral', (m) => alert(m));
-        socket.on('connect', () => document.getElementById('status').innerText = "✅ Conectado ao Servidor");
+        socket.on('connect', () => document.getElementById('status').innerText = "✅ Conectado");
     </script>
 </body>
 </html>
