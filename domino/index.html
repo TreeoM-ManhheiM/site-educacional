@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title> EE 8 de Abril Lógico 🧠 — Laboratório de Computação</title>
+    <title>EE. 8 de Abril Lógico 🧠 — Laboratório de Computação</title>
 
     <style>
         /* ESTILO PADRÃO: LABORATÓRIO DE COMPUTAÇÃO */
@@ -31,7 +31,6 @@
             padding: 20px;
         }
 
-        /* PAINEL DO JOGO */
         .game-container {
             background: white;
             padding: 25px;
@@ -42,7 +41,6 @@
 
         #status { color: #64748b; font-size: 13px; margin-bottom: 10px; }
 
-        /* PAINEL DE INFO (AZUL CLARO) */
         .painel-info {
             background: #e5edff;
             padding: 15px;
@@ -58,7 +56,6 @@
 
         .destaque { color: #2563eb; }
 
-        /* MESA DE JOGO */
         #mesa { 
             background: #f8fafc; 
             padding: 40px; 
@@ -72,7 +69,6 @@
             border: 2px dashed #cbd5e1; 
         }
 
-        /* PEÇAS */
         .peca { 
             background: white; 
             color: #1e293b; 
@@ -86,28 +82,22 @@
             cursor: pointer; 
             border: 1px solid #cbd5e1;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: 0.2s;
         }
 
-        .peca:hover { transform: translateY(-3px); border-color: #2563eb; }
-
-        /* BOTÕES */
         button { 
             padding: 12px 20px; 
             border-radius: 8px; 
             border: none; 
             cursor: pointer; 
             font-weight: bold; 
-            transition: 0.2s;
         }
 
         .btn-conectar { background: #10b981; color: white; }
         .btn-pronto { background: #3b82f6; color: white; width: 100%; }
         .btn-comprar { background: #eab308; color: black; }
         .btn-passar { background: #ef4444; color: white; }
-        .btn-olho { background: #64748b; color: white; margin-bottom: 15px; }
+        .btn-olho { background: #ef4444; color: white; margin-bottom: 15px; }
 
-        /* MODAL DE LADO */
         #modal-lado { 
             display: none; 
             position: fixed; 
@@ -118,10 +108,19 @@
         }
 
         .escondido { filter: blur(15px); opacity: 0.2; pointer-events: none; }
-
         input { padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; margin: 5px; }
+        li { list-style: none; background: #f1f5f9; margin: 5px; padding: 10px; border-radius: 5px; text-align: left; }
         
-        li { list-style: none; background: #f1f5f9; margin: 5px; padding: 10px; border-radius: 5px; color: #1e293b; border-left: 4px solid #3b82f6; text-align: left; }
+        /* LINK DE REGRAS */
+        .link-regras {
+            display: block;
+            margin-top: 15px;
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .link-regras:hover { text-decoration: underline; }
     </style>
 </head>
 
@@ -129,17 +128,20 @@
 
 <header>
     <h1>Dominó Lógico 🧠</h1>
-    <p>Projeto "2°A DS" e "3°B CD" — Versão 2026</p>
+    <p>Projeto Integrado — Laboratório de Computação</p>
 </header>
 
 <main>
     <div id="status">Conectando...</div>
 
     <div id="tela-login" class="game-container">
-        <h2>Entrar na Sala</h2>
+        <h2>Entrar na Partida</h2>
         <input type="text" id="input-apelido" placeholder="Seu Nome">
         <input type="text" id="input-sala" placeholder="Sala">
-        <button onclick="entrar()" class="btn-conectar">CONECTAR</button>
+        <br><br>
+        <button onclick="entrar()" class="btn-conectar">CONECTAR AO SERVIDOR</button>
+        
+        <a href="regras.html" class="link-regras">📖 Ler as regras antes de jogar</a>
     </div>
 
     <div id="lobby" class="game-container" style="display:none;">
@@ -191,11 +193,6 @@
         }
     }
 
-    socket.on('resetJogo', () => {
-        alert("Partida Encerrada! A sala foi limpa.");
-        location.reload();
-    });
-
     socket.on('infoParceiro', (n) => document.getElementById('display-parceiro').innerText = "🤝 Parceiro: " + n);
 
     socket.on('estadoLobby', (dados) => {
@@ -226,10 +223,8 @@
     function confirmarLado(lado) { socket.emit('jogarPeca', { index: pecaSelecionadaIdx, lado }); document.getElementById('modal-lado').style.display = 'none'; }
     socket.on('atualizarMesa', (m) => { mesaAtual = m; document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca" style="cursor:default;">${p[0]} | ${p[1]}</div>`).join(''); });
     socket.on('atualizarMao', (m) => { document.getElementById('minhas-pecas').innerHTML = m.map((p, i) => `<div class="peca" onclick="validarJogada(${i}, ${JSON.stringify(m)})">${p[0]} | ${p[1]}</div>`).join(''); });
-    socket.on('erro', (m) => alert("❌ " + m));
     socket.on('mudarTurno', (d) => document.getElementById('vez-nome').innerText = d.nome);
     socket.on('atualizarMonte', (q) => document.getElementById('qtd-monte').innerText = q);
-    socket.on('mensagemGeral', (m) => alert(m));
     socket.on('connect', () => document.getElementById('status').innerText = "✅ Conectado ao Servidor");
 </script>
 
