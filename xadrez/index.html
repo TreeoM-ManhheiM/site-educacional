@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Xadrez Lógico ♟️ — Laboratório de Computação</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+
+    <style>
+        /* ESTILO PADRÃO: LABORATÓRIO DE COMPUTAÇÃO */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+            text-align: center;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        header h1 { margin: 0; font-size: 28px; }
+        header p { font-size: 14px; margin-top: 5px; opacity: 0.9; }
+
+        .btn-header-regras {
+            display: inline-block;
+            margin-top: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            padding: 8px 18px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: 0.3s;
+        }
+        .btn-header-regras:hover { background: rgba(255, 255, 255, 0.3); }
+
+        main {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .game-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+
+        #status-conexao { color: #64748b; font-size: 13px; margin-bottom: 10px; }
+
+        .painel-info {
+            background: #e5edff;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 20px;
+            border: 1px solid #c7d2fe;
+            color: #1e3a8a;
+            font-weight: bold;
+        }
+
+        .destaque { color: #2563eb; }
+        .alerta-xeque { color: #ef4444; font-weight: bold; animation: piscar 1s infinite; }
+        
+        @keyframes piscar { 50% { opacity: 0.5; } }
+
+        button { 
+            padding: 12px 20px; 
+            border-radius: 8px; 
+            border: none; 
+            cursor: pointer; 
+            font-weight: bold; 
+        }
+
+        .btn-conectar { background: #10b981; color: white; }
+        .btn-pronto { background: #3b82f6; color: white; width: 100%; }
+
+        input { padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; margin: 5px; }
+        li { list-style: none; background: #f1f5f9; margin: 5px; padding: 10px; border-radius: 5px; text-align: left; }
+        
+        /* Centralizar o tabuleiro */
+        #meu-tabuleiro {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Xadrez Lógico ♟️</h1>
+    <p>Projeto Integrado — Laboratório de Computação</p>
+    <a href="regras.html" target="_blank" class="btn-header-regras">📖 VER REGRAS DO JOGO</a>
+</header>
+
+<main>
+    <div id="status-conexao">Conectando...</div>
+
+    <div id="tela-login" class="game-container">
+        <h2>Entrar na Partida de Xadrez</h2>
+        <input type="text" id="input-apelido" placeholder="Seu Nome">
+        <input type="text" id="input-sala" placeholder="Sala (ex: mesa1)">
+        <br><br>
+        <button onclick="entrar()" class="btn-conectar">CONECTAR AO SERVIDOR</button>
+    </div>
+
+    <div id="lobby" class="game-container" style="display:none;">
+        <h3>Aguardando Oponente (Máximo 2 jogadores):</h3>
+        <ul id="lista-alunos" style="padding:0;"></ul>
+        <button onclick="marcarPronto()" class="btn-pronto">ESTOU PRONTO / INICIAR</button>
+    </div>
+
+    <div id="area-jogo" style="display:none;">
+        <div class="painel-info">
+            <div>Sua Cor: <span id="minha-cor" class="destaque">---</span></div>
+            <div>Turno das: <span id="vez-atual" class="destaque">Brancas</span></div>
+            <div id="status-jogo" class="destaque">Partida em andamento</div>
+        </div>
+
+        <div class="game-container">
+            <div id="meu-tabuleiro"></div>
+        </div>
+    </div>
+</main>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<script>
+    // Apontando para o seu FUTURO servidor de xadrez (por enquanto usaremos um nome provisório)
+    const socket = io("https://motor-xadrez.onrender.com");
+    
+    let motorXadrez = new Chess(); // O juiz das regras
+    let tabuleiroVisual = null; // O visual
+    let minhaCor = 'w'; // 'w' = white, 'b' = black
+
+    // 1. FUNÇÕES DE REDE (Igual ao Dominó)
+    function entrar() {
+        const apelido = document.getElementById('input-apelido').value;
+        const sala = document.getElementById('input-sala').value;
+        if(apelido && sala) {
+            socket.emit('entrarSala', { apelido, sala });
+            document.getElementById('tela-login').style.display = 'none';
+        }
+    }
+
+    function marcarPronto() {
+        socket.emit('marcarPronto');
+    }
+
+    socket.on('connect', () => {
+        document.getElementById('status-conexao').innerText = "✅ Conectado ao Servidor";
+    });
+
+    socket.on('estadoLobby', (dados) => {
+        const lobby = document.getElementById('lobby');
+        const jogo = document.getElementById('area-jogo');
+        
+        if (dados.rodando) { 
+            lobby.style.display = 'none'; 
+            jogo.style.display = 'block'; 
+        } else { 
+            lobby.style.display = 'block'; 
+            document.getElementById('lista-alunos').innerHTML = dados.jogadoresInfo.map(j => `<li>👤 ${j.nome} ${j.pronto ? '✅' : '⏳'}</li>`).join(''); 
+        }
+    });
+
+    // 2. LÓGICA DO TABULEIRO DE XADREZ
+    socket.on('iniciarPartida', (dados) => {
+        // O servidor diz se você é branca (w) ou preta (b)
+        minhaCor = dados.cor; 
+        document.getElementById('minha-cor').innerText = (minhaCor === 'w') ? "⚪ Brancas" : "⚫ Pretas";
+        
+        // Se for preta, vira o tabuleiro de cabeça para baixo
+        tabuleiroVisual.orientation(minhaCor === 'w' ? 'white' : 'black');
+        motorXadrez.reset();
+        tabuleiroVisual.start();
+        atualizarStatus();
+    });
+
+    // Quando o adversário faz uma jogada e o servidor avisa
+    socket.on('jogadaFeita', (fen) => {
+        motorXadrez.load(fen); // Atualiza o juiz com a posição nova
+        tabuleiroVisual.position(fen); // Move a peça visualmente
+        atualizarStatus();
+    });
+
+    // Regra: Só pode mover a peça se for a sua vez e a peça for sua
+    function aoComecarArrastar (source, piece, position, orientation) {
+        if (motorXadrez.game_over()) return false;
+        if ((motorXadrez.turn() === 'w' && piece.search(/^b/) !== -1) ||
+            (motorXadrez.turn() === 'b' && piece.search(/^w/) !== -1)) {
+            return false;
+        }
+        // Impede de jogar se não for a sua cor
+        if (motorXadrez.turn() !== minhaCor) return false;
+    }
+
+    // Regra: Validar o movimento quando soltar a peça
+    function aoSoltarPeca (source, target) {
+        // Tenta fazer o movimento usando o juiz (chess.js)
+        let movimento = motorXadrez.move({
+            from: source,
+            to: target,
+            promotion: 'q' // Simplificação: sempre promove para Dama (Queen)
+        });
+
+        // Se o movimento for ilegal (ex: cavalo andando reto), a peça volta pro lugar ('snapback')
+        if (movimento === null) return 'snapback';
+
+        // Se for legal, avisa o servidor sobre a jogada
+        socket.emit('fazerJogada', motorXadrez.fen());
+        atualizarStatus();
+    }
+
+    // Regra: Roque, En Passant e Promoção atualizam o tabuleiro automaticamente
+    function aposMovimento (oldPos, newPos) {
+        tabuleiroVisual.position(motorXadrez.fen());
+    }
+
+    function atualizarStatus () {
+        let statusHTML = '';
+        let vez = motorXadrez.turn() === 'w' ? '⚪ Brancas' : '⚫ Pretas';
+        document.getElementById('vez-atual').innerText = vez;
+
+        if (motorXadrez.in_checkmate()) {
+            statusHTML = '🏆 Fim de Jogo: Xeque-Mate!';
+        } else if (motorXadrez.in_draw()) {
+            statusHTML = '🤝 Fim de Jogo: Empate!';
+        } else if (motorXadrez.in_check()) {
+            statusHTML = '<span class="alerta-xeque">⚠️ REI EM XEQUE!</span>';
+        } else {
+            statusHTML = 'Partida em andamento';
+        }
+        document.getElementById('status-jogo').innerHTML = statusHTML;
+    }
+
+    // Configurando o Tabuleiro Visual
+    let config = {
+        draggable: true,
+        position: 'start',
+        onDragStart: aoComecarArrastar,
+        onDrop: aoSoltarPeca,
+        onSnapEnd: aposMovimento
+    };
+    
+    // Inicializa o tabuleiro
+    tabuleiroVisual = Chessboard('meu-tabuleiro', config);
+
+</script>
+</body>
+</html>
