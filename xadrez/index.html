@@ -143,14 +143,12 @@
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 
 <script>
-    // AQUI ESTÁ A ATUALIZAÇÃO: Apontando para o seu servidor Render real!
     const socket = io("https://motor-xadrez.onrender.com");
     
-    let motorXadrez = new Chess(); // O juiz das regras
-    let tabuleiroVisual = null; // O visual
-    let minhaCor = 'w'; // 'w' = white, 'b' = black
+    let motorXadrez = new Chess(); 
+    let tabuleiroVisual = null; 
+    let minhaCor = 'w'; 
 
-    // 1. FUNÇÕES DE REDE (Igual ao Dominó)
     function entrar() {
         const apelido = document.getElementById('input-apelido').value;
         const sala = document.getElementById('input-sala').value;
@@ -181,55 +179,44 @@
         }
     });
 
-    // 2. LÓGICA DO TABULEIRO DE XADREZ
     socket.on('iniciarPartida', (dados) => {
-        // O servidor diz se você é branca (w) ou preta (b)
         minhaCor = dados.cor; 
         document.getElementById('minha-cor').innerText = (minhaCor === 'w') ? "⚪ Brancas" : "⚫ Pretas";
         
-        // Se for preta, vira o tabuleiro de cabeça para baixo
         tabuleiroVisual.orientation(minhaCor === 'w' ? 'white' : 'black');
         motorXadrez.reset();
         tabuleiroVisual.start();
         atualizarStatus();
     });
 
-    // Quando o adversário faz uma jogada e o servidor avisa
     socket.on('jogadaFeita', (fen) => {
-        motorXadrez.load(fen); // Atualiza o juiz com a posição nova
-        tabuleiroVisual.position(fen); // Move a peça visualmente
+        motorXadrez.load(fen);
+        tabuleiroVisual.position(fen);
         atualizarStatus();
     });
 
-    // Regra: Só pode mover a peça se for a sua vez e a peça for sua
     function aoComecarArrastar (source, piece, position, orientation) {
         if (motorXadrez.game_over()) return false;
         if ((motorXadrez.turn() === 'w' && piece.search(/^b/) !== -1) ||
             (motorXadrez.turn() === 'b' && piece.search(/^w/) !== -1)) {
             return false;
         }
-        // Impede de jogar se não for a sua cor
         if (motorXadrez.turn() !== minhaCor) return false;
     }
 
-    // Regra: Validar o movimento quando soltar a peça
     function aoSoltarPeca (source, target) {
-        // Tenta fazer o movimento usando o juiz (chess.js)
         let movimento = motorXadrez.move({
             from: source,
             to: target,
-            promotion: 'q' // Simplificação: sempre promove para Dama (Queen)
+            promotion: 'q'
         });
 
-        // Se o movimento for ilegal (ex: cavalo andando reto), a peça volta pro lugar ('snapback')
         if (movimento === null) return 'snapback';
 
-        // Se for legal, avisa o servidor sobre a jogada
         socket.emit('fazerJogada', motorXadrez.fen());
         atualizarStatus();
     }
 
-    // Regra: Roque, En Passant e Promoção atualizam o tabuleiro automaticamente
     function aposMovimento (oldPos, newPos) {
         tabuleiroVisual.position(motorXadrez.fen());
     }
@@ -251,16 +238,16 @@
         document.getElementById('status-jogo').innerHTML = statusHTML;
     }
 
-    // Configurando o Tabuleiro Visual
+    // AQUI ESTÁ A CORREÇÃO MÁGICA: pieceTheme adicionado!
     let config = {
         draggable: true,
         position: 'start',
+        pieceTheme: 'https://chessboardjs.com/img/chesspieces/wikipedia/{piece}.png',
         onDragStart: aoComecarArrastar,
         onDrop: aoSoltarPeca,
         onSnapEnd: aposMovimento
     };
     
-    // Inicializa o tabuleiro
     tabuleiroVisual = Chessboard('meu-tabuleiro', config);
 
 </script>
