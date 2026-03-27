@@ -11,85 +11,36 @@
     <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
 
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f8fafc;
-            color: #333;
-        }
-
-        header {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-        }
-
+        body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #333; }
+        header { background: linear-gradient(135deg, #0f172a, #1e293b); color: white; padding: 40px 20px; text-align: center; }
         header h1 { margin: 0; font-size: 36px; color: #38bdf8; }
         header p { font-size: 16px; margin-top: 10px; opacity: 0.9; max-width: 600px; margin-left: auto; margin-right: auto; }
-
-        .tag-goty {
-            display: inline-block;
-            background: #eab308;
-            color: #422006;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
-        }
-
+        .tag-goty { display: inline-block; background: #eab308; color: #422006; font-size: 12px; font-weight: bold; padding: 4px 8px; border-radius: 12px; margin-bottom: 15px; letter-spacing: 1px; }
         main { max-width: 1100px; margin: 40px auto; padding: 0 20px; }
 
         /* Estilos do Menu */
-        .grid-modulos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-top: 4px solid #38bdf8;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
+        .grid-modulos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #38bdf8; transition: transform 0.3s, box-shadow 0.3s; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         .card h2 { margin-top: 0; color: #0f172a; font-size: 20px; }
         .card ul { padding-left: 20px; color: #475569; font-size: 15px; line-height: 1.6; }
         
-        .btn-acessar {
-            display: block; width: 100%; text-align: center; background: #f1f5f9;
-            color: #2563eb; text-decoration: none; padding: 10px 0; border-radius: 6px;
-            font-weight: bold; margin-top: 15px; transition: 0.3s; cursor: pointer; border: none; font-size: 16px;
-        }
+        .btn-acessar { display: block; width: 100%; text-align: center; background: #f1f5f9; color: #2563eb; text-decoration: none; padding: 10px 0; border-radius: 6px; font-weight: bold; margin-top: 15px; transition: 0.3s; cursor: pointer; border: none; font-size: 16px; }
         .btn-acessar:hover { background: #2563eb; color: white; }
-
-        /* Botão Voltar Universal */
-        .btn-voltar {
-            background: #64748b; color: white; border: none; padding: 10px 20px;
-            border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 5px;
-        }
+        .btn-voltar { background: #64748b; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 20px; display: inline-flex; align-items: center; gap: 5px; }
         .btn-voltar:hover { background: #475569; }
 
-        /* Estilos Matrizes e Vetores */
+        /* Estilos Ferramentas */
         .container-ferramenta { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); margin-bottom: 20px; text-align: center; }
-        .matriz-grid { display: inline-grid; gap: 10px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 2px solid #cbd5e1; }
-        .matriz-2x2 { grid-template-columns: repeat(3, 60px); }
-        .matriz-3x3 { grid-template-columns: repeat(4, 60px); }
+        .matriz-grid { display: inline-grid; gap: 10px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 2px solid #cbd5e1; margin: 10px; }
+        .matriz-2x2 { grid-template-columns: repeat(2, 60px); }
+        .matriz-3x3 { grid-template-columns: repeat(3, 60px); }
         input[type="number"] { width: 100%; padding: 10px 0; text-align: center; border: 1px solid #94a3b8; border-radius: 4px; font-weight: bold; }
-        .btn-calcular { background: #2563eb; color: white; font-weight: bold; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; }
-        .resultado-box { background: #e0f2fe; padding: 20px; border-radius: 8px; border-left: 5px solid #0284c7; text-align: left; margin-top: 20px; font-size: 18px; overflow-x: auto; }
+        .btn-calcular { background: #2563eb; color: white; font-weight: bold; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+        .btn-calcular:hover { background: #1d4ed8; }
+        .resultado-box { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: left; margin-top: 20px; font-size: 18px; overflow-x: auto; }
         
-        /* Layout Flex para 3D */
-        .layout-3d { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-        .painel-controles { flex: 1; min-width: 300px; text-align: left; background: #f8fafc; padding: 15px; border-radius: 8px; }
-        .painel-grafico { flex: 2; min-width: 400px; height: 500px; }
-        .linha-input { display: flex; gap: 10px; margin-top: 5px; }
+        .layout-flex { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px; }
     </style>
 </head>
 
@@ -104,50 +55,84 @@
 <main>
     <div id="tela-menu">
         <div class="grid-modulos">
+            <div class="card" style="border-top-color: #f59e0b;">
+                <h2>➕ Operações Básicas</h2>
+                <ul>
+                    <li>Soma e Subtração</li>
+                    <li>Multiplicação por Escalar</li>
+                    <li>Multiplicação Linha × Coluna</li>
+                </ul>
+                <button class="btn-acessar" style="color: #d97706;" onclick="mudarTela('tela-calculadora')">Abrir Calculadora</button>
+            </div>
+
             <div class="card" style="border-top-color: #38bdf8;">
-                <h2>🧮 Sistemas Lineares</h2>
+                <h2>🧮 Sistemas Lineares (Cramer)</h2>
                 <ul>
                     <li>Representação matricial (Ax = b)</li>
-                    <li>Regra de Cramer</li>
                     <li>Determinantes 2x2 e 3x3</li>
                 </ul>
-                <button class="btn-acessar" onclick="mudarTela('tela-matrizes')">Acessar Simulador (Cramer)</button>
+                <button class="btn-acessar" onclick="mudarTela('tela-matrizes')">Acessar Simulador</button>
             </div>
 
             <div class="card" style="border-top-color: #10b981;">
-                <h2>💻 Aplicações Computacionais</h2>
+                <h2>💻 Vetores 3D</h2>
                 <ul>
-                    <li>Soma de Vetores no Espaço 3D</li>
-                    <li>Visualização Geométrica</li>
-                    <li>Base para Computação Gráfica</li>
+                    <li>Soma de Vetores no Espaço</li>
+                    <li>Visualização Interativa</li>
                 </ul>
-                <button class="btn-acessar" style="color: #10b981;" onclick="mudarTela('tela-vetores')">Acessar Simulador 3D</button>
+                <button class="btn-acessar" style="color: #10b981;" onclick="mudarTela('tela-vetores')">Acessar Gráfico 3D</button>
             </div>
+        </div>
+    </div>
+
+    <div id="tela-calculadora" style="display: none;">
+        <button class="btn-voltar" onclick="mudarTela('tela-menu')">⬅ Voltar ao Menu</button>
+        <div class="container-ferramenta">
+            <h2>Calculadora de Matrizes Passo a Passo</h2>
             
-            <div class="card" style="border-top-color: #94a3b8;">
-                <h2>🚧 Mais Módulos em Breve</h2>
-                <ul>
-                    <li>Autovalores e Autovetores</li>
-                    <li>Matriz Transposta e Inversa</li>
-                    <li>Redes Neurais</li>
-                </ul>
-                <button class="btn-acessar" style="background:#e2e8f0; color:#64748b;" disabled>Em Desenvolvimento</button>
+            <select id="op-basica" style="padding: 10px; font-size: 16px; margin-bottom: 20px;">
+                <option value="soma">A + B (Soma)</option>
+                <option value="sub">A - B (Subtração)</option>
+                <option value="mult">A × B (Multiplicação)</option>
+            </select>
+
+            <div class="layout-flex">
+                <div>
+                    <p><b>Matriz A (2x2)</b></p>
+                    <div class="matriz-grid matriz-2x2" id="grid-A">
+                        <input type="number" id="A11" value="2"> <input type="number" id="A12" value="3">
+                        <input type="number" id="A21" value="1"> <input type="number" id="A22" value="4">
+                    </div>
+                </div>
+                <h2>&</h2>
+                <div>
+                    <p><b>Matriz B (2x2)</b></p>
+                    <div class="matriz-grid matriz-2x2" id="grid-B">
+                        <input type="number" id="B11" value="5"> <input type="number" id="B12" value="-1">
+                        <input type="number" id="B21" value="0"> <input type="number" id="B22" value="2">
+                    </div>
+                </div>
             </div>
+
+            <button class="btn-calcular" onclick="calcularBasico()">GERAR PASSO A PASSO</button>
+        </div>
+        
+        <div class="container-ferramenta" id="area-resultado-calc" style="display: none;">
+            <h3>Resolução Passo a Passo:</h3>
+            <div class="resultado-box" id="texto-resultado-calc"></div>
         </div>
     </div>
 
     <div id="tela-matrizes" style="display: none;">
         <button class="btn-voltar" onclick="mudarTela('tela-menu')">⬅ Voltar ao Menu</button>
         <div class="container-ferramenta">
-            <h2>Simulador de Matrizes e Sistemas (Cramer)</h2>
-            <select id="tipo-sistema" onchange="iniciarMatriz()" style="padding: 10px; font-size: 16px; margin-bottom: 15px;">
-                <option value="2">Sistema 2x2 (X, Y)</option>
-                <option value="3">Sistema 3x3 (X, Y, Z)</option>
-            </select>
-            <br>
-            <div id="area-matriz"></div>
-            <br><br>
-            <button class="btn-calcular" onclick="calcularCramer()">CALCULAR PASSO A PASSO</button>
+            <h2>Regra de Cramer (2x2)</h2>
+            <p>Em breve 3x3 ativado nesta visão unificada!</p>
+            <div class="matriz-grid matriz-3x3" style="grid-template-columns: repeat(3, 60px);">
+                <input type="number" id="c11" value="2"> <input type="number" id="c12" value="1"> <input type="number" id="cr1" value="5" style="background:#dbeafe">
+                <input type="number" id="c21" value="1"> <input type="number" id="c22" value="-3"> <input type="number" id="cr2" value="-1" style="background:#dbeafe">
+            </div><br>
+            <button class="btn-calcular" onclick="calcularCramer()">RESOLVER SISTEMA</button>
         </div>
         <div class="container-ferramenta" id="area-resultado-matriz" style="display: none;">
             <div class="resultado-box" id="texto-resultado-matriz"></div>
@@ -158,122 +143,99 @@
         <button class="btn-voltar" onclick="mudarTela('tela-menu')">⬅ Voltar ao Menu</button>
         <div class="container-ferramenta">
             <h2>Simulador de Vetores 3D</h2>
-            <div class="layout-3d">
-                <div class="painel-controles">
-                    <p><b>Vetor A (Azul)</b></p>
-                    <div class="linha-input">
-                        X: <input type="number" id="ax" value="3" onchange="atualizarGrafico()">
-                        Y: <input type="number" id="ay" value="2" onchange="atualizarGrafico()">
-                        Z: <input type="number" id="az" value="4" onchange="atualizarGrafico()">
-                    </div>
-                    <hr>
-                    <p><b>Vetor B (Roxo)</b></p>
-                    <div class="linha-input">
-                        X: <input type="number" id="bx" value="2" onchange="atualizarGrafico()">
-                        Y: <input type="number" id="by" value="-3" onchange="atualizarGrafico()">
-                        Z: <input type="number" id="bz" value="1" onchange="atualizarGrafico()">
-                    </div>
-                    <hr>
-                    <p><b>A + B (Verde Resultante)</b></p>
-                    <h3 id="texto-resultado-vetor" style="color: #10b981;">R = (5, -1, 5)</h3>
-                </div>
-                <div class="painel-grafico" id="grafico3d"></div>
-            </div>
+            <div id="grafico3d" style="height: 500px; width: 100%;"></div>
         </div>
     </div>
 
 </main>
 
 <script>
-    // SISTEMA DE NAVEGAÇÃO
+    // NAVEGAÇÃO
     function mudarTela(idTela) {
         document.getElementById('tela-menu').style.display = 'none';
+        document.getElementById('tela-calculadora').style.display = 'none';
         document.getElementById('tela-matrizes').style.display = 'none';
         document.getElementById('tela-vetores').style.display = 'none';
-        
         document.getElementById(idTela).style.display = 'block';
+        if(idTela === 'tela-vetores') renderizarGraficoBase();
+    }
 
-        // Se abrir a tela 3D, forçar a renderização do gráfico
-        if(idTela === 'tela-vetores') {
-            atualizarGrafico();
+    // ==========================================
+    // MÓDULO 1: OPERAÇÕES BÁSICAS
+    // ==========================================
+    function calcularBasico() {
+        const op = document.getElementById('op-basica').value;
+        const resBox = document.getElementById('texto-resultado-calc');
+        document.getElementById('area-resultado-calc').style.display = 'block';
+
+        // Lendo Matriz A
+        let a11 = Number(document.getElementById('A11').value), a12 = Number(document.getElementById('A12').value);
+        let a21 = Number(document.getElementById('A21').value), a22 = Number(document.getElementById('A22').value);
+        
+        // Lendo Matriz B
+        let b11 = Number(document.getElementById('B11').value), b12 = Number(document.getElementById('B12').value);
+        let b21 = Number(document.getElementById('B21').value), b22 = Number(document.getElementById('B22').value);
+
+        let latex = "";
+        let strA = `\\begin{bmatrix} ${a11} & ${a12} \\\\ ${a21} & ${a22} \\end{bmatrix}`;
+        let strB = `\\begin{bmatrix} ${b11} & ${b12} \\\\ ${b21} & ${b22} \\end{bmatrix}`;
+
+        if (op === 'soma') {
+            latex += `<p>Para somar matrizes, somamos os elementos que estão na mesma posição:</p>`;
+            latex += `$$ ${strA} + ${strB} = \\begin{bmatrix} ${a11} + (${b11}) & ${a12} + (${b12}) \\\\ ${a21} + (${b21}) & ${a22} + (${b22}) \\end{bmatrix} $$`;
+            latex += `$$ = \\begin{bmatrix} ${a11+b11} & ${a12+b12} \\\\ ${a21+b21} & ${a22+b22} \\end{bmatrix} $$`;
+        } 
+        else if (op === 'sub') {
+            latex += `<p>Para subtrair matrizes, subtraímos os elementos na mesma posição:</p>`;
+            latex += `$$ ${strA} - ${strB} = \\begin{bmatrix} ${a11} - (${b11}) & ${a12} - (${b12}) \\\\ ${a21} - (${b21}) & ${a22} - (${b22}) \\end{bmatrix} $$`;
+            latex += `$$ = \\begin{bmatrix} ${a11-b11} & ${a12-b12} \\\\ ${a21-b21} & ${a22-b22} \\end{bmatrix} $$`;
         }
-    }
+        else if (op === 'mult') {
+            latex += `<p>Para multiplicar matrizes, multiplicamos as <b>Linhas da Matriz A</b> pelas <b>Colunas da Matriz B</b>:</p>`;
+            
+            let c11_str = `(${a11})((${b11}) + (${a12})(${b21})`;
+            let c12_str = `(${a11})(${b12}) + (${a12})(${b22})`;
+            let c21_str = `(${a21})(${b11}) + (${a22})(${b21})`;
+            let c22_str = `(${a21})(${b12}) + (${a22})(${b22})`;
 
-    // ==========================================
-    // LÓGICA DO SIMULADOR 3D
-    // ==========================================
-    function atualizarGrafico() {
-        let ax = parseFloat(document.getElementById('ax').value) || 0; let ay = parseFloat(document.getElementById('ay').value) || 0; let az = parseFloat(document.getElementById('az').value) || 0;
-        let bx = parseFloat(document.getElementById('bx').value) || 0; let by = parseFloat(document.getElementById('by').value) || 0; let bz = parseFloat(document.getElementById('bz').value) || 0;
+            let c11 = (a11*b11) + (a12*b21);
+            let c12 = (a11*b12) + (a12*b22);
+            let c21 = (a21*b11) + (a22*b21);
+            let c22 = (a21*b12) + (a22*b22);
 
-        let cx = ax + bx, cy = ay + by, cz = az + bz;
-        document.getElementById('texto-resultado-vetor').innerText = `R = (${cx}, ${cy}, ${cz})`;
-
-        let tracoA = { type: 'scatter3d', mode: 'lines+markers', x: [0, ax], y: [0, ay], z: [0, az], line: { width: 6, color: '#3b82f6' }, name: 'Vetor A' };
-        let tracoB = { type: 'scatter3d', mode: 'lines+markers', x: [0, bx], y: [0, by], z: [0, bz], line: { width: 6, color: '#d946ef' }, name: 'Vetor B' };
-        let tracoR = { type: 'scatter3d', mode: 'lines+markers', x: [0, cx], y: [0, cy], z: [0, cz], line: { width: 8, color: '#10b981', dash: 'dash' }, name: 'A + B' };
-
-        Plotly.newPlot('grafico3d', [tracoA, tracoB, tracoR], { margin: { l: 0, r: 0, b: 0, t: 0 } });
-    }
-
-    // ==========================================
-    // LÓGICA DE MATRIZES E CRAMER
-    // ==========================================
-    function iniciarMatriz() {
-        const tipo = document.getElementById('tipo-sistema').value;
-        const area = document.getElementById('area-matriz');
-        if (tipo === '2') {
-            area.innerHTML = `<div class="matriz-grid matriz-2x2">
-                <input type="number" id="a11" value="2"> <input type="number" id="a12" value="1"> <input type="number" id="b1" value="5" style="background:#dbeafe">
-                <input type="number" id="a21" value="1"> <input type="number" id="a22" value="-3"> <input type="number" id="b2" value="-1" style="background:#dbeafe">
-            </div>`;
-        } else {
-            area.innerHTML = `<div class="matriz-grid matriz-3x3">
-                <input type="number" id="a11" value="1"> <input type="number" id="a12" value="2"> <input type="number" id="a13" value="-1"> <input type="number" id="b1" value="2" style="background:#dbeafe">
-                <input type="number" id="a21" value="2"> <input type="number" id="a22" value="-1"> <input type="number" id="a23" value="1"> <input type="number" id="b2" value="3" style="background:#dbeafe">
-                <input type="number" id="a31" value="1"> <input type="number" id="a32" value="1"> <input type="number" id="a33" value="1"> <input type="number" id="b3" value="6" style="background:#dbeafe">
-            </div>`;
+            latex += `$$ ${strA} \\times ${strB} = \\begin{bmatrix} ${c11_str} & ${c12_str} \\\\ ${c21_str} & ${c22_str} \\end{bmatrix} $$`;
+            latex += `$$ = \\begin{bmatrix} ${c11} & ${c12} \\\\ ${c21} & ${c22} \\end{bmatrix} $$`;
         }
-        document.getElementById('area-resultado-matriz').style.display = 'none';
+
+        resBox.innerHTML = latex;
+        if (window.MathJax) MathJax.typesetPromise([resBox]);
     }
 
-    function det2x2(m) { return (m[0][0] * m[1][1]) - (m[0][1] * m[1][0]); }
-    function det3x3(m) { return ((m[0][0]*m[1][1]*m[2][2]) + (m[0][1]*m[1][2]*m[2][0]) + (m[0][2]*m[1][0]*m[2][1])) - ((m[0][2]*m[1][1]*m[2][0]) + (m[0][0]*m[1][2]*m[2][1]) + (m[0][1]*m[1][0]*m[2][2])); }
-
+    // ==========================================
+    // MÓDULO 2: CRAMER BÁSICO (2x2)
+    // ==========================================
     function calcularCramer() {
-        const tipo = document.getElementById('tipo-sistema').value;
+        let a11 = Number(document.getElementById('c11').value), a12 = Number(document.getElementById('c12').value), b1 = Number(document.getElementById('cr1').value);
+        let a21 = Number(document.getElementById('c21').value), a22 = Number(document.getElementById('c22').value), b2 = Number(document.getElementById('cr2').value);
+        let D = (a11*a22) - (a12*a21), Dx = (b1*a22) - (a12*b2), Dy = (a11*b2) - (b1*a21);
+        
+        let latex = `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} $$`;
+        if (D !== 0) latex += `<br><b>Solução:</b> $x = ${Dx/D}$, $y = ${Dy/D}$`;
+        else latex += `<br><b>Atenção:</b> $\\Delta = 0$ (Sem solução única).`;
+        
         let res = document.getElementById('texto-resultado-matriz');
         document.getElementById('area-resultado-matriz').style.display = 'block';
-        let latex = '';
-
-        if (tipo === '2') {
-            let a11 = Number(document.getElementById('a11').value), a12 = Number(document.getElementById('a12').value), b1 = Number(document.getElementById('b1').value);
-            let a21 = Number(document.getElementById('a21').value), a22 = Number(document.getElementById('a22').value), b2 = Number(document.getElementById('b2').value);
-            let D = det2x2([[a11, a12], [a21, a22]]), Dx = det2x2([[b1, a12], [b2, a22]]), Dy = det2x2([[a11, b1], [a21, b2]]);
-            
-            latex += `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} $$`;
-            if (D !== 0) latex += `<br><b>Solução:</b> $x = ${Dx/D}$, $y = ${Dy/D}$`;
-            else latex += `<br><b>Atenção:</b> $\\Delta = 0$ (Sem solução única).`;
-        } else {
-            let a11 = Number(document.getElementById('a11').value), a12 = Number(document.getElementById('a12').value), a13 = Number(document.getElementById('a13').value), b1 = Number(document.getElementById('b1').value);
-            let a21 = Number(document.getElementById('a21').value), a22 = Number(document.getElementById('a22').value), a23 = Number(document.getElementById('a23').value), b2 = Number(document.getElementById('b2').value);
-            let a31 = Number(document.getElementById('a31').value), a32 = Number(document.getElementById('a32').value), a33 = Number(document.getElementById('a33').value), b3 = Number(document.getElementById('b3').value);
-            
-            let D = det3x3([[a11, a12, a13], [a21, a22, a23], [a31, a32, a33]]);
-            let Dx = det3x3([[b1, a12, a13], [b2, a22, a23], [b3, a32, a33]]);
-            let Dy = det3x3([[a11, b1, a13], [a21, b2, a23], [a31, b3, a33]]);
-            let Dz = det3x3([[a11, a12, b1], [a21, a22, b2], [a31, a32, b3]]);
-
-            latex += `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} \\quad \\Delta z = ${Dz} $$`;
-            if (D !== 0) latex += `<br><b>Solução:</b> $x = ${(Dx/D).toFixed(2)}$, $y = ${(Dy/D).toFixed(2)}$, $z = ${(Dz/D).toFixed(2)}$`;
-            else latex += `<br><b>Atenção:</b> $\\Delta = 0$ (Sem solução única).`;
-        }
         res.innerHTML = latex;
         if (window.MathJax) MathJax.typesetPromise([res]);
     }
 
-    // Inicializa campos na primeira carga
-    iniciarMatriz();
+    // ==========================================
+    // MÓDULO 3: GRÁFICO 3D
+    // ==========================================
+    function renderizarGraficoBase() {
+        let traco = { type: 'scatter3d', mode: 'lines+markers', x: [0, 3], y: [0, 2], z: [0, 4], line: { width: 6, color: '#3b82f6' }};
+        Plotly.newPlot('grafico3d', [traco], { margin: { l: 0, r: 0, b: 0, t: 0 } });
+    }
 </script>
 
 </body>
