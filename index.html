@@ -125,6 +125,7 @@
             font-size: 14px;
         }
 
+        /* --- ESTILOS DOS BOTÕES DOS JOGOS --- */
         .btn-domino {
             display: inline-block;
             padding: 12px 24px;
@@ -141,6 +142,25 @@
 
         .btn-domino:hover {
             background-color: #059669;
+            transform: scale(1.05);
+        }
+
+        .btn-xadrez {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #1e293b; /* Cor escura do Xadrez */
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: 0.2s;
+            text-align: center;
+        }
+
+        .btn-xadrez:hover {
+            background-color: #334155;
             transform: scale(1.05);
         }
     </style>
@@ -202,10 +222,6 @@
                 <li><a href="loboratorio_redes.html">Laboratório de Jogos de Lógica</a></li>
             </ul>
             
-            <div style="text-align: center; margin-top: 20px;">
-                <a href="domino/" class="btn-domino">🎮 Dominó Lógico</a>
-            </div>
-        </section>
             <div style="text-align: center; margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
                 <a href="domino/" class="btn-domino">🎮 Dominó Lógico</a>
                 <a href="xadrez/" class="btn-xadrez">♟️ Xadrez Lógico</a>
