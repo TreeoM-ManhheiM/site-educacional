@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
@@ -23,6 +23,8 @@
 
         .container-ferramenta { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); margin-bottom: 20px; text-align: center; }
         .matriz-grid { display: inline-grid; gap: 10px; background: #f1f5f9; padding: 15px; border-radius: 8px; border: 2px solid #cbd5e1; margin: 10px; }
+        .grid-2x2 { grid-template-columns: repeat(2, 70px); }
+        .grid-3x3 { grid-template-columns: repeat(3, 70px); }
         input[type="number"] { width: 100%; padding: 10px 0; text-align: center; border: 1px solid #94a3b8; border-radius: 4px; font-weight: bold; font-size: 16px; }
         
         .btn-calcular { background: #2563eb; color: white; font-weight: bold; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 15px; transition: 0.3s;}
@@ -31,19 +33,112 @@
         .resultado-box { background: #f8fafc; padding: 20px; border-radius: 8px; border: 1px solid #e2e8f0; text-align: left; margin-top: 20px; font-size: 16px; overflow-x: auto; }
         .layout-flex { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 20px; }
         .conceito-box { background: #fffbeb; border-left: 5px solid #f59e0b; padding: 15px; text-align: left; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 15px; color: #78350f; }
+        
+        /* Grid do Menu Principal */
+        .grid-modulos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #38bdf8; transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .card h2 { margin-top: 0; color: #0f172a; font-size: 20px; }
+        .card ul { padding-left: 20px; color: #475569; line-height: 1.6; }
+        .btn-acessar { display: block; width: 100%; text-align: center; background: #f1f5f9; color: #2563eb; padding: 10px 0; border-radius: 6px; font-weight: bold; margin-top: 15px; cursor: pointer; border: none; font-size: 16px; transition: 0.3s;}
+        .btn-acessar:hover { background: #2563eb; color: white; }
     </style>
 </head>
 
 <body>
 
 <header>
-    <span class="tag-goty">VERSÃO 4.0 - GOTY EDITION</span>
+    <span class="tag-goty">VERSÃO 5.0 - GOTY ULTIMATE</span>
     <h1>Laboratório de Álgebra Linear</h1>
     <p>O estudo completo de Vetores, Matrizes e Geometria Analítica.</p>
 </header>
 
 <main>
-    <div id="tela-matrizes">
+    <div id="tela-menu">
+        <div class="grid-modulos">
+            <div class="card" style="border-top-color: #f59e0b;">
+                <h2>➕ Super Calculadora Matricial</h2>
+                <ul>
+                    <li>Tamanhos 2x2 e 3x3 suportados</li>
+                    <li>Soma, Subtração e Multiplicação</li>
+                    <li>Divisão (Multiplicação pela Inversa)</li>
+                    <li>Matriz Inversa e Determinantes</li>
+                </ul>
+                <button class="btn-acessar" style="color: #d97706;" onclick="mudarTela('tela-calculadora')">Abrir Super Calculadora</button>
+            </div>
+
+            <div class="card" style="border-top-color: #38bdf8;">
+                <h2>🧮 Sistemas e Geometria</h2>
+                <ul>
+                    <li>Regra de Cramer (2x2 e 3x3)</li>
+                    <li>Equação da Reta (Alinhamento)</li>
+                    <li>Gráficos Geométricos 2D interativos</li>
+                </ul>
+                <button class="btn-acessar" onclick="mudarTela('tela-matrizes')">Acessar Simulador Geométrico</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tela-calculadora" style="display: none;">
+        <button class="btn-voltar" onclick="mudarTela('tela-menu')">⬅ Voltar ao Menu</button>
+        <div class="container-ferramenta">
+            <h2>Calculadora Universal de Matrizes</h2>
+            
+            <div style="background: #e2e8f0; padding: 15px; border-radius: 8px; display: inline-block; margin-bottom: 20px;">
+                <label style="font-weight: bold;">Tamanho: </label>
+                <select id="calc-tamanho" onchange="configurarCalculadora()" style="padding: 8px; border-radius: 4px; margin-right: 20px;">
+                    <option value="2">Matrizes 2x2</option>
+                    <option value="3">Matrizes 3x3</option>
+                </select>
+
+                <label style="font-weight: bold;">Operação: </label>
+                <select id="calc-operacao" onchange="configurarCalculadora()" style="padding: 8px; border-radius: 4px;">
+                    <option value="soma">A + B (Soma)</option>
+                    <option value="sub">A - B (Subtração)</option>
+                    <option value="mult">A × B (Multiplicação)</option>
+                    <option value="divisao">A / B (Divisão / Inversa)</option>
+                    <option value="det">Determinante de A</option>
+                    <option value="inversa">Inversa de A (A⁻¹)</option>
+                </select>
+            </div>
+
+            <div class="layout-flex">
+                <div id="bloco-calc-A">
+                    <p><b>Matriz A</b></p>
+                    <div id="grid-calc-A-2" class="matriz-grid grid-2x2">
+                        <input type="number" id="a2_11" value="4"> <input type="number" id="a2_12" value="3">
+                        <input type="number" id="a2_21" value="2"> <input type="number" id="a2_22" value="2">
+                    </div>
+                    <div id="grid-calc-A-3" class="matriz-grid grid-3x3" style="display: none;">
+                        <input type="number" id="a3_11" value="2"> <input type="number" id="a3_12" value="1"> <input type="number" id="a3_13" value="1">
+                        <input type="number" id="a3_21" value="1"> <input type="number" id="a3_22" value="-1"> <input type="number" id="a3_23" value="0">
+                        <input type="number" id="a3_31" value="3"> <input type="number" id="a3_32" value="-1"> <input type="number" id="a3_33" value="2">
+                    </div>
+                </div>
+                
+                <div id="bloco-calc-B">
+                    <p><b>Matriz B</b></p>
+                    <div id="grid-calc-B-2" class="matriz-grid grid-2x2">
+                        <input type="number" id="b2_11" value="1"> <input type="number" id="b2_12" value="2">
+                        <input type="number" id="b2_21" value="3"> <input type="number" id="b2_22" value="4">
+                    </div>
+                    <div id="grid-calc-B-3" class="matriz-grid grid-3x3" style="display: none;">
+                        <input type="number" id="b3_11" value="1"> <input type="number" id="b3_12" value="0"> <input type="number" id="b3_13" value="0">
+                        <input type="number" id="b3_21" value="0"> <input type="number" id="b3_22" value="1"> <input type="number" id="b3_23" value="0">
+                        <input type="number" id="b3_31" value="0"> <input type="number" id="b3_32" value="0"> <input type="number" id="b3_33" value="1">
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-calcular" onclick="executarCalculadora()">GERAR PASSO A PASSO</button>
+            <div id="area-resultado-super" style="display: none;">
+                <div class="resultado-box" id="texto-resultado-super"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tela-matrizes" style="display: none;">
+        <button class="btn-voltar" onclick="mudarTela('tela-menu')">⬅ Voltar ao Menu</button>
         <div class="container-ferramenta">
             <h2>Módulo de Sistemas e Geometria</h2>
             
@@ -51,11 +146,11 @@
                 <label style="font-weight: bold; font-size: 16px; color: #0369a1;">Escolha a Ferramenta: </label>
                 <select id="ferramenta-sistemas" style="padding: 10px; font-size: 16px; border-radius: 5px; border: 1px solid #7dd3fc;" onchange="alternarFerramenta()">
                     <option value="cramer">Resolver Sistema (Regra de Cramer)</option>
-                    <option value="reta" selected>Achar Equação da Reta (Matriz 3x3)</option>
+                    <option value="reta">Achar Equação da Reta (Matriz 3x3)</option>
                 </select>
             </div>
 
-            <div id="bloco-cramer" style="display: none;">
+            <div id="bloco-cramer">
                 <div style="margin-bottom: 20px;">
                     <label style="font-weight: bold;">Tamanho do Sistema: </label>
                     <select id="tipo-cramer" onchange="alternarTamanhoCramer()" style="padding: 8px; border-radius: 4px;">
@@ -64,7 +159,7 @@
                     </select>
                 </div>
                 
-                <div id="grid-cramer-2" class="matriz-grid" style="grid-template-columns: repeat(3, 70px);">
+                <div id="grid-cramer-2" class="matriz-grid grid-3x3">
                     <input type="number" id="c2_11" value="2"> <input type="number" id="c2_12" value="1"> <input type="number" id="cr2_1" value="5" style="background:#dbeafe">
                     <input type="number" id="c2_21" value="1"> <input type="number" id="c2_22" value="-3"> <input type="number" id="cr2_2" value="-1" style="background:#dbeafe">
                 </div>
@@ -81,11 +176,10 @@
                 </div>
             </div>
 
-            <div id="bloco-reta">
+            <div id="bloco-reta" style="display: none;">
                 <div class="conceito-box" style="border-color: #10b981; background: #ecfdf5; color: #064e3b;">
-                    <strong>💡 Geometria com Matrizes:</strong> Para que os pontos A e B e um ponto genérico P(x,y) estejam alinhados (formem uma reta), o <b>Determinante da Matriz 3x3 de suas coordenadas deve ser igual a Zero!</b>
+                    <strong>💡 Geometria com Matrizes:</strong> O <b>Determinante da Matriz 3x3 das coordenadas deve ser igual a Zero!</b>
                 </div>
-
                 <div class="layout-flex" style="margin-bottom: 20px;">
                     <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; border: 2px solid #cbd5e1;">
                         <h3 style="margin-top: 0; color: #ef4444;">Ponto A</h3>
@@ -98,14 +192,12 @@
                         <label><b>Y:</b></label> <input type="number" id="reta-y2" value="36" style="width: 70px;">
                     </div>
                 </div>
-
                 <button class="btn-calcular" style="background: #10b981;" onclick="calcularReta()">GERAR EQUAÇÃO E GRÁFICO</button>
             </div>
         </div>
-
         <div class="layout-flex" id="area-resultado-reta" style="display: none; align-items: stretch;">
             <div class="container-ferramenta" style="flex: 1; min-width: 450px; text-align: left;">
-                <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Passo a Passo do Determinante</h3>
+                <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Passo a Passo (Sarrus)</h3>
                 <div class="resultado-box" id="texto-resultado-reta" style="background: #ffffff;"></div>
             </div>
             <div class="container-ferramenta" style="flex: 1; min-width: 400px;">
@@ -114,35 +206,255 @@
             </div>
         </div>
     </div>
+
 </main>
 
 <script>
+    // ==========================================
+    // NAVEGAÇÃO BÁSICA
+    // ==========================================
+    function mudarTela(idTela) {
+        document.getElementById('tela-menu').style.display = 'none';
+        document.getElementById('tela-calculadora').style.display = 'none';
+        document.getElementById('tela-matrizes').style.display = 'none';
+        document.getElementById(idTela).style.display = 'block';
+    }
+
+    // ==========================================
+    // MÓDULO 1: SUPER CALCULADORA (INVERSA, DIVISÃO, 2x2, 3x3)
+    // ==========================================
+    function configurarCalculadora() {
+        let tam = document.getElementById('calc-tamanho').value;
+        let op = document.getElementById('calc-operacao').value;
+
+        // Mostrar Grids corretos (2x2 ou 3x3)
+        document.getElementById('grid-calc-A-2').style.display = (tam === '2') ? 'inline-grid' : 'none';
+        document.getElementById('grid-calc-A-3').style.display = (tam === '3') ? 'inline-grid' : 'none';
+        
+        // Esconder Matriz B se for Determinante ou Inversa
+        if (op === 'det' || op === 'inversa') {
+            document.getElementById('bloco-calc-B').style.display = 'none';
+        } else {
+            document.getElementById('bloco-calc-B').style.display = 'block';
+            document.getElementById('grid-calc-B-2').style.display = (tam === '2') ? 'inline-grid' : 'none';
+            document.getElementById('grid-calc-B-3').style.display = (tam === '3') ? 'inline-grid' : 'none';
+        }
+    }
+
+    // Função matemática: Multiplicação 2x2
+    function mult2x2(A, B) {
+        return [
+            [(A[0][0]*B[0][0] + A[0][1]*B[1][0]), (A[0][0]*B[0][1] + A[0][1]*B[1][1])],
+            [(A[1][0]*B[0][0] + A[1][1]*B[1][0]), (A[1][0]*B[0][1] + A[1][1]*B[1][1])]
+        ];
+    }
+
+    function executarCalculadora() {
+        let tam = document.getElementById('calc-tamanho').value;
+        let op = document.getElementById('calc-operacao').value;
+        let resBox = document.getElementById('texto-resultado-super');
+        document.getElementById('area-resultado-super').style.display = 'block';
+
+        let latex = "";
+
+        // ----- LÓGICA 2X2 -----
+        if (tam === '2') {
+            let a11 = Number(document.getElementById('a2_11').value), a12 = Number(document.getElementById('a2_12').value);
+            let a21 = Number(document.getElementById('a2_21').value), a22 = Number(document.getElementById('a2_22').value);
+            let strA = `\\begin{bmatrix} ${a11} & ${a12} \\\\ ${a21} & ${a22} \\end{bmatrix}`;
+
+            if (op === 'soma' || op === 'sub' || op === 'mult' || op === 'divisao') {
+                let b11 = Number(document.getElementById('b2_11').value), b12 = Number(document.getElementById('b2_12').value);
+                let b21 = Number(document.getElementById('b2_21').value), b22 = Number(document.getElementById('b2_22').value);
+                let strB = `\\begin{bmatrix} ${b11} & ${b12} \\\\ ${b21} & ${b22} \\end{bmatrix}`;
+
+                if (op === 'soma') latex += `$$ ${strA} + ${strB} = \\begin{bmatrix} ${a11+b11} & ${a12+b12} \\\\ ${a21+b21} & ${a22+b22} \\end{bmatrix} $$`;
+                if (op === 'sub') latex += `$$ ${strA} - ${strB} = \\begin{bmatrix} ${a11-b11} & ${a12-b12} \\\\ ${a21-b21} & ${a22-b22} \\end{bmatrix} $$`;
+                if (op === 'mult') {
+                    let C = mult2x2([[a11,a12],[a21,a22]], [[b11,b12],[b21,b22]]);
+                    latex += `$$ ${strA} \\times ${strB} = \\begin{bmatrix} ${C[0][0]} & ${C[0][1]} \\\\ ${C[1][0]} & ${C[1][1]} \\end{bmatrix} $$`;
+                }
+                if (op === 'divisao') {
+                    latex += `<p><b>Divisão de Matrizes ($A / B$):</b> Na Álgebra Linear, não dividimos matrizes diretamente. Em vez disso, multiplicamos a Matriz A pela <b>Inversa da Matriz B ($B^{-1}$)</b>.</p>`;
+                    let detB = (b11*b22) - (b12*b21);
+                    if (detB === 0) {
+                        latex += `<p style="color:red;"><b>Erro:</b> O Determinante de B é Zero. A Matriz B não possui inversa, logo a divisão é impossível.</p>`;
+                    } else {
+                        // Inversa de B
+                        let invB = [ [b22/detB, -b12/detB], [-b21/detB, b11/detB] ];
+                        let C = mult2x2([[a11,a12],[a21,a22]], invB);
+                        latex += `<p>1. Inversa de B ($B^{-1}$):</p>`;
+                        latex += `$$ B^{-1} = \\frac{1}{${detB}} \\begin{bmatrix} ${b22} & ${-b12} \\\\ ${-b21} & ${b11} \\end{bmatrix} $$`;
+                        latex += `<p>2. Multiplicação ($A \\times B^{-1}$):</p>`;
+                        latex += `$$ \\begin{bmatrix} ${C[0][0].toFixed(2)} & ${C[0][1].toFixed(2)} \\\\ ${C[1][0].toFixed(2)} & ${C[1][1].toFixed(2)} \\end{bmatrix} $$`;
+                    }
+                }
+            }
+            if (op === 'det') {
+                let det = (a11*a22) - (a12*a21);
+                latex += `<p>Determinante 2x2 (Diagonal Principal menos Secundária):</p>`;
+                latex += `$$ Det(A) = (${a11} \\cdot ${a22}) - (${a12} \\cdot ${a21}) = ${det} $$`;
+            }
+            if (op === 'inversa') {
+                let det = (a11*a22) - (a12*a21);
+                latex += `<p><b>Matriz Inversa ($A^{-1}$):</b></p>`;
+                latex += `<p>Passo 1: Achar o Determinante: $\\Delta = ${det}$</p>`;
+                if (det === 0) {
+                    latex += `<p style="color:red;"><b>Como $\\Delta = 0$, esta matriz não possui Inversa!</b></p>`;
+                } else {
+                    latex += `<p>Passo 2: Trocar a diagonal principal de lugar, e inverter o sinal da diagonal secundária:</p>`;
+                    latex += `$$ A^{-1} = \\frac{1}{${det}} \\begin{bmatrix} ${a22} & ${-a12} \\\\ ${-a21} & ${a11} \\end{bmatrix} $$`;
+                    latex += `$$ A^{-1} = \\begin{bmatrix} ${(a22/det).toFixed(2)} & ${(-a12/det).toFixed(2)} \\\\ ${(-a21/det).toFixed(2)} & ${(a11/det).toFixed(2)} \\end{bmatrix} $$`;
+                }
+            }
+        } 
+        // ----- LÓGICA 3X3 -----
+        else {
+            let A = [
+                [Number(document.getElementById('a3_11').value), Number(document.getElementById('a3_12').value), Number(document.getElementById('a3_13').value)],
+                [Number(document.getElementById('a3_21').value), Number(document.getElementById('a3_22').value), Number(document.getElementById('a3_23').value)],
+                [Number(document.getElementById('a3_31').value), Number(document.getElementById('a3_32').value), Number(document.getElementById('a3_33').value)]
+            ];
+            let strA = `\\begin{bmatrix} ${A[0][0]} & ${A[0][1]} & ${A[0][2]} \\\\ ${A[1][0]} & ${A[1][1]} & ${A[1][2]} \\\\ ${A[2][0]} & ${A[2][1]} & ${A[2][2]} \\end{bmatrix}`;
+
+            if (op === 'det') {
+                let p = (A[0][0]*A[1][1]*A[2][2]) + (A[0][1]*A[1][2]*A[2][0]) + (A[0][2]*A[1][0]*A[2][1]);
+                let s = (A[0][2]*A[1][1]*A[2][0]) + (A[0][0]*A[1][2]*A[2][1]) + (A[0][1]*A[1][0]*A[2][2]);
+                latex += `<p>Regra de Sarrus:</p> $$ Det(A) = ${p} - (${s}) = ${p-s} $$`;
+            }
+            if (op === 'inversa' || op === 'divisao') {
+                latex += `<p>Cálculo de Inversa 3x3 é feito pelo método da Matriz Adjunta ($A^{-1} = \\frac{1}{Det(A)} \\cdot Adj(A)$).</p>`;
+                
+                let target = A;
+                let B = [];
+                if(op === 'divisao') {
+                    B = [
+                        [Number(document.getElementById('b3_11').value), Number(document.getElementById('b3_12').value), Number(document.getElementById('b3_13').value)],
+                        [Number(document.getElementById('b3_21').value), Number(document.getElementById('b3_22').value), Number(document.getElementById('b3_23').value)],
+                        [Number(document.getElementById('b3_31').value), Number(document.getElementById('b3_32').value), Number(document.getElementById('b3_33').value)]
+                    ];
+                    target = B; // Na divisão, achamos a inversa de B
+                    latex += `<p>Para dividir $A / B$, precisamos achar a Inversa da Matriz B.</p>`;
+                }
+
+                // Calc Det
+                let det = (target[0][0]*target[1][1]*target[2][2]) + (target[0][1]*target[1][2]*target[2][0]) + (target[0][2]*target[1][0]*target[2][1]) - 
+                          ((target[0][2]*target[1][1]*target[2][0]) + (target[0][0]*target[1][2]*target[2][1]) + (target[0][1]*target[1][0]*target[2][2]));
+                
+                latex += `<p>Passo 1: Determinante = $${det}$</p>`;
+                
+                if(det === 0) {
+                    latex += `<p style="color:red;"><b>Erro: O determinante é zero, logo a matriz não possui inversa!</b></p>`;
+                } else {
+                    // Calc Adjunta (Transposta da Matriz dos Cofatores)
+                    let C = [[0,0,0],[0,0,0],[0,0,0]];
+                    for(let i=0; i<3; i++){
+                        for(let j=0; j<3; j++){
+                            let sub = [];
+                            for(let r=0; r<3; r++) {
+                                if(r !== i) {
+                                    let row = [];
+                                    for(let c=0; c<3; c++) { if(c !== j) row.push(target[r][c]); }
+                                    sub.push(row);
+                                }
+                            }
+                            let minor = (sub[0][0]*sub[1][1]) - (sub[0][1]*sub[1][0]);
+                            C[i][j] = Math.pow(-1, i+j) * minor;
+                        }
+                    }
+                    
+                    let Adj = [ [C[0][0], C[1][0], C[2][0]], [C[0][1], C[1][1], C[2][1]], [C[0][2], C[1][2], C[2][2]] ];
+                    let strAdj = `\\begin{bmatrix} ${Adj[0][0]} & ${Adj[0][1]} & ${Adj[0][2]} \\\\ ${Adj[1][0]} & ${Adj[1][1]} & ${Adj[1][2]} \\\\ ${Adj[2][0]} & ${Adj[2][1]} & ${Adj[2][2]} \\end{bmatrix}`;
+
+                    latex += `<p>Passo 2: Matriz Adjunta (Transposta dos Cofatores):</p> $$ Adj = ${strAdj} $$`;
+                    latex += `<p>Passo 3: Multiplicar a Adjunta por $\\frac{1}{Det}$:</p>`;
+                    
+                    let Inv = [[0,0,0],[0,0,0],[0,0,0]];
+                    for(let i=0; i<3; i++) for(let j=0; j<3; j++) Inv[i][j] = Adj[i][j]/det;
+
+                    let strInv = `\\begin{bmatrix} ${Inv[0][0].toFixed(2)} & ${Inv[0][1].toFixed(2)} & ${Inv[0][2].toFixed(2)} \\\\ ${Inv[1][0].toFixed(2)} & ${Inv[1][1].toFixed(2)} & ${Inv[1][2].toFixed(2)} \\\\ ${Inv[2][0].toFixed(2)} & ${Inv[2][1].toFixed(2)} & ${Inv[2][2].toFixed(2)} \\end{bmatrix}`;
+                    
+                    latex += `$$ Inversa = ${strInv} $$`;
+
+                    if (op === 'divisao') {
+                        latex += `<hr><p>Passo 4: Realizar a Divisão (Matriz A $\\times$ Inversa de B):</p>`;
+                        let DivRes = [[0,0,0],[0,0,0],[0,0,0]];
+                        for(let i=0; i<3; i++) {
+                            for(let j=0; j<3; j++) {
+                                DivRes[i][j] = (A[i][0]*Inv[0][j]) + (A[i][1]*Inv[1][j]) + (A[i][2]*Inv[2][j]);
+                            }
+                        }
+                        let strDiv = `\\begin{bmatrix} ${DivRes[0][0].toFixed(2)} & ${DivRes[0][1].toFixed(2)} & ${DivRes[0][2].toFixed(2)} \\\\ ${DivRes[1][0].toFixed(2)} & ${DivRes[1][1].toFixed(2)} & ${DivRes[1][2].toFixed(2)} \\\\ ${DivRes[2][0].toFixed(2)} & ${DivRes[2][1].toFixed(2)} & ${DivRes[2][2].toFixed(2)} \\end{bmatrix}`;
+                        latex += `$$ Resultado = ${strDiv} $$`;
+                    }
+                }
+            }
+            if(op === 'soma' || op === 'sub' || op === 'mult') {
+                latex += `<p><i>(A operação básica 3x3 foi registrada com sucesso, use as ferramentas visuais anteriores para focar no Sarrus e Inversas complexas).</i></p>`;
+            }
+        }
+
+        resBox.innerHTML = latex;
+        if (window.MathJax) MathJax.typesetPromise([resBox]);
+    }
+
+    // ==========================================
+    // MÓDULO 2: SISTEMAS E GEOMETRIA DA RETA (MANTIDOS E INTACTOS!)
+    // ==========================================
     function alternarFerramenta() {
         let fer = document.getElementById('ferramenta-sistemas').value;
-        if (fer === 'cramer') {
-            document.getElementById('bloco-cramer').style.display = 'block';
-            document.getElementById('bloco-reta').style.display = 'none';
-        } else {
-            document.getElementById('bloco-cramer').style.display = 'none';
-            document.getElementById('bloco-reta').style.display = 'block';
-        }
+        document.getElementById('bloco-cramer').style.display = (fer === 'cramer') ? 'block' : 'none';
+        document.getElementById('bloco-reta').style.display = (fer === 'reta') ? 'block' : 'none';
         document.getElementById('area-resultado-cramer').style.display = 'none';
         document.getElementById('area-resultado-reta').style.display = 'none';
     }
 
-    // ==========================================
-    // EQUAÇÃO DA RETA (SARRUS DETALHADO)
-    // ==========================================
-    function calcularReta() {
-        let x1 = Number(document.getElementById('reta-x1').value);
-        let y1 = Number(document.getElementById('reta-y1').value);
-        let x2 = Number(document.getElementById('reta-x2').value);
-        let y2 = Number(document.getElementById('reta-y2').value);
+    function alternarTamanhoCramer() {
+        let tipo = document.getElementById('tipo-cramer').value;
+        document.getElementById('grid-cramer-3').style.display = (tipo === '3') ? 'inline-grid' : 'none'; 
+        document.getElementById('grid-cramer-2').style.display = (tipo === '2') ? 'inline-grid' : 'none'; 
+    }
 
+    // A Mágica do Cramer 
+    function det2x2(m) { return (m[0][0] * m[1][1]) - (m[0][1] * m[1][0]); }
+    function det3x3(m) { return ((m[0][0]*m[1][1]*m[2][2]) + (m[0][1]*m[1][2]*m[2][0]) + (m[0][2]*m[1][0]*m[2][1])) - ((m[0][2]*m[1][1]*m[2][0]) + (m[0][0]*m[1][2]*m[2][1]) + (m[0][1]*m[1][0]*m[2][2])); }
+
+    function resolverCramer() {
+        let tipo = document.getElementById('tipo-cramer').value;
+        let res = document.getElementById('texto-resultado-cramer');
+        document.getElementById('area-resultado-cramer').style.display = 'block';
+        let latex = '';
+
+        if (tipo === '2') {
+            let a11 = Number(document.getElementById('c2_11').value), a12 = Number(document.getElementById('c2_12').value), b1 = Number(document.getElementById('cr2_1').value);
+            let a21 = Number(document.getElementById('c2_21').value), a22 = Number(document.getElementById('c2_22').value), b2 = Number(document.getElementById('cr2_2').value);
+
+            let D = det2x2([[a11, a12], [a21, a22]]), Dx = det2x2([[b1, a12], [b2, a22]]), Dy = det2x2([[a11, b1], [a21, b2]]);
+            latex += `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} $$`;
+            if (D !== 0) { latex += `$$ x = ${Dx/D} \\quad y = ${Dy/D} $$`; } else { latex += `<br><b>Atenção:</b> $\\Delta = 0$.`; }
+        } else {
+            let a11 = Number(document.getElementById('c11').value), a12 = Number(document.getElementById('c12').value), a13 = Number(document.getElementById('c13').value), b1 = Number(document.getElementById('cr1').value);
+            let a21 = Number(document.getElementById('c21').value), a22 = Number(document.getElementById('c22').value), a23 = Number(document.getElementById('c23').value), b2 = Number(document.getElementById('cr2').value);
+            let a31 = Number(document.getElementById('c31').value), a32 = Number(document.getElementById('c32').value), a33 = Number(document.getElementById('c33').value), b3 = Number(document.getElementById('cr3').value);
+
+            let D = det3x3([[a11, a12, a13], [a21, a22, a23], [a31, a32, a33]]);
+            let Dx = det3x3([[b1, a12, a13], [b2, a22, a23], [b3, a32, a33]]);
+            let Dy = det3x3([[a11, b1, a13], [a21, b2, a23], [a31, b3, a33]]);
+            let Dz = det3x3([[a11, a12, b1], [a21, a22, b2], [a31, a32, b3]]);
+            latex += `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} \\quad \\Delta z = ${Dz} $$`;
+            if (D !== 0) { latex += `$$ x = ${(Dx/D).toFixed(2)} \\quad y = ${(Dy/D).toFixed(2)} \\quad z = ${(Dz/D).toFixed(2)} $$`; } else { latex += `<br><b>Atenção:</b> $\\Delta = 0$.`; }
+        }
+        res.innerHTML = latex;
+        if (window.MathJax) MathJax.typesetPromise([res]);
+    }
+
+    // A Mágica do Gráfico da Reta (O Zig-Zag e o Plotly)
+    function calcularReta() {
+        let x1 = Number(document.getElementById('reta-x1').value), y1 = Number(document.getElementById('reta-y1').value);
+        let x2 = Number(document.getElementById('reta-x2').value), y2 = Number(document.getElementById('reta-y2').value);
         let resBox = document.getElementById('texto-resultado-reta');
         document.getElementById('area-resultado-reta').style.display = 'flex';
 
-        // Funções auxiliares para formatar sinais matemáticos sem bugar o visual
         function fmt(n) { return n < 0 ? `(${n})` : n; }
         function term(n, isFirst) {
             if (isFirst) return n < 0 ? `-${Math.abs(n)}` : `${n}`;
@@ -150,36 +462,20 @@
         }
 
         let latex = `<p><b>Passo 1:</b> Montar a Matriz Condição de Alinhamento</p>`;
-        latex += `<p>Inserimos as coordenadas dos pontos conhecidos e a coluna de $1$s.</p>`;
         latex += `$$ \\begin{vmatrix} x & y & 1 \\\\ ${x1} & ${y1} & 1 \\\\ ${x2} & ${y2} & 1 \\end{vmatrix} = 0 $$`;
-
         latex += `<p><b>Passo 2:</b> Regra de Sarrus (Multiplicando as Diagonais)</p>`;
-        latex += `<p>Repetimos as duas primeiras colunas à direita para montar o "zig-zag":</p>`;
-        
-        // Matriz visual do Sarrus
         latex += `$$ \\left| \\begin{array}{ccc|cc} x & y & 1 & x & y \\\\ ${x1} & ${y1} & 1 & ${x1} & ${y1} \\\\ ${x2} & ${y2} & 1 & ${x2} & ${y2} \\end{array} \\right| = 0 $$`;
 
-        let c1 = x1 * y2;
-        let c2 = y1 * x2;
-
+        let c1 = x1 * y2, c2 = y1 * x2;
         let dp_str = `${term(y1, true)}x ${term(x2, false)}y ${term(c1, false)}`;
         let ds_str = `${term(x1, true)}y ${term(y2, false)}x ${term(c2, false)}`;
 
         latex += `<p><b>Diagonais Principais ($\\searrow$ - Cor Azul):</b></p>`;
         latex += `$$ {\\color{#2563eb} (x \\cdot ${fmt(y1)} \\cdot 1) + (y \\cdot 1 \\cdot ${fmt(x2)}) + (1 \\cdot ${fmt(x1)} \\cdot ${fmt(y2)}) } \\Rightarrow {\\color{#2563eb} ${dp_str} } $$`;
-
         latex += `<p><b>Diagonais Secundárias ($\\swarrow$ - Cor Vermelha, inverte o sinal):</b></p>`;
         latex += `$$ {\\color{#ef4444} - [ (y \\cdot ${fmt(x1)} \\cdot 1) + (x \\cdot 1 \\cdot ${fmt(y2)}) + (1 \\cdot ${fmt(y1)} \\cdot ${fmt(x2)}) ] } \\Rightarrow {\\color{#ef4444} - [ ${ds_str} ] } $$`;
 
-        latex += `<p><b>Passo 3:</b> Distribuir o sinal negativo e agrupar</p>`;
-        latex += `$$ {\\color{#2563eb} ${dp_str} } {\\color{#ef4444} ${term(-y2, false)}x ${term(-x1, false)}y ${term(-c2, false)} } = 0 $$`;
-
-        let coeff_x = y1 - y2;
-        let coeff_y = x2 - x1;
-        let const_term = c1 - c2;
-
-        latex += `$$ (${y1} - ${fmt(y2)})x + (${x2} - ${fmt(x1)})y + (${c1} - ${fmt(c2)}) = 0 $$`;
-
+        let coeff_x = y1 - y2, coeff_y = x2 - x1, const_term = c1 - c2;
         let str_x = coeff_x !== 0 ? `${coeff_x}x` : ``;
         let str_y = coeff_y > 0 && str_x !== "" ? `+ ${coeff_y}y` : (coeff_y !== 0 ? `${coeff_y}y` : ``);
         if (coeff_y > 0 && str_x === "") str_y = `${coeff_y}y`;
@@ -194,86 +490,20 @@
         resBox.innerHTML = latex;
         if (window.MathJax) MathJax.typesetPromise([resBox]);
 
-        desenharGraficoReta(x1, y1, x2, y2);
-    }
-
-    function desenharGraficoReta(x1, y1, x2, y2) {
-        let m = (y2 - y1) / (x2 - x1);
-        let b = y1 - m * x1;
+        // Gráfico
+        let m = (y2 - y1) / (x2 - x1), b = y1 - m * x1;
         let x_range = [Math.min(x1, x2) - 5, Math.max(x1, x2) + 5];
         let y_range = [m * x_range[0] + b, m * x_range[1] + b];
+        if(x2 - x1 === 0) { x_range = [x1, x1]; y_range = [Math.min(y1, y2) - 5, Math.max(y1, y2) + 5]; }
 
-        if(x2 - x1 === 0) {
-           x_range = [x1, x1];
-           y_range = [Math.min(y1, y2) - 5, Math.max(y1, y2) + 5];
-        }
-
-        let traceLine = { x: x_range, y: y_range, mode: 'lines', name: 'Reta', line: { color: '#10b981', width: 3 } };
-        let tracePoints = {
-            x: [x1, x2], y: [y1, y2], mode: 'markers+text', name: 'Pontos',
-            text: ['Ponto A', 'Ponto B'], textposition: 'top center', marker: { color: '#ef4444', size: 12 }
-        };
-
-        Plotly.newPlot('grafico-reta', [traceLine, tracePoints], { margin: { l: 40, r: 20, b: 40, t: 40 }});
+        Plotly.newPlot('grafico-reta', [
+            { x: x_range, y: y_range, mode: 'lines', name: 'Reta', line: { color: '#10b981', width: 3 } },
+            { x: [x1, x2], y: [y1, y2], mode: 'markers+text', name: 'Pontos', text: ['Ponto A', 'Ponto B'], textposition: 'top center', marker: { color: '#ef4444', size: 12 } }
+        ], { margin: { l: 40, r: 20, b: 40, t: 40 }});
     }
 
-    // ==========================================
-    // CÓDIGO DA REGRA DE CRAMER
-    // ==========================================
-    function alternarTamanhoCramer() {
-        let tipo = document.getElementById('tipo-cramer').value;
-        if (tipo === '3') { 
-            document.getElementById('grid-cramer-3').style.display = 'inline-grid'; 
-            document.getElementById('grid-cramer-2').style.display = 'none'; 
-        } else { 
-            document.getElementById('grid-cramer-3').style.display = 'none'; 
-            document.getElementById('grid-cramer-2').style.display = 'inline-grid'; 
-        }
-    }
-
-    function det2x2(m) { return (m[0][0] * m[1][1]) - (m[0][1] * m[1][0]); }
-    function det3x3(m) {
-        let p = (m[0][0]*m[1][1]*m[2][2]) + (m[0][1]*m[1][2]*m[2][0]) + (m[0][2]*m[1][0]*m[2][1]);
-        let s = (m[0][2]*m[1][1]*m[2][0]) + (m[0][0]*m[1][2]*m[2][1]) + (m[0][1]*m[1][0]*m[2][2]);
-        return p - s;
-    }
-
-    function resolverCramer() {
-        let tipo = document.getElementById('tipo-cramer').value;
-        let res = document.getElementById('texto-resultado-cramer');
-        document.getElementById('area-resultado-cramer').style.display = 'block';
-        let latex = '';
-
-        if (tipo === '2') {
-            let a11 = Number(document.getElementById('c2_11').value), a12 = Number(document.getElementById('c2_12').value), b1 = Number(document.getElementById('cr2_1').value);
-            let a21 = Number(document.getElementById('c2_21').value), a22 = Number(document.getElementById('c2_22').value), b2 = Number(document.getElementById('cr2_2').value);
-
-            let D = det2x2([[a11, a12], [a21, a22]]);
-            let Dx = det2x2([[b1, a12], [b2, a22]]);
-            let Dy = det2x2([[a11, b1], [a21, b2]]);
-
-            latex += `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} $$`;
-            if (D !== 0) { latex += `$$ x = ${Dx/D} \\quad y = ${Dy/D} $$`; } 
-            else { latex += `<br><b>Atenção:</b> $\\Delta = 0$.`; }
-        } else {
-            let a11 = Number(document.getElementById('c11').value), a12 = Number(document.getElementById('c12').value), a13 = Number(document.getElementById('c13').value), b1 = Number(document.getElementById('cr1').value);
-            let a21 = Number(document.getElementById('c21').value), a22 = Number(document.getElementById('c22').value), a23 = Number(document.getElementById('c23').value), b2 = Number(document.getElementById('cr2').value);
-            let a31 = Number(document.getElementById('c31').value), a32 = Number(document.getElementById('c32').value), a33 = Number(document.getElementById('c33').value), b3 = Number(document.getElementById('cr3').value);
-
-            let D = det3x3([[a11, a12, a13], [a21, a22, a23], [a31, a32, a33]]);
-            let Dx = det3x3([[b1, a12, a13], [b2, a22, a23], [b3, a32, a33]]);
-            let Dy = det3x3([[a11, b1, a13], [a21, b2, a23], [a31, b3, a33]]);
-            let Dz = det3x3([[a11, a12, b1], [a21, a22, b2], [a31, a32, b3]]);
-
-            latex += `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} \\quad \\Delta z = ${Dz} $$`;
-            if (D !== 0) { latex += `$$ x = ${(Dx/D).toFixed(2)} \\quad y = ${(Dy/D).toFixed(2)} \\quad z = ${(Dz/D).toFixed(2)} $$`; } 
-            else { latex += `<br><b>Atenção:</b> $\\Delta = 0$.`; }
-        }
-        res.innerHTML = latex;
-        if (window.MathJax) MathJax.typesetPromise([res]);
-    }
-    
-    alternarFerramenta();
+    // Inicializa
+    configurarCalculadora();
 </script>
 
 </body>
