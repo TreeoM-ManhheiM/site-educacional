@@ -89,13 +89,13 @@
                 <div class="layout-flex" style="margin-bottom: 20px;">
                     <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; border: 2px solid #cbd5e1;">
                         <h3 style="margin-top: 0; color: #ef4444;">Ponto A</h3>
-                        <label><b>X:</b></label> <input type="number" id="reta-x1" value="1" style="width: 70px; margin-right: 10px;">
-                        <label><b>Y:</b></label> <input type="number" id="reta-y1" value="2" style="width: 70px;">
+                        <label><b>X:</b></label> <input type="number" id="reta-x1" value="2" style="width: 70px; margin-right: 10px;">
+                        <label><b>Y:</b></label> <input type="number" id="reta-y1" value="4" style="width: 70px;">
                     </div>
                     <div style="background: #f1f5f9; padding: 20px; border-radius: 8px; border: 2px solid #cbd5e1;">
                         <h3 style="margin-top: 0; color: #ef4444;">Ponto B</h3>
-                        <label><b>X:</b></label> <input type="number" id="reta-x2" value="4" style="width: 70px; margin-right: 10px;">
-                        <label><b>Y:</b></label> <input type="number" id="reta-y2" value="6" style="width: 70px;">
+                        <label><b>X:</b></label> <input type="number" id="reta-x2" value="6" style="width: 70px; margin-right: 10px;">
+                        <label><b>Y:</b></label> <input type="number" id="reta-y2" value="36" style="width: 70px;">
                     </div>
                 </div>
 
@@ -104,9 +104,9 @@
         </div>
 
         <div class="layout-flex" id="area-resultado-reta" style="display: none; align-items: stretch;">
-            <div class="container-ferramenta" style="flex: 1; min-width: 400px; text-align: left;">
+            <div class="container-ferramenta" style="flex: 1; min-width: 450px; text-align: left;">
                 <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Passo a Passo do Determinante</h3>
-                <div class="resultado-box" id="texto-resultado-reta"></div>
+                <div class="resultado-box" id="texto-resultado-reta" style="background: #ffffff;"></div>
             </div>
             <div class="container-ferramenta" style="flex: 1; min-width: 400px;">
                 <h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; color: #10b981;">Gráfico Analítico 2D</h3>
@@ -131,7 +131,7 @@
     }
 
     // ==========================================
-    // EQUAÇÃO DA RETA
+    // EQUAÇÃO DA RETA (SARRUS DETALHADO)
     // ==========================================
     function calcularReta() {
         let x1 = Number(document.getElementById('reta-x1').value);
@@ -142,16 +142,43 @@
         let resBox = document.getElementById('texto-resultado-reta');
         document.getElementById('area-resultado-reta').style.display = 'flex';
 
+        // Funções auxiliares para formatar sinais matemáticos sem bugar o visual
+        function fmt(n) { return n < 0 ? `(${n})` : n; }
+        function term(n, isFirst) {
+            if (isFirst) return n < 0 ? `-${Math.abs(n)}` : `${n}`;
+            return n < 0 ? `- ${Math.abs(n)}` : `+ ${n}`;
+        }
+
         let latex = `<p><b>Passo 1:</b> Montar a Matriz Condição de Alinhamento</p>`;
-        latex += `<p>Inserimos o Ponto genérico $P(x, y)$, o $A(${x1}, ${y1})$ e o $B(${x2}, ${y2})$, preenchendo a 3ª coluna com $1$. Igualamos a zero.</p>`;
+        latex += `<p>Inserimos as coordenadas dos pontos conhecidos e a coluna de $1$s.</p>`;
         latex += `$$ \\begin{vmatrix} x & y & 1 \\\\ ${x1} & ${y1} & 1 \\\\ ${x2} & ${y2} & 1 \\end{vmatrix} = 0 $$`;
 
-        let coeff_x = y1 - y2;
-        let coeff_y = -(x1 - x2);
-        let const_term = (x1 * y2) - (x2 * y1);
+        latex += `<p><b>Passo 2:</b> Regra de Sarrus (Multiplicando as Diagonais)</p>`;
+        latex += `<p>Repetimos as duas primeiras colunas à direita para montar o "zig-zag":</p>`;
+        
+        // Matriz visual do Sarrus
+        latex += `$$ \\left| \\begin{array}{ccc|cc} x & y & 1 & x & y \\\\ ${x1} & ${y1} & 1 & ${x1} & ${y1} \\\\ ${x2} & ${y2} & 1 & ${x2} & ${y2} \\end{array} \\right| = 0 $$`;
 
-        latex += `<p><b>Passo 2:</b> Resolver o Determinante (Regra de Sarrus)</p>`;
-        latex += `$$ x(${y1} - ${y2}) - y(${x1} - ${x2}) + 1(${x1}\\cdot${y2} - ${x2}\\cdot${y1}) = 0 $$`;
+        let c1 = x1 * y2;
+        let c2 = y1 * x2;
+
+        let dp_str = `${term(y1, true)}x ${term(x2, false)}y ${term(c1, false)}`;
+        let ds_str = `${term(x1, true)}y ${term(y2, false)}x ${term(c2, false)}`;
+
+        latex += `<p><b>Diagonais Principais ($\\searrow$ - Cor Azul):</b></p>`;
+        latex += `$$ {\\color{#2563eb} (x \\cdot ${fmt(y1)} \\cdot 1) + (y \\cdot 1 \\cdot ${fmt(x2)}) + (1 \\cdot ${fmt(x1)} \\cdot ${fmt(y2)}) } \\Rightarrow {\\color{#2563eb} ${dp_str} } $$`;
+
+        latex += `<p><b>Diagonais Secundárias ($\\swarrow$ - Cor Vermelha, inverte o sinal):</b></p>`;
+        latex += `$$ {\\color{#ef4444} - [ (y \\cdot ${fmt(x1)} \\cdot 1) + (x \\cdot 1 \\cdot ${fmt(y2)}) + (1 \\cdot ${fmt(y1)} \\cdot ${fmt(x2)}) ] } \\Rightarrow {\\color{#ef4444} - [ ${ds_str} ] } $$`;
+
+        latex += `<p><b>Passo 3:</b> Distribuir o sinal negativo e agrupar</p>`;
+        latex += `$$ {\\color{#2563eb} ${dp_str} } {\\color{#ef4444} ${term(-y2, false)}x ${term(-x1, false)}y ${term(-c2, false)} } = 0 $$`;
+
+        let coeff_x = y1 - y2;
+        let coeff_y = x2 - x1;
+        let const_term = c1 - c2;
+
+        latex += `$$ (${y1} - ${fmt(y2)})x + (${x2} - ${fmt(x1)})y + (${c1} - ${fmt(c2)}) = 0 $$`;
 
         let str_x = coeff_x !== 0 ? `${coeff_x}x` : ``;
         let str_y = coeff_y > 0 && str_x !== "" ? `+ ${coeff_y}y` : (coeff_y !== 0 ? `${coeff_y}y` : ``);
@@ -191,7 +218,7 @@
     }
 
     // ==========================================
-    // CÓDIGO DA REGRA DE CRAMER (COMPLETO)
+    // CÓDIGO DA REGRA DE CRAMER
     // ==========================================
     function alternarTamanhoCramer() {
         let tipo = document.getElementById('tipo-cramer').value;
@@ -226,11 +253,8 @@
             let Dy = det2x2([[a11, b1], [a21, b2]]);
 
             latex += `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} $$`;
-            if (D !== 0) {
-                latex += `$$ x = \\frac{${Dx}}{${D}} = ${Dx/D} \\quad y = \\frac{${Dy}}{${D}} = ${Dy/D} $$`;
-            } else {
-                latex += `<br><b>Atenção:</b> $\\Delta = 0$, sem solução única.`;
-            }
+            if (D !== 0) { latex += `$$ x = ${Dx/D} \\quad y = ${Dy/D} $$`; } 
+            else { latex += `<br><b>Atenção:</b> $\\Delta = 0$.`; }
         } else {
             let a11 = Number(document.getElementById('c11').value), a12 = Number(document.getElementById('c12').value), a13 = Number(document.getElementById('c13').value), b1 = Number(document.getElementById('cr1').value);
             let a21 = Number(document.getElementById('c21').value), a22 = Number(document.getElementById('c22').value), a23 = Number(document.getElementById('c23').value), b2 = Number(document.getElementById('cr2').value);
@@ -242,17 +266,13 @@
             let Dz = det3x3([[a11, a12, b1], [a21, a22, b2], [a31, a32, b3]]);
 
             latex += `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} \\quad \\Delta z = ${Dz} $$`;
-            if (D !== 0) {
-                latex += `$$ x = ${(Dx/D).toFixed(2)} \\quad y = ${(Dy/D).toFixed(2)} \\quad z = ${(Dz/D).toFixed(2)} $$`;
-            } else {
-                latex += `<br><b>Atenção:</b> $\\Delta = 0$, sem solução única.`;
-            }
+            if (D !== 0) { latex += `$$ x = ${(Dx/D).toFixed(2)} \\quad y = ${(Dy/D).toFixed(2)} \\quad z = ${(Dz/D).toFixed(2)} $$`; } 
+            else { latex += `<br><b>Atenção:</b> $\\Delta = 0$.`; }
         }
         res.innerHTML = latex;
         if (window.MathJax) MathJax.typesetPromise([res]);
     }
     
-    // Inicia já mostrando a reta
     alternarFerramenta();
 </script>
 
