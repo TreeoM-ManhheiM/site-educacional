@@ -141,9 +141,9 @@
         <div class="container-ferramenta">
             <h2>Regra de Cramer (3x3)</h2>
             <div class="matriz-grid matriz-3x3" style="grid-template-columns: repeat(4, 70px);">
-                <input type="number" id="c11" value="1"> <input type="number" id="c12" value="2"> <input type="number" id="c13" value="-1"> <input type="number" id="cr1" value="2" style="background:#dbeafe">
-                <input type="number" id="c21" value="2"> <input type="number" id="c22" value="-1"> <input type="number" id="c23" value="1"> <input type="number" id="cr2" value="3" style="background:#dbeafe">
-                <input type="number" id="c31" value="1"> <input type="number" id="c32" value="1"> <input type="number" id="c33" value="1"> <input type="number" id="cr3" value="6" style="background:#dbeafe">
+                <input type="number" id="c11" value="1"> <input type="number" id="c12" value="2"> <input type="number" id="c13" value="-1"> <input type="number" id="cr1" value="2" style="background:#dbeafe" title="Resultado 1">
+                <input type="number" id="c21" value="2"> <input type="number" id="c22" value="-1"> <input type="number" id="c23" value="1"> <input type="number" id="cr2" value="3" style="background:#dbeafe" title="Resultado 2">
+                <input type="number" id="c31" value="1"> <input type="number" id="c32" value="1"> <input type="number" id="c33" value="1"> <input type="number" id="cr3" value="6" style="background:#dbeafe" title="Resultado 3">
             </div><br>
             <button class="btn-calcular" onclick="calcularCramer3x3()">RESOLVER SISTEMA</button>
         </div>
@@ -231,20 +231,9 @@
             latex += `<p>Multiplicação (Linha × Coluna): Multiplicamos as linhas de A pelas colunas de B.</p>`;
             latex += `$$ ${strA} \\times ${strB} $$`;
             
-            // Calculando a primeira linha do resultado
-            let c11 = (a11*b11) + (a12*b21) + (a13*b31);
-            let c12 = (a11*b12) + (a12*b22) + (a13*b32);
-            let c13 = (a11*b13) + (a12*b23) + (a13*b33);
-            
-            // Calculando a segunda linha do resultado
-            let c21 = (a21*b11) + (a22*b21) + (a23*b31);
-            let c22 = (a21*b12) + (a22*b22) + (a23*b32);
-            let c23 = (a21*b13) + (a22*b23) + (a23*b33);
-            
-            // Calculando a terceira linha do resultado
-            let c31 = (a31*b11) + (a32*b21) + (a33*b31);
-            let c32 = (a31*b12) + (a32*b22) + (a33*b32);
-            let c33 = (a31*b13) + (a32*b23) + (a33*b33);
+            let c11 = (a11*b11) + (a12*b21) + (a13*b31); let c12 = (a11*b12) + (a12*b22) + (a13*b32); let c13 = (a11*b13) + (a12*b23) + (a13*b33);
+            let c21 = (a21*b11) + (a22*b21) + (a23*b31); let c22 = (a21*b12) + (a22*b22) + (a23*b32); let c23 = (a21*b13) + (a22*b23) + (a23*b33);
+            let c31 = (a31*b11) + (a32*b21) + (a33*b31); let c32 = (a31*b12) + (a32*b22) + (a33*b32); let c33 = (a31*b13) + (a32*b23) + (a33*b33);
 
             latex += `$$ = \\begin{bmatrix} 
                 (${a11}\\cdot${b11} + ${a12}\\cdot${b21} + ${a13}\\cdot${b31}) & 
@@ -294,28 +283,62 @@
     }
 
     // ==========================================
-    // MÓDULO 2: CRAMER 3X3
+    // MÓDULO 2: CRAMER 3X3 (VERSÃO GOTY)
     // ==========================================
-    function det3(m) { return ((m[0][0]*m[1][1]*m[2][2]) + (m[0][1]*m[1][2]*m[2][0]) + (m[0][2]*m[1][0]*m[2][1])) - ((m[0][2]*m[1][1]*m[2][0]) + (m[0][0]*m[1][2]*m[2][1]) + (m[0][1]*m[1][0]*m[2][2])); }
+    function det3(m) { 
+        return ((m[0][0]*m[1][1]*m[2][2]) + (m[0][1]*m[1][2]*m[2][0]) + (m[0][2]*m[1][0]*m[2][1])) - ((m[0][2]*m[1][1]*m[2][0]) + (m[0][0]*m[1][2]*m[2][1]) + (m[0][1]*m[1][0]*m[2][2])); 
+    }
 
     function calcularCramer3x3() {
+        // Lendo a Matriz
         let a11 = Number(document.getElementById('c11').value), a12 = Number(document.getElementById('c12').value), a13 = Number(document.getElementById('c13').value), b1 = Number(document.getElementById('cr1').value);
         let a21 = Number(document.getElementById('c21').value), a22 = Number(document.getElementById('c22').value), a23 = Number(document.getElementById('c23').value), b2 = Number(document.getElementById('cr2').value);
         let a31 = Number(document.getElementById('c31').value), a32 = Number(document.getElementById('c32').value), a33 = Number(document.getElementById('c33').value), b3 = Number(document.getElementById('cr3').value);
         
+        // Calculando os Determinantes
         let D = det3([[a11, a12, a13], [a21, a22, a23], [a31, a32, a33]]);
         let Dx = det3([[b1, a12, a13], [b2, a22, a23], [b3, a32, a33]]);
         let Dy = det3([[a11, b1, a13], [a21, b2, a23], [a31, b3, a33]]);
         let Dz = det3([[a11, a12, b1], [a21, a22, b2], [a31, a32, b3]]);
 
-        let latex = `$$ \\Delta = ${D} \\quad \\Delta x = ${Dx} \\quad \\Delta y = ${Dy} \\quad \\Delta z = ${Dz} $$`;
-        if (D !== 0) latex += `<br><b>Solução:</b> $x = ${(Dx/D).toFixed(2)}$, $y = ${(Dy/D).toFixed(2)}$, $z = ${(Dz/D).toFixed(2)}$`;
-        else latex += `<br><b>Atenção:</b> $\\Delta = 0$ (Sem solução única).`;
-        
+        // Montando o Visual Passo a Passo
+        let latex = `<p><b>Passo 1:</b> Representação do Sistema Matricial $A\\vec{x} = \\vec{b}$</p>`;
+        latex += `$$ \\begin{bmatrix} ${a11} & ${a12} & ${a13} \\\\ ${a21} & ${a22} & ${a23} \\\\ ${a31} & ${a32} & ${a33} \\end{bmatrix} \\begin{bmatrix} x \\\\ y \\\\ z \\end{bmatrix} = \\begin{bmatrix} \\mathbf{${b1}} \\\\ \\mathbf{${b2}} \\\\ \\mathbf{${b3}} \\end{bmatrix} $$`;
+
+        latex += `<hr style="border:0; border-top:1px solid #e2e8f0; margin: 20px 0;">`;
+
+        latex += `<p><b>Passo 2:</b> Encontrar o determinante da Matriz Principal ($\\Delta$)</p>`;
+        latex += `$$ \\Delta = \\begin{vmatrix} ${a11} & ${a12} & ${a13} \\\\ ${a21} & ${a22} & ${a23} \\\\ ${a31} & ${a32} & ${a33} \\end{vmatrix} = ${D} $$`;
+
+        if (D === 0) {
+            latex += `<br><p style="color: #ef4444; font-weight: bold;">Atenção: Como o determinante principal ($\\Delta$) é igual a 0, este sistema não possui solução única (pode ser Impossível ou Indeterminado).</p>`;
+        } else {
+            latex += `<p><b>Passo 3:</b> Substituir o vetor resultado nas colunas de $x$, $y$ e $z$ para achar $\\Delta x$, $\\Delta y$ e $\\Delta z$:</p>`;
+            
+            latex += `$$ \\Delta x = \\begin{vmatrix} \\mathbf{${b1}} & ${a12} & ${a13} \\\\ \\mathbf{${b2}} & ${a22} & ${a23} \\\\ \\mathbf{${b3}} & ${a32} & ${a33} \\end{vmatrix} = ${Dx} $$`;
+            latex += `$$ \\Delta y = \\begin{vmatrix} ${a11} & \\mathbf{${b1}} & ${a13} \\\\ ${a21} & \\mathbf{${b2}} & ${a23} \\\\ ${a31} & \\mathbf{${b3}} & ${a33} \\end{vmatrix} = ${Dy} $$`;
+            latex += `$$ \\Delta z = \\begin{vmatrix} ${a11} & ${a12} & \\mathbf{${b1}} \\\\ ${a21} & ${a22} & \\mathbf{${b2}} \\\\ ${a31} & ${a32} & \\mathbf{${b3}} \\end{vmatrix} = ${Dz} $$`;
+
+            latex += `<hr style="border:0; border-top:1px solid #e2e8f0; margin: 20px 0;">`;
+
+            latex += `<p><b>Passo 4:</b> Dividir pelo determinante principal ($\\Delta$)</p>`;
+            latex += `$$ x = \\frac{\\Delta x}{\\Delta} = \\frac{${Dx}}{${D}} = ${(Dx/D).toFixed(2)} $$`;
+            latex += `$$ y = \\frac{\\Delta y}{\\Delta} = \\frac{${Dy}}{${D}} = ${(Dy/D).toFixed(2)} $$`;
+            latex += `$$ z = \\frac{\\Delta z}{\\Delta} = \\frac{${Dz}}{${D}} = ${(Dz/D).toFixed(2)} $$`;
+
+            latex += `<div style="background: #dbeafe; padding: 15px; border-radius: 8px; margin-top: 20px; text-align: center; border: 1px solid #bfdbfe;">`;
+            latex += `<h3 style="margin: 0; color: #1e40af;">Conjunto Solução:</h3>`;
+            latex += `$$ S = \\{ ${(Dx/D).toFixed(2)}, \\; ${(Dy/D).toFixed(2)}, \\; ${(Dz/D).toFixed(2)} \\} $$`;
+            latex += `</div>`;
+        }
+
         let res = document.getElementById('texto-resultado-matriz');
         document.getElementById('area-resultado-matriz').style.display = 'block';
         res.innerHTML = latex;
-        if (window.MathJax) MathJax.typesetPromise([res]);
+        
+        if (window.MathJax) {
+            MathJax.typesetPromise([res]);
+        }
     }
 
     // ==========================================
