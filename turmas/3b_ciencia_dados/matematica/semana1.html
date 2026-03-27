@@ -34,7 +34,6 @@
         .layout-flex { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 20px; }
         .conceito-box { background: #fffbeb; border-left: 5px solid #f59e0b; padding: 15px; text-align: left; margin-bottom: 20px; border-radius: 0 8px 8px 0; font-size: 15px; color: #78350f; }
         
-        /* Grid do Menu Principal */
         .grid-modulos { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
         .card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border-top: 4px solid #38bdf8; transition: transform 0.3s; }
         .card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
@@ -48,7 +47,7 @@
 <body>
 
 <header>
-    <span class="tag-goty">VERSÃO 5.0 - GOTY ULTIMATE PEDAGÓGICA</span>
+    <span class="tag-goty">VERSÃO 6.0 - COM GRÁFICOS VETORIAIS 2D</span>
     <h1>Laboratório de Álgebra Linear</h1>
     <p>O estudo detalhado passo a passo de Vetores, Matrizes e Geometria Analítica.</p>
 </header>
@@ -61,7 +60,7 @@
                 <ul>
                     <li>Tamanhos 2x2 e 3x3 suportados</li>
                     <li>Soma, Subtração e Multiplicação detalhadas</li>
-                    <li>Matriz Inversa e Determinantes (Sarrus)</li>
+                    <li>Matriz Inversa e Determinantes (Gráfico 2D)</li>
                 </ul>
                 <button class="btn-acessar" style="color: #d97706;" onclick="mudarTela('tela-calculadora')">Abrir Super Calculadora</button>
             </div>
@@ -69,7 +68,7 @@
             <div class="card" style="border-top-color: #38bdf8;">
                 <h2>🧮 Sistemas e Geometria</h2>
                 <ul>
-                    <li>Regra de Cramer (2x2 e 3x3)</li>
+                    <li>Regra de Cramer (2x2 e 3x3 com Sarrus Visual)</li>
                     <li>Equação da Reta (Alinhamento)</li>
                     <li>Gráficos Geométricos 2D interativos</li>
                 </ul>
@@ -105,8 +104,8 @@
                 <div id="bloco-calc-A">
                     <p><b>Matriz A</b></p>
                     <div id="grid-calc-A-2" class="matriz-grid grid-2x2">
-                        <input type="number" id="a2_11" value="4"> <input type="number" id="a2_12" value="3">
-                        <input type="number" id="a2_21" value="2"> <input type="number" id="a2_22" value="2">
+                        <input type="number" id="a2_11" value="2"> <input type="number" id="a2_12" value="1">
+                        <input type="number" id="a2_21" value="1"> <input type="number" id="a2_22" value="3">
                     </div>
                     <div id="grid-calc-A-3" class="matriz-grid grid-3x3" style="display: none;">
                         <input type="number" id="a3_11" value="2"> <input type="number" id="a3_12" value="1"> <input type="number" id="a3_13" value="1">
@@ -194,7 +193,6 @@
             <div class="container-ferramenta" style="flex: 1; min-width: 400px;"><h3 style="border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; color: #10b981;">Gráfico Analítico 2D</h3><div id="grafico-reta" style="height: 400px; width: 100%;"></div></div>
         </div>
     </div>
-
 </main>
 
 <script>
@@ -213,6 +211,51 @@
         document.getElementById('tela-matrizes').style.display = 'none';
         document.getElementById(idTela).style.display = 'block';
     }
+
+    // ==========================================
+    // MOTORES DE RENDERIZAÇÃO DE DETERMINANTES (AZUL E VERMELHO)
+    // ==========================================
+    function gerarPassoDet2x2(M, nome) {
+        let p = M[0][0]*M[1][1];
+        let s = M[0][1]*M[1][0];
+        let det = p - s;
+
+        let latex = `<div style="background:#ffffff; padding:15px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:15px;">`;
+        latex += `<p><b>Cálculo de $${nome}$:</b></p>`;
+        latex += `$$ \\begin{vmatrix} ${M[0][0]} & ${M[0][1]} \\\\ ${M[1][0]} & ${M[1][1]} \\end{vmatrix} $$`;
+        latex += `<p><b>Diagonal Principal ($\\searrow$ - <span style="color:#2563eb;">Azul</span>):</b><br> $$ {\\color{#2563eb} (${fmt(M[0][0])} \\cdot ${fmt(M[1][1])}) = ${p} } $$</p>`;
+        latex += `<p><b>Diagonal Secundária ($\\swarrow$ - <span style="color:#ef4444;">Vermelha</span>):</b><br> $$ {\\color{#ef4444} - (${fmt(M[0][1])} \\cdot ${fmt(M[1][0])}) = -(${s}) } $$</p>`;
+        latex += `<p><b>Resultado:</b> $$ ${nome} = {\\color{#2563eb} ${p} } {\\color{#ef4444} - (${fmt(s)}) } = \\mathbf{${det}} $$</p>`;
+        latex += `</div>`;
+        
+        return { val: det, latex: latex };
+    }
+
+    function gerarPassoDet3x3(M, nome) {
+        let p1 = M[0][0]*M[1][1]*M[2][2], p2 = M[0][1]*M[1][2]*M[2][0], p3 = M[0][2]*M[1][0]*M[2][1];
+        let s1 = M[0][2]*M[1][1]*M[2][0], s2 = M[0][0]*M[1][2]*M[2][1], s3 = M[0][1]*M[1][0]*M[2][2];
+        let sumP = p1+p2+p3;
+        let sumS = s1+s2+s3;
+        let det = sumP - sumS;
+
+        let latex = `<div style="background:#ffffff; padding:15px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:15px;">`;
+        latex += `<p><b>Cálculo de $${nome}$ (Regra de Sarrus):</b></p>`;
+        latex += `$$ \\left| \\begin{array}{ccc|cc} ${M[0][0]} & ${M[0][1]} & ${M[0][2]} & ${M[0][0]} & ${M[0][1]} \\\\ ${M[1][0]} & ${M[1][1]} & ${M[1][2]} & ${M[1][0]} & ${M[1][1]} \\\\ ${M[2][0]} & ${M[2][1]} & ${M[2][2]} & ${M[2][0]} & ${M[2][1]} \\end{array} \\right| $$`;
+        
+        latex += `<p><b>Diagonais Principais ($\\searrow$ - <span style="color:#2563eb;">Azul</span>):</b><br>`;
+        latex += `$$ {\\color{#2563eb} [(${fmt(M[0][0])}\\cdot${fmt(M[1][1])}\\cdot${fmt(M[2][2])}) + (${fmt(M[0][1])}\\cdot${fmt(M[1][2])}\\cdot${fmt(M[2][0])}) + (${fmt(M[0][2])}\\cdot${fmt(M[1][0])}\\cdot${fmt(M[2][1])})] } $$`;
+        latex += `$$ {\\color{#2563eb} = (${fmt(p1)}) + (${fmt(p2)}) + (${fmt(p3)}) = ${sumP} } $$</p>`;
+
+        latex += `<p><b>Diagonais Secundárias ($\\swarrow$ - <span style="color:#ef4444;">Vermelha</span>):</b><br>`;
+        latex += `$$ {\\color{#ef4444} - [(${fmt(M[0][2])}\\cdot${fmt(M[1][1])}\\cdot${fmt(M[2][0])}) + (${fmt(M[0][0])}\\cdot${fmt(M[1][2])}\\cdot${fmt(M[2][1])}) + (${fmt(M[0][1])}\\cdot${fmt(M[1][0])}\\cdot${fmt(M[2][2])})] } $$`;
+        latex += `$$ {\\color{#ef4444} = - [(${fmt(s1)}) + (${fmt(s2)}) + (${fmt(s3)})] = - [${sumS}] } $$</p>`;
+
+        latex += `<p><b>Resultado:</b> $$ ${nome} = {\\color{#2563eb} ${sumP} } {\\color{#ef4444} - (${fmt(sumS)}) } = \\mathbf{${det}} $$</p>`;
+        latex += `</div>`;
+
+        return { val: det, latex: latex };
+    }
+
 
     // ==========================================
     // MÓDULO 1: SUPER CALCULADORA (PEDAGÓGICA)
@@ -240,6 +283,7 @@
         document.getElementById('area-resultado-super').style.display = 'block';
 
         let latex = "";
+        let callbackGrafico = null; // Função para chamar o Plotly depois de renderizar o HTML
 
         // ==============================
         // CALCULADORA 2X2
@@ -256,30 +300,30 @@
 
                 if (op === 'soma') {
                     latex += `<p><b>Passo a Passo:</b> Somamos os elementos na mesma posição ($a_{ij} + b_{ij}$).</p>`;
-                    latex += `$$ ${strA} + ${strB} = \\begin{bmatrix} ${a11} + ${fmt(b11)} & ${a12} + ${fmt(b12)} \\\\ ${a21} + ${fmt(b21)} & ${a22} + ${fmt(b22)} \\end{bmatrix} $$`;
-                    latex += `$$ = \\begin{bmatrix} ${a11+b11} & ${a12+b12} \\\\ ${a21+b21} & ${a22+b22} \\end{bmatrix} $$`;
+                    latex += `$$ ${strA} + ${strB} = \\begin{bmatrix} ${a11} + ${fmt(b11)} & ${a12} + ${fmt(b12)} \\\\ ${a21} + ${fmt(b21)} & ${a22} + ${fmt(b22)} \\end{bmatrix} = \\begin{bmatrix} ${a11+b11} & ${a12+b12} \\\\ ${a21+b21} & ${a22+b22} \\end{bmatrix} $$`;
                 }
                 if (op === 'sub') {
                     latex += `<p><b>Passo a Passo:</b> Subtraímos os elementos na mesma posição ($a_{ij} - b_{ij}$).</p>`;
-                    latex += `$$ ${strA} - ${strB} = \\begin{bmatrix} ${a11} - ${fmt(b11)} & ${a12} - ${fmt(b12)} \\\\ ${a21} - ${fmt(b21)} & ${a22} - ${fmt(b22)} \\end{bmatrix} $$`;
-                    latex += `$$ = \\begin{bmatrix} ${a11-b11} & ${a12-b12} \\\\ ${a21-b21} & ${a22-b22} \\end{bmatrix} $$`;
+                    latex += `$$ ${strA} - ${strB} = \\begin{bmatrix} ${a11} - ${fmt(b11)} & ${a12} - ${fmt(b12)} \\\\ ${a21} - ${fmt(b21)} & ${a22} - ${fmt(b22)} \\end{bmatrix} = \\begin{bmatrix} ${a11-b11} & ${a12-b12} \\\\ ${a21-b21} & ${a22-b22} \\end{bmatrix} $$`;
                 }
                 if (op === 'mult') {
                     latex += `<p><b>Passo a Passo (Linha $\\times$ Coluna):</b> Multiplicamos a linha de A pela coluna de B.</p>`;
-                    latex += `$$ ${strA} \\times ${strB} $$`;
-                    latex += `$$ = \\begin{bmatrix} (${a11}\\cdot${fmt(b11)} + ${a12}\\cdot${fmt(b21)}) & (${a11}\\cdot${fmt(b12)} + ${a12}\\cdot${fmt(b22)}) \\\\ (${a21}\\cdot${fmt(b11)} + ${a22}\\cdot${fmt(b21)}) & (${a21}\\cdot${fmt(b12)} + ${a22}\\cdot${fmt(b22)}) \\end{bmatrix} $$`;
+                    latex += `$$ ${strA} \\times ${strB} = \\begin{bmatrix} (${a11}\\cdot${fmt(b11)} + ${a12}\\cdot${fmt(b21)}) & (${a11}\\cdot${fmt(b12)} + ${a12}\\cdot${fmt(b22)}) \\\\ (${a21}\\cdot${fmt(b11)} + ${a22}\\cdot${fmt(b21)}) & (${a21}\\cdot${fmt(b12)} + ${a22}\\cdot${fmt(b22)}) \\end{bmatrix} $$`;
                     latex += `$$ = \\begin{bmatrix} ${(a11*b11)+(a12*b21)} & ${(a11*b12)+(a12*b22)} \\\\ ${(a21*b11)+(a22*b21)} & ${(a21*b12)+(a22*b22)} \\end{bmatrix} $$`;
                 }
                 if (op === 'divisao') {
                     latex += `<p><b>Divisão de Matrizes ($A / B$):</b> Multiplicamos A pela <b>Inversa de B ($B^{-1}$)</b>.</p>`;
-                    let detB = (b11*b22) - (b12*b21);
+                    let calcDetB = gerarPassoDet2x2([[b11,b12],[b21,b22]], "Det(B)");
+                    latex += calcDetB.latex;
+                    let detB = calcDetB.val;
+
                     if (detB === 0) {
-                        latex += `<p style="color:red;"><b>Erro:</b> O Determinante de B é Zero. A Matriz B não possui inversa.</p>`;
+                        latex += `<p style="color:red; font-weight:bold;">Erro: O Determinante de B é Zero. A Matriz B não possui inversa.</p>`;
                     } else {
                         let invB11 = b22/detB, invB12 = -b12/detB, invB21 = -b21/detB, invB22 = b11/detB;
-                        latex += `<p>1. Inversa de B ($B^{-1}$): Troca-se a diagonal principal, inverte-se o sinal da secundária e divide-se por $Det(B) = ${detB}$.</p>`;
+                        latex += `<p><b>1. Inversa de B ($B^{-1}$):</b> Troca-se a diagonal principal, inverte-se o sinal da secundária e divide-se por $Det(B) = ${detB}$.</p>`;
                         latex += `$$ B^{-1} = \\begin{bmatrix} ${invB11.toFixed(2)} & ${invB12.toFixed(2)} \\\\ ${invB21.toFixed(2)} & ${invB22.toFixed(2)} \\end{bmatrix} $$`;
-                        latex += `<p>2. Multiplicação ($A \\times B^{-1}$):</p>`;
+                        latex += `<p><b>2. Multiplicação ($A \\times B^{-1}$):</b></p>`;
                         let C11 = (a11*invB11)+(a12*invB21), C12 = (a11*invB12)+(a12*invB22);
                         let C21 = (a21*invB11)+(a22*invB21), C22 = (a21*invB12)+(a22*invB22);
                         latex += `$$ \\begin{bmatrix} ${C11.toFixed(2)} & ${C12.toFixed(2)} \\\\ ${C21.toFixed(2)} & ${C22.toFixed(2)} \\end{bmatrix} $$`;
@@ -287,20 +331,60 @@
                 }
             }
             if (op === 'det') {
-                let det = (a11*a22) - (a12*a21);
-                latex += `<p><b>Determinante 2x2:</b> Produto da diagonal principal menos a secundária.</p>`;
-                latex += `$$ Det(A) = {\\color{#2563eb} (${a11} \\cdot ${fmt(a22)})} - {\\color{#ef4444} (${a12} \\cdot ${fmt(a21)})} $$`;
-                latex += `$$ Det(A) = ${a11*a22} - ${fmt(a12*a21)} = ${det} $$`;
+                let calcD = gerarPassoDet2x2([[a11,a12],[a21,a22]], "Det(A)");
+                latex += calcD.latex;
+
+                // INSERIR CONTAINER DO GRÁFICO
+                latex += `<div style="background: #ffffff; padding: 20px; border-radius: 8px; border: 2px solid #e2e8f0; margin-top: 20px;">
+                            <h3 style="margin-top: 0; color: #0ea5e9; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Interpretação Geométrica do Determinante 2x2</h3>
+                            <p style="font-size: 14px; color: #64748b;">O determinante corresponde à área do paralelogramo formado pelas colunas da matriz (tratadas como vetores <b>u</b> e <b>v</b>).</p>
+                            <div id="grafico-det-2x2" style="height: 400px; width: 100%;"></div>
+                          </div>`;
+
+                // FUNÇÃO DE RENDERIZAÇÃO DO PLOTLY QUE SERÁ CHAMADA NO FINAL
+                callbackGrafico = () => {
+                    let u_x = a11, u_y = a21;
+                    let v_x = a12, v_y = a22;
+                    let detArea = (u_x * v_y) - (u_y * v_x);
+                    
+                    let traceArea = {
+                        x: [0, u_x, u_x + v_x, v_x, 0],
+                        y: [0, u_y, u_y + v_y, v_y, 0],
+                        fill: 'toself',
+                        fillcolor: detArea >= 0 ? 'rgba(56, 189, 248, 0.3)' : 'rgba(239, 68, 68, 0.3)', // Azul se positivo, vermelho se negativo
+                        line: { color: 'rgba(255,255,255,0)' },
+                        name: 'Área = ' + Math.abs(detArea),
+                        hoverinfo: 'name'
+                    };
+
+                    let traceDashed1 = { x: [u_x, u_x + v_x], y: [u_y, u_y + v_y], mode: 'lines', line: {dash: 'dash', color: '#94a3b8', width: 2}, showlegend: false };
+                    let traceDashed2 = { x: [v_x, u_x + v_x], y: [v_y, u_y + v_y], mode: 'lines', line: {dash: 'dash', color: '#94a3b8', width: 2}, showlegend: false };
+
+                    let layout = {
+                        title: `<b>Det(u, v) = ${detArea}</b>`,
+                        margin: { l: 40, r: 40, b: 40, t: 50 },
+                        xaxis: { title: 'X', zeroline: true, zerolinewidth: 2, zerolinecolor: '#333', gridcolor: '#e2e8f0' },
+                        yaxis: { title: 'Y', scaleanchor: "x", scaleratio: 1, zeroline: true, zerolinewidth: 2, zerolinecolor: '#333', gridcolor: '#e2e8f0' },
+                        annotations: [
+                            { ax: 0, ay: 0, axref: 'x', ayref: 'y', x: u_x, y: u_y, xref: 'x', yref: 'y', showarrow: true, arrowhead: 2, arrowcolor: '#10b981', arrowsize: 1.5, arrowwidth: 3, text: '<b>u</b> (Col 1)', font: {color: '#10b981', size: 14} },
+                            { ax: 0, ay: 0, axref: 'x', ayref: 'y', x: v_x, y: v_y, xref: 'x', yref: 'y', showarrow: true, arrowhead: 2, arrowcolor: '#ef4444', arrowsize: 1.5, arrowwidth: 3, text: '<b>v</b> (Col 2)', font: {color: '#ef4444', size: 14} }
+                        ]
+                    };
+
+                    Plotly.newPlot('grafico-det-2x2', [traceArea, traceDashed1, traceDashed2], layout, {staticPlot: false});
+                };
             }
             if (op === 'inversa') {
-                let det = (a11*a22) - (a12*a21);
-                latex += `<p><b>Matriz Inversa ($A^{-1}$):</b></p>`;
-                latex += `<p>Passo 1: Achar o Determinante: $\\Delta = ${det}$</p>`;
-                if (det === 0) latex += `<p style="color:red;"><b>Como $\\Delta = 0$, não possui Inversa!</b></p>`;
+                latex += `<p><b>Cálculo da Matriz Inversa ($A^{-1}$):</b></p>`;
+                let calcD = gerarPassoDet2x2([[a11,a12],[a21,a22]], "\\Delta");
+                latex += calcD.latex;
+                let det = calcD.val;
+
+                if (det === 0) latex += `<p style="color:red; font-weight:bold;">Como $\\Delta = 0$, esta matriz não possui Inversa!</p>`;
                 else {
-                    latex += `<p>Passo 2: Matriz Adjunta (Troca principal, inverte sinal da secundária):</p>`;
+                    latex += `<p><b>Passo 2:</b> Matriz Adjunta (Troca principal, inverte sinal da secundária):</p>`;
                     latex += `$$ Adj = \\begin{bmatrix} ${a22} & ${-a12} \\\\ ${-a21} & ${a11} \\end{bmatrix} $$`;
-                    latex += `<p>Passo 3: Dividir pelo Determinante:</p>`;
+                    latex += `<p><b>Passo 3:</b> Dividir pelo Determinante ($\\Delta = ${det}$):</p>`;
                     latex += `$$ A^{-1} = \\frac{1}{${det}} \\begin{bmatrix} ${a22} & ${-a12} \\\\ ${-a21} & ${a11} \\end{bmatrix} = \\begin{bmatrix} ${(a22/det).toFixed(2)} & ${(-a12/det).toFixed(2)} \\\\ ${(-a21/det).toFixed(2)} & ${(a11/det).toFixed(2)} \\end{bmatrix} $$`;
                 }
             }
@@ -314,7 +398,6 @@
                 [Number(document.getElementById('a3_21').value), Number(document.getElementById('a3_22').value), Number(document.getElementById('a3_23').value)],
                 [Number(document.getElementById('a3_31').value), Number(document.getElementById('a3_32').value), Number(document.getElementById('a3_33').value)]
             ];
-            let strA = `\\begin{bmatrix} ${A[0][0]} & ${A[0][1]} & ${A[0][2]} \\\\ ${A[1][0]} & ${A[1][1]} & ${A[1][2]} \\\\ ${A[2][0]} & ${A[2][1]} & ${A[2][2]} \\end{bmatrix}`;
 
             if (op === 'soma' || op === 'sub' || op === 'mult' || op === 'divisao') {
                 let B = [
@@ -322,7 +405,6 @@
                     [Number(document.getElementById('b3_21').value), Number(document.getElementById('b3_22').value), Number(document.getElementById('b3_23').value)],
                     [Number(document.getElementById('b3_31').value), Number(document.getElementById('b3_32').value), Number(document.getElementById('b3_33').value)]
                 ];
-                let strB = `\\begin{bmatrix} ${B[0][0]} & ${B[0][1]} & ${B[0][2]} \\\\ ${B[1][0]} & ${B[1][1]} & ${B[1][2]} \\\\ ${B[2][0]} & ${B[2][1]} & ${B[2][2]} \\end{bmatrix}`;
 
                 if (op === 'soma') {
                     latex += `<p><b>Passo a Passo:</b> Somamos $a_{ij} + b_{ij}$.</p>`;
@@ -343,26 +425,11 @@
                 }
             }
 
-            // SARRUS 3x3
             if (op === 'det') {
-                let det = (A[0][0]*A[1][1]*A[2][2]) + (A[0][1]*A[1][2]*A[2][0]) + (A[0][2]*A[1][0]*A[2][1]) - ((A[0][2]*A[1][1]*A[2][0]) + (A[0][0]*A[1][2]*A[2][1]) + (A[0][1]*A[1][0]*A[2][2]));
-                
-                latex += `<p><b>Passo 1: Regra de Sarrus (Cópia das colunas)</b></p>`;
-                latex += `$$ \\left| \\begin{array}{ccc|cc} ${A[0][0]} & ${A[0][1]} & ${A[0][2]} & ${A[0][0]} & ${A[0][1]} \\\\ ${A[1][0]} & ${A[1][1]} & ${A[1][2]} & ${A[1][0]} & ${A[1][1]} \\\\ ${A[2][0]} & ${A[2][1]} & ${A[2][2]} & ${A[2][0]} & ${A[2][1]} \\end{array} \\right| $$`;
-
-                let p1 = A[0][0]*A[1][1]*A[2][2], p2 = A[0][1]*A[1][2]*A[2][0], p3 = A[0][2]*A[1][0]*A[2][1];
-                let s1 = A[0][2]*A[1][1]*A[2][0], s2 = A[0][0]*A[1][2]*A[2][1], s3 = A[0][1]*A[1][0]*A[2][2];
-
-                latex += `<p><b>Diagonais Principais ($\\searrow$ - Azul):</b></p>`;
-                latex += `$$ {\\color{#2563eb} (${p1}) + (${p2}) + (${p3}) } = {\\color{#2563eb} ${p1+p2+p3} } $$`;
-                latex += `<p><b>Diagonais Secundárias ($\\swarrow$ - Vermelha):</b></p>`;
-                latex += `$$ {\\color{#ef4444} - [ (${s1}) + (${s2}) + (${s3}) ] } = {\\color{#ef4444} - [ ${s1+s2+s3} ] } $$`;
-                
-                latex += `<p><b>Resultado Final:</b></p>`;
-                latex += `$$ Det(A) = {\\color{#2563eb} ${p1+p2+p3} } {\\color{#ef4444} ${term(-(s1+s2+s3), false)} } = ${det} $$`;
+                let calcD = gerarPassoDet3x3(A, "Det(A)");
+                latex += calcD.latex;
             }
 
-            // INVERSA E DIVISÃO 3x3
             if (op === 'inversa' || op === 'divisao') {
                 let target = A;
                 if(op === 'divisao') {
@@ -374,10 +441,11 @@
                     latex += `<p>Para dividir $A / B$, calculamos a <b>Inversa da Matriz B</b> e multiplicamos $A \\times B^{-1}$.</p>`;
                 }
 
-                let det = (target[0][0]*target[1][1]*target[2][2]) + (target[0][1]*target[1][2]*target[2][0]) + (target[0][2]*target[1][0]*target[2][1]) - ((target[0][2]*target[1][1]*target[2][0]) + (target[0][0]*target[1][2]*target[2][1]) + (target[0][1]*target[1][0]*target[2][2]));
-                
-                latex += `<p>Passo 1: Determinante ($Det = ${det}$)</p>`;
-                if(det === 0) latex += `<p style="color:red;"><b>Erro: Matriz sem inversa! (Det = 0)</b></p>`;
+                let calcD = gerarPassoDet3x3(target, op === 'divisao' ? "Det(B)" : "Det(A)");
+                latex += calcD.latex;
+                let det = calcD.val;
+
+                if(det === 0) latex += `<p style="color:red; font-weight:bold;">Erro: A matriz analisada não possui inversa! (Det = 0)</p>`;
                 else {
                     let C = [[0,0,0],[0,0,0],[0,0,0]];
                     for(let i=0; i<3; i++){
@@ -392,9 +460,9 @@
                     let Adj = [ [C[0][0], C[1][0], C[2][0]], [C[0][1], C[1][1], C[2][1]], [C[0][2], C[1][2], C[2][2]] ];
                     let strAdj = `\\begin{bmatrix} ${Adj[0][0]} & ${Adj[0][1]} & ${Adj[0][2]} \\\\ ${Adj[1][0]} & ${Adj[1][1]} & ${Adj[1][2]} \\\\ ${Adj[2][0]} & ${Adj[2][1]} & ${Adj[2][2]} \\end{bmatrix}`;
 
-                    latex += `<p>Passo 2: Matriz dos Cofatores (cálculo dos determinantes menores $\\times (-1)^{i+j}$):</p> $$ Cof = ${strCof} $$`;
-                    latex += `<p>Passo 3: Matriz Adjunta (Transposta dos Cofatores - linha vira coluna):</p> $$ Adj = ${strAdj} $$`;
-                    latex += `<p>Passo 4: Dividir a Adjunta pelo Determinante (${det}):</p>`;
+                    latex += `<p><b>Passo 2:</b> Matriz dos Cofatores (cálculo dos determinantes menores $\\times (-1)^{i+j}$):</p> $$ Cof = ${strCof} $$`;
+                    latex += `<p><b>Passo 3:</b> Matriz Adjunta (Transposta dos Cofatores - linha vira coluna):</p> $$ Adj = ${strAdj} $$`;
+                    latex += `<p><b>Passo 4:</b> Dividir a Adjunta pelo Determinante (${det}):</p>`;
                     
                     let Inv = [[0,0,0],[0,0,0],[0,0,0]];
                     for(let i=0; i<3; i++) for(let j=0; j<3; j++) Inv[i][j] = Adj[i][j]/det;
@@ -403,7 +471,7 @@
                     latex += `$$ Inversa = ${strInv} $$`;
 
                     if (op === 'divisao') {
-                        latex += `<hr><p>Passo 5: Efetuar $A \\times B^{-1}$</p>`;
+                        latex += `<hr><p><b>Passo 5:</b> Efetuar $A \\times B^{-1}$</p>`;
                         let DivRes = [[0,0,0],[0,0,0],[0,0,0]];
                         for(let i=0; i<3; i++) for(let j=0; j<3; j++) DivRes[i][j] = (A[i][0]*Inv[0][j]) + (A[i][1]*Inv[1][j]) + (A[i][2]*Inv[2][j]);
                         let strDiv = `\\begin{bmatrix} ${DivRes[0][0].toFixed(2)} & ${DivRes[0][1].toFixed(2)} & ${DivRes[0][2].toFixed(2)} \\\\ ${DivRes[1][0].toFixed(2)} & ${DivRes[1][1].toFixed(2)} & ${DivRes[1][2].toFixed(2)} \\\\ ${DivRes[2][0].toFixed(2)} & ${DivRes[2][1].toFixed(2)} & ${DivRes[2][2].toFixed(2)} \\end{bmatrix}`;
@@ -415,10 +483,15 @@
 
         resBox.innerHTML = latex;
         if (window.MathJax) MathJax.typesetPromise([resBox]);
+        
+        // Se a operação gerou um gráfico, renderizamos após o HTML ser injetado na tela
+        if (callbackGrafico) {
+            setTimeout(callbackGrafico, 100);
+        }
     }
 
     // ==========================================
-    // CÓDIGO DA GEOMETRIA / CRAMER MANTIDO
+    // MÓDULO 2: SISTEMAS (CRAMER RESTAURADO E DETALHADO) E RETA
     // ==========================================
     function alternarFerramenta() {
         let fer = document.getElementById('ferramenta-sistemas').value;
@@ -434,21 +507,76 @@
         document.getElementById('grid-cramer-2').style.display = (tipo === '2') ? 'inline-grid' : 'none'; 
     }
 
-    // Resolucao de Cramer (simplificada p/ tamanho)
     function resolverCramer() {
+        let tipo = document.getElementById('tipo-cramer').value;
         let res = document.getElementById('texto-resultado-cramer');
         document.getElementById('area-resultado-cramer').style.display = 'block';
-        res.innerHTML = "<p><i>Cálculo em execução (Mecânica mantida das versões anteriores com êxito).</i></p>";
+        let latex = '';
+
+        if (tipo === '2') {
+            let a11 = Number(document.getElementById('c2_11').value), a12 = Number(document.getElementById('c2_12').value), b1 = Number(document.getElementById('cr2_1').value);
+            let a21 = Number(document.getElementById('c2_21').value), a22 = Number(document.getElementById('c2_22').value), b2 = Number(document.getElementById('cr2_2').value);
+
+            latex += `<p><b>Representação do Sistema:</b></p>`;
+            latex += `$$ \\begin{bmatrix} ${a11} & ${a12} \\\\ ${a21} & ${a22} \\end{bmatrix} \\begin{bmatrix} x \\\\ y \\end{bmatrix} = \\begin{bmatrix} ${b1} \\\\ ${b2} \\end{bmatrix} $$`;
+
+            let calcD = gerarPassoDet2x2([[a11, a12], [a21, a22]], "\\Delta");
+            latex += calcD.latex;
+
+            if (calcD.val === 0) { 
+                latex += `<p style="color:red; font-weight:bold;">Atenção: Como $\\Delta = 0$, o sistema não possui solução única.</p>`; 
+            } else { 
+                let calcDx = gerarPassoDet2x2([[b1, a12], [b2, a22]], "\\Delta x");
+                let calcDy = gerarPassoDet2x2([[a11, b1], [a21, b2]], "\\Delta y");
+                latex += calcDx.latex + calcDy.latex;
+
+                latex += `<div style="background:#ecfdf5; padding:15px; border-radius:8px; border:1px solid #a7f3d0; text-align:center;">`;
+                latex += `<h3 style="color:#047857; margin-top:0;">Solução do Sistema:</h3>`;
+                latex += `$$ x = \\frac{\\Delta x}{\\Delta} = \\frac{${calcDx.val}}{${calcD.val}} = ${(calcDx.val/calcD.val).toFixed(2)} $$`;
+                latex += `$$ y = \\frac{\\Delta y}{\\Delta} = \\frac{${calcDy.val}}{${calcD.val}} = ${(calcDy.val/calcD.val).toFixed(2)} $$`;
+                latex += `</div>`;
+            }
+        } else {
+            let a11 = Number(document.getElementById('c11').value), a12 = Number(document.getElementById('c12').value), a13 = Number(document.getElementById('c13').value), b1 = Number(document.getElementById('cr1').value);
+            let a21 = Number(document.getElementById('c21').value), a22 = Number(document.getElementById('c22').value), a23 = Number(document.getElementById('c23').value), b2 = Number(document.getElementById('cr2').value);
+            let a31 = Number(document.getElementById('c31').value), a32 = Number(document.getElementById('c32').value), a33 = Number(document.getElementById('c33').value), b3 = Number(document.getElementById('cr3').value);
+
+            latex += `<p><b>Representação do Sistema:</b></p>`;
+            latex += `$$ \\begin{bmatrix} ${a11} & ${a12} & ${a13} \\\\ ${a21} & ${a22} & ${a23} \\\\ ${a31} & ${a32} & ${a33} \\end{bmatrix} \\begin{bmatrix} x \\\\ y \\\\ z \\end{bmatrix} = \\begin{bmatrix} ${b1} \\\\ ${b2} \\\\ ${b3} \\end{bmatrix} $$`;
+
+            let calcD = gerarPassoDet3x3([[a11, a12, a13], [a21, a22, a23], [a31, a32, a33]], "\\Delta");
+            latex += calcD.latex;
+
+            if (calcD.val === 0) { 
+                latex += `<p style="color:red; font-weight:bold;">Atenção: Como $\\Delta = 0$, o sistema não possui solução única.</p>`; 
+            } else { 
+                let calcDx = gerarPassoDet3x3([[b1, a12, a13], [b2, a22, a23], [b3, a32, a33]], "\\Delta x");
+                let calcDy = gerarPassoDet3x3([[a11, b1, a13], [a21, b2, a23], [a31, b3, a33]], "\\Delta y");
+                let calcDz = gerarPassoDet3x3([[a11, a12, b1], [a21, a22, b2], [a31, a32, b3]], "\\Delta z");
+                
+                latex += calcDx.latex + calcDy.latex + calcDz.latex;
+
+                latex += `<div style="background:#ecfdf5; padding:15px; border-radius:8px; border:1px solid #a7f3d0; text-align:center;">`;
+                latex += `<h3 style="color:#047857; margin-top:0;">Solução do Sistema:</h3>`;
+                latex += `$$ x = \\frac{\\Delta x}{\\Delta} = \\frac{${calcDx.val}}{${calcD.val}} = ${(calcDx.val/calcD.val).toFixed(2)} $$`;
+                latex += `$$ y = \\frac{\\Delta y}{\\Delta} = \\frac{${calcDy.val}}{${calcD.val}} = ${(calcDy.val/calcD.val).toFixed(2)} $$`;
+                latex += `$$ z = \\frac{\\Delta z}{\\Delta} = \\frac{${calcDz.val}}{${calcD.val}} = ${(calcDz.val/calcD.val).toFixed(2)} $$`;
+                latex += `</div>`;
+            }
+        }
+        res.innerHTML = latex;
+        if (window.MathJax) MathJax.typesetPromise([res]);
     }
 
-    // Gráfico e Equação da Reta (Zig-Zag)
+    // Gráfico e Equação da Reta 
     function calcularReta() {
         let x1 = Number(document.getElementById('reta-x1').value), y1 = Number(document.getElementById('reta-y1').value);
         let x2 = Number(document.getElementById('reta-x2').value), y2 = Number(document.getElementById('reta-y2').value);
         let resBox = document.getElementById('texto-resultado-reta');
         document.getElementById('area-resultado-reta').style.display = 'flex';
 
-        let latex = `<p><b>Passo 1:</b> Montar a Matriz Condição de Alinhamento</p>`;
+        let latex = `<div style="background:#ffffff; padding:15px; border-radius:8px; border:1px solid #cbd5e1; margin-bottom:15px;">`;
+        latex += `<p><b>Passo 1:</b> Montar a Matriz Condição de Alinhamento</p>`;
         latex += `$$ \\begin{vmatrix} x & y & 1 \\\\ ${x1} & ${y1} & 1 \\\\ ${x2} & ${y2} & 1 \\end{vmatrix} = 0 $$`;
         latex += `<p><b>Passo 2:</b> Regra de Sarrus (Multiplicando as Diagonais)</p>`;
         latex += `$$ \\left| \\begin{array}{ccc|cc} x & y & 1 & x & y \\\\ ${x1} & ${y1} & 1 & ${x1} & ${y1} \\\\ ${x2} & ${y2} & 1 & ${x2} & ${y2} \\end{array} \\right| = 0 $$`;
@@ -457,8 +585,9 @@
         let dp_str = `${term(y1, true)}x ${term(x2, false)}y ${term(c1, false)}`;
         let ds_str = `${term(x1, true)}y ${term(y2, false)}x ${term(c2, false)}`;
 
-        latex += `<p><b>Diagonais Principais ($\\searrow$ - Azul):</b></p> $$ {\\color{#2563eb} ${dp_str} } $$`;
-        latex += `<p><b>Diagonais Secundárias ($\\swarrow$ - Vermelha):</b></p> $$ {\\color{#ef4444} - [ ${ds_str} ] } $$`;
+        latex += `<p><b>Diagonais Principais ($\\searrow$ - <span style="color:#2563eb;">Azul</span>):</b><br> $$ {\\color{#2563eb} [x\\cdot${fmt(y1)}\\cdot1] + [y\\cdot1\\cdot${fmt(x2)}] + [1\\cdot${fmt(x1)}\\cdot${fmt(y2)}] } \\Rightarrow {\\color{#2563eb} ${dp_str} } $$</p>`;
+        latex += `<p><b>Diagonais Secundárias ($\\swarrow$ - <span style="color:#ef4444;">Vermelha</span>):</b><br> $$ {\\color{#ef4444} - \\left( [y\\cdot${fmt(x1)}\\cdot1] + [x\\cdot1\\cdot${fmt(y2)}] + [1\\cdot${fmt(y1)}\\cdot${fmt(x2)}] \\right) } \\Rightarrow {\\color{#ef4444} - \\left[ ${ds_str} \\right] } $$</p>`;
+        latex += `</div>`;
 
         let coeff_x = y1 - y2, coeff_y = x2 - x1, const_term = c1 - c2;
         let str_x = coeff_x !== 0 ? `${coeff_x}x` : ``;
