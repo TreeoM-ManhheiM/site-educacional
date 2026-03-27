@@ -173,6 +173,9 @@
         if (dados.rodando) { 
             lobby.style.display = 'none'; 
             jogo.style.display = 'block'; 
+            
+            // CORREÇÃO: Avisa o tabuleiro para recalcular o tamanho agora que está visível
+            if (tabuleiroVisual) tabuleiroVisual.resize();
         } else { 
             lobby.style.display = 'block'; 
             document.getElementById('lista-alunos').innerHTML = dados.jogadoresInfo.map(j => `<li>👤 ${j.nome} ${j.pronto ? '✅' : '⏳'}</li>`).join(''); 
@@ -183,6 +186,9 @@
         minhaCor = dados.cor; 
         document.getElementById('minha-cor').innerText = (minhaCor === 'w') ? "⚪ Brancas" : "⚫ Pretas";
         
+        // CORREÇÃO: Garante o tamanho certo antes de virar as peças
+        if (tabuleiroVisual) tabuleiroVisual.resize();
+
         tabuleiroVisual.orientation(minhaCor === 'w' ? 'white' : 'black');
         motorXadrez.reset();
         tabuleiroVisual.start();
@@ -238,7 +244,7 @@
         document.getElementById('status-jogo').innerHTML = statusHTML;
     }
 
-    // AQUI ESTÁ A CORREÇÃO MÁGICA: pieceTheme adicionado!
+    // Configuração com as peças direto da internet
     let config = {
         draggable: true,
         position: 'start',
