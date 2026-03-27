@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regras do Xadrez — Laboratório de Computação</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        header p {
+            font-size: 16px;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .container-regras {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+
+        h2 {
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-top: 30px;
+        }
+
+        h3 {
+            color: #2563eb;
+            margin-bottom: 5px;
+        }
+
+        ul {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        .peca-destaque {
+            font-size: 24px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        .btn-voltar {
+            display: block;
+            width: fit-content;
+            margin: 30px auto 0;
+            background: #3b82f6;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .btn-voltar:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Regras do Xadrez Lógico ♟️</h1>
+        <p>Aprenda os movimentos e estratégias do jogo dos reis</p>
+    </header>
+
+    <main>
+        <div class="container-regras">
+            <h2>🎯 Objetivo do Jogo</h2>
+            <p>O objetivo do xadrez é dar <strong>Xeque-Mate</strong> no rei adversário. Isso acontece quando o rei está sob ataque (em "xeque") e não há nenhum movimento legal que possa salvá-lo na próxima jogada.</p>
+
+            <h2>♟️ As Peças e Seus Movimentos</h2>
+            
+            <h3><span class="peca-destaque">♙</span> Peão</h3>
+            <p>Move-se uma casa para frente. No seu primeiro movimento, pode avançar duas casas. O peão é a única peça que captura de forma diferente de como anda: ele captura nas diagonais imediatamente à sua frente. Nunca recua.</p>
+
+            <h3><span class="peca-destaque">♖</span> Torre</h3>
+            <p>Move-se em linha reta: horizontalmente ou verticalmente, quantas casas quiser, desde que o caminho esteja livre.</p>
+
+            <h3><span class="peca-destaque">♘</span> Cavalo</h3>
+            <p>Move-se em formato de "L" (duas casas em uma direção e uma casa para o lado). É a única peça do xadrez que pode "pular" sobre outras peças (tanto aliadas quanto inimigas).</p>
+
+            <h3><span class="peca-destaque">♗</span> Bispo</h3>
+            <p>Move-se apenas nas diagonais, quantas casas quiser, desde que o caminho esteja livre. Um bispo que começa na casa branca sempre andará nas casas brancas (e vice-versa).</p>
+
+            <h3><span class="peca-destaque">♕</span> Rainha (ou Dama)</h3>
+            <p>A peça mais poderosa do jogo! Ela combina os movimentos da Torre e do Bispo: pode andar na horizontal, vertical ou diagonal, quantas casas quiser.</p>
+
+            <h3><span class="peca-destaque">♔</span> Rei</h3>
+            <p>A peça mais importante. Move-se exatamente uma casa em qualquer direção (horizontal, vertical ou diagonal). O Rei nunca pode se mover para uma casa onde possa ser capturado (entrar em xeque).</p>
+
+            <h2>✨ Movimentos Especiais</h2>
+            <ul>
+                <li><strong>Roque:</strong> Um movimento defensivo que envolve o Rei e a Torre. O Rei anda duas casas em direção à Torre, e a Torre "pula" para o lado do Rei. Só pode ser feito se nem o Rei nem a Torre tiverem se movido antes na partida, e se o caminho entre eles estiver livre.</li>
+                <li><strong>Promoção do Peão:</strong> Se um peão conseguir atravessar todo o tabuleiro e chegar à última fileira do lado adversário, ele é "promovido" e pode se transformar em qualquer peça (geralmente a Rainha). Neste nosso sistema, ele vira Rainha automaticamente!</li>
+            </ul>
+
+            <a href="index.html" class="btn-voltar">⬅️ Voltar para o Jogo</a>
+        </div>
+    </main>
+
+</body>
+
+</html>
