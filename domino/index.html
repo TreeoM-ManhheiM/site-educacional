@@ -1,28 +1,177 @@
-function preJogo(i) {
-    const peca = maoAtual[i];
-    
-    // Se a mesa estiver vazia, joga direto
-    if (mesaAtual.length === 0) {
-        socket.emit('jogarPeca', { index: i, lado: 'dir' });
-        return;
-    }
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominó Lógico 🧠 - EE. 8 de Abril</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --ivory: #fdf6e3; 
+            --pips: #1a1a1a; 
+            --table: #14532d; 
+            --blue: #3b82f6; 
+            --bg: #0f172a;
+        }
+        
+        body { 
+            margin: 0; font-family: 'Montserrat', sans-serif; 
+            background: var(--bg); color: white; 
+            display: flex; flex-direction: column; align-items: center; 
+            min-height: 100vh;
+        }
 
-    const pEsq = mesaAtual[0][0];
-    const pDir = mesaAtual[mesaAtual.length - 1][1];
+        .container { width: 100%; max-width: 1100px; padding: 20px; text-align: center; box-sizing: border-box; }
+        
+        /* MESA DE JOGO */
+        #mesa {
+            background: var(--table); min-height: 350px; border-radius: 30px; padding: 40px;
+            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px;
+            box-shadow: inset 0 0 80px rgba(0,0,0,0.8); border: 8px solid #3e2723; margin: 20px 0;
+        }
 
-    const serveEsq = (peca[0] === pEsq || peca[1] === pEsq);
-    const serveDir = (peca[0] === pDir || peca[1] === pDir);
+        /* DESIGN DAS PEÇAS */
+        .peca {
+            background: var(--ivory); border-radius: 8px; color: var(--pips); font-size: 26px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; 
+            box-shadow: 0 5px 0px #ccc, 3px 8px 15px rgba(0,0,0,0.4);
+            cursor: pointer; transition: 0.2s; flex-shrink: 0; border: 1px solid #ddd;
+        }
 
-    if (serveEsq && serveDir) {
-        // Se servir nos dois, para não bugar com modal, joga na direita por padrão
-        // Ou você pode descomentar a linha do modal abaixo se ele estiver funcionando
-        // document.getElementById('modalLado').style.display = 'flex'; idxSel = i;
-        socket.emit('jogarPeca', { index: i, lado: 'dir' }); 
-    } else if (serveEsq) {
-        socket.emit('jogarPeca', { index: i, lado: 'esq' });
-    } else if (serveDir) {
-        socket.emit('jogarPeca', { index: i, lado: 'dir' });
-    } else {
-        alert("Essa peça não encaixa em lugar nenhum!");
-    }
-}
+        /* Peça deitada */
+        .p-horiz { width: 90px; height: 50px; flex-direction: row; }
+        .p-horiz .divisoria { width: 2px; height: 70%; background: #ccc; margin: 0 10px; }
+
+        /* Peça em pé (Bucha) */
+        .p-vert { width: 50px; height: 90px; flex-direction: column; }
+        .p-vert .divisoria { height: 2px; width: 70%; background: #ccc; margin: 10px 0; }
+
+        .peca:hover { transform: translateY(-5px); filter: brightness(1.1); border-color: var(--blue); }
+
+        /* INTERFACE */
+        .game-box { background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        button { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-weight: 900; cursor: pointer; margin: 10px; text-transform: uppercase; transition: 0.2s; }
+        button:hover { transform: scale(1.05); }
+        button:disabled { background: #475569; cursor: not-allowed; }
+        input { padding: 12px; border-radius: 8px; border: 2px solid #334155; margin: 10px; width: 220px; background: #000; color: #fff; text-align: center; }
+        
+        #status-turno { font-size: 22px; color: #fbbf24; margin: 20px; font-weight: 900; }
+        #mao { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; padding: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="lobby-screen">
+        <div class="game-box">
+            <h1>EE. 8 de Abril 🧠</h1>
+            <p>Dominó Online - Laboratório Lógico</p>
+            <input type="text" id="nick" placeholder="Seu Apelido" maxlength="12">
+            <input type="text" id="sala" placeholder="Nome da Sala">
+            <br>
+            <button onclick="entrar()">CONECTAR</button>
+            
+            <div id="espera" style="display:none; margin-top: 30px; border-top: 1px solid #334155; padding-top: 20px;">
+                <h3>Jogadores na Sala:</h3>
+                <ul id="lista" style="list-style: none; padding: 0; font-weight: bold; color: #60a5fa;"></ul>
+                <button id="btnIni" onclick="socket.emit('marcarPronto')" disabled>ESTOU PRONTO</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="jogo-screen" style="display:none">
+        <div id="status-turno">Aguardando...</div>
+        <div id="mesa"></div>
+        <p style="opacity: 0.5">SUAS PEÇAS:</p>
+        <div id="mao"></div>
+        <div style="margin-top:40px">
+            <button onclick="socket.emit('comprarPeca')" style="background: #475569;">📥 COMPRAR</button>
+            <button onclick="socket.emit('passarVez')" style="background: #475569;">⏭️ PASSAR VEZ</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+    <script>
+        // URL DO SEU BACKEND NO RENDER
+        const socket = io("https://motor-domino.onrender.com");
+        
+        let meuNome = "", mesaAtual = [], maoAtual = [];
+
+        function entrar() {
+            meuNome = document.getElementById('nick').value.trim();
+            const salaNome = document.getElementById('sala').value.trim();
+            if (!meuNome || !salaNome) return alert("Preencha nome e sala!");
+            socket.emit('entrarSala', { apelido: meuNome, sala: salaNome });
+        }
+
+        socket.on('estadoLobby', d => {
+            document.getElementById('espera').style.display = 'block';
+            document.getElementById('lista').innerHTML = d.jogadoresInfo.map(j => `<li>● ${j.nome}</li>`).join('');
+            document.getElementById('btnIni').disabled = d.jogadoresInfo.length < 2;
+        });
+
+        socket.on('jogoIniciado', () => {
+            document.getElementById('lobby-screen').style.display = 'none';
+            document.getElementById('jogo-screen').style.display = 'block';
+        });
+
+        socket.on('atualizarMesa', m => {
+            mesaAtual = m;
+            const mesaDiv = document.getElementById('mesa');
+            mesaDiv.innerHTML = m.map(p => {
+                let classe = p[0] === p[1] ? 'p-vert' : 'p-horiz';
+                return `<div class="peca ${classe}"><div>${p[0]}</div><div class="divisoria"></div><div>${p[1]}</div></div>`;
+            }).join('');
+        });
+
+        socket.on('atualizarMao', m => {
+            maoAtual = m;
+            const maoDiv = document.getElementById('mao');
+            maoDiv.innerHTML = m.map((p, i) => {
+                let classe = p[0] === p[1] ? 'p-vert' : 'p-horiz';
+                return `<div class="peca ${classe}" onclick="tentarJogar(${i})"><div>${p[0]}</div><div class="divisoria"></div><div>${p[1]}</div></div>`;
+            }).join('');
+        });
+
+        socket.on('mudarTurno', d => {
+            const status = document.getElementById('status-turno');
+            if (d.nome === meuNome) {
+                status.innerText = "⭐ SUA VEZ DE JOGAR!";
+                status.style.color = "#10b981";
+            } else {
+                status.innerText = `Vez de: ${d.nome}`;
+                status.style.color = "#fbbf24";
+            }
+        });
+
+        // LÓGICA DE CLIQUE CORRIGIDA (SEM MODAL QUE TRAVA)
+        function tentarJogar(index) {
+            const peca = maoAtual[index];
+
+            // Se for a primeira peça da mesa
+            if (mesaAtual.length === 0) {
+                socket.emit('jogarPeca', { index: index, lado: 'dir' });
+                return;
+            }
+
+            const pEsq = mesaAtual[0][0];
+            const pDir = mesaAtual[mesaAtual.length - 1][1];
+
+            const serveEsq = (peca[0] === pEsq || peca[1] === pEsq);
+            const serveDir = (peca[0] === pDir || peca[1] === pDir);
+
+            if (serveDir) {
+                // Prioriza o lado direito para evitar perguntas
+                socket.emit('jogarPeca', { index: index, lado: 'dir' });
+            } else if (serveEsq) {
+                socket.emit('jogarPeca', { index: index, lado: 'esq' });
+            } else {
+                alert("Essa peça não encaixa em nenhuma das pontas!");
+            }
+        }
+
+        socket.on('erro', msg => alert(msg));
+        socket.on('mensagemGeral', msg => alert(msg));
+        socket.on('resetJogo', () => location.reload());
+    </script>
+</body>
+</html>
