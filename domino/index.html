@@ -6,120 +6,29 @@
     <title>Dominó Lógico</title>
     <style>
         /* BASE DA PÁGINA */
-        body { 
-            margin: 0; 
-            font-family: sans-serif; 
-            background: #0f172a; 
-            color: white; 
-            text-align: center; 
-        }
-        
-        /* TELAS */
+        body { margin: 0; font-family: sans-serif; background: #0f172a; color: white; text-align: center; }
         #lobby { padding: 50px; }
         #jogo { padding: 20px; }
 
-        /* A MESA ONDE AS PEÇAS SÃO JOGADAS */
-        #mesa { 
-            background: #14532d; 
-            min-height: 300px; 
-            border-radius: 20px; 
-            border: 8px solid #3e2723; 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 10px; 
-            margin: 20px auto; 
-            max-width: 90%; 
-            padding: 20px;
-        }
+        /* MESA E MÃO */
+        #mesa { background: #14532d; min-height: 300px; border-radius: 20px; border: 8px solid #3e2723; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 20px auto; max-width: 90%; padding: 20px; }
+        #mao { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; margin-bottom: 20px; }
 
-        /* A MÃO DO JOGADOR (COM FLEXBOX PARA ALINHAR TUDO) */
-        #mao { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 10px; 
-            flex-wrap: wrap; 
-            margin-top: 20px; 
-            margin-bottom: 20px;
-        }
-
-        /* ESTILO GERAL DAS PEÇAS */
-        .peca { 
-            background: #fdf6e3; 
-            color: #1a1a1a; 
-            border-radius: 5px; 
-            font-weight: bold; 
-            font-size: 24px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
-            cursor: pointer; 
-            box-shadow: 0 4px 0 #ccc; 
-        }
-
-        /* PEÇA DEITADA */
-        .p-horiz { 
-            width: 80px; 
-            height: 40px; 
-            flex-direction: row; 
-        }
-
-        /* PEÇA EM PÉ */
-        .p-vert { 
-            width: 40px; 
-            height: 80px; 
-            flex-direction: column; 
-        }
-
-        /* ÁREA ONDE FICA O NÚMERO DENTRO DA PEÇA */
-        .valor {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-        }
-
-        /* LINHA DO MEIO DA PEÇA DEITADA */
-        .p-horiz .linha {
-            width: 2px;
-            height: 100%;
-            background: #ccc;
-        }
-
-        /* LINHA DO MEIO DA PEÇA EM PÉ */
-        .p-vert .linha {
-            width: 100%;
-            height: 2px;
-            background: #ccc;
-        }
+        /* PEÇAS */
+        .peca { background: #fdf6e3; color: #1a1a1a; border-radius: 5px; font-weight: bold; font-size: 24px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 0 #ccc; }
+        .p-horiz { width: 80px; height: 40px; flex-direction: row; }
+        .p-vert { width: 40px; height: 80px; flex-direction: column; }
+        .valor { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
+        .p-horiz .linha { width: 2px; height: 100%; background: #ccc; }
+        .p-vert .linha { width: 100%; height: 2px; background: #ccc; }
 
         /* BOTÕES E INPUTS */
-        button { 
-            background: #3b82f6; 
-            color: white; 
-            border: none; 
-            padding: 10px 20px; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            margin: 5px; 
-            font-size: 16px;
-        }
-        button:disabled {
-            background: #64748b;
-            cursor: not-allowed;
-        }
-        input { 
-            padding: 10px; 
-            border-radius: 5px; 
-            border: none; 
-            margin: 5px; 
-            font-size: 16px;
-        }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; font-size: 16px; transition: 0.3s; }
+        button:disabled { background: #64748b; cursor: not-allowed; }
+        input { padding: 10px; border-radius: 5px; border: none; margin: 5px; font-size: 16px; text-align: center; }
+        
+        /* TIMER DO LOBBY */
+        #avisoTempo { color: #fbbf24; font-weight: bold; font-size: 18px; display: none; margin-bottom: 15px;}
     </style>
 </head>
 <body>
@@ -134,17 +43,16 @@
 
         <div id="espera" style="display:none">
             <ul id="lista" style="list-style: none; padding: 0; font-size: 18px; margin-bottom: 20px;"></ul>
-            <button id="btnIni" onclick="socket.emit('marcarPronto')" disabled>INICIAR</button>
+            
+            <p id="avisoTempo"></p> 
+            <button id="btnIni" onclick="clicarPronto()" disabled>CONFIRMAR PRONTO</button>
         </div>
     </div>
 
     <div id="jogo" style="display:none">
         <h2 id="turno">Aguardando...</h2>
-        
         <div id="mesa"></div>
-        
         <div id="mao"></div>
-        
         <div>
             <button onclick="socket.emit('comprarPeca')">COMPRAR</button>
             <button onclick="socket.emit('passarVez')">PASSAR</button>
@@ -156,81 +64,55 @@
         const socket = io("https://motor-domino.onrender.com");
         let meuNome = "", mesaAtu = [], maoAtu = [];
 
-        // FUNÇÃO DE ENTRAR ARRUMADA (MATA O BUG DOS CLONES)
+        // LÓGICA DO LOBBY INTELIGENTE
+        let jaEstouPronto = false; 
+        let timerLigado = false;
+        let tempoRestante = 180;
+        let intervaloTimer = null;
+
         function entrar() {
             meuNome = document.getElementById('nick').value;
             const sala = document.getElementById('sala').value;
 
-            if (meuNome.trim() === "" || sala.trim() === "") {
-                return alert("Por favor, preencha seu nome e a sala!");
-            }
+            if (meuNome.trim() === "" || sala.trim() === "") return alert("Preencha seu nome e a sala!");
 
             socket.emit('entrarSala', { apelido: meuNome, sala: sala });
-
-            // Esconde as caixas de texto e o botão CONECTAR após o primeiro clique
             document.getElementById('controles-login').style.display = 'none';
         }
 
         socket.on('estadoLobby', d => {
+            const qtd = d.jogadoresInfo.length;
             document.getElementById('espera').style.display = 'block';
             document.getElementById('lista').innerHTML = d.jogadoresInfo.map(j => `<li>${j.nome}</li>`).join('');
-            document.getElementById('btnIni').disabled = d.jogadoresInfo.length < 2;
-        });
-
-        socket.on('jogoIniciado', () => {
-            document.getElementById('lobby').style.display = 'none';
-            document.getElementById('jogo').style.display = 'block';
-        });
-
-        socket.on('atualizarMesa', m => {
-            mesaAtu = m;
-            document.getElementById('mesa').innerHTML = m.map(p => `
-                <div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}">
-                    <div class="valor">${p[0]}</div>
-                    <div class="linha"></div>
-                    <div class="valor">${p[1]}</div>
-                </div>`).join('');
-        });
-
-        socket.on('atualizarMao', m => {
-            maoAtu = m;
-            document.getElementById('mao').innerHTML = m.map((p, i) => `
-                <div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}" onclick="jogar(${i})">
-                    <div class="valor">${p[0]}</div>
-                    <div class="linha"></div>
-                    <div class="valor">${p[1]}</div>
-                </div>`).join('');
-        });
-
-        socket.on('mudarTurno', d => { 
-            document.getElementById('turno').innerText = d.nome === meuNome ? "SUA VEZ!" : "Vez de " + d.nome; 
-        });
-
-        function jogar(idx) {
-            const p = maoAtu[idx];
             
-            if (mesaAtu.length === 0) {
-                return socket.emit('jogarPeca', { index: idx, lado: 'dir' });
+            const btn = document.getElementById('btnIni');
+
+            // Se esvaziar a sala (alguém saiu e ficou só 1), cancela o timer
+            if (qtd < 2) {
+                clearInterval(intervaloTimer);
+                timerLigado = false;
+                document.getElementById('avisoTempo').style.display = 'none';
+                btn.disabled = true;
+                return;
             }
 
-            const e = mesaAtu[0][0]; 
-            const d = mesaAtu[mesaAtu.length - 1][1]; 
+            // REGRA MÁXIMA: 4 Jogadores = Inicia na hora, sem choro
+            if (qtd === 4) {
+                if (!jaEstouPronto) clicarPronto();
+            } 
+            // REGRA DO 1x1 e 1x1x1: Deixa confirmar, se não confirmar em 180s, força.
+            else if (qtd >= 2 && qtd < 4) {
+                if (!jaEstouPronto) {
+                    btn.disabled = false; // Libera pro jogador clicar e confirmar
+                }
+                
+                if (!timerLigado) {
+                    iniciarTimerLobby();
+                }
+            } 
+        });
 
-            const serveEsq = (p[0] === e || p[1] === e);
-            const serveDir = (p[0] === d || p[1] === d);
-
-            if (serveDir) {
-                socket.emit('jogarPeca', { index: idx, lado: 'dir' });
-            } else if (serveEsq) {
-                socket.emit('jogarPeca', { index: idx, lado: 'esq' });
-            } else {
-                alert("Não encaixa em nenhum lado!");
-            }
-        }
-
-        socket.on('erro', m => alert(m));
-        socket.on('mensagemGeral', m => alert(m));
-        socket.on('resetJogo', () => location.reload());
-    </script>
-</body>
-</html>
+        // Essa função é chamada quando o jogador clica para confirmar, ou quando bate 180s/4 jogadores
+        function clicarPronto() {
+            if (jaEstouPronto) return;
+            jaEstouPronto = true;
