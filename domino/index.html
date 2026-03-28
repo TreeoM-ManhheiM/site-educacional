@@ -5,45 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dominó Lógico</title>
     <style>
-        /* BASE DA PÁGINA */
         body { margin: 0; font-family: sans-serif; background: #0f172a; color: white; text-align: center; }
         #lobby { padding: 50px; }
         #jogo { padding: 20px; }
-
-        /* MESA E MÃO */
         #mesa { background: #14532d; min-height: 300px; border-radius: 20px; border: 8px solid #3e2723; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 20px auto; max-width: 90%; padding: 20px; }
         #mao { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; margin-bottom: 20px; }
-
-        /* PEÇAS */
         .peca { background: #fdf6e3; color: #1a1a1a; border-radius: 5px; font-weight: bold; font-size: 24px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 0 #ccc; }
         .p-horiz { width: 80px; height: 40px; flex-direction: row; }
         .p-vert { width: 40px; height: 80px; flex-direction: column; }
         .valor { flex: 1; display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
         .p-horiz .linha { width: 2px; height: 100%; background: #ccc; }
         .p-vert .linha { width: 100%; height: 2px; background: #ccc; }
-
-        /* BOTÕES E INPUTS */
         button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; font-size: 16px; transition: 0.3s; }
         button:disabled { background: #64748b; cursor: not-allowed; }
         input { padding: 10px; border-radius: 5px; border: none; margin: 5px; font-size: 16px; text-align: center; }
-        
-        /* TIMER DO LOBBY */
         #avisoTempo { color: #fbbf24; font-weight: bold; font-size: 18px; display: none; margin-bottom: 15px;}
     </style>
 </head>
 <body>
     <div id="lobby">
         <h1>EE. 8 de Abril 🧠</h1>
-        
         <div id="controles-login">
             <input type="text" id="nick" placeholder="Seu Nome">
             <input type="text" id="sala" placeholder="Sala">
             <button onclick="window.entrar()">CONECTAR</button>
         </div>
-
         <div id="espera" style="display:none">
             <ul id="lista" style="list-style: none; padding: 0; font-size: 18px; margin-bottom: 20px;"></ul>
-            
             <p id="avisoTempo"></p> 
             <button id="btnIni" onclick="window.clicarPronto()" disabled>CONFIRMAR PRONTO</button>
         </div>
@@ -61,29 +49,21 @@
 
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     <script>
-        // 1. Conexão com o Servidor (Protegido contra erros de carregamento)
         let socket;
         try {
+            // LEMBRE-SE DE COLOCAR O SEU LINK DO RENDER AQUI SE PRECISAR!
             socket = io("https://motor-domino.onrender.com");
         } catch(err) {
-            console.error("Erro ao carregar o Socket.IO:", err);
             alert("Aguarde um momento e recarregue a página.");
         }
 
-        // 2. Variáveis Globais
         let meuNome = "", mesaAtu = [], maoAtu = [];
-        let jaEstouPronto = false; 
-        let timerLigado = false;
-        let tempoRestante = 180;
-        let intervaloTimer = null;
+        let jaEstouPronto = false, timerLigado = false, tempoRestante = 180, intervaloTimer = null;
 
-        // 3. Funções dos botões (Amarradas no window para não dar "is not defined")
         window.entrar = function() {
             meuNome = document.getElementById('nick').value;
             const sala = document.getElementById('sala').value;
-
             if (meuNome.trim() === "" || sala.trim() === "") return alert("Preencha seu nome e a sala!");
-
             socket.emit('entrarSala', { apelido: meuNome, sala: sala });
             document.getElementById('controles-login').style.display = 'none';
         };
@@ -91,21 +71,14 @@
         window.clicarPronto = function() {
             if (jaEstouPronto) return;
             jaEstouPronto = true; 
-            
             socket.emit('marcarPronto'); 
-            
             const btn = document.getElementById('btnIni');
-            btn.disabled = true;
-            btn.innerText = "ESPERANDO OS OUTROS...";
-            btn.style.background = "#059669"; 
+            btn.disabled = true; btn.innerText = "ESPERANDO OS OUTROS..."; btn.style.background = "#059669"; 
         };
 
         window.jogar = function(idx) {
             const p = maoAtu[idx];
-            
-            if (mesaAtu.length === 0) {
-                return socket.emit('jogarPeca', { index: idx, lado: 'dir' });
-            }
+            if (mesaAtu.length === 0) return socket.emit('jogarPeca', { index: idx, lado: 'dir' });
 
             const e = mesaAtu[0][0]; 
             const d = mesaAtu[mesaAtu.length - 1][1]; 
@@ -113,101 +86,59 @@
             const serveEsq = (p[0] === e || p[1] === e);
             const serveDir = (p[0] === d || p[1] === d);
 
-            if (serveDir) {
+            if (serveDir && serveEsq) {
+                let escolha = confirm("Essa peça serve nos dois lados! Quer colocar na ESQUERDA? \n(Clique OK para ESQUERDA, ou Cancelar para DIREITA)");
+                socket.emit('jogarPeca', { index: idx, lado: escolha ? 'esq' : 'dir' });
+            } else if (serveDir) {
                 socket.emit('jogarPeca', { index: idx, lado: 'dir' });
             } else if (serveEsq) {
                 socket.emit('jogarPeca', { index: idx, lado: 'esq' });
             } else {
-                alert("Não encaixa em nenhum lado!");
+                alert("Não encaixa em nenhum lado da mesa!");
             }
         };
 
         window.comprar = function() { socket.emit('comprarPeca'); };
         window.passar = function() { socket.emit('passarVez'); };
 
-        // 4. Sistema do Cronômetro
         function iniciarTimerLobby() {
-            timerLigado = true;
-            tempoRestante = 180;
-            document.getElementById('avisoTempo').style.display = 'block';
+            timerLigado = true; tempoRestante = 180; document.getElementById('avisoTempo').style.display = 'block';
             atualizarTextoTimer();
-
             intervaloTimer = setInterval(() => {
-                tempoRestante--;
-                atualizarTextoTimer();
-                
-                if (tempoRestante <= 0) {
-                    clearInterval(intervaloTimer);
-                    if (!jaEstouPronto) {
-                        window.clicarPronto(); 
-                    }
-                }
+                tempoRestante--; atualizarTextoTimer();
+                if (tempoRestante <= 0) { clearInterval(intervaloTimer); if (!jaEstouPronto) window.clicarPronto(); }
             }, 1000);
         }
 
         function atualizarTextoTimer() {
-            document.getElementById('avisoTempo').innerText = `O jogo iniciará automaticamente em ${tempoRestante}s se alguém não confirmar`;
+            document.getElementById('avisoTempo').innerText = `O jogo iniciará em ${tempoRestante}s se alguém não confirmar`;
         }
 
-        // 5. Comunicação com o Servidor
         socket.on('estadoLobby', d => {
             const qtd = d.jogadoresInfo.length;
             document.getElementById('espera').style.display = 'block';
             document.getElementById('lista').innerHTML = d.jogadoresInfo.map(j => `<li>${j.nome}</li>`).join('');
-            
             const btn = document.getElementById('btnIni');
-
-            if (qtd < 2) {
-                clearInterval(intervaloTimer);
-                timerLigado = false;
-                document.getElementById('avisoTempo').style.display = 'none';
-                btn.disabled = true;
-                return;
-            }
-
-            if (qtd === 4) {
-                if (!jaEstouPronto) window.clicarPronto();
-            } 
-            else if (qtd >= 2 && qtd < 4) {
-                if (!jaEstouPronto) {
-                    btn.disabled = false; 
-                }
-                if (!timerLigado) {
-                    iniciarTimerLobby();
-                }
-            } 
+            if (qtd < 2) { clearInterval(intervaloTimer); timerLigado = false; document.getElementById('avisoTempo').style.display = 'none'; btn.disabled = true; return; }
+            if (qtd === 4 && !jaEstouPronto) window.clicarPronto();
+            else if (qtd >= 2 && qtd < 4) { if (!jaEstouPronto) btn.disabled = false; if (!timerLigado) iniciarTimerLobby(); } 
         });
 
         socket.on('jogoIniciado', () => {
-            clearInterval(intervaloTimer); 
-            document.getElementById('lobby').style.display = 'none';
-            document.getElementById('jogo').style.display = 'block';
+            clearInterval(intervaloTimer); document.getElementById('lobby').style.display = 'none'; document.getElementById('jogo').style.display = 'block';
         });
 
         socket.on('atualizarMesa', m => {
             mesaAtu = m;
-            document.getElementById('mesa').innerHTML = m.map(p => `
-                <div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}">
-                    <div class="valor">${p[0]}</div>
-                    <div class="linha"></div>
-                    <div class="valor">${p[1]}</div>
-                </div>`).join('');
+            document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}"><div class="valor">${p[0]}</div><div class="linha"></div><div class="valor">${p[1]}</div></div>`).join('');
         });
 
         socket.on('atualizarMao', m => {
             maoAtu = m;
-            document.getElementById('mao').innerHTML = m.map((p, i) => `
-                <div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}" onclick="window.jogar(${i})">
-                    <div class="valor">${p[0]}</div>
-                    <div class="linha"></div>
-                    <div class="valor">${p[1]}</div>
-                </div>`).join('');
+            document.getElementById('mao').innerHTML = m.map((p, i) => `<div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}" onclick="window.jogar(${i})"><div class="valor">${p[0]}</div><div class="linha"></div><div class="valor">${p[1]}</div></div>`).join('');
         });
 
-        socket.on('mudarTurno', d => { 
-            document.getElementById('turno').innerText = d.nome === meuNome ? "SUA VEZ!" : "Vez de " + d.nome; 
-        });
-
+        socket.on('mudarTurno', d => { document.getElementById('turno').innerText = d.nome === meuNome ? "SUA VEZ!" : "Vez de " + d.nome; });
         socket.on('erro', m => alert(m));
         socket.on('mensagemGeral', m => alert(m));
         socket.on('resetJogo', () => location.reload());
