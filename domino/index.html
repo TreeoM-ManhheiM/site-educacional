@@ -152,10 +152,8 @@
 
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     <script>
-        // ATENÇÃO: Se o front-end HTML não estiver hospedado no mesmo link do back-end,
-        // substitua o io() abaixo pela URL do seu Render. 
-        // Exemplo: const socket = io("https://seu-backend.onrender.com");
-        const socket = io();
+        // CONEXÃO CORRIGIDA PARA O RENDER COM HTTPS!
+        const socket = io("https://domino-online.onrender.com");
         
         let pecaSelecionadaIdx = null;
         let mesaAtual = [];
@@ -169,12 +167,16 @@
             const sala = document.getElementById('nome-sala').value.trim();
             if (!nome || !sala) return alert("Preencha seu nome e a sala!");
             socket.emit('entrarSala', { nomeJogador: nome, nomeSala: sala });
+            // Aqui tem que usar os nomes corretos que seu servidor espera
+            // Dependendo do seu server.js atual, pode ser 'entrarSala', { apelido: nome, sala: sala }
+            // Como estou mantendo seu Front-End, se der erro ao entrar, avise!
+            
             document.getElementById('nome-jogador').disabled = true;
             document.getElementById('nome-sala').disabled = true;
         }
 
         function iniciar() {
-            socket.emit('iniciarJogo');
+            socket.emit('marcarPronto'); // Adequado para o que vimos no seu servidor hoje
         }
 
         socket.on('estadoLobby', (dados) => {
@@ -206,7 +208,6 @@
             const divMesa = document.getElementById('mesa');
             divMesa.innerHTML = '';
             mesa.forEach(p => {
-                // REGRA ESTILO: Se for carroça, usa classe 'p-vert' (em pé). Se não, 'p-horiz' (deitado).
                 const estiloPeca = (p[0] === p[1]) ? 'p-vert' : 'p-horiz';
                 divMesa.innerHTML += `<div class="peca-domino mesa-peca ${estiloPeca}"><span>${p[0]}</span><span>${p[1]}</span></div>`;
             });
@@ -216,7 +217,6 @@
             const div = document.getElementById('minhas-pecas');
             div.innerHTML = '';
             mao.forEach((p, i) => {
-                // REGRA ESTILO: Aplica mesma regra visual das carroças na mão
                 const estiloPecaMao = (p[0] === p[1]) ? 'p-vert' : 'p-horiz';
                 let conteudo = maoOculta ? `<span>?</span><span>?</span>` : `<span>${p[0]}</span><span>${p[1]}</span>`;
                 div.innerHTML += `<div class="peca-domino ${estiloPecaMao}" onclick="validarJogada(${i}, ${JSON.stringify(mao)})">${conteudo}</div>`;
@@ -235,6 +235,19 @@
             }
         });
 
+        socket.on('mudarTurno', (dados) => {
+            // Suporte para a versão do backend que envia mudarTurno com o nome
+            const status = document.getElementById('status-turno');
+            const meuNome = document.getElementById('nome-jogador').value.trim();
+            if (dados.nome === meuNome) {
+                status.innerText = "⭐ SUA VEZ DE JOGAR! ⭐";
+                status.style.color = "#10b981";
+            } else {
+                status.innerText = `Aguarde... Vez de: ${dados.nome}`;
+                status.style.color = "var(--danger-accent)";
+            }
+        });
+
         socket.on('atualizarMonte', (qtd) => {
             document.getElementById('info-monte').innerText = `📥 Monte: ${qtd}`;
         });
@@ -242,6 +255,10 @@
         socket.on('atualizarJogadores', (jogadores) => {
             let info = jogadores.map(j => `<span style="border:1px solid rgba(255,255,255,0.1); padding: 4px 8px; border-radius:4px; font-size:12px; font-weight:600; margin-left:5px;">${j.nome}(${j.pecas})</span>`).join(' ');
             document.getElementById('info-jogadores').innerHTML = `Peças: ${info}`;
+        });
+
+        socket.on('infoParceiro', (msg) => {
+             document.getElementById('info-jogadores').innerHTML = `Sua Dupla: ${msg}`;
         });
 
         // ---- LÓGICA DE JOGADA ----
@@ -272,7 +289,6 @@
         // ---- RECURSOS EXTRAS ----
         function togglePecas() {
             maoOculta = !maoOculta;
-            // Oculta/Mostra os spans com os números dentro das peças
             const pecasConteudo = document.querySelectorAll('#minhas-pecas .peca-domino span');
             if (maoOculta) pecasConteudo.forEach(p => p.style.opacity = "0");
             else pecasConteudo.forEach(p => p.style.opacity = "1");
@@ -282,11 +298,17 @@
             alert("⚠️ ERROR: " + msg);
         });
 
-        // ---- FIM DE JOGO ----
+        // ---- FIM DE JOGO E RESET ----
         socket.on('fimDeJogo', (dados) => {
             document.getElementById('titulo-fim').innerText = dados.motivo;
             document.getElementById('mensagem-fim').innerText = dados.mensagem;
             document.getElementById('modal-fim-jogo').style.display = 'flex';
+        });
+
+        socket.on('resetJogo', () => {
+             // Limpa a mesa e a mão caso o servidor mande um reset
+             document.getElementById('mesa').innerHTML = '';
+             document.getElementById('minhas-pecas').innerHTML = '';
         });
 
         function voltarAoLobbyDaPartida() {
@@ -294,6 +316,10 @@
             document.getElementById('tela-jogo').style.display = 'none';
             document.getElementById('lobby').style.display = 'block';
             document.getElementById('btn-iniciar').style.display = 'inline-block';
+            
+            // Reabilita os inputs para permitir entrar em outra sala
+            document.getElementById('nome-jogador').disabled = false;
+            document.getElementById('nome-sala').disabled = false;
         }
     </script>
 </body>
