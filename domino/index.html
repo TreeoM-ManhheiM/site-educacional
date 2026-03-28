@@ -1,221 +1,28 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EE. 8 de Abril Lógico 🧠 — Dominó Online</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --domino-ivory: #fdf6e3;
-            --domino-pips: #1a1a1a;
-            --domino-sep: #d1d1d1;
-            --table-green: #14532d;
-            --bg-dark: #0f172a;
-            --blue-accent: #3b82f6;
-        }
+function preJogo(i) {
+    const peca = maoAtual[i];
+    
+    // Se a mesa estiver vazia, joga direto
+    if (mesaAtual.length === 0) {
+        socket.emit('jogarPeca', { index: i, lado: 'dir' });
+        return;
+    }
 
-        body { 
-            margin: 0; 
-            font-family: 'Montserrat', sans-serif; 
-            background: var(--bg-dark); 
-            color: white; 
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        header { padding: 20px; text-align: center; }
-        header h1 { margin: 0; font-size: 24px; }
-        
-        .container { width: 100%; max-width: 1000px; padding: 20px; box-sizing: border-box; }
-        
-        /* LOBBY */
-        .game-box { 
-            background: #1e293b; 
-            border-radius: 20px; 
-            padding: 40px; 
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
+    const pEsq = mesaAtual[0][0];
+    const pDir = mesaAtual[mesaAtual.length - 1][1];
 
-        .input-group { display: flex; flex-direction: column; gap: 15px; align-items: center; }
-        input { padding: 12px; font-size: 16px; border: 2px solid #334155; background: #000; color: #fff; border-radius: 8px; width: 250px; text-align: center; }
-        button { background: var(--blue-accent); color: white; border: none; padding: 12px 30px; font-size: 16px; border-radius: 8px; cursor: pointer; font-weight: 800; text-transform: uppercase; }
+    const serveEsq = (peca[0] === pEsq || peca[1] === pEsq);
+    const serveDir = (peca[0] === pDir || peca[1] === pDir);
 
-        /* MESA DE JOGO */
-        #tela-jogo { display: none; width: 100%; }
-        #mesa {
-            background-color: var(--table-green);
-            min-height: 350px; 
-            border-radius: 24px; 
-            padding: 40px; 
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 10px;
-            box-shadow: inset 0 0 60px rgba(0,0,0,0.7); 
-            border: 10px solid #3e2723;
-            margin: 20px 0;
-            box-sizing: border-box;
-        }
-
-        /* --- DESIGN CRÍTICO DAS PEÇAS (CSS GRID) --- */
-        .peca-domino {
-            background: var(--domino-ivory); 
-            border-radius: 8px; 
-            font-weight: 800; 
-            color: var(--domino-pips);
-            box-shadow: 3px 5px 8px rgba(0,0,0,0.4); 
-            display: grid; /* Usando Grid para alinhamento perfeito */
-            overflow: hidden;
-            flex-shrink: 0;
-            border-bottom: 3px solid #e2e2e2;
-        }
-
-        /* Peça Horizontal: 2 colunas, 1 linha */
-        .p-horiz { 
-            width: 90px; 
-            height: 45px; 
-            grid-template-columns: 1fr auto 1fr; /* Esquerda, Divisor, Direita */
-            grid-template-rows: 1fr;
-            font-size: 26px; 
-        }
-        .p-horiz .divisoria { width: 2px; height: 80%; background: var(--domino-sep); grid-column: 2; align-self: center; }
-
-        /* Peça Vertical: 1 coluna, 2 linhas */
-        .p-vert { 
-            width: 45px; 
-            height: 90px; 
-            grid-template-columns: 1fr;
-            grid-template-rows: 1fr auto 1fr; /* Cima, Divisor, Baixo */
-            font-size: 26px; 
-        }
-        .p-vert .divisoria { height: 2px; width: 80%; background: var(--domino-sep); grid-row: 2; justify-self: center; }
-
-        /* Centralização dos Números dentro do Grid */
-        .peca-domino .numero {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-        }
-
-        /* MINHA MÃO */
-        #minhas-pecas { 
-            display: flex; 
-            justify-content: center; 
-            gap: 15px; 
-            flex-wrap: wrap; 
-            margin: 30px 0; 
-            padding: 20px;
-        }
-        
-        .peca-domino:hover { cursor: pointer; transform: translateY(-8px); border-color: var(--blue-accent); }
-        #status-turno { font-size: 22px; font-weight: 800; margin: 20px 0; text-align: center; color: #fbbf24; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>EE. 8 de Abril Lógico 🧠</h1>
-    </header>
-
-    <div class="container">
-        <div id="lobby" class="game-box">
-            <h2>Novo Jogo</h2>
-            <div class="input-group">
-                <input type="text" id="nome-jogador" placeholder="Seu Apelido" maxlength="12">
-                <input type="text" id="nome-sala" placeholder="Nome da Sala">
-                <button onclick="entrar()">ENTRAR</button>
-            </div>
-            
-            <div id="espera" style="display: none; margin-top: 30px;">
-                <p>Aguardando jogadores...</p>
-                <ul id="lista-jogadores" style="list-style: none; padding: 0; font-size: 18px; color: #60a5fa;"></ul>
-                <button id="btn-iniciar" onclick="iniciar()" disabled>COMEÇAR</button>
-            </div>
-        </div>
-
-        <div id="tela-jogo">
-            <div id="status-turno">Aguardando início...</div>
-            <div id="mesa"></div>
-            <p style="text-align: center; opacity: 0.6; margin-top: 30px;">SUAS PEÇAS (Clique para jogar):</p>
-            <div id="minhas-pecas"></div>
-            <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center; padding-bottom: 40px;">
-                <button onclick="socket.emit('comprarPeca')" style="background:#4b5563">📥 Comprar</button>
-                <button onclick="socket.emit('passarVez')" style="background:#4b5563">⏭️ Passar</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-    <script>
-        const socket = io("https://motor-domino.onrender.com");
-        let meuNome = "";
-
-        function entrar() {
-            meuNome = document.getElementById('nome-jogador').value.trim();
-            const sala = document.getElementById('nome-sala').value.trim();
-            if (!meuNome || !sala) return alert("Preencha os campos!");
-            socket.emit('entrarSala', { apelido: meuNome, sala: sala });
-        }
-
-        function iniciar() { socket.emit('marcarPronto'); }
-
-        socket.on('estadoLobby', (dados) => {
-            document.getElementById('espera').style.display = 'block';
-            const ul = document.getElementById('lista-jogadores');
-            ul.innerHTML = dados.jogadoresInfo.map(j => `<li>● ${j.nome}</li>`).join('');
-            document.getElementById('btn-iniciar').disabled = dados.jogadoresInfo.length < 2;
-            
-            if(dados.rodando) {
-                document.getElementById('lobby').style.display = 'none';
-                document.getElementById('tela-jogo').style.display = 'block';
-            }
-        });
-
-        socket.on('atualizarMesa', (mesa) => {
-            const divMesa = document.getElementById('mesa');
-            divMesa.innerHTML = mesa.map(p => {
-                const estilo = (p[0] === p[1]) ? 'p-vert' : 'p-horiz';
-                return `<div class="peca-domino ${estilo}">
-                            <div class="numero">${p[0]}</div>
-                            <div class="divisoria"></div>
-                            <div class="numero">${p[1]}</div>
-                        </div>`;
-            }).join('');
-        });
-
-        socket.on('atualizarMao', (mao) => {
-            const div = document.getElementById('minhas-pecas');
-            div.innerHTML = mao.map((p, i) => {
-                const estilo = (p[0] === p[1]) ? 'p-vert' : 'p-horiz';
-                return `<div class="peca-domino ${estilo}" onclick="jogar(${i})">
-                            <div class="numero">${p[0]}</div>
-                            <div class="divisoria"></div>
-                            <div class="numero">${p[1]}</div>
-                        </div>`;
-            }).join('');
-        });
-
-        socket.on('mudarTurno', (dados) => {
-            const status = document.getElementById('status-turno');
-            status.innerText = (dados.nome === meuNome) ? "⭐ SUA VEZ!" : `Vez de: ${dados.nome}`;
-            status.style.color = (dados.nome === meuNome) ? "#10b981" : "#fbbf24";
-        });
-
-        function jogar(index) {
-            // Lógica simples: tenta jogar na direita automático.
-            // Para escolher o lado, precisaria reativar o Modal.
-            socket.emit('jogarPeca', { index, lado: 'dir' });
-        }
-
-        socket.on('erro', msg => alert(msg));
-        socket.on('resetJogo', () => location.reload());
-    </script>
-</body>
-</html>
+    if (serveEsq && serveDir) {
+        // Se servir nos dois, para não bugar com modal, joga na direita por padrão
+        // Ou você pode descomentar a linha do modal abaixo se ele estiver funcionando
+        // document.getElementById('modalLado').style.display = 'flex'; idxSel = i;
+        socket.emit('jogarPeca', { index: i, lado: 'dir' }); 
+    } else if (serveEsq) {
+        socket.emit('jogarPeca', { index: i, lado: 'esq' });
+    } else if (serveDir) {
+        socket.emit('jogarPeca', { index: i, lado: 'dir' });
+    } else {
+        alert("Essa peça não encaixa em lugar nenhum!");
+    }
+}
