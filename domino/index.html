@@ -5,17 +5,121 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dominó Lógico</title>
     <style>
-        body { margin: 0; font-family: sans-serif; background: #0f172a; color: white; text-align: center; }
-        .container { padding: 20px; }
-        #mesa { background: #14532d; min-height: 300px; border-radius: 20px; border: 8px solid #3e2723; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 20px auto; max-width: 90%; }
-        .peca { background: #fdf6e3; color: #1a1a1a; border-radius: 5px; font-weight: bold; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 2px 4px 0 #ccc; }
-        .p-horiz { width: 80px; height: 40px; }
-        .p-horiz::after { content: ""; width: 2px; height: 100%; background: #ccc; margin: 0 10px; }
-        .p-vert { width: 40px; height: 80px; flex-direction: column; }
-        .p-vert::after { content: ""; height: 2px; width: 100%; background: #ccc; margin: 10px 0; }
-        #mao { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
-        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; }
-        input { padding: 10px; border-radius: 5px; border: none; margin: 5px; }
+        /* BASE DA PÁGININA */
+        body { 
+            margin: 0; 
+            font-family: sans-serif; 
+            background: #0f172a; 
+            color: white; 
+            text-align: center; 
+        }
+        
+        /* TELAS */
+        #lobby { padding: 50px; }
+        #jogo { padding: 20px; }
+
+        /* A MESA ONDE AS PEÇAS SÃO JOGADAS */
+        #mesa { 
+            background: #14532d; 
+            min-height: 300px; 
+            border-radius: 20px; 
+            border: 8px solid #3e2723; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+            margin: 20px auto; 
+            max-width: 90%; 
+            padding: 20px;
+        }
+
+        /* A MÃO DO JOGADOR (ONDE FICA O PROBLEMA DO ALINHAMENTO) */
+        #mao { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; /* ISSO ALINHA AS PEÇAS VERTICAIS E HORIZONTAIS NA MESMA LINHA */
+            gap: 10px; 
+            flex-wrap: wrap; 
+            margin-top: 20px; 
+            margin-bottom: 20px;
+        }
+
+        /* ESTILO GERAL DAS PEÇAS */
+        .peca { 
+            background: #fdf6e3; 
+            color: #1a1a1a; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            font-size: 24px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; /* Distribui os números e a linha */
+            cursor: pointer; 
+            box-shadow: 0 4px 0 #ccc; /* Sombra embaixo para dar efeito de volume */
+        }
+
+        /* PEÇA DEITADA */
+        .p-horiz { 
+            width: 80px; 
+            height: 40px; 
+            flex-direction: row; 
+        }
+
+        /* PEÇA EM PÉ */
+        .p-vert { 
+            width: 40px; 
+            height: 80px; 
+            flex-direction: column; 
+        }
+
+        /* ÁREA ONDE FICA O NÚMERO DENTRO DA PEÇA */
+        .valor {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* LINHA DO MEIO DA PEÇA DEITADA */
+        .p-horiz .linha {
+            width: 2px;
+            height: 100%;
+            background: #ccc;
+        }
+
+        /* LINHA DO MEIO DA PEÇA EM PÉ */
+        .p-vert .linha {
+            width: 100%;
+            height: 2px;
+            background: #ccc;
+        }
+
+        /* BOTÕES E INPUTS */
+        button { 
+            background: #3b82f6; 
+            color: white; 
+            border: none; 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            margin: 5px; 
+            font-size: 16px;
+        }
+        button:disabled {
+            background: #64748b;
+            cursor: not-allowed;
+        }
+        input { 
+            padding: 10px; 
+            border-radius: 5px; 
+            border: none; 
+            margin: 5px; 
+            font-size: 16px;
+        }
     </style>
 </head>
 <body>
@@ -25,17 +129,22 @@
         <input type="text" id="sala" placeholder="Sala">
         <button onclick="entrar()">CONECTAR</button>
         <div id="espera" style="display:none">
-            <ul id="lista"></ul>
+            <ul id="lista" style="list-style: none; padding: 0;"></ul>
             <button id="btnIni" onclick="socket.emit('marcarPronto')" disabled>INICIAR</button>
         </div>
     </div>
 
     <div id="jogo" style="display:none">
         <h2 id="turno">Aguardando...</h2>
+        
         <div id="mesa"></div>
+        
         <div id="mao"></div>
-        <button onclick="socket.emit('comprarPeca')">COMPRAR</button>
-        <button onclick="socket.emit('passarVez')">PASSAR</button>
+        
+        <div>
+            <button onclick="socket.emit('comprarPeca')">COMPRAR</button>
+            <button onclick="socket.emit('passarVez')">PASSAR</button>
+        </div>
     </div>
 
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
@@ -59,31 +168,40 @@
             document.getElementById('jogo').style.display = 'block';
         });
 
+        // MUDEI AQUI: A forma como a peça é desenhada para usar as divs de "valor" e "linha"
         socket.on('atualizarMesa', m => {
             mesaAtu = m;
-            document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca ${p[0]===p[1]?'p-vert':'p-horiz'}"><span>${p[0]}</span><span>${p[1]}</span></div>`).join('');
+            document.getElementById('mesa').innerHTML = m.map(p => `
+                <div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}">
+                    <div class="valor">${p[0]}</div>
+                    <div class="linha"></div>
+                    <div class="valor">${p[1]}</div>
+                </div>`).join('');
         });
 
+        // MUDEI AQUI TAMBÉM: Mesma coisa, usando as divs estruturadas
         socket.on('atualizarMao', m => {
             maoAtu = m;
-            document.getElementById('mao').innerHTML = m.map((p, i) => `<div class="peca ${p[0]===p[1]?'p-vert':'p-horiz'}" onclick="jogar(${i})"><span>${p[0]}</span><span>${p[1]}</span></div>`).join('');
+            document.getElementById('mao').innerHTML = m.map((p, i) => `
+                <div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}" onclick="jogar(${i})">
+                    <div class="valor">${p[0]}</div>
+                    <div class="linha"></div>
+                    <div class="valor">${p[1]}</div>
+                </div>`).join('');
         });
 
         socket.on('mudarTurno', d => { document.getElementById('turno').innerText = d.nome === meuNome ? "SUA VEZ!" : "Vez de " + d.nome; });
 
-        // LÓGICA DE JOGADA CORRIGIDA PARA ACEITAR O ZERO (0)
         function jogar(idx) {
             const p = maoAtu[idx];
             
-            // Se a mesa estiver vazia, joga na direita por padrão
             if (mesaAtu.length === 0) {
                 return socket.emit('jogarPeca', { index: idx, lado: 'dir' });
             }
 
-            const e = mesaAtu[0][0]; // Ponta esquerda da mesa
-            const d = mesaAtu[mesaAtu.length - 1][1]; // Ponta direita da mesa
+            const e = mesaAtu[0][0]; 
+            const d = mesaAtu[mesaAtu.length - 1][1]; 
 
-            // Verifica as correspondências usando === (compara número com número)
             const serveEsq = (p[0] === e || p[1] === e);
             const serveDir = (p[0] === d || p[1] === d);
 
