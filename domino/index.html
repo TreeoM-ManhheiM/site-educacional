@@ -20,9 +20,26 @@
         button:disabled { background: #64748b; cursor: not-allowed; }
         input { padding: 10px; border-radius: 5px; border: none; margin: 5px; font-size: 16px; text-align: center; }
         #avisoTempo { color: #fbbf24; font-weight: bold; font-size: 18px; display: none; margin-bottom: 15px;}
+        
+        /* NOVO MODAL DE ESCOLHA */
+        #modal-escolha { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
+        .modal-box { background: #1e293b; padding: 20px; border-radius: 10px; text-align: center; border: 2px solid #3b82f6; box-shadow: 0 0 15px rgba(0,0,0,0.5); }
+        .btn-escolha { margin: 10px; padding: 15px 30px; font-size: 18px; font-weight: bold; background: #10b981; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .btn-escolha.dir { background: #3b82f6; }
+        .btn-cancelar { background: #ef4444; margin-top: 15px; }
     </style>
 </head>
 <body>
+    <div id="modal-escolha">
+        <div class="modal-box">
+            <h3 style="margin-top: 0;">Onde quer jogar a peça?</h3>
+            <button class="btn-escolha" onclick="window.confirmarJogada('esq')">⬅️ ESQUERDA</button>
+            <button class="btn-escolha dir" onclick="window.confirmarJogada('dir')">DIREITA ➡️</button>
+            <br>
+            <button class="btn-cancelar" onclick="document.getElementById('modal-escolha').style.display = 'none'">Cancelar</button>
+        </div>
+    </div>
+
     <div id="lobby">
         <h1>EE. 8 de Abril 🧠</h1>
         <div id="controles-login">
@@ -51,7 +68,7 @@
     <script>
         let socket;
         try {
-            // LEMBRE-SE DE COLOCAR O SEU LINK DO RENDER AQUI SE PRECISAR!
+            // LEMBRE-SE DE MANTER O SEU LINK DO RENDER AQUI SE PRECISAR!
             socket = io("https://motor-domino.onrender.com");
         } catch(err) {
             alert("Aguarde um momento e recarregue a página.");
@@ -59,6 +76,7 @@
 
         let meuNome = "", mesaAtu = [], maoAtu = [];
         let jaEstouPronto = false, timerLigado = false, tempoRestante = 180, intervaloTimer = null;
+        let jogadaPendente = null; // Memória para a peça que serve nos dois lados
 
         window.entrar = function() {
             meuNome = document.getElementById('nick').value;
@@ -87,14 +105,22 @@
             const serveDir = (p[0] === d || p[1] === d);
 
             if (serveDir && serveEsq) {
-                let escolha = confirm("Essa peça serve nos dois lados! Quer colocar na ESQUERDA? \n(Clique OK para ESQUERDA, ou Cancelar para DIREITA)");
-                socket.emit('jogarPeca', { index: idx, lado: escolha ? 'esq' : 'dir' });
+                jogadaPendente = idx;
+                document.getElementById('modal-escolha').style.display = 'flex';
             } else if (serveDir) {
                 socket.emit('jogarPeca', { index: idx, lado: 'dir' });
             } else if (serveEsq) {
                 socket.emit('jogarPeca', { index: idx, lado: 'esq' });
             } else {
                 alert("Não encaixa em nenhum lado da mesa!");
+            }
+        };
+
+        window.confirmarJogada = function(ladoEscolhido) {
+            if (jogadaPendente !== null) {
+                socket.emit('jogarPeca', { index: jogadaPendente, lado: ladoEscolhido });
+                jogadaPendente = null;
+                document.getElementById('modal-escolha').style.display = 'none';
             }
         };
 
