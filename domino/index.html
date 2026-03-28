@@ -45,9 +45,9 @@
         /* MESA DE FELTRO PREMIUM */
         #mesa {
             background-color: var(--table-green);
-            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 2px,transparent 2px, transparent 4px); /* Textura feltro */
+            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.03) 0px, rgba(0,0,0,0.03) 2px,transparent 2px, transparent 4px);
             min-height: 250px; border-radius: 16px; padding: 30px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 5px;
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.3); border: 8px solid #6f4e37; /* Borda de madeira */
+            box-shadow: inset 0 0 50px rgba(0,0,0,0.4), 0 10px 20px rgba(0,0,0,0.3); border: 8px solid #6f4e37;
             margin-bottom: 25px;
         }
 
@@ -61,15 +61,15 @@
             display: flex; justify-content: center; align-items: center;
         }
         .peca-domino:hover { transform: translateY(-8px) rotate(2deg); box-shadow: 5px 10px 15px rgba(0,0,0,0.4); border-color: var(--blue-accent); }
-        .peca-domino span { display: block; }
+        .peca-domino span { display: flex; justify-content: center; align-items: center; width: 100%; height: 100%; }
         
         /* REGRA: Peças Normais (Horizontal) */
-        .p-horiz { width: 85px; height: 43px; flex-direction: row; font-size: 24px; }
-        .p-horiz::after { content:''; width: 2px; height: 70%; background: var(--domino-sep); margin: 0 5px; border-radius: 1px; }
+        .p-horiz { width: 85px; height: 43px; flex-direction: row; font-size: 22px; }
+        .p-horiz::after { content:''; width: 2px; height: 70%; background: var(--domino-sep); border-radius: 1px; }
 
         /* REGRA: Carroças/Duplas (Vertical) */
-        .p-vert { width: 43px; height: 85px; flex-direction: column; font-size: 24px; }
-        .p-vert::after { content:''; width: 70%; height: 2px; background: var(--domino-sep); margin: 5px 0; border-radius: 1px; }
+        .p-vert { width: 43px; height: 85px; flex-direction: column; font-size: 22px; }
+        .p-vert::after { content:''; width: 70%; height: 2px; background: var(--domino-sep); border-radius: 1px; }
 
         /* Estilo da Peça na Mesa (Não clicável, sem hover transform) */
         .mesa-peca { cursor: default; }
@@ -212,7 +212,7 @@
             const div = document.getElementById('minhas-pecas');
             div.innerHTML = '';
             mao.forEach((p, i) => {
-                // REGRA ESTILO: Mantém a consistência de orientação também na sua mão
+                // REGRA ESTILO: Aplica mesma regra visual das carroças na mão
                 const estiloPecaMao = (p[0] === p[1]) ? 'p-vert' : 'p-horiz';
                 let conteudo = maoOculta ? `<span>?</span><span>?</span>` : `<span>${p[0]}</span><span>${p[1]}</span>`;
                 div.innerHTML += `<div class="peca-domino ${estiloPecaMao}" onclick="validarJogada(${i}, ${JSON.stringify(mao)})">${conteudo}</div>`;
@@ -227,7 +227,7 @@
             } else {
                 const jogadorDaVez = listaJogadoresGlobal[turnoId] ? listaJogadoresGlobal[turnoId].nome : "Outro";
                 status.innerText = `Aguarde... Vez de: ${jogadorDaVez}`;
-                status.style.color = var(--danger-accent);
+                status.style.color = "var(--danger-accent)";
             }
         });
 
@@ -268,10 +268,10 @@
         // ---- RECURSOS EXTRAS ----
         function togglePecas() {
             maoOculta = !maoOculta;
-            // Para esconder, ocultamos o conteúdo numérico mantendo a peça visível
+            // Oculta/Mostra os spans com os números dentro das peças
             const pecasConteudo = document.querySelectorAll('#minhas-pecas .peca-domino span');
             if (maoOculta) pecasConteudo.forEach(p => p.style.opacity = "0");
-            else pecas Conteudo.forEach(p => p.style.opacity = "1");
+            else pecasConteudo.forEach(p => p.style.opacity = "1");
         }
 
         socket.on('erro', (msg) => {
