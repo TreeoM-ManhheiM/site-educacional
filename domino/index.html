@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dominó Lógico</title>
     <style>
-        /* BASE DA PÁGININA */
+        /* BASE DA PÁGINA */
         body { 
             margin: 0; 
             font-family: sans-serif; 
@@ -34,11 +34,11 @@
             padding: 20px;
         }
 
-        /* A MÃO DO JOGADOR (ONDE FICA O PROBLEMA DO ALINHAMENTO) */
+        /* A MÃO DO JOGADOR (COM FLEXBOX PARA ALINHAR TUDO) */
         #mao { 
             display: flex; 
             justify-content: center; 
-            align-items: center; /* ISSO ALINHA AS PEÇAS VERTICAIS E HORIZONTAIS NA MESMA LINHA */
+            align-items: center; 
             gap: 10px; 
             flex-wrap: wrap; 
             margin-top: 20px; 
@@ -54,9 +54,9 @@
             font-size: 24px; 
             display: flex; 
             align-items: center; 
-            justify-content: space-between; /* Distribui os números e a linha */
+            justify-content: space-between; 
             cursor: pointer; 
-            box-shadow: 0 4px 0 #ccc; /* Sombra embaixo para dar efeito de volume */
+            box-shadow: 0 4px 0 #ccc; 
         }
 
         /* PEÇA DEITADA */
@@ -125,11 +125,15 @@
 <body>
     <div id="lobby">
         <h1>EE. 8 de Abril 🧠</h1>
-        <input type="text" id="nick" placeholder="Seu Nome">
-        <input type="text" id="sala" placeholder="Sala">
-        <button onclick="entrar()">CONECTAR</button>
+        
+        <div id="controles-login">
+            <input type="text" id="nick" placeholder="Seu Nome">
+            <input type="text" id="sala" placeholder="Sala">
+            <button onclick="entrar()">CONECTAR</button>
+        </div>
+
         <div id="espera" style="display:none">
-            <ul id="lista" style="list-style: none; padding: 0;"></ul>
+            <ul id="lista" style="list-style: none; padding: 0; font-size: 18px; margin-bottom: 20px;"></ul>
             <button id="btnIni" onclick="socket.emit('marcarPronto')" disabled>INICIAR</button>
         </div>
     </div>
@@ -152,9 +156,19 @@
         const socket = io("https://motor-domino.onrender.com");
         let meuNome = "", mesaAtu = [], maoAtu = [];
 
+        // FUNÇÃO DE ENTRAR ARRUMADA (MATA O BUG DOS CLONES)
         function entrar() {
             meuNome = document.getElementById('nick').value;
-            socket.emit('entrarSala', { apelido: meuNome, sala: document.getElementById('sala').value });
+            const sala = document.getElementById('sala').value;
+
+            if (meuNome.trim() === "" || sala.trim() === "") {
+                return alert("Por favor, preencha seu nome e a sala!");
+            }
+
+            socket.emit('entrarSala', { apelido: meuNome, sala: sala });
+
+            // Esconde as caixas de texto e o botão CONECTAR após o primeiro clique
+            document.getElementById('controles-login').style.display = 'none';
         }
 
         socket.on('estadoLobby', d => {
@@ -168,7 +182,6 @@
             document.getElementById('jogo').style.display = 'block';
         });
 
-        // MUDEI AQUI: A forma como a peça é desenhada para usar as divs de "valor" e "linha"
         socket.on('atualizarMesa', m => {
             mesaAtu = m;
             document.getElementById('mesa').innerHTML = m.map(p => `
@@ -179,7 +192,6 @@
                 </div>`).join('');
         });
 
-        // MUDEI AQUI TAMBÉM: Mesma coisa, usando as divs estruturadas
         socket.on('atualizarMao', m => {
             maoAtu = m;
             document.getElementById('mao').innerHTML = m.map((p, i) => `
@@ -190,7 +202,9 @@
                 </div>`).join('');
         });
 
-        socket.on('mudarTurno', d => { document.getElementById('turno').innerText = d.nome === meuNome ? "SUA VEZ!" : "Vez de " + d.nome; });
+        socket.on('mudarTurno', d => { 
+            document.getElementById('turno').innerText = d.nome === meuNome ? "SUA VEZ!" : "Vez de " + d.nome; 
+        });
 
         function jogar(idx) {
             const p = maoAtu[idx];
