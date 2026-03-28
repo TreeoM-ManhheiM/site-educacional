@@ -38,14 +38,14 @@
         <div id="controles-login">
             <input type="text" id="nick" placeholder="Seu Nome">
             <input type="text" id="sala" placeholder="Sala">
-            <button onclick="entrar()">CONECTAR</button>
+            <button onclick="window.entrar()">CONECTAR</button>
         </div>
 
         <div id="espera" style="display:none">
             <ul id="lista" style="list-style: none; padding: 0; font-size: 18px; margin-bottom: 20px;"></ul>
             
             <p id="avisoTempo"></p> 
-            <button id="btnIni" onclick="clicarPronto()" disabled>CONFIRMAR PRONTO</button>
+            <button id="btnIni" onclick="window.clicarPronto()" disabled>CONFIRMAR PRONTO</button>
         </div>
     </div>
 
@@ -54,23 +54,31 @@
         <div id="mesa"></div>
         <div id="mao"></div>
         <div>
-            <button onclick="socket.emit('comprarPeca')">COMPRAR</button>
-            <button onclick="socket.emit('passarVez')">PASSAR</button>
+            <button onclick="window.comprar()">COMPRAR</button>
+            <button onclick="window.passar()">PASSAR</button>
         </div>
     </div>
 
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     <script>
-        const socket = io("https://motor-domino.onrender.com");
-        let meuNome = "", mesaAtu = [], maoAtu = [];
+        // 1. Conexão com o Servidor (Protegido contra erros de carregamento)
+        let socket;
+        try {
+            socket = io("https://motor-domino.onrender.com");
+        } catch(err) {
+            console.error("Erro ao carregar o Socket.IO:", err);
+            alert("Aguarde um momento e recarregue a página.");
+        }
 
-        // LÓGICA DO LOBBY INTELIGENTE
+        // 2. Variáveis Globais
+        let meuNome = "", mesaAtu = [], maoAtu = [];
         let jaEstouPronto = false; 
         let timerLigado = false;
         let tempoRestante = 180;
         let intervaloTimer = null;
 
-        function entrar() {
+        // 3. Funções dos botões (Amarradas no window para não dar "is not defined")
+        window.entrar = function() {
             meuNome = document.getElementById('nick').value;
             const sala = document.getElementById('sala').value;
 
@@ -78,8 +86,70 @@
 
             socket.emit('entrarSala', { apelido: meuNome, sala: sala });
             document.getElementById('controles-login').style.display = 'none';
+        };
+
+        window.clicarPronto = function() {
+            if (jaEstouPronto) return;
+            jaEstouPronto = true; 
+            
+            socket.emit('marcarPronto'); 
+            
+            const btn = document.getElementById('btnIni');
+            btn.disabled = true;
+            btn.innerText = "ESPERANDO OS OUTROS...";
+            btn.style.background = "#059669"; 
+        };
+
+        window.jogar = function(idx) {
+            const p = maoAtu[idx];
+            
+            if (mesaAtu.length === 0) {
+                return socket.emit('jogarPeca', { index: idx, lado: 'dir' });
+            }
+
+            const e = mesaAtu[0][0]; 
+            const d = mesaAtu[mesaAtu.length - 1][1]; 
+
+            const serveEsq = (p[0] === e || p[1] === e);
+            const serveDir = (p[0] === d || p[1] === d);
+
+            if (serveDir) {
+                socket.emit('jogarPeca', { index: idx, lado: 'dir' });
+            } else if (serveEsq) {
+                socket.emit('jogarPeca', { index: idx, lado: 'esq' });
+            } else {
+                alert("Não encaixa em nenhum lado!");
+            }
+        };
+
+        window.comprar = function() { socket.emit('comprarPeca'); };
+        window.passar = function() { socket.emit('passarVez'); };
+
+        // 4. Sistema do Cronômetro
+        function iniciarTimerLobby() {
+            timerLigado = true;
+            tempoRestante = 180;
+            document.getElementById('avisoTempo').style.display = 'block';
+            atualizarTextoTimer();
+
+            intervaloTimer = setInterval(() => {
+                tempoRestante--;
+                atualizarTextoTimer();
+                
+                if (tempoRestante <= 0) {
+                    clearInterval(intervaloTimer);
+                    if (!jaEstouPronto) {
+                        window.clicarPronto(); 
+                    }
+                }
+            }, 1000);
         }
 
+        function atualizarTextoTimer() {
+            document.getElementById('avisoTempo').innerText = `O jogo iniciará automaticamente em ${tempoRestante}s se alguém não confirmar`;
+        }
+
+        // 5. Comunicação com o Servidor
         socket.on('estadoLobby', d => {
             const qtd = d.jogadoresInfo.length;
             document.getElementById('espera').style.display = 'block';
@@ -87,7 +157,6 @@
             
             const btn = document.getElementById('btnIni');
 
-            // Se esvaziar a sala (alguém saiu e ficou só 1), cancela o timer
             if (qtd < 2) {
                 clearInterval(intervaloTimer);
                 timerLigado = false;
@@ -96,23 +165,52 @@
                 return;
             }
 
-            // REGRA MÁXIMA: 4 Jogadores = Inicia na hora, sem choro
             if (qtd === 4) {
-                if (!jaEstouPronto) clicarPronto();
+                if (!jaEstouPronto) window.clicarPronto();
             } 
-            // REGRA DO 1x1 e 1x1x1: Deixa confirmar, se não confirmar em 180s, força.
             else if (qtd >= 2 && qtd < 4) {
                 if (!jaEstouPronto) {
-                    btn.disabled = false; // Libera pro jogador clicar e confirmar
+                    btn.disabled = false; 
                 }
-                
                 if (!timerLigado) {
                     iniciarTimerLobby();
                 }
             } 
         });
 
-        // Essa função é chamada quando o jogador clica para confirmar, ou quando bate 180s/4 jogadores
-        function clicarPronto() {
-            if (jaEstouPronto) return;
-            jaEstouPronto = true;
+        socket.on('jogoIniciado', () => {
+            clearInterval(intervaloTimer); 
+            document.getElementById('lobby').style.display = 'none';
+            document.getElementById('jogo').style.display = 'block';
+        });
+
+        socket.on('atualizarMesa', m => {
+            mesaAtu = m;
+            document.getElementById('mesa').innerHTML = m.map(p => `
+                <div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}">
+                    <div class="valor">${p[0]}</div>
+                    <div class="linha"></div>
+                    <div class="valor">${p[1]}</div>
+                </div>`).join('');
+        });
+
+        socket.on('atualizarMao', m => {
+            maoAtu = m;
+            document.getElementById('mao').innerHTML = m.map((p, i) => `
+                <div class="peca ${p[0] === p[1] ? 'p-vert' : 'p-horiz'}" onclick="window.jogar(${i})">
+                    <div class="valor">${p[0]}</div>
+                    <div class="linha"></div>
+                    <div class="valor">${p[1]}</div>
+                </div>`).join('');
+        });
+
+        socket.on('mudarTurno', d => { 
+            document.getElementById('turno').innerText = d.nome === meuNome ? "SUA VEZ!" : "Vez de " + d.nome; 
+        });
+
+        socket.on('erro', m => alert(m));
+        socket.on('mensagemGeral', m => alert(m));
+        socket.on('resetJogo', () => location.reload());
+    </script>
+</body>
+</html>
