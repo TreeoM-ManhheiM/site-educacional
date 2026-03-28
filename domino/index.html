@@ -150,9 +150,13 @@
         </div>
     </div>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     <script>
+        // ATENÇÃO: Se o front-end HTML não estiver hospedado no mesmo link do back-end,
+        // substitua o io() abaixo pela URL do seu Render. 
+        // Exemplo: const socket = io("https://seu-backend.onrender.com");
         const socket = io();
+        
         let pecaSelecionadaIdx = null;
         let mesaAtual = [];
         let meuTurnoId = -1;
