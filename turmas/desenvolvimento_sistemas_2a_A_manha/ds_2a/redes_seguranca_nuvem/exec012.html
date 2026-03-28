@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Meios Físicos - Semana 5</title>
+    <style>
+        :root { --primary: #2563eb; --bg: #f8fafc; --panel: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 20px; color: #1e293b; }
+        .container { max-width: 1000px; margin: auto; background: var(--panel); padding: 25px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        h2 { text-align: center; font-size: 1.1em; color: #64748b; margin-top: 0; }
+
+        /* ÁREA DE TRANSMISSÃO */
+        .bench { display: flex; align-items: center; justify-content: space-between; background: #1e293b; padding: 40px 20px; border-radius: 12px; margin: 20px 0; position: relative; overflow: hidden; }
+        .device { width: 80px; text-align: center; color: white; z-index: 2; }
+        .device i { font-size: 40px; display: block; margin-bottom: 10px; }
+        
+        .cable-path { position: relative; flex: 1; height: 10px; margin: 0 15px; background: #334155; border-radius: 5px; }
+        .packet { position: absolute; top: 50%; width: 12px; height: 12px; border-radius: 50%; transform: translateY(-50%); }
+        
+        /* INTERFERÊNCIA VISUAL */
+        #noise-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, transparent, rgba(255,255,0,0.05) 2px, transparent 4px); display: none; pointer-events: none; z-index: 1; }
+
+        /* CONTROLES */
+        .controls { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .control-group { background: #f1f5f9; padding: 15px; border-radius: 8px; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; }
+        select, input { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #cbd5e1; }
+        
+        .btn-run { grid-column: span 2; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .btn-run:hover { background: #1d4ed8; }
+        
+        .noise-toggle { margin-top: 10px; display: flex; align-items: center; gap: 10px; font-weight: bold; color: #b91c1c; }
+
+        /* RESULTADOS */
+        .dashboard { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-top: 20px; }
+        .stat-card { background: #f1f5f9; padding: 15px; border-radius: 8px; text-align: center; }
+        .stat-val { display: block; font-size: 1.5em; font-weight: bold; color: var(--primary); }
+        
+        canvas { width: 100%; height: 150px; background: #000; border-radius: 8px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📡 Laboratório de Meios Físicos</h1>
+    <h2>Semana 5: Cabos de Cobre e Fibra</h2>
+
+    <div class="bench" id="bench">
+        <div id="noise-overlay"></div>
+        <div class="device">💻<br>TX</div>
+        <div class="cable-path" id="cable"></div>
+        <div class="device">💻<br>RX</div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Meio Físico (Cabo)</label>
+            <select id="meio" onchange="atualizarMeio()">
+                <option value="utp">Par Trançado UTP (Sem Blindagem)</option>
+                <option value="stp">Par Trançado STP (Blindado)</option>
+                <option value="coaxial">Cabo Coaxial</option>
+                <option value="fibra">Fibra Óptica</option>
+            </select>
+            <div class="noise-toggle">
+                <input type="checkbox" id="noiseCheck" onchange="toggleNoise()"> ⚡ Ligar Motor (Interferência)
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label>Distância: <span id="distVal">10</span> metros</label>
+            <input type="range" id="distancia" min="1" max="500" value="10" oninput="atualizarDistancia(this.value)">
+            <p id="info-cabo" style="font-size: 0.85em; color: #64748b; margin-top: 10px;"></p>
+        </div>
+
+        <button class="btn-run" onclick="iniciarSimulacao()">TESTAR TRANSMISSÃO</button>
+    </div>
+
+    <div class="dashboard">
+        <div class="stat-card">Sinal Chegando<br><span class="stat-val" id="resSinal">0%</span></div>
+        <div class="stat-card">Velocidade Real<br><span class="stat-val" id="resVel">0 Mbps</span></div>
+        <div class="stat-card">Perda de Dados<br><span class="stat-val" id="resPerda">0%</span></div>
+    </div>
+
+    <canvas id="osciloscope"></canvas>
+</div>
+
+<script>
+    const meios = {
+        utp: { nome: 'UTP', max: 100, sensibilidade: 0.8, cor: '#fbbf24', info: 'Barato, flexível. Sofre muito com ruído elétrico.' },
+        stp: { nome: 'STP', max: 100, sensibilidade: 0.1, cor: '#3b82f6', info: 'Blindagem metálica protege contra interferência (EMI).' },
+        coaxial: { nome: 'Coaxial', max: 500, sensibilidade: 0.2, cor: '#94a3b8', info: 'Malha de cobre central. Bom alcance, mas rígido.' },
+        fibra: { nome: 'Fibra', max: 2000, sensibilidade: 0, cor: '#22c55e', info: 'Imune a ruído elétrico. Usa pulsos de luz.' }
+    };
+
+    let simActive = false;
+    const ctx = document.getElementById('osciloscope').getContext('2d');
+
+    function atualizarDistancia(v) {
+        document.getElementById('distVal').innerText = v;
+    }
+
+    function atualizarMeio() {
+        const m = meios[document.getElementById('meio').value];
+        document.getElementById('info-cabo').innerText = m.info;
+        const distInput = document.getElementById('distancia');
+        // Ajusta o máximo do slider conforme o cabo
+        if(m.nome === 'Fibra') distInput.max = 2000;
+        else if(m.nome === 'Coaxial') distInput.max = 500;
+        else distInput.max = 150;
+    }
+
+    function toggleNoise() {
+        document.getElementById('noise-overlay').style.display = document.getElementById('noiseCheck').checked ? 'block' : 'none';
+    }
+
+    function iniciarSimulacao() {
+        if(simActive) return;
+        simActive = true;
+        const meioKey = document.getElementById('meio').value;
+        const m = meios[meioKey];
+        const dist = parseInt(document.getElementById('distancia').value);
+        const noise = document.getElementById('noiseCheck').checked;
+
+        // CÁLCULO DE PERDA REALISTA
+        let qualidade = 100;
+        
+        // Perda por distância (Atenuação)
+        if (dist > m.max) {
+            qualidade -= (dist - m.max) * 1.5;
+        }
+        
+        // Perda por Interferência (EMI)
+        if (noise) {
+            qualidade -= (100 * m.sensibilidade);
+        }
+
+        qualidade = Math.max(0, qualidade);
+        const velFinal = (qualidade / 100) * (meioKey === 'fibra' ? 1000 : 100);
+
+        // Atualiza Dashboard
+        document.getElementById('resSinal').innerText = Math.round(qualidade) + "%";
+        document.getElementById('resVel').innerText = velFinal.toFixed(1) + " Mbps";
+        document.getElementById('resPerda').innerText = (100 - qualidade).toFixed(0) + "%";
+
+        // Animação de Pacotes
+        enviarPacotes(m.cor, qualidade);
+        desenharOnda(qualidade, meioKey === 'fibra');
+    }
+
+    function enviarPacotes(cor, qualidade) {
+        const cable = document.getElementById('cable');
+        let count = 0;
+        const interval = setInterval(() => {
+            const p = document.createElement('div');
+            p.className = 'packet';
+            p.style.background = cor;
+            p.style.left = '0%';
+            
+            // Se qualidade for baixa, alguns pacotes "somem" no caminho
+            if(Math.random() * 100 > qualidade) {
+                p.style.boxShadow = "0 0 10px red";
+                setTimeout(() => p.remove(), 400);
+            }
+
+            cable.appendChild(p);
+            
+            p.animate([
+                { left: '0%', opacity: 1 },
+                { left: '100%', opacity: 1 }
+            ], { duration: 800, easing: 'linear' }).onfinish = () => p.remove();
+
+            count++;
+            if(count > 10) { clearInterval(interval); simActive = false; }
+        }, 200);
+    }
+
+    function desenharOnda(qualidade, isFibra) {
+        ctx.clearRect(0,0,960,150);
+        ctx.strokeStyle = isFibra ? '#22c55e' : '#fbbf24';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, 75);
+
+        for(let x = 0; x < 960; x += 10) {
+            let y = 75;
+            if (qualidade > 0) {
+                // Se for cobre, sinal quadrado. Se for fibra, picos de luz.
+                if(!isFibra) {
+                    y = (Math.floor(x/40) % 2 === 0) ? 40 : 110;
+                } else {
+                    y = (Math.sin(x/5) > 0) ? 40 : 75;
+                }
+                // Adiciona ruído visual se qualidade for baixa
+                y += (Math.random() - 0.5) * (100 - qualidade);
+            }
+            ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+
+    atualizarMeio();
+</script>
+</body>
+</html>
