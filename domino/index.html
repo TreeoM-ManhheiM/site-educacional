@@ -3,174 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dominó Lógico 🧠 - EE. 8 de Abril</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
+    <title>Dominó Lógico</title>
     <style>
-        :root { 
-            --ivory: #fdf6e3; 
-            --pips: #1a1a1a; 
-            --table: #14532d; 
-            --blue: #3b82f6; 
-            --bg: #0f172a;
-        }
-        
-        body { 
-            margin: 0; font-family: 'Montserrat', sans-serif; 
-            background: var(--bg); color: white; 
-            display: flex; flex-direction: column; align-items: center; 
-            min-height: 100vh;
-        }
-
-        .container { width: 100%; max-width: 1100px; padding: 20px; text-align: center; box-sizing: border-box; }
-        
-        /* MESA DE JOGO */
-        #mesa {
-            background: var(--table); min-height: 350px; border-radius: 30px; padding: 40px;
-            display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px;
-            box-shadow: inset 0 0 80px rgba(0,0,0,0.8); border: 8px solid #3e2723; margin: 20px 0;
-        }
-
-        /* DESIGN DAS PEÇAS */
-        .peca {
-            background: var(--ivory); border-radius: 8px; color: var(--pips); font-size: 26px; font-weight: 900;
-            display: flex; align-items: center; justify-content: center; 
-            box-shadow: 0 5px 0px #ccc, 3px 8px 15px rgba(0,0,0,0.4);
-            cursor: pointer; transition: 0.2s; flex-shrink: 0; border: 1px solid #ddd;
-        }
-
-        /* Peça deitada */
-        .p-horiz { width: 90px; height: 50px; flex-direction: row; }
-        .p-horiz .divisoria { width: 2px; height: 70%; background: #ccc; margin: 0 10px; }
-
-        /* Peça em pé (Bucha) */
-        .p-vert { width: 50px; height: 90px; flex-direction: column; }
-        .p-vert .divisoria { height: 2px; width: 70%; background: #ccc; margin: 10px 0; }
-
-        .peca:hover { transform: translateY(-5px); filter: brightness(1.1); border-color: var(--blue); }
-
-        /* INTERFACE */
-        .game-box { background: #1e293b; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        button { background: var(--blue); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-weight: 900; cursor: pointer; margin: 10px; text-transform: uppercase; transition: 0.2s; }
-        button:hover { transform: scale(1.05); }
-        button:disabled { background: #475569; cursor: not-allowed; }
-        input { padding: 12px; border-radius: 8px; border: 2px solid #334155; margin: 10px; width: 220px; background: #000; color: #fff; text-align: center; }
-        
-        #status-turno { font-size: 22px; color: #fbbf24; margin: 20px; font-weight: 900; }
-        #mao { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; padding: 20px; }
+        body { margin: 0; font-family: sans-serif; background: #0f172a; color: white; text-align: center; }
+        .container { padding: 20px; }
+        #mesa { background: #14532d; min-height: 300px; border-radius: 20px; border: 8px solid #3e2723; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; margin: 20px auto; max-width: 90%; }
+        .peca { background: #fdf6e3; color: #1a1a1a; border-radius: 5px; font-weight: bold; font-size: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 2px 4px 0 #ccc; }
+        .p-horiz { width: 80px; height: 40px; }
+        .p-horiz::after { content: ""; width: 2px; height: 100%; background: #ccc; margin: 0 10px; }
+        .p-vert { width: 40px; height: 80px; flex-direction: column; }
+        .p-vert::after { content: ""; height: 2px; width: 100%; background: #ccc; margin: 10px 0; }
+        #mao { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 20px; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; margin: 5px; }
+        input { padding: 10px; border-radius: 5px; border: none; margin: 5px; }
     </style>
 </head>
 <body>
-
-    <div class="container" id="lobby-screen">
-        <div class="game-box">
-            <h1>EE. 8 de Abril 🧠</h1>
-            <p>Dominó Online - Laboratório Lógico</p>
-            <input type="text" id="nick" placeholder="Seu Apelido" maxlength="12">
-            <input type="text" id="sala" placeholder="Nome da Sala">
-            <br>
-            <button onclick="entrar()">CONECTAR</button>
-            
-            <div id="espera" style="display:none; margin-top: 30px; border-top: 1px solid #334155; padding-top: 20px;">
-                <h3>Jogadores na Sala:</h3>
-                <ul id="lista" style="list-style: none; padding: 0; font-weight: bold; color: #60a5fa;"></ul>
-                <button id="btnIni" onclick="socket.emit('marcarPronto')" disabled>ESTOU PRONTO</button>
-            </div>
+    <div id="lobby">
+        <h1>EE. 8 de Abril 🧠</h1>
+        <input type="text" id="nick" placeholder="Seu Nome">
+        <input type="text" id="sala" placeholder="Sala">
+        <button onclick="entrar()">CONECTAR</button>
+        <div id="espera" style="display:none">
+            <ul id="lista"></ul>
+            <button id="btnIni" onclick="socket.emit('marcarPronto')" disabled>INICIAR</button>
         </div>
     </div>
 
-    <div class="container" id="jogo-screen" style="display:none">
-        <div id="status-turno">Aguardando...</div>
+    <div id="jogo" style="display:none">
+        <h2 id="turno">Aguardando...</h2>
         <div id="mesa"></div>
-        <p style="opacity: 0.5">SUAS PEÇAS:</p>
         <div id="mao"></div>
-        <div style="margin-top:40px">
-            <button onclick="socket.emit('comprarPeca')" style="background: #475569;">📥 COMPRAR</button>
-            <button onclick="socket.emit('passarVez')" style="background: #475569;">⏭️ PASSAR VEZ</button>
-        </div>
+        <button onclick="socket.emit('comprarPeca')">COMPRAR</button>
+        <button onclick="socket.emit('passarVez')">PASSAR</button>
     </div>
 
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     <script>
-        // URL DO SEU BACKEND NO RENDER
         const socket = io("https://motor-domino.onrender.com");
-        
-        let meuNome = "", mesaAtual = [], maoAtual = [];
+        let meuNome = "", mesaAtu = [], maoAtu = [];
 
         function entrar() {
-            meuNome = document.getElementById('nick').value.trim();
-            const salaNome = document.getElementById('sala').value.trim();
-            if (!meuNome || !salaNome) return alert("Preencha nome e sala!");
-            socket.emit('entrarSala', { apelido: meuNome, sala: salaNome });
+            meuNome = document.getElementById('nick').value;
+            socket.emit('entrarSala', { apelido: meuNome, sala: document.getElementById('sala').value });
         }
 
         socket.on('estadoLobby', d => {
             document.getElementById('espera').style.display = 'block';
-            document.getElementById('lista').innerHTML = d.jogadoresInfo.map(j => `<li>● ${j.nome}</li>`).join('');
+            document.getElementById('lista').innerHTML = d.jogadoresInfo.map(j => `<li>${j.nome}</li>`).join('');
             document.getElementById('btnIni').disabled = d.jogadoresInfo.length < 2;
         });
 
         socket.on('jogoIniciado', () => {
-            document.getElementById('lobby-screen').style.display = 'none';
-            document.getElementById('jogo-screen').style.display = 'block';
+            document.getElementById('lobby').style.display = 'none';
+            document.getElementById('jogo').style.display = 'block';
         });
 
         socket.on('atualizarMesa', m => {
-            mesaAtual = m;
-            const mesaDiv = document.getElementById('mesa');
-            mesaDiv.innerHTML = m.map(p => {
-                let classe = p[0] === p[1] ? 'p-vert' : 'p-horiz';
-                return `<div class="peca ${classe}"><div>${p[0]}</div><div class="divisoria"></div><div>${p[1]}</div></div>`;
-            }).join('');
+            mesaAtu = m;
+            document.getElementById('mesa').innerHTML = m.map(p => `<div class="peca ${p[0]===p[1]?'p-vert':'p-horiz'}"><span>${p[0]}</span><span>${p[1]}</span></div>`).join('');
         });
 
         socket.on('atualizarMao', m => {
-            maoAtual = m;
-            const maoDiv = document.getElementById('mao');
-            maoDiv.innerHTML = m.map((p, i) => {
-                let classe = p[0] === p[1] ? 'p-vert' : 'p-horiz';
-                return `<div class="peca ${classe}" onclick="tentarJogar(${i})"><div>${p[0]}</div><div class="divisoria"></div><div>${p[1]}</div></div>`;
-            }).join('');
+            maoAtu = m;
+            document.getElementById('mao').innerHTML = m.map((p, i) => `<div class="peca ${p[0]===p[1]?'p-vert':'p-horiz'}" onclick="jogar(${i})"><span>${p[0]}</span><span>${p[1]}</span></div>`).join('');
         });
 
-        socket.on('mudarTurno', d => {
-            const status = document.getElementById('status-turno');
-            if (d.nome === meuNome) {
-                status.innerText = "⭐ SUA VEZ DE JOGAR!";
-                status.style.color = "#10b981";
-            } else {
-                status.innerText = `Vez de: ${d.nome}`;
-                status.style.color = "#fbbf24";
-            }
-        });
+        socket.on('mudarTurno', d => { document.getElementById('turno').innerText = d.nome === meuNome ? "SUA VEZ!" : "Vez de " + d.nome; });
 
-        // LÓGICA DE CLIQUE CORRIGIDA (SEM MODAL QUE TRAVA)
-        function tentarJogar(index) {
-            const peca = maoAtual[index];
-
-            // Se for a primeira peça da mesa
-            if (mesaAtual.length === 0) {
-                socket.emit('jogarPeca', { index: index, lado: 'dir' });
-                return;
+        // LÓGICA DE JOGADA CORRIGIDA PARA ACEITAR O ZERO (0)
+        function jogar(idx) {
+            const p = maoAtu[idx];
+            
+            // Se a mesa estiver vazia, joga na direita por padrão
+            if (mesaAtu.length === 0) {
+                return socket.emit('jogarPeca', { index: idx, lado: 'dir' });
             }
 
-            const pEsq = mesaAtual[0][0];
-            const pDir = mesaAtual[mesaAtual.length - 1][1];
+            const e = mesaAtu[0][0]; // Ponta esquerda da mesa
+            const d = mesaAtu[mesaAtu.length - 1][1]; // Ponta direita da mesa
 
-            const serveEsq = (peca[0] === pEsq || peca[1] === pEsq);
-            const serveDir = (peca[0] === pDir || peca[1] === pDir);
+            // Verifica as correspondências usando === (compara número com número)
+            const serveEsq = (p[0] === e || p[1] === e);
+            const serveDir = (p[0] === d || p[1] === d);
 
             if (serveDir) {
-                // Prioriza o lado direito para evitar perguntas
-                socket.emit('jogarPeca', { index: index, lado: 'dir' });
+                socket.emit('jogarPeca', { index: idx, lado: 'dir' });
             } else if (serveEsq) {
-                socket.emit('jogarPeca', { index: index, lado: 'esq' });
+                socket.emit('jogarPeca', { index: idx, lado: 'esq' });
             } else {
-                alert("Essa peça não encaixa em nenhuma das pontas!");
+                alert("Não encaixa em nenhum lado!");
             }
         }
 
-        socket.on('erro', msg => alert(msg));
-        socket.on('mensagemGeral', msg => alert(msg));
+        socket.on('erro', m => alert(m));
+        socket.on('mensagemGeral', m => alert(m));
         socket.on('resetJogo', () => location.reload());
     </script>
 </body>
