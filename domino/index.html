@@ -3,125 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EE. 8 de Abril Lógico 🧠 — Jogo de Dominó Online</title>
+    <title>EE. 8 de Abril Lógico 🧠 — Dominó Online</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --domino-ivory: #fdf6e3;
             --domino-pips: #1a1a1a;
-            --domino-sep: #dcdcdc;
             --table-green: #0d5c36;
             --blue-accent: #3b82f6;
-            --bg-dark: #0f172a; /* Azul escuro do print */
+            --bg-dark: #0f172a;
         }
 
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--bg-dark); color: white; text-align: center; }
+        body { 
+            margin: 0; 
+            font-family: 'Montserrat', sans-serif; 
+            background: var(--bg-dark); 
+            color: white; 
+            min-height: 100vh;
+        }
         
-        header { padding: 40px 20px; }
-        header h1 { margin: 0; font-size: 32px; font-weight: 800; color: #fff; }
-        header p { font-size: 16px; opacity: 0.9; margin-top: 10px; }
+        header { padding: 20px; background: rgba(0,0,0,0.3); }
+        header h1 { margin: 0; font-size: 24px; color: #fff; }
         
-        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; padding: 20px; }
         
-        /* BOX PRINCIPAL */
+        /* LOBBY AJUSTADO */
         .game-box { 
-            background: #111827; 
-            border: 2px solid #1e293b; 
-            border-radius: 24px; 
-            padding: 50px 30px; 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            background: #1e293b; 
+            border-radius: 20px; 
+            padding: 40px 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: inline-block;
+            width: 100%;
+            max-width: 500px;
         }
 
-        h2 { font-size: 28px; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 1px; }
-
-        .input-group { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .input-group { display: flex; flex-direction: column; gap: 15px; align-items: center; }
         
         input { 
-            padding: 15px 20px; 
-            font-size: 18px; 
+            padding: 12px; 
+            font-size: 16px; 
             border: 2px solid #334155; 
             background: #000; 
             color: #fff; 
-            border-radius: 12px; 
-            width: 100%; 
-            max-width: 400px; 
-            text-align: center;
+            border-radius: 8px; 
+            width: 80%; 
         }
 
         button { 
             background: var(--blue-accent); 
             color: white; 
             border: none; 
-            padding: 15px 40px; 
-            font-size: 18px; 
-            border-radius: 12px; 
+            padding: 12px 30px; 
+            font-size: 16px; 
+            border-radius: 8px; 
             cursor: pointer; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            transition: 0.3s;
-            margin-top: 10px;
+            font-weight: 800;
+            transition: 0.2s;
         }
 
-        button:hover { background: #2563eb; transform: scale(1.05); }
-        button:disabled { background: #475569; cursor: not-allowed; transform: none; }
+        button:hover { transform: scale(1.05); background: #2563eb; }
 
-        /* LISTA DE JOGADORES */
-        #lista-jogadores { list-style: none; padding: 0; margin: 30px 0; font-size: 22px; line-height: 1.6; }
-        .player-item { color: #f8fafc; font-weight: 600; }
-
-        /* MESA DE JOGO */
-        #tela-jogo { display: none; }
+        /* MESA DE JOGO - ONDE AS PEÇAS FICAM */
+        #tela-jogo { display: none; width: 100%; }
+        
         #mesa {
             background-color: var(--table-green);
-            min-height: 300px; border-radius: 20px; padding: 30px; display: flex; flex-wrap: wrap; 
-            justify-content: center; align-items: center; gap: 10px;
-            box-shadow: inset 0 0 60px rgba(0,0,0,0.6); border: 10px solid #451a03; margin: 20px 0;
+            min-height: 300px; 
+            border-radius: 20px; 
+            padding: 40px; 
+            display: flex; 
+            flex-wrap: wrap; /* Permite que as peças quebrem a linha se não couberem */
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; /* Espaço entre as peças na mesa */
+            box-shadow: inset 0 0 60px rgba(0,0,0,0.6); 
+            border: 8px solid #3e2723;
+            margin: 20px 0;
+            overflow: hidden;
         }
 
+        /* DESIGN DAS PEÇAS */
         .peca-domino {
-            background: var(--domino-ivory); border-radius: 8px; font-weight: 800; color: var(--domino-pips);
-            cursor: pointer; box-shadow: 3px 3px 8px rgba(0,0,0,0.4); display: flex; justify-content: center; align-items: center;
+            background: var(--domino-ivory); 
+            border-radius: 6px; 
+            font-weight: 800; 
+            color: var(--domino-pips);
+            box-shadow: 2px 4px 6px rgba(0,0,0,0.3); 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            flex-shrink: 0; /* Impede a peça de "esmagar" */
+            transition: 0.2s;
         }
-        .p-horiz { width: 80px; height: 40px; flex-direction: row; font-size: 22px; }
-        .p-horiz::after { content:''; width: 2px; height: 80%; background: var(--domino-sep); margin: 0 5px; }
-        .p-vert { width: 40px; height: 80px; flex-direction: column; font-size: 22px; }
-        .p-vert::after { content:''; width: 80%; height: 2px; background: var(--domino-sep); margin: 5px 0; }
+
+        .p-horiz { 
+            width: 70px; 
+            height: 35px; 
+            flex-direction: row; 
+            font-size: 18px; 
+            border-bottom: 3px solid #d1d1d1;
+        }
+        .p-horiz::after { content:''; width: 1px; height: 70%; background: #ccc; margin: 0 8px; }
+
+        .p-vert { 
+            width: 35px; 
+            height: 70px; 
+            flex-direction: column; 
+            font-size: 18px; 
+            border-right: 3px solid #d1d1d1;
+        }
+        .p-vert::after { content:''; width: 70%; height: 1px; background: #ccc; margin: 8px 0; }
+
+        /* MINHA MÃO */
+        #minhas-pecas { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+            flex-wrap: wrap; 
+            margin-top: 20px; 
+            padding: 20px;
+        }
         
-        #minhas-pecas { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 20px; }
-        #status-turno { font-size: 20px; font-weight: 800; margin-bottom: 10px; color: #fbbf24; }
+        .peca-domino:hover { cursor: pointer; transform: translateY(-5px); border-color: var(--blue-accent); }
+
+        #status-turno { font-size: 20px; font-weight: 800; margin: 20px 0; color: #fbbf24; }
     </style>
 </head>
 <body>
 
     <header>
         <h1>EE. 8 de Abril Lógico 🧠</h1>
-        <p>Laboratório de Computação — Dominó Online</p>
     </header>
 
     <div class="container">
         <div id="lobby" class="game-box">
-            <h2>Criar Partida</h2>
+            <h2>Novo Jogo</h2>
             <div class="input-group">
-                <input type="text" id="nome-jogador" placeholder="Seu Nome" maxlength="15">
+                <input type="text" id="nome-jogador" placeholder="Seu Apelido" maxlength="12">
                 <input type="text" id="nome-sala" placeholder="Nome da Sala">
-                <button onclick="entrar()">Conectar</button>
+                <button onclick="entrar()">ENTRAR</button>
             </div>
             
-            <div id="espera" style="display: none; margin-top: 40px;">
-                <h3>Jogadores Conectados:</h3>
-                <ul id="lista-jogadores"></ul>
-                <button id="btn-iniciar" onclick="iniciar()" disabled>INICIAR JOGO</button>
+            <div id="espera" style="display: none; margin-top: 30px;">
+                <p>Aguardando jogadores...</p>
+                <ul id="lista-jogadores" style="list-style: none; padding: 0; font-size: 18px; color: #60a5fa;"></ul>
+                <button id="btn-iniciar" onclick="iniciar()" disabled>COMEÇAR JOGO</button>
             </div>
         </div>
 
         <div id="tela-jogo">
             <div id="status-turno">Aguardando...</div>
             <div id="mesa"></div>
-            <h3>SUAS PEÇAS:</h3>
+            <p style="opacity: 0.6;">SUAS PEÇAS (Clique para jogar):</p>
             <div id="minhas-pecas"></div>
-            <div style="margin-top: 30px;">
-                <button onclick="socket.emit('comprarPeca')" style="background:#475569">📥 Comprar</button>
-                <button onclick="socket.emit('passarVez')" style="background:#475569">⏭️ Passar</button>
+            <div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center;">
+                <button onclick="socket.emit('comprarPeca')" style="background:#4b5563">📥 Comprar</button>
+                <button onclick="socket.emit('passarVez')" style="background:#4b5563">⏭️ Passar</button>
             </div>
         </div>
     </div>
@@ -129,31 +167,21 @@
     <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
     <script>
         const socket = io("https://motor-domino.onrender.com");
-        
         let meuNome = "";
-        let mesaAtual = [];
 
         function entrar() {
             meuNome = document.getElementById('nome-jogador').value.trim();
             const sala = document.getElementById('nome-sala').value.trim();
-            if (!meuNome || !sala) return alert("Preencha tudo!");
-            
-            // CORREÇÃO AQUI: Enviando como 'apelido' para bater com o server.js
+            if (!meuNome || !sala) return alert("Preencha os campos!");
             socket.emit('entrarSala', { apelido: meuNome, sala: sala });
-            
-            document.getElementById('nome-jogador').disabled = true;
-            document.getElementById('nome-sala').disabled = true;
         }
 
-        function iniciar() {
-            socket.emit('marcarPronto');
-        }
+        function iniciar() { socket.emit('marcarPronto'); }
 
         socket.on('estadoLobby', (dados) => {
             document.getElementById('espera').style.display = 'block';
             const ul = document.getElementById('lista-jogadores');
-            // CORREÇÃO AQUI: j.nome é o que vem do servidor
-            ul.innerHTML = dados.jogadoresInfo.map(j => `<li class="player-item">${j.nome}</li>`).join('');
+            ul.innerHTML = dados.jogadoresInfo.map(j => `<li>● ${j.nome}</li>`).join('');
             document.getElementById('btn-iniciar').disabled = dados.jogadoresInfo.length < 2;
             
             if(dados.rodando) {
@@ -163,7 +191,6 @@
         });
 
         socket.on('atualizarMesa', (mesa) => {
-            mesaAtual = mesa;
             const divMesa = document.getElementById('mesa');
             divMesa.innerHTML = mesa.map(p => {
                 const estilo = (p[0] === p[1]) ? 'p-vert' : 'p-horiz';
@@ -184,15 +211,14 @@
         socket.on('mudarTurno', (dados) => {
             const status = document.getElementById('status-turno');
             status.innerText = (dados.nome === meuNome) ? "⭐ SUA VEZ!" : `Vez de: ${dados.nome}`;
+            status.style.color = (dados.nome === meuNome) ? "#10b981" : "#fbbf24";
         });
 
         function jogar(index) {
-            // Lógica simples: se for a primeira peça vai na direita, senão tenta encaixar
             socket.emit('jogarPeca', { index, lado: 'dir' });
         }
 
         socket.on('erro', msg => alert(msg));
-        socket.on('mensagemGeral', msg => alert(msg));
         socket.on('resetJogo', () => location.reload());
     </script>
 </body>
