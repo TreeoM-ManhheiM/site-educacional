@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Mantendo a identidade visual de confiança do 9od.com */
+        body { background: #010409; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        h2 { color: #58a6ff; margin-bottom: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .tab-btn { background: #0d1117; border: 1px solid #30363d; color: #8b949e; padding: 8px 15px; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .tab-btn.active { border-color: #58a6ff; color: #58a6ff; font-weight: bold; background: rgba(88, 166, 255, 0.1); }
+        
+        .tool-content { display: none; }
+        .tool-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sim-container { display: flex; gap: 20px; height: 500px; }
+        .panel { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
+        .panel-header { font-size: 12px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        
+        /* Estilo para simular barra de endereço da API */
+        .api-address-bar { display: flex; gap: 5px; margin-bottom: 10px; }
+        .method { background: #e3b341; color: #000; padding: 5px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; }
+        .url { flex: 1; background: #010409; border: 1px solid #30363d; padding: 5px 10px; border-radius: 4px; color: #58a6ff; font-family: monospace; font-size: 12px; }
+
+        textarea { flex: 1; background: #010409; color: #a5d6ff; border: 1px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Courier New', monospace; resize: none; outline: none; line-height: 1.5; font-size: 14px; }
+        
+        .btn-run { margin-top: 15px; padding: 12px; background: #238636; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:hover { background: #2ea44f; }
+
+        .terminal { background: black; border: 1px solid #30363d; border-radius: 5px; flex: 1; padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; color: #d1d5da; overflow-y: auto; white-space: pre-wrap; }
+        
+        .json-preview { background: #010409; padding: 10px; border: 1px solid #30363d; margin-bottom: 10px; border-radius: 4px; font-family: monospace; color: #39d353; font-size: 12px; }
+        
+        .passou { color: #39d353; font-weight: bold; }
+        .falhou { color: #ff7b72; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2>API Testing</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('postman', this)">Postman</button>
+        <button class="tab-btn" onclick="switchTab('insomnia', this)">Insomnia</button>
+        <button class="tab-btn" onclick="switchTab('restassured', this)">Rest Assured (Java)</button>
+    </div>
+
+    <div id="postman" class="tool-content active">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>Tests Script (JS)</span></div>
+                <div class="api-address-bar">
+                    <div class="method">GET</div>
+                    <div class="url">https://api.9od.com/v1/users/8</div>
+                </div>
+                <textarea id="code-postman">
+pm.test("Status code is 200", function () {
+    pm.response.to.have.status(404);
+});
+
+pm.test("Validar Nome do Usuário", function () {
+    var jsonData = pm.response.json();
+    pm.expect(jsonData.nome).to.eql("Errado");
+});</textarea>
+                <button class="btn-run" onclick="rodarApi('postman')">▶ Send Request</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Response Body</div>
+                <div class="json-preview">
+{<br>
+&nbsp;&nbsp;"id": 8,<br>
+&nbsp;&nbsp;"nome": "Oito Aluno",<br>
+&nbsp;&nbsp;"status": "ativo"<br>
+}
+                </div>
+                <div class="terminal" id="term-postman">Aguardando...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="insomnia" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>Request Config (JSON)</span></div>
+                <textarea id="code-insomnia">
+{
+  "method": "POST",
+  "url": "https://api.9od.com/login",
+  "body": {
+    "user": "aluno@9od.com",
+    "pass": "1234"
+  }
+}</textarea>
+                <button class="btn-run" onclick="rodarApi('insomnia')">▶ Send POST</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Timeline Logs</div>
+                <div class="terminal" id="term-insomnia">Aguardando...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="restassured" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>UserApiTest.java</span></div>
+                <textarea id="code-restassured">
+given()
+    .baseUri("https://api.9od.com")
+.when()
+    .get("/users/8")
+.then()
+    .statusCode(500)
+    .body("nome", equalTo("Incorreto"));</textarea>
+                <button class="btn-run" onclick="rodarApi('restassured')">▶ Run Rest Assured</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">JUnit/RestAssured Output</div>
+                <div class="terminal" id="term-restassured">Aguardando...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function rodarApi(tool) {
+            const code = document.getElementById(`code-${tool}`).value;
+            const term = document.getElementById(`term-${tool}`);
+            term.innerHTML = `Sending request via ${tool}...\n\n`;
+
+            setTimeout(() => {
+                if (tool === 'postman') {
+                    const t1 = code.includes('status(200)');
+                    const t2 = code.includes('eql("Oito Aluno")');
+                    term.innerHTML += `Test 1 (Status 200): ${t1 ? '<span class="passou">PASS</span>' : '<span class="falhou">FAIL (Expected 200)</span>'}\n`;
+                    term.innerHTML += `Test 2 (User Name): ${t2 ? '<span class="passou">PASS</span>' : '<span class="falhou">FAIL (Expected "Oito Aluno")</span>'}`;
+                } else if (tool === 'insomnia') {
+                    term.innerHTML += "<span class='passou'>HTTP/1.1 200 OK</span>\n";
+                    term.innerHTML += "Content-Type: application/json\n";
+                    term.innerHTML += "✓ Request sent successfully!";
+                } else if (tool === 'restassured') {
+                    const t1 = code.includes('statusCode(200)');
+                    const t2 = code.includes('equalTo("Oito Aluno")');
+                    if(t1 && t2) {
+                        term.innerHTML += "<span class='passou'>✓ All assertions passed! (245ms)</span>";
+                    } else {
+                        term.innerHTML += "<span class='falhou'>java.lang.AssertionError: 1 expectation failed.</span>\n";
+                        term.innerHTML += !t1 ? "Expected status code <200> but was <500>.\n" : "";
+                        term.innerHTML += !t2 ? "JSON path 'nome' doesn't match." : "";
+                    }
+                }
+            }, 600);
+        }
+    </script>
+</body>
+</html>

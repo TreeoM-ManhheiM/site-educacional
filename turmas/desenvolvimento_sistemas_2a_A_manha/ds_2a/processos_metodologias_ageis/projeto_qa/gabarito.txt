@@ -1,0 +1,1 @@
+<a href="gabarito.html" target="view" class="menu-item">Ver Gabarito</a>

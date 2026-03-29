@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Mobile Testing - 9od.com</title>
+    <style>
+        /* Identidade visual 9od.com */
+        body { background: #010409; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        h2 { color: #58a6ff; margin-bottom: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .tab-btn { background: #0d1117; border: 1px solid #30363d; color: #8b949e; padding: 8px 15px; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .tab-btn:hover { background: #161b22; }
+        .tab-btn.active { border-color: #58a6ff; color: #58a6ff; font-weight: bold; background: rgba(88, 166, 255, 0.1); }
+        
+        .tool-content { display: none; }
+        .tool-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sim-container { display: flex; gap: 20px; height: 550px; }
+        .panel { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
+        .panel-header { font-size: 12px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        
+        textarea { flex: 1; background: #010409; color: #a5d6ff; border: 1px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Courier New', monospace; resize: none; outline: none; line-height: 1.5; font-size: 13px; }
+        
+        .btn-run { margin-top: 15px; padding: 12px; background: #238636; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:hover { background: #2ea44f; }
+
+        .terminal { background: black; border: 1px solid #30363d; border-radius: 5px; flex: 1; padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; color: #d1d5da; overflow-y: auto; white-space: pre-wrap; }
+        
+        .passou { color: #39d353; font-weight: bold; }
+        .falhou { color: #ff7b72; font-weight: bold; }
+        .device-info { color: #e3b341; font-size: 11px; margin-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <h2>Mobile Automation Testing</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('appium', this)">Appium</button>
+        <button class="tab-btn" onclick="switchTab('espresso', this)">Espresso (Android)</button>
+        <button class="tab-btn" onclick="switchTab('xcuitest', this)">XCUITest (iOS)</button>
+    </div>
+
+    <div id="appium" class="tool-content active">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>appium_test.js</span></div>
+                <textarea id="code-appium">
+// Desired Capabilities
+const caps = {
+  platformName: "Android",
+  deviceName: "Pixel_4_API_30",
+  app: "/path/to/app.apk"
+};
+
+// DESAFIO: Altere o platformName para "iOS" 
+// para validar a compatibilidade Cross-Platform.
+                </textarea>
+                <button class="btn-run" onclick="rodarMobile('appium')">▶ Start Session</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Appium Server Logs</div>
+                <div class="terminal" id="term-appium">Aguardando conexão do driver...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="espresso" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>MainActivityTest.java</span></div>
+                <textarea id="code-espresso">
+@Test
+public void checkLoginButton() {
+    onView(withId(R.id.login_button))
+        .perform(click());
+    
+    // DESAFIO: Mude o check para 'isDisplayed()'
+    onView(withId(R.id.success_msg))
+        .check(matches(withText("Welcome")));
+}
+                </textarea>
+                <button class="btn-run" onclick="rodarMobile('espresso')">▶ Run Instrumentation</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Android JUnit Report</div>
+                <div class="terminal" id="term-espresso">Dispositivo: Emulator-5554 offline</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="xcuitest" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>LoginUITests.swift</span></div>
+                <textarea id="code-xcuitest">
+func testLoginFlow() {
+    let app = XCUIApplication()
+    app.launch()
+    
+    let emailField = app.textFields["email_input"]
+    emailField.tap()
+    emailField.typeText("qa@9od.com")
+
+    // DESAFIO: Use app.buttons["Entrar"].tap()
+    // para finalizar o fluxo de UI.
+}
+                </textarea>
+                <button class="btn-run" onclick="rodarMobile('xcuitest')">▶ Test via Xcode</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">XCode Test Navigator</div>
+                <div class="terminal" id="term-xcuitest">Selecione um simulador iOS...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function rodarMobile(tool) {
+            const code = document.getElementById(`code-${tool}`).value;
+            const term = document.getElementById(`term-${tool}`);
+            
+            term.innerHTML = `<div class='device-info'>[DEVICE] Initializing simulator/emulator...</div>`;
+
+            setTimeout(() => {
+                if (tool === 'appium') {
+                    if (code.includes('platformName: "iOS"')) {
+                        term.innerHTML += "[Appium] Welcome to Appium v2.0\n";
+                        term.innerHTML += "[Appium] Attempting to find XCUITest driver...\n";
+                        term.innerHTML += "<span class='passou'>✓ Appium Session Created (iOS)</span>";
+                    } else {
+                        term.innerHTML += "[Appium] Session started on Android\n";
+                        term.innerHTML += "<span class='falhou'>✗ DESAFIO: Mude o platformName para 'iOS'.</span>";
+                    }
+                } else if (tool === 'espresso') {
+                    if (code.includes('isDisplayed()')) {
+                        term.innerHTML += "Test running: checkLoginButton\n";
+                        term.innerHTML += "Action: Click -> ID: login_button\n";
+                        term.innerHTML += "<span class='passou'>✓ OK: success_msg is displayed!</span>";
+                    } else {
+                        term.innerHTML += "Test running: checkLoginButton\n";
+                        term.innerHTML += "<span class='falhou'>✗ Assertion Error: 'withText' não é suficiente. Use 'isDisplayed()'.</span>";
+                    }
+                } else if (tool === 'xcuitest') {
+                    if (code.includes('app.buttons["Entrar"].tap()')) {
+                        term.innerHTML += "t = 0.00s Launching app.9od.mobile\n";
+                        term.innerHTML += "t = 2.15s Tap Button 'Entrar'\n";
+                        term.innerHTML += "<span class='passou'>Test Suite 'LoginUITests' passed</span>";
+                    } else {
+                        term.innerHTML += "t = 0.00s Launching app.9od.mobile\n";
+                        term.innerHTML += "<span class='falhou'>✗ Test Interrupted: O botão 'Entrar' não foi acionado.</span>";
+                    }
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

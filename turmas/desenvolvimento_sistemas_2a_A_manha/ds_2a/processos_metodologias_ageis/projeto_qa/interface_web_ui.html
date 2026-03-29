@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Mantendo a identidade visual de confiança do 9od.com */
+        body { background: #010409; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        h2 { color: #58a6ff; margin-bottom: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .tab-btn { background: #0d1117; border: 1px solid #30363d; color: #8b949e; padding: 8px 15px; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .tab-btn.active { border-color: #58a6ff; color: #58a6ff; font-weight: bold; background: rgba(88, 166, 255, 0.1); }
+        
+        .tool-content { display: none; }
+        .tool-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sim-container { display: flex; gap: 20px; height: 500px; }
+        .panel { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
+        .panel-header { font-size: 12px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        
+        textarea { flex: 1; background: #010409; color: #a5d6ff; border: 1px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Courier New', monospace; resize: none; outline: none; line-height: 1.5; font-size: 14px; }
+        
+        .btn-run { margin-top: 15px; padding: 12px; background: #238636; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:hover { background: #2ea44f; }
+
+        .terminal { background: black; border: 1px solid #30363d; border-radius: 5px; flex: 1; padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; color: #d1d5da; overflow-y: auto; white-space: pre-wrap; }
+        
+        /* Preview da Interface Simulado */
+        .browser-preview { background: #f0f0f0; border-radius: 4px; padding: 15px; margin-bottom: 10px; color: #333; text-align: center; border: 2px solid #30363d; }
+        .browser-input { width: 80%; padding: 5px; margin: 5px 0; border: 1px solid #ccc; border-radius: 3px; }
+        .browser-btn { background: #1f6feb; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        
+        .passou { color: #39d353; font-weight: bold; }
+        .falhou { color: #ff7b72; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2>Interface Web / UI Testing</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('selenium', this)">Selenium (Python)</button>
+        <button class="tab-btn" onclick="switchTab('cypress', this)">Cypress (JS)</button>
+        <button class="tab-btn" onclick="switchTab('playwright', this)">Playwright (JS/TS)</button>
+    </div>
+
+    <div id="selenium" class="tool-content active">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>login_test.py</span></div>
+                <textarea id="code-selenium">
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+
+driver = webdriver.Chrome()
+driver.get("https://9od.com/login")
+
+# Desafio: Identifique o ID correto do botão de entrar
+driver.find_element(By.ID, "user").send_keys("aluno@9od.com")
+driver.find_element(By.ID, "pass").send_keys("1234")
+driver.find_element(By.ID, "").click()</textarea>
+                <button class="btn-run" onclick="rodarWeb('selenium')">▶ Rodar Selenium</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Preview & Logs</div>
+                <div class="browser-preview">
+                    <strong>9od Login</strong><br>
+                    <input type="text" placeholder="User (ID: user)" class="browser-input" disabled><br>
+                    <input type="password" placeholder="Pass (ID: pass)" class="browser-input" disabled><br>
+                    <button class="browser-btn">Entrar (ID: btn-entrar)</button>
+                </div>
+                <div class="terminal" id="term-selenium">Aguardando...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cypress" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>spec.cy.js</span></div>
+                <textarea id="code-cypress">
+describe('Fluxo de Login', () => {
+  it('Deve entrar no dashboard', () => {
+    cy.visit('/login')
+    cy.get('#user').type('aluno@9od.com')
+    cy.get('#pass').type('1234')
+    
+    // Desafio: Falta a ação final de clique!
+    cy.get('#btn-entrar')
+  })
+})</textarea>
+                <button class="btn-run" onclick="rodarWeb('cypress')">▶ Run Cypress</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Cypress Runner</div>
+                <div class="terminal" id="term-cypress">Aguardando...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="playwright" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>test.spec.ts</span></div>
+                <textarea id="code-playwright">
+import { test, expect } from '@playwright/test';
+
+test('validar titulo', async ({ page }) => {
+  await page.goto('https://9od.com');
+  
+  // Desafio: Ajuste o título esperado
+  await expect(page).toHaveTitle('9od - Errado');
+});</textarea>
+                <button class="btn-run" onclick="rodarWeb('playwright')">▶ Run Playwright</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Playwright Inspector</div>
+                <div class="terminal" id="term-playwright">Aguardando...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function rodarWeb(tool) {
+            const code = document.getElementById(`code-${tool}`).value;
+            const term = document.getElementById(`term-${tool}`);
+            term.innerHTML = `Iniciando automação ${tool}...\n`;
+
+            setTimeout(() => {
+                if (tool === 'selenium') {
+                    if (code.includes('"btn-entrar"')) {
+                        term.innerHTML += "<span class='passou'>✓ Elemento 'btn-entrar' encontrado.</span>\n";
+                        term.innerHTML += "<span class='passou'>✓ Click realizado. Login OK!</span>";
+                    } else {
+                        term.innerHTML += "<span class='falhou'>✗ NoSuchElementException: ID vazio ou inválido.</span>";
+                    }
+                } else if (tool === 'cypress') {
+                    if (code.includes('.click()')) {
+                        term.innerHTML += "cy.get('#btn-entrar') <span class='passou'>CLICKED</span>\n";
+                        term.innerHTML += "<span class='passou'>✓ 1 test passed (1.2s)</span>";
+                    } else {
+                        term.innerHTML += "cy.get('#btn-entrar') <span class='falhou'>EXIST (NO ACTION)</span>\n";
+                        term.innerHTML += "<span class='falhou'>✗ Teste incompleto: Onde está o clique?</span>";
+                    }
+                } else if (tool === 'playwright') {
+                    if (code.includes("'9od - Home'")) {
+                        term.innerHTML += "<span class='passou'>✓ expect(page).toHaveTitle('9od - Home')</span>\n";
+                        term.innerHTML += "<span class='passou'>1 passed (0.8s)</span>";
+                    } else {
+                        term.innerHTML += "<span class='falhou'>✗ expect(received).toBe(expected)</span>\n";
+                        term.innerHTML += "  Expected: '9od - Home'\n  Received: '9od - Errado'";
+                    }
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        /* Mantendo a identidade visual do Cypress.html */
+        body { background: #010409; color: #c9d1d9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; margin: 0; }
+        h2 { color: #58a6ff; margin-bottom: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .tab-btn { background: #0d1117; border: 1px solid #30363d; color: #8b949e; padding: 8px 15px; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .tab-btn:hover { background: #161b22; }
+        .tab-btn.active { border-color: #58a6ff; color: #58a6ff; font-weight: bold; background: rgba(88, 166, 255, 0.1); }
+        
+        .tool-content { display: none; }
+        .tool-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sim-container { display: flex; gap: 20px; height: 500px; }
+        .panel { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
+        .panel-header { font-size: 12px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        
+        textarea { flex: 1; background: #010409; color: #a5d6ff; border: 1px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Courier New', Courier, monospace; resize: none; outline: none; line-height: 1.5; font-size: 14px; }
+        
+        .btn-run { margin-top: 15px; padding: 12px; background: #238636; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn-run:hover { background: #2ea44f; }
+
+        .terminal { background: black; border: 1px solid #30363d; border-radius: 5px; flex: 1; padding: 15px; font-family: 'Courier New', Courier, monospace; font-size: 13px; color: #d1d5da; overflow-y: auto; white-space: pre-wrap; }
+        .passou { color: #39d353; font-weight: bold; }
+        .falhou { color: #ff7b72; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h2>Unitário & Integração</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('pytest', this)">PyTest (Python)</button>
+        <button class="tab-btn" onclick="switchTab('junit', this)">JUnit (Java)</button>
+        <button class="tab-btn" onclick="switchTab('testng', this)">TestNG (Java)</button>
+        <button class="tab-btn" onclick="switchTab('unittest', this)">Unittest (Python)</button>
+    </div>
+
+    <div id="pytest" class="tool-content active">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>test_app.py</span> <span>[Desafio]</span></div>
+                <textarea id="code-pytest">
+from app import validar_email, login
+
+def test_email_valido():
+    # O email tem "@", deve retornar True
+    assert validar_email("oito@aluno.com") == False
+
+def test_login_sucesso():
+    # A senha correta no app.py é "1234"
+    assert login("oito@aluno.com", "0000") == "Sucesso"
+
+def test_login_falha():
+    # Se o email é inválido, o retorno deve ser "Falha"
+    assert login("sem_arroba.com", "1234") == "Sucesso"</textarea>
+                <button class="btn-run" onclick="rodarTeste('pytest')">▶ Executar PyTest</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Console Output</div>
+                <div class="terminal" id="term-pytest">Aguardando execução...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="junit" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>CalculatorTest.java</span></div>
+                <textarea id="code-junit">
+import static org.junit.Assert.*;
+import org.junit.Test;
+
+public class CalculatorTest {
+    @Test
+    public void testSoma() {
+        Calculator calc = new Calculator();
+        // 2 + 2 deve ser 4
+        assertEquals(5, calc.somar(2, 2));
+    }
+}</textarea>
+                <button class="btn-run" onclick="rodarTeste('junit')">▶ Run JUnit Test</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">JUnit Console</div>
+                <div class="terminal" id="term-junit">Aguardando execução...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="testng" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>ApiTest.java</span></div>
+                <textarea id="code-testng">
+import org.testng.annotations.Test;
+import org.testng.Assert;
+
+public class ApiTest {
+    @Test
+    public void validarEndpoint() {
+        String url = "https://9od.com/api";
+        // O esperado está sem o 's' do https
+        Assert.assertEquals(url, "http://9od.com/api");
+    }
+}</textarea>
+                <button class="btn-run" onclick="rodarTeste('testng')">▶ Run TestNG</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">TestNG Report</div>
+                <div class="terminal" id="term-testng">Aguardando execução...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="unittest" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>test_math.py</span></div>
+                <textarea id="code-unittest">
+import unittest
+
+class TestMath(unittest.TestCase):
+    def test_multiplicar(self):
+        # 3 * 3 deve ser 9
+        self.assertEqual(3 * 3, 10)
+
+if __name__ == '__main__':
+    unittest.main()</textarea>
+                <button class="btn-run" onclick="rodarTeste('unittest')">▶ Run Unittest</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Python Unittest Console</div>
+                <div class="terminal" id="term-unittest">Aguardando execução...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function rodarTeste(ferramenta) {
+            const code = document.getElementById(`code-${ferramenta}`).value;
+            const term = document.getElementById(`term-${ferramenta}`);
+            term.innerHTML = "Iniciando testes...\n\n";
+
+            setTimeout(() => {
+                if (ferramenta === 'pytest') {
+                    const t1 = code.includes('== True');
+                    const t2 = code.includes('"1234") == "Sucesso"');
+                    const t3 = code.includes('== "Falha"');
+                    
+                    term.innerHTML += `test_email_valido: ${t1 ? '<span class="passou">PASSED</span>' : '<span class="falhou">FAILED</span>'}\n`;
+                    term.innerHTML += `test_login_sucesso: ${t2 ? '<span class="passou">PASSED</span>' : '<span class="falhou">FAILED</span>'}\n`;
+                    term.innerHTML += `test_login_falha: ${t3 ? '<span class="passou">PASSED</span>' : '<span class="falhou">FAILED</span>'}\n`;
+                    if(t1 && t2 && t3) term.innerHTML += "\n<span class='passou'>[ 100% SUCCESS ]</span>";
+                } 
+                else if (ferramenta === 'junit') {
+                    const pass = code.includes('assertEquals(4,');
+                    term.innerHTML += `Running: CalculatorTest\n`;
+                    term.innerHTML += `testSoma: ${pass ? '<span class="passou">OK</span>' : '<span class="falhou">AssertionError: expected:<4> but was:<5></span>'}\n`;
+                }
+                else if (ferramenta === 'testng') {
+                    const pass = code.includes('"https://9od.com/api"');
+                    term.innerHTML += `Tests run: 1, Failures: ${pass ? 0 : 1}, Skips: 0\n`;
+                    term.innerHTML += `validarEndpoint: ${pass ? '<span class="passou">SUCCESS</span>' : '<span class="falhou">FAILED</span>'}\n`;
+                }
+                else if (ferramenta === 'unittest') {
+                    const pass = code.includes('assertEqual(3 * 3, 9)');
+                    term.innerHTML += `Ran 1 test\n\n`;
+                    term.innerHTML += pass ? `<span class="passou">OK</span>` : `<span class="falhou">FAIL: test_multiplicar\nAssertionError: 9 != 10</span>`;
+                }
+            }, 600);
+        }
+    </script>
+</body>
+</html>

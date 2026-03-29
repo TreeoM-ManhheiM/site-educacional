@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>DevOps & CI/CD - 9od.com</title>
+    <style>
+        /* Identidade visual 9od.com baseada nos módulos anteriores */
+        body { background: #010409; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        h2 { color: #58a6ff; margin-bottom: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .tab-btn { background: #0d1117; border: 1px solid #30363d; color: #8b949e; padding: 8px 15px; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .tab-btn:hover { background: #161b22; }
+        .tab-btn.active { border-color: #58a6ff; color: #58a6ff; font-weight: bold; background: rgba(88, 166, 255, 0.1); }
+        
+        .tool-content { display: none; }
+        .tool-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sim-container { display: flex; gap: 20px; height: 500px; }
+        .panel { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
+        .panel-header { font-size: 12px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; font-weight: bold; }
+        
+        textarea { flex: 1; background: #010409; color: #a5d6ff; border: 1px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Courier New', monospace; resize: none; outline: none; line-height: 1.5; font-size: 13px; }
+        
+        .btn-run { margin-top: 15px; padding: 12px; background: #238636; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .btn-run:hover { background: #2ea44f; }
+
+        .terminal { background: black; border: 1px solid #30363d; border-radius: 5px; flex: 1; padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; color: #d1d5da; overflow-y: auto; white-space: pre-wrap; }
+        .log-success { color: #39d353; font-weight: bold; }
+        .log-error { color: #ff7b72; }
+        .log-info { color: #58a6ff; }
+    </style>
+</head>
+<body>
+
+    <h2>CI/CD Pipelines & DevOps</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('github', this)">GitHub Actions</button>
+        <button class="tab-btn" onclick="switchTab('gitlab', this)">GitLab CI</button>
+        <button class="tab-btn" onclick="switchTab('jenkins', this)">Jenkins</button>
+    </div>
+
+    <div id="github" class="tool-content active">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header">main.yml (Workflow)</div>
+                <textarea id="code-github">
+name: QA_Pipeline
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run QA Tests
+        run: npm run test:ci</textarea>
+                <button class="btn-run" onclick="executarPipeline('github')">▶ Trigger Workflow</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Action Console Output</div>
+                <div class="terminal" id="term-github">Aguardando evento de push...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="gitlab" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header">.gitlab-ci.yml</div>
+                <textarea id="code-gitlab">
+stages:
+  - test
+  - deploy
+
+qa_job:
+  stage: test
+  script:
+    - echo "Iniciando testes no Runner..."
+    - pytest tests/</textarea>
+                <button class="btn-run" onclick="executarPipeline('gitlab')">▶ Run GitLab Pipeline</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">GitLab Runner Log</div>
+                <div class="terminal" id="term-gitlab">Runner em standby...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="jenkins" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header">Jenkinsfile (Declarative)</div>
+                <textarea id="code-jenkins">
+pipeline {
+    agent any
+    stages {
+        stage('Testing') {
+            steps {
+                sh 'mvn test'
+            }
+        }
+    }
+}</textarea>
+                <button class="btn-run" onclick="executarPipeline('jenkins')">▶ Build Now</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Console Output (Build #1)</div>
+                <div class="terminal" id="term-jenkins">Aguardando início do build...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function executarPipeline(tool) {
+            const term = document.getElementById(`term-${tool}`);
+            term.innerHTML = `<span class='log-info'>[SYSTEM]</span> Iniciando pipeline em ${tool}...\n`;
+            
+            setTimeout(() => {
+                term.innerHTML += `[${tool.toUpperCase()}] Validando sintaxe do arquivo...\n`;
+                setTimeout(() => {
+                    term.innerHTML += `<span class='log-success'>[SUCCESS]</span> Sintaxe OK. provisionando ambiente...\n`;
+                    term.innerHTML += `[${tool.toUpperCase()}] Executando scripts de QA...\n`;
+                    term.innerHTML += `-----------------------------------\n`;
+                    term.innerHTML += `TOTAL: 15 testes\nPASSED: 15\nFAILED: 0\n`;
+                    term.innerHTML += `-----------------------------------\n`;
+                    term.innerHTML += `<span class='log-success'>✓ PIPELINE CONCLUÍDA COM SUCESSO!</span>`;
+                }, 800);
+            }, 500);
+        }
+    </script>
+</body>
+</html>

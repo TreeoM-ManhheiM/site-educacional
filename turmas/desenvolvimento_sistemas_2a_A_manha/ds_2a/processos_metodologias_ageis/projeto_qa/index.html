@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma QA 360 - 9od.com</title>
+    <style>
+        :root {
+            --bg-color: #0d1117; --sidebar-bg: #161b22; --border-color: #30363d;
+            --neon-blue: #58a6ff; --accent-glow: rgba(88, 166, 255, 0.15);
+            --text-main: #c9d1d9; --text-muted: #8b949e;
+        }
+        body { margin: 0; display: flex; height: 100vh; background-color: var(--bg-color); font-family: 'Segoe UI', sans-serif; overflow: hidden; color: var(--text-main); }
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; }
+        .logo { padding: 30px 20px; font-size: 24px; font-weight: 800; color: var(--neon-blue); text-align: center; border-bottom: 1px solid var(--border-color); letter-spacing: 2px; }
+        .menu-container { flex: 1; overflow-y: auto; padding: 10px 0; }
+        .category { padding: 25px 25px 10px 25px; font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 1.5px; }
+        .menu-item { padding: 12px 25px; cursor: pointer; color: var(--text-main); text-decoration: none; display: flex; align-items: center; font-size: 14px; transition: all 0.2s ease; border-left: 4px solid transparent; }
+        .menu-item:hover { background-color: rgba(255, 255, 255, 0.05); }
+        .menu-item.active { background-color: var(--accent-glow); border-left-color: var(--neon-blue); color: var(--neon-blue); font-weight: 600; }
+        #content-frame { flex: 1; border: none; background-color: var(--bg-color); }
+        .footer { padding: 15px; font-size: 10px; color: var(--text-muted); text-align: center; border-top: 1px solid var(--border-color); }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <div class="logo">9od.com [QA]</div>
+        <div class="menu-container">
+            <div class="category">⚖️ Regras de Negócio</div>
+            <a href="calculo_icms.html" target="view" class="menu-item" onclick="ativar(this)">C-5521: Cálculo ICMS</a>
+
+            <div class="category">⚙️ Core & Mobile</div>
+            <a href="unitario_Integracao.html" target="view" class="menu-item active" onclick="ativar(this)">Unitário & Integração</a>
+            <a href="teste_mobile.html" target="view" class="menu-item" onclick="ativar(this)">Mobile Automation</a>
+            
+            <div class="category">🌐 Web & API</div>
+            <a href="interface_web_ui.html" target="view" class="menu-item" onclick="ativar(this)">Interface Web / UI</a>
+            <a href="api.html" target="view" class="menu-item" onclick="ativar(this)">API Testing</a>
+            
+            <div class="category">⚡ Infra & DevOps</div>
+            <a href="Performance.html" target="view" class="menu-item" onclick="ativar(this)">Performance</a>
+            <a href="devops.html" target="view" class="menu-item" onclick="ativar(this)">DevOps & CI/CD</a>
+
+            <div class="category">📋 Documentação</div>
+            <a href="gestao_bug.html" target="view" class="menu-item" onclick="ativar(this)">Gestão & Bugs</a>
+
+            </div>
+        <div class="footer">Plataforma Didática QA v3.0</div>
+    </nav>
+    <iframe name="view" id="content-frame" src="unitario_Integracao.html"></iframe>
+    <script>
+        function ativar(el) {
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            el.classList.add('active');
+        }
+    </script>
+</body>
+</html>

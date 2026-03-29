@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Bugs & Testes - 9od.com</title>
+    <style>
+        /* Mantendo a identidade visual de confiança do 9od.com */
+        body { background: #010409; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        h2 { color: #58a6ff; margin-bottom: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .tab-btn { background: #0d1117; border: 1px solid #30363d; color: #8b949e; padding: 8px 15px; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .tab-btn:hover { background: #161b22; }
+        .tab-btn.active { border-color: #58a6ff; color: #58a6ff; font-weight: bold; background: rgba(88, 166, 255, 0.1); }
+        
+        .tool-content { display: none; }
+        .tool-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sim-container { display: flex; gap: 20px; height: 550px; }
+        .panel { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
+        .panel-header { font-size: 12px; color: #8b949e; margin-bottom: 15px; text-transform: uppercase; font-weight: bold; }
+
+        /* Estilo simulando Formulário do Jira */
+        .jira-form { display: flex; flex-direction: column; gap: 12px; }
+        .jira-field { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 11px; color: #8b949e; }
+        .jira-input, .jira-select, .jira-textarea { 
+            background: #010409; border: 1px solid #30363d; color: #c9d1d9; padding: 10px; border-radius: 4px; font-size: 13px; outline: none;
+        }
+        .jira-input:focus { border-color: #58a6ff; }
+        
+        .btn-jira { background: #0052cc; color: white; border: none; padding: 12px; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 10px; transition: 0.2s; }
+        .btn-jira:hover { background: #0747a6; }
+        
+        /* Estilo TestRail (Lista de Casos) */
+        .test-case-item { background: #161b22; border: 1px solid #30363d; padding: 12px; border-radius: 6px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .tc-info { display: flex; flex-direction: column; }
+        .tc-id { font-size: 10px; color: #58a6ff; font-weight: bold; }
+        .tc-title { font-size: 14px; }
+        
+        .status-badge { padding: 5px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; border: none; cursor: pointer; min-width: 80px; }
+        .untested { background: #484f58; color: #f0f6fc; }
+        .passed { background: #238636; color: white; }
+        .failed { background: #da3633; color: white; }
+
+        .terminal { background: black; border: 1px solid #30363d; border-radius: 5px; flex: 1; padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; color: #d1d5da; overflow-y: auto; }
+        .log-success { color: #39d353; font-weight: bold; }
+        .log-error { color: #ff7b72; }
+    </style>
+</head>
+<body>
+
+    <h2>Gestão de Bugs & Casos de Teste</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('jira', this)">Jira Software</button>
+        <button class="tab-btn" onclick="switchTab('testrail', this)">TestRail</button>
+    </div>
+
+    <div id="jira" class="tool-content active">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header">Criar Nova Issue: [BUG]</div>
+                <div class="jira-form">
+                    <div class="jira-field">
+                        <label>Resumo (Summary)</label>
+                        <input type="text" id="summary" class="jira-input" placeholder="Ex: Erro 500 ao finalizar compra no Android">
+                    </div>
+                    <div class="jira-field">
+                        <label>Prioridade</label>
+                        <select id="priority" class="jira-select">
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                            <option value="Highest (Blocker)">Highest (Blocker)</option>
+                        </select>
+                    </div>
+                    <div class="jira-field">
+                        <label>Passos para Reproduzir</label>
+                        <textarea id="desc" class="jira-textarea" rows="6" placeholder="1. Abrir app&#10;2. Ir ao carrinho..."></textarea>
+                    </div>
+                    <button class="btn-jira" onclick="criarBug()">Criar Issue no Backlog</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Activity Stream</div>
+                <div class="terminal" id="term-jira">Aguardando novo reporte...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="testrail" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header">Test Run: Regressão Sprint 98</div>
+                
+                <div class="test-case-item">
+                    <div class="tc-info">
+                        <span class="tc-id">C-5520</span>
+                        <span class="tc-title">Validar Checkout com Pix</span>
+                    </div>
+                    <button class="status-badge untested" onclick="updateTC(this, 'passed')">Untested</button>
+                </div>
+
+                <div class="test-case-item">
+                    <div class="tc-info">
+                        <span class="tc-id">C-5521</span>
+                        <span class="tc-title">Cálculo de Impostos (ICMS)</span>
+                    </div>
+                    <button class="status-badge untested" onclick="updateTC(this, 'failed')">Untested</button>
+                </div>
+
+                <div class="test-case-item">
+                    <div class="tc-info">
+                        <span class="tc-id">C-5525</span>
+                        <span class="tc-title">Push Notification de Entrega</span>
+                    </div>
+                    <button class="status-badge untested" onclick="updateTC(this, 'passed')">Untested</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header">Status da Execução (API)</div>
+                <div class="terminal" id="term-testrail">Clique nos botões dos casos de teste para atualizar o status.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function criarBug() {
+            const summary = document.getElementById('summary').value;
+            const term = document.getElementById('term-jira');
+            
+            if(summary.length < 15) {
+                term.innerHTML = "<span class='log-error'>[ERRO] O resumo do bug deve ser mais descritivo (mínimo 15 caracteres).</span>";
+            } else {
+                term.innerHTML = `<span class='log-success'>[SUCESSO] Issue QA-900 criada!</span>\n\n`;
+                term.innerHTML += `<b>Resumo:</b> ${summary}\n`;
+                term.innerHTML += `<b>Status:</b> TO DO\n`;
+                term.innerHTML += `<b>Priority:</b> ${document.getElementById('priority').value}`;
+            }
+        }
+
+        function updateTC(btn, status) {
+            btn.innerText = status.toUpperCase();
+            btn.className = `status-badge ${status}`;
+            const term = document.getElementById('term-testrail');
+            term.innerHTML = `Enviando resultado para o TestRail...\n`;
+            setTimeout(() => {
+                term.innerHTML += `[API] POST /api/v2/add_result/ \n`;
+                term.innerHTML += `<span class='log-success'>✓ Caso atualizado como ${status.toUpperCase()}!</span>`;
+            }, 400);
+        }
+    </script>
+</body>
+</html>

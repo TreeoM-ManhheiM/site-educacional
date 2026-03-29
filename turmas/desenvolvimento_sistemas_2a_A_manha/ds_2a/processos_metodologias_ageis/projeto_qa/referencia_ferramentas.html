@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Tech Stack QA 360 - 9od.com</title>
+    <style>
+        :root {
+            --bg: #0d1117; --card: #161b22; --border: #30363d;
+            --blue: #58a6ff; --green: #39d353; --text: #c9d1d9; --muted: #8b949e;
+            --tag-free: rgba(57, 211, 83, 0.1); --tag-prop: rgba(227, 179, 65, 0.1);
+        }
+        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; margin: 0; padding: 30px; line-height: 1.4; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 30px; text-align: center; }
+        h1 { color: var(--blue); margin: 0; font-size: 24px; letter-spacing: 1px; }
+        .category-title { color: var(--green); font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin: 40px 0 15px 5px; border-left: 3px solid var(--green); padding-left: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 18px; display: flex; flex-direction: column; transition: transform 0.2s; }
+        .card:hover { border-color: var(--blue); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        h2 { margin: 0; font-size: 16px; color: var(--blue); }
+        .tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; border: 1px solid transparent; }
+        .free { background: var(--tag-free); color: var(--green); border-color: var(--green); }
+        .prop { background: var(--tag-prop); color: #e3b341; border-color: #e3b341; }
+        p { font-size: 12px; color: var(--muted); margin: 8px 0; min-height: 36px; }
+        .label { font-size: 10px; color: var(--blue); font-weight: bold; text-transform: uppercase; margin-top: 10px; display: block; }
+        ul { padding-left: 15px; margin: 5px 0; font-size: 12px; color: var(--text); }
+        code { background: #010409; color: #a5d6ff; padding: 6px; border-radius: 4px; font-size: 11px; display: block; margin-top: 5px; border: 1px solid var(--border); overflow-x: auto; }
+        .links { margin-top: auto; padding-top: 15px; display: flex; gap: 12px; border-top: 1px solid var(--border); }
+        .links a { font-size: 11px; color: var(--blue); text-decoration: none; }
+        .links a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>Stack Tecnológica QA 360 Full Stack</h1>
+        <div style="color: var(--muted); font-size: 12px; margin-top: 5px;">Mapeamento completo de ferramentas para Engenharia de Qualidade - 9od.com</div>
+    </header>
+
+    <div class="category-title">⚙️ Unitário & Integração</div>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header"><h2>PyTest</h2><span class="tag free">Open Source</span></div>
+            <p>Framework Python focado em simplicidade e escalabilidade de testes.</p>
+            <span class="label">Console</span><code>pytest tests/ -v</code>
+            <div class="links"><a href="https://pytest.org/">Official</a><a href="https://pypi.org/project/pytest/">Download</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>JUnit</h2><span class="tag free">Open Source</span></div>
+            <p>O padrão da indústria para testes unitários no ecossistema Java.</p>
+            <span class="label">Console</span><code>mvn test</code>
+            <div class="links"><a href="https://junit.org/junit5/">Official</a><a href="https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api">Maven</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>TestNG</h2><span class="tag free">Open Source</span></div>
+            <p>Inspirado no JUnit, mas com suporte a testes de integração e data-driven.</p>
+            <span class="label">Console</span><code>java org.testng.TestNG testng.xml</code>
+            <div class="links"><a href="https://testng.org/">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>Unittest</h2><span class="tag free">Open Source</span></div>
+            <p>Biblioteca padrão (Built-in) do Python para testes unitários.</p>
+            <span class="label">Console</span><code>python -m unittest discover</code>
+            <div class="links"><a href="https://docs.python.org/3/library/unittest.html">Docs</a></div>
+        </div>
+    </div>
+
+    <div class="category-title">📱 Mobile Automation</div>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header"><h2>Appium</h2><span class="tag free">Open Source</span></div>
+            <p>Automação cross-platform para iOS e Android usando o protocolo WebDriver.</p>
+            <span class="label">Console</span><code>appium --address 127.0.0.1</code>
+            <div class="links"><a href="https://appium.io/">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>Espresso</h2><span class="tag free">Open Source</span></div>
+            <p>Framework nativo da Google para testes de UI rápidos no Android.</p>
+            <span class="label">Console</span><code>./gradlew connectedAndroidTest</code>
+            <div class="links"><a href="https://developer.android.com/training/testing/espresso">Docs</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>XCUITest</h2><span class="tag free">Open Source</span></div>
+            <p>Framework nativo da Apple para testes de interface em apps iOS.</p>
+            <span class="label">Console</span><code>xcodebuild test -scheme YourApp</code>
+            <div class="links"><a href="https://developer.apple.com/library/archive/documentation/DeveloperTools/Conceptual/testing_with_xcode/">Docs</a></div>
+        </div>
+    </div>
+
+    <div class="category-title">🌐 Interface Web / UI Testing</div>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header"><h2>Selenium</h2><span class="tag free">Open Source</span></div>
+            <p>O pioneiro em automação de navegadores, suportando múltiplas linguagens.</p>
+            <span class="label">Console (Grid)</span><code>java -jar selenium-server.jar standalone</code>
+            <div class="links"><a href="https://www.selenium.dev/">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>Cypress</h2><span class="tag free">MIT</span></div>
+            <p>Ferramenta moderna de JS para testes rápidos dentro do navegador.</p>
+            <span class="label">Console</span><code>npx cypress run</code>
+            <div class="links"><a href="https://www.cypress.io/">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>Playwright</h2><span class="tag free">Open Source</span></div>
+            <p>Framework da Microsoft para testes rápidos e estáveis em navegadores modernos.</p>
+            <span class="label">Console</span><code>npx playwright test</code>
+            <div class="links"><a href="https://playwright.dev/">Official</a></div>
+        </div>
+    </div>
+
+    <div class="category-title">🔗 API Testing</div>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header"><h2>Postman</h2><span class="tag prop">Proprietário / Free</span></div>
+            <p>Plataforma completa para design e testes de APIs com interface amigável.</p>
+            <span class="label">Console (Newman)</span><code>newman run my_coll.json</code>
+            <div class="links"><a href="https://www.postman.com/">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>Insomnia</h2><span class="tag free">Open Source / Core</span></div>
+            <p>Cliente de API leve focado em produtividade e design clean.</p>
+            <span class="label">Console (Inso)</span><code>inso run test my_api</code>
+            <div class="links"><a href="https://insomnia.rest/">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>Rest Assured</h2><span class="tag free">Open Source</span></div>
+            <p>Biblioteca Java com DSL fluida para validação simplificada de APIs REST.</p>
+            <span class="label">Integração</span><code>import static io.restassured.RestAssured.*</code>
+            <div class="links"><a href="https://rest-assured.io/">Official</a></div>
+        </div>
+    </div>
+
+    <div class="category-title">⚡ Performance & Load Testing</div>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header"><h2>Apache JMeter</h2><span class="tag free">Open Source</span></div>
+            <p>Ferramenta Java clássica para testes de carga e estresse em diversos protocolos.</p>
+            <span class="label">Console (CLI Mode)</span><code>jmeter -n -t test.jmx -l results.jtl</code>
+            <div class="links"><a href="https://jmeter.apache.org/">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>k6</h2><span class="tag free">Open Source</span></div>
+            <p>Focado em SRE e Engenharia de Performance, testes em JS com alta performance.</p>
+            <span class="label">Console</span><code>k6 run script.js</code>
+            <div class="links"><a href="https://k6.io/">Official</a></div>
+        </div>
+    </div>
+
+    <div class="category-title">🚀 CI/CD Pipelines & DevOps</div>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header"><h2>GitHub Actions</h2><span class="tag prop">Proprietário / Free</span></div>
+            <p>Automação de workflow integrada diretamente no repositório GitHub.</p>
+            <span class="label">Config</span><code>.github/workflows/main.yml</code>
+            <div class="links"><a href="https://github.com/features/actions">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>GitLab CI</h2><span class="tag free">Proprietário / Core</span></div>
+            <p>Pipeline robusta integrada ao GitLab, baseada em runners e Docker.</p>
+            <span class="label">Config</span><code>.gitlab-ci.yml</code>
+            <div class="links"><a href="https://about.gitlab.com/stages-devops-lifecycle/continuous-integration/">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>Jenkins</h2><span class="tag free">Open Source</span></div>
+            <p>O servidor de automação open-source mais utilizado no mundo.</p>
+            <span class="label">Pipeline</span><code>Jenkinsfile (Groovy)</code>
+            <div class="links"><a href="https://www.jenkins.io/">Official</a></div>
+        </div>
+    </div>
+
+    <div class="category-title">📋 Gestão de Bugs & Casos de Teste</div>
+    <div class="grid">
+        <div class="card">
+            <div class="card-header"><h2>Jira Software</h2><span class="tag prop">Proprietário</span></div>
+            <p>Líder de mercado em gestão de projetos ágeis e rastreamento de bugs.</p>
+            <span class="label">Funcionalidade</span><code>Issue Tracking / Sprint Board</code>
+            <div class="links"><a href="https://www.atlassian.com/software/jira">Official</a></div>
+        </div>
+        <div class="card">
+            <div class="card-header"><h2>TestRail</h2><span class="tag prop">Proprietário</span></div>
+            <p>Gestão centralizada de casos de teste, planos e execuções.</p>
+            <span class="label">Funcionalidade</span><code>Test Runs / Reporting</code>
+            <div class="links"><a href="https://www.gurock.com/testrail/">Official</a></div>
+        </div>
+    </div>
+
+    <footer style="text-align: center; margin-top: 50px; color: var(--muted); font-size: 11px; border-top: 1px solid var(--border); padding-top: 20px;">
+        &copy; 2026 <strong>9od.com</strong> - Projeto QA 360 Full Stack. Todos os direitos reservados.
+    </footer>
+</div>
+
+</body>
+</html>

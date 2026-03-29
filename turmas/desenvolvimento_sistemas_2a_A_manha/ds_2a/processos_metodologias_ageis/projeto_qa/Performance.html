@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Performance Testing - 9od.com</title>
+    <style>
+        /* Mantendo a identidade visual de confiança do 9od.com */
+        body { background: #010409; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; padding: 20px; margin: 0; }
+        h2 { color: #58a6ff; margin-bottom: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #30363d; padding-bottom: 10px; }
+        .tab-btn { background: #0d1117; border: 1px solid #30363d; color: #8b949e; padding: 8px 15px; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .tab-btn:hover { background: #161b22; }
+        .tab-btn.active { border-color: #58a6ff; color: #58a6ff; font-weight: bold; background: rgba(88, 166, 255, 0.1); }
+        
+        .tool-content { display: none; }
+        .tool-content.active { display: block; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .sim-container { display: flex; gap: 20px; height: 500px; }
+        .panel { flex: 1; background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; display: flex; flex-direction: column; }
+        .panel-header { font-size: 12px; color: #8b949e; margin-bottom: 8px; text-transform: uppercase; display: flex; justify-content: space-between; }
+        
+        textarea { flex: 1; background: #010409; color: #a5d6ff; border: 1px solid #30363d; border-radius: 5px; padding: 12px; font-family: 'Courier New', monospace; resize: none; outline: none; line-height: 1.5; font-size: 14px; }
+        
+        .btn-run { margin-top: 15px; padding: 12px; background: #238636; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-run:hover { background: #2ea44f; }
+
+        .terminal { background: black; border: 1px solid #30363d; border-radius: 5px; flex: 1; padding: 15px; font-family: 'Courier New', monospace; font-size: 13px; color: #d1d5da; overflow-y: auto; white-space: pre-wrap; }
+        
+        .passou { color: #39d353; font-weight: bold; }
+        .falhou { color: #ff7b72; font-weight: bold; }
+
+        /* Estilo para a tabela de resultados de performance */
+        .perf-table { width: 100%; border-collapse: collapse; font-size: 12px; color: #c9d1d9; margin-top: 10px; }
+        .perf-table th { text-align: left; color: #8b949e; border-bottom: 1px solid #30363d; padding: 5px; }
+        .perf-table td { padding: 5px; border-bottom: 1px solid #161b22; }
+    </style>
+</head>
+<body>
+
+    <h2>Performance & Load Testing</h2>
+    
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('jmeter', this)">Apache JMeter</button>
+        <button class="tab-btn" onclick="switchTab('k6', this)">k6 (JavaScript)</button>
+    </div>
+
+    <div id="jmeter" class="tool-content active">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>user_load_test.jmx (Properties)</span></div>
+                <textarea id="code-jmeter">
+# Configuração do Grupo de Usuários
+threadgroup.threads=10
+threadgroup.ramp_up=5
+threadgroup.duration=60
+
+# DESAFIO: Para um teste de estresse real, 
+# mude as threads para 100 para ver o resultado.
+                </textarea>
+                <button class="btn-run" onclick="rodarPerf('jmeter')">▶ Executar Plano JMeter</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">JMeter Summary Report</div>
+                <div class="terminal" id="term-jmeter">Aguardando execução...</div>
+                <div id="results-jmeter"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="k6" class="tool-content">
+        <div class="sim-container">
+            <div class="panel">
+                <div class="panel-header"><span>load_script.js</span></div>
+                <textarea id="code-k6">
+import http from 'k6/http';
+import { check } from 'k6';
+
+export const options = {
+  vus: 10,
+  duration: '5s',
+  thresholds: {
+    // DESAFIO: O tempo de resposta p(95) deve ser < 200ms
+    http_req_duration: ['p(95)<500'], 
+  },
+};
+
+export default function () {
+  const res = http.get('https://api.9od.com/health');
+  check(res, { 'status is 200': (r) => r.status === 200 });
+}</textarea>
+                <button class="btn-run" onclick="rodarPerf('k6')">▶ Run k6 Test</button>
+            </div>
+            <div class="panel">
+                <div class="panel-header">k6 Cloud Console</div>
+                <div class="terminal" id="term-k6">Aguardando execução...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(id, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-content').forEach(c => c.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById(id).classList.add('active');
+        }
+
+        function rodarPerf(tool) {
+            const code = document.getElementById(`code-${tool}`).value;
+            const term = document.getElementById(`term-${tool}`);
+            const results = document.getElementById('results-jmeter');
+            
+            term.innerHTML = `[INFO] Iniciando motor de performance ${tool}...\n`;
+
+            setTimeout(() => {
+                if (tool === 'jmeter') {
+                    const threads = code.includes('threadgroup.threads=100');
+                    if (threads) {
+                        term.innerHTML += "INFO: Gerando carga crítica com 100 usuários simultâneos...\n";
+                        term.innerHTML += "<span class='passou'>✓ Teste de Estresse Concluído!</span>";
+                        results.innerHTML = `
+                            <table class="perf-table">
+                                <tr><th>Label</th><th># Samples</th><th>Average</th><th>Error %</th></tr>
+                                <tr><td>HTTP Request</td><td>1250</td><td>182ms</td><td>0.00%</td></tr>
+                            </table>`;
+                    } else {
+                        term.innerHTML += "WARN: Carga insuficiente para estresse.\n";
+                        term.innerHTML += "<span class='falhou'>✗ Erro: Configure 100 threads no editor.</span>";
+                        results.innerHTML = "";
+                    }
+                } else if (tool === 'k6') {
+                    const threshold = code.includes('p(95)<200');
+                    term.innerHTML += "execution: local\nscenarios: (100.00%) 1 scenario, 10 max VUs\n\n";
+                    if (threshold) {
+                        term.innerHTML += "✓ status is 200\n";
+                        term.innerHTML += "http_req_duration..............: <span class='passou'>avg=140ms p(95)=190ms</span>\n";
+                        term.innerHTML += "<span class='passou'>✓ Thresholds Passaram!</span>";
+                    } else {
+                        term.innerHTML += "✓ status is 200\n";
+                        term.innerHTML += "http_req_duration..............: <span class='falhou'>avg=140ms p(95)=190ms</span>\n";
+                        term.innerHTML += "<span class='falhou'>✗ Threshold Fail: p(95) > 200ms configurado</span>";
+                    }
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>C-5521 Cálculo de ICMS - 9od.com</title>
+    <style>
+        body { background: #010409; color: #c9d1d9; font-family: 'Segoe UI', sans-serif; padding: 20px; }
+        h2 { color: #58a6ff; }
+        .card { background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+        .setup { color: #8b949e; font-size: 13px; margin-bottom: 10px; }
+        textarea { width: 100%; height: 120px; background: #010409; color: #a5d6ff; border: 1px solid #30363d; border-radius: 5px; padding: 10px; font-family: monospace; }
+        .btn-test { background: #238636; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        .terminal { background: black; padding: 15px; border-radius: 5px; font-family: monospace; font-size: 13px; margin-top: 15px; min-height: 80px; }
+        .success { color: #39d353; }
+        .error { color: #ff7b72; }
+    </style>
+</head>
+<body>
+
+    <h2>Caso de Teste C-5521: Cálculo de ICMS</h2>
+    <p>Objetivo: Validar se o sistema calcula corretamente o ICMS interno e a substituição tributária.</p>
+
+    <div class="card">
+        <div class="setup">🔍 Ferramenta: <b>PyTest (Lógica de Imposto)</b></div>
+        <textarea id="code-pytest">
+def test_calculo_icms_sp():
+    valor_produto = 1000.00
+    aliquota = 0.18  # 18% SP
+    resultado = calcular_icms(valor_produto, aliquota)
+    
+    # DESAFIO: O valor esperado de imposto para 1000.00 a 18% é 180.00
+    assert resultado == 0.00 
+        </textarea>
+        <button class="btn-test" onclick="testarICMS()">Executar Unit Test</button>
+        <div class="terminal" id="term-icms">Aguardando execução...</div>
+    </div>
+
+    <script>
+        function testarICMS() {
+            const code = document.getElementById('code-pytest').value;
+            const term = document.getElementById('term-icms');
+            term.innerHTML = "Iniciando PyTest...<br>";
+            
+            setTimeout(() => {
+                if (code.includes("resultado == 180.00") || code.includes("resultado == 180")) {
+                    term.innerHTML += "<span class='success'>PASSED: test_calculo_icms_sp [100%]</span><br>";
+                    term.innerHTML += "ICMS calculado corretamente: R$ 180.00";
+                } else {
+                    term.innerHTML += "<span class='error'>FAILED: test_calculo_icms_sp</span><br>";
+                    term.innerHTML += "AssertionError: 0.00 != 180.00 (Valor incorreto)";
+                }
+            }, 800);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gabarito QA 360 - 9od.com</title>
+    <style>
+        :root {
+            --bg-color: #010409; --panel-bg: #0d1117; --border-color: #30363d;
+            --neon-blue: #58a6ff; --neon-green: #39d353; --text-main: #c9d1d9;
+            --text-muted: #8b949e; --warning: #e3b341;
+        }
+        body { background-color: var(--bg-color); color: var(--text-main); font-family: 'Segoe UI', sans-serif; padding: 40px; line-height: 1.6; }
+        .container { max-width: 950px; margin: 0 auto; }
+        h1 { color: var(--neon-blue); border-bottom: 2px solid var(--border-color); padding-bottom: 10px; margin-bottom: 30px; }
+        h2 { color: var(--neon-green); margin-top: 35px; border-left: 4px solid var(--neon-green); padding-left: 15px; font-size: 1.4em; }
+        .card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 25px; margin-bottom: 20px; }
+        code { background: #000; color: #a5d6ff; padding: 3px 7px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 0.95em; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { text-align: left; padding: 12px; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--text-muted); text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+        .file-name { color: var(--neon-blue); font-weight: bold; }
+        .badge-passed { background: rgba(57, 211, 83, 0.1); color: var(--neon-green); padding: 2px 8px; border-radius: 10px; font-size: 12px; font-weight: bold; border: 1px solid var(--neon-green); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>📋 Gabarito Full Stack - Plataforma QA 360</h1>
+
+    <div class="card" style="border-color: var(--warning);">
+        <h2 style="color: var(--warning); border-color: var(--warning);">📂 Checklist de Arquivos (Pasta Local)</h2>
+        <p style="font-size: 14px;">Certifique-se de que estes arquivos estão na mesma pasta que o <code>index.html</code>:</p>
+        <ul style="list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 13px;">
+            <li>📄 <span class="file-name">api.html</span></li>
+            <li>📄 <span class="file-name">calculo_icms.html</span></li>
+            <li>📄 <span class="file-name">devops.html</span></li>
+            <li>📄 <span class="file-name">gestao_bug.html</span></li>
+            <li>📄 <span class="file-name">index.html</span></li>
+            <li>📄 <span class="file-name">interface_web_ui.html</span></li>
+            <li>📄 <span class="file-name">Performance.html</span></li>
+            <li>📄 <span class="file-name">teste_mobile.html</span></li>
+            <li>📄 <span class="file-name">unitario_Integracao.html</span></li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>🌐 Interface Web / UI</h2>
+        <table>
+            <tr><th>Ferramenta</th><th>Desafio / Ação</th><th>Resposta Correta (PASS)</th></tr>
+            <tr>
+                <td>Playwright</td>
+                <td>Ajustar Título Esperado</td>
+                <td><code>await expect(page).toHaveTitle('9od.com [QA]');</code></td>
+            </tr>
+            <tr>
+                <td>Cypress</td>
+                <td>Automação de Login</td>
+                <td><code>cy.get('#senha').type('1234')</code></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>🔗 API Testing (Simuladores)</h2>
+        <table>
+            <tr><th>Ferramenta</th><th>Desafio / Ação</th><th>Resposta Correta (PASS)</th></tr>
+            <tr>
+                <td>Postman</td>
+                <td>Status Code & Name</td>
+                <td><code>status(200)</code> e <code>eql("Oito Aluno")</code></td>
+            </tr>
+            <tr>
+                <td>Rest Assured</td>
+                <td>Assertion Java</td>
+                <td><code>statusCode(200)</code> e <code>equalTo("Oito Aluno")</code></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>⚙️ Core, Mobile & Infra</h2>
+        <table>
+            <tr><th>Módulo</th><th>Ferramenta</th><th>Solução</th></tr>
+            <tr><td>Unitário</td><td>PyTest</td><td><code>assert login("admin", "1234") == "Sucesso"</code></td></tr>
+            <tr><td>Mobile</td><td>Appium</td><td>Mudar platformName para <code>"iOS"</code></td></tr>
+            <tr><td>Performance</td><td>k6</td><td>Threshold: <code>['p(95)<200']</code></td></tr>
+            <tr><td>DevOps</td><td>CI/CD</td><td>Trigger: <code>on: [pull_request]</code></td></tr>
+        </table>
+    </div>
+
+    <div class="card">
+        <h2>📋 Gestão & Bugs</h2>
+        <table>
+            <tr><th>Ferramenta</th><th>Ação</th><th>Critério de Sucesso</th></tr>
+            <tr><td>Jira</td><td>Summary</td><td>Descrição deve ter > 15 caracteres</td></tr>
+            <tr><td>TestRail</td><td>Execução</td><td>Badges devem estar como <span class="badge-passed">PASSED</span></td></tr>
+        </table>
+    </div>
+
+    <footer style="text-align: center; margin-top: 50px; font-size: 12px; color: var(--text-muted);">
+        &copy; 2026 9od.com - Guia de Respostas Full Stack Consolidadas.
+    </footer>
+</div>
+
+</body>
+</html>
