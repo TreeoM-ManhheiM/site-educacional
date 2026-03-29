@@ -384,6 +384,7 @@
         if (isPaused) svgFlow.classList.add('paused-animation');
     }
 
+    // ========== MODIFICAÇÕES DE LOG REALIZADAS AQUI ==========
     async function iniciarSimulacao() {
         if (isRunning) return;
         isRunning = true;
@@ -415,35 +416,42 @@
         try {
             logMsg(null, `Iniciando Pilha OSI. Alvo: ${proto.desc} via porta ${proto.port}/${proto.transp}`, "warn");
 
-            logMsg('Enlace/L2', `Negociando conexão física. MAC Address resolvido via ARP.`, "info");
+            logMsg('Enlace/L2', `Quadro Ethernet montado. Resolução ARP concluída. MAC Gateway: A1:B2:C3:D4:E5:F6`, "info");
             await wait(500);
             
-            logMsg('Internet/L3', `Construindo cabeçalho IPv4. Origem: ${nodesData[0].ip} -> Destino: ${nodesData[6].ip}`, "info");
-            logMsg('Internet/L3', `Disparando ICMP Echo Request para calcular MTU e Latência.`, "info");
+            logMsg('Internet/L3', `Cabeçalho IPv4 criado. Origem: ${nodesData[0].ip} -> Destino: ${nodesData[6].ip} (Protocolo ID: ${isTCP ? 6 : 17})`, "info");
+            logMsg('Internet/L3', `Disparando pacote ICMP Echo Request para descoberta de MTU e Rota.`, "info");
             
             await shootPacket(0, 6, 'pkt-ping', 50); 
             await shootPacket(6, 0, 'pkt-ping', 50);
             
             document.getElementById('dash-ping').innerText = `${basePingReal} ms`;
-            logMsg('Internet/L3', `ICMP Echo Reply recebido. Roteamento BGP confirmou caminho.`, "succ");
+            logMsg('Internet/L3', `ICMP Echo Reply recebido. Latência base de ${basePingReal}ms. Rota BGP estabelecida.`, "succ");
             await wait(500);
 
             document.getElementById('transfer-status').innerText = `Negociando C4 (${proto.transp})...`;
             if (isTCP) {
-                logMsg('Transp/L4', `Iniciando 3-Way Handshake TCP (SYN, SYN-ACK, ACK).`, "info");
+                logMsg('Transp/L4', `Iniciando 3-Way Handshake TCP. Enviando [SYN] Seq=0 para a porta ${proto.port}.`, "info");
                 await shootPacket(0, 6, 'pkt-ctrl', 60); 
+                logMsg('Transp/L4', `Recebido [SYN, ACK] Seq=0 Ack=1.`, "info");
                 await shootPacket(6, 0, 'pkt-ctrl', 60); 
+                logMsg('Transp/L4', `Enviando [ACK] Seq=1. Conexão TCP no estado ESTABLISHED.`, "succ");
                 await shootPacket(0, 6, 'pkt-ctrl', 60); 
-                logMsg('Transp/L4', `Conexão TCP Estabelecida. Controle de Janela Ativo.`, "succ");
+                logMsg('Transp/L4', `Controle de Fluxo: Janela TCP ajustada para a capacidade de ${maxMBps.toFixed(1)} MB/s.`, "info");
             } else {
-                logMsg('Transp/L4', `Protocolo UDP selecionado. Pulando Handshake TCP.`, "warn");
+                logMsg('Transp/L4', `Sessão UDP identificada (Connectionless). Pulando negociação de Handshake.`, "warn");
             }
 
-            logMsg('Aplic/L7', `Injetando payload do protocolo ${protoKey}...`, "warn");
+            logMsg('Aplic/L7', `Preparando injeção de Payload do protocolo ${protoKey}...`, "warn");
             await wait(400);
-            logMsg('Aplic/L7', `>>> ${proto.cmdReq}`, "succ");
+            
+            if (protoKey === 'HTTPS' || protoKey === 'SSH' || protoKey === 'SFTP') {
+                logMsg('Apres/L6', `Negociando algoritmo de Criptografia (TLS/SSH). Canal seguro estabelecido.`, "succ");
+            }
+
+            logMsg('Aplic/L7', `>>> Requisição enviada: ${proto.cmdReq}`, "succ");
             await shootPacket(0, 6, 'pkt-ctrl', 80, !isTCP); 
-            logMsg('Aplic/L7', `<<< ${proto.cmdRes}`, "succ");
+            logMsg('Aplic/L7', `<<< Resposta recebida: ${proto.cmdRes}`, "succ");
             await shootPacket(6, 0, 'pkt-ctrl', 80, !isTCP); 
             
             document.getElementById('transfer-status').innerText = `Executando ${protoKey}...`;
@@ -471,20 +479,20 @@
                     downloadedMB += added;
                     
                     if (!isSmallPayload && (Date.now() - lastLogTime > 1200)) {
-                        logMsg('Física/L1', `Modulação ativa. Status: ${Math.floor(downloadedMB)}MB transferidos.`, "info");
+                        logMsg('Física/L1', `Sinal Modulado [${meioKey.toUpperCase()}]. Transmitidos: ${Math.floor(downloadedMB)} MB de ${Math.floor(totalSizeMB)} MB.`, "info");
                         lastLogTime = Date.now();
                     }
                     
                 } catch (e) { 
                     if (e.message === "Loss_Local") {
-                        logMsg('Enlace/L2', `[DROP] FCS Checksum falhou no Wi-Fi/Satélite local!`, "drop");
+                        logMsg('Enlace/L2', `[DROP L2] Falha de FCS / Interferência no meio local (${meioKey.toUpperCase()})!`, "drop");
                     } else if (e.message === "Loss_Ocean") {
-                        logMsg('Internet/L3', `[DROP] TTL Exceeded / Descartes de pacote no backbone.`, "drop");
+                        logMsg('Internet/L3', `[DROP L3] Roteador descartou pacote (TTL Exceeded / Congestionamento).`, "drop");
                     }
                     
                     if (isTCP) {
                         setFlowAnimation(false);
-                        logMsg('Transp/L4', `[TCP] Ausência de ACK. Retransmissão Rápida iniciada.`, "warn");
+                        logMsg('Transp/L4', `[TCP DUP ACK] Ausência de confirmação. Acionando Retransmissão Rápida.`, "warn");
                         await wait(basePingReal + 300); 
                         setFlowAnimation(true);
                         downloadedMB += (maxMBps * 0.1); 
@@ -508,16 +516,16 @@
                 
                 if (isTCP) {
                     document.getElementById('transfer-status').innerText = `Operação Concluída!`;
-                    logMsg('Aplic/L7', `Transação ${protoKey} validada com sucesso.`, "succ");
-                    logMsg('Transp/L4', `Tear-down connection (Enviando FIN, ACK).`, "info");
+                    logMsg('Aplic/L7', `Sessão ${protoKey} finalizada com integridade total garantida.`, "succ");
+                    logMsg('Transp/L4', `Enviando flags [FIN, ACK] para encerramento da conexão (Teardown).`, "info");
                 } else {
                     if (lostDataMB > 0 && !isSmallPayload) {
                         document.getElementById('transfer-status').innerText = `Stream Corrompido`;
                         document.getElementById('progress-bar').style.background = 'var(--danger)';
-                        logMsg('Aplic/L7', `[UDP FATAL] ${Math.floor(lostDataMB)} MB de perda em ${protoKey}! Artefatos na tela.`, "drop");
+                        logMsg('Aplic/L7', `[UDP FATAL] Aproximadamente ${Math.floor(lostDataMB)} MB de perda em ${protoKey}! Artefatos na tela.`, "drop");
                     } else {
                         document.getElementById('transfer-status').innerText = `Operação Concluída`;
-                        logMsg('Aplic/L7', `Transação ${protoKey} via UDP resolvida instantaneamente.`, "succ");
+                        logMsg('Aplic/L7', `Transação ${protoKey} via UDP resolvida (Connectionless).`, "succ");
                     }
                 }
                 
