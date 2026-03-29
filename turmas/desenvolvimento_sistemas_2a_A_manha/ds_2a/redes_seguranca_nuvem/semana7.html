@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Osciloscópio Digital L1 - Pro</title>
+    <style>
+        :root { --neon: #00ff9d; --bg: #0a0a0a; --grid: #1a1a1a; --text: #e0e0e0; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* HEADER MINIMALISTA */
+        header { padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; }
+        .bit-display { font-family: 'JetBrains Mono', monospace; font-size: 2.2em; letter-spacing: 8px; color: #333; }
+        .bit-focus { color: var(--neon); text-shadow: 0 0 15px var(--neon); font-weight: bold; }
+
+        /* ÁREA DO OSCILOSCÓPIO (FOCO TOTAL) */
+        .main-view { flex: 1; position: relative; cursor: crosshair; background: var(--bg); }
+        canvas { width: 100%; height: 100%; }
+        
+        /* LINHAS DE REFERÊNCIA */
+        .axis-label { position: absolute; left: 10px; font-size: 10px; color: #666; font-family: monospace; pointer-events: none; }
+        .trigger-line { position: absolute; left: 50%; top: 0; width: 1px; height: 100%; background: rgba(255, 68, 68, 0.4); z-index: 5; }
+
+        /* PAINEL FLUTUANTE DE CONTROLE */
+        .dock { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(20, 20, 20, 0.9); padding: 10px 25px; border-radius: 50px; border: 1px solid #333; display: flex; gap: 20px; align-items: center; backdrop-filter: blur(10px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        select, button { background: transparent; border: 1px solid #444; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        button:hover { background: var(--neon); color: black; border-color: var(--neon); }
+        .btn-active { background: #ff4444 !important; border-color: #ff4444 !important; }
+
+        .stat-group { display: flex; flex-direction: column; align-items: center; min-width: 80px; }
+        .stat-label { font-size: 9px; color: #888; text-transform: uppercase; margin-bottom: 2px; }
+        .stat-val { font-family: monospace; font-size: 14px; color: var(--neon); }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="font-weight: 800; letter-spacing: 1px; font-size: 0.9em;">OSI L1 ANALYZER <span id="mode-tag" style="color:var(--neon)">- ASK</span></div>
+    <div class="bit-display" id="bit-stream"></div>
+    <div style="font-size: 0.8em; color: #666;">2°A 2026 - ENSINO TÉCNICO</div>
+</header>
+
+<div class="main-view">
+    <div class="axis-label" style="top: 20%;">+5V (1)</div>
+    <div class="axis-label" style="top: 49%; color: #444;">0.00V</div>
+    <div class="axis-label" style="top: 78%;">-5V (0)</div>
+    <div class="trigger-line"></div>
+    <canvas id="scope"></canvas>
+</div>
+
+<div class="dock">
+    <div class="stat-group">
+        <span class="stat-label">Modulação</span>
+        <select id="modType" onchange="updateUI()">
+            <option value="ask">ASK (Amplitude)</option>
+            <option value="fsk">FSK (Frequência)</option>
+            <option value="qam">QAM (Fase/Amp)</option>
+        </select>
+    </div>
+
+    <div class="stat-group">
+        <span class="stat-label">Progresso</span>
+        <span class="stat-val" id="down-mb">0.00 MB</span>
+    </div>
+
+    <button id="playBtn" onclick="toggleSim()">▶ INICIAR</button>
+    <button onclick="resetSim()">🔄 RESET</button>
+
+    <div class="stat-group" style="border-left: 1px solid #333; padding-left: 20px;">
+        <span class="stat-label">Bit Atual</span>
+        <span class="stat-val" id="current-bit" style="font-size: 20px;">-</span>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('scope');
+    const ctx = canvas.getContext('2d');
+    let isRunning = false;
+    let offset = 0;
+    let downloaded = 0;
+    const bitWidth = 120;
+    const bitBuffer = Array.from({length: 40}, () => Math.round(Math.random()));
+
+    function updateUI() {
+        document.getElementById('mode-tag').innerText = "- " + document.getElementById('modType').value.toUpperCase();
+        draw();
+    }
+
+    function toggleSim() {
+        isRunning = !isRunning;
+        const btn = document.getElementById('playBtn');
+        btn.innerText = isRunning ? "⏸ PAUSAR" : "▶ CONTINUAR";
+        btn.className = isRunning ? "btn-active" : "";
+        if(isRunning) animate();
+    }
+
+    function resetSim() {
+        isRunning = false;
+        offset = 0;
+        downloaded = 0;
+        document.getElementById('playBtn').innerText = "▶ INICIAR";
+        document.getElementById('playBtn').className = "";
+        document.getElementById('down-mb').innerText = "0.00 MB";
+        draw();
+    }
+
+    function drawGrid() {
+        ctx.strokeStyle = "#111";
+        ctx.lineWidth = 1;
+        for(let x=0; x<canvas.width; x+=60) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+        for(let y=0; y<canvas.height; y+=40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+        
+        ctx.strokeStyle = "#222";
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height/2);
+        ctx.lineTo(canvas.width, canvas.height/2);
+        ctx.stroke();
+    }
+
+    function draw() {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        drawGrid();
+
+        const midY = canvas.height / 2;
+        const type = document.getElementById('modType').value;
+        const centerX = canvas.width / 2;
+
+        ctx.strokeStyle = "#00ff9d";
+        ctx.lineWidth = 3;
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = "#00ff9d";
+        ctx.beginPath();
+
+        for(let x = 0; x < canvas.width; x++) {
+            let worldX = x + offset - centerX;
+            let bitRelIdx = Math.floor(worldX / bitWidth) + Math.floor(bitBuffer.length / 2);
+            
+            if (bitRelIdx >= 0 && bitRelIdx < bitBuffer.length) {
+                let bit = bitBuffer[bitRelIdx];
+                let y = 0;
+
+                if (type === 'ask') {
+                    y = Math.sin(worldX * 0.12) * (bit === 1 ? 80 : 15);
+                } else if (type === 'fsk') {
+                    y = Math.sin(worldX * (bit === 1 ? 0.25 : 0.08)) * 70;
+                } else if (type === 'qam') {
+                    y = Math.sin((worldX * 0.12) + (bit === 1 ? 0 : Math.PI)) * (bit === 1 ? 80 : 35);
+                }
+
+                if (x === 0) ctx.moveTo(x, midY + y);
+                else ctx.lineTo(x, midY + y);
+
+                if (Math.abs(x - centerX) < 1) {
+                    document.getElementById('current-bit').innerText = bit;
+                    updateBitStream(bitRelIdx);
+                }
+            }
+        }
+        ctx.stroke();
+        ctx.shadowBlur = 0; // Reset para não borrar o resto
+    }
+
+    function updateBitStream(activeIdx) {
+        const stream = document.getElementById('bit-stream');
+        // Mostra apenas 10 bits ao redor do atual para ficar "clean"
+        const start = Math.max(0, activeIdx - 5);
+        const end = Math.min(bitBuffer.length, activeIdx + 5);
+        
+        stream.innerHTML = bitBuffer.slice(start, end).map((b, i) => {
+            const isCenter = (start + i) === activeIdx;
+            return `<span class="${isCenter ? 'bit-focus' : ''}">${b}</span>`;
+        }).join(' ');
+    }
+
+    function animate() {
+        if(!isRunning) return;
+        offset += 5;
+        if(offset > bitWidth) {
+            bitBuffer.shift();
+            bitBuffer.push(Math.round(Math.random()));
+            offset -= bitWidth;
+            downloaded += 0.8;
+            document.getElementById('down-mb').innerText = downloaded.toFixed(2) + " MB";
+        }
+        draw();
+        requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('resize', () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        draw();
+    });
+
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+    draw();
+</script>
+</body>
+</html>
