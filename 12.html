@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabarito Oficial - Meios Físicos (Semana 5)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #f8fafc;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2563eb;
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+        .header-info {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #64748b;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #cbd5e1;
+            margin-bottom: 30px;
+        }
+        .question-block {
+            margin-bottom: 25px;
+        }
+        .question {
+            font-weight: 600;
+            font-size: 1.05em;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .answer {
+            background-color: #f0fdf4;
+            border-left: 5px solid #22c55e;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            color: #166534;
+        }
+        .answer-label {
+            font-weight: bold;
+            color: #15803d;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            display: block;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>GABARITO OFICIAL - LABORATÓRIO DE MEIOS FÍSICOS</h1>
+    <div class="header-info">
+        Semana 5: Cabos de Cobre e Fibra<br>
+        <strong>Professor:</strong> Prof. Eng. André Corrêa de Lima
+    </div>
+    
+    <hr>
+
+    <div class="question-block">
+        <div class="question">1. Selecione o meio "Par Trançado UTP (Sem Blindagem)". Mantenha o motor (interferência) desligado. Faça um teste com a distância em 50 metros e, em seguida, puxe a barra para 150 metros. O que acontece com a "Perda de Dados" e a "Velocidade Real" ao ultrapassar os 100 metros? Por que isso ocorre?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Em 50m a perda é de 0% e a velocidade é de 100 Mbps. Ao passar para 150m, a Perda de Dados sobe para 75% e a Velocidade Real cai para 25 Mbps. Isso ocorre devido à atenuação do sinal, pois o limite máximo do cabo de rede UTP é de 100 metros.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">2. Volte a distância do cabo UTP para 10 metros. Agora, marque a caixa "Ligar Motor (Interferência)" e faça o teste. Qual foi o impacto da interferência elétrica na porcentagem do "Sinal Chegando"? Descreva também o que acontece com o desenho da onda no osciloscópio.</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            O "Sinal Chegando" despenca para 20% (sofrendo 80% de perda). No osciloscópio, a linha amarela que antes era reta e definida passa a apresentar ruído visual pesado (distorção), com picos aleatórios demonstrando que o sinal elétrico foi corrompido.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">3. Mantenha a distância em 10 metros e o "Motor (Interferência)" LIGADO. Troque o meio físico de "UTP" para "Par Trançado STP (Blindado)" e teste novamente. Compare os resultados de perda de dados com os da questão anterior. Qual a função da blindagem do cabo STP demonstrada na prática?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            No cabo STP, a perda de dados é de apenas 10% (comparado aos 80% do UTP na questão anterior). Isso demonstra que a blindagem metálica do STP protege o sinal contra a Interferência Eletromagnética (EMI) gerada pelo motor.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">4. Selecione o "Cabo Coaxial". Verifique o limite máximo que a barra de distância permite configurar para esse cabo. Qual é esse valor máximo e por que ele é superior ao do cabo de Par Trançado?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            O valor máximo no slider é de 500 metros. Ele possui alcance superior ao Par Trançado (100m) devido à sua estrutura física mais robusta, que possui uma malha de cobre central espessa.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">5. Selecione a "Fibra Óptica". Ligue o "Motor (Interferência)" e realize a transmissão. A interferência elétrica gerada pelo motor causou alguma perda de dados ou queda na velocidade? Explique o motivo desse comportamento com base na forma como a fibra transmite os dados.</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Não houve nenhuma perda (0% de perda, 1000 Mbps de velocidade). Isso ocorre porque a fibra óptica utiliza pulsos de luz para transmitir dados, tornando-se completamente imune a ruídos e interferências de natureza elétrica (motores, fios de energia).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">6. Mantenha a "Fibra Óptica" selecionada. Deslize a barra de distância até o valor máximo permitido pelo simulador para este meio. Qual é a distância máxima alcançada e qual é o nível do sinal ("Sinal Chegando") ao atingir essa quilometragem?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            A distância máxima alcançada na barra é de 2000 metros (2 km). Mesmo nessa distância extrema, o "Sinal Chegando" permanece em perfeitos 100%.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">7. Realize um teste com qualquer cabo de cobre (UTP, STP ou Coaxial) em condições ideais (sem ruído) e preste atenção à forma da onda no osciloscópio (linha amarela). Depois, faça um teste com a Fibra Óptica (linha verde). Qual a diferença no formato do sinal desenhado no gráfico entre o cobre e a fibra?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Nos cabos de cobre, a onda tem formato "quadrado" (linha amarela), representando picos e vales de tensão elétrica (sinal digital). Na fibra óptica, o sinal assume um formato mais suave e "arredondado/senoidal" (linha verde), representando as oscilações dos pulsos de luz.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">8. Configure o simulador no pior cenário possível para um cabo UTP: coloque a distância no máximo e ligue a interferência do motor. Clique em "TESTAR TRANSMISSÃO" e olhe fixamente para a animação dos pacotes (bolinhas) no caminho do cabo. O que acontece visualmente com os pacotes quando a qualidade do sinal está muito baixa?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Os pacotes piscam com uma aura vermelha (indicando corrupção do dado) e desaparecem (sumindo no meio do cabo) antes mesmo de chegarem ao computador de destino (RX).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">9. Em condições perfeitas (distância curta de 10 metros e sem interferência), compare a "Velocidade Real" máxima entregue pelo cabo Par Trançado (UTP ou STP) e a velocidade máxima entregue pela Fibra Óptica. Quais são esses valores em Mbps segundo o simulador?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Os cabos de Par Trançado (cobre) entregam a velocidade máxima de 100 Mbps. Já a Fibra Óptica entrega uma velocidade dez vezes maior, chegando a 1000 Mbps (1 Gbps).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">10. Com base em todos os testes realizados, imagine que você foi contratado para projetar a rede de uma fábrica. O ambiente possui muitas máquinas pesadas que geram forte ruído eletromagnético (EMI), e a distância entre o servidor e os computadores é de 80 metros. Qual cabo do simulador você escolheria para garantir 100% de estabilidade? Justifique sua escolha.</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            A resposta correta é a <strong>Fibra Óptica</strong>. Embora o cabo blindado (STP) suporte a distância de 80m, o simulador mostra que ele ainda sofre uma leve perda (10%) com forte ruído. Para garantir exatos 100% de estabilidade em um ambiente industrial com alto ruído eletromagnético, apenas a Fibra Óptica (imune a EMI) atende aos requisitos.
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
