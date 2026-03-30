@@ -1,16 +1,195 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <title>Download</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação: Matemática para Ciência de Dados</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; max-width: 900px; margin: 0 auto; padding: 20px; color: #333; }
+        h1 { text-align: center; color: #2c3e50; font-size: 1.5em; }
+        h2 { color: #2980b9; font-size: 1.2em; border-bottom: 2px solid #2980b9; padding-bottom: 5px; margin-top: 30px; }
+        p { margin-bottom: 10px; }
+        .header-info { display: flex; flex-wrap: wrap; justify-content: space-between; font-weight: bold; margin-bottom: 20px; }
+        .header-info div { flex: 1; min-width: 45%; margin-bottom: 10px; }
+        .question { margin-bottom: 15px; }
+        .answer { font-weight: bold; color: #c0392b; }
+        .step { background-color: #f9f9f9; padding: 5px 10px; border-left: 3px solid #ccc; font-size: 0.9em; margin-top: 5px; color: #555; }
+        .matrix { display: inline-table; vertical-align: middle; border-left: 2px solid #333; border-right: 2px solid #333; border-radius: 5px; padding: 2px; margin: 0 5px; text-align: center; }
+        .matrix td { padding: 2px 10px; }
+        .operation { display: inline-block; vertical-align: middle; padding: 0 5px; font-weight: bold; }
+        hr { border: none; border-top: 1px dashed #bbb; margin: 30px 0; }
+    </style>
 </head>
 <body>
 
-  <h2>Baixar Arquivos</h2>
+    <h1>AVALIAÇÃO: MATEMÁTICA PARA CIÊNCIA DE DADOS [cite: 1]</h1>
+    
+    <div class="header-info">
+        <div>Nome do Aluno: _____________________________________ [cite: 2]</div>
+        <div>Data: ________ [cite: 2]</div>
+        <div>Turma: _________________ [cite: 3]</div>
+        <div>Nota: _________ [cite: 3]</div>
+    </div>
 
-  <a href="https://drive.google.com/drive/folders/164_A_vRNr-YzJfc2iqNwmp2lLZnCsTnz?usp=sharing" target="_blank">
-    Clique aqui para acessar os arquivos no Google Drive
-  </a>
+    <h2>SEMANA 1 — ÁLGEBRA LINEAR: VETORES [cite: 4]</h2>
+    <p><em>Questões 1 a 10 – Na Ciência de Dados, os vetores representam coordenadas ou características de um item. [cite: 5] Calcule o vetor resultante das operações matemáticas abaixo. [cite: 6]</em></p>
+
+    <div class="question">1) (2, 3) + (1, 1) [cite: 7] = <span class="answer">(3, 4)</span>
+        <div class="step">Passo a passo: (2+1, 3+1) = (3, 4)</div>
+    </div>
+    <div class="question">2) (5, 4) + (2, 3) [cite: 8] = <span class="answer">(7, 7)</span>
+        <div class="step">Passo a passo: (5+2, 4+3) = (7, 7)</div>
+    </div>
+    <div class="question">3) (6, 2) - (1, 1) [cite: 9] = <span class="answer">(5, 1)</span>
+        <div class="step">Passo a passo: (6-1, 2-1) = (5, 1)</div>
+    </div>
+    <div class="question">4) (9, 7) - (3, 2) [cite: 10] = <span class="answer">(6, 5)</span>
+        <div class="step">Passo a passo: (9-3, 7-2) = (6, 5)</div>
+    </div>
+    <div class="question">5) (3, 3) × 2 [cite: 11] = <span class="answer">(6, 6)</span>
+        <div class="step">Passo a passo: (3×2, 3×2) = (6, 6)</div>
+    </div>
+    <div class="question">6) (4, 5) × 3 [cite: 12] = <span class="answer">(12, 15)</span>
+        <div class="step">Passo a passo: (4×3, 5×3) = (12, 15)</div>
+    </div>
+    <div class="question">7) (8, 6) ÷ 2 [cite: 13] = <span class="answer">(4, 3)</span>
+        <div class="step">Passo a passo: (8÷2, 6÷2) = (4, 3)</div>
+    </div>
+    <div class="question">8) (10, 4) ÷ 2 [cite: 14] = <span class="answer">(5, 2)</span>
+        <div class="step">Passo a passo: (10÷2, 4÷2) = (5, 2)</div>
+    </div>
+    <div class="question">9) (7, 1) + (2, 8) [cite: 15] = <span class="answer">(9, 9)</span>
+        <div class="step">Passo a passo: (7+2, 1+8) = (9, 9)</div>
+    </div>
+    <div class="question">10) Represente um vetor A de (9, 9) subtraído pelo vetor B de (4, 5) [cite: 16] = <span class="answer">(5, 4)</span>
+        <div class="step">Passo a passo: (9-4, 9-5) = (5, 4)</div>
+    </div>
+
+    <hr>
+
+    <h2>SEMANA 2 — CONCEITOS BÁSICOS E TIPOS DE DADOS [cite: 17]</h2>
+    <p><em>Questões 11 a 20 – Para treinar um modelo de Inteligência Artificial, precisamos de classificar corretamente a natureza da informação. [cite: 18] Leia os exemplos abaixo e classifique-os como: Numérico, Categórico ou Textual. [cite: 19]</em></p>
+
+    <ul>
+        <li><strong>11)</strong> Idade do cliente (ex: 34 anos) [cite: 20] R: <span class="answer">Numérico</span></li>
+        <li><strong>12)</strong> Avaliação do produto (ex: Bom, Regular, Mau) [cite: 21] R: <span class="answer">Categórico</span></li>
+        <li><strong>13)</strong> Comentário no site (ex: "Adorei a entrega rápida!") [cite: 22] R: <span class="answer">Textual</span></li>
+        <li><strong>14)</strong> Salário de um funcionário (ex: 4.500,00 €) [cite: 23] R: <span class="answer">Numérico</span></li>
+        <li><strong>15)</strong> Cor do veículo (ex: Prata, Preto, Vermelho) [cite: 24] R: <span class="answer">Categórico</span></li>
+        <li><strong>16)</strong> Biografia / Resumo do currículo [cite: 25] R: <span class="answer">Textual</span></li>
+        <li><strong>17)</strong> Temperatura ambiente (ex: 22.5 °C) [cite: 26] R: <span class="answer">Numérico</span></li>
+        <li><strong>18)</strong> Estado civil (ex: Solteiro, Casado, Divorciado) [cite: 27] R: <span class="answer">Categórico</span></li>
+        <li><strong>19)</strong> Número de filhos (ex: 2) [cite: 28] R: <span class="answer">Numérico</span></li>
+        <li><strong>20)</strong> Morada completa (ex: "Rua das Flores, 123") [cite: 29] R: <span class="answer">Textual</span></li>
+    </ul>
+
+    <hr>
+
+    <h2>SEMANA 3 — ÁLGEBRA LINEAR: MATRIZES [cite: 30]</h2>
+    <p><em>Questões 21 a 30 – Resolva as operações entre as matrizes 2x2. [cite: 31]<br>
+    (Atenção: Para adição, subtração e divisão, opere os elementos nas mesmas posições. Para as questões 26 a 30, faça a MULTIPLICAÇÃO matricial: Linha × Coluna). [cite: 32]</em></p>
+
+    <h3>Soma, Subtração e Operações por Escalar [cite: 33]</h3>
+
+    <div class="question">
+        <strong>21)</strong> [cite: 34] 
+        <table class="matrix"><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table>
+        <span class="operation">+</span>
+        <table class="matrix"><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></table> [cite: 35]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>4</td><td>6</td></tr><tr><td>8</td><td>10</td></tr></table>
+        <div class="step">Passo: Linha 1: (1+3=4, 2+4=6). Linha 2: (3+5=8, 4+6=10).</div>
+    </div>
+
+    <div class="question">
+        <strong>22)</strong> 
+        <table class="matrix"><tr><td>5</td><td>6</td></tr><tr><td>7</td><td>8</td></tr></table>
+        <span class="operation">-</span>
+        <table class="matrix"><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table> [cite: 36]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>4</td><td>4</td></tr><tr><td>4</td><td>4</td></tr></table>
+        <div class="step">Passo: Linha 1: (5-1=4, 6-2=4). Linha 2: (7-3=4, 8-4=4).</div>
+    </div>
+
+    <div class="question">
+        <strong>23)</strong> 
+        <table class="matrix"><tr><td>7</td><td>1</td></tr><tr><td>3</td><td>5</td></tr></table>
+        <span class="operation">+</span>
+        <table class="matrix"><tr><td>2</td><td>3</td></tr><tr><td>1</td><td>1</td></tr></table> [cite: 37]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>9</td><td>4</td></tr><tr><td>4</td><td>6</td></tr></table>
+        <div class="step">Passo: Linha 1: (7+2=9, 1+3=4). Linha 2: (3+1=4, 5+1=6).</div>
+    </div>
+
+    <div class="question">
+        <strong>24) (Multiplicação por escalar)</strong> [cite: 37] 
+        <span class="operation">2 ×</span>
+        <table class="matrix"><tr><td>2</td><td>2</td></tr><tr><td>2</td><td>2</td></tr></table> [cite: 38]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>4</td><td>4</td></tr><tr><td>4</td><td>4</td></tr></table>
+        <div class="step">Passo: Multiplica todos os termos por 2. (2×2=4).</div>
+    </div>
+
+    <div class="question">
+        <strong>25) (Divisão por escalar)</strong> [cite: 38] 
+        <span class="operation">1/2 ×</span>
+        <table class="matrix"><tr><td>8</td><td>4</td></tr><tr><td>6</td><td>2</td></tr></table> [cite: 39]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>4</td><td>2</td></tr><tr><td>3</td><td>1</td></tr></table>
+        <div class="step">Passo: Divide todos os termos por 2. (8/2=4, 4/2=2, 6/2=3, 2/2=1).</div>
+    </div>
+
+    <h3>🔹 (B) Multiplicação de Matrizes (Linha × Coluna) [cite: 40]</h3>
+
+    <div class="question">
+        <strong>26)</strong> [cite: 41] 
+        <table class="matrix"><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table>
+        <span class="operation">×</span>
+        <table class="matrix"><tr><td>2</td><td>0</td></tr><tr><td>0</td><td>2</td></tr></table> [cite: 42]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>2</td><td>4</td></tr><tr><td>6</td><td>8</td></tr></table>
+        <div class="step">Passo: L1xC1=(1×2+2×0=2), L1xC2=(1×0+2×2=4). L2xC1=(3×2+4×0=6), L2xC2=(3×0+4×2=8).</div>
+    </div>
+
+    <div class="question">
+        <strong>27)</strong> 
+        <table class="matrix"><tr><td>2</td><td>0</td></tr><tr><td>0</td><td>2</td></tr></table>
+        <span class="operation">×</span>
+        <table class="matrix"><tr><td>3</td><td>1</td></tr><tr><td>1</td><td>3</td></tr></table> [cite: 43]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>6</td><td>2</td></tr><tr><td>2</td><td>6</td></tr></table>
+        <div class="step">Passo: L1xC1=(2×3+0×1=6), L1xC2=(2×1+0×3=2). L2xC1=(0×3+2×1=2), L2xC2=(0×1+2×3=6).</div>
+    </div>
+
+    <div class="question">
+        <strong>28)</strong> 
+        <table class="matrix"><tr><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td></tr></table>
+        <span class="operation">×</span>
+        <table class="matrix"><tr><td>2</td><td>2</td></tr><tr><td>2</td><td>2</td></tr></table> [cite: 44]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>4</td><td>4</td></tr><tr><td>4</td><td>4</td></tr></table>
+        <div class="step">Passo: L1xC1=(1×2+1×2=4). A operação se repete para todas as outras posições.</div>
+    </div>
+
+    <div class="question">
+        <strong>29) Dica: Multiplicação pela matriz identidade não altera a matriz.</strong> [cite: 44] 
+        <table class="matrix"><tr><td>2</td><td>1</td></tr><tr><td>1</td><td>2</td></tr></table>
+        <span class="operation">×</span>
+        <table class="matrix"><tr><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td></tr></table> [cite: 45]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>2</td><td>1</td></tr><tr><td>1</td><td>2</td></tr></table>
+        <div class="step">Passo: Qualquer matriz multiplicada pela Identidade (1 na diagonal, 0 no restante) resulta nela mesma.</div>
+    </div>
+
+    <div class="question">
+        <strong>30)</strong> [cite: 45] 
+        <table class="matrix"><tr><td>3</td><td>2</td></tr><tr><td>1</td><td>4</td></tr></table>
+        <span class="operation">×</span>
+        <table class="matrix"><tr><td>1</td><td>1</td></tr><tr><td>0</td><td>2</td></tr></table> [cite: 46]
+        <span class="operation">=</span>
+        <table class="matrix" style="color: #c0392b; font-weight: bold;"><tr><td>3</td><td>7</td></tr><tr><td>1</td><td>9</td></tr></table>
+        <div class="step">Passo: L1xC1=(3×1+2×0=3), L1xC2=(3×1+2×2=7). L2xC1=(1×1+4×0=1), L2xC2=(1×1+4×2=9).</div>
+    </div>
 
 </body>
 </html>
