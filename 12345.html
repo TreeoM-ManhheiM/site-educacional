@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gabarito Oficial - Pilha OSI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: #f4f7f6;
+        }
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #1e293b;
+            text-align: center;
+            font-size: 1.8em;
+            margin-bottom: 10px;
+        }
+        .header-info {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #475569;
+            font-size: 1.1em;
+        }
+        hr {
+            border: 0;
+            height: 1px;
+            background: #cbd5e1;
+            margin-bottom: 30px;
+        }
+        .question-block {
+            margin-bottom: 25px;
+        }
+        .question {
+            font-weight: 600;
+            font-size: 1.05em;
+            color: #0f172a;
+            margin-bottom: 10px;
+        }
+        .answer {
+            background-color: #ecfdf5;
+            border-left: 5px solid #10b981;
+            padding: 15px;
+            border-radius: 0 4px 4px 0;
+            color: #064e3b;
+        }
+        .answer-label {
+            font-weight: bold;
+            color: #047857;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            display: block;
+            margin-bottom: 5px;
+        }
+        code {
+            background-color: rgba(0,0,0,0.05);
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>GABARITO OFICIAL - SIMULAÇÃO DE PILHA OSI E PROTOCOLOS</h1>
+    <div class="header-info">
+        <strong>Disciplina:</strong> Redes de Computadores / Arquitetura TCP/IP<br>
+        <strong>Professor:</strong> Prof. Eng. André Corrêa de Lima
+    </div>
+    
+    <hr>
+
+    <div class="question-block">
+        <div class="question">1. Selecione o meio de acesso "Fibra Óptica" e depois "Satélite", utilizando o protocolo HTTP em ambos os testes. Qual é o impacto direto observado nas métricas de "Jitter (Ping)" e na "Banda Liberada" mostradas no painel superior?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Na Fibra Óptica, o Jitter (Ping) é extremamente baixo (latência na casa dos milissegundos) e a Banda Liberada é muito alta (próxima a 100+ MB/s). Ao mudar para o Satélite, o Jitter sobe drasticamente (para mais de 900ms a 1000ms+) e a Banda Liberada cai significativamente (ficando em torno de 1.6 MB/s). O aluno deve notar que o satélite tem alta latência e menor largura de banda.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">2. Ao iniciar uma simulação com um protocolo TCP (como FTP) e outra com um protocolo UDP (como DNS), observe o log do terminal referente à camada de Transporte (Transp/L4). Descreva a principal diferença na etapa de inicialização da conexão entre esses dois protocolos.</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            No TCP (FTP), o log mostra o processo de 3-Way Handshake (negociação em três vias), enviando pacotes [SYN], recebendo [SYN, ACK] e confirmando com [ACK] para garantir que a conexão foi estabelecida antes de enviar os dados. No UDP (DNS), o log informa que a sessão é "Connectionless" (sem conexão) e o sistema "Pula a negociação de Handshake", enviando os dados imediatamente.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">3. Ative a opção "Simular Tempestade (Perda L3/L4)", selecione o meio "Fibra Óptica" e inicie uma transferência FTP. O que o log do terminal relata na camada de Transporte (L4) quando ocorre a perda de um pacote durante o trajeto? Como o protocolo reage para contornar o problema?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            O log exibe a mensagem de aviso: <code>[TCP DUP ACK] Ausência de confirmação. Acionando Retransmissão Rápida.</code> O protocolo TCP reage retransmitindo o pacote perdido para garantir a integridade total do arquivo, pausando o fluxo temporariamente até que o dado seja confirmado. O status final é de sucesso.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">4. Mantenha a "Tempestade" ativa, mas agora mude o protocolo para RTP (Streaming de Vídeo). Qual é o status final da transferência (barra de progresso) em comparação com o teste do FTP da questão anterior? Explique o motivo desse resultado com base nos logs da camada de Aplicação (Aplic/L7).</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Diferente do FTP, o status final no RTP fica vermelho e mostra "Stream Corrompido". No log da camada de Aplicação (L7), o sistema acusa: <code>[UDP FATAL] Aproximadamente X MB de perda em RTP! Artefatos na tela.</code> Isso ocorre porque o UDP não faz retransmissão de pacotes perdidos; o dado é simplesmente descartado, gerando falhas na imagem/vídeo para o usuário.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">5. Zere a simulação (Reset) e inicie um novo teste com qualquer protocolo. Observe os primeiros logs gerados pelo sistema. Quais protocolos são utilizados nas camadas de Enlace (L2) e Internet (L3) antes da transferência de dados começar de fato? Qual a função de cada um segundo o log?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Na Camada de Enlace (L2), é utilizado o ARP (Resolução ARP concluída) para descobrir o MAC Address do Gateway. Na Camada de Internet (L3), é utilizado o protocolo ICMP (Echo Request) para realizar a descoberta de MTU e determinar a Rota até o destino.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">6. Realize um teste utilizando o protocolo HTTP e, em seguida, realize outro utilizando o HTTPS. De acordo com o terminal, qual camada extra do Modelo OSI é acionada exclusivamente no HTTPS e qual é a ação executada por ela?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            O HTTPS aciona a Camada de Apresentação (L6). A ação executada por ela é a negociação do algoritmo de Criptografia (TLS), estabelecendo um canal de comunicação seguro.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">7. Selecione o protocolo SMTP. Durante a execução, observe a direção da animação dos pacotes de dados (verdes) no mapa de rede. Agora, mude para IMAP e inicie novamente. O que muda no sentido do fluxo dos pacotes e por que isso acontece baseado na função prática de cada um desses protocolos de e-mail?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            No SMTP, os pacotes fluem do PC (Origem) para o Servidor (Destino), caracterizando um Upload, pois o SMTP é usado para enviar e-mails. No IMAP, os pacotes fluem do Servidor para o PC, caracterizando um Download, pois o IMAP é usado para receber/sincronizar a caixa de entrada (inbox).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">8. Durante a simulação de qualquer protocolo UDP, o sistema emite um alerta amarelo no log da camada de transporte informando que a sessão é "Connectionless" (Sem conexão). Explique o que isso significa na prática em termos de garantia de entrega dos pacotes.</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            Significa que o remetente envia os dados sem verificar previamente se o destinatário está pronto para receber e sem exigir uma confirmação de recebimento (ACK). Na prática, não há garantia de entrega (os pacotes podem se perder no caminho sem que sejam reenviados).
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">9. Simule uma conexão utilizando "Rede Wi-Fi 5" com o protocolo DHCP. Em caso de interferência no meio físico local (Loss_Local), o que ocorre com o Quadro Ethernet (L2) e qual erro específico o simulador acusa no terminal?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            O pacote falha ao atravessar o meio local (entre o PC e o Roteador). O terminal acusa o erro vermelho: <code>[DROP L2] Falha de FCS / Interferência no meio local (WIFI)!</code>.
+        </div>
+    </div>
+
+    <div class="question-block">
+        <div class="question">10. De acordo com o log gerado na camada "Internet/L3", logo após o disparo dos pacotes brancos (ICMP Echo Request/Reply) e do cálculo da latência base, qual infraestrutura lógica é estabelecida pelo roteador para que a comunicação alcance o Servidor Alvo no final do mapa?</div>
+        <div class="answer">
+            <span class="answer-label">Resposta Esperada:</span>
+            O roteador estabelece uma Rota BGP. (A mensagem no log é: <code>ICMP Echo Reply recebido. Latência base de Xms. Rota BGP estabelecida.</code>).
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
