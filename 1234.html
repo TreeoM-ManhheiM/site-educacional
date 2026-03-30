@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exemplo Prático: Tarifas, Break e Continue</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f4f7f6; 
+            color: #333; 
+            line-height: 1.6; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+        }
+        h1 { 
+            text-align: center; 
+            color: #2c3e50; 
+            border-bottom: 2px solid #3498db; 
+            padding-bottom: 10px; 
+            margin-bottom: 30px;
+        }
+        .intro-text {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+        }
+        .card { 
+            background: #fff; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            margin-bottom: 25px; 
+            padding: 20px; 
+            border-left: 5px solid #3498db;
+        }
+        .card h2 {
+            color: #2c3e50; /* Cor base para títulos */
+            margin-top: 0;
+            font-size: 1.3em;
+            display: flex;
+            align-items: center;
+        }
+        .tag {
+            display: inline-block;
+            background-color: #e8f4f8;
+            color: #2980b9;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        pre {
+            background-color: #282c34;
+            color: #abb2bf;
+            padding: 15px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 1.05em;
+            line-height: 1.4;
+        }
+        /* Syntax highlighting simples em CSS */
+        .keyword { color: #c678dd; font-weight: bold; }
+        .function { color: #61afef; }
+        .string { color: #98c379; }
+        .comment { color: #5c6370; font-style: italic; }
+        .operator { color: #56b6c2; }
+        
+        .explanation {
+            background-color: #eef2f5;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-size: 0.95em;
+            border-left: 3px solid #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Evolução do Código: Laços e Controles</h1>
+    <p class="intro-text">Veja como passamos de um programa simples para fluxos controlados usando laços de repetição, pausas (break) e saltos (continue).</p>
+
+    <div class="card">
+        <h2 style="color: #2980b9;">1. Estrutura de Decisão Simples <span class="tag">if / else</span></h2>
+        <p>Este programa lê a idade de <strong>apenas um cliente</strong>, imprime a tarifa correspondente e encerra a execução. Para consultar o próximo, seria necessário rodar o código de novo.</p>
+        
+<pre><code><span class="comment"># 11. Tarifas Básicas</span>
+id <span class="operator">=</span> <span class="function">int</span>(<span class="function">input</span>(<span class="string">"Idade: "</span>))
+
+<span class="keyword">if</span> id <span class="operator">&lt;</span> 6:
+    <span class="function">print</span>(<span class="string">"Isento"</span>)
+<span class="keyword">elif</span> id <span class="operator">&gt;=</span> 60:
+    <span class="function">print</span>(<span class="string">"Meia"</span>)
+<span class="keyword">else</span>:
+    <span class="function">print</span>(<span class="string">"Inteira"</span>)
+<span class="comment"># Fim</span></code></pre>
+
+        <div class="explanation">
+            <strong>Limitação:</strong> Imagine um caixa de cinema usando este sistema. O funcionário teria que abrir o programa repetidas vezes para cada pessoa na fila.
+        </div>
+    </div>
+
+    <div class="card" style="border-left-color: #27ae60;">
+        <h2 style="color: #27ae60;">2. Estrutura de Repetição Infinita <span class="tag" style="background-color: #e8f8f0; color: #27ae60;">while True / break</span></h2>
+        <p>Agora o programa entra em um <strong>loop infinito</strong>. Ele atende de forma contínua e só para quando o comando <code>break</code> é ativado por uma condição (a variável sentinela "s").</p>
+
+<pre><code><span class="comment"># Tarifa Contínua</span>
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    i <span class="operator">=</span> <span class="function">int</span>(<span class="function">input</span>(<span class="string">"Idade: "</span>))
+    
+    <span class="keyword">if</span> i <span class="operator">&lt;</span> 6: 
+        <span class="function">print</span>(<span class="string">"Grátis"</span>)
+    <span class="keyword">elif</span> i <span class="operator">&gt;=</span> 60: 
+        <span class="function">print</span>(<span class="string">"Meia"</span>)
+    <span class="keyword">else</span>: 
+        <span class="function">print</span>(<span class="string">"Inteira"</span>)
+        
+    <span class="comment"># Condição de parada (Sentinela)</span>
+    <span class="keyword">if</span> <span class="function">input</span>(<span class="string">"Sair? (s/n): "</span>) <span class="operator">==</span> <span class="string">"s"</span>: 
+        <span class="keyword">break</span> <span class="comment"># Quebra o laço e finaliza o programa</span>
+<span class="comment"># Fim</span></code></pre>
+
+        <div class="explanation" style="background-color: #e8f8f0; border-left-color: #27ae60;">
+            <strong>Vantagem:</strong> O comando <code>while True</code> mantém o sistema rodando. O comando <code>break</code> dá ao usuário o poder de interromper o loop de forma controlada.
+        </div>
+    </div>
+
+    <div class="card" style="border-left-color: #e67e22;">
+        <h2 style="color: #e67e22;">3. Ignorando Dados Inválidos <span class="tag" style="background-color: #fdf2e9; color: #e67e22;">continue</span></h2>
+        <p>E se o usuário digitar uma idade negativa por engano? O comando <code>continue</code> permite <strong>ignorar (pular)</strong> o restante do bloco naquela rodada e voltar imediatamente para o início do laço.</p>
+
+<pre><code><span class="comment"># Validação com Continue</span>
+<span class="keyword">while</span> <span class="keyword">True</span>:
+    idade <span class="operator">=</span> <span class="function">int</span>(<span class="function">input</span>(<span class="string">"Digite a idade (0 para sair): "</span>))
+    
+    <span class="keyword">if</span> idade <span class="operator">==</span> 0:
+        <span class="function">print</span>(<span class="string">"Encerrando o sistema..."</span>)
+        <span class="keyword">break</span>
+        
+    <span class="keyword">if</span> idade <span class="operator">&lt;</span> 0:
+        <span class="function">print</span>(<span class="string">"Erro: Idade não pode ser negativa!"</span>)
+        <span class="keyword">continue</span> <span class="comment"># Volta para a linha do 'while' na mesma hora</span>
+        
+    <span class="function">print</span>(<span class="string">"Idade de"</span>, idade, <span class="string">"anos registrada com sucesso."</span>)
+</code></pre>
+
+        <div class="explanation" style="background-color: #fdf2e9; border-left-color: #e67e22;">
+            <strong>Diferença crucial:</strong> O <code>break</code> chuta você para fora do laço. O <code>continue</code> apenas pula a vez atual e recomeça a próxima repetição.
+        </div>
+    </div>
+
+    <div class="card" style="border-left-color: #8e44ad;">
+        <h2 style="color: #8e44ad;">4. Limite de Tentativas (Login) <span class="tag" style="background-color: #f4ecf8; color: #8e44ad;">while + break</span></h2>
+        <p>Aqui o laço já tem uma condição de parada natural (limite de 3 tentativas). Porém, se o usuário acertar a senha antes, usamos o <code>break</code> para encerrar o ciclo antecipadamente.</p>
+
+<pre><code><span class="comment"># Sistema de Login</span>
+tentativas <span class="operator">=</span> 0
+
+<span class="keyword">while</span> tentativas <span class="operator">&lt;</span> 3:
+    senha <span class="operator">=</span> <span class="function">input</span>(<span class="string">"Digite a senha: "</span>)
+    
+    <span class="keyword">if</span> senha <span class="operator">==</span> <span class="string">"1234"</span>:
+        <span class="function">print</span>(<span class="string">"Acesso Permitido!"</span>)
+        <span class="keyword">break</span> <span class="comment"># Sai do loop imediatamente, pois acertou</span>
+        
+    <span class="function">print</span>(<span class="string">"Senha incorreta."</span>)
+    tentativas <span class="operator">+=</span> 1
+
+<span class="comment"># Verifica se esgotou as chances</span>
+<span class="keyword">if</span> tentativas <span class="operator">==</span> 3:
+    <span class="function">print</span>(<span class="string">"Conta bloqueada após 3 tentativas."</span>)
+</code></pre>
+
+        <div class="explanation" style="background-color: #f4ecf8; border-left-color: #8e44ad;">
+            <strong>Aplicação real:</strong> É o padrão usado em caixas eletrônicos e sistemas de login. O loop te dá um limite de chances, mas para de perguntar assim que você acerta.
+        </div>
+    </div>
+
+</body>
+</html>
