@@ -1,23 +1,273 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Exercícios — Carreira e Competências para o Mercado de Trabalho — 3ºB</title>
-  <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial;margin:32px;background:#f6f7fb;color:#111827}
-    a{color:#2563eb;text-decoration:none} a:hover{text-decoration:underline}
-    header{margin-bottom:16px} h1{margin:0 0 4px 0} .crumbs{color:#475569;font-size:0.95rem}
-    .box{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Carreira Tech - Preparação Profissional</title>
+    <style>
+        :root {
+            --primary: #b30000; /* Vermelho estilo Paula Souza / Etec */
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --bg: #f8f9fa;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+        body { background-color: var(--bg); color: var(--dark); line-height: 1.6; }
+
+        header { background-color: var(--dark); color: white; padding: 20px; text-align: center; border-bottom: 5px solid var(--primary); }
+        header h1 { font-size: 24px; }
+        header p { font-size: 14px; color: #bdc3c7; }
+
+        .container { max-width: 900px; margin: 30px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+
+        /* Navegação das Abas */
+        .tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--light); }
+        .tab-btn { flex: 1; padding: 15px; border: none; background: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; color: var(--dark); }
+        .tab-btn:hover { background-color: var(--light); }
+        .tab-btn.active { border-bottom: 3px solid var(--primary); color: var(--primary); }
+
+        .tab-content { display: none; padding: 20px 0; }
+        .tab-content.active { display: block; animation: fadeIn 0.5s; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Formulários e Inputs */
+        .input-group { margin-bottom: 20px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; }
+        textarea { width: 100%; height: 120px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; }
+        button.action-btn { background-color: var(--primary); color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; transition: 0.3s; }
+        button.action-btn:hover { background-color: #8b0000; }
+
+        /* Resultados ATS */
+        .result-box { margin-top: 20px; padding: 20px; border-radius: 4px; display: none; }
+        .result-box.show { display: block; }
+        .progress-bar { width: 100%; background-color: var(--light); border-radius: 10px; margin: 15px 0; overflow: hidden; height: 25px;}
+        .progress-fill { height: 100%; background-color: var(--success); text-align: center; color: white; font-weight: bold; line-height: 25px; width: 0%; transition: width 1s; }
+        .keywords { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+        .badge { padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; color: white; }
+        .badge.found { background-color: var(--success); }
+        .badge.missing { background-color: var(--primary); }
+
+        /* Simulador de Entrevista */
+        .chat-box { border: 1px solid var(--light); border-radius: 8px; padding: 20px; min-height: 300px; display: flex; flex-direction: column; justify-content: space-between; }
+        .question-area { margin-bottom: 20px; }
+        .recruiter-msg { background-color: var(--light); padding: 15px; border-radius: 0 15px 15px 15px; margin-bottom: 15px; border-left: 4px solid var(--primary); }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { background-color: white; border: 2px solid var(--dark); padding: 10px; border-radius: 8px; cursor: pointer; text-align: left; transition: 0.2s; font-size: 14px; }
+        .option-btn:hover { background-color: var(--dark); color: white; }
+    </style>
 </head>
 <body>
-  <header>
-    <div class="crumbs"><a href="/index.html">Início</a> / Carreira e Competências para o Mercado de Trabalho</div>
-    <h1>Exercícios — Carreira e Competências para o Mercado de Trabalho</h1>
-  </header>
-  <div class="box">
-    <p>Página inicial de <strong>Exercícios — Carreira e Competências para o Mercado de Trabalho</strong>. Substitua este conteúdo pelos materiais da disciplina.</p>
-  </div>
+
+    <header>
+        <h1>Simulador de Preparação Profissional</h1>
+        <p>Módulo: Desenvolvimento de Sistemas - Postura e Identidade Profissional</p>
+    </header>
+
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="openTab('ats')">1. Robô ATS (Currículo vs Vaga)</button>
+            <button class="tab-btn" onclick="openTab('entrevista')">2. Entrevista (Postura Responsável)</button>
+        </div>
+
+        <div id="ats" class="tab-content active">
+            <h2>Simulador de Triagem (ATS)</h2>
+            <p>Descubra como os algoritmos leem seu currículo comparando as palavras-chave com a vaga.</p>
+            <br>
+            
+            <div class="input-group">
+                <label>Descrição da Vaga de TI (Cole os requisitos aqui):</label>
+                <textarea id="jobDesc" placeholder="Ex: Buscamos desenvolvedor com conhecimento em HTML, CSS, JavaScript e banco de dados SQL. Desejável perfil de liderança e comunicação."></textarea>
+            </div>
+            
+            <div class="input-group">
+                <label>Seu Currículo (Cole seu resumo e experiências aqui):</label>
+                <textarea id="cvText" placeholder="Ex: Sou estudante de tecnologia, fiz projetos usando HTML e CSS. Tenho boa comunicação."></textarea>
+            </div>
+
+            <button class="action-btn" onclick="analyzeCV()">Analisar Compatibilidade</button>
+
+            <div id="atsResult" class="result-box bg-light">
+                <h3>Resultado da Análise</h3>
+                <div class="progress-bar">
+                    <div id="matchProgress" class="progress-fill">0%</div>
+                </div>
+                <p id="atsMessage"></p>
+                <div class="keywords" id="keywordContainer"></div>
+            </div>
+        </div>
+
+        <div id="entrevista" class="tab-content">
+            <h2>Simulador de Entrevista de Emprego</h2>
+            <p>Teste sua "Postura Responsável" e Soft Skills diante do recrutador.</p>
+            <br>
+
+            <div class="chat-box" id="chatContainer">
+                <div class="question-area">
+                    <div class="recruiter-msg" id="questionText">
+                        Olá! Sou o Tech Recruiter. Vamos começar?
+                    </div>
+                </div>
+                <div class="options" id="optionsContainer">
+                    <button class="option-btn" onclick="startInterview()">Iniciar Entrevista</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lógica de Troca de Abas
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // ==========================================
+        // LÓGICA DO SIMULADOR ATS (ROBÔ DE CURRÍCULO)
+        // ==========================================
+        function analyzeCV() {
+            const jobText = document.getElementById('jobDesc').value.toLowerCase();
+            const cvText = document.getElementById('cvText').value.toLowerCase();
+            
+            if (!jobText || !cvText) {
+                alert("Por favor, preencha os dois campos para realizar a simulação.");
+                return;
+            }
+
+            // Lista de tecnologias e skills comuns em TI para buscar no texto
+            const possibleSkills = ["html", "css", "javascript", "js", "sql", "python", "react", "java", "php", "liderança", "comunicação", "agile", "scrum", "git", "github", "proativo", "responsável"];
+            
+            // Encontra quais skills a vaga exige
+            let requiredSkills = possibleSkills.filter(skill => jobText.includes(skill));
+            
+            if(requiredSkills.length === 0) {
+                // Se o script não achar skills da lista, usa palavras maiores que 5 letras da vaga
+                const words = jobText.split(/\s+/).filter(word => word.length > 5);
+                requiredSkills = [...new Set(words)].slice(0, 10); // pega até 10 palavras
+            }
+
+            let matches = 0;
+            const keywordContainer = document.getElementById('keywordContainer');
+            keywordContainer.innerHTML = '';
+
+            // Verifica quais skills do Job estão no CV
+            requiredSkills.forEach(skill => {
+                const found = cvText.includes(skill);
+                if (found) matches++;
+                
+                const span = document.createElement('span');
+                span.className = `badge ${found ? 'found' : 'missing'}`;
+                span.innerText = skill.toUpperCase() + (found ? ' (Encontrado)' : ' (Faltando)');
+                keywordContainer.appendChild(span);
+            });
+
+            // Calcula porcentagem
+            const percentage = Math.round((matches / requiredSkills.length) * 100);
+            
+            const progressFill = document.getElementById('matchProgress');
+            progressFill.style.width = percentage + '%';
+            progressFill.innerText = percentage + '%';
+
+            const msgBox = document.getElementById('atsMessage');
+            if(percentage >= 70) {
+                msgBox.innerHTML = "<strong>Aprovado pelo robô!</strong> Seu currículo tem fortes chances de ir para a mão de um recrutador humano.";
+                progressFill.style.backgroundColor = "var(--success)";
+            } else {
+                msgBox.innerHTML = "<strong>Filtro de atenção:</strong> Faltam palavras-chave cruciais. Molde seu currículo para esta vaga específica.";
+                progressFill.style.backgroundColor = "var(--warning)";
+            }
+
+            document.getElementById('atsResult').classList.add('show');
+        }
+
+        // ==========================================
+        // LÓGICA DO SIMULADOR DE ENTREVISTA (POSTURA)
+        // ==========================================
+        const questions = [
+            {
+                q: "Notei que você colocou 'Inglês Fluente' no currículo, mas a vaga pede conversação imediata. Podemos fazer o resto da entrevista em inglês?",
+                options: [
+                    { text: "(Gagueja) É... fluente assim, na verdade eu uso mais o Google Tradutor, sabe?", score: 0 },
+                    { text: "Com certeza, let's do it! (Se realmente for fluente)", score: 10 },
+                    { text: "Fui honesto no currículo: leio e escrevo muito bem, mas a conversação ainda é intermediária. Estou estudando para melhorar.", score: 8 }
+                ]
+            },
+            {
+                q: "Vi no seu GitHub um projeto integrador escolar. Me conte de um problema que a equipe teve e como VOCÊ ajudou a resolver.",
+                options: [
+                    { text: "O pessoal do meu grupo era muito folgado, então eu acabei fazendo o banco de dados e o front-end sozinho pra não tirar zero.", score: 0 },
+                    { text: "Tivemos conflitos na modelagem do banco. Chamei o grupo para uma chamada, desenhamos juntos no papel primeiro e dividimos as tarefas.", score: 10 },
+                    { text: "Não tivemos problemas, nosso projeto foi perfeito do começo ao fim.", score: 2 } /* Cuidado: recrutador não gosta de mentiras */
+                ]
+            },
+            {
+                q: "Qual formato de e-mail está no cabeçalho do seu currículo real?",
+                options: [
+                    { text: "joao_gameplays_matador2010@email.com", score: 0 },
+                    { text: "joao.silva.dev@email.com", score: 10 },
+                    { text: "Eu não coloquei e-mail, só o link do Instagram.", score: 0 }
+                ]
+            }
+        ];
+
+        let currentQIndex = 0;
+        let totalScore = 0;
+
+        function startInterview() {
+            currentQIndex = 0;
+            totalScore = 0;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQIndex >= questions.length) {
+                endInterview();
+                return;
+            }
+
+            const currentQ = questions[currentQIndex];
+            document.getElementById('questionText').innerText = `Recrutador: "${currentQ.q}"`;
+            
+            const optionsBox = document.getElementById('optionsContainer');
+            optionsBox.innerHTML = ''; // Limpa opções anteriores
+
+            currentQ.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => answerQuestion(opt.score);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function answerQuestion(score) {
+            totalScore += score;
+            currentQIndex++;
+            showQuestion();
+        }
+
+        function endInterview() {
+            const maxScore = questions.length * 10;
+            let feedback = "";
+
+            if (totalScore >= 25) {
+                feedback = "✅ CONTRATADO! Você demonstrou excelente postura responsável, maturidade profissional e sinceridade.";
+            } else if (totalScore >= 15) {
+                feedback = "⚠️ BANCO DE TALENTOS. Você tem potencial, mas precisa ajustar sua postura, comunicação ou formatação do currículo.";
+            } else {
+                feedback = "❌ REPROVADO. Faltou postura profissional (soft skills) ou você cometeu erros fatais de currículo. Revise as aulas!";
+            }
+
+            document.getElementById('questionText').innerText = `Fim da Entrevista! Pontuação: ${totalScore}/${maxScore}`;
+            document.getElementById('optionsContainer').innerHTML = `<div style="padding: 15px; background: var(--light); border-radius: 8px;"><b>Feedback do RH:</b> ${feedback}</div> <br><button class="action-btn" onclick="startInterview()">Tentar Novamente</button>`;
+        }
+    </script>
 </body>
 </html>
