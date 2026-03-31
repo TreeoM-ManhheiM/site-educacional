@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Carreira Tech - Preparação Profissional</title>
+    <title>Simulador de Carreira Tech - Preparação Profissional EE. 8 de Abril 2026</title>
     <style>
         :root {
             --primary: #b30000; /* Vermelho estilo Paula Souza / Etec */
@@ -22,13 +22,13 @@
         header h1 { font-size: 24px; }
         header p { font-size: 14px; color: #bdc3c7; }
 
-        .container { max-width: 900px; margin: 30px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .container { max-width: 1000px; margin: 30px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
 
         /* Navegação das Abas */
-        .tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--light); }
-        .tab-btn { flex: 1; padding: 15px; border: none; background: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; color: var(--dark); }
+        .tabs { display: flex; margin-bottom: 20px; border-bottom: 2px solid var(--light); flex-wrap: wrap; }
+        .tab-btn { flex: 1; min-width: 200px; padding: 15px; border: none; background: none; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.3s; color: var(--dark); }
         .tab-btn:hover { background-color: var(--light); }
-        .tab-btn.active { border-bottom: 3px solid var(--primary); color: var(--primary); }
+        .tab-btn.active { border-bottom: 3px solid var(--primary); color: var(--primary); background-color: #fcfcfc; }
 
         .tab-content { display: none; padding: 20px 0; }
         .tab-content.active { display: block; animation: fadeIn 0.5s; }
@@ -38,12 +38,12 @@
         /* Formulários e Inputs */
         .input-group { margin-bottom: 20px; }
         label { display: block; font-weight: bold; margin-bottom: 5px; }
-        textarea { width: 100%; height: 120px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; }
+        textarea { width: 100%; height: 120px; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical; font-size: 14px; }
         button.action-btn { background-color: var(--primary); color: white; border: none; padding: 12px 24px; font-size: 16px; border-radius: 4px; cursor: pointer; width: 100%; transition: 0.3s; }
         button.action-btn:hover { background-color: #8b0000; }
 
         /* Resultados ATS */
-        .result-box { margin-top: 20px; padding: 20px; border-radius: 4px; display: none; }
+        .result-box { margin-top: 20px; padding: 20px; border-radius: 4px; display: none; background-color: #f9f9f9; border: 1px solid #eee; }
         .result-box.show { display: block; }
         .progress-bar { width: 100%; background-color: var(--light); border-radius: 10px; margin: 15px 0; overflow: hidden; height: 25px;}
         .progress-fill { height: 100%; background-color: var(--success); text-align: center; color: white; font-weight: bold; line-height: 25px; width: 0%; transition: width 1s; }
@@ -59,6 +59,14 @@
         .options { display: flex; flex-direction: column; gap: 10px; }
         .option-btn { background-color: white; border: 2px solid var(--dark); padding: 10px; border-radius: 8px; cursor: pointer; text-align: left; transition: 0.2s; font-size: 14px; }
         .option-btn:hover { background-color: var(--dark); color: white; }
+
+        /* Grade de Vagas (Nova Aba) */
+        .grid-vagas { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 20px; }
+        .card-vaga { border: 2px dashed #bdc3c7; padding: 15px; border-radius: 8px; background-color: #fdfdfd; transition: 0.2s; }
+        .card-vaga:hover { border-color: var(--primary); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        .card-vaga h3 { margin-top: 0; margin-bottom: 10px; color: var(--primary); font-size: 16px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .card-vaga p { font-size: 13px; line-height: 1.5; margin-bottom: 0; }
+        .card-vaga strong { color: var(--dark); }
     </style>
 </head>
 <body>
@@ -71,7 +79,8 @@
     <div class="container">
         <div class="tabs">
             <button class="tab-btn active" onclick="openTab('ats')">1. Robô ATS (Currículo vs Vaga)</button>
-            <button class="tab-btn" onclick="openTab('entrevista')">2. Entrevista (Postura Responsável)</button>
+            <button class="tab-btn" onclick="openTab('entrevista')">2. Entrevista (Postura)</button>
+            <button class="tab-btn" onclick="openTab('vagas')">3. Vagas Disponíveis</button>
         </div>
 
         <div id="ats" class="tab-content active">
@@ -81,7 +90,7 @@
             
             <div class="input-group">
                 <label>Descrição da Vaga de TI (Cole os requisitos aqui):</label>
-                <textarea id="jobDesc" placeholder="Ex: Buscamos desenvolvedor com conhecimento em HTML, CSS, JavaScript e banco de dados SQL. Desejável perfil de liderança e comunicação."></textarea>
+                <textarea id="jobDesc" placeholder="Vá na aba '3. Vagas Disponíveis', copie os requisitos de uma vaga e cole aqui."></textarea>
             </div>
             
             <div class="input-group">
@@ -91,7 +100,7 @@
 
             <button class="action-btn" onclick="analyzeCV()">Analisar Compatibilidade</button>
 
-            <div id="atsResult" class="result-box bg-light">
+            <div id="atsResult" class="result-box">
                 <h3>Resultado da Análise</h3>
                 <div class="progress-bar">
                     <div id="matchProgress" class="progress-fill">0%</div>
@@ -117,14 +126,129 @@
                 </div>
             </div>
         </div>
+
+        <div id="vagas" class="tab-content">
+            <h2>Banco de Vagas Tech</h2>
+            <p>Escolha uma vaga abaixo, selecione o texto, copie (Ctrl+C) e cole (Ctrl+V) no campo "Descrição da Vaga" na aba Robô ATS.</p>
+            
+            <div class="grid-vagas">
+                <div class="card-vaga">
+                    <h3>1. Dev Front-End Júnior</h3>
+                    <p><strong>Requisitos:</strong> HTML5, CSS3, JavaScript (ES6+), React.js e Git.<br><strong>Diferencial:</strong> Conhecimento em Styled Components e consumo de APIs REST.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>2. Estagiário Web Design</h3>
+                    <p><strong>Requisitos:</strong> HTML, CSS, Framework Bootstrap ou Tailwind.<br><strong>Diferencial:</strong> Noções de UI/UX no Figma e muita proatividade para aprender.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>3. Dev Web Júnior (Angular)</h3>
+                    <p><strong>Requisitos:</strong> TypeScript, Angular (versões recentes), CSS (Sass/Less) e integração com back-end.<br><strong>Diferencial:</strong> Foco em organização de código e clean code.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>4. Dev Front-End (Vue.js)</h3>
+                    <p><strong>Requisitos:</strong> JavaScript, Vue.js, Vuex e Axios.<br><strong>Diferencial:</strong> Desejável conhecimento em metodologias ágeis como o Scrum.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>5. Dev de Interfaces Web</h3>
+                    <p><strong>Requisitos:</strong> HTML, CSS, JavaScript básico.<br><strong>Diferencial:</strong> Noções de acessibilidade web (WCAG), perfil detalhista e boa comunicação.</p>
+                </div>
+
+                <div class="card-vaga">
+                    <h3>6. Dev Back-End Júnior (Java)</h3>
+                    <p><strong>Requisitos:</strong> Java 11+, Spring Boot, Hibernate e Banco de Dados SQL (MySQL ou PostgreSQL).<br><strong>Diferencial:</strong> Forte raciocínio lógico.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>7. Programador Júnior (Python)</h3>
+                    <p><strong>Requisitos:</strong> Python 3, Django ou Flask, criação de APIs.<br><strong>Diferencial:</strong> Conhecimento básico em Docker e conteinerização.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>8. Dev C#/.NET Júnior</h3>
+                    <p><strong>Requisitos:</strong> C#, ASP.NET Core, Entity Framework e SQL Server.<br><strong>Diferencial:</strong> Conhecimento na arquitetura de software MVC.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>9. Estagiário Dev PHP</h3>
+                    <p><strong>Requisitos:</strong> Lógica de programação, PHP básico e MySQL.<br><strong>Diferencial:</strong> Vontade de aprender o framework Laravel e boas práticas.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>10. Dev Back-End (Node.js)</h3>
+                    <p><strong>Requisitos:</strong> JavaScript (Node.js), Express e banco de dados MongoDB.<br><strong>Diferencial:</strong> Lógica de integração com sistemas de pagamento.</p>
+                </div>
+
+                <div class="card-vaga">
+                    <h3>11. Dev Mobile Júnior (Flutter)</h3>
+                    <p><strong>Requisitos:</strong> Dart, Flutter e gerenciamento de estado (MobX ou Bloc).<br><strong>Diferencial:</strong> Conhecimento em publicação na Play Store/App Store.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>12. Estagiário Android (Kotlin)</h3>
+                    <p><strong>Requisitos:</strong> Lógica de programação, conhecimento básico em Kotlin e XML para construção de layouts Mobile.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>13. Dev Mobile (React Native)</h3>
+                    <p><strong>Requisitos:</strong> JavaScript, React Native e uso de bibliotecas de navegação.<br><strong>Diferencial:</strong> Integração de apps com sensores nativos do celular.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>14. Dev iOS Júnior (Swift)</h3>
+                    <p><strong>Requisitos:</strong> Linguagem Swift, ambiente Xcode.<br><strong>Diferencial:</strong> Noções de design patterns voltados para a Apple, como MVVM.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>15. Dev de Aplicativos (PWA)</h3>
+                    <p><strong>Requisitos:</strong> HTML avançado, Service Workers, e Manifest de aplicativos.<br><strong>Diferencial:</strong> Estratégias de cache para funcionamento offline.</p>
+                </div>
+
+                <div class="card-vaga">
+                    <h3>16. Estagiário Banco de Dados</h3>
+                    <p><strong>Requisitos:</strong> SQL avançado, modelagem de dados (DER/MER).<br><strong>Diferencial:</strong> Conhecimento prático em Oracle ou SQL Server.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>17. Analista de Dados Júnior</h3>
+                    <p><strong>Requisitos:</strong> Python, bibliotecas Pandas e Numpy, noções de SQL.<br><strong>Diferencial:</strong> Ferramentas de visualização como Power BI ou Tableau.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>18. Estagiário DevOps</h3>
+                    <p><strong>Requisitos:</strong> Linux básico, comandos Git e noções de redes TCP/IP.<br><strong>Diferencial:</strong> Interesse forte em automação de deploy (CI/CD).</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>19. Suporte Técnico N2</h3>
+                    <p><strong>Requisitos:</strong> Conhecimento em SQL para consultas no banco, Windows Server.<br><strong>Diferencial:</strong> Excelente capacidade de resolução de problemas sob pressão.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>20. Analista de Testes (QA)</h3>
+                    <p><strong>Requisitos:</strong> Noções de testes manuais e criação de casos de teste estruturados.<br><strong>Diferencial:</strong> Interesse em automação usando Selenium ou Cypress.</p>
+                </div>
+
+                <div class="card-vaga">
+                    <h3>21. Dev Fullstack Júnior (JS)</h3>
+                    <p><strong>Requisitos:</strong> Node.js no back-end e React no front-end.<br><strong>Diferencial:</strong> Conhecimento tanto em bancos de dados relacionais quanto não-relacionais.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>22. Dev de Jogos Júnior</h3>
+                    <p><strong>Requisitos:</strong> Linguagem C#, engine de desenvolvimento Unity (2D e 3D).<br><strong>Diferencial:</strong> Boa lógica matemática aplicada à física de jogos.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>23. Dev E-commerce</h3>
+                    <p><strong>Requisitos:</strong> Excelente base de HTML, CSS e JavaScript.<br><strong>Diferencial:</strong> Conhecimento em customização de plataformas como Shopify, VTEX ou Nuvemshop.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>24. Analista de Sistemas Júnior</h3>
+                    <p><strong>Requisitos:</strong> Escrita técnica, criação de diagramas UML e levantamento de requisitos.<br><strong>Diferencial:</strong> Boa postura profissional para contato direto com o cliente.</p>
+                </div>
+                <div class="card-vaga">
+                    <h3>25. Estagiário em IA</h3>
+                    <p><strong>Requisitos:</strong> Python básico e lógica matemática apurada.<br><strong>Diferencial:</strong> Curiosidade e projetos acadêmicos envolvendo Machine Learning ou LLMs.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
         // Lógica de Troca de Abas
         function openTab(tabName) {
+            // Oculta todos os conteúdos
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            // Remove classe ativa de todos os botões
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             
+            // Mostra a aba clicada e marca o botão correspondente
             document.getElementById(tabName).classList.add('active');
             event.currentTarget.classList.add('active');
         }
@@ -137,20 +261,20 @@
             const cvText = document.getElementById('cvText').value.toLowerCase();
             
             if (!jobText || !cvText) {
-                alert("Por favor, preencha os dois campos para realizar a simulação.");
+                alert("Por favor, preencha os dois campos (Vaga e Currículo) para realizar a simulação.");
                 return;
             }
 
-            // Lista de tecnologias e skills comuns em TI para buscar no texto
-            const possibleSkills = ["html", "css", "javascript", "js", "sql", "python", "react", "java", "php", "liderança", "comunicação", "agile", "scrum", "git", "github", "proativo", "responsável"];
+            // Lista estendida de tecnologias e skills para buscar no texto
+            const possibleSkills = ["html", "css", "javascript", "js", "sql", "python", "react", "java", "php", "liderança", "comunicação", "agile", "scrum", "git", "github", "proativo", "responsável", "node", "angular", "vue", "c#", ".net", "flutter", "kotlin", "swift", "mysql", "docker", "figma", "ui", "ux"];
             
             // Encontra quais skills a vaga exige
             let requiredSkills = possibleSkills.filter(skill => jobText.includes(skill));
             
             if(requiredSkills.length === 0) {
                 // Se o script não achar skills da lista, usa palavras maiores que 5 letras da vaga
-                const words = jobText.split(/\s+/).filter(word => word.length > 5);
-                requiredSkills = [...new Set(words)].slice(0, 10); // pega até 10 palavras
+                const words = jobText.split(/[\s,.]+/).filter(word => word.length > 5);
+                requiredSkills = [...new Set(words)].slice(0, 10);
             }
 
             let matches = 0;
@@ -188,31 +312,87 @@
         }
 
         // ==========================================
-        // LÓGICA DO SIMULADOR DE ENTREVISTA (POSTURA)
+        // LÓGICA DO SIMULADOR DE ENTREVISTA (POSTURA) - VERSÃO 2.0 (10 Perguntas)
         // ==========================================
         const questions = [
             {
-                q: "Notei que você colocou 'Inglês Fluente' no currículo, mas a vaga pede conversação imediata. Podemos fazer o resto da entrevista em inglês?",
+                q: "1. Notei que você colocou 'Inglês Fluente' no currículo, mas a vaga pede conversação. Podemos fazer o resto da entrevista em inglês?",
                 options: [
-                    { text: "(Gagueja) É... fluente assim, na verdade eu uso mais o Google Tradutor, sabe?", score: 0 },
+                    { text: "(Gagueja) É... na verdade eu uso mais o Google Tradutor, sabe?", score: 0 },
                     { text: "Com certeza, let's do it! (Se realmente for fluente)", score: 10 },
-                    { text: "Fui honesto no currículo: leio e escrevo muito bem, mas a conversação ainda é intermediária. Estou estudando para melhorar.", score: 8 }
+                    { text: "Fui honesto no currículo: leio e escrevo bem, mas a conversação é intermediária. Estou estudando para melhorar.", score: 8 }
                 ]
             },
             {
-                q: "Vi no seu GitHub um projeto integrador escolar. Me conte de um problema que a equipe teve e como VOCÊ ajudou a resolver.",
+                q: "2. Vi no seu GitHub um projeto de escola. Me conte de um problema que a equipe teve e como VOCÊ ajudou a resolver.",
                 options: [
-                    { text: "O pessoal do meu grupo era muito folgado, então eu acabei fazendo o banco de dados e o front-end sozinho pra não tirar zero.", score: 0 },
-                    { text: "Tivemos conflitos na modelagem do banco. Chamei o grupo para uma chamada, desenhamos juntos no papel primeiro e dividimos as tarefas.", score: 10 },
-                    { text: "Não tivemos problemas, nosso projeto foi perfeito do começo ao fim.", score: 2 } /* Cuidado: recrutador não gosta de mentiras */
+                    { text: "O pessoal do grupo era muito folgado, então eu fiz o sistema inteiro sozinho pra não tirar zero.", score: 0 },
+                    { text: "Tivemos conflitos na modelagem do banco. Chamei o grupo, desenhamos juntos no papel e dividimos as tarefas.", score: 10 },
+                    { text: "Não tivemos problemas, nosso projeto foi perfeito do começo ao fim.", score: 2 }
                 ]
             },
             {
-                q: "Qual formato de e-mail está no cabeçalho do seu currículo real?",
+                q: "3. Qual formato de e-mail está no cabeçalho do seu currículo real?",
                 options: [
                     { text: "joao_gameplays_matador2010@email.com", score: 0 },
                     { text: "joao.silva.dev@email.com", score: 10 },
-                    { text: "Eu não coloquei e-mail, só o link do Instagram.", score: 0 }
+                    { text: "Eu não coloquei e-mail, achei que hoje em dia era só WhatsApp.", score: 0 }
+                ]
+            },
+            {
+                q: "4. Vimos que você não conseguiu completar o teste técnico prático de código que enviamos na semana passada. O que houve?",
+                options: [
+                    { text: "Achei o tempo muito curto e a plataforma de vocês travou.", score: 0 },
+                    { text: "Fiquei nervoso na hora. Mas eu sei fazer, prometo.", score: 5 },
+                    { text: "Tive dificuldade com um conceito específico. Depois do teste, estudei onde errei e agora já entendi a solução.", score: 10 }
+                ]
+            },
+            {
+                q: "5. A área de T.I. muda muito rápido. Como você se mantém atualizado sobre novas tecnologias?",
+                options: [
+                    { text: "Só acompanho o que os professores passam nas aulas do técnico.", score: 3 },
+                    { text: "Leio documentações, sigo comunidades no GitHub e crio pequenos projetos práticos no meu tempo livre.", score: 10 },
+                    { text: "Assisto vídeos no TikTok sobre tecnologia.", score: 0 }
+                ]
+            },
+            {
+                q: "6. Durante um Code Review (Revisão de Código), um Desenvolvedor Sênior aponta 5 erros no código que você passou horas fazendo. Como você reage?",
+                options: [
+                    { text: "Fico meio chateado porque meu código estava funcionando, mas corrijo.", score: 5 },
+                    { text: "Agradeço o feedback, pergunto a ele as melhores práticas e corrijo para não repetir o erro no futuro.", score: 10 },
+                    { text: "Tento provar para ele que o meu jeito de fazer também está certo.", score: 0 }
+                ]
+            },
+            {
+                q: "7. O cliente exige que você adicione um botão no sistema hoje à tarde. Mas você, como desenvolvedor, sabe que isso vai quebrar o banco de dados. O que você faz?",
+                options: [
+                    { text: "Faço o que ele pediu. O cliente tem sempre razão e quem paga meu salário é ele.", score: 0 },
+                    { text: "Digo simplesmente que não dá pra fazer e ignoro a mensagem.", score: 2 },
+                    { text: "Explico o risco técnico de forma clara e proponho uma solução ou prazo alternativo que não quebre o sistema.", score: 10 }
+                ]
+            },
+            {
+                q: "8. Nossa vaga exige conhecimento na ferramenta 'Docker', que você não colocou no currículo. Você tem experiência?",
+                options: [
+                    { text: "Claro, sou especialista nisso! (Mentindo para não perder a vaga).", score: 0 },
+                    { text: "Ainda não tive contato, mas aprendo rápido, assim como fiz quando precisei aprender Git por conta própria.", score: 10 },
+                    { text: "Não. Na minha escola eles não ensinam isso.", score: 3 }
+                ]
+            },
+            {
+                q: "9. Por que você quer trabalhar na nossa empresa especificamente?",
+                options: [
+                    { text: "Pela bolsa-auxílio, estou precisando muito pagar umas contas.", score: 0 },
+                    { text: "Pesquisei sobre vocês, vi que usam tecnologias modernas e me identifiquei muito com a cultura da empresa.", score: 10 },
+                    { text: "Porque vocês ficam perto da minha casa, é mais fácil pra ir trabalhar.", score: 2 }
+                ]
+            },
+            {
+                q: "10. Para finalizar: Onde você se vê profissionalmente daqui a 5 anos?",
+                options: [
+                    { text: "No lugar do meu chefe, mandando na equipe inteira.", score: 0 },
+                    { text: "Não faço ideia, não costumo pensar muito no futuro.", score: 2 },
+                    { text: "Quero me consolidar como um Desenvolvedor Pleno/Sênior, dominar minha stack e estar ajudando a treinar os novatos.", score: 10 }
                 ]
             }
         ];
@@ -236,7 +416,7 @@
             document.getElementById('questionText').innerText = `Recrutador: "${currentQ.q}"`;
             
             const optionsBox = document.getElementById('optionsContainer');
-            optionsBox.innerHTML = ''; // Limpa opções anteriores
+            optionsBox.innerHTML = ''; 
 
             currentQ.options.forEach(opt => {
                 const btn = document.createElement('button');
@@ -254,15 +434,15 @@
         }
 
         function endInterview() {
-            const maxScore = questions.length * 10;
+            const maxScore = questions.length * 10; // Agora o máximo é 100 pontos
             let feedback = "";
 
-            if (totalScore >= 25) {
-                feedback = "✅ CONTRATADO! Você demonstrou excelente postura responsável, maturidade profissional e sinceridade.";
-            } else if (totalScore >= 15) {
-                feedback = "⚠️ BANCO DE TALENTOS. Você tem potencial, mas precisa ajustar sua postura, comunicação ou formatação do currículo.";
+            if (totalScore >= 80) {
+                feedback = "✅ CONTRATADO! Excelente postura responsável. Você demonstrou maturidade profissional, sinceridade, inteligência emocional e fome de aprendizado.";
+            } else if (totalScore >= 50) {
+                feedback = "⚠️ BANCO DE TALENTOS. Você tem potencial técnico, mas escorregou em algumas respostas comportamentais. Cuidado com atitudes defensivas ou respostas genéricas.";
             } else {
-                feedback = "❌ REPROVADO. Faltou postura profissional (soft skills) ou você cometeu erros fatais de currículo. Revise as aulas!";
+                feedback = "❌ REPROVADO. Faltou maturidade profissional. Você pode ter sido arrogante, mentido sobre habilidades ou não soube lidar com feedbacks e falhas. Revise os conceitos da aula!";
             }
 
             document.getElementById('questionText').innerText = `Fim da Entrevista! Pontuação: ${totalScore}/${maxScore}`;
