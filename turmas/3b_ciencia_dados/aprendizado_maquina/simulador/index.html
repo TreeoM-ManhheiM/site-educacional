@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IA Lab: 28 Semanas de Estudo</title>
+    <link rel="stylesheet" href="css/style.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.17.0"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@1.5.1"></script>
+</head>
+<body>
+    
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-icon">🧠</div>
+            <div class="logo-text">
+                <h2>IA Simulator</h2>
+                <span>28 Weeks Track</span>
+            </div>
+        </div>
+        
+        <ul class="nav-links">
+            <li>
+                <button class="nav-btn active" data-module="mlp">
+                    <span class="icon">📊</span> Fundamentos (S1-8)
+                </button>
+            </li>
+            <li>
+                <button class="nav-btn" data-module="vision">
+                    <span class="icon">📷</span> Visão (S9-14)
+                </button>
+            </li>
+            <li>
+                <button class="nav-btn" data-module="nlp">
+                    <span class="icon">✍️</span> NLP (S15-17)
+                </button>
+            </li>
+            <li>
+                <button class="nav-btn" data-module="genai">
+                    <span class="icon">🎨</span> GenAI (S18-28)
+                </button>
+            </li>
+            <li>
+                <button class="nav-btn" data-module="rag">
+                    <span class="icon">🔍</span> RAG (S22)
+                </button>
+            </li>
+        </ul>
+        
+        <div class="status-container">
+            <div class="status-item">
+                <span class="status-dot green"></span>
+                TF.js: <span id="tf-ver">...</span>
+            </div>
+        </div>
+    </nav>
+
+    <main id="app-container">
+        <div class="welcome-screen">
+            <div class="card">
+                <h1>Bem-vindo ao Laboratório de IA</h1>
+                <p>Selecione um módulo na barra lateral para começar a simulação prática das semanas de estudo.</p>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
