@@ -11,7 +11,8 @@
  header{padding:16px 20px;border-bottom:1px solid #1f2937;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
  h1{margin:0;font-size:1.08rem}
  .tabs{display:flex;gap:6px;flex-wrap:wrap}
- .tab{border:none;background:#1f2937;color:var(--fg);padding:8px 12px;border-radius:8px;cursor:pointer}
+ .tab{border:none;background:#1f2937;color:var(--fg);padding:8px 12px;border-radius:8px;cursor:pointer;transition:all 0.2s}
+ .tab:hover{background:#374151}
  .tab[aria-selected="true"]{background:var(--primary)}
  main{padding:16px;display:grid;gap:16px}
  .grid{display:grid;gap:16px}
@@ -21,12 +22,14 @@
  .col{display:flex;flex-direction:column;gap:6px}
  label{font-size:.9rem;color:var(--muted)}
  input[type=number],select,textarea{background:#0b1220;color:var(--fg);border:1px solid #243049;border-radius:8px;padding:6px 8px}
- button{background:var(--primary);color:white;border:none;border-radius:8px;padding:8px 12px;cursor:pointer}
+ button{background:var(--primary);color:white;border:none;border-radius:8px;padding:8px 12px;cursor:pointer;transition:all 0.2s}
+ button:hover{opacity:0.9;transform:translateY(-1px)}
+ button:active{transform:translateY(0)}
  button.ghost{background:#1f2937}
  button.secondary{background:#334155}
  .hint{font-size:.85rem;color:var(--muted)}
  svg{width:100%;height:420px;background:#0b1220;border-radius:10px}
- pre{white-space:pre-wrap;background:#0b1220;border:1px solid #243049;border-radius:8px;padding:10px;max-height:240px;overflow:auto}
+ pre{white-space:pre-wrap;background:#0b1220;border:1px solid #243049;border-radius:8px;padding:10px;max-height:240px;overflow:auto;font-size:0.85rem}
  .chart{height:180px;background:#0b1220;border:1px solid #243049;border-radius:10px;position:relative;overflow:hidden}
  .chart canvas{position:absolute;inset:0}
  .pill{display:inline-flex;gap:6px;align-items:center;padding:2px 8px;border-radius:999px;background:#0b1220;border:1px solid #243049}
@@ -40,51 +43,90 @@
  .code{font-family:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;}
  .logicDot{width:12px;height:12px;border-radius:50%;background:#64748b;border:1px solid #243049}
  .logicDot.on{opacity:1}
-
-/* ---- Compacta a 1ª coluna do SIMULADOR (só visual) ---- */
-#sim .panel:first-child{ align-self:start; }
-#sim .panel:first-child h2{ display:none; }
-
-
-/* === UX Refresh (aparência apenas) === */
-header{position:sticky;top:0;z-index:10;background:var(--bg);} 
-.tabs{gap:8px}
-.tab{padding:10px 14px;border:1px solid #1f2937}
-.tab[aria-selected="true"]{background:transparent;border-color:var(--primary);box-shadow:inset 0 -2px 0 var(--primary);font-weight:600;color:#cfe0ff}
-.panel{--pad:12px;padding:var(--pad);}
-.panel h2{margin:0 0 8px 0;font-size:1rem;color:#d1d5db}
-.row.controls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px 12px;align-items:end}
-.row.controls-grid .col label{font-size:.78rem;color:#9aa4b2}
-.row.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:6px 8px;border-top:1px dashed #223046;background:rgba(11,18,32,.35);border-radius:8px}
-.row.toolbar .badge{margin-left:0}
-button{padding:10px 12px;border-radius:10px}
-button.secondary{background:#3a4a66}
-button.ghost{background:#0b1220;color:#cbd5e1;border:1px solid #243049}
-button:focus{outline:2px solid #60a5fa;outline-offset:2px}
-label.pill{gap:8px}
-.badge{background:#0b1220;color:#cbd5e1}
-/* Inputs mais consistentes */
-input[type=number]{min-width:88px}
-select{min-width:120px}
-/* Espaço entre seções no painel */
-.panel .hint{margin-top:6px}
-/* Cards menores dentro do painel direito (hist) */
-#histW0,#histW1,#histW2{background:#0a1323}
-/* Reduz altura visual do painel esquerdo no simulador (apenas aparência) */
-#sim .panel:first-child{align-self:start}
-
+ .training-indicator{display:inline-flex;align-items:center;gap:6px;background:#1e293b;padding:4px 10px;border-radius:20px}
+ .training-indicator .spinner{width:16px;height:16px;border:2px solid var(--primary);border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite}
+ @keyframes spin{to{transform:rotate(360deg)}}
+ .tooltip{position:relative;cursor:help}
+ .tooltip::before{content:attr(data-tip);position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:4px 8px;border-radius:6px;font-size:12px;white-space:nowrap;display:none;z-index:1000}
+ .tooltip:hover::before{display:block}
+ .toast{position:fixed;bottom:20px;right:20px;background:#1e293b;color:#fff;padding:12px 20px;border-radius:8px;z-index:10000;animation:slideIn 0.3s ease}
+ @keyframes slideIn{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}
+ /* Layout melhorado para os controles da aba Real */
+ .real-controls-grid {
+   display: grid;
+   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+   gap: 12px 16px;
+   align-items: end;
+   margin-bottom: 12px;
+ }
+ .real-controls-grid .col {
+   margin: 0;
+ }
+ .real-toolbar {
+   display: flex;
+   flex-wrap: wrap;
+   gap: 10px;
+   align-items: center;
+   margin-top: 12px;
+   padding-top: 12px;
+   border-top: 1px solid #1f2937;
+ }
+ /* Painel do neurônio único */
+ .single-neuron-panel {
+   background: #0f172a;
+   border: 1px solid #2563eb;
+   border-radius: 12px;
+   padding: 12px;
+   margin-top: 12px;
+ }
+ .single-neuron-panel h4 {
+   margin: 0 0 8px 0;
+   font-size: 1rem;
+   color: #60a5fa;
+ }
+ .neuron-slider {
+   width: 100%;
+   max-width: 300px;
+ }
+ /* Estilos para os textos dentro dos neurônios no SVG */
+ .neuron-equation {
+   font-size: 8px;
+   font-family: monospace;
+   fill: #e2e8f0;
+   text-anchor: middle;
+   dominant-baseline: middle;
+ }
+ .neuron-equation small {
+   font-size: 6px;
+   fill: #94a3b8;
+ }
+ /* Painel de animação */
+ .animation-panel {
+   background: #0f172a;
+   border: 1px solid #334155;
+   border-radius: 8px;
+   padding: 8px 12px;
+   margin-top: 8px;
+   display: flex;
+   gap: 12px;
+   flex-wrap: wrap;
+   align-items: center;
+ }
+ .animation-panel label {
+   font-size: 0.75rem;
+ }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.16.0/dist/tf.min.js"></script>
 </head>
 <body>
 <header>
-<h1>Laboratório IA — MLP (Simulado) • MLP (Real TF.js) • Teoria • CNN • RNN</h1>
+<h1>🧠 Laboratório IA — MLP (Simulado) • MLP (Real TF.js) • Teoria • CNN • RNN</h1>
 <nav class="tabs" role="tablist" aria-label="Seções">
- <button id="tab-sim"  class="tab" data-tab="sim"   aria-selected="false">Simulador (MLP)</button>
- <button id="tab-real" class="tab" data-tab="real"  aria-selected="true">MLP (Real • TF.js)</button>
- <button id="tab-teoria" class="tab" data-tab="teoria" aria-selected="false">Teoria</button>
- <button id="tab-cnn" class="tab" data-tab="cnn" aria-selected="false">CNN (conceito)</button>
- <button id="tab-rnn" class="tab" data-tab="rnn" aria-selected="false">RNN (conceito)</button>
+ <button id="tab-sim"  class="tab" data-tab="sim"   aria-selected="false" aria-label="Simulador MLP">📊 Simulador (MLP)</button>
+ <button id="tab-real" class="tab" data-tab="real"  aria-selected="true" aria-label="MLP Real TensorFlow.js">⚡ MLP (Real • TF.js)</button>
+ <button id="tab-teoria" class="tab" data-tab="teoria" aria-selected="false" aria-label="Teoria">📖 Teoria</button>
+ <button id="tab-cnn" class="tab" data-tab="cnn" aria-selected="false" aria-label="CNN Conceitual">🖼️ CNN (conceito)</button>
+ <button id="tab-rnn" class="tab" data-tab="rnn" aria-selected="false" aria-label="RNN Conceitual">🔄 RNN (conceito)</button>
 </nav>
 </header>
 <main>
@@ -94,42 +136,43 @@ select{min-width:120px}
  <div class="panel">
   <h2 style="display:none">Arquitetura e Entradas (Simulado)</h2>
   <div class="row">
-    <div class="col"><label>Entradas</label><input id="inpN" type="number" min="1" max="6" value="2"></div>
-    <div class="col"><label>Oculta 1</label><input id="hid1N" type="number" min="0" max="64" value="3"></div>
-    <div class="col"><label>Oculta 2</label><input id="hid2N" type="number" min="0" max="64" value="0"></div>
-    <div class="col"><label>Saídas</label><input id="outN" type="number" min="1" max="8" value="1"></div>
+    <div class="col tooltip" data-tip="Número de neurônios de entrada"><label>📥 Entradas</label><input id="inpN" type="number" min="1" max="6" value="2"></div>
+    <div class="col tooltip" data-tip="Primeira camada oculta (0 = nenhuma)"><label>🔹 Oculta 1</label><input id="hid1N" type="number" min="0" max="64" value="3"></div>
+    <div class="col tooltip" data-tip="Segunda camada oculta (0 = sem)"><label>🔸 Oculta 2</label><input id="hid2N" type="number" min="0" max="64" value="0"></div>
+    <div class="col tooltip" data-tip="Número de neurônios de saída"><label>📤 Saídas</label><input id="outN" type="number" min="1" max="8" value="1"></div>
   </div>
   <div class="row controls-grid" style="margin-top:6px">
-    <div class="col"><label>Ativação Oculta</label>
+    <div class="col"><label>🎭 Ativação Oculta</label>
       <select id="actHidden"><option value="sigmoid">Sigmoid</option><option value="tanh" selected>tanh</option><option value="relu">ReLU</option><option value="step">Degrau</option></select>
     </div>
-    <div class="col"><label>Ativação Saída</label>
+    <div class="col"><label>🎯 Ativação Saída</label>
       <select id="actOut"><option value="sigmoid" selected>Sigmoid</option><option value="tanh">tanh</option><option value="relu">ReLU</option><option value="softmax">Softmax</option></select>
     </div>
-    <div class="col"><label>Bias</label><select id="biasOn"><option value="1" selected>Com bias</option><option value="0">Sem bias</option></select></div>
-    <div class="col"><label>Semente</label><input id="seed" type="number" value="42"></div>
-    <div class="col"><label>Peso inicial</label><input id="wscale" type="number" step="0.01" value="0.5"></div>
+    <div class="col"><label>⚙️ Bias</label><select id="biasOn"><option value="1" selected>Com bias</option><option value="0">Sem bias</option></select></div>
+    <div class="col"><label>🎲 Semente</label><input id="seed" type="number" value="42"></div>
+    <div class="col"><label>📏 Peso inicial</label><input id="wscale" type="number" step="0.01" value="0.5"></div>
   </div>
   <div class="row toolbar" style="margin-top:8px">
-    <button id="btnBuild">⚙️ Gerar Rede</button>
-    <button id="btnRandW" class="secondary">🎲 Aleatorizar Pesos</button>
+    <button id="btnBuild">⚙️ Gerar Rede</button>
+    <button id="btnRandW" class="secondary">🎲 Aleatorizar Pesos</button>
+    <button id="btnResetSnapshots" class="ghost" style="background:#4a1d6d">🗑️ Limpar Snapshots</button>
   </div>
-  <p class="hint">Esta seção mantém o MLP simulado. A aba <b>MLP (Real • TF.js)</b> mostra backprop e otimizadores reais.</p>
-  <h2 style="margin-top:14px">Entradas</h2>
+  <p class="hint">💡 Esta seção mantém o MLP simulado. A aba <b>MLP (Real • TF.js)</b> mostra backprop e otimizadores reais.</p>
+  <h2 style="margin-top:14px">📌 Entradas</h2>
   <div id="inputsRow" class="row" style="display:none"></div>
   <div class="row" style="margin-top:8px;display:none">
-    <button id="btnSim">Simular</button>
+    <button id="btnSim">🔮 Simular</button>
     <span class="pill">τ <input id="thr" type="range" min="0" max="1" step="0.01" style="width:120px;margin:0 6px;vertical-align:middle;" value="0.5"> <span id="thrVal">0.50</span></span>
     <span class="pill">Saída: <b id="dynLabel">ŷ</b> = <b id="binVal">—</b> <span class="logicDot" id="logicDot" title="Indicador"></span></span>
   </div>
  </div>
  <div class="panel">
-  <h2>Rede Neural (simulada)</h2>
+  <h2>🧬 Rede Neural (simulada)</h2>
   <div class="row" style="margin-bottom:6px;align-items:center">
-    <label class="pill">Época exibida: <input id="epochView" type="range" min="1" step="1" style="width:220px;margin:0 6px" value="1"> <span id="epochViewVal">1</span></label>
+    <label class="pill">📅 Época: <input id="epochView" type="range" min="1" step="1" style="width:220px;margin:0 6px" value="1"> <span id="epochViewVal">1</span></label>
     <button id="epPrev" class="ghost">◀</button>
     <button id="epNext">▶</button>
-    <label class="pill" style="margin-left:6px"><input id="overlayDelta" type="checkbox"> ΔW overlay</label>
+    <label class="pill" style="margin-left:6px"><input id="overlayDelta" type="checkbox"> 🔍 ΔW overlay</label>
     <label class="pill">Camada:
       <select id="overlayLayer">
         <option value="0">Entrada→H1</option>
@@ -137,25 +180,37 @@ select{min-width:120px}
         <option value="2">H2→Saída</option>
       </select>
     </label>
-    <label class="pill">Intensidade ΔW
+    <label class="pill">🎚️ Intensidade
       <input id="overlayScale" type="range" min="0.2" max="4" step="0.1" value="1">
       <span id="overlayScaleVal">1.0×</span>
     </label>
-    <label class="pill"><input id="biasOnGraph" type="checkbox"> Mostrar bias no grafo</label>
-    <label class="pill">Época A <input id="epA" type="number" min="1" value="1" style="width:72px"> Época B <input id="epB" type="number" min="1" value="1" style="width:72px"> <button id="btnApplyAB" class="secondary">Aplicar ΔW(A→B)</button></label>
-    <button id="btnExportSimCSV" class="ghost" title="Exportar pesos e bias do simulador">Exportar CSV (simulador)</button>
-    <span class="badge" style="margin-left:auto">loss: <span id="chipLoss">—</span></span>
-    <span class="badge">acc TT: <span id="chipAccTT">—</span></span>
-    <span class="badge">%ReLU=0: <span id="chipReluDead">—</span></span>
-    <span class="badge">∥ΔW∥: <span id="chipDW">—</span></span>
+    <label class="pill"><input id="biasOnGraph" type="checkbox"> 📊 Mostrar bias</label>
+    <label class="pill">Época A <input id="epA" type="number" min="1" value="1" style="width:72px"> Época B <input id="epB" type="number" min="1" value="1" style="width:72px"> <button id="btnApplyAB" class="secondary">📈 ΔW(A→B)</button></label>
+    <button id="btnExportSimCSV" class="ghost" title="Exportar pesos e bias do simulador">📥 CSV</button>
+    <span class="badge tooltip" data-tip="Erro quadrático médio">📉 loss: <span id="chipLoss">—</span></span>
+    <span class="badge tooltip" data-tip="Acurácia na tabela verdade">✅ acc TT: <span id="chipAccTT">—</span></span>
+    <span class="badge tooltip" data-tip="Neurônios ReLU inativos">💀 %ReLU=0: <span id="chipReluDead">—</span></span>
+    <span class="badge tooltip" data-tip="Norma da variação dos pesos">📐 ∥ΔW∥: <span id="chipDW">—</span></span>
   </div>
+  
+  <!-- Painel de animação didática -->
+  <div class="animation-panel">
+    <span>🎬 Animação didática:</span>
+    <label class="pill">⏱️ Velocidade <input id="animSpeed" type="range" min="100" max="2000" step="100" value="800"> <span id="animSpeedVal">800</span>ms</label>
+    <button id="animPause" class="ghost">⏸️ Pausar</button>
+    <button id="animPlay" class="ghost">▶️ Continuar</button>
+    <button id="animStep" class="ghost">⏩ Passo</button>
+    <label class="pill"><input id="showEquations" type="checkbox" checked> 📐 Mostrar equações nos neurônios</label>
+    <span class="badge tooltip" data-tip="z = Σ(w·x) + b | a = f(z)">🧮 Fórmula: <b>z = Σ(w·x) + b</b> → <b>a = f(z)</b></span>
+  </div>
+  
   <div class="row" style="gap:8px;align-items:center;margin-top:6px">
-    <span class="badge">Hist W0</span><canvas id="histW0" width="200" height="80" style="background:#0b1220;border:1px solid #243049;border-radius:6px"></canvas>
-    <span class="badge">Hist W1</span><canvas id="histW1" width="200" height="80" style="background:#0b1220;border:1px solid #243049;border-radius:6px"></canvas>
-    <span class="badge">Hist W2</span><canvas id="histW2" width="200" height="80" style="background:#0b1220;border:1px solid #243049;border-radius:6px"></canvas>
+    <span class="badge">📊 Hist W0</span><canvas id="histW0" width="200" height="80" style="background:#0b1220;border:1px solid #243049;border-radius:6px"></canvas>
+    <span class="badge">📊 Hist W1</span><canvas id="histW1" width="200" height="80" style="background:#0b1220;border:1px solid #243049;border-radius:6px"></canvas>
+    <span class="badge">📊 Hist W2</span><canvas id="histW2" width="200" height="80" style="background:#0b1220;border:1px solid #243049;border-radius:6px"></canvas>
   </div>
   <div class="canvasWrap"><svg id="netSvg" viewBox="0 0 900 420"></svg></div>
-  <h3>Log / Passo a passo</h3>
+  <h3>📝 Log / Passo a passo</h3>
   <pre id="log"></pre>
  </div>
 </section>
@@ -163,98 +218,118 @@ select{min-width:120px}
 <!-- ===== MLP Real (TF.js) ===== -->
 <section id="real" class="grid">
  <div class="panel">
-  <h2>MLP (Real) — TensorFlow.js</h2>
-  <p class="hint">Aqui a rede <b>aprende sozinha</b> com <b>backpropagation automático</b>, <b>função de custo</b> e <b>otimizadores</b> (Adam/SGD). <i>Sem alterar o simulador original</i>.</p>
-  <div class="row">
-    <div class="col"><label>Tarefa</label>
-      <select id="taskSel"><option value="xor">Classificação XOR</option><option value="class2">Classificação 2D (sintética)</option><option value="regr">Regressão 1D (y=2x+1)</option><option value="and">Porta AND</option><option value="or">Porta OR</option><option value="nand">Porta NAND</option><option value="nor">Porta NOR</option><option value="xnor">Porta XNOR</option><option value="not">Porta NOT (1 entrada)</option></select>
+  <h2>⚡ MLP (Real) — TensorFlow.js</h2>
+  <p class="hint">💡 Aqui a rede <b>aprende sozinha</b> com <b>backpropagation automático</b>, <b>função de custo</b> e <b>otimizadores</b> (Adam/SGD).</p>
+  
+  <!-- Controles organizados em grid -->
+  <div class="real-controls-grid">
+    <div class="col"><label>🎯 Tarefa</label>
+      <select id="taskSel">
+        <option value="xor">XOR (2 entradas)</option>
+        <option value="xor3">XOR (3 entradas)</option>
+        <option value="and">AND (2 entradas)</option>
+        <option value="and3">AND (3 entradas)</option>
+        <option value="nand">NAND (2 entradas)</option>
+        <option value="nand3">NAND (3 entradas)</option>
+        <option value="xnor">XNOR (2 entradas)</option>
+        <option value="xnor3">XNOR (3 entradas)</option>
+        <option value="or">OR (2 entradas)</option>
+        <option value="or3">OR (3 entradas)</option>
+        <option value="nor">NOR (2 entradas)</option>
+        <option value="nor3">NOR (3 entradas)</option>
+        <option value="not">NOT (1 entrada)</option>
+        <option value="class2">Classificação 2D (2 entradas)</option>
+        <option value="regr">Regressão y=2x+1 (1 entrada)</option>
+      </select>
     </div>
-    <div class="col"><label>Oculta 1 (neurônios)</label><input id="realH" type="number" min="1" max="128" value="8"></div>
-    <div class="col"><label>Oculta 2 (neurônios)</label><input id="realH2" type="number" min="0" max="128" value="0"></div>
-    <div class="col"><label>Ativação 1</label>
+    <div class="col"><label>🔹 Oculta 1</label><input id="realH" type="number" min="1" max="128" value="8"></div>
+    <div class="col"><label>🔸 Oculta 2</label><input id="realH2" type="number" min="0" max="128" value="0"></div>
+    <div class="col"><label>🎭 Ativação 1</label>
       <select id="realAct"><option>tanh</option><option selected>relu</option><option>sigmoid</option></select>
     </div>
-    <div class="col"><label>Ativação 2</label>
+    <div class="col"><label>🎭 Ativação 2</label>
       <select id="realAct2"><option>tanh</option><option>relu</option><option>sigmoid</option></select>
     </div>
-    <div class="col"><label>Otimizador</label>
+    <div class="col"><label>⚙️ Otimizador</label>
       <select id="optSel"><option value="adam">Adam</option><option value="sgd">SGD</option></select>
     </div>
-    <div class="col"><label>LR</label><input id="lrReal" type="number" step="0.001" value="0.01"></div>
-    <div class="col"><label>Épocas</label><input id="epReal" type="number" value="300"></div>
-    <div class="col"><label>Batch</label><input id="bsReal" type="number" min="1" value="16"></div>
+    <div class="col"><label>📉 LR</label><input id="lrReal" type="number" step="0.001" value="0.01"></div>
+    <div class="col"><label>🔄 Épocas</label><input id="epReal" type="number" value="300"></div>
+    <div class="col"><label>📦 Batch</label><input id="bsReal" type="number" min="1" value="16"></div>
   </div>
-  <div class="row toolbar" style="margin-top:8px">
-    <button id="btnRunReal">▶ Treinar</button>
-  <!-- ✅ Botão de importação (JSON + BIN) -->
-  <button id="btnLoadModel" class="ghost" title="Importar modelo (JSON + BIN)">
-    📂 Importar modelo (JSON)
-  </button>
-  <input id="fileModel" type="file" accept=".json,.bin" multiple hidden>
 
-
-    <button id="btnStopReal" class="ghost">■ Parar</button>
-    <button id="btnSaveModel" class="ghost">💾 Exportar modelo</button>
-    <span class="badge">TensorFlow.js <span id="tfVer">-</span></span>
-    <button id="btnSyncWeights" class="secondary">🔄 Sincronizar pesos → Simulador</button>
-    <button id="btnTrainAndSync" class="secondary">▶🔄 Treinar & Sincronizar</button>
-    <label class="pill">Espelhar treino → Grafo <input id="mirrorLive" type="checkbox"></label>
-    <label class="pill">Passo: <input id="mirrorStep" type="number" min="1" style="width:72px" value="10"></label>
+  <div class="real-toolbar">
+    <button id="btnRunReal">▶ Treinar</button>
+    <button id="btnLoadModel" class="ghost" title="Importar modelo (JSON + BIN)">📂 Importar</button>
+    <input id="fileModel" type="file" accept=".json,.bin" multiple hidden>
+    <button id="btnStopReal" class="ghost">⏹️ Parar</button>
+    <button id="btnSaveModel" class="ghost">💾 Exportar</button>
+    <span class="badge">TF.js <span id="tfVer">-</span></span>
+    <button id="btnSyncWeights" class="secondary">🔄 Sincronizar → Simulador</button>
+    <button id="btnTrainAndSync" class="secondary">▶🔄 Treinar & Sincronizar</button>
+    <label class="pill">🪞 Espelhar treino <input id="mirrorLive" type="checkbox"></label>
+    <label class="pill">⏱️ Passo: <input id="mirrorStep" type="number" min="1" style="width:72px" value="10"></label>
+    <div id="trainingStatus" class="training-indicator" style="display:none"><span class="spinner"></span><span>Treinando...</span></div>
   </div>
-  <h3 style="margin-top:10px">Curva de perda</h3>
+  <h3 style="margin-top:10px">📉 Curva de perda</h3>
   <div class="chart"><canvas id="lossReal"></canvas></div>
-  <h3 style="margin-top:10px">Resultados</h3>
+  <h3 style="margin-top:10px">📊 Resultados</h3>
   <div id="realOut" class="mini">—</div>
  </div>
  <div class="panel">
-  <h2>Visualizações rápidas</h2>
+  <h2>🎨 Visualizações rápidas</h2>
   <div class="chart" style="height:220px"><canvas id="vizReal"></canvas></div>
-  <p class="hint">Para classificação 2D, desenha o plano; para regressão, plota pontos e curva.</p>
+  <p class="hint">📌 Classificação 2D mostra o plano de decisão; regressão mostra curva ajustada.<br>Para tarefas com 3 entradas, a visualização gráfica é substituída por texto.</p>
  </div>
  <div class="panel">
-  <h2>Entradas</h2>
+  <h2>🔢 Entradas</h2>
   <div id="realInputsRow" class="row"></div>
   <div class="row toolbar" style="margin-top:8px">
-    <button id="btnSimReal">Simular (TF.js)</button>
+    <button id="btnSimReal">🔮 Simular (TF.js)</button>
     <span class="pill">τ <input id="thrReal" type="range" min="0" max="1" step="0.01" style="width:120px;margin:0 6px;vertical-align:middle;" value="0.5"><span id="thrRealVal">0.50</span></span>
     <span class="pill">Saída: <b>ŷ</b> = <b id="binRealVal">—</b> <span class="logicDot" id="logicDotReal" title="Indicador"></span></span>
   </div>
   <div class="row" style="margin-top:10px">
-    <button id="btnTT">Validar tabela‑verdade</button>
+    <button id="btnTT">✅ Validar tabela‑verdade</button>
     <span id="ttAcc" class="badge">Acurácia TT: —</span>
   </div>
   <div id="ttWrap">
-    <table id="ttbl" class="table"><thead><tr><th>x0</th><th>x1</th><th>y*</th><th>ŷ</th><th>classe</th><th>status</th></tr></thead><tbody></tbody></table>
-    <div id="ttHint" class="hint">Use apenas para portas lógicas (AND/OR/NAND/NOR/XOR/XNOR/NOT).</div>
+    <table id="ttbl" class="table"><thead>  <tr><th>x₀</th><th>x₁</th><th>x₂</th><th>y*</th><th>ŷ</th><th>classe</th><th>status</th> </thead><tbody></tbody>  </table>
+    <div id="ttHint" class="hint">📌 A coluna <b>y*</b> mostra o valor binário <b>esperado</b> pela porta lógica. Compare com ŷ (saída da rede).</div>
   </div>
  </div>
 </section>
 
 <!-- ===== Teoria (resumo) ===== -->
 <section id="teoria" hidden>
- <div class="panel"><h2>Teoria — Guia Didático</h2>
-  <p class="hint">Texto didático resumido para uso em aula.</p>
-  <p>Este laboratório apresenta MLP, ativação, perda, backpropagation e treino em TF.js, com exemplos de portas lógicas, 2D sintético e regressão.</p>
+ <div class="panel"><h2>📖 Teoria — Guia Didático</h2>
+  <p class="hint">📚 Texto didático resumido para uso em aula.</p>
+  <p><strong>🔹 Perceptron Multicamadas (MLP)</strong>: Rede neural feedforward com camadas ocultas que permite aprender funções não-lineares.</p>
+  <p><strong>🎭 Funções de Ativação</strong>: Sigmoid (saída entre 0-1), Tanh (entre -1 e 1), ReLU (max(0,x)) - essenciais para não-linearidade.</p>
+  <p><strong>📉 Backpropagation</strong>: Algoritmo que calcula gradientes da função de custo em relação aos pesos usando regra da cadeia.</p>
+  <p><strong>⚙️ Otimizadores</strong>: SGD (Stochastic Gradient Descent) e Adam (Adaptive Moment Estimation) ajustam pesos minimizando o erro.</p>
+  <p><strong>🖼️ CNN</strong>: Camadas convolucionais extraem características espaciais; pooling reduz dimensionalidade.</p>
+  <p><strong>🔄 RNN</strong>: Neurônios com memória (estado oculto) para processamento sequencial.</p>
  </div>
 </section>
 
 <!-- ===== CNN (conceito) ===== -->
 <section id="cnn" class="twoCols" hidden>
  <div class="panel">
-  <h2>CNN — Protótipo (mesmo do v6)</h2>
-  <p class="hint">Convolução 3×3 + ReLU + Pooling 2×2 (visual). Sem treino.</p>
-  <div class="row"><button id="cnnClear" class="ghost">Limpar</button><button id="cnnSampleX" class="ghost">Amostra: X</button><button id="cnnSampleH" class="ghost">Amostra: H</button></div>
+  <h2>🖼️ CNN — Protótipo</h2>
+  <p class="hint">Convolução 3×3 + ReLU + Pooling 2×2 (visual). Desenhe na entrada!</p>
+  <div class="row"><button id="cnnClear" class="ghost">🗑️ Limpar</button><button id="cnnSampleX" class="ghost">🔤 Amostra: X</button><button id="cnnSampleH" class="ghost">🔲 Amostra: H</button></div>
   <div class="row" style="gap:16px;margin-top:8px">
-    <div><div class="mini">Entrada — 28×28</div><canvas id="cnnIn" width="280" height="280"></canvas></div>
-    <div><div class="mini">Convolução</div><canvas id="cnnConv" width="280" height="280"></canvas></div>
-    <div><div class="mini">Pooling 2×2</div><canvas id="cnnPool" width="140" height="140"></canvas></div>
+    <div><div class="mini">📥 Entrada — 28×28</div><canvas id="cnnIn" width="280" height="280" style="border:1px solid #243049;cursor:crosshair"></canvas></div>
+    <div><div class="mini">🔍 Convolução</div><canvas id="cnnConv" width="280" height="280"></canvas></div>
+    <div><div class="mini">📊 Pooling 2×2</div><canvas id="cnnPool" width="140" height="140"></canvas></div>
   </div>
  </div>
  <div class="panel">
-  <h3>Kernel 3×3</h3>
+  <h3>🎛️ Kernel 3×3</h3>
   <div id="kgrid" style="display:grid;grid-template-columns:repeat(3,72px);gap:6px"></div>
-  <div class="row controls-grid" style="margin-top:6px"><button id="kNormalize" class="ghost">Normalizar</button><button id="kEdge" class="ghost">Borda</button><button id="kSharpen" class="ghost">Sharpen</button><button id="kBlur" class="ghost">Blur</button></div>
-  <div class="row" style="margin-top:10px"><label class="pill"><input id="reluOn" type="checkbox" checked> ReLU</label>
+  <div class="row controls-grid" style="margin-top:6px"><button id="kNormalize" class="ghost">⚖️ Normalizar</button><button id="kEdge" class="ghost">🔲 Borda</button><button id="kSharpen" class="ghost">✨ Sharpen</button><button id="kBlur" class="ghost">💧 Blur</button></div>
+  <div class="row" style="margin-top:10px"><label class="pill"><input id="reluOn" type="checkbox" checked> ⚡ ReLU</label>
     <label class="pill">Pooling <select id="poolSel"><option>Max 2×2</option><option>Average 2×2</option><option>Nenhum</option></select></label></div>
   <pre class="code" style="margin-top:12px">z = x * K; a = relu(z); y = pool(a)</pre>
  </div>
@@ -263,93 +338,553 @@ select{min-width:120px}
 <!-- ===== RNN (conceito) ===== -->
 <section id="rnn" class="twoCols" hidden>
  <div class="panel">
-  <h2>RNN — Protótipo (mesmo do v6)</h2>
+  <h2>🔄 RNN — Protótipo</h2>
   <p class="hint">Avance no tempo, veja h_t e y_t. Sem treino.</p>
   <div class="row">
-    <label class="pill">x_t <input id="rnnSeq" type="text" style="width:220px" value="0,0,1,1,0,1,0,0"></label>
-    <button id="rnnReset" class="ghost">Reset</button>
-    <button id="rnnStep" class="secondary">Step ▶</button>
-    <button id="rnnRun">Run ▶▶</button>
-    <button id="rnnStop" class="ghost">Stop ■</button>
+    <label class="pill">🔢 x_t <input id="rnnSeq" type="text" style="width:220px" value="0,0,1,1,0,1,0,0"></label>
+    <button id="rnnReset" class="ghost">🔄 Reset</button>
+    <button id="rnnStep" class="secondary">⏯️ Step</button>
+    <button id="rnnRun">▶▶ Run</button>
+    <button id="rnnStop" class="ghost">⏹️ Stop</button>
   </div>
-  <div class="row toolbar" style="margin-top:8px"><label class="pill">t: <span id="rnnT">0</span></label>
+  <div class="row toolbar" style="margin-top:8px"><label class="pill">⏱️ t: <span id="rnnT">0</span></label>
     <label class="pill">h₀ = <input id="rnnH0_0" class="kcell" type="number" step="0.01" value="0"> <input id="rnnH0_1" class="kcell" type="number" step="0.01" value="0"></label></div>
   <div class="chart" style="height:200px"><canvas id="rnnBars"></canvas></div>
  </div>
  <div class="panel">
-  <h3>Parâmetros</h3>
+  <h3>⚙️ Parâmetros</h3>
   <div class="row">
     <div class="col"><label>W_xh</label><input id="wxh0" class="kcell" type="number" step="0.01" value="1.2"><input id="wxh1" class="kcell" type="number" step="0.01" value="-0.8"></div>
     <div class="col"><label>W_hh</label><div><input id="whh00" class="kcell" type="number" step="0.01" value="0.6"> <input id="whh01" class="kcell" type="number" step="0.01" value="0.2"></div><div><input id="whh10" class="kcell" type="number" step="0.01" value="-0.3"> <input id="whh11" class="kcell" type="number" step="0.01" value="0.5"></div></div>
     <div class="col"><label>b</label><input id="b0" class="kcell" type="number" step="0.01" value="0.0"><input id="b1" class="kcell" type="number" step="0.01" value="0.0"></div>
     <div class="col"><label>W_hy & c</label><div><input id="why0" class="kcell" type="number" step="0.01" value="1.0"> <input id="why1" class="kcell" type="number" step="0.01" value="-1.0"></div><input id="c0" class="kcell" type="number" step="0.01" value="0.0"></div>
   </div>
-  <div class="row toolbar" style="margin-top:8px"><button id="rnnRand" class="ghost">Aleatorizar</button><button id="rnnZero" class="ghost">Zerar</button></div>
-  <pre class="code" style="margin-top:12px">h_t = tanh(W_xh x_t + W_hh h_{t-1} + b)\ny_t = sigmoid(W_hy h_t + c)</pre>
+  <div class="row toolbar" style="margin-top:8px"><button id="rnnRand" class="ghost">🎲 Aleatorizar</button><button id="rnnZero" class="ghost">🧹 Zerar</button></div>
+  <pre class="code" style="margin-top:12px">h_t = tanh(W_xh·x_t + W_hh·h_{t-1} + b)<br>y_t = sigmoid(W_hy·h_t + c)</pre>
  </div>
 </section>
 
 </main>
 
 <script>
-const $ = s => document.querySelector(s);
-const $$ = s => Array.from(document.querySelectorAll(s));
-// Tabs
-$$('.tab').forEach(btn=> btn.addEventListener('click', ()=>{ $$('.tab').forEach(b=>b.setAttribute('aria-selected','false')); btn.setAttribute('aria-selected','true'); const t=btn.dataset.tab; ['sim','real','teoria','cnn','rnn'].forEach(id=> $('#'+id).hidden = (id!==t)); }));
+// ==================== UTILITÁRIOS ====================
+function showToast(msg, duration=3000){
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), duration);
+}
 
-// ===== Simulador (grafo) =====
+// Tabs com persistência
+const tabs = document.querySelectorAll('.tab');
+tabs.forEach(btn=> btn.addEventListener('click', ()=>{
+  tabs.forEach(b=>b.setAttribute('aria-selected','false'));
+  btn.setAttribute('aria-selected','true');
+  const t=btn.dataset.tab;
+  ['sim','real','teoria','cnn','rnn'].forEach(id=> document.getElementById(id).hidden = (id!==t));
+  localStorage.setItem('activeTab', t);
+}));
+const savedTab = localStorage.getItem('activeTab');
+if(savedTab){
+  const tabBtn = document.querySelector(`.tab[data-tab="${savedTab}"]`);
+  if(tabBtn) tabBtn.click();
+}
+
+// ==================== SIMULADOR COM ANIMAÇÃO DIDÁTICA ====================
 let net={ nin:2,h1:3,h2:0,nout:1, actH:'tanh', actO:'sigmoid', bias:true, W:[], b:[], wscale:0.5 };
-window.net = net; // exp: expor net no escopo global para utilidades
+let drawPending = false;
+window.net = net;
+let animInterval = null;
+let animPaused = false;
+let currentNeuronValues = {}; // armazena z e a para cada neurônio
+
 function zeros(r,c){ const a=new Array(r); for(let i=0;i<r;i++){ a[i]=new Float64Array(c).fill(0);} return a; }
 function transpose(A){ const r=A.length,c=A[0].length; const T=zeros(c,r); for(let i=0;i<r;i++) for(let j=0;j<c;j++) T[j][i]=A[i][j]; return T; }
 function matMul(A,B){ const r=A.length, n=B.length, c=B[0].length; const C=zeros(r,c); for(let i=0;i<r;i++) for(let k=0;k<n;k++){ const aik=A[i][k]; for(let j=0;j<c;j++) C[i][j]+=aik*B[k][j]; } return C; }
 function addBias(Z,b){ const r=Z.length,c=Z[0].length; const R=zeros(r,c); for(let i=0;i<r;i++) for(let j=0;j<c;j++) R[i][j]=Z[i][j]+b[0][j]; return R; }
-const Acts={ step:{f:x=>x>=0?1:0}, sigmoid:{f:x=>1/(1+Math.exp(-x))}, tanh:{f:x=>Math.tanh(x)}, relu:{f:x=>x>0?x:0} };
-function buildNetwork(){ net.nin=+$('#inpN').value; net.h1=+$('#hid1N').value; net.h2=+$('#hid2N').value; net.nout=+$('#outN').value; net.actH=$('#actHidden').value; net.actO=$('#actOut').value; net.bias=$('#biasOn').value==='1'; net.wscale=+($('#wscale').value)||0.5; const layers=[net.nin, ...(net.h1?[net.h1]:[]), ...(net.h2?[net.h2]:[]), net.nout]; net.W=[]; net.b=[]; for(let l=1;l<layers.length;l++){ const r=layers[l], c=layers[l-1]; const w=zeros(r,c); for(let i=0;i<r;i++) for(let j=0;j<c;j++) w[i][j]=(Math.random()*2-1)*net.wscale; net.W.push(w); net.b.push([Float64Array.from({length:r},()=> (Math.random()*2-1)*net.wscale)]); } drawNetwork(); makeInputs(); $('#log').textContent='Rede gerada: '+layers.join(' → '); }
-function randomizeWeights(){ for(let l=0;l<net.W.length;l++){ for(let i=0;i<net.W[l].length;i++) for(let j=0;j<net.W[l][0].length;j++) net.W[l][i][j]=(Math.random()*2-1)*net.wscale; for(let j=0;j<net.b[l][0].length;j++) net.b[l][0][j]=(Math.random()*2-1)*net.wscale; } drawNetwork(); $('#log').textContent='Pesos aleatorizados.'; }
-function makeInputs(){ const row=$('#inputsRow'); row.innerHTML=''; for(let i=0;i<net.nin;i++){ const d=document.createElement('div'); d.className='col'; d.innerHTML='<label>x'+i+'</label><input id="x_'+i+'" type="number" step="0.01" value="0">'; row.appendChild(d);} }
-function mapMat(A,fn){ const R=zeros(A.length,A[0].length); for(let i=0;i<A.length;i++) for(let j=0;j<A[0].length;j++) R[i][j]=fn(A[i][j],i,j); return R; }
-function forward(X){ const actH=x=>Acts[net.actH].f(x); const actO=x=>Acts[net.actO]?.f(x)??x; let A=X; let Z1=null,A1=null,Z2=null,A2=null; for(let l=0;l<net.W.length;l++){ const Z=addBias(matMul(A, transpose(net.W[l])), net.b[l]); const isLast=(l===net.W.length-1); const Anext=mapMat(Z, v=> isLast? actO(v):actH(v)); if(l===0){Z1=Z;A1=Anext;} if(isLast){Z2=Z;A2=Anext;} A=Anext;} return {A1,Z1,A2,Z2}; }
-function simulateOnce(){ const v=new Float64Array(net.nin); for(let i=0;i<net.nin;i++) v[i]=+($('#x_'+i).value)||0; const {A1,Z1,A2,Z2}=forward([v]); const tau=+$('#thr').value||0.5; $('#thrVal').textContent=tau.toFixed(2); const y=(A2[0][0]||0); $('#binVal').textContent=y.toFixed(4); drawNetwork(); $('#log').textContent='z1='+(Z1?Z1[0].map(x=>x.toFixed(3)).join(', '):'—')+'\na1='+(A1?A1[0].map(x=>x.toFixed(3)).join(', '):'—')+'\n'+'z2='+(Z2?Z2[0].map(x=>x.toFixed(3)).join(', '):'—')+'\na2='+(A2?A2[0].map(x=>x.toFixed(3)).join(', '):'—'); const dot=$('#logicDot'); if(dot){ dot.style.background=(y>=tau)?'#22c55e':'#ef4444'; dot.classList.add('on'); }}
-function drawNetwork(){ const svg=$('#netSvg'); svg.innerHTML=''; const cols=[net.nin, ...(net.h1?[net.h1]:[]), ...(net.h2?[net.h2]:[]), net.nout]; const W=900,H=420,padX=90; const colGap=(W-2*padX)/(cols.length-1); const nodes=[]; for(let c=0;c<cols.length;c++){ const n=cols[c]; const totalH=(n-1)*50; const startY=(H/2)-totalH/2; for(let i=0;i<n;i++){ nodes.push({c,i,x:padX+c*colGap,y:startY+i*50}); } } const idx={}; nodes.forEach(n=>idx[`${n.c}:${n.i}`]=n); const gE=document.createElementNS('http://www.w3.org/2000/svg','g'); const gN=document.createElementNS('http://www.w3.org/2000/svg','g'); svg.appendChild(gE); svg.appendChild(gN); let L=0; for(let c=0;c<cols.length-1;c++){ const from=cols[c], to=cols[c+1]; for(let j=0;j<to;j++){ for(let i=0;i<from;i++){ const w=net.W[L]?.[j]?.[i]||0; const a=idx[`${c}:${i}`], b=idx[`${c+1}:${j}`]; const line=document.createElementNS('http://www.w3.org/2000/svg','line'); line.setAttribute('x1',a.x+16); line.setAttribute('y1',a.y); line.setAttribute('x2',b.x-16); line.setAttribute('y2',b.y);
- const overlayOn=$('#overlayDelta')?.checked; const layerSel=Number($('#overlayLayer')?.value||0); const scale=Number($('#overlayScale')?.value||1); const dWall=window._lastDW||null; if(overlayOn && dWall && dWall[layerSel] && L===layerSel){ const dw=(dWall[layerSel][i] && typeof dWall[layerSel][i][j]==='number')? dWall[layerSel][i][j] : 0; const width=Math.min(8, 1 + (40*Math.abs(dw))*scale); line.setAttribute('stroke', dw>=0? '#22c55e':'#ef4444'); line.setAttribute('stroke-width', String(width)); line.setAttribute('opacity','0.45'); } else { line.setAttribute('stroke', w>=0? '#60a5fa':'#fca5a5'); line.setAttribute('opacity', String(0.35+Math.min(0.65,Math.abs(w)))); line.setAttribute('stroke-width','1.5'); }
- gE.appendChild(line);} } L++; } nodes.forEach(n=>{ const c=document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('cx',n.x); c.setAttribute('cy',n.y); c.setAttribute('r',16); c.setAttribute('fill','#334155'); c.setAttribute('stroke','#1f2937'); gN.appendChild(c); }); }
-$('#btnBuild').addEventListener('click', buildNetwork); $('#btnRandW').addEventListener('click', randomizeWeights); $('#btnSim').addEventListener('click', simulateOnce); buildNetwork();
+const Acts={ step:{f:x=>x>=0?1:0, name:'step'}, sigmoid:{f:x=>1/(1+Math.exp(-x)), name:'σ'}, tanh:{f:x=>Math.tanh(x), name:'tanh'}, relu:{f:x=>x>0?x:0, name:'ReLU'} };
 
-// ===== MLP Real (TF.js) =====
-const tfReady=(typeof tf!=='undefined'); if(tfReady){ $('#tfVer').textContent=(tf?.version?.tfjs || tf?.version_core || 'ok'); }
-let stopFlag=false; window._snapshots = window._snapshots || [];
+// Calcula os valores z e a para todos os neurônios baseado nas entradas atuais
+function computeNeuronValues() {
+  const v = new Float64Array(net.nin);
+  for(let i=0;i<net.nin;i++){ const inp = document.getElementById('x_'+i); v[i] = (inp ? parseFloat(inp.value) : 0) || 0; }
+  const actH = net.actH; const actO = net.actO;
+  const layers = [net.nin, ...(net.h1?[net.h1]:[]), ...(net.h2?[net.h2]:[]), net.nout];
+  let A = [v];
+  let allZ = [];
+  let allA = [v];
+  for(let l=0; l<net.W.length; l++){
+    const Z = addBias(matMul(A, transpose(net.W[l])), net.b[l]);
+    const isLast = (l === net.W.length-1);
+    const activation = isLast ? actO : actH;
+    const actFunc = Acts[activation] || Acts.sigmoid;
+    const Anext = Z.map(row => row.map(val => actFunc.f(val)));
+    allZ.push(Z[0]);
+    allA.push(Anext[0]);
+    A = Anext;
+  }
+  return { zValues: allZ, aValues: allA.slice(1) };
+}
+
+// Atualiza a animação: calcula valores e redesenha
+function updateAnimation() {
+  if(!document.getElementById('sim') || document.getElementById('sim').hidden) return;
+  try {
+    const values = computeNeuronValues();
+    currentNeuronValues = values;
+    drawNetworkWithEquations();
+  } catch(e) { console.warn(e); }
+}
+
+function startAnimation() {
+  if(animInterval) clearInterval(animInterval);
+  animPaused = false;
+  const speed = parseInt(document.getElementById('animSpeed')?.value || 800);
+  animInterval = setInterval(() => {
+    if(!animPaused && document.getElementById('sim') && !document.getElementById('sim').hidden) {
+      updateAnimation();
+    }
+  }, speed);
+}
+
+function stopAnimation() {
+  if(animInterval) { clearInterval(animInterval); animInterval = null; }
+}
+
+// Desenha o grafo com equações dentro dos neurônios
+function drawNetworkWithEquations() {
+  const svg = document.getElementById('netSvg');
+  if(!svg) return;
+  svg.innerHTML = '';
+  const cols = [net.nin, ...(net.h1?[net.h1]:[]), ...(net.h2?[net.h2]:[]), net.nout];
+  const Wsvg = 900, Hsvg = 420, padX = 90;
+  const colGap = (Wsvg-2*padX)/(cols.length-1);
+  const nodes = [];
+  for(let c=0;c<cols.length;c++){
+    const n = cols[c];
+    const totalH = (n-1)*50;
+    const startY = (Hsvg/2)-totalH/2;
+    for(let i=0;i<n;i++){
+      nodes.push({c,i,x:padX+c*colGap,y:startY+i*50});
+    }
+  }
+  const idx = {};
+  nodes.forEach(n=>idx[`${n.c}:${n.i}`]=n);
+  const gE = document.createElementNS('http://www.w3.org/2000/svg','g');
+  const gN = document.createElementNS('http://www.w3.org/2000/svg','g');
+  svg.appendChild(gE); svg.appendChild(gN);
+  
+  // Desenha conexões (arestas)
+  let L=0;
+  for(let c=0;c<cols.length-1;c++){
+    const from = cols[c], to = cols[c+1];
+    for(let j=0;j<to;j++){
+      for(let i=0;i<from;i++){
+        const w = net.W[L]?.[j]?.[i] || 0;
+        const a = idx[`${c}:${i}`], b = idx[`${c+1}:${j}`];
+        if(!a || !b) continue;
+        const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+        line.setAttribute('x1',a.x+16); line.setAttribute('y1',a.y);
+        line.setAttribute('x2',b.x-16); line.setAttribute('y2',b.y);
+        line.setAttribute('stroke', w>=0 ? '#60a5fa' : '#fca5a5');
+        line.setAttribute('stroke-width','1.5');
+        line.setAttribute('opacity', String(0.35+Math.min(0.65,Math.abs(w))));
+        gE.appendChild(line);
+      }
+    }
+    L++;
+  }
+  
+  // Desenha neurônios com equações
+  const showEq = document.getElementById('showEquations')?.checked !== false;
+  const layersList = [net.nin, net.h1, net.h2, net.nout].filter((v,i,arr)=> !(i>0 && v===0 && arr[i-1]!==undefined));
+  let neuronIdx = 0;
+  for(let c=0;c<cols.length;c++){
+    for(let i=0;i<cols[c];i++){
+      const node = idx[`${c}:${i}`];
+      if(!node) continue;
+      const isInput = (c===0);
+      const isOutput = (c===cols.length-1);
+      const zVal = currentNeuronValues.zValues?.[c-1]?.[i];
+      const aVal = currentNeuronValues.aValues?.[c-1]?.[i];
+      const activationName = (c===0 ? 'input' : (c===cols.length-1 ? net.actO : net.actH));
+      const actShort = Acts[activationName]?.name || activationName.slice(0,3);
+      
+      // Cor do neurônio baseada no valor de ativação
+      let fillColor = '#334155';
+      if(!isInput && aVal !== undefined){
+        const normVal = Math.min(1, Math.max(0, (aVal+1)/2));
+        const r = Math.round(50 + 205 * normVal);
+        const g = Math.round(100 + 155 * (1-normVal));
+        const b = Math.round(150 + 105 * normVal);
+        fillColor = `rgb(${r},${g},${b})`;
+      }
+      
+      const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+      circle.setAttribute('cx',node.x); circle.setAttribute('cy',node.y);
+      circle.setAttribute('r',22);
+      circle.setAttribute('fill',fillColor);
+      circle.setAttribute('stroke','#1f2937');
+      circle.setAttribute('stroke-width','2');
+      gN.appendChild(circle);
+      
+      // Adiciona texto com equação dentro do neurônio
+      if(showEq && !isInput && aVal !== undefined){
+        const zFixed = zVal !== undefined ? zVal.toFixed(2) : '?';
+        const aFixed = aVal.toFixed(3);
+        const textGroup = document.createElementNS('http://www.w3.org/2000/svg','g');
+        const text1 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text1.setAttribute('x',node.x); text1.setAttribute('y',node.y-8);
+        text1.setAttribute('class','neuron-equation');
+        text1.setAttribute('font-size','7');
+        text1.textContent = `z = ${zFixed}`;
+        textGroup.appendChild(text1);
+        const text2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text2.setAttribute('x',node.x); text2.setAttribute('y',node.y+2);
+        text2.setAttribute('class','neuron-equation');
+        text2.setAttribute('font-size','7');
+        text2.textContent = `a = ${actShort}(${aFixed})`;
+        textGroup.appendChild(text2);
+        gN.appendChild(textGroup);
+      } else if(isInput){
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('x',node.x); text.setAttribute('y',node.y);
+        text.setAttribute('class','neuron-equation');
+        text.setAttribute('font-size','9');
+        text.textContent = `x${i}`;
+        gN.appendChild(text);
+      } else if(isOutput && aVal !== undefined){
+        const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+        text.setAttribute('x',node.x); text.setAttribute('y',node.y);
+        text.setAttribute('class','neuron-equation');
+        text.setAttribute('font-size','9');
+        text.textContent = `ŷ = ${aVal.toFixed(3)}`;
+        gN.appendChild(text);
+      }
+      neuronIdx++;
+    }
+  }
+  drawBiasOverlaySVG(svg);
+}
+
+function drawBiasOverlaySVG(svg){
+  try{
+    const old = svg.querySelector('#gBias');
+    if(old) old.remove();
+    if(!(document.querySelector('#biasOnGraph')?.checked)) return;
+    const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('id','gBias');
+    svg.appendChild(g);
+    const cols = [net.nin, ...(net.h1?[net.h1]:[]), ...(net.h2?[net.h2]:[]), net.nout];
+    const W=900,H=420,padX=90;
+    const colGap=(W-2*padX)/(cols.length-1);
+    const nodes={};
+    for(let c=0;c<cols.length;c++){
+      const n=cols[c];
+      const totalH=(n-1)*50;
+      const startY=(H/2)-totalH/2;
+      for(let i=0;i<n;i++){ nodes[`${c}:${i}`]={x:padX+c*colGap, y:startY+i*50}; }
+    }
+    let L=0;
+    for(let c=1;c<cols.length;c++){
+      const curr=cols[c];
+      const bArr=(net.b[L]&&net.b[L][0])? net.b[L][0]:[];
+      for(let j=0;j<curr;j++){
+        const n=nodes[`${c}:${j}`];
+        if(!n) continue;
+        const bx1=n.x-30, bx2=n.x-16, by=n.y;
+        const v=(typeof bArr[j]==='number')? bArr[j]:0;
+        const col = v>=0? '#93c5fd' : '#fca5a5';
+        const wth=String(1+Math.min(6, Math.abs(v)*4));
+        const bl=document.createElementNS('http://www.w3.org/2000/svg','line');
+        bl.setAttribute('x1',bx1); bl.setAttribute('y1',by);
+        bl.setAttribute('x2',bx2); bl.setAttribute('y2',by);
+        bl.setAttribute('stroke',col); bl.setAttribute('stroke-width',wth);
+        bl.setAttribute('opacity','0.7');
+        g.appendChild(bl);
+      }
+      L++;
+    }
+  }catch(e){}
+}
+
+function drawNetworkThrottled(){ 
+  if(drawPending) return; 
+  drawPending=true; 
+  requestAnimationFrame(()=>{ 
+    drawNetworkWithEquations(); 
+    drawPending=false; 
+  }); 
+}
+
+function buildNetwork(){
+  net.nin=+$('#inpN').value; net.h1=+$('#hid1N').value; net.h2=+$('#hid2N').value; net.nout=+$('#outN').value;
+  net.actH=$('#actHidden').value; net.actO=$('#actOut').value; net.bias=$('#biasOn').value==='1'; net.wscale=+($('#wscale').value)||0.5;
+  const layers=[net.nin, ...(net.h1?[net.h1]:[]), ...(net.h2?[net.h2]:[]), net.nout];
+  net.W=[]; net.b=[];
+  for(let l=1;l<layers.length;l++){ const r=layers[l], c=layers[l-1]; const w=zeros(r,c);
+    for(let i=0;i<r;i++) for(let j=0;j<c;j++) w[i][j]=(Math.random()*2-1)*net.wscale;
+    net.W.push(w); net.b.push([Float64Array.from({length:r},()=> (Math.random()*2-1)*net.wscale)]);
+  }
+  makeInputs(); updateSingleNeuronUI();
+  drawNetworkThrottled();
+  updateAnimation();
+  $('#log').textContent='✅ Rede gerada: '+layers.join(' → ');
+  showToast('Rede gerada com sucesso!');
+}
+
+function randomizeWeights(){ 
+  for(let l=0;l<net.W.length;l++){ 
+    for(let i=0;i<net.W[l].length;i++) for(let j=0;j<net.W[l][0].length;j++) net.W[l][i][j]=(Math.random()*2-1)*net.wscale; 
+    for(let j=0;j<net.b[l][0].length;j++) net.b[l][0][j]=(Math.random()*2-1)*net.wscale; 
+  } 
+  drawNetworkThrottled(); 
+  updateAnimation();
+  updateSingleNeuronUI(); 
+  $('#log').textContent='🎲 Pesos aleatorizados.'; 
+  showToast('Pesos aleatorizados!'); 
+}
+
+function makeInputs(){ 
+  const row=$('#inputsRow'); 
+  row.innerHTML=''; 
+  for(let i=0;i<net.nin;i++){ 
+    const d=document.createElement('div'); 
+    d.className='col'; 
+    d.innerHTML='<label>x'+i+'</label><input id="x_'+i+'" type="number" step="0.01" value="0" onchange="updateAnimation()" oninput="updateAnimation()">'; 
+    row.appendChild(d);
+  } 
+}
+
+function simulateOnce(){
+  const v=new Float64Array(net.nin); 
+  for(let i=0;i<net.nin;i++) v[i]=+($('#x_'+i).value)||0; 
+  const tau=+$('#thr').value||0.5; 
+  $('#thrVal').textContent=tau.toFixed(2);
+  updateAnimation();
+  const values = computeNeuronValues();
+  const y = values.aValues[values.aValues.length-1]?.[0] || 0;
+  $('#binVal').textContent=y.toFixed(4);
+  const dot=$('#logicDot'); 
+  if(dot){ dot.style.background=(y>=tau)?'#22c55e':'#ef4444'; dot.classList.add('on'); }
+  $('#log').textContent='🧮 Cálculo atualizado nos neurônios.';
+}
+
+function updateSingleNeuronUI(){
+  let panel = document.getElementById('singleNeuronPanel');
+  if(!panel){
+    const targetDiv = document.querySelector('#sim .panel:first-child');
+    if(!targetDiv) return;
+    panel = document.createElement('div');
+    panel.id = 'singleNeuronPanel';
+    panel.className = 'single-neuron-panel';
+    panel.innerHTML = `
+      <h4>🧠 Neurônio Artificial (Perceptron)</h4>
+      <p class="hint">Ajuste os valores abaixo e veja a saída mudar. Compare com o neurônio biológico: dendritos (entrada), sinapses (pesos), corpo celular (soma + bias), axônio (saída).</p>
+      <div class="row" style="gap:16px; flex-wrap:wrap;">
+        <div class="col"><label>Peso (w) <span style="color:#60a5fa">↓</span></label>
+          <input type="range" id="neuronW" min="-2" max="2" step="0.01" value="0.5" style="width:200px">
+          <span id="neuronWVal">0.50</span>
+        </div>
+        <div class="col"><label>Bias (b)</label>
+          <input type="range" id="neuronB" min="-2" max="2" step="0.01" value="0.0" style="width:200px">
+          <span id="neuronBVal">0.00</span>
+        </div>
+        <div class="col"><label>Entrada x</label>
+          <select id="neuronX">
+            <option value="0">0</option>
+            <option value="1">1</option>
+          </select>
+        </div>
+        <div class="col"><button id="neuronSim" class="secondary">Simular</button></div>
+        <div class="col"><label>Saída ŷ = <b id="neuronOut">—</b></label></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button id="neuronPresetNOT" class="ghost">🔁 Porta NOT (w = -1, b = 0.5)</button>
+        <button id="neuronPresetIdentity" class="ghost">➡️ Identidade (w = 1, b = 0)</button>
+        <button id="neuronPresetZero" class="ghost">0️⃣ Sempre 0 (w = 0, b = -0.5)</button>
+        <button id="neuronPresetOne" class="ghost">1️⃣ Sempre 1 (w = 0, b = 0.5)</button>
+      </div>
+    `;
+    targetDiv.appendChild(panel);
+    
+    const wSlider = document.getElementById('neuronW');
+    const bSlider = document.getElementById('neuronB');
+    const wVal = document.getElementById('neuronWVal');
+    const bVal = document.getElementById('neuronBVal');
+    const neuronSim = document.getElementById('neuronSim');
+    const neuronX = document.getElementById('neuronX');
+    const neuronOut = document.getElementById('neuronOut');
+    
+    function updateFromSliders() {
+      wVal.textContent = parseFloat(wSlider.value).toFixed(2);
+      bVal.textContent = parseFloat(bSlider.value).toFixed(2);
+      if (net.W.length === 1 && net.W[0].length === 1 && net.W[0][0].length === net.nin && net.nin === 1 && net.nout === 1 && net.h1 === 0 && net.h2 === 0) {
+        net.W[0][0][0] = parseFloat(wSlider.value);
+        net.b[0][0][0] = parseFloat(bSlider.value);
+        drawNetworkThrottled();
+        simulateSingleNeuron();
+      }
+    }
+    wSlider.addEventListener('input', updateFromSliders);
+    bSlider.addEventListener('input', updateFromSliders);
+    neuronSim.addEventListener('click', simulateSingleNeuron);
+    function simulateSingleNeuron() {
+      const x = parseFloat(neuronX.value);
+      const w = parseFloat(wSlider.value);
+      const b = parseFloat(bSlider.value);
+      const act = net.actO || 'sigmoid';
+      let z = w * x + b;
+      let y;
+      if (act === 'sigmoid') y = 1 / (1 + Math.exp(-z));
+      else if (act === 'tanh') y = Math.tanh(z);
+      else if (act === 'relu') y = Math.max(0, z);
+      else if (act === 'step') y = z >= 0 ? 1 : 0;
+      else y = z;
+      neuronOut.textContent = y.toFixed(4);
+      if (net.nin === 1 && net.h1 === 0 && net.h2 === 0) {
+        document.getElementById('x_0').value = x;
+        updateAnimation();
+      }
+    }
+    document.getElementById('neuronPresetNOT').onclick = () => { wSlider.value = '-1'; bSlider.value = '0.5'; updateFromSliders(); simulateSingleNeuron(); };
+    document.getElementById('neuronPresetIdentity').onclick = () => { wSlider.value = '1'; bSlider.value = '0'; updateFromSliders(); simulateSingleNeuron(); };
+    document.getElementById('neuronPresetZero').onclick = () => { wSlider.value = '0'; bSlider.value = '-0.5'; updateFromSliders(); simulateSingleNeuron(); };
+    document.getElementById('neuronPresetOne').onclick = () => { wSlider.value = '0'; bSlider.value = '0.5'; updateFromSliders(); simulateSingleNeuron(); };
+    simulateSingleNeuron();
+  }
+  const isSingleNeuron = (net.nin === 1 && net.h1 === 0 && net.h2 === 0 && net.nout === 1);
+  panel.style.display = isSingleNeuron ? 'block' : 'none';
+  if(isSingleNeuron && net.W[0] && net.W[0][0] && net.W[0][0][0] !== undefined){
+    document.getElementById('neuronW').value = net.W[0][0][0];
+    document.getElementById('neuronB').value = net.b[0][0][0];
+    document.getElementById('neuronWVal').textContent = net.W[0][0][0].toFixed(2);
+    document.getElementById('neuronBVal').textContent = net.b[0][0][0].toFixed(2);
+  }
+}
+
+// Configuração da animação
+document.getElementById('animSpeed')?.addEventListener('input', (e)=>{
+  const val = e.target.value;
+  document.getElementById('animSpeedVal').textContent = val;
+  if(animInterval && !animPaused){
+    startAnimation();
+  }
+});
+document.getElementById('animPause')?.addEventListener('click', ()=>{ animPaused = true; });
+document.getElementById('animPlay')?.addEventListener('click', ()=>{ animPaused = false; });
+document.getElementById('animStep')?.addEventListener('click', ()=>{ updateAnimation(); });
+document.getElementById('showEquations')?.addEventListener('change', ()=>{ drawNetworkThrottled(); });
+
+$('#btnBuild').addEventListener('click', buildNetwork); 
+$('#btnRandW').addEventListener('click', randomizeWeights); 
+$('#btnSim').addEventListener('click', simulateOnce); 
+buildNetwork();
+startAnimation();
+
+// ==================== MLP REAL (TF.js) - mantido igual ====================
+let stopFlag=false; let trainingActive=false; window._snapshots = []; const MAX_SNAPSHOTS = 100;
 function drawLine(canvas, arr, color){ const ctx=canvas.getContext('2d'); canvas.width=canvas.clientWidth; canvas.height=canvas.clientHeight; ctx.clearRect(0,0,canvas.width,canvas.height); if(arr.length<2) return; const pad=12, W=canvas.width-2*pad, H=canvas.height-2*pad; const max=Math.max(...arr), min=Math.min(...arr); ctx.strokeStyle='#334155'; ctx.strokeRect(pad,pad,W,H); ctx.beginPath(); ctx.strokeStyle=color||'#22c55e'; ctx.lineWidth=2; arr.forEach((v,i)=>{ const x=pad+(i/(arr.length-1))*W; const y=pad+(1-(v-min)/(max-min+1e-9))*H; if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }); ctx.stroke(); }
 function rand2D(n=200){ const X=[], Y=[]; for(let i=0;i<n;i++){ const x=Math.random(), y=Math.random(); const cls=(x>y)?1:0; X.push([x,y]); Y.push(cls); } return {X,Y}; }
-function makeGateData(kind){ if(kind==='not'){ const X=[[0],[1]]; const Y=[1,0]; return { xs: tf.tensor2d(X), ys: tf.tensor2d(Y,[2,1]), dim:1 }; } const tt={ and:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]], or:[[0,0,0],[0,1,1],[1,0,1],[1,1,1]], xor:[[0,0,0],[0,1,1],[1,0,1],[1,1,0]], nand:[[0,0,1],[0,1,1],[1,0,1],[1,1,0]], nor:[[0,0,1],[0,1,0],[1,0,0],[1,1,0]], xnor:[[0,0,1],[0,1,0],[1,0,0],[1,1,1]] }[kind]; if(!tt) return null; const X=tt.map(r=>[r[0],r[1]]); const Y=tt.map(r=>r[2]); return { xs: tf.tensor2d(X), ys: tf.tensor2d(Y,[Y.length,1]), dim:2 }; }
-async function runReal(){ stopFlag=false; const task=$('#taskSel').value; const H=+( $('#realH').value )||8; const H2=+( $('#realH2')?.value || 0 ); const act=$('#realAct').value; const act2=($('#realAct2')?.value || act); const lr=+( $('#lrReal').value )||0.01; const opt=($('#optSel').value==='adam')? tf.train.adam(lr) : tf.train.sgd(lr); const epochs=+( $('#epReal').value )||300; const bs=+( $('#bsReal').value )||16; const lossCanvas=$('#lossReal'); const viz=$('#vizReal'); const out=$('#realOut'); out.textContent='Preparando…'; let xs, ys, isReg=false; if(task==='class2'){ const {X,Y}=rand2D(400); xs=tf.tensor2d(X); ys=tf.tensor2d(Y,[Y.length,1]); isReg=false; } else if(task==='regr'){ const X=[],Y=[]; for(let i=0;i<200;i++){ const x=(i/199); X.push([x]); Y.push(2*x+1+(Math.random()-0.5)*0.1);} xs=tf.tensor2d(X); ys=tf.tensor2d(Y,[Y.length,1]); isReg=true; } else { const gd=makeGateData(task); if(!gd){ throw new Error('Tarefa desconhecida: '+task);} xs=gd.xs; ys=gd.ys; isReg=false; }
- const model=tf.sequential(); model.add(tf.layers.dense({units:H, activation:act, inputShape:[xs.shape[1]]})); if(H2>0){ model.add(tf.layers.dense({units:H2, activation:act2})); } model.add(tf.layers.dense({units:1, activation: isReg? 'linear':'sigmoid'})); model.compile({optimizer:opt, loss: isReg? 'meanSquaredError':'binaryCrossentropy', metrics: isReg? ['mse']:['accuracy']});
- window._tfRealModel=model; window._tfRealInputDim=xs.shape[1]; window._tfRealHidden=H; window._tfRealHidden2=H2; window._tfRealAct=act; window._tfRealAct2=act2; window._tfRealNout=1; window._tfRealIsReg=isReg;
- const hist=[]; await model.fit(xs,ys,{epochs, batchSize:bs, shuffle:true, callbacks:{ onEpochEnd: async (ep, logs)=>{ hist.push(logs.loss); drawLine(lossCanvas, hist, '#22c55e'); const accLog=(!isReg && typeof logs.acc === 'number')? (' — acc '+logs.acc.toFixed(4)) : ''; out.textContent=`época ${ep+1}/${epochs} — perda ${logs.loss.toFixed(6)}${accLog}`; try{ const [k0,b0]=model.layers[0].getWeights(); let snap; if(H2>0){ const [k1,b1]=model.layers[1].getWeights(); const [k2,b2]=model.layers[2].getWeights(); snap={ ep:ep+1, W0: await k0.array(), b0: await b0.array(), W1: await k1.array(), b1: await b1.array(), W2: await k2.array(), b2: await b2.array() }; } else { const [k1,b1]=model.layers[1].getWeights(); snap={ ep:ep+1, W0: await k0.array(), b0: await b0.array(), W1: await k1.array(), b1: await b1.array() }; } window._snapshots.push(snap); publish('weights:snapshot',{snap}); const mirrorOn=$('#mirrorLive')?.checked; const mirrorStep=Number($('#mirrorStep')?.value||10); if(mirrorOn && ((ep+1)%mirrorStep===0)){ publish('weights:applyToSim',{snap}); } }catch(e){ console.warn('snapshot/mirror failed', e);} if(stopFlag) throw 'stop'; } }}).catch(()=>{});
- // avaliação rápida
- const preds=model.predict(xs); const p=await preds.array(); const t=await ys.array(); let txt=''; if(!isReg){ let correct=0; for(let i=0;i<p.length;i++){ const pred=(p[i][0]>=0.5)?1:0; if(pred===t[i][0]) correct++; } const acc=(correct/p.length*100).toFixed(1); txt += `Acurácia (treino): ${acc}%\n`; } if(task==='xor'){ txt += 'XOR (ŷ): '+p.map(r=>r[0].toFixed(3)).join(', '); } else if(task==='class2'){ txt += 'Classificação 2D: '+p.slice(0,8).map(r=>r[0].toFixed(3)).join(', ')+' ...'; } else { txt += 'Regressão: primeiro(s) ŷ = '+p.slice(0,5).map(r=>r[0].toFixed(3)).join(', ')+' ...'; } out.textContent=txt;
- // visualização
- const ctx=viz.getContext('2d'); viz.width=viz.clientWidth; viz.height=viz.clientHeight; ctx.clearRect(0,0,viz.width,viz.height); if(task!=='regr'){ const pad=10, W=viz.width-2*pad, Hh=viz.height-2*pad; const steps=120; for(let ix=0;ix<=steps;ix++){ for(let iy=0;iy<=steps;iy++){ const x=ix/steps, y=1-iy/steps; const pr=model.predict(tf.tensor2d([[x,y]])).dataSync()[0]; const r=Math.round(244*(1-pr)), g=Math.round(140*pr), b=Math.round(244*(1-pr)+244*pr*0.2); ctx.fillStyle=`rgba(${r},${g},${b},0.16)`; ctx.fillRect(pad+ix*(W/steps), pad+iy*(Hh/steps), (W/steps)+1, (Hh/steps)+1); }} const Xa=await xs.array(); const Ya=await ys.array(); ctx.strokeStyle='#0ea5e9'; for(let i=0;i<Xa.length;i++){ const cx=pad+Xa[i][0]*W, cy=pad+(1-(Xa[i][1]||0))*Hh; ctx.beginPath(); ctx.arc(cx,cy,4,0,2*Math.PI); ctx.fillStyle=(Ya[i][0]===1)? '#22c55e':'#ef4444'; ctx.fill(); ctx.stroke(); } } else { const pad=12, W=viz.width-2*pad, Hh=viz.height-2*pad; ctx.strokeStyle='#334155'; ctx.strokeRect(pad,pad,W,Hh); const Xa=await xs.array(); const Ya=await ys.array(); for(let i=0;i<Xa.length;i++){ const x=pad + (Xa[i][0])*W; const y=pad + (1-(Ya[i][0]-0.8)/1.6)*Hh; ctx.fillStyle='#60a5fa'; ctx.fillRect(x-1,y-1,2,2); } ctx.beginPath(); ctx.strokeStyle='#22c55e'; ctx.lineWidth=2; for(let ix=0; ix<=200; ix++){ const x=ix/200; const yy=model.predict(tf.tensor2d([[x]])).dataSync()[0]; const Xp=pad+x*W; const Yp=pad + (1-(yy-0.8)/1.6)*Hh; if(ix===0) ctx.moveTo(Xp,Yp); else ctx.lineTo(Xp,Yp); } ctx.stroke(); }
- $('#btnSaveModel').onclick= async ()=>{ try{ await model.save('downloads://mlp_tfjs_model'); out.textContent += "\nModelo exportado (TF.js)."; }catch(e){ out.textContent += "\nFalha ao exportar: "+e; } };
+function makeGateData3(kind){
+  const allCombos = [];
+  for(let i=0;i<8;i++){ allCombos.push([(i>>2)&1, (i>>1)&1, i&1]); }
+  let ys;
+  if(kind === 'and3') ys = allCombos.map(([a,b,c]) => a&b&c);
+  else if(kind === 'or3') ys = allCombos.map(([a,b,c]) => a|b|c);
+  else if(kind === 'nand3') ys = allCombos.map(([a,b,c]) => 1 - (a&b&c));
+  else if(kind === 'nor3') ys = allCombos.map(([a,b,c]) => 1 - (a|b|c));
+  else if(kind === 'xor3') ys = allCombos.map(([a,b,c]) => (a^b^c));
+  else if(kind === 'xnor3') ys = allCombos.map(([a,b,c]) => 1 - (a^b^c));
+  else return null;
+  return { xs: tf.tensor2d(allCombos), ys: tf.tensor2d(ys, [8,1]), dim:3 };
 }
-$('#btnRunReal').addEventListener('click', runReal); $('#btnStopReal').addEventListener('click', ()=>{ stopFlag=true; });
-
-// Entradas integradas (TF.js)
-function renderRealInputs(){ const task=$('#taskSel').value; const row=$('#realInputsRow'); if(!row) return; row.innerHTML=''; const nin=(task==='not')?1:(task==='regr'?1:2); for(let i=0;i<nin;i++){ const col=document.createElement('div'); col.className='col'; const lab=document.createElement('label'); lab.textContent='x'+i; col.appendChild(lab); const inp=document.createElement('input'); inp.type='number'; inp.step='0.01'; inp.value='0'; inp.id='rx_'+i; col.appendChild(inp); row.appendChild(col);} }
-async function simulateTFOnce(){ const m=window._tfRealModel; if(!m){ alert('Treine primeiro no painel MLP (Real — TF.js).'); return; } const task=$('#taskSel').value; const thr=Number(($('#thrReal')?.value||'0.5').replace(',','.'))||0.5; const dot=$('#logicDotReal'); const out=$('#binRealVal'); const nin=(task==='not')?1:(task==='regr'?1:2); const v=[]; for(let i=0;i<nin;i++){ const el=$('#rx_'+i); v.push(Number((el?.value||'0').replace(',','.'))||0); } let y=0; if(task==='regr'){ y=m.predict(tf.tensor2d([v],[1,v.length])).dataSync()[0]; } else { y=m.predict(tf.tensor2d([v],[1,v.length])).dataSync()[0]; } out.textContent=(Number.isFinite(y)? y.toFixed(4):'—'); $('#thrRealVal').textContent=thr.toFixed(2); if(dot){ dot.classList.add('on'); const isOn=(y>=thr); dot.style.background=isOn? '#22c55e':'#ef4444'; } }
+function makeGateData(kind){
+  if(kind==='not'){ const X=[[0],[1]]; const Y=[1,0]; return { xs: tf.tensor2d(X), ys: tf.tensor2d(Y,[2,1]), dim:1 }; }
+  const tt={ and:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]], or:[[0,0,0],[0,1,1],[1,0,1],[1,1,1]], xor:[[0,0,0],[0,1,1],[1,0,1],[1,1,0]], nand:[[0,0,1],[0,1,1],[1,0,1],[1,1,0]], nor:[[0,0,1],[0,1,0],[1,0,0],[1,1,0]], xnor:[[0,0,1],[0,1,0],[1,0,0],[1,1,1]] }[kind];
+  if(!tt) return null;
+  const X=tt.map(r=>[r[0],r[1]]); const Y=tt.map(r=>r[2]);
+  return { xs: tf.tensor2d(X), ys: tf.tensor2d(Y,[Y.length,1]), dim:2 };
+}
+async function runReal(){ if(trainingActive){ showToast('Treinamento já em andamento!'); return; }
+  stopFlag=false; trainingActive=true; const statusDiv=document.getElementById('trainingStatus'); if(statusDiv) statusDiv.style.display='flex';
+  const task=$('#taskSel').value; const H=+( $('#realH').value )||8; const H2=+( $('#realH2')?.value || 0 ); const act=$('#realAct').value; const act2=($('#realAct2')?.value || act); const lr=+( $('#lrReal').value )||0.01; const opt=($('#optSel').value==='adam')? tf.train.adam(lr) : tf.train.sgd(lr); const epochs=+( $('#epReal').value )||300; const bs=+( $('#bsReal').value )||16; const lossCanvas=$('#lossReal'); const viz=$('#vizReal'); const out=$('#realOut'); out.textContent='🔄 Preparando...'; let xs, ys, isReg=false, inputDim=1;
+  if(task==='class2'){ const {X,Y}=rand2D(400); xs=tf.tensor2d(X); ys=tf.tensor2d(Y,[Y.length,1]); isReg=false; inputDim=2; }
+  else if(task==='regr'){ const X=[],Y=[]; for(let i=0;i<200;i++){ const x=(i/199); X.push([x]); Y.push(2*x+1+(Math.random()-0.5)*0.1);} xs=tf.tensor2d(X); ys=tf.tensor2d(Y,[Y.length,1]); isReg=true; inputDim=1; }
+  else {
+    if(['and3','or3','nand3','nor3','xor3','xnor3'].includes(task)){
+      const gd3 = makeGateData3(task);
+      if(gd3){ xs=gd3.xs; ys=gd3.ys; isReg=false; inputDim=3; }
+      else { throw new Error('Erro ao gerar dados para '+task); }
+    } else {
+      const gd = makeGateData(task);
+      if(!gd){ throw new Error('Tarefa desconhecida: '+task);}
+      xs=gd.xs; ys=gd.ys; isReg=false; inputDim=gd.dim;
+    }
+  }
+  const model=tf.sequential(); model.add(tf.layers.dense({units:H, activation:act, inputShape:[inputDim]})); if(H2>0){ model.add(tf.layers.dense({units:H2, activation:act2})); } model.add(tf.layers.dense({units:1, activation: isReg? 'linear':'sigmoid'})); model.compile({optimizer:opt, loss: isReg? 'meanSquaredError':'binaryCrossentropy', metrics: isReg? ['mse']:['accuracy']});
+  window._tfRealModel=model; window._tfRealInputDim=inputDim; window._tfRealHidden=H; window._tfRealHidden2=H2; window._tfRealAct=act; window._tfRealAct2=act2; window._tfRealNout=1; window._tfRealIsReg=isReg;
+  const hist=[]; await model.fit(xs,ys,{epochs, batchSize:bs, shuffle:true, callbacks:{ onEpochEnd: async (ep, logs)=>{ hist.push(logs.loss); drawLine(lossCanvas, hist, '#22c55e'); const accLog=(!isReg && typeof logs.acc === 'number')? ' — acc '+logs.acc.toFixed(4) : ''; out.textContent=`📊 época ${ep+1}/${epochs} — loss ${logs.loss.toFixed(6)}${accLog}`; try{ const [k0,b0]=model.layers[0].getWeights(); let snap; if(H2>0){ const [k1,b1]=model.layers[1].getWeights(); const [k2,b2]=model.layers[2].getWeights(); snap={ ep:ep+1, W0: await k0.array(), b0: await b0.array(), W1: await k1.array(), b1: await b1.array(), W2: await k2.array(), b2: await b2.array() }; } else { const [k1,b1]=model.layers[1].getWeights(); snap={ ep:ep+1, W0: await k0.array(), b0: await b0.array(), W1: await k1.array(), b1: await b1.array() }; } window._snapshots.push(snap); if(window._snapshots.length > MAX_SNAPSHOTS) window._snapshots.shift(); publish('weights:snapshot',{snap}); const mirrorOn=$('#mirrorLive')?.checked; const mirrorStep=Number($('#mirrorStep')?.value||10); if(mirrorOn && ((ep+1)%mirrorStep===0)){ publish('weights:applyToSim',{snap}); } }catch(e){ console.warn('snapshot/mirror failed', e);} if(stopFlag) throw new Error('Treino interrompido pelo usuário'); } }}).catch((err)=>{ if(err.message !== 'Treino interrompido pelo usuário') showToast('Erro no treino: '+err.message); });
+  const preds=model.predict(xs); const p=await preds.array(); const t=await ys.array(); let txt=''; if(!isReg){ let correct=0; for(let i=0;i<p.length;i++){ const pred=(p[i][0]>=0.5)?1:0; if(pred===t[i][0]) correct++; } const acc=(correct/p.length*100).toFixed(1); txt += `✅ Acurácia (treino): ${acc}%\n`; } if(task==='xor' || task==='xor3'){ txt += `${task.toUpperCase()} (ŷ): `+p.map(r=>r[0].toFixed(3)).join(', '); } else if(task==='class2'){ txt += 'Classificação 2D: '+p.slice(0,8).map(r=>r[0].toFixed(3)).join(', ')+' ...'; } else { txt += 'Regressão: ŷ = '+p.slice(0,5).map(r=>r[0].toFixed(3)).join(', ')+' ...'; } out.textContent=txt; showToast('Treinamento concluído!');
+  const ctx=viz.getContext('2d'); viz.width=viz.clientWidth; viz.height=viz.clientHeight; ctx.clearRect(0,0,viz.width,viz.height);
+  if(inputDim===2 && task!=='regr'){
+    const pad=10, W=viz.width-2*pad, Hh=viz.height-2*pad; const steps=120;
+    for(let ix=0;ix<=steps;ix++){ for(let iy=0;iy<=steps;iy++){ const x=ix/steps, y=1-iy/steps; const pr=model.predict(tf.tensor2d([[x,y]])).dataSync()[0]; const r=Math.round(244*(1-pr)), g=Math.round(140*pr), b=Math.round(244*(1-pr)+244*pr*0.2); ctx.fillStyle=`rgba(${r},${g},${b},0.16)`; ctx.fillRect(pad+ix*(W/steps), pad+iy*(Hh/steps), (W/steps)+1, (Hh/steps)+1); }} const Xa=await xs.array(); const Ya=await ys.array(); ctx.strokeStyle='#0ea5e9'; for(let i=0;i<Xa.length;i++){ const cx=pad+Xa[i][0]*W, cy=pad+(1-(Xa[i][1]||0))*Hh; ctx.beginPath(); ctx.arc(cx,cy,4,0,2*Math.PI); ctx.fillStyle=(Ya[i][0]===1)? '#22c55e':'#ef4444'; ctx.fill(); ctx.stroke(); }
+  } else if(task==='regr'){
+    const pad=12, W=viz.width-2*pad, Hh=viz.height-2*pad; ctx.strokeStyle='#334155'; ctx.strokeRect(pad,pad,W,Hh); const Xa=await xs.array(); const Ya=await ys.array(); for(let i=0;i<Xa.length;i++){ const x=pad + (Xa[i][0])*W; const y=pad + (1-(Ya[i][0]-0.8)/1.6)*Hh; ctx.fillStyle='#60a5fa'; ctx.fillRect(x-1,y-1,2,2); } ctx.beginPath(); ctx.strokeStyle='#22c55e'; ctx.lineWidth=2; for(let ix=0; ix<=200; ix++){ const x=ix/200; const yy=model.predict(tf.tensor2d([[x]])).dataSync()[0]; const Xp=pad+x*W; const Yp=pad + (1-(yy-0.8)/1.6)*Hh; if(ix===0) ctx.moveTo(Xp,Yp); else ctx.lineTo(Xp,Yp); } ctx.stroke();
+  } else {
+    ctx.fillStyle='#cbd5e1'; ctx.font='14px system-ui'; ctx.fillText('Visualização não disponível para tarefas com 3 entradas.', 20, 40);
+  }
+  trainingActive=false; if(statusDiv) statusDiv.style.display='none';
+}
+$('#btnRunReal').addEventListener('click', runReal); $('#btnStopReal').addEventListener('click', ()=>{ stopFlag=true; if(trainingActive) showToast('Interrompendo treinamento...'); });
+$('#btnSaveModel').onclick= async ()=>{ try{ await window._tfRealModel.save('downloads://mlp_tfjs_model'); showToast('Modelo exportado!'); }catch(e){ showToast('Falha ao exportar: '+e.message); } };
+$('#btnResetSnapshots').addEventListener('click', ()=>{ window._snapshots = []; showToast('Snapshots limpos!'); });
+function renderRealInputs(){ const task=$('#taskSel').value; const row=$('#realInputsRow'); if(!row) return; row.innerHTML='';
+  let nin=1;
+  if(task==='not') nin=1;
+  else if(task==='regr') nin=1;
+  else if(['and3','or3','nand3','nor3','xor3','xnor3'].includes(task)) nin=3;
+  else if(['and','or','xor','nand','nor','xnor','class2'].includes(task)) nin=2;
+  else nin=2;
+  for(let i=0;i<nin;i++){ const col=document.createElement('div'); col.className='col'; const lab=document.createElement('label'); lab.textContent='x'+i; col.appendChild(lab); const inp=document.createElement('input'); inp.type='number'; inp.step='0.01'; inp.value='0'; inp.id='rx_'+i; col.appendChild(inp); row.appendChild(col);}
+}
+async function simulateTFOnce(){ const m=window._tfRealModel; if(!m){ alert('Treine primeiro no painel MLP (Real — TF.js).'); return; } const task=$('#taskSel').value; const thr=Number(($('#thrReal')?.value||'0.5').replace(',','.'))||0.5; const dot=$('#logicDotReal'); const out=$('#binRealVal'); let nin=1;
+  if(task==='not') nin=1;
+  else if(task==='regr') nin=1;
+  else if(['and3','or3','nand3','nor3','xor3','xnor3'].includes(task)) nin=3;
+  else if(['and','or','xor','nand','nor','xnor','class2'].includes(task)) nin=2;
+  else nin=2;
+  const v=[]; for(let i=0;i<nin;i++){ const el=$('#rx_'+i); v.push(Number((el?.value||'0').replace(',','.'))||0); }
+  let y=0; if(task==='regr'){ y=m.predict(tf.tensor2d([v],[1,v.length])).dataSync()[0]; } else { y=m.predict(tf.tensor2d([v],[1,v.length])).dataSync()[0]; }
+  out.textContent=(Number.isFinite(y)? y.toFixed(4):'—'); $('#thrRealVal').textContent=thr.toFixed(2); if(dot){ dot.classList.add('on'); const isOn=(y>=thr); dot.style.background=isOn? '#22c55e':'#ef4444'; } }
 $('#btnSimReal')?.addEventListener('click', ()=> setTimeout(simulateTFOnce,0)); $('#thrReal')?.addEventListener('input', ()=>{ const t=$('#thrReal'); if(t){ $('#thrRealVal').textContent=Number(t.value).toFixed(2);} }); $('#taskSel')?.addEventListener('change', renderRealInputs); renderRealInputs();
-
-// Tabela-verdade
-function logicTruth(task){ if(task==='not') return { X:[[0],[1]], Y:[1,0], nin:1 }; const map={ and:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[0,0,0,1]}, or:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[0,1,1,1]}, xor:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[0,1,1,0]}, nand:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[1,1,1,0]}, nor:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[1,0,0,0]}, xnor:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[1,0,0,1]} }[task]; if(!map) return null; map.nin=2; return map; }
-function renderTruthSkeleton(){ const task=$('#taskSel').value; const tb=$('#ttbl tbody'); const hint=$('#ttHint'); const acc=$('#ttAcc'); if(!tb) return; tb.innerHTML=''; acc.textContent='Acurácia TT: —'; const tt=logicTruth(task); if(!tt){ if(hint) hint.textContent='Tabela-verdade não se aplica a esta tarefa.'; return; } if(hint) hint.textContent='Clique em “Validar tabela‑verdade” após treinar.'; for(let i=0;i<tt.X.length;i++){ const tr=document.createElement('tr'); const nin=tt.nin; const td0=document.createElement('td'); td0.textContent=tt.X[i][0]; tr.appendChild(td0); const td1=document.createElement('td'); td1.textContent=(nin===2? tt.X[i][1]:'—'); tr.appendChild(td1); const tdy=document.createElement('td'); tdy.textContent=tt.Y[i]; tr.appendChild(tdy); const tdp=document.createElement('td'); tdp.textContent='—'; tdp.className='code'; tr.appendChild(tdp); const tdc=document.createElement('td'); const dot=document.createElement('span'); dot.className='logicDot'; dot.style.opacity='1'; dot.style.background='#64748b'; tdc.appendChild(dot); tr.appendChild(tdc); const tds=document.createElement('td'); tds.textContent='—'; tr.appendChild(tds); tb.appendChild(tr);} }
-async function validateTruth(){ const m=window._tfRealModel; if(!m){ alert('Treine primeiro no painel MLP (Real — TF.js).'); return; } const task=$('#taskSel').value; const tt=logicTruth(task); if(!tt){ alert('Tabela-verdade só para portas lógicas.'); return; } const thr=Number(($('#thrReal')?.value||'0.5').replace(',','.'))||0.5; const xs=tf.tensor2d(tt.X,[tt.X.length, tt.nin]); const preds=m.predict(xs); const p=Array.from(preds.dataSync()); const tb=$('#ttbl tbody'); const rows=tb?.querySelectorAll('tr')||[]; let ok=0; for(let i=0;i<rows.length;i++){ const row=rows[i]; const ystar=tt.Y[i]; const yhat=p[i]; row.children[3].textContent=yhat.toFixed(4); const cls=(yhat>=thr)?1:0; const dot=row.children[4].querySelector('.logicDot'); if(dot){ dot.style.background=(cls? '#22c55e':'#ef4444'); } const pass=(cls===ystar); row.children[5].textContent=pass? '✔︎':'✖'; row.children[5].style.color=pass? '#22c55e':'#ef4444'; if(pass) ok++; } const acc=$('#ttAcc'); if(acc){ const pct=(ok/tt.X.length*100).toFixed(1); acc.textContent=`Acurácia TT: ${pct}% (${ok}/${tt.X.length})`; } }
+function logicTruth(task){ 
+  if(task==='not') return { X:[[0],[1]], Y:[1,0], nin:1 };
+  if(['and3','or3','nand3','nor3','xor3','xnor3'].includes(task)){
+    const combos=[]; for(let i=0;i<8;i++){ combos.push([(i>>2)&1, (i>>1)&1, i&1]); }
+    let Y;
+    if(task==='and3') Y=combos.map(([a,b,c])=> a&b&c);
+    else if(task==='or3') Y=combos.map(([a,b,c])=> a|b|c);
+    else if(task==='nand3') Y=combos.map(([a,b,c])=> 1-(a&b&c));
+    else if(task==='nor3') Y=combos.map(([a,b,c])=> 1-(a|b|c));
+    else if(task==='xor3') Y=combos.map(([a,b,c])=> a^b^c);
+    else if(task==='xnor3') Y=combos.map(([a,b,c])=> 1-(a^b^c));
+    else return null;
+    return { X:combos, Y, nin:3 };
+  }
+  const map={ and:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[0,0,0,1]}, or:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[0,1,1,1]}, xor:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[0,1,1,0]}, nand:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[1,1,1,0]}, nor:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[1,0,0,0]}, xnor:{X:[[0,0],[0,1],[1,0],[1,1]],Y:[1,0,0,1]} }[task];
+  if(!map) return null;
+  map.nin=2; return map;
+}
+function renderTruthSkeleton(){ const task=$('#taskSel').value; const tb=$('#ttbl tbody'); const hint=$('#ttHint'); const acc=$('#ttAcc'); if(!tb) return; tb.innerHTML=''; acc.textContent='Acurácia TT: —'; const tt=logicTruth(task); if(!tt){ if(hint) hint.textContent='Tabela-verdade não se aplica a esta tarefa.'; return; } if(hint) hint.textContent='Clique em “Validar tabela‑verdade” após treinar.'; for(let i=0;i<tt.X.length;i++){ const tr=document.createElement('tr'); const nin=tt.nin; const td0=document.createElement('td'); td0.textContent=tt.X[i][0]; tr.appendChild(td0); const td1=document.createElement('td'); td1.textContent=(nin>=2? tt.X[i][1]:'—'); tr.appendChild(td1); const td2=document.createElement('td'); td2.textContent=(nin>=3? tt.X[i][2]:'—'); tr.appendChild(td2); const tdy=document.createElement('td'); tdy.textContent=tt.Y[i]; tr.appendChild(tdy); const tdp=document.createElement('td'); tdp.textContent='—'; tdp.className='code'; tr.appendChild(tdp); const tdc=document.createElement('td'); const dot=document.createElement('span'); dot.className='logicDot'; dot.style.opacity='1'; dot.style.background='#64748b'; tdc.appendChild(dot); tr.appendChild(tdc); const tds=document.createElement('td'); tds.textContent='—'; tr.appendChild(tds); tb.appendChild(tr);} }
+async function validateTruth(){ const m=window._tfRealModel; if(!m){ alert('Treine primeiro no painel MLP (Real — TF.js).'); return; } const task=$('#taskSel').value; const tt=logicTruth(task); if(!tt){ alert('Tabela-verdade só para portas lógicas.'); return; } const thr=Number(($('#thrReal')?.value||'0.5').replace(',','.'))||0.5; const xs=tf.tensor2d(tt.X,[tt.X.length, tt.nin]); const preds=m.predict(xs); const p=Array.from(preds.dataSync()); const tb=$('#ttbl tbody'); const rows=tb?.querySelectorAll('tr')||[]; let ok=0; for(let i=0;i<rows.length;i++){ const row=rows[i]; const ystar=tt.Y[i]; const yhat=p[i]; row.children[3].textContent=ystar; row.children[4].textContent=yhat.toFixed(4); const cls=(yhat>=thr)?1:0; const dot=row.children[5].querySelector('.logicDot'); if(dot){ dot.style.background=(cls? '#22c55e':'#ef4444'); } const pass=(cls===ystar); row.children[6].textContent=pass? '✔︎':'✖'; row.children[6].style.color=pass? '#22c55e':'#ef4444'; if(pass) ok++; } const acc=$('#ttAcc'); if(acc){ const pct=(ok/tt.X.length*100).toFixed(1); acc.textContent=`Acurácia TT: ${pct}% (${ok}/${tt.X.length})`; showToast(`Acurácia: ${pct}%`); } }
 $('#btnTT')?.addEventListener('click', validateTruth); $('#taskSel')?.addEventListener('change', renderTruthSkeleton); $('#thrReal')?.addEventListener('input', ()=>{ const m=window._tfRealModel; if(m){ validateTruth(); }}); renderTruthSkeleton();
-
-// Event bus + Learning-Graph glue
 window.appBus = window.appBus || new EventTarget();
 function publish(type, detail){ window.appBus.dispatchEvent(new CustomEvent(type,{detail})); }
 (function(){ let _prevSnap=null; function applySnapToSim(s){ try{ const H=((s.W0[0]||[]).length)||8; if($('#hid1N')){ $('#hid1N').value=String(H); $('#hid2N').value= String( (s.W2 && s.W2[0]? s.W2[0].length : 0) ); buildNetwork(); }
- if(window.net && window.net.W && window.net.W.length>=2){ for(let j=0;j<net.W[0].length;j++){ for(let i=0;i<net.W[0][0].length;i++){ net.W[0][j][i]=(s.W0[i] && typeof s.W0[i][j]==='number')? s.W0[i][j] : 0; } } for(let j=0;j<net.b[0][0].length;j++) net.b[0][0][j]=(typeof s.b0?.[j]==='number')? s.b0[j]:0; for(let j=0;j<net.W[1].length;j++){ for(let i=0;i<net.W[1][0].length;i++){ net.W[1][j][i]=(s.W1[i] && typeof s.W1[i][j]==='number')? s.W1[i][j]:0; } } for(let j=0;j<net.b[1][0].length;j++) net.b[1][0][j]=(typeof s.b1?.[j]==='number')? s.b1[j]:0; if(s.W2 && net.W.length>=3){ for(let j=0;j<net.W[2].length;j++){ for(let i=0;i<net.W[2][0].length;i++){ net.W[2][j][i]=(s.W2[i] && typeof s.W2[i][j]==='number')? s.W2[i][j]:0; } } for(let j=0;j<net.b[2][0].length;j++) net.b[2][0][j]=(typeof s.b2?.[j]==='number')? s.b2[j]:0; } drawNetwork(); }
+ if(window.net && window.net.W && window.net.W.length>=2){ for(let j=0;j<net.W[0].length;j++){ for(let i=0;i<net.W[0][0].length;i++){ net.W[0][j][i]=(s.W0[i] && typeof s.W0[i][j]==='number')? s.W0[i][j] : 0; } } for(let j=0;j<net.b[0][0].length;j++) net.b[0][0][j]=(typeof s.b0?.[j]==='number')? s.b0[j]:0; for(let j=0;j<net.W[1].length;j++){ for(let i=0;i<net.W[1][0].length;i++){ net.W[1][j][i]=(s.W1[i] && typeof s.W1[i][j]==='number')? s.W1[i][j]:0; } } for(let j=0;j<net.b[1][0].length;j++) net.b[1][0][j]=(typeof s.b1?.[j]==='number')? s.b1[j]:0; if(s.W2 && net.W.length>=3){ for(let j=0;j<net.W[2].length;j++){ for(let i=0;i<net.W[2][0].length;i++){ net.W[2][j][i]=(s.W2[i] && typeof s.W2[i][j]==='number')? s.W2[i][j]:0; } } for(let j=0;j<net.b[2][0].length;j++) net.b[2][0][j]=(typeof s.b2?.[j]==='number')? s.b2[j]:0; } drawNetworkThrottled(); updateSingleNeuronUI(); updateAnimation(); showToast('Pesos sincronizados com sucesso!'); }
  }catch(e){ console.warn('applySnapToSim failed', e);} }
  window.appBus.addEventListener('weights:applyToSim', e=>{ applySnapToSim(e.detail.snap); });
  window.appBus.addEventListener('weights:snapshot', e=>{
@@ -365,124 +900,29 @@ function publish(type, detail){ window.appBus.dispatchEvent(new CustomEvent(type
  try{ if(s.W0) drawHistogram($('#histW0'), [].concat(...s.W0)); }catch{}
  try{ if(s.W1) drawHistogram($('#histW1'), [].concat(...s.W1)); }catch{}
  try{ if(s.W2) drawHistogram($('#histW2'), [].concat(...s.W2)); else { const c=$('#histW2'); if(c){ const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);} } }catch{}
-});
+ });
 })();
-
-// Sincronizar TF.js → Simulador
-async function syncWeightsToSimulator(){ const m=window._tfRealModel; if(!m){ alert('Treine primeiro o modelo na aba "MLP (Real — TF.js)".'); return; } try{ const layers=m.layers.filter(l=> l.getWeights && l.getWeights().length>=2); if(layers.length<2) throw new Error('Camadas Dense insuficientes.'); const W=layers.map(l=> l.getWeights()); const kA= await Promise.all(W.map(([k,_b])=> k.array())); const bA= await Promise.all(W.map(([_,b])=> b.array())); const nin=kA[0].length; const H1=kA[0][0].length; const hasH2=(kA.length>=3); const H2= hasH2? kA[1][0].length : 0; const nout=bA[bA.length-1].length; const actH = (window._tfRealAct && ['tanh','relu','sigmoid'].includes(window._tfRealAct))? window._tfRealAct : 'tanh'; const actO = (window._tfRealIsReg? 'tanh':'sigmoid'); $('#inpN').value=String(nin); $('#hid1N').value=String(H1); $('#hid2N').value=String(H2); $('#outN').value=String(nout); $('#actHidden').value=actH; $('#actOut').value=actO; $('#biasOn').value='1'; buildNetwork(); // copy
- for(let j=0;j<net.W[0].length;j++) for(let i=0;i<net.W[0][0].length;i++) net.W[0][j][i]=(kA[0][i] && typeof kA[0][i][j]==='number')? kA[0][i][j]:0; for(let j=0;j<net.b[0][0].length;j++) net.b[0][0][j]=(typeof bA[0][j]==='number')? bA[0][j]:0; // layer1
- for(let j=0;j<net.W[1].length;j++) for(let i=0;i<net.W[1][0].length;i++) net.W[1][j][i]=(kA[1][i] && typeof kA[1][i][j]==='number')? kA[1][i][j]:0; for(let j=0;j<net.b[1][0].length;j++) net.b[1][0][j]=(typeof bA[1][j]==='number')? bA[1][j]:0; // layer2 if exists
+async function syncWeightsToSimulator(){ const m=window._tfRealModel; if(!m){ alert('Treine primeiro o modelo na aba "MLP (Real — TF.js)".'); return; } try{ const layers=m.layers.filter(l=> l.getWeights && l.getWeights().length>=2); if(layers.length<2) throw new Error('Camadas Dense insuficientes.'); const W=layers.map(l=> l.getWeights()); const kA= await Promise.all(W.map(([k,_b])=> k.array())); const bA= await Promise.all(W.map(([_,b])=> b.array())); const nin=kA[0].length; const H1=kA[0][0].length; const hasH2=(kA.length>=3); const H2= hasH2? kA[1][0].length : 0; const nout=bA[bA.length-1].length; const actH = (window._tfRealAct && ['tanh','relu','sigmoid'].includes(window._tfRealAct))? window._tfRealAct : 'tanh'; const actO = (window._tfRealIsReg? 'tanh':'sigmoid'); $('#inpN').value=String(nin); $('#hid1N').value=String(H1); $('#hid2N').value=String(H2); $('#outN').value=String(nout); $('#actHidden').value=actH; $('#actOut').value=actO; $('#biasOn').value='1'; buildNetwork();
+ for(let j=0;j<net.W[0].length;j++) for(let i=0;i<net.W[0][0].length;i++) net.W[0][j][i]=(kA[0][i] && typeof kA[0][i][j]==='number')? kA[0][i][j]:0; for(let j=0;j<net.b[0][0].length;j++) net.b[0][0][j]=(typeof bA[0][j]==='number')? bA[0][j]:0;
+ for(let j=0;j<net.W[1].length;j++) for(let i=0;i<net.W[1][0].length;i++) net.W[1][j][i]=(kA[1][i] && typeof kA[1][i][j]==='number')? kA[1][i][j]:0; for(let j=0;j<net.b[1][0].length;j++) net.b[1][0][j]=(typeof bA[1][j]==='number')? bA[1][j]:0;
  if(hasH2 && net.W.length>=3){ for(let j=0;j<net.W[2].length;j++) for(let i=0;i<net.W[2][0].length;i++) net.W[2][j][i]=(kA[2][i] && typeof kA[2][i][j]==='number')? kA[2][i][j]:0; for(let j=0;j<net.b[2][0].length;j++) net.b[2][0][j]=(typeof bA[2][j]==='number')? bA[2][j]:0; }
- drawNetwork(); const log=$('#log'); if(log){ log.textContent='Pesos sincronizados TF.js → Simulador.'; } alert('Pesos sincronizados com sucesso!'); }catch(e){ console.error(e); alert('Falha ao sincronizar: '+e.message); } }
+ drawNetworkThrottled(); updateSingleNeuronUI(); updateAnimation(); $('#log').textContent='✅ Pesos sincronizados TF.js → Simulador.'; showToast('Pesos sincronizados!'); }catch(e){ console.error(e); alert('Falha ao sincronizar: '+e.message); } }
 $('#btnSyncWeights')?.addEventListener('click', ()=>{ syncWeightsToSimulator(); });
 $('#btnTrainAndSync')?.addEventListener('click', async ()=>{ try{ await runReal(); await syncWeightsToSimulator(); }catch{} });
-
-// CNN (conceito) — idêntico ao v6 resumido
+window.drawHistogram = function(canvas, data, bins=10){ if(!canvas) return; const ctx=canvas.getContext('2d'); const W=canvas.width, H=canvas.height; ctx.clearRect(0,0,W,H); if(!data || !data.length) return; let mn=Infinity, mx=-Infinity; for(const v of data){ if(v<mn) mn=v; if(v>mx) mx=v; } if(!(mx>mn)) { mx = mn+1e-6; } const hist=new Array(bins).fill(0); for(const v of data){ const t=(v-mn)/(mx-mn); let k=Math.floor(t*bins); if(k>=bins) k=bins-1; if(k<0) k=0; hist[k]++; } const maxCnt=Math.max(...hist); ctx.strokeStyle='#334155'; ctx.strokeRect(1,1,W-2,H-2); ctx.fillStyle='#60a5fa'; for(let i=0;i<bins;i++){ const bw=(W-8)/bins; const x=4+i*bw; const h=(H-8)*(hist[i]/(maxCnt||1)); ctx.fillRect(x, H-4-h, bw*0.9, h); } };
+window.updateABInputsMax = function(maxEp){ const a=document.querySelector('#epA'), b=document.querySelector('#epB'); if(a){ a.max=String(maxEp); if(Number(a.value)>maxEp) a.value=String(maxEp);} if(b){ b.max=String(maxEp); if(Number(b.value)>maxEp) b.value=String(maxEp);} };
+window.applyDeltaBetweenEpochs = function(epA, epB){ const snaps=window._snapshots||[]; const sA=snaps.find(s=>s.ep===epA); const sB=snaps.find(s=>s.ep===epB); if(!sA||!sB){ alert('Época A/B não encontradas.'); return; } function dW(A,B){ const R=[]; for(let i=0;i<A.length;i++){ R[i]=[]; for(let j=0;j<A[0].length;j++){ R[i][j]=(B[i][j]-A[i][j]); } } return R; } const out=[]; out[0]=dW(sA.W0,sB.W0); out[1]=dW(sA.W1,sB.W1); if(sA.W2&&sB.W2) out[2]=dW(sA.W2,sB.W2); window._lastDW = out; drawNetworkThrottled(); };
+document.querySelector('#btnApplyAB')?.addEventListener('click', ()=>{ const epA=Number(document.querySelector('#epA')?.value||1); const epB=Number(document.querySelector('#epB')?.value||1); window.applyDeltaBetweenEpochs(epA,epB); });
+document.querySelector('#overlayScale')?.addEventListener('input', ()=>{ const v = Number(document.querySelector('#overlayScale').value||1); const lab = document.querySelector('#overlayScaleVal'); if(lab) lab.textContent = v.toFixed(1)+'×'; drawNetworkThrottled(); });
+document.querySelector('#overlayLayer')?.addEventListener('change', ()=>{ drawNetworkThrottled(); });
+document.querySelector('#biasOnGraph')?.addEventListener('change', ()=>{ drawNetworkThrottled(); });
+(function(){function x(a){var b='﻿'+a.join('\r\n');var blob=new Blob([b],{type:'text/csv;charset=utf-8'});var el=document.createElement('a');el.href=URL.createObjectURL(blob);el.download='simulator_weights.csv';document.body.appendChild(el);el.click();setTimeout(function(){URL.revokeObjectURL(el.href);el.remove();},0);}function f(){try{var n=(window.net||self.net)||null;if(!(n&&n.W&&n.W.length)){alert('Gere/sincronize a rede no simulador primeiro.');return;}var lines=[];lines.push('nin,'+n.nin);lines.push('h1,'+n.h1);lines.push('h2,'+n.h2);lines.push('nout,'+n.nout);for(var L=0;L<n.W.length;L++){var R=n.W[L].length;var C=n.W[L][0].length;lines.push('L'+L+'_W,'+R+'x'+C);for(var r=0;r<R;r++){var row=Array.prototype.map.call(n.W[L][r],function(v){return Number(v).toFixed(8);}).join(',');lines.push(row);}var bArr=(n.b[L]&&n.b[L][0])?n.b[L][0]:[];lines.push('L'+L+'_b,'+bArr.length);if(bArr.length){var brow=Array.prototype.map.call(bArr,function(v){return Number(v).toFixed(8);}).join(',');lines.push(brow);}}x(lines);showToast('CSV exportado!');}catch(err){console.error('Export CSV failed:',err);alert('Falha ao exportar CSV: '+(err&&err.message?err.message:err));}}var btn=document.getElementById('btnExportSimCSV');if(btn){btn.addEventListener('click',f);}})();
+async function importModelFromFiles(fileList){ try{ if(!fileList || !fileList.length){ alert('Selecione o arquivo .json e o(s) .bin do modelo TF.js.'); return; } const files = Array.from(fileList); const jsonFile = files.find(f=>/\.json$/i.test(f.name)); const binFiles = files.filter(f=>/\.bin$/i.test(f.name)); if(!jsonFile){ alert('Arquivo .json do modelo não encontrado.'); return; } const ordered = [jsonFile, ...binFiles]; const model = await tf.loadLayersModel(tf.io.browserFiles(ordered)); window._tfRealModel = model; const layers = model.layers || []; const last = layers[layers.length-1]; const first = layers[0]; try{ window._tfRealInputDim = (first.batchInputShape && first.batchInputShape.slice(-1)[0]) || (first.inputShape && first.inputShape.slice(-1)[0]) || null; }catch{} try{ window._tfRealHidden = (first.getConfig && first.getConfig().units) || window._tfRealHidden; }catch{} try{ if(layers.length>=3){ window._tfRealHidden2 = (layers[1].getConfig && layers[1].getConfig().units) || 0; window._tfRealAct2 = (layers[1].getConfig && layers[1].getConfig().activation) || null; } else { window._tfRealHidden2 = 0; window._tfRealAct2 = null; } }catch{} try{ window._tfRealAct = (first.getConfig && first.getConfig().activation) || window._tfRealAct; }catch{} try{ window._tfRealNout = (last.getConfig && last.getConfig().units) || 1; }catch{ window._tfRealNout = 1; } try{ window._tfRealIsReg = (last.getConfig && last.getConfig().activation === 'linear'); }catch{ window._tfRealIsReg = false; } const out = document.querySelector('#realOut'); if(out) out.textContent = '✅ Modelo importado com sucesso!'; showToast('Modelo importado!'); try{ const tfLab=document.querySelector('#tfVer'); if(tfLab) tfLab.textContent=(tf?.version?.tfjs||tf?.version_core||'-'); }catch{} }catch(err){ alert('Falha ao importar modelo: '+ (err?.message || err)); } }
+const btnLoad = document.querySelector('#btnLoadModel'); const inpFile = document.querySelector('#fileModel'); if(btnLoad && inpFile){ btnLoad.addEventListener('click', ()=> inpFile.click()); inpFile.addEventListener('change', ()=> importModelFromFiles(inpFile.files)); }
 (function(){ const cnnIn=$('#cnnIn'); if(!cnnIn) return; const ctxIn=cnnIn.getContext('2d'), ctxC=$('#cnnConv').getContext('2d'), ctxP=$('#cnnPool').getContext('2d'); let K=[[0,-1,0],[-1,5,-1],[0,-1,0]]; function renderK(){ const g=$('#kgrid'); g.innerHTML=''; for(let i=0;i<3;i++) for(let j=0;j<3;j++){ const inp=document.createElement('input'); inp.type='number'; inp.step='0.1'; inp.value=K[i][j]; inp.className='kcell'; inp.oninput=()=>{ const v=Number(inp.value); if(Number.isFinite(v)) K[i][j]=v; update(); }; g.appendChild(inp);} } function clearIn(){ ctxIn.fillStyle='#000'; ctxIn.fillRect(0,0,280,280);} function drawDot(x,y){ ctxIn.fillStyle='#fff'; ctxIn.fillRect(x*10,y*10,10,10);} function toCell(ev){ const r=cnnIn.getBoundingClientRect(); return {x:Math.floor((ev.clientX-r.left)/10), y:Math.floor((ev.clientY-r.top)/10)}; } let drawing=false; cnnIn.onmousedown=e=>{ drawing=true; const {x,y}=toCell(e); drawDot(x,y); update(); }; cnnIn.onmousemove=e=>{ if(!drawing) return; const {x,y}=toCell(e); drawDot(x,y); update(); }; window.onmouseup=()=>drawing=false; $('#cnnClear').onclick=()=>{ clearIn(); update(); }; $('#cnnSampleX').onclick=()=>{ clearIn(); for(let i=4;i<24;i++){ drawDot(i,i); drawDot(27-i,i);} update(); }; $('#cnnSampleH').onclick=()=>{ clearIn(); for(let i=4;i<24;i++){ drawDot(6,i); drawDot(21,i);} for(let j=6;j<22;j++){ drawDot(j,14);} update(); };
  function getGray28(){ const d=ctxIn.getImageData(0,0,280,280).data; const g=new Array(28); for(let y=0;y<28;y++){ g[y]=new Float64Array(28); for(let x=0;x<28;x++){ g[y][x]= d[(y*10*280 + x*10)*4]/255; } } return g; } function conv3(img){ const out=zeros(26,26); for(let y=1;y<27;y++) for(let x=1;x<27;x++){ let s=0; for(let u=-1;u<=1;u++) for(let v=-1;v<=1;v++) s+= img[y+u][x+v]*K[u+1][v+1]; out[y-1][x-1]=s; } return out; } function relu(A){ const R=zeros(A.length,A[0].length); for(let i=0;i<R.length;i++) for(let j=0;j<R[0].length;j++) R[i][j]=Math.max(0,A[i][j]); return R; } function pool2(A,mode){ const rr=Math.floor(A.length/2), cc=Math.floor(A[0].length/2); const P=zeros(rr,cc); for(let i=0;i<rr;i++) for(let j=0;j<cc;j++){ const a=A[2*i][2*j], b=A[2*i][2*j+1], c=A[2*i+1][2*j], d=A[2*i+1][2*j+1]; P[i][j]=(mode==='Max 2×2')? Math.max(a,b,c,d): (mode==='Average 2×2'? (a+b+c+d)/4:0); } return P; } function drawHeat(ctx,A){ const r=A.length,c=A[0].length, W=ctx.canvas.width,H=ctx.canvas.height; ctx.clearRect(0,0,W,H); const dx=W/c, dy=H/r; let mn=Infinity,mx=-Infinity; for(let i=0;i<r;i++) for(let j=0;j<c;j++){ const v=A[i][j]; if(v<mn) mn=v; if(v>mx) mx=v; } for(let i=0;i<r;i++) for(let j=0;j<c;j++){ const v=A[i][j]; const t=(v-mn)/(mx-mn+1e-9); const R=Math.round(255*(1-t)), G=Math.round(140*t), B=Math.round(244*(1-t)+244*t*0.2); ctx.fillStyle=`rgba(${R},${G},${B},0.18)`; ctx.fillRect(j*dx,i*dy,dx+1,dy+1);} } function update(){ const g=getGray28(); const z=conv3(g); const a=$('#reluOn').checked? relu(z): z; const pSel=$('#poolSel').value; const p=(pSel==='Nenhum')? zeros(1,1): pool2(a,pSel); drawHeat(ctxC,a); drawHeat(ctxP,p); } $('#kNormalize').onclick=()=>{ let s=0; for(let i=0;i<3;i++) for(let j=0;j<3;j++) s+=K[i][j]; if(Math.abs(s)>1e-9) for(let i=0;i<3;i++) for(let j=0;j<3;j++) K[i][j]/=s; renderK(); update(); }; $('#kEdge').onclick=()=>{ K=[[1,0,-1],[2,0,-2],[1,0,-1]]; renderK(); update(); }; $('#kSharpen').onclick=()=>{ K=[[0,-1,0],[-1,5,-1],[0,-1,0]]; renderK(); update(); }; $('#kBlur').onclick=()=>{ K=[[1,1,1],[1,1,1],[1,1,1]]; renderK(); update(); }; renderK(); clearIn(); update(); })();
-
-// RNN — barras
-(function(){ const rBars=$('#rnnBars'); if(!rBars) return; const ctx=rBars.getContext('2d'); rBars.width=rBars.clientWidth; rBars.height=rBars.clientHeight; function drawBars(x,h,y){ ctx.clearRect(0,0,rBars.width,rBars.height); const W=rBars.width-20; const H=rBars.height-20; function bar(val,i,col){ const w=W*val; ctx.fillStyle=col; ctx.fillRect(10, 10+i*24, w, 16);} const norm=v=> Math.max(0, Math.min(1,(v+1)/2)); bar(x,0,'#60a5fa'); bar(norm(h[0]),1,'#22c55e'); bar(norm(h[1]),2,'#22c55e'); bar(y,3,'#f59e0b'); }
- let rnn={ t:0, seq:[0,0,1,1,0,1,0,0], h:[0,0], wxh:[1.2,-0.8], whh:[[0.6,0.2],[-0.3,0.5]], b:[0,0], why:[1,-1], c:0 };
- function readNum(id,def){ const el=$('#'+id); if(!el) return def; const v=Number((el.value||'0').replace(',','.')); return Number.isFinite(v)? v:def; }
- function tanh(x){ return Math.tanh(x);} function sigm(x){ return 1/(1+Math.exp(-x)); }
- function rnnReset(){ rnn.t=0; rnn.h=[ readNum('rnnH0_0',0), readNum('rnnH0_1',0) ]; const seqStr=$('#rnnSeq').value||'0'; rnn.seq= seqStr.split(',').map(s=> Number((s.trim()||'0').replace(',','.'))||0); $('#rnnT').textContent='0'; drawBars(0,rnn.h,0); }
- function rnnStep(){ const x = rnn.seq[Math.min(rnn.t, rnn.seq.length-1)]||0; const h0 = tanh( readNum('wxh0',1.2)*x + readNum('whh00',0.6)*rnn.h[0] + readNum('whh01',0.2)*rnn.h[1] + readNum('b0',0) ); const h1 = tanh( readNum('wxh1',-0.8)*x + readNum('whh10',-0.3)*rnn.h[0] + readNum('whh11',0.5)*rnn.h[1] + readNum('b1',0) ); rnn.h=[h0,h1]; const y = sigm( readNum('why0',1)*h0 + readNum('why1',-1)*h1 + readNum('c0',0) ); rnn.t++; $('#rnnT').textContent=String(rnn.t); drawBars(x,rnn.h,y); }
- let timer=null; function rnnRun(){ if(timer) return; timer=setInterval(()=>{ if(rnn.t>=rnn.seq.length){ clearInterval(timer); timer=null; return;} rnnStep(); }, 300);} function rnnStop(){ if(!timer) return; clearInterval(timer); timer=null; }
- function rnnRand(){ const set=(id,val)=> $('#'+id).value=val.toFixed(2); set('wxh0',(Math.random()*2-1)); set('wxh1',(Math.random()*2-1)); set('whh00',(Math.random()*2-1)); set('whh01',(Math.random()*2-1)); set('whh10',(Math.random()*2-1)); set('whh11',(Math.random()*2-1)); set('b0',(Math.random()*2-1)); set('b1',(Math.random()*2-1)); set('why0',(Math.random()*2-1)); set('why1',(Math.random()*2-1)); set('c0',(Math.random()*2-1)); }
- function rnnZero(){ ['wxh0','wxh1','whh00','whh01','whh10','whh11','b0','b1','why0','why1','c0'].forEach(id=> $('#'+id).value='0'); }
- $('#rnnReset').addEventListener('click', rnnReset); $('#rnnStep').addEventListener('click', rnnStep); $('#rnnRun').addEventListener('click', rnnRun); $('#rnnStop').addEventListener('click', rnnStop); $('#rnnRand').addEventListener('click', rnnRand); $('#rnnZero').addEventListener('click', rnnZero); rnnReset(); })();
+(function(){ const rBars=$('#rnnBars'); if(!rBars) return; const ctx=rBars.getContext('2d'); rBars.width=rBars.clientWidth; rBars.height=rBars.clientHeight; function drawBars(x,h,y){ ctx.clearRect(0,0,rBars.width,rBars.height); const W=rBars.width-20; const H=rBars.height-20; function bar(val,i,col){ const w=W*val; ctx.fillStyle=col; ctx.fillRect(10, 10+i*24, w, 16);} const norm=v=> Math.max(0, Math.min(1,(v+1)/2)); bar(x,0,'#60a5fa'); bar(norm(h[0]),1,'#22c55e'); bar(norm(h[1]),2,'#22c55e'); bar(y,3,'#f59e0b'); } let rnn={ t:0, seq:[0,0,1,1,0,1,0,0], h:[0,0], wxh:[1.2,-0.8], whh:[[0.6,0.2],[-0.3,0.5]], b:[0,0], why:[1,-1], c:0 }; function readNum(id,def){ const el=$('#'+id); if(!el) return def; const v=Number((el.value||'0').replace(',','.')); return Number.isFinite(v)? v:def; } function tanh(x){ return Math.tanh(x);} function sigm(x){ return 1/(1+Math.exp(-x)); } function rnnReset(){ rnn.t=0; rnn.h=[ readNum('rnnH0_0',0), readNum('rnnH0_1',0) ]; const seqStr=$('#rnnSeq').value||'0'; rnn.seq= seqStr.split(',').map(s=> Number((s.trim()||'0').replace(',','.'))||0); $('#rnnT').textContent='0'; drawBars(0,rnn.h,0); } function rnnStep(){ const x = rnn.seq[Math.min(rnn.t, rnn.seq.length-1)]||0; const h0 = tanh( readNum('wxh0',1.2)*x + readNum('whh00',0.6)*rnn.h[0] + readNum('whh01',0.2)*rnn.h[1] + readNum('b0',0) ); const h1 = tanh( readNum('wxh1',-0.8)*x + readNum('whh10',-0.3)*rnn.h[0] + readNum('whh11',0.5)*rnn.h[1] + readNum('b1',0) ); rnn.h=[h0,h1]; const y = sigm( readNum('why0',1)*h0 + readNum('why1',-1)*h1 + readNum('c0',0) ); rnn.t++; $('#rnnT').textContent=String(rnn.t); drawBars(x,rnn.h,y); } let timer=null; function rnnRun(){ if(timer) return; timer=setInterval(()=>{ if(rnn.t>=rnn.seq.length){ clearInterval(timer); timer=null; return;} rnnStep(); }, 300);} function rnnStop(){ if(!timer) return; clearInterval(timer); timer=null; } function rnnRand(){ const set=(id,val)=> $('#'+id).value=val.toFixed(2); set('wxh0',(Math.random()*2-1)); set('wxh1',(Math.random()*2-1)); set('whh00',(Math.random()*2-1)); set('whh01',(Math.random()*2-1)); set('whh10',(Math.random()*2-1)); set('whh11',(Math.random()*2-1)); set('b0',(Math.random()*2-1)); set('b1',(Math.random()*2-1)); set('why0',(Math.random()*2-1)); set('why1',(Math.random()*2-1)); set('c0',(Math.random()*2-1)); } function rnnZero(){ ['wxh0','wxh1','whh00','whh01','whh10','whh11','b0','b1','why0','why1','c0'].forEach(id=> $('#'+id).value='0'); } $('#rnnReset').addEventListener('click', rnnReset); $('#rnnStep').addEventListener('click', rnnStep); $('#rnnRun').addEventListener('click', rnnRun); $('#rnnStop').addEventListener('click', rnnStop); $('#rnnRand').addEventListener('click', rnnRand); $('#rnnZero').addEventListener('click', rnnZero); rnnReset(); })();
+function $(s){ return document.querySelector(s); }
 </script>
-
-<script>
-// === Pacote B utilidades (reinserido na build de confiança) ===
-(function(){
-  // Atualiza label da escala + redesenho
-  document.querySelector('#overlayScale')?.addEventListener('input', ()=>{
-    const v = Number(document.querySelector('#overlayScale').value||1);
-    const lab = document.querySelector('#overlayScaleVal'); if(lab) lab.textContent = v.toFixed(1)+'×';
-    if(typeof drawNetwork==='function') drawNetwork();
-  });
-  document.querySelector('#overlayLayer')?.addEventListener('change', ()=>{ if(typeof drawNetwork==='function') drawNetwork(); });
-  document.querySelector('#biasOnGraph')?.addEventListener('change', ()=>{ if(typeof drawNetwork==='function') drawNetwork(); });
-
-  // Histograma util (canvas simples)
-  window.drawHistogram = function(canvas, data, bins=10){
-    if(!canvas) return; const ctx=canvas.getContext('2d'); const W=canvas.width, H=canvas.height; ctx.clearRect(0,0,W,H);
-    if(!data || !data.length) return; let mn=Infinity, mx=-Infinity; for(const v of data){ if(v<mn) mn=v; if(v>mx) mx=v; }
-    if(!(mx>mn)) { mx = mn+1e-6; }
-    const hist=new Array(bins).fill(0);
-    for(const v of data){ const t=(v-mn)/(mx-mn); let k=Math.floor(t*bins); if(k>=bins) k=bins-1; if(k<0) k=0; hist[k]++; }
-    const maxCnt=Math.max(...hist);
-    ctx.strokeStyle='#334155'; ctx.strokeRect(1,1,W-2,H-2);
-    ctx.fillStyle='#60a5fa';
-    for(let i=0;i<bins;i++){ const bw=(W-8)/bins; const x=4+i*bw; const h=(H-8)*(hist[i]/(maxCnt||1)); ctx.fillRect(x, H-4-h, bw*0.9, h); }
-  }
-
-  // A/B de épocas
-  window.updateABInputsMax = function(maxEp){ const a=document.querySelector('#epA'), b=document.querySelector('#epB'); if(a){ a.max=String(maxEp); if(Number(a.value)>maxEp) a.value=String(maxEp);} if(b){ b.max=String(maxEp); if(Number(b.value)>maxEp) b.value=String(maxEp);} }
-  window.applyDeltaBetweenEpochs = function(epA, epB){ const snaps=window._snapshots||[]; const sA=snaps.find(s=>s.ep===epA); const sB=snaps.find(s=>s.ep===epB); if(!sA||!sB){ alert('Época A/B não encontradas.'); return; } function dW(A,B){ const R=[]; for(let i=0;i<A.length;i++){ R[i]=[]; for(let j=0;j<A[0].length;j++){ R[i][j]=(B[i][j]-A[i][j]); } } return R; } const out=[]; out[0]=dW(sA.W0,sB.W0); out[1]=dW(sA.W1,sB.W1); if(sA.W2&&sB.W2) out[2]=dW(sA.W2,sB.W2); window._lastDW = out; if(typeof drawNetwork==='function') drawNetwork(); }
-  document.querySelector('#btnApplyAB')?.addEventListener('click', ()=>{ const epA=Number(document.querySelector('#epA')?.value||1); const epB=Number(document.querySelector('#epB')?.value||1); window.applyDeltaBetweenEpochs(epA,epB); });
-
-  // Export CSV do simulador
-(function(){var h='simulator_weights.csv';function x(a){var b='﻿'+a.join('\r\n');var blob=new Blob([b],{type:'text/csv;charset=utf-8'});var el=document.createElement('a');el.href=URL.createObjectURL(blob);el.download=h;document.body.appendChild(el);el.click();setTimeout(function(){URL.revokeObjectURL(el.href);el.remove();},0);}function f(){try{var n=(window.net||self.net)||null;if(!(n&&n.W&&n.W.length)){alert('Gere/sincronize a rede no simulador primeiro.');return;}var lines=[];lines.push('nin,'+n.nin);lines.push('h1,'+n.h1);lines.push('h2,'+n.h2);lines.push('nout,'+n.nout);for(var L=0;L<n.W.length;L++){var R=n.W[L].length;var C=n.W[L][0].length;lines.push('L'+L+'_W,'+R+'x'+C);for(var r=0;r<R;r++){var row=Array.prototype.map.call(n.W[L][r],function(v){return Number(v).toFixed(8);}).join(',');lines.push(row);}var bArr=(n.b[L]&&n.b[L][0])?n.b[L][0]:[];lines.push('L'+L+'_b,'+bArr.length);if(bArr.length){var brow=Array.prototype.map.call(bArr,function(v){return Number(v).toFixed(8);}).join(',');lines.push(brow);}}x(lines);}catch(err){console.error('Export CSV failed:',err);alert('Falha ao exportar CSV: '+(err&&err.message?err.message:err));}}var btn=document.getElementById('btnExportSimCSV');if(btn){btn.addEventListener('click',f);}})();
-// Bias ticks no grafo (monkey-patch no drawNetwork)
-  const _origDraw = window.drawNetwork;
-  window.drawNetwork = function(){
-    if(typeof _origDraw==='function') _origDraw();
-    try{ const svg=document.querySelector('#netSvg'); if(!svg) return; const old=svg.querySelector('#gBias'); if(old) old.remove(); if(!(document.querySelector('#biasOnGraph')?.checked)) return; const g=document.createElementNS('http://www.w3.org/2000/svg','g'); g.setAttribute('id','gBias'); svg.appendChild(g); const cols=[net.nin, ...(net.h1?[net.h1]:[]), ...(net.h2?[net.h2]:[]), net.nout]; const W=900,H=420,padX=90; const colGap=(W-2*padX)/(cols.length-1); const nodes={}; for(let c=0;c<cols.length;c++){ const n=cols[c]; const totalH=(n-1)*50; const startY=(H/2)-totalH/2; for(let i=0;i<n;i++){ nodes[`${c}:${i}`]={x:padX+c*colGap, y:startY+i*50}; } } let L=0; for(let c=1;c<cols.length;c++){ const curr=cols[c]; const bArr=(net.b[L]&&net.b[L][0])? net.b[L][0]:[]; for(let j=0;j<curr;j++){ const n=nodes[`${c}:${j}`]; const bx1=n.x-30, bx2=n.x-16, by=n.y; const v=(typeof bArr[j]==='number')? bArr[j]:0; const col = v>=0? '#93c5fd' : '#fca5a5'; const wth=String(1+Math.min(6, Math.abs(v)*4)); const bl=document.createElementNS('http://www.w3.org/2000/svg','line'); bl.setAttribute('x1',bx1); bl.setAttribute('y1',by); bl.setAttribute('x2',bx2); bl.setAttribute('y2',by); bl.setAttribute('stroke',col); bl.setAttribute('stroke-width',wth); bl.setAttribute('opacity','0.7'); g.appendChild(bl);} L++; }
-    }catch(e){ console.warn('bias overlay failed', e); }
-  }
-})();
-
-// === Importar modelo (TF.js) ===
-async function importModelFromFiles(fileList){
-  try{
-    if(!fileList || !fileList.length){ alert('Selecione o arquivo .json e o(s) .bin do modelo TF.js.'); return; }
-    const files = Array.from(fileList);
-    const jsonFile = files.find(f=>/\.json$/i.test(f.name));
-    const binFiles = files.filter(f=>/\.bin$/i.test(f.name));
-    if(!jsonFile){ alert('Arquivo .json do modelo não encontrado. Selecione o .json e o(s) .bin.'); return; }
-    const ordered = [jsonFile, ...binFiles];
-    const model = await tf.loadLayersModel(tf.io.browserFiles(ordered));
-    // Atualiza referências globais, mantendo compatibilidade com o restante da UI
-    window._tfRealModel = model;
-    // Inferência de metadados (sem mudar lógica de treino)
-    const layers = model.layers || [];
-    const last = layers[layers.length-1];
-    const first = layers[0];
-    try{ window._tfRealInputDim = (first.batchInputShape && first.batchInputShape.slice(-1)[0]) || (first.inputShape && first.inputShape.slice(-1)[0]) || null; }catch{}
-    try{ window._tfRealHidden = (first.getConfig && first.getConfig().units) || window._tfRealHidden; }catch{}
-    try{
-      if(layers.length>=3){
-        window._tfRealHidden2 = (layers[1].getConfig && layers[1].getConfig().units) || 0;
-        window._tfRealAct2    = (layers[1].getConfig && layers[1].getConfig().activation) || null;
-      } else {
-        window._tfRealHidden2 = 0; window._tfRealAct2 = null;
-      }
-    }catch{}
-    try{ window._tfRealAct = (first.getConfig && first.getConfig().activation) || window._tfRealAct; }catch{}
-    try{ window._tfRealNout = (last.getConfig && last.getConfig().units) || 1; }catch{ window._tfRealNout = 1; }
-    try{ window._tfRealIsReg = (last.getConfig && last.getConfig().activation === 'linear'); }catch{ window._tfRealIsReg = false; }
-    // Feedback visual
-    const out = document.querySelector('#realOut');
-    if(out) out.textContent = 'Modelo importado com sucesso. Pronto para Simular/Sincronizar.';
-    // Atualiza label de versão
-    try{ const tfLab=document.querySelector('#tfVer'); if(tfLab) tfLab.textContent=(tf?.version?.tfjs||tf?.version_core||'-'); }catch{}
-  }catch(err){
-    alert('Falha ao importar modelo: '+ (err?.message || err));
-  }
-}
-// Hook nos controles do menu
-(function(){
-  const btn = document.querySelector('#btnLoadModel');
-  const inp = document.querySelector('#fileModel');
-  if(btn && inp){
-    btn.addEventListener('click', ()=> inp.click());
-    inp.addEventListener('change', ()=> importModelFromFiles(inp.files));
-  }
-})();
-</script>
-
 </body>
 </html>
