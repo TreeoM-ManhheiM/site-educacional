@@ -1,111 +1,155 @@
 export function initMLP(mountPoint) {
     mountPoint.innerHTML = `
         <div class="card" style="margin-bottom: 20px;">
-            <h1>Semanas 1-8: Simulador de Perceptron (Manual)</h1>
-            <p>Ajuste as entradas, pesos e bias para ver o neurônio processando a informação em tempo real.</p>
+            <h1>Semanas 1-8: MLP Pro - Treinamento e Arquitetura</h1>
+            <p>Configure a rede, escolha a porta lógica e assista à IA aprendendo ao vivo.</p>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 20px;">
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px;">
             <div class="card">
-                <h3>⚙️ Ajustes</h3>
+                <h3>⚙️ Configuração da Rede</h3>
+                
                 <div class="control-group">
-                    <label>Entrada X1: <b id="val-x1">1</b></label>
-                    <input type="range" id="mlp-x1" min="0" max="1" step="1" value="1">
+                    <label>Porta Lógica (Alvo):</label>
+                    <select id="mlp-gate" style="width:100%; padding:10px; background:var(--bg-input); color:white; border-radius:5px;">
+                        <option value="and">AND (E)</option>
+                        <option value="or">OR (OU)</option>
+                        <option value="xor">XOR (OU Exclusivo - Desafio!)</option>
+                    </select>
                 </div>
+
                 <div class="control-group">
-                    <label>Entrada X2: <b id="val-x2">0</b></label>
-                    <input type="range" id="mlp-x2" min="0" max="1" step="1" value="0">
+                    <label>Camada Oculta 1 (Neurônios): <b id="val-h1">4</b></label>
+                    <input type="range" id="mlp-h1" min="1" max="8" value="4">
                 </div>
-                <hr style="border: 0; border-top: 1px solid var(--border); margin: 20px 0;">
+
                 <div class="control-group">
-                    <label>Peso W1: <b id="val-w1">0.5</b></label>
-                    <input type="range" id="mlp-w1" min="-1" max="1" step="0.1" value="0.5">
+                    <label>Camada Oculta 2 (Neurônios): <b id="val-h2">0</b></label>
+                    <input type="range" id="mlp-h2" min="0" max="8" value="0">
                 </div>
+
                 <div class="control-group">
-                    <label>Peso W2: <b id="val-w2">0.5</b></label>
-                    <input type="range" id="mlp-w2" min="-1" max="1" step="0.1" value="0.5">
+                    <label>Velocidade (Learning Rate): <b id="val-lr">0.1</b></label>
+                    <input type="range" id="mlp-lr" min="0.01" max="0.5" step="0.01" value="0.1">
                 </div>
-                <div class="control-group">
-                    <label>Bias (B): <b id="val-bias">-0.7</b></label>
-                    <input type="range" id="mlp-bias" min="-1" max="1" step="0.1" value="-0.7">
-                </div>
+
+                <button id="btn-train" class="btn-main" style="width:100%; margin-top:15px; background:var(--success);">🚀 Treinar Rede Neural</button>
+                
+                <div id="train-status" style="margin-top:10px; font-size:0.8rem; color:var(--text-muted); text-align:center;">Status: Aguardando...</div>
             </div>
 
-            <div class="card" style="position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 400px; background: var(--bg-input);">
+            <div class="card">
+                <h3>📈 Evolução do Aprendizado (Loss)</h3>
+                <div id="loss-chart" style="width: 100%; height: 250px; background: rgba(0,0,0,0.2); border-radius: 8px;"></div>
                 
-                <svg style="position: absolute; width: 100%; height: 100%; pointer-events: none;">
-                    <line id="line1" x1="100" y1="120" x2="300" y2="200" stroke="#3b82f6" stroke-width="2" />
-                    <line id="line2" x1="100" y1="280" x2="300" y2="200" stroke="#3b82f6" stroke-width="2" />
-                    <line id="line-out" x1="400" y1="200" x2="500" y2="200" stroke="#94a3b8" stroke-width="3" />
-                </svg>
-
-                <div id="node-x1" style="position: absolute; left: 60px; top: 100px; width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; background: var(--bg-panel);">X1</div>
-                <div id="node-x2" style="position: absolute; left: 60px; top: 260px; width: 50px; height: 50px; border-radius: 50%; border: 2px solid var(--accent); display: flex; align-items: center; justify-content: center; background: var(--bg-panel);">X2</div>
-
-                <div id="main-neuron" style="position: absolute; left: 300px; top: 150px; width: 100px; height: 100px; border-radius: 50%; border: 4px solid var(--accent); display: flex; flex-direction: column; align-items: center; justify-content: center; background: var(--bg-panel); z-index: 2; transition: all 0.3s;">
-                    <span style="font-size: 1.5rem; font-weight: bold;">Σ</span>
-                    <span id="res-sum" style="font-size: 0.8rem;">0.00</span>
+                <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; text-align: center;">
+                    <div class="card" style="background: var(--bg-input);">
+                        <small>Erro Final</small>
+                        <div id="final-loss" style="font-size: 1.2rem; font-weight: bold;">-</div>
+                    </div>
+                    <div class="card" style="background: var(--bg-input);">
+                        <small>Acurácia</small>
+                        <div id="final-acc" style="font-size: 1.2rem; font-weight: bold;">-</div>
+                    </div>
                 </div>
+            </div>
+        </div>
 
-                <div id="node-out" style="position: absolute; right: 40px; top: 175px; width: 60px; height: 50px; border-radius: 8px; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: bold; background: var(--bg-panel);">0</div>
-
-                <div style="position: absolute; left: 180px; top: 130px; color: var(--accent); font-size: 0.8rem;">W1: <span id="label-w1">0.5</span></div>
-                <div style="position: absolute; left: 180px; top: 250px; color: var(--accent); font-size: 0.8rem;">W2: <span id="label-w2">0.5</span></div>
-                <div style="position: absolute; left: 330px; top: 120px; color: #f59e0b; font-size: 0.8rem;">B: <span id="label-bias">-0.7</span></div>
+        <div class="card" style="margin-top:20px;">
+            <h3>🔍 Teste de Predição (Pós-Treino)</h3>
+            <div style="display: flex; justify-content: space-around; align-items: center; padding: 20px;">
+                <div>X1: <select id="test-x1"><option>0</option><option selected>1</option></select></div>
+                <div>X2: <select id="test-x2"><option selected>1</option><option>0</option></select></div>
+                <div style="font-size: 1.5rem;">➔</div>
+                <div id="test-result" style="font-size: 2rem; font-weight: bold; color: var(--accent);">?</div>
             </div>
         </div>
     `;
 
-    function atualizarSimulacao() {
-        // Pega valores dos sliders
-        const x1 = parseFloat(document.getElementById('mlp-x1').value);
-        const x2 = parseFloat(document.getElementById('mlp-x2').value);
-        const w1 = parseFloat(document.getElementById('mlp-w1').value);
-        const w2 = parseFloat(document.getElementById('mlp-w2').value);
-        const b = parseFloat(document.getElementById('mlp-bias').value);
+    // Sliders dinâmicos
+    const inputs = ['h1', 'h2', 'lr'];
+    inputs.forEach(id => {
+        const el = document.getElementById(`mlp-${id}`);
+        el.addEventListener('input', () => {
+            document.getElementById(`val-${id}`).innerText = el.value;
+        });
+    });
 
-        // Atualiza os textos/labels
-        document.getElementById('val-x1').innerText = x1;
-        document.getElementById('val-x2').innerText = x2;
-        document.getElementById('val-w1').innerText = w1.toFixed(1);
-        document.getElementById('val-w2').innerText = w2.toFixed(1);
-        document.getElementById('val-bias').innerText = b.toFixed(1);
-        document.getElementById('label-w1').innerText = w1.toFixed(1);
-        document.getElementById('label-w2').innerText = w2.toFixed(1);
-        document.getElementById('label-bias').innerText = b.toFixed(1);
+    // LÓGICA DE TREINAMENTO COM TENSORFLOW.JS
+    document.getElementById('btn-train').addEventListener('click', async () => {
+        const gate = document.getElementById('mlp-gate').value;
+        const h1Size = parseInt(document.getElementById('mlp-h1').value);
+        const h2Size = parseInt(document.getElementById('mlp-h2').value);
+        const lr = parseFloat(document.getElementById('mlp-lr').value);
+        const status = document.getElementById('train-status');
+        const btn = document.getElementById('btn-train');
 
-        // Cálculo Matemático Real: Z = (X1*W1) + (X2*W2) + B
-        const soma = (x1 * w1) + (x2 * w2) + b;
-        const saida = soma >= 0 ? 1 : 0;
+        btn.disabled = true;
+        status.innerText = "Status: Criando modelo...";
 
-        // Atualiza o círculo e a saída no diagrama
-        const sumEl = document.getElementById('res-sum');
-        const outEl = document.getElementById('node-out');
-        const mainNode = document.getElementById('main-neuron');
-        const lineOut = document.getElementById('line-out');
+        // 1. Dados de Treino baseados na porta escolhida
+        const data = {
+            and: { x: [[0,0],[0,1],[1,0],[1,1]], y: [[0],[0],[0],[1]] },
+            or:  { x: [[0,0],[0,1],[1,0],[1,1]], y: [[0],[1],[1],[1]] },
+            xor: { x: [[0,0],[0,1],[1,0],[1,1]], y: [[0],[1],[1],[0]] }
+        };
 
-        sumEl.innerText = soma.toFixed(2);
-        outEl.innerText = saida;
+        const xs = tf.tensor2d(data[gate].x);
+        const ys = tf.tensor2d(data[gate].y);
 
-        if (saida === 1) {
-            mainNode.style.borderColor = 'var(--success)';
-            mainNode.style.boxShadow = '0 0 20px rgba(16, 185, 129, 0.4)';
-            outEl.style.borderColor = 'var(--success)';
-            outEl.style.color = 'var(--success)';
-            lineOut.setAttribute('stroke', '#10b981');
-        } else {
-            mainNode.style.borderColor = 'var(--accent)';
-            mainNode.style.boxShadow = 'none';
-            outEl.style.borderColor = 'var(--border)';
-            outEl.style.color = 'var(--text-muted)';
-            lineOut.setAttribute('stroke', '#334155');
+        // 2. Construção do Modelo Dinâmico
+        const model = tf.sequential();
+        model.add(tf.layers.dense({ units: h1Size, activation: 'relu', inputShape: [2] }));
+        
+        if (h2Size > 0) {
+            model.add(tf.layers.dense({ units: h2Size, activation: 'relu' }));
         }
-    }
+        
+        model.add(tf.layers.dense({ units: 1, activation: 'sigmoid' }));
 
-    // Liga os eventos de movimento dos sliders
-    const controls = mountPoint.querySelectorAll('input');
-    controls.forEach(c => c.addEventListener('input', atualizarSimulacao));
+        model.compile({
+            optimizer: tf.train.adam(lr),
+            loss: 'binaryCrossentropy',
+            metrics: ['accuracy']
+        });
 
-    // Roda uma vez no início
-    atualizarSimulacao();
+        // 3. Treinamento com Gráfico ao Vivo
+        const surface = { name: 'Perda durante o Treino', tab: 'Treinamento' };
+        
+        try {
+            await model.fit(xs, ys, {
+                epochs: 50,
+                callbacks: tfvis.show.fitCallbacks(
+                    document.getElementById('loss-chart'),
+                    ['loss', 'acc'],
+                    { height: 250, callbacks: ['onEpochEnd'] }
+                )
+            });
+
+            status.innerText = "Status: Treinado com Sucesso!";
+            status.style.color = "var(--success)";
+
+            // Teste Automático ao mudar selects de teste
+            const updateTest = () => {
+                const tx1 = parseInt(document.getElementById('test-x1').value);
+                const tx2 = parseInt(document.getElementById('test-x2').value);
+                const inputTest = tf.tensor2d([[tx1, tx2]]);
+                const pred = model.predict(inputTest);
+                pred.data().then(d => {
+                    const val = d[0];
+                    document.getElementById('test-result').innerText = val.toFixed(2);
+                    document.getElementById('test-result').style.color = val > 0.5 ? 'var(--success)' : '#ef4444';
+                });
+            };
+
+            document.getElementById('test-x1').addEventListener('change', updateTest);
+            document.getElementById('test-x2').addEventListener('change', updateTest);
+            updateTest();
+
+        } catch (e) {
+            status.innerText = "Erro no treino. Verifique o console.";
+        } finally {
+            btn.disabled = false;
+        }
+    });
 }
