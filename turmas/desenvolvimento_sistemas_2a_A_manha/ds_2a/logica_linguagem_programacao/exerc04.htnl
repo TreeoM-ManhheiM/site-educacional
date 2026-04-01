@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>🎮 Game: while, break e continue - Modo Desafio (Tema Claro)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #f4f7fc;
+            font-family: 'Inter', system-ui, 'Segoe UI', 'Fira Code', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .game-container {
+            max-width: 900px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .game-header {
+            background: #eef2f7;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #d0dae8;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .score-box, .challenge-counter, .attempts-box {
+            background: #ffffff;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border: 1px solid #dce5f0;
+        }
+
+        .score-box span, .challenge-counter span, .attempts-box span {
+            color: #006b6b;
+        }
+
+        .attempts-box {
+            background: #fff3e0;
+            color: #b85c00;
+            border-color: #ffd9a5;
+        }
+
+        .challenge-area {
+            padding: 1.5rem;
+        }
+
+        .challenge-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1e466e;
+            border-left: 4px solid #008b8b;
+            padding-left: 1rem;
+        }
+
+        .code-lines {
+            background: #f8fafd;
+            border-radius: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            border-left: 3px solid #008b8b;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 1px 2px #00000008, 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .code-line {
+            white-space: pre;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            line-height: 1.6;
+        }
+        .line-number {
+            color: #8a9bb0;
+            user-select: none;
+            margin-right: 1rem;
+            text-align: right;
+            width: 2.5rem;
+        }
+        .line-content {
+            flex: 1;
+            white-space: pre-wrap;
+            word-break: break-word;
+            color: #1e2f3e;
+        }
+        select {
+            background: #ffffff;
+            color: #1f2f3f;
+            border: 1px solid #b9c8e0;
+            border-radius: 2rem;
+            padding: 0.2rem 0.6rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin: 0 2px;
+            outline: none;
+            transition: all 0.1s;
+        }
+        select:focus {
+            border-color: #008b8b;
+            box-shadow: 0 0 0 2px #008b8b30;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin: 1.5rem 0 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            border: none;
+            background: #eef2f7;
+            color: #1e466e;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            font-family: inherit;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #d0dae8;
+        }
+
+        .btn-primary {
+            background: #e0f0f0;
+            color: #006666;
+            border: 1px solid #80c0c0;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #cce8e8;
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: #f0f2f5;
+            border-color: #cbd5e1;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #e6e9ef;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .feedback {
+            background: #fefce8;
+            border-left: 4px solid #f5b042;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #2c3e4e;
+        }
+
+        .feedback-correct {
+            border-left-color: #2c9e6e;
+            background: #e6f7ef;
+        }
+
+        .feedback-wrong {
+            border-left-color: #e26d5c;
+            background: #fee9e6;
+        }
+
+        .progress-bar {
+            height: 4px;
+            background: #e2e8f0;
+            margin-top: 0.5rem;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #008b8b;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .game-footer {
+            background: #f1f5f9;
+            padding: 0.8rem;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #5a6e85;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 600px) {
+            body { padding: 1rem; }
+            .game-header { flex-direction: column; align-items: stretch; }
+            .action-buttons { flex-direction: column; }
+            .btn { justify-content: center; }
+            .code-line { flex-wrap: wrap; }
+            .line-number { width: auto; margin-right: 0.5rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="game-container" id="gameContainer">
+    <div class="game-header">
+        <div class="score-box">🏆 PONTOS: <span id="scoreValue">0</span></div>
+        <div class="challenge-counter">📋 DESAFIO <span id="currentChallengeIndex">1</span> / <span id="totalChallenges">20</span></div>
+        <div class="attempts-box">💪 TENTATIVAS: <span id="attemptsLeft">3</span></div>
+    </div>
+    <div class="challenge-area" id="challengeArea"></div>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="game-footer">
+        ⚡ Regras: Você tem 3 tentativas por desafio. <strong>Preencha todas as lacunas</strong> com as opções corretas.<br>
+        ✅ Acertar = +1 ponto e avança. ❌ Errar 3 vezes = pula o desafio (sem pontuar).<br>
+        🎯 O jogo só reinicia quando você completar todos os 20 desafios!
+    </div>
+</div>
+
+<script>
+    // ====================== 20 DESAFIOS ======================
+    const desafiosRaw = [
+        { titulo: "Desafio 1: Continue se vazio, break com 'sair'", codigo: `while True:\n    entrada = input("Digite algo: ")\n    if entrada == "":\n        _______\n    if entrada == "sair":\n        _______`, opcoesPorLacuna: [["continue", "break", "pass"], ["break", "continue", "pass"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 2: Continue se número for 0, break se for 5", codigo: `while True:\n    num = input("Número: ")\n    if num == "0":\n        _______\n    if num == "5":\n        _______`, opcoesPorLacuna: [["continue", "break", "pass"], ["break", "continue", "pass"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 3: Dois break (opções 'a' ou 'b') e um continue para vazio", codigo: `while True:\n    x = input("Digite: ")\n    if x == "":\n        _______\n    if x == "a":\n        _______\n    if x == "b":\n        _______`, opcoesPorLacuna: [["continue", "break", "pass"], ["break", "continue", "pass"], ["break", "continue", "pass"]], solucao: ["continue", "break", "break"] },
+        { titulo: "Desafio 4: Continue para 'x', break para 'sair' ou 'fim'", codigo: `while True:\n    letra = input("Letra: ")\n    if letra == "x":\n        _______\n    if letra == "sair":\n        _______\n    if letra == "fim":\n        _______`, opcoesPorLacuna: [["continue", "break", "pass"], ["break", "continue", "pass"], ["break", "continue", "pass"]], solucao: ["continue", "break", "break"] },
+        { titulo: "Desafio 5: Continue para números negativos, break com '0'", codigo: `while True:\n    valor = input("Digite um número: ")\n    if valor.startswith("-"):\n        _______\n    if valor == "0":\n        _______`, opcoesPorLacuna: [["continue", "break", "pass"], ["break", "continue", "pass"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 6: Continue para 'sim', break para 'nao'", codigo: `while True:\n    resp = input("Continuar? (sim/nao): ")\n    if resp == "sim":\n        _______\n    if resp == "nao":\n        _______`, opcoesPorLacuna: [["continue", "break", "pass"], ["break", "continue", "pass"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 7: Dois continues (vazio e espaço) e dois breaks (sair, fim)", codigo: `while True:\n    txt = input("Texto: ")\n    if txt == "":\n        _______\n    if txt == " ":\n        _______\n    if txt == "sair":\n        _______\n    if txt == "fim":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["continue", "break"], ["break", "continue"], ["break", "continue"]], solucao: ["continue", "continue", "break", "break"] },
+        { titulo: "Desafio 8: Continue para 'c', break para 'b'", codigo: `while True:\n    op = input("Opção: ")\n    if op == "c":\n        _______\n    if op == "b":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 9: Continue se vazio; break se for 'quit'", codigo: `while True:\n    dado = input("Comando: ")\n    if dado == "":\n        _______\n    if dado == "quit":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 10: Continue para 'pular', break para 'parar'", codigo: `while True:\n    cmd = input("Digite 'pular' ou 'parar': ")\n    if cmd == "pular":\n        _______\n    if cmd == "parar":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 11: Continue para 'next', break para 'stop'", codigo: `while True:\n    acao = input("Ação: ")\n    if acao == "next":\n        _______\n    if acao == "stop":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 12: Dois breaks (7 e 8) e continue para 0", codigo: `while True:\n    n = input("Número: ")\n    if n == "0":\n        _______\n    if n == "7":\n        _______\n    if n == "8":\n        _______`, opcoesPorLacuna: [["continue", "break", "pass"], ["break", "continue", "pass"], ["break", "continue", "pass"]], solucao: ["continue", "break", "break"] },
+        { titulo: "Desafio 13: Continue para letras minúsculas, break para 'FIM'", codigo: `while True:\n    texto = input("Palavra: ")\n    if texto.islower():\n        _______\n    if texto == "FIM":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 14: Continue para 'reiniciar', break para 'encerrar'", codigo: `while True:\n    comando = input("Comando: ")\n    if comando == "reiniciar":\n        _______\n    if comando == "encerrar":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 15: Continue para numérico, break para 'sair'", codigo: `while True:\n    valor = input("Digite algo: ")\n    if valor.isdigit():\n        _______\n    if valor == "sair":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 16: Dois continues (vazio/espaço) e um break ('exit')", codigo: `while True:\n    dado = input("> ")\n    if dado == "":\n        _______\n    if dado == " ":\n        _______\n    if dado == "exit":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["continue", "break"], ["break", "continue"]], solucao: ["continue", "continue", "break"] },
+        { titulo: "Desafio 17: Continue se len < 3, break se 'sair'", codigo: `while True:\n    palavra = input("Palavra: ")\n    if len(palavra) < 3:\n        _______\n    if palavra == "sair":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 18: Continue para 'p', break para 'q'", codigo: `while True:\n    tecla = input("Tecla (p/q): ")\n    if tecla == "p":\n        _______\n    if tecla == "q":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 19: Continue para pares, break para 99", codigo: `while True:\n    num = input("Número: ")\n    if num.isdigit() and int(num) % 2 == 0:\n        _______\n    if num == "99":\n        _______`, opcoesPorLacuna: [["continue", "break"], ["break", "continue"]], solucao: ["continue", "break"] },
+        { titulo: "Desafio 20: Dois break ('stop'/'end') e continue se vazio", codigo: `while True:\n    entrada = input("Digite algo: ")\n    if entrada == "":\n        _______\n    if entrada == "stop":\n        _______\n    if entrada == "end":\n        _______`, opcoesPorLacuna: [["continue", "break", "pass"], ["break", "continue", "pass"], ["break", "continue", "pass"]], solucao: ["continue", "break", "break"] }
+    ];
+
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
+    let currentIndex = 0;
+    let score = 0;
+    let attemptsLeft = 3;
+    let gameFinished = false;
+
+    const challengeArea = document.getElementById('challengeArea');
+    const scoreSpan = document.getElementById('scoreValue');
+    const currentIndexSpan = document.getElementById('currentChallengeIndex');
+    const totalChallengesSpan = document.getElementById('totalChallenges');
+    const attemptsLeftSpan = document.getElementById('attemptsLeft');
+    const progressFill = document.getElementById('progressFill');
+
+    totalChallengesSpan.textContent = desafiosRaw.length;
+
+    function updateProgress() {
+        const percent = (currentIndex / desafiosRaw.length) * 100;
+        progressFill.style.width = `${percent}%`;
+    }
+
+    function renderCurrentChallenge() {
+        if (gameFinished) {
+            challengeArea.innerHTML = `
+                <div style="text-align:center; padding:2rem;">
+                    <h2 style="color:#006b6b;">🏆 PARABÉNS! 🏆</h2>
+                    <p style="margin:1rem 0; color:#2c3e4e;">Você completou todos os ${desafiosRaw.length} desafios!</p>
+                    <p style="color:#2c3e4e;">Sua pontuação final: <strong style="font-size:1.8rem; color:#b85c00;">${score}</strong> de ${desafiosRaw.length}</p>
+                    <button id="restartGameBtn" class="btn btn-primary" style="margin-top:1rem;">🔄 REINICIAR JOGO</button>
+                </div>
+            `;
+            const restartBtn = document.getElementById('restartGameBtn');
+            if (restartBtn) restartBtn.addEventListener('click', restartGame);
+            return;
+        }
+
+        const desafio = desafiosRaw[currentIndex];
+        const linhas = desafio.codigo.split('\n');
+        
+        const codeLinesDiv = document.createElement('div');
+        codeLinesDiv.className = 'code-lines';
+        
+        const selects = [];
+        let lacunaCounter = 0;
+        
+        for (let i = 0; i < linhas.length; i++) {
+            let linha = linhas[i];
+            if (linha.trim() === '' && i === linhas.length-1) continue;
+            
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'code-line';
+            
+            const lineNumberSpan = document.createElement('span');
+            lineNumberSpan.className = 'line-number';
+            lineNumberSpan.textContent = (i+1).toString().padStart(2, ' ');
+            lineDiv.appendChild(lineNumberSpan);
+            
+            const contentSpan = document.createElement('span');
+            contentSpan.className = 'line-content';
+            
+            if (linha.includes('_______')) {
+                const parts = linha.split('_______');
+                for (let p = 0; p < parts.length; p++) {
+                    if (parts[p]) {
+                        contentSpan.appendChild(document.createTextNode(parts[p]));
+                    }
+                    if (p < parts.length - 1) {
+                        const opcoes = desafio.opcoesPorLacuna[lacunaCounter];
+                        if (opcoes) {
+                            const select = document.createElement('select');
+                            select.setAttribute('data-lacuna', lacunaCounter);
+                            const placeholder = document.createElement('option');
+                            placeholder.value = "";
+                            placeholder.textContent = "⬇️ selecione";
+                            placeholder.disabled = true;
+                            placeholder.selected = true;
+                            select.appendChild(placeholder);
+                            const shuffled = shuffleArray([...opcoes]);
+                            shuffled.forEach(opt => {
+                                const option = document.createElement('option');
+                                option.value = opt;
+                                option.textContent = opt;
+                                select.appendChild(option);
+                            });
+                            selects.push(select);
+                            contentSpan.appendChild(select);
+                            lacunaCounter++;
+                        } else {
+                            contentSpan.appendChild(document.createTextNode('_______'));
+                        }
+                    }
+                }
+            } else {
+                contentSpan.appendChild(document.createTextNode(linha));
+            }
+            
+            lineDiv.appendChild(contentSpan);
+            codeLinesDiv.appendChild(lineDiv);
+        }
+        
+        const verifyBtn = document.createElement('button');
+        verifyBtn.className = 'btn btn-primary';
+        verifyBtn.innerHTML = '✅ VERIFICAR RESPOSTA';
+        const resetAttemptsBtn = document.createElement('button');
+        resetAttemptsBtn.className = 'btn btn-secondary';
+        resetAttemptsBtn.innerHTML = '↺ REINICIAR TENTATIVAS (mesmo desafio)';
+        
+        const actionDiv = document.createElement('div');
+        actionDiv.className = 'action-buttons';
+        actionDiv.appendChild(verifyBtn);
+        actionDiv.appendChild(resetAttemptsBtn);
+        
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.className = 'feedback';
+        feedbackDiv.innerHTML = `⚡ Você tem ${attemptsLeft} tentativa(s). Preencha todas as lacunas e verifique.`;
+        
+        challengeArea.innerHTML = '';
+        const titleDiv = document.createElement('div');
+        titleDiv.className = 'challenge-title';
+        titleDiv.textContent = desafio.titulo;
+        challengeArea.appendChild(titleDiv);
+        challengeArea.appendChild(codeLinesDiv);
+        challengeArea.appendChild(actionDiv);
+        challengeArea.appendChild(feedbackDiv);
+        
+        const currentSelects = selects;
+        
+        function handleVerify() {
+            if (gameFinished) return;
+            
+            let allSelected = true;
+            currentSelects.forEach(select => {
+                if (select.value === "") allSelected = false;
+            });
+            if (!allSelected) {
+                feedbackDiv.innerHTML = '⚠️ Preencha TODAS as lacunas antes de verificar.';
+                feedbackDiv.className = 'feedback feedback-wrong';
+                return;
+            }
+            
+            if (attemptsLeft <= 0) {
+                feedbackDiv.innerHTML = '❌ Você já esgotou as tentativas deste desafio. O próximo desafio será carregado.';
+                return;
+            }
+            
+            const respostas = currentSelects.map(select => select.value);
+            const solucao = desafio.solucao;
+            
+            let correto = true;
+            for (let i = 0; i < solucao.length; i++) {
+                if (respostas[i] !== solucao[i]) {
+                    correto = false;
+                    break;
+                }
+            }
+            
+            if (correto) {
+                score++;
+                scoreSpan.textContent = score;
+                feedbackDiv.innerHTML = `🎉 CORRETO! +1 ponto. Avançando para o próximo desafio...`;
+                feedbackDiv.className = 'feedback feedback-correct';
+                currentIndex++;
+                attemptsLeft = 3;
+                updateProgress();
+                if (currentIndex >= desafiosRaw.length) {
+                    gameFinished = true;
+                    renderCurrentChallenge();
+                } else {
+                    currentIndexSpan.textContent = currentIndex + 1;
+                    attemptsLeftSpan.textContent = attemptsLeft;
+                    renderCurrentChallenge();
+                }
+            } else {
+                attemptsLeft--;
+                attemptsLeftSpan.textContent = attemptsLeft;
+                feedbackDiv.innerHTML = `❌ INCORRETO! Tentativas restantes: ${attemptsLeft}`;
+                feedbackDiv.className = 'feedback feedback-wrong';
+                if (attemptsLeft === 0) {
+                    feedbackDiv.innerHTML += `<br>⚠️ Esgotou as tentativas. Pulando para o próximo desafio sem pontuar.`;
+                    currentIndex++;
+                    attemptsLeft = 3;
+                    updateProgress();
+                    if (currentIndex >= desafiosRaw.length) {
+                        gameFinished = true;
+                        renderCurrentChallenge();
+                    } else {
+                        currentIndexSpan.textContent = currentIndex + 1;
+                        attemptsLeftSpan.textContent = attemptsLeft;
+                        renderCurrentChallenge();
+                    }
+                }
+            }
+        }
+        
+        function resetCurrentAttempts() {
+            if (gameFinished) return;
+            attemptsLeft = 3;
+            attemptsLeftSpan.textContent = attemptsLeft;
+            feedbackDiv.innerHTML = `⚡ Tentativas reiniciadas para este desafio. Você tem 3 novas chances.`;
+            feedbackDiv.className = 'feedback';
+            renderCurrentChallenge();
+        }
+        
+        verifyBtn.addEventListener('click', handleVerify);
+        resetAttemptsBtn.addEventListener('click', resetCurrentAttempts);
+    }
+    
+    function restartGame() {
+        currentIndex = 0;
+        score = 0;
+        attemptsLeft = 3;
+        gameFinished = false;
+        scoreSpan.textContent = score;
+        currentIndexSpan.textContent = 1;
+        attemptsLeftSpan.textContent = attemptsLeft;
+        updateProgress();
+        renderCurrentChallenge();
+    }
+    
+    updateProgress();
+    renderCurrentChallenge();
+</script>
+</body>
+</html>
