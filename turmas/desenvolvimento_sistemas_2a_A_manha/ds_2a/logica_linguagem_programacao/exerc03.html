@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Python Interativo: While, Break e Continue</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%);
+            font-family: 'Inter', system-ui, 'Segoe UI', 'Fira Code', monospace;
+            padding: 2rem;
+            color: #eef4ff;
+        }
+
+        /* Container principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* cabeçalho */
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 255, 204, 0.3);
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #b3ffe0, #00ffcc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            font-weight: 700;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: #b9c7d9;
+            margin-top: 0.5rem;
+        }
+
+        /* grade responsiva */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+
+        /* cards modernos */
+        .card {
+            background: rgba(18, 25, 40, 0.75);
+            backdrop-filter: blur(2px);
+            border-radius: 1.75rem;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+            box-shadow: 0 12px 28px -8px rgba(0,0,0,0.4);
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 255, 204, 0.5);
+            box-shadow: 0 20px 32px -12px rgba(0, 255, 204, 0.15);
+        }
+
+        .card-header {
+            background: rgba(0, 30, 30, 0.5);
+            padding: 0.9rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+        }
+        .card-header h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #b3ffe0;
+        }
+        .card-header h3:before {
+            content: "🐍";
+            font-size: 1.2rem;
+            filter: drop-shadow(0 0 2px #0ff);
+        }
+
+        .code-block {
+            background: #0a0e17;
+            padding: 1rem 1.2rem;
+            margin: 1rem 1.2rem;
+            border-radius: 1rem;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.85rem;
+            border-left: 3px solid #00ffcc;
+        }
+        .code-block pre {
+            margin: 0;
+            color: #d6deeb;
+            background: transparent;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 0.8rem;
+            padding: 0 1.2rem 0.8rem 1.2rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            border: none;
+            background: #1e2a3a;
+            color: #e2e8f0;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            font-family: inherit;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-primary {
+            background: #0f2c2c;
+            color: #00ffcc;
+            border: 1px solid #00ffcc80;
+            box-shadow: 0 2px 6px rgba(0,255,204,0.1);
+        }
+        .btn-primary:hover {
+            background: #00ccaa20;
+            border-color: #00ffcc;
+            transform: scale(0.97);
+            box-shadow: 0 0 8px #00ffcc40;
+        }
+        .btn-secondary {
+            background: #232e3c;
+            border-color: #5b6e8c;
+        }
+        .btn-secondary:hover {
+            background: #2d3b4b;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .console-area {
+            background: #03060c;
+            border-top: 1px solid #1f2a3a;
+            padding: 1rem 1.2rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            margin-top: 0.8rem;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .console-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #5f7f9e;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .log-content {
+            color: #bbd4f0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+        .log-line {
+            border-left: 2px solid #2c6e6e;
+            padding-left: 8px;
+            margin: 4px 0;
+            font-size: 0.75rem;
+        }
+        .log-break {
+            color: #ffb86c;
+            border-left-color: #ffaa44;
+        }
+        .log-continue {
+            color: #8be9fd;
+            border-left-color: #6ac8ff;
+        }
+        .log-info {
+            color: #9ccfd8;
+        }
+
+        footer {
+            text-align: center;
+            background: rgba(0, 20, 20, 0.5);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid #00ffcc30;
+        }
+        .diff-box {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .diff-item {
+            background: #111a24;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: bold;
+        }
+        .badge-break { color: #ffa657; }
+        .badge-continue { color: #68e1fd; }
+
+        @media (max-width: 750px) {
+            body { padding: 1rem; }
+            .grid { grid-template-columns: 1fr; }
+            .hero h1 { font-size: 2rem; }
+        }
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0f1a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #00ffcc60;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🔄 while, break & continue</h1>
+        <p>▶ Simulador interativo — execute cada exemplo como se estivesse no terminal Python</p>
+    </div>
+
+    <div class="grid" id="examplesGrid">
+        <!-- Os cards serão gerados via JS para manter o código limpo, mas também posso gerar manualmente.
+             Vou criar dinamicamente com base nos dados dos exemplos, assim facilita a manutenção e garante consistência -->
+    </div>
+
+    <footer>
+        <h3 style="color:#00ffcc; margin-bottom:12px;">🎯 Diferença essencial</h3>
+        <div class="diff-box">
+            <div class="diff-item"><span class="badge-break">🔴 break</span> → encerra o loop imediatamente</div>
+            <div class="diff-item"><span class="badge-continue">🟢 continue</span> → volta ao início da iteração (ignora o resto)</div>
+        </div>
+        <p style="font-size:0.8rem; opacity:0.7;">⭐ Cada card simula fielmente o código Python. Clique em "▶ Executar" e interaja via popup. Os logs mostram o fluxo do loop.</p>
+    </footer>
+</div>
+
+<script>
+    // Definição dos exemplos (código + lógica de simulação)
+    // Cada exemplo possui: título, código (string), e uma função runSimulation que recebe um callback de log e retorna Promise (síncrono com prompt)
+    // Para manter a experiência fluida e bloqueante (como input() real) usamos while com prompt sincrono.
+    // A função retorna void, mas desabilita o botão durante execução.
+    
+    const examplesData = [
+        { // 1
+            title: "1. Um break (sair)",
+            code: `while True:
+    x = input("Digite 'sair': ")
+    if x == "sair":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                let loopActive = true;
+                while (loopActive) {
+                    let entrada = prompt("🐍 [Exemplo 1] Digite 'sair' para encerrar:");
+                    if (entrada === null) {
+                        logger("❌ Execução cancelada pelo usuário.", "info");
+                        break;
+                    }
+                    if (entrada === "sair") {
+                        logger("✅ break acionado! Loop encerrado.", "break");
+                        break;
+                    } else {
+                        logger(`↺ Entrada "${entrada}" não é 'sair'. Continuando...`, "info");
+                    }
+                }
+                logger("🏁 Fim da execução.", "info");
+            }
+        },
+        { // 2
+            title: "2. Um break (parar com 0)",
+            code: `while True:
+    n = input("Digite 0: ")
+    if n == "0":
+        print("Parando...")
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let val = prompt("🐍 [Exemplo 2] Digite 0 para parar:");
+                    if (val === null) { logger("⛔ Execução cancelada.", "info"); break; }
+                    if (val === "0") {
+                        logger("📢 'Parando...' (print do código)", "break");
+                        logger("✅ break -> encerrando loop.", "break");
+                        break;
+                    } else {
+                        logger(`↺ "${val}" não é 0. Tente novamente.`, "info");
+                    }
+                }
+                logger("🏁 Simulação finalizada.", "info");
+            }
+        },
+        { // 3 dois break a ou b
+            title: "3. Dois break (a ou b)",
+            code: `while True:
+    x = input("Digite 'a' ou 'b': ")
+    if x == "a":
+        break
+    if x == "b":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let inp = prompt("🐍 [Exemplo 3] Digite 'a' ou 'b' para sair:");
+                    if (inp === null) { logger("Cancelado.", "info"); break; }
+                    if (inp === "a") {
+                        logger("🔁 break por 'a' detectado.", "break");
+                        break;
+                    }
+                    if (inp === "b") {
+                        logger("🔁 break por 'b' detectado.", "break");
+                        break;
+                    }
+                    logger(`"${inp}" não é a nem b, continua...`, "info");
+                }
+                logger("Execução concluída.", "info");
+            }
+        },
+        { // 4 dois break 1 ou 2
+            title: "4. Dois break (1 ou 2)",
+            code: `while True:
+    n = input("Digite 1 ou 2: ")
+    if n == "1":
+        break
+    if n == "2":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let v = prompt("🐍 [Exemplo 4] Digite '1' ou '2' para sair:");
+                    if (v === null) break;
+                    if (v === "1") { logger("break: entrada 1", "break"); break; }
+                    if (v === "2") { logger("break: entrada 2", "break"); break; }
+                    logger(`"${v}" inválido, tente 1 ou 2.`, "info");
+                }
+                logger("Loop finalizado.", "info");
+            }
+        },
+        { // 5 um break e um continue (vazio e ok)
+            title: "5. break + continue (vazio e ok)",
+            code: `while True:
+    x = input("Digite algo: ")
+    if x == "":
+        continue
+    if x == "ok":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let entrada = prompt("🐍 [Exemplo 5] Digite algo (ou vazio para continue, 'ok' para break):");
+                    if (entrada === null) { logger("Cancelado", "info"); break; }
+                    if (entrada === "") {
+                        logger("⚠️ continue: entrada vazia, reinicia o loop.", "continue");
+                        continue;
+                    }
+                    if (entrada === "ok") {
+                        logger("✅ break: 'ok' detectado, encerrando.", "break");
+                        break;
+                    }
+                    logger(`"${entrada}" não é 'ok' nem vazio. Loop continua.`, "info");
+                }
+                logger("Fim da simulação.", "info");
+            }
+        },
+        { // 6 Número: 0 continue, 5 break
+            title: "6. continue (0) e break (5)",
+            code: `while True:
+    n = input("Número: ")
+    if n == "0":
+        continue
+    if n == "5":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let num = prompt("🐍 [Exemplo 6] Digite um número (0 → continue | 5 → break):");
+                    if (num === null) { logger("Cancelado", "info"); break; }
+                    if (num === "0") {
+                        logger("🔁 continue: digitou 0, volta ao início.", "continue");
+                        continue;
+                    }
+                    if (num === "5") {
+                        logger("💥 break: número 5, saindo do loop.", "break");
+                        break;
+                    }
+                    logger(`Número "${num}" ignorado, sem efeito.`, "info");
+                }
+                logger("Encerrado.", "info");
+            }
+        },
+        { // 7 dois break e um continue (vazio, sair, fim)
+            title: "7. 2 break + continue (vazio, sair, fim)",
+            code: `while True:
+    x = input("Digite: ")
+    if x == "":
+        continue
+    if x == "sair":
+        break
+    if x == "fim":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let txt = prompt("🐍 [Exemplo 7] Digite algo (vazio=continue | 'sair' ou 'fim'=break):");
+                    if (txt === null) { logger("Cancelado", "info"); break; }
+                    if (txt === "") {
+                        logger("continue: string vazia, recomeça iteração.", "continue");
+                        continue;
+                    }
+                    if (txt === "sair") {
+                        logger("break: comando 'sair' acionado.", "break");
+                        break;
+                    }
+                    if (txt === "fim") {
+                        logger("break: comando 'fim' acionado.", "break");
+                        break;
+                    }
+                    logger(`"${txt}" não atende condições, continua loop.`, "info");
+                }
+                logger("Fim.", "info");
+            }
+        },
+        { // 8 dois break e um continue (1 continue, 9 e 10 break)
+            title: "8. continue(1) e break(9 ou 10)",
+            code: `while True:
+    n = input("Digite número: ")
+    if n == "1":
+        continue
+    if n == "9":
+        break
+    if n == "10":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let num = prompt("🐍 [Exemplo 8] Número (1=continue, 9 ou 10=break):");
+                    if (num === null) { logger("Cancelado", "info"); break; }
+                    if (num === "1") {
+                        logger("continue: número 1, reinicia.", "continue");
+                        continue;
+                    }
+                    if (num === "9") {
+                        logger("break: número 9 encontrado.", "break");
+                        break;
+                    }
+                    if (num === "10") {
+                        logger("break: número 10 encontrado.", "break");
+                        break;
+                    }
+                    logger(`Número ${num} não é 1, 9 ou 10 → continua.`, "info");
+                }
+                logger("Simulação finalizada.", "info");
+            }
+        },
+        { // 9 dois break e dois continue (vazio, 0, sair, fim)
+            title: "9. 2 break + 2 continue (vazio, 0, sair, fim)",
+            code: `while True:
+    x = input("Digite algo: ")
+    if x == "":
+        continue
+    if x == "0":
+        continue
+    if x == "sair":
+        break
+    if x == "fim":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let val = prompt("🐍 [Exemplo 9] Entrada: vazio/0 = continue | 'sair'/'fim' = break:");
+                    if (val === null) { logger("Cancelado", "info"); break; }
+                    if (val === "") {
+                        logger("continue: string vazia", "continue");
+                        continue;
+                    }
+                    if (val === "0") {
+                        logger("continue: entrada '0'", "continue");
+                        continue;
+                    }
+                    if (val === "sair") {
+                        logger("break: 'sair' detectado.", "break");
+                        break;
+                    }
+                    if (val === "fim") {
+                        logger("break: 'fim' detectado.", "break");
+                        break;
+                    }
+                    logger(`"${val}" não é gatilho, continua.`, "info");
+                }
+                logger("Encerrado.", "info");
+            }
+        },
+        { // 10 dois break e dois continue (a,b continue; 1,2 break)
+            title: "10. continue(a,b) e break(1,2)",
+            code: `while True:
+    n = input("Digite: ")
+    if n == "a":
+        continue
+    if n == "b":
+        continue
+    if n == "1":
+        break
+    if n == "2":
+        break`,
+            run: (logger, clearLog) => {
+                clearLog();
+                while (true) {
+                    let ch = prompt("🐍 [Exemplo 10] Digite: a/b = continue | 1/2 = break");
+                    if (ch === null) { logger("Cancelado", "info"); break; }
+                    if (ch === "a") {
+                        logger("continue: letra 'a'", "continue");
+                        continue;
+                    }
+                    if (ch === "b") {
+                        logger("continue: letra 'b'", "continue");
+                        continue;
+                    }
+                    if (ch === "1") {
+                        logger("break: dígito 1", "break");
+                        break;
+                    }
+                    if (ch === "2") {
+                        logger("break: dígito 2", "break");
+                        break;
+                    }
+                    logger(`"${ch}" não atende regras, repete.`, "info");
+                }
+                logger("Execução concluída.", "info");
+            }
+        }
+    ];
+
+    // Função auxiliar para criar um card com console
+    function buildCard(example, idx) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        
+        // Header
+        const header = document.createElement('div');
+        header.className = 'card-header';
+        const titleEl = document.createElement('h3');
+        titleEl.innerText = example.title;
+        header.appendChild(titleEl);
+        
+        // Code block
+        const codeDiv = document.createElement('div');
+        codeDiv.className = 'code-block';
+        const pre = document.createElement('pre');
+        pre.innerText = example.code;
+        codeDiv.appendChild(pre);
+        
+        // Action buttons
+        const actionBar = document.createElement('div');
+        actionBar.className = 'action-bar';
+        const runBtn = document.createElement('button');
+        runBtn.className = 'btn btn-primary';
+        runBtn.innerHTML = '▶ Executar Simulação';
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'btn btn-secondary';
+        clearBtn.innerHTML = '🗑 Limpar Log';
+        
+        // Console area
+        const consoleDiv = document.createElement('div');
+        consoleDiv.className = 'console-area';
+        const consoleHeader = document.createElement('div');
+        consoleHeader.className = 'console-title';
+        consoleHeader.innerHTML = `<span>📟 CONSOLE DE EXECUÇÃO</span><span>🐍 emulação</span>`;
+        const logContent = document.createElement('div');
+        logContent.className = 'log-content';
+        logContent.id = `log-${idx}`;
+        consoleDiv.appendChild(consoleHeader);
+        consoleDiv.appendChild(logContent);
+        
+        actionBar.appendChild(runBtn);
+        actionBar.appendChild(clearBtn);
+        card.appendChild(header);
+        card.appendChild(codeDiv);
+        card.appendChild(actionBar);
+        card.appendChild(consoleDiv);
+        
+        // logger function para este card específico
+        const logger = (message, type = "info") => {
+            const logDiv = document.createElement('div');
+            logDiv.className = `log-line ${type === 'break' ? 'log-break' : (type === 'continue' ? 'log-continue' : 'log-info')}`;
+            const prefix = type === 'break' ? '🔴 BREAK: ' : (type === 'continue' ? '🟢 CONTINUE: ' : 'ℹ️ ');
+            logDiv.innerHTML = `${prefix}${message}`;
+            logContent.appendChild(logDiv);
+            logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+        
+        const clearLog = () => {
+            logContent.innerHTML = '';
+            const initialMsg = document.createElement('div');
+            initialMsg.className = 'log-line log-info';
+            initialMsg.innerHTML = '⚡ Pronto para executar. Clique em "Executar Simulação".';
+            logContent.appendChild(initialMsg);
+        };
+        clearLog(); // mensagem inicial
+        
+        // estado para evitar múltiplas execuções simultâneas
+        let isRunning = false;
+        
+        const runSimulation = () => {
+            if (isRunning) {
+                logger("⚠️ Já existe uma simulação em andamento. Conclua ou recarregue.", "info");
+                return;
+            }
+            isRunning = true;
+            runBtn.disabled = true;
+            runBtn.style.opacity = "0.6";
+            try {
+                // executa a lógica do exemplo (usando prompts síncronos)
+                example.run(logger, clearLog);
+            } catch (err) {
+                logger(`Erro na simulação: ${err}`, "info");
+                console.error(err);
+            } finally {
+                isRunning = false;
+                runBtn.disabled = false;
+                runBtn.style.opacity = "1";
+                logger("✅ Simulação finalizada. Você pode executar novamente.", "info");
+            }
+        };
+        
+        runBtn.addEventListener('click', runSimulation);
+        clearBtn.addEventListener('click', () => {
+            if (isRunning) {
+                logger("Não é possível limpar enquanto a simulação está rodando.", "info");
+                return;
+            }
+            clearLog();
+        });
+        
+        return card;
+    }
+    
+    // Injetar todos os cards no grid
+    const gridContainer = document.getElementById('examplesGrid');
+    examplesData.forEach((ex, i) => {
+        const cardElement = buildCard(ex, i);
+        gridContainer.appendChild(cardElement);
+    });
+    
+    // adicional: aviso de comportamento
+    window.addEventListener('load', () => {
+        console.log("Página interativa pronta! Cada exemplo roda com prompt e registra o fluxo.");
+        const styleNote = document.createElement('style');
+        styleNote.innerText = `
+            .btn-primary:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+                filter: grayscale(0.2);
+            }
+        `;
+        document.head.appendChild(styleNote);
+    });
+</script>
+</body>
+</html>
