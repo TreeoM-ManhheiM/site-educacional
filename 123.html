@@ -1,284 +1,573 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Avaliação: Matemática para Ciência de Dados</title>
+    <title>Atividade Prática - Redes Neurais (RESPOSTAS MODELO)</title>
     <style>
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f4f7f6; 
-            color: #333; 
-            line-height: 1.6; 
-            max-width: 900px; 
-            margin: 0 auto; 
-            padding: 20px; 
-        }
-        h1 { 
-            text-align: center; 
-            color: #2c3e50; 
-            border-bottom: 2px solid #3498db; 
-            padding-bottom: 10px; 
-            margin-bottom: 30px;
-        }
-        h2 { 
-            color: #2c3e50; 
-            font-size: 1.3em; 
-            margin-top: 40px;
-            margin-bottom: 5px;
-        }
-        h3 {
-            color: #7f8c8d;
-            font-size: 1.1em;
-            margin-top: 20px;
-            margin-bottom: 15px;
-        }
-        .intro-text {
-            color: #555;
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        .header-info { 
-            background: #fff; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            padding: 20px;
-            margin-bottom: 30px;
-            display: flex; 
-            flex-wrap: wrap; 
-            justify-content: space-between; 
-            font-weight: bold;
-            border-left: 5px solid #2c3e50;
-        }
-        .header-info div { flex: 1; min-width: 45%; margin-bottom: 10px; }
-        
-        .card { 
-            background: #fff; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            margin-bottom: 15px; 
-            padding: 15px 20px; 
-            border-left: 5px solid #3498db;
-        }
-        .answer { font-weight: bold; color: #e74c3c; }
-        .step { 
-            background-color: #e8f4f8; 
-            padding: 8px 12px; 
-            border-radius: 4px; 
-            font-size: 0.9em; 
-            margin-top: 10px; 
-            color: #2980b9; 
-            font-weight: 500;
-        }
-        
-        ul.list-card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            padding: 20px 20px 20px 40px;
-            border-left: 5px solid #3498db;
-            list-style-type: none;
-        }
-        ul.list-card li {
-            margin-bottom: 12px;
-            border-bottom: 1px dashed #ecf0f1;
-            padding-bottom: 8px;
-        }
-        ul.list-card li:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        /* ESTILO ACADÊMICO PADRÃO TCC - OTIMIZADO PARA 2 FOLHAS A4 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .matrix { 
-            display: inline-table; 
-            vertical-align: middle; 
-            border-left: 2px solid #2c3e50; 
-            border-right: 2px solid #2c3e50; 
-            border-radius: 5px; 
-            padding: 2px; 
-            margin: 0 5px; 
-            text-align: center; 
-            background-color: #fcfcfc;
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #ffffff;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: center;
+            line-height: 1.2;
+            font-size: 10pt;
         }
-        .matrix td { padding: 4px 12px; }
-        .operation { display: inline-block; vertical-align: middle; padding: 0 5px; font-weight: bold; color: #333; }
+
+        .report-container {
+            max-width: 1100px;
+            width: 100%;
+            background-color: white;
+            border: none;
+            box-shadow: none;
+        }
+
+        .report-content {
+            padding: 10px 15px;
+        }
+
+        /* Cabeçalho institucional */
+        .institutional-header {
+            text-align: center;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 4px;
+        }
+
+        .institutional-header h3 {
+            font-size: 11px;
+            font-weight: normal;
+        }
+
+        .institutional-header h2 {
+            font-size: 13px;
+            font-weight: bold;
+            margin: 2px 0;
+        }
+
+        .institutional-header p {
+            font-size: 9px;
+            margin: 1px 0;
+        }
+
+        /* Campos do aluno */
+        .student-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 5px;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        .info-field {
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .info-field label {
+            font-weight: bold;
+            font-size: 9px;
+            display: block;
+            margin-bottom: 1px;
+        }
+
+        .info-field .field-value, .info-field input {
+            border-bottom: 1px solid #000;
+            padding: 2px 0;
+            font-size: 10px;
+            font-family: 'Times New Roman', Times, serif;
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #000;
+            background: transparent;
+        }
+
+        /* Títulos acadêmicos */
+        h1 {
+            font-size: 14px;
+            text-align: center;
+            margin: 5px 0 2px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 12px;
+            margin: 8px 0 3px;
+            font-weight: bold;
+            border-bottom: 1px solid #000;
+            padding-bottom: 1px;
+        }
+
+        h3 {
+            font-size: 11px;
+            margin: 4px 0 2px;
+            font-weight: bold;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 9px;
+            margin-bottom: 5px;
+        }
+
+        p {
+            margin: 2px 0;
+            font-size: 9px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 18px;
+            margin-bottom: 3px;
+            font-size: 9px;
+        }
+
+        li {
+            margin: 1px 0;
+        }
+
+        .sim-instruction {
+            background-color: #f8f9fa;
+            border-left: 2px solid #2c3e50;
+            padding: 4px 8px;
+            margin: 5px 0;
+            font-size: 9px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            line-height: 1.4;
+        }
+
+        .sim-instruction strong {
+            color: #1a4d8c;
+            font-size: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 4px 0;
+            font-size: 8px;
+        }
+
+        th, td {
+            border: 1px solid #000000;
+            padding: 2px 3px;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f5f5f5;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        td {
+            text-align: left;
+        }
+
+        .fill-blank {
+            display: inline-block;
+            min-width: 70px;
+            padding: 0 2px;
+            margin: 0 1px;
+            font-family: 'Times New Roman', Times, serif;
+            background: transparent;
+            font-weight: normal;
+            border-bottom: 1px solid #000;
+        }
+
+        .activity-box {
+            margin: 4px 0;
+            padding: 4px 8px;
+            border: 1px solid #ddd;
+            background: #ffffff;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        footer {
+            margin-top: 8px;
+            text-align: center;
+            font-size: 7px;
+            border-top: 1px solid #000;
+            padding-top: 3px;
+        }
+
+        button {
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            font-size: 9px;
+            font-family: 'Times New Roman', Times, serif;
+            cursor: pointer;
+            margin: 8px auto;
+            display: block;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+                font-size: 9pt;
+            }
+            .report-container {
+                border: none;
+                max-width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            button {
+                display: none;
+            }
+            .info-field input {
+                border-bottom: 1px solid black;
+            }
+            .fill-blank {
+                border-bottom: 1px solid black;
+            }
+            th, td {
+                border-color: black !important;
+            }
+            .activity-box {
+                border: 1px solid #aaa;
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+            .sim-instruction {
+                background-color: #f0f0f0;
+                border-left: 2px solid black;
+            }
+            table, tr, td, th {
+                break-inside: avoid;
+            }
+            .report-content {
+                padding: 0 5px;
+            }
+            h2 {
+                margin: 2px 0 1px;
+            }
+            .student-info {
+                margin-bottom: 2px;
+                padding-bottom: 2px;
+            }
+            .institutional-header {
+                margin-bottom: 2px;
+                padding-bottom: 1px;
+            }
+            h1 {
+                margin: 2px 0 0;
+            }
+            @page {
+                margin: 1.5cm 1.8cm;
+                size: A4;
+            }
+        }
     </style>
 </head>
 <body>
+<div class="report-container">
+    <div class="report-content">
+        <div class="institutional-header">
+            <h3>Curso Técnico em Ciência de Dados</h3>
+            <h2>Laboratório de Inteligência Artificial</h2>
+            <p>Atividade Prática – Redes Neurais Artificiais</p>
+            <p>Duração: 2 horas | Utilização do Simulador Interativo</p>
+        </div>
 
-    <h1>AVALIAÇÃO: MATEMÁTICA PARA CIÊNCIA DE DADOS</h1>
-    
-    <div class="header-info">
-        <div>Nome do Aluno: _____________________________________</div>
-        <div>Data: ________</div>
-        <div>Turma: _________________</div>
-        <div>Nota: _________</div>
+        <div class="student-info">
+            <div class="info-field"><label>Nome do Aluno(a):</label><input type="text" placeholder="" value="MARIA EDUARDA SANTOS"></div>
+            <div class="info-field"><label>Turma:</label><div class="field-value">3°A - Ciência de Dados</div></div>
+            <div class="info-field"><label>Professor:</label><div class="field-value">Engº André Corrêa de Lima</div></div>
+            <div class="info-field"><label>Data:</label><input type="text" placeholder="" value="01/04/2026"></div>
+        </div>
+
+        <h1>ATIVIDADE PRÁTICA: REDES NEURAIS ARTIFICIAIS</h1>
+        <div class="subtitle">Conceitos fundamentais – Do neurônio biológico às redes profundas</div>
+
+        <h2>1. OBJETIVOS</h2>
+        <ul>
+            <li>Compreender a analogia entre neurônio biológico e neurônio artificial.</li>
+            <li>Explorar a estrutura de redes neurais (camadas, neurônios, conexões).</li>
+            <li>Analisar o papel de pesos, bias e funções de ativação.</li>
+            <li>Experimentar com redes rasas e profundas utilizando um simulador.</li>
+        </ul>
+
+        <h2>2. SEMANA 1 – CONCEITOS BÁSICOS E MODELOS BIOLÓGICOS</h2>
+
+        <div class="activity-box">
+            <h3>Atividade 2.1: Conhecendo o neurônio artificial</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> No topo da tela, clique na aba <strong>📊 Simulador (MLP)</strong>.<br>
+                <strong>2.</strong> No painel à esquerda, defina os valores:<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Entradas</strong> = 1<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Oculta 1</strong> = 0<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Saídas</strong> = 1<br>
+                <strong>3.</strong> Clique no botão <strong>⚙️ Gerar Rede</strong>.<br>
+                <strong>4.</strong> Observe o neurônio desenhado no grafo (parte direita) e o painel <strong>🧠 Neurônio Artificial</strong> que aparece logo abaixo dos controles.<br>
+                <strong>5.</strong> No painel do neurônio, mova os sliders de <strong>Peso (w)</strong> e <strong>Bias (b)</strong> e veja como a <strong>Saída ŷ</strong> muda.
+            </div>
+            <ol>
+                <li>Qual a fórmula matemática que aparece dentro do neurônio? <span class="fill-blank">z = w·x + b  →  a = σ(z) (sigmoid)</span></li>
+                <li>Qual a diferença entre <em>z</em> (potencial) e <em>a</em> (ativação)? <span class="fill-blank">z é a soma ponderada + bias (valor linear); a é o resultado após aplicar a função de ativação (não-linearidade).</span></li>
+                <li>No painel “Neurônio Artificial”, mova o peso (w) e o bias (b). Observe a saída ŷ. Explique o efeito:<br>
+                - Quando w aumenta de 0 para 2: <span class="fill-blank">A saída ŷ aumenta mais rapidamente conforme a entrada x, amplificando o sinal.</span><br>
+                - Quando b aumenta de 0 para 1: <span class="fill-blank">Desloca a curva de ativação para a esquerda; mesmo com x=0 a saída já é positiva.</span></li>
+            </ol>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 2.2: Comparação com o neurônio biológico</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Mantenha a mesma configuração da atividade anterior (1 entrada, 0 ocultas, 1 saída).<br>
+                <strong>2.</strong> No grafo, observe a estrutura do neurônio artificial: os círculos representam os neurônios, as linhas coloridas representam as conexões (pesos).<br>
+                <strong>3.</strong> Compare com a descrição do neurônio biológico: dendritos (recebem sinais), corpo celular (soma os sinais), axônio (transmite o sinal), sinapses (conexões).
+            </div>
+            <p>Preencha a tabela de analogia:</p>
+            <table style="font-size:8px">
+                <thead>    <tr><th>Estrutura Biológica</th><th>Equivalente Artificial</th> </thead>
+                <tbody>
+                     <tr><td>Dendritos</td><td><span class="fill-blank">Entradas (valores x)</span></td> </tr>
+                      <tr><td>Corpo Celular (Soma)</td><td><span class="fill-blank">Soma ponderada z = Σ(w·x) + b</span></td> </tr>
+                      <tr><td>Axônio</td><td><span class="fill-blank">Saída a = f(z) após ativação</span></td> </tr>
+                      <tr><td>Sinapses</td><td><span class="fill-blank">Pesos (w) que conectam neurônios</span></td> </tr>
+                </tbody>
+              </table>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 2.3: Simulação da porta NOT</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> No painel <strong>🧠 Neurônio Artificial</strong> (logo abaixo dos controles), clique no botão <strong>🔁 Porta NOT</strong>.<br>
+                &nbsp;&nbsp;&nbsp;• Isso configurará automaticamente w = -1 e b = 0.5.<br>
+                <strong>2.</strong> No seletor <strong>Entrada x</strong>, escolha <strong>0</strong> e anote a saída ŷ.<br>
+                <strong>3.</strong> Depois escolha <strong>1</strong> e anote a saída ŷ.<br>
+                <strong>4.</strong> Compare com a saída esperada da porta NOT.
+            </div>
+            <table>
+                <thead><tr><th>Entrada (x)</th><th>Saída Esperada (NOT)</th><th>Saída ŷ (simulador)</th><th>Acertou?</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>1</td><td><span class="fill-blank">0.98</span></td><td><span class="fill-blank">✔ Sim</span></td></tr>
+                    <tr><td>1</td><td>0</td><td><span class="fill-blank">0.02</span></td><td><span class="fill-blank">✔ Sim</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>3. SEMANA 2 – ESTRUTURA DAS REDES NEURAIS</h2>
+        <div class="activity-box">
+            <h3>Atividade 3.1: Rede com camada oculta</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Na aba <strong>📊 Simulador (MLP)</strong>, configure:<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Entradas</strong> = 2<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Oculta 1</strong> = 4<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Oculta 2</strong> = 0<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Saídas</strong> = 1<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Ativação Oculta</strong> = tanh<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Ativação Saída</strong> = sigmoid<br>
+                <strong>2.</strong> Clique em <strong>⚙️ Gerar Rede</strong>.<br>
+                <strong>3.</strong> Observe o grafo e conte os elementos.
+            </div>
+            <ol>
+                <li>Número total de neurônios: <span class="fill-blank">2 (entrada) + 4 (oculta) + 1 (saída) = 7</span></li>
+                <li>Quantidade de conexões (pesos) entre entrada e camada oculta: <span class="fill-blank">2 × 4 = 8</span></li>
+                <li>Quantidade de bias na camada oculta: <span class="fill-blank">4 (um para cada neurônio oculto)</span></li>
+                <li>Desenhe a arquitetura no espaço abaixo (esquema de camadas):<br><span class="fill-blank" style="display:block; min-height:25px;">[Camada Entrada: 2 neurônios] → [Camada Oculta: 4 neurônios] → [Camada Saída: 1 neurônio]</span></li>
+            </ol>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 3.2: Explorando conexões e bias</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Com a rede gerada (2 entradas, 4 ocultas, 1 saída), passe o mouse sobre as linhas (arestas) do grafo. Aparecerá uma etiqueta com o valor do peso.<br>
+                <strong>2.</strong> Clique no botão <strong>🎲 Aleatorizar Pesos</strong> e observe como as cores e valores das linhas mudam.<br>
+                <strong>3.</strong> Na barra de ferramentas acima do grafo, ative a opção <strong>📊 Mostrar bias</strong>. Surgirão pequenas linhas extras conectadas a cada neurônio, representando os bias.
+            </div>
+            <ol>
+                <li>O que representam os números nas arestas (linhas) do grafo? <span class="fill-blank">Os valores dos pesos (w) que multiplicam as entradas de cada conexão.</span></li>
+                <li>Ao clicar em “Aleatorizar Pesos”, o que se altera? <span class="fill-blank">Todos os pesos são redefinidos com valores aleatórios (pequenos) e as cores das linhas mudam para indicar sinal/magnitude.</span></li>
+                <li>Ative a opção “Mostrar bias”. O que surge no grafo? <span class="fill-blank">Linhas extras (geralmente tracejadas ou de outra cor) partindo de um nó especial “bias” conectado a cada neurônio das camadas oculta e saída.</span></li>
+            </ol>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 3.3: Redes rasas versus redes profundas</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                Para cada linha da tabela abaixo, siga os passos:<br>
+                <strong>1.</strong> Altere os campos <strong>Entradas</strong>, <strong>Oculta 1</strong>, <strong>Oculta 2</strong> e <strong>Saídas</strong> conforme a configuração.<br>
+                <strong>2.</strong> Clique em <strong>⚙️ Gerar Rede</strong>.<br>
+                <strong>3.</strong> Conte o número de camadas (considere entrada e saída) e o número total de neurônios.<br>
+                <strong>4.</strong> Anote os valores na tabela.
+            </div>
+            <table>
+                <thead><tr><th>Configuração</th><th>Número de camadas</th><th>Número de neurônios totais</th></tr></thead>
+                <tbody>
+                    <tr><td>2 entradas, 0 ocultas, 1 saída</td><td><span class="fill-blank">2 (entrada + saída)</span></td><td><span class="fill-blank">3</span></td></tr>
+                    <tr><td>2 entradas, 3 ocultas, 1 saída</td><td><span class="fill-blank">3 (entrada, oculta, saída)</span></td><td><span class="fill-blank">2+3+1 = 6</span></td></tr>
+                    <tr><td>2 entradas, 3 ocultas, 2 ocultas, 1 saída</td><td><span class="fill-blank">4 (entrada, oculta1, oculta2, saída)</span></td><td><span class="fill-blank">2+3+2+1 = 8</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>4. SEMANA 3 – FUNÇÕES DE ATIVAÇÃO, PESOS E BIAS</h2>
+        <div class="activity-box">
+            <h3>Atividade 4.1: Experimentando funções de ativação</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Configure: <strong>Entradas</strong> = 1, <strong>Oculta 1</strong> = 3, <strong>Saídas</strong> = 1. Clique em <strong>Gerar Rede</strong>.<br>
+                <strong>2.</strong> No painel <strong>📌 Entradas</strong>, defina o valor de <strong>x0</strong> conforme cada coluna da tabela (-2, 0, 2, 5).<br>
+                <strong>3.</strong> Para cada função de ativação oculta (Sigmoid, Tanh, ReLU, Degrau), altere o seletor <strong>🎭 Ativação Oculta</strong> e anote o valor de ŷ (aparece no topo do grafo ou no painel do neurônio).<br>
+                <strong>4.</strong> Repita para cada valor de x.
+            </div>
+            <table>
+                <thead><tr><th>Ativação Oculta</th><th>x = -2</th><th>x = 0</th><th>x = 2</th><th>x = 5</th></tr></thead>
+                <tbody>
+                    <tr><td>Sigmoid</td><td><span class="fill-blank">0.12</span></td><td><span class="fill-blank">0.50</span></td><td><span class="fill-blank">0.88</span></td><td><span class="fill-blank">0.99</span></td></tr>
+                    <tr><td>Tanh</td><td><span class="fill-blank">-0.96</span></td><td><span class="fill-blank">0.00</span></td><td><span class="fill-blank">0.96</span></td><td><span class="fill-blank">1.00</span></td></tr>
+                    <tr><td>ReLU</td><td><span class="fill-blank">0.00</span></td><td><span class="fill-blank">0.00</span></td><td><span class="fill-blank">2.00</span></td><td><span class="fill-blank">5.00</span></td></tr>
+                    <tr><td>Degrau</td><td><span class="fill-blank">0</span></td><td><span class="fill-blank">0</span></td><td><span class="fill-blank">1</span></td><td><span class="fill-blank">1</span></td></tr>
+                </tbody>
+            </table>
+            <p>Qual função tem saída entre 0 e 1? <span class="fill-blank">Sigmoid</span><br>
+            Qual função "mata" neurônios com valores negativos? <span class="fill-blank">ReLU</span><br>
+            Qual função tem saída entre -1 e 1? <span class="fill-blank">Tanh</span></p>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 4.2: Entendendo peso versus bias</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Volte à configuração de neurônio único: <strong>Entradas</strong> = 1, <strong>Oculta 1</strong> = 0, <strong>Saídas</strong> = 1. Clique em <strong>Gerar Rede</strong>.<br>
+                <strong>2.</strong> No painel <strong>🧠 Neurônio Artificial</strong>, ajuste os sliders:<br>
+                &nbsp;&nbsp;&nbsp;<strong>Cenário 1:</strong> w = 1, b = 0. Teste x = 0, 1, 2 (use o seletor "Entrada x" e clique em Simular). Anote ŷ.<br>
+                &nbsp;&nbsp;&nbsp;<strong>Cenário 2:</strong> w = 1, b = 2. Teste novamente x = 0, 1, 2.<br>
+                <strong>3.</strong> Compare os resultados e responda.
+            </div>
+            <p><strong>Cenário 1:</strong> w = 1, b = 0 → x=0 → ŷ = 0.50 ; x=1 → 0.73 ; x=2 → 0.88<br>
+            <strong>Cenário 2:</strong> w = 1, b = 2 → x=0 → 0.88 ; x=1 → 0.95 ; x=2 → 0.98<br>
+            O que o bias provocou na reta? <span class="fill-blank">O bias desloca a reta (ou curva sigmoide) para a esquerda/direita; neste caso, aumentou a saída para todos os valores de x, elevando o patamar base.</span></p>
+            <p><strong>Definição formal:</strong> Peso (weight) = <span class="fill-blank">Parâmetro que multiplica a entrada, controlando a inclinação/influência da conexão.</span><br>
+            Bias = <span class="fill-blank">Parâmetro adicionado à soma ponderada, permitindo deslocar o limiar de ativação.</span></p>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 4.3: Limitação do neurônio único</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Mantenha o neurônio único (1 entrada, 0 ocultas, 1 saída).<br>
+                <strong>2.</strong> Tente ajustar manualmente os sliders <strong>w</strong> e <strong>b</strong> para que o neurônio se comporte como uma porta AND (ou seja, saída 1 apenas quando as duas entradas são 1). Como o neurônio tem apenas uma entrada, você perceberá que é impossível simular uma porta com duas entradas.<br>
+                <strong>3.</strong> Entenda que um único neurônio (perceptron) só consegue resolver problemas linearmente separáveis. A função XOR é um exemplo clássico que não é linearmente separável.
+            </div>
+            <p>Por que um único neurônio (perceptron) não consegue resolver a função lógica XOR? <span class="fill-blank">Porque XOR não é linearmente separável: não existe uma única reta que separe os pontos (0,0) e (1,1) dos pontos (0,1) e (1,0) em um plano. É necessário ao menos uma camada oculta para combinar neurônios e criar uma região de decisão não linear.</span></p>
+        </div>
+
+        <h2>5. SEMANA 4 – REDES NEURAIS PROFUNDAS (APRENDIZADO REAL)</h2>
+        <div class="activity-box">
+            <h3>Atividade 5.1: Treinando a rede para XOR</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Clique na aba <strong>⚡ MLP (Real • TF.js)</strong>.<br>
+                <strong>2.</strong> No painel "MLP Real — TensorFlow.js", configure:<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Tarefa</strong> = XOR (2 entradas)<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Oculta 1</strong> = 4<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Oculta 2</strong> = 0<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Ativação 1</strong> = relu<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Otimizador</strong> = Adam<br>
+                &nbsp;&nbsp;&nbsp;• <strong>LR</strong> = 0.01<br>
+                &nbsp;&nbsp;&nbsp;• <strong>Épocas</strong> = 500<br>
+                <strong>3.</strong> Clique em <strong>▶ Treinar</strong> e aguarde o término (a barra de progresso aparecerá e a curva de perda será desenhada).<br>
+                <strong>4.</strong> Observe a acurácia exibida no final.
+            </div>
+            <p>Acurácia final do treino: <span class="fill-blank">100 %</span><br>
+            O que a curva de perda (loss) representa? <span class="fill-blank">A evolução do erro (binary crossentropy) ao longo das épocas; idealmente decresce e estabiliza próxima de zero, indicando que a rede está aprendendo.</span></p>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 5.2: Validação da tabela verdade</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Após o treino da atividade anterior, clique no botão <strong>✅ Validar tabela‑verdade</strong> (logo abaixo dos controles).<br>
+                <strong>2.</strong> A tabela será preenchida automaticamente com os valores ŷ previstos pela rede.<br>
+                <strong>3.</strong> Copie os valores de ŷ e o status (✔ ou ✖) para a tabela abaixo.
+            </div>
+            <table>
+                <thead><tr><th>x₀</th><th>x₁</th><th>y* (esperado)</th><th>ŷ (previsto)</th><th>classe</th><th>status</th></tr></thead>
+                <tbody>
+                    <tr><td>0</td><td>0</td><td>0</td><td><span class="fill-blank">0.02</span></td><td><span class="fill-blank">0</span></td><td><span class="fill-blank">✔</span></td></tr>
+                    <tr><td>0</td><td>1</td><td>1</td><td><span class="fill-blank">0.97</span></td><td><span class="fill-blank">1</span></td><td><span class="fill-blank">✔</span></td></tr>
+                    <tr><td>1</td><td>0</td><td>1</td><td><span class="fill-blank">0.96</span></td><td><span class="fill-blank">1</span></td><td><span class="fill-blank">✔</span></td></tr>
+                    <tr><td>1</td><td>1</td><td>0</td><td><span class="fill-blank">0.03</span></td><td><span class="fill-blank">0</span></td><td><span class="fill-blank">✔</span></td></tr>
+                </tbody>
+            </table>
+            <p>A rede aprendeu o padrão XOR? Justifique: <span class="fill-blank">Sim, após o treinamento a acurácia na tabela‑verdade foi 100%, com ŷ próximo dos valores esperados (0 ou 1), demonstrando que a MLP com uma camada oculta de 4 neurônios ReLU consegue resolver o XOR.</span></p>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 5.3: Profundidade da rede</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>Teste 1 (rede rasa):</strong><br>
+                &nbsp;&nbsp;&nbsp;1. Mantenha a tarefa XOR (2 entradas).<br>
+                &nbsp;&nbsp;&nbsp;2. Altere <strong>Oculta 1</strong> para <strong>2</strong> e mantenha Oculta 2 = 0.<br>
+                &nbsp;&nbsp;&nbsp;3. Clique em <strong>▶ Treinar</strong> e observe se a rede consegue aprender (acurácia perto de 100%).<br>
+                <strong>Teste 2 (rede profunda):</strong><br>
+                &nbsp;&nbsp;&nbsp;1. Configure <strong>Oculta 1</strong> = 4 e <strong>Oculta 2</strong> = 4.<br>
+                &nbsp;&nbsp;&nbsp;2. Treine novamente e anote a acurácia.<br>
+                <strong>3.</strong> Compare os resultados.
+            </div>
+            <p><strong>Teste 1:</strong> XOR com Oculta 1 = 2 neurônios → Aprendeu? <span class="fill-blank">Sim, em geral com 2 neurônios na camada oculta já é suficiente, porém pode precisar de mais épocas (ex: 1000) para convergir com 100%.</span> Por quê? <span class="fill-blank">O XOR pode ser resolvido com 2 neurônios ocultos (cada um aprendendo uma reta de separação) e um neurônio de saída combinando as duas regiões.</span><br>
+            <strong>Teste 2:</strong> XOR com duas camadas ocultas (4+4) → Acurácia: <span class="fill-blank">100 %</span>. Compare com a rede de uma camada: <span class="fill-blank">Ambas conseguem 100% com hiperparâmetros adequados; a rede mais profunda pode convergir mais rápido ou com menor número de neurônios totais, mas requer mais cuidado com vanishing gradient.</span></p>
+        </div>
+
+        <div class="activity-box">
+            <h3>Atividade 5.4: Desafio – XOR com três entradas</h3>
+            <div class="sim-instruction">
+                <strong>🧪 Instrução no simulador:</strong><br>
+                <strong>1.</strong> Na aba <strong>⚡ MLP (Real • TF.js)</strong>, selecione a tarefa <strong>XOR (3 entradas)</strong>.<br>
+                <strong>2.</strong> Configure <strong>Oculta 1</strong> = 8, <strong>Épocas</strong> = 1000.<br>
+                <strong>3.</strong> Clique em <strong>▶ Treinar</strong>.<br>
+                <strong>4.</strong> Após o treino, clique em <strong>✅ Validar tabela‑verdade</strong>.<br>
+                <strong>5.</strong> Conte quantas das 8 combinações a rede acertou (será exibido no campo "Acurácia TT").
+            </div>
+            <p>Quantas combinações a rede acertou? <span class="fill-blank">8 / 8 (100%)</span><br>
+            O que a complexidade adicional da tarefa exige? <span class="fill-blank">Maior capacidade de representação (mais neurônios na camada oculta ou mais épocas), pois o número de combinações dobra (de 4 para 8), exigindo que a rede crie uma superfície de decisão mais complexa no espaço 3D.</span></p>
+        </div>
+
+        <h2>6. CONCLUSÃO E REFLEXÃO</h2>
+        <div class="activity-box">
+            <ol>
+                <li>Qual foi a maior dificuldade encontrada durante a atividade? <span class="fill-blank" style="display:inline-block; width:90%;">Interpretar como os pesos e bias alteram a saída em neurônios com funções de ativação diferentes, principalmente nos casos em que a saída não era binária.</span></li>
+                <li>O que você aprendeu que não conhecia antes? <span class="fill-blank" style="display:inline-block; width:90%;">A importância das funções de ativação para introduzir não-linearidade, e que redes profundas (com mais camadas) conseguem representar funções mais complexas como XOR com três entradas de forma eficiente.</span></li>
+                <li>Como o simulador contribuiu para a compreensão dos conceitos? <span class="fill-blank" style="display:inline-block; width:90%;">Permitiu visualizar em tempo real o efeito de pesos e bias, a arquitetura das redes, e o treinamento real com backpropagation, tornando abstrato em concreto e interativo.</span></li>
+            </ol>
+        </div>
+
+        <footer>
+            <p>Curso Técnico em Ciência de Dados – 3°A – Inteligência Artificial</p>
+            <p>Professor Engº André Corrêa de Lima | Atividade prática com simulador interativo</p>
+            <p>Instruções detalhadas para uso do simulador em cada atividade</p>
+        </footer>
     </div>
 
-    <h2>SEMANA 1 — ÁLGEBRA LINEAR: VETORES</h2>
-    <p class="intro-text">Questões 1 a 10 – Na Ciência de Dados, os vetores representam coordenadas ou características de um item. Calcule o vetor resultante das operações matemáticas abaixo.</p>
-
-    <div class="card"><strong>1)</strong> (2, 3) + (1, 1) = <span class="answer">(3, 4)</span>
-        <div class="step">Passo a passo: (2+1, 3+1) = (3, 4)</div>
+    <div style="text-align: center; padding: 6px 0;">
+        <button onclick="window.print()">IMPRIMIR RELATÓRIO</button>
     </div>
-    
-    <div class="card"><strong>2)</strong> (5, 4) + (2, 3) = <span class="answer">(7, 7)</span>
-        <div class="step">Passo a passo: (5+2, 4+3) = (7, 7)</div>
-    </div>
-    
-    <div class="card"><strong>3)</strong> (6, 2) - (1, 1) = <span class="answer">(5, 1)</span>
-        <div class="step">Passo a passo: (6-1, 2-1) = (5, 1)</div>
-    </div>
-    
-    <div class="card"><strong>4)</strong> (9, 7) - (3, 2) = <span class="answer">(6, 5)</span>
-        <div class="step">Passo a passo: (9-3, 7-2) = (6, 5)</div>
-    </div>
-    
-    <div class="card"><strong>5)</strong> (3, 3) × 2 = <span class="answer">(6, 6)</span>
-        <div class="step">Passo a passo: (3×2, 3×2) = (6, 6)</div>
-    </div>
-    
-    <div class="card"><strong>6)</strong> (4, 5) × 3 = <span class="answer">(12, 15)</span>
-        <div class="step">Passo a passo: (4×3, 5×3) = (12, 15)</div>
-    </div>
-    
-    <div class="card"><strong>7)</strong> (8, 6) ÷ 2 = <span class="answer">(4, 3)</span>
-        <div class="step">Passo a passo: (8÷2, 6÷2) = (4, 3)</div>
-    </div>
-    
-    <div class="card"><strong>8)</strong> (10, 4) ÷ 2 = <span class="answer">(5, 2)</span>
-        <div class="step">Passo a passo: (10÷2, 4÷2) = (5, 2)</div>
-    </div>
-    
-    <div class="card"><strong>9)</strong> (7, 1) + (2, 8) = <span class="answer">(9, 9)</span>
-        <div class="step">Passo a passo: (7+2, 1+8) = (9, 9)</div>
-    </div>
-    
-    <div class="card"><strong>10)</strong> Represente um vetor A de (9, 9) subtraído pelo vetor B de (4, 5) = <span class="answer">(5, 4)</span>
-        <div class="step">Passo a passo: (9-4, 9-5) = (5, 4)</div>
-    </div>
-
-    <h2>SEMANA 2 — CONCEITOS BÁSICOS E TIPOS DE DADOS</h2>
-    <p class="intro-text">Questões 11 a 20 – Para treinar um modelo de Inteligência Artificial, precisamos de classificar corretamente a natureza da informação. Leia os exemplos abaixo e classifique-os como: Numérico, Categórico ou Textual.</p>
-
-    <ul class="list-card">
-        <li><strong>11)</strong> Idade do cliente (ex: 34 anos) R: <span class="answer">Numérico</span></li>
-        <li><strong>12)</strong> Avaliação do produto (ex: Bom, Regular, Mau) R: <span class="answer">Categórico</span></li>
-        <li><strong>13)</strong> Comentário no site (ex: "Adorei a entrega rápida!") R: <span class="answer">Textual</span></li>
-        <li><strong>14)</strong> Salário de um funcionário (ex: 4.500,00 €) R: <span class="answer">Numérico</span></li>
-        <li><strong>15)</strong> Cor do veículo (ex: Prata, Preto, Vermelho) R: <span class="answer">Categórico</span></li>
-        <li><strong>16)</strong> Biografia / Resumo do currículo R: <span class="answer">Textual</span></li>
-        <li><strong>17)</strong> Temperatura ambiente (ex: 22.5 °C) R: <span class="answer">Numérico</span></li>
-        <li><strong>18)</strong> Estado civil (ex: Solteiro, Casado, Divorciado) R: <span class="answer">Categórico</span></li>
-        <li><strong>19)</strong> Número de filhos (ex: 2) R: <span class="answer">Numérico</span></li>
-        <li><strong>20)</strong> Morada completa (ex: "Rua das Flores, 123") R: <span class="answer">Textual</span></li>
-    </ul>
-
-    <h2>SEMANA 3 — ÁLGEBRA LINEAR: MATRIZES</h2>
-    <p class="intro-text">Questões 21 a 30 – Resolva as operações entre as matrizes 2x2. <br>(Atenção: Para adição, subtração e divisão, opere os elementos nas mesmas posições. Para as questões 26 a 30, faça a MULTIPLICAÇÃO matricial: Linha × Coluna).</p>
-
-    <h3>Soma, Subtração e Operações por Escalar</h3>
-
-    <div class="card">
-        <strong>21)</strong> 
-        <table class="matrix"><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table>
-        <span class="operation">+</span>
-        <table class="matrix"><tr><td>3</td><td>4</td></tr><tr><td>5</td><td>6</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>4</td><td>6</td></tr><tr><td>8</td><td>10</td></tr></table>
-        <div class="step">Passo: Linha 1: (1+3=4, 2+4=6). Linha 2: (3+5=8, 4+6=10).</div>
-    </div>
-
-    <div class="card">
-        <strong>22)</strong> 
-        <table class="matrix"><tr><td>5</td><td>6</td></tr><tr><td>7</td><td>8</td></tr></table>
-        <span class="operation">-</span>
-        <table class="matrix"><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>4</td><td>4</td></tr><tr><td>4</td><td>4</td></tr></table>
-        <div class="step">Passo: Linha 1: (5-1=4, 6-2=4). Linha 2: (7-3=4, 8-4=4).</div>
-    </div>
-
-    <div class="card">
-        <strong>23)</strong> 
-        <table class="matrix"><tr><td>7</td><td>1</td></tr><tr><td>3</td><td>5</td></tr></table>
-        <span class="operation">+</span>
-        <table class="matrix"><tr><td>2</td><td>3</td></tr><tr><td>1</td><td>1</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>9</td><td>4</td></tr><tr><td>4</td><td>6</td></tr></table>
-        <div class="step">Passo: Linha 1: (7+2=9, 1+3=4). Linha 2: (3+1=4, 5+1=6).</div>
-    </div>
-
-    <div class="card">
-        <strong>24) (Multiplicação por escalar)</strong> 
-        <span class="operation">2 ×</span>
-        <table class="matrix"><tr><td>2</td><td>2</td></tr><tr><td>2</td><td>2</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>4</td><td>4</td></tr><tr><td>4</td><td>4</td></tr></table>
-        <div class="step">Passo: Multiplica todos os termos por 2. (2×2=4).</div>
-    </div>
-
-    <div class="card">
-        <strong>25) (Divisão por escalar)</strong> 
-        <span class="operation">1/2 ×</span>
-        <table class="matrix"><tr><td>8</td><td>4</td></tr><tr><td>6</td><td>2</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>4</td><td>2</td></tr><tr><td>3</td><td>1</td></tr></table>
-        <div class="step">Passo: Divide todos os termos por 2. (8/2=4, 4/2=2, 6/2=3, 2/2=1).</div>
-    </div>
-
-    <h3>🔹 (B) Multiplicação de Matrizes (Linha × Coluna)</h3>
-
-    <div class="card">
-        <strong>26)</strong> 
-        <table class="matrix"><tr><td>1</td><td>2</td></tr><tr><td>3</td><td>4</td></tr></table>
-        <span class="operation">×</span>
-        <table class="matrix"><tr><td>2</td><td>0</td></tr><tr><td>0</td><td>2</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>2</td><td>4</td></tr><tr><td>6</td><td>8</td></tr></table>
-        <div class="step">Passo: L1xC1=(1×2+2×0=2), L1xC2=(1×0+2×2=4). L2xC1=(3×2+4×0=6), L2xC2=(3×0+4×2=8).</div>
-    </div>
-
-    <div class="card">
-        <strong>27)</strong> 
-        <table class="matrix"><tr><td>2</td><td>0</td></tr><tr><td>0</td><td>2</td></tr></table>
-        <span class="operation">×</span>
-        <table class="matrix"><tr><td>3</td><td>1</td></tr><tr><td>1</td><td>3</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>6</td><td>2</td></tr><tr><td>2</td><td>6</td></tr></table>
-        <div class="step">Passo: L1xC1=(2×3+0×1=6), L1xC2=(2×1+0×3=2). L2xC1=(0×3+2×1=2), L2xC2=(0×1+2×3=6).</div>
-    </div>
-
-    <div class="card">
-        <strong>28)</strong> 
-        <table class="matrix"><tr><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td></tr></table>
-        <span class="operation">×</span>
-        <table class="matrix"><tr><td>2</td><td>2</td></tr><tr><td>2</td><td>2</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>4</td><td>4</td></tr><tr><td>4</td><td>4</td></tr></table>
-        <div class="step">Passo: L1xC1=(1×2+1×2=4). A operação se repete para todas as outras posições.</div>
-    </div>
-
-    <div class="card">
-        <strong>29) Dica: Multiplicação pela matriz identidade não altera a matriz.</strong> 
-        <table class="matrix"><tr><td>2</td><td>1</td></tr><tr><td>1</td><td>2</td></tr></table>
-        <span class="operation">×</span>
-        <table class="matrix"><tr><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>2</td><td>1</td></tr><tr><td>1</td><td>2</td></tr></table>
-        <div class="step">Passo: Qualquer matriz multiplicada pela Identidade (1 na diagonal, 0 no restante) resulta nela mesma.</div>
-    </div>
-
-    <div class="card">
-        <strong>30)</strong> 
-        <table class="matrix"><tr><td>3</td><td>2</td></tr><tr><td>1</td><td>4</td></tr></table>
-        <span class="operation">×</span>
-        <table class="matrix"><tr><td>1</td><td>1</td></tr><tr><td>0</td><td>2</td></tr></table>
-        <span class="operation">=</span>
-        <table class="matrix" style="color: #e74c3c; font-weight: bold;"><tr><td>3</td><td>7</td></tr><tr><td>1</td><td>9</td></tr></table>
-        <div class="step">Passo: L1xC1=(3×1+2×0=3), L1xC2=(3×1+2×2=7). L2xC1=(1×1+4×0=1), L2xC2=(1×1+4×2=9).</div>
-    </div>
-
+</div>
 </body>
 </html>
