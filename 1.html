@@ -2,684 +2,635 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1, user-scalable=no" />
-  <title>Pinball Arcade — 2.5D Frente Fixa</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Pinball 2.5D — Flippers Estáveis + Plunger + Mobile</title>
   <style>
+    * {
+      user-select: none;
+      touch-action: manipulation;
+    }
     html, body {
       margin: 0;
       height: 100%;
       overflow: hidden;
       background: #03060c;
-      font-family: 'Segoe UI', 'Orbitron', system-ui, monospace;
-      touch-action: none; /* ajuda no mobile */
+      font-family: 'Segoe UI', system-ui, monospace;
     }
-
-    /* HUD estilo neon arcade */
     #hud {
       position: fixed;
-      top: 18px;
-      left: 18px;
+      top: 12px;
+      left: 12px;
       z-index: 20;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(10px);
-      border-radius: 28px;
-      padding: 12px 20px;
-      border: 1px solid rgba(0, 255, 255, 0.35);
-      box-shadow: 0 0 12px rgba(0, 180, 255, 0.2);
-      font-weight: bold;
-      font-family: 'Orbitron', monospace;
-      letter-spacing: 1px;
-    }
-    .hud-row {
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 10px 16px;
+      border: 1px solid rgba(0, 255, 255, 0.5);
       display: flex;
       gap: 16px;
       flex-wrap: wrap;
-      align-items: baseline;
+      font-weight: bold;
+      font-size: 14px;
     }
     .stat {
       background: #0a0f1a;
-      padding: 6px 14px;
-      border-radius: 40px;
-      border-left: 3px solid #0ff;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+      padding: 4px 12px;
+      border-radius: 32px;
+      border-left: 2px solid #0ff;
     }
-    .stat span {
-      font-size: 12px;
-      color: #8ab3ff;
-      margin-right: 8px;
-    }
-    .stat b {
-      font-size: 22px;
-      color: #f0f9ff;
-      text-shadow: 0 0 5px #0af;
-    }
-    #hint {
-      margin-top: 10px;
-      font-size: 11px;
-      opacity: 0.85;
-      display: flex;
-      gap: 14px;
-      flex-wrap: wrap;
-      font-family: monospace;
-    }
-    kbd {
-      background: #11161f;
-      border-radius: 8px;
-      padding: 3px 8px;
-      font-weight: bold;
-      color: #0ff;
-      border: 1px solid #2a4c7a;
-      margin: 0 3px;
-      font-size: 11px;
-    }
+    .stat span { color: #8ab3ff; margin-right: 6px; }
+    .stat b { color: #0ff; font-size: 20px; text-shadow: 0 0 5px #0ff; }
     #toast {
       position: fixed;
-      bottom: 24px;
+      bottom: 100px;
       left: 50%;
       transform: translateX(-50%);
       background: #0a1428ee;
       backdrop-filter: blur(12px);
       padding: 8px 20px;
-      border-radius: 60px;
-      color: #c6f0ff;
-      border: 1px solid cyan;
+      border-radius: 40px;
+      color: #0ff;
       font-size: 14px;
       font-weight: bold;
       z-index: 25;
       white-space: nowrap;
-      font-family: monospace;
       transition: 0.2s;
       pointer-events: none;
-      opacity: 0;
-    }
-
-    .controls-panel {
-      position: fixed;
-      bottom: 18px;
-      right: 18px;
-      background: rgba(0,0,0,0.5);
-      border-radius: 24px;
-      padding: 8px 16px;
-      font-size: 10px;
       font-family: monospace;
-      color: #8dd0ff;
-      backdrop-filter: blur(6px);
-      border: 0.5px solid #2f5f8f;
-      z-index: 20;
+      border: 1px solid #0ff;
     }
-
-    /* Controles touch */
-    #touchControls {
+    .touch-panel {
       position: fixed;
-      left: 14px;
-      right: 14px;
-      bottom: 14px;
-      display: none; /* aparece só em pointer coarse */
-      gap: 10px;
-      justify-content: space-between;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
       z-index: 30;
+      padding: 10px;
       pointer-events: none;
     }
-    .touchBtn {
+    .touch-btn {
       pointer-events: auto;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-tap-highlight-color: transparent;
-      width: 32%;
-      height: 64px;
-      border-radius: 22px;
-      border: 1px solid rgba(0,255,255,0.35);
-      background: rgba(0,0,0,0.55);
-      backdrop-filter: blur(10px);
-      color: #bff6ff;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(12px);
+      border: 1px solid #0ff;
+      border-radius: 50px;
+      padding: 12px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #0ff;
+      text-align: center;
+      min-width: 80px;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
+      transition: 0.05s linear;
+      touch-action: manipulation;
+      cursor: pointer;
       font-family: monospace;
-      font-weight: 800;
-      letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 18px rgba(0,180,255,0.15);
     }
-    .touchBtn:active {
-      transform: translateY(1px);
-      filter: brightness(1.1);
+    .touch-btn:active {
+      transform: scale(0.95);
+      background: #0ff;
+      color: #000;
     }
-
-    /* Barra do plunger */
-    #plungerBarWrap{
-      margin-top: 10px;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(0,255,255,0.22);
+    .plunger-bar {
+      position: fixed;
+      bottom: 140px;
+      right: 20px;
+      width: 45px;
+      height: 130px;
+      background: #111;
+      border: 2px solid #0ff;
+      border-radius: 25px;
       overflow: hidden;
+      z-index: 30;
+      box-shadow: 0 0 10px rgba(0,255,255,0.3);
     }
-    #plungerBar{
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #00ccff, #ff44aa);
-      box-shadow: 0 0 10px rgba(0,255,255,0.35);
-      transition: width 0.05s linear;
+    .plunger-fill {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background: linear-gradient(to top, #0ff, #0af);
+      transition: height 0.02s linear;
+      height: 0%;
+    }
+    @media (max-width: 700px) {
+      .touch-btn { padding: 8px 16px; font-size: 14px; min-width: 65px; }
+      .stat b { font-size: 16px; }
+      .plunger-bar { width: 35px; height: 100px; bottom: 120px; }
     }
   </style>
 </head>
-
 <body>
   <div id="hud">
-    <div class="hud-row">
-      <div class="stat"><span>🎯 SCORE</span> <b id="score">0</b></div>
-      <div class="stat"><span>💥 BALLS</span> <b id="balls">3</b></div>
-      <div class="stat"><span>⚡ MULTI</span> <b id="multiplier">1x</b></div>
-    </div>
-
-    <div id="plungerBarWrap" title="Plunger (segure para carregar)">
-      <div id="plungerBar"></div>
-    </div>
-
-    <div id="hint">
-      <span>🕹️ <kbd>←</kbd> <kbd>→</kbd> FLIPPERS</span>
-      <span>🚀 <kbd>SPACE</kbd> PLUNGER (SEGURE/SOLTE)</span>
-      <span>🔄 <kbd>R</kbd> RESET</span>
-      <span>⏸️ <kbd>P</kbd> PAUSE</span>
-    </div>
+    <div class="stat"><span>🎯 SCORE</span> <b id="score">0</b></div>
+    <div class="stat"><span>💥 BALLS</span> <b id="balls">3</b></div>
+    <div class="stat"><span>⚡ MULTI</span> <b id="multiplier">1x</b></div>
+  </div>
+  <div id="toast">🎮 PINBALL 2.5D</div>
+  
+  <div class="touch-panel">
+    <div class="touch-btn" id="touchLeft">◀ LEFT</div>
+    <div class="touch-btn" id="touchRight">RIGHT ▶</div>
+    <div class="touch-btn" id="touchPlunger">🎯 PLUNGER</div>
+  </div>
+  <div class="plunger-bar" id="plungerBar">
+    <div class="plunger-fill" id="plungerFill"></div>
   </div>
 
-  <div id="toast"></div>
-
-  <div class="controls-panel">
-    🎮 VIEW: FRONT FIXED (2.5D) • PINBALL CLASSIC
-  </div>
-
-  <div id="touchControls">
-    <div class="touchBtn" id="btnLeft">⟵ FLIP</div>
-    <div class="touchBtn" id="btnLaunch">HOLD • LAUNCH</div>
-    <div class="touchBtn" id="btnRight">FLIP ⟶</div>
-  </div>
-
-  <!-- Import Three.js via importmap -->
   <script type="importmap">
     {
       "imports": {
         "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+        "cannon-es": "https://unpkg.com/cannon-es@0.20.0/dist/cannon-es.js"
       }
     }
   </script>
 
   <script type="module">
     import * as THREE from 'three';
-    import * as CANNON from 'https://cdn.jsdelivr.net/npm/cannon-es@0.20.0/dist/cannon-es.js';
+    import * as CANNON from 'cannon-es';
 
-    // ---------- UI Elements ----------
+    // ---------- UI ----------
     const scoreEl = document.getElementById('score');
     const ballsEl = document.getElementById('balls');
-    const multEl  = document.getElementById('multiplier');
+    const multEl = document.getElementById('multiplier');
     const toastDiv = document.getElementById('toast');
-    const plungerBar = document.getElementById('plungerBar');
-
-    // Touch
-    const touchWrap = document.getElementById('touchControls');
-    const btnLeft = document.getElementById('btnLeft');
-    const btnRight = document.getElementById('btnRight');
-    const btnLaunch = document.getElementById('btnLaunch');
-
-    const isCoarsePointer = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-    if (isCoarsePointer) touchWrap.style.display = 'flex';
-
-    let showToastTimer = null;
+    const plungerFill = document.getElementById('plungerFill');
+    
     function showMessage(msg, duration = 1300) {
       toastDiv.textContent = msg;
       toastDiv.style.opacity = '1';
-      if (showToastTimer) clearTimeout(showToastTimer);
-      showToastTimer = setTimeout(() => toastDiv.style.opacity = '0', duration);
+      if (window.toastTimer) clearTimeout(window.toastTimer);
+      window.toastTimer = setTimeout(() => {
+        if (toastDiv) toastDiv.style.opacity = '0.9';
+      }, duration);
     }
-
-    // ---------- CONFIG ----------
+    
+    // Configuração física melhorada
     const CFG = {
-      tilt: 0.19,            // agora tilt é aplicado via gravidade (robusto)
-      gravity: 17.2,
-      restitution: 0.56,
-      friction: 0.085,
+      tilt: 0.19,
+      gravity: 18.5,
+      restitution: 0.64,
+      friction: 0.07,
       ballRadius: 0.19,
       flipper: {
-        length: 1.08,
-        width: 0.24,
-        height: 0.13,
-        maxForce: 80,     // mais firme
-        speedUp: 24,
-        speedDown: -18
+        length: 1.08, width: 0.24, height: 0.14,
+        torque: 4.2,
+        damping: 0.92
       },
-      plunger: {
-        maxCharge: 1.0,      // 0..1
-        chargeRate: 0.75,    // por segundo
-        minZ: -8.0,
-        maxZ: -14.0,
-        minY: 1.6,
-        maxY: 4.0,
-        xJitter: 0.45
-      },
-      table: { w: 6.4, h: 10.8, wall: 0.38, drainGap: 1.25 }
+      table: { w: 6.4, h: 10.8, wall: 0.38 }
     };
 
-    // ---------- Three.js ----------
-    const renderer = new THREE.WebGLRenderer({
-      antialias: true,
-      powerPreference: "high-performance"
-    });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    // --- Three.js
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    renderer.setClearColor(0x03060c, 1);
+    renderer.setClearColor(0x03060c);
     document.body.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
     scene.fog = new THREE.FogExp2(0x03060c, 0.025);
-
-    // CÂMERA FIXA
-    const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 60);
-    camera.position.set(0, 5.5, 12.6);
+    
+    const camera = new THREE.PerspectiveCamera(48, window.innerWidth/window.innerHeight, 0.1, 50);
+    camera.position.set(0, 5.2, 12.8);
     camera.lookAt(0, 1.2, 0);
-
-    // Luzes
-    const ambient = new THREE.AmbientLight(0x222a44, 0.45);
+    
+    // Iluminação
+    const ambient = new THREE.AmbientLight(0x223366, 0.6);
     scene.add(ambient);
-
-    const mainLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    mainLight.position.set(4, 9, 5);
+    const mainLight = new THREE.DirectionalLight(0xffffff, 1.3);
+    mainLight.position.set(4, 10, 5);
     mainLight.castShadow = true;
     mainLight.shadow.mapSize.width = 1024;
     mainLight.shadow.mapSize.height = 1024;
     scene.add(mainLight);
-
-    const fillLight = new THREE.PointLight(0x4466cc, 0.65);
+    const fillLight = new THREE.PointLight(0x4488ff, 0.7);
     fillLight.position.set(-2, 3.5, 4);
     scene.add(fillLight);
-
-    const backRim = new THREE.PointLight(0xff44aa, 0.55);
-    backRim.position.set(0, 2.5, -5);
-    scene.add(backRim);
-
-    const neonUnder = new THREE.PointLight(0x00ccff, 0.9);
-    neonUnder.position.set(0, -0.5, 0);
-    scene.add(neonUnder);
-
-    const gridHelper = new THREE.GridHelper(20, 20, 0x00aaff, 0x3366aa);
-    gridHelper.position.y = -1.8;
-    gridHelper.material.transparent = true;
-    gridHelper.material.opacity = 0.25;
-    scene.add(gridHelper);
-
-    // ---------- Cannon ----------
+    const backLight = new THREE.PointLight(0xff44aa, 0.5);
+    backLight.position.set(0, 2.5, -5);
+    scene.add(backLight);
+    
+    // --- Mundo físico CANNON
     const world = new CANNON.World();
-    // Broadphase melhor que Naive
-    world.broadphase = new CANNON.SAPBroadphase(world);
-    world.allowSleep = true;
+    world.gravity = new CANNON.Vec3(0, -CFG.gravity, 0);
+    world.broadphase = new CANNON.NaiveBroadphase();
     world.solver.iterations = 20;
-
-    // Tilt robusto: NÃO inclina plano físico. Inclina a gravidade no eixo Z (descida para +Z)
-    const g = CFG.gravity;
-    const t = CFG.tilt;
-    world.gravity.set(0, -g * Math.cos(t), +g * Math.sin(t));
-
+    
     const matBall = new CANNON.Material('ball');
     const matTable = new CANNON.Material('table');
     const matBumper = new CANNON.Material('bumper');
     const matFlipper = new CANNON.Material('flipper');
-
-    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matTable, {
-      friction: 0.07, restitution: CFG.restitution,
-      contactEquationStiffness: 1e8, contactEquationRelaxation: 3
-    }));
-    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matBumper, {
-      friction: 0.02, restitution: 0.86,
-      contactEquationStiffness: 1e8, contactEquationRelaxation: 3
-    }));
-    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matFlipper, {
-      friction: 0.045, restitution: 0.62, // um pouco menos elástico => mais estável
-      contactEquationStiffness: 1e8, contactEquationRelaxation: 4
-    }));
-
-    // ---------- Mesa visual + física ----------
+    
+    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matTable, { friction: 0.06, restitution: CFG.restitution, contactEquationStiffness: 1e9 }));
+    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matBumper, { friction: 0.02, restitution: 0.92, contactEquationStiffness: 1e9 }));
+    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matFlipper, { friction: 0.03, restitution: 0.8, contactEquationStiffness: 1e9 }));
+    world.defaultContactMaterial.material1 = matTable;
+    world.defaultContactMaterial.material2 = matBall;
+    world.defaultContactMaterial.restitution = 0.6;
+    
+    // --- Mesa visual
     const tableGroup = new THREE.Group();
     scene.add(tableGroup);
-
-    // Playfield agora RETO (tilt é via gravidade, evita inconsistência)
-    const playfieldMat = new THREE.MeshStandardMaterial({
-      color: 0x0b1426, metalness: 0.7, roughness: 0.45,
-      emissive: 0x001133, emissiveIntensity: 0.28
-    });
+    
+    const playfieldMat = new THREE.MeshStandardMaterial({ color: 0x0b1426, metalness: 0.7, roughness: 0.4, emissive: 0x001133, emissiveIntensity: 0.2 });
     const playfieldPlane = new THREE.Mesh(new THREE.PlaneGeometry(CFG.table.w, CFG.table.h), playfieldMat);
-    playfieldPlane.rotation.x = -Math.PI / 2;
+    playfieldPlane.rotation.x = -Math.PI/2 + CFG.tilt;
     playfieldPlane.position.y = 0;
     playfieldPlane.receiveShadow = true;
     tableGroup.add(playfieldPlane);
-
-    const borderMat = new THREE.MeshStandardMaterial({
-      color: 0x0a1120, metalness: 0.9, emissive: 0x0a4c6e, emissiveIntensity: 0.45
-    });
-
-    const drainGap = CFG.table.drainGap;
-    const halfW = CFG.table.w / 2;
-    const halfH = CFG.table.h / 2;
-
-    // Bordas visuais
-    const borderL = new THREE.Mesh(new THREE.BoxGeometry(CFG.table.wall, 0.5, CFG.table.h), borderMat);
-    borderL.position.set(-halfW - CFG.table.wall/2, 0.2, 0);
-    borderL.castShadow = true;
-    tableGroup.add(borderL);
-
-    const borderR = new THREE.Mesh(new THREE.BoxGeometry(CFG.table.wall, 0.5, CFG.table.h), borderMat);
-    borderR.position.set(halfW + CFG.table.wall/2, 0.2, 0);
-    borderR.castShadow = true;
-    tableGroup.add(borderR);
-
-    const borderTop = new THREE.Mesh(new THREE.BoxGeometry(CFG.table.w + CFG.table.wall*2, 0.5, CFG.table.wall), borderMat);
-    borderTop.position.set(0, 0.2, -halfH - CFG.table.wall/2);
-    borderTop.castShadow = true;
-    tableGroup.add(borderTop);
-
-    const leftDrainBlock = new THREE.Mesh(new THREE.BoxGeometry((CFG.table.w - drainGap)/2, 0.5, CFG.table.wall), borderMat);
-    leftDrainBlock.position.set(-(drainGap/2 + (CFG.table.w - drainGap)/4), 0.2, halfH + CFG.table.wall/2);
-    tableGroup.add(leftDrainBlock);
-
-    const rightDrainBlock = new THREE.Mesh(new THREE.BoxGeometry((CFG.table.w - drainGap)/2, 0.5, CFG.table.wall), borderMat);
-    rightDrainBlock.position.set((drainGap/2 + (CFG.table.w - drainGap)/4), 0.2, halfH + CFG.table.wall/2);
-    tableGroup.add(rightDrainBlock);
-
+    
+    // Bordas com efeito neon
+    const borderMat = new THREE.MeshStandardMaterial({ color: 0x0a1120, metalness: 0.8, emissive: 0x0a4c6e, emissiveIntensity: 0.4 });
+    const addBorderBox = (x, z, w, d) => {
+      const box = new THREE.Mesh(new THREE.BoxGeometry(w, 0.5, d), borderMat);
+      box.position.set(x, 0.2, z);
+      box.castShadow = true;
+      tableGroup.add(box);
+    };
+    addBorderBox(-CFG.table.w/2 - 0.2, 0, CFG.table.wall, CFG.table.h);
+    addBorderBox( CFG.table.w/2 + 0.2, 0, CFG.table.wall, CFG.table.h);
+    addBorderBox(0, -CFG.table.h/2 - 0.2, CFG.table.w + 0.8, CFG.table.wall);
+    const drainGap = 1.25;
+    addBorderBox(-(drainGap/2 + (CFG.table.w-drainGap)/4), CFG.table.h/2 + 0.2, (CFG.table.w-drainGap)/2, CFG.table.wall);
+    addBorderBox( (drainGap/2 + (CFG.table.w-drainGap)/4), CFG.table.h/2 + 0.2, (CFG.table.w-drainGap)/2, CFG.table.wall);
+    
     // Paredes físicas
-    function addWallBox(w, h, d, x, y, z, material = matTable) {
+    function addPhysBox(w, h, d, x, y, z, material = matTable) {
       const body = new CANNON.Body({ mass: 0, material });
       body.addShape(new CANNON.Box(new CANNON.Vec3(w/2, h/2, d/2)));
       body.position.set(x, y, z);
       world.addBody(body);
-      return body;
     }
-    addWallBox(CFG.table.wall, 0.8, CFG.table.h, -halfW - CFG.table.wall/2, 0.35, 0);
-    addWallBox(CFG.table.wall, 0.8, CFG.table.h,  halfW + CFG.table.wall/2, 0.35, 0);
-    addWallBox(CFG.table.w + CFG.table.wall*2, 0.8, CFG.table.wall, 0, 0.35, -halfH - CFG.table.wall/2);
-    addWallBox((CFG.table.w-drainGap)/2, 0.8, CFG.table.wall,
-      -(drainGap/2 + (CFG.table.w-drainGap)/4), 0.35, halfH + CFG.table.wall/2
-    );
-    addWallBox((CFG.table.w-drainGap)/2, 0.8, CFG.table.wall,
-      +(drainGap/2 + (CFG.table.w-drainGap)/4), 0.35, halfH + CFG.table.wall/2
-    );
-
-    // Plano físico horizontal
-    const tablePlanePhys = new CANNON.Body({ mass: 0, material: matTable });
-    tablePlanePhys.addShape(new CANNON.Plane());
-    tablePlanePhys.quaternion.setFromEuler(-Math.PI/2, 0, 0);
-    world.addBody(tablePlanePhys);
-
-    // ---------- BUMPERS ----------
-    const bumpersList = [];
+    addPhysBox(CFG.table.wall, 0.7, CFG.table.h, -CFG.table.w/2 - 0.2, 0.35, 0);
+    addPhysBox(CFG.table.wall, 0.7, CFG.table.h,  CFG.table.w/2 + 0.2, 0.35, 0);
+    addPhysBox(CFG.table.w + 0.8, 0.7, CFG.table.wall, 0, 0.35, -CFG.table.h/2 - 0.2);
+    addPhysBox((CFG.table.w-drainGap)/2, 0.7, CFG.table.wall, -(drainGap/2 + (CFG.table.w-drainGap)/4), 0.35, CFG.table.h/2 + 0.2);
+    addPhysBox((CFG.table.w-drainGap)/2, 0.7, CFG.table.wall,  (drainGap/2 + (CFG.table.w-drainGap)/4), 0.35, CFG.table.h/2 + 0.2);
+    
+    // Plano inclinado
+    const inclinePlane = new CANNON.Body({ mass: 0, material: matTable });
+    inclinePlane.addShape(new CANNON.Plane());
+    inclinePlane.quaternion.setFromEuler(-Math.PI/2 + CFG.tilt, 0, 0);
+    world.addBody(inclinePlane);
+    
+    // --- Bumpers
+    const bumpers = [];
     const bumperMeshes = [];
     const bumperPositions = [
-      { x: -2.05, z: -2.4, r: 0.38, pts: 70,  color: 0x0af,    emColor: 0x00ddff },
-      { x: 0,     z: -2.9, r: 0.42, pts: 100, color: 0xf0f,    emColor: 0xff44ee },
-      { x: 2.1,   z: -2.35,r: 0.38, pts: 70,  color: 0x0af,    emColor: 0x88ff44 },
-      { x: 0,     z: -4.5, r: 0.45, pts: 150, color: 0xffaa33, emColor: 0xffaa33 },
-      { x: -1.2,  z: -1.1, r: 0.32, pts: 55,  color: 0x66ccff, emColor: 0x2288ff },
-      { x: 1.3,   z: -1.05,r: 0.32, pts: 55,  color: 0x66ccff, emColor: 0x2288ff },
+      { x: -2.05, z: -2.4, r: 0.38, pts: 70, color: 0x00aaff },
+      { x: 0, z: -2.9, r: 0.42, pts: 100, color: 0xff44ff },
+      { x: 2.1, z: -2.35, r: 0.38, pts: 70, color: 0x88ff44 },
+      { x: 0, z: -4.5, r: 0.45, pts: 150, color: 0xffaa44 },
+      { x: -1.2, z: -1.1, r: 0.32, pts: 55, color: 0x66ccff },
+      { x: 1.3, z: -1.05, r: 0.32, pts: 55, color: 0x66ccff }
     ];
-
-    bumperPositions.forEach((b) => {
+    
+    bumperPositions.forEach(b => {
       const body = new CANNON.Body({ mass: 0, material: matBumper });
       body.addShape(new CANNON.Sphere(b.r));
       body.position.set(b.x, 0.4, b.z);
       world.addBody(body);
-      bumpersList.push({ body, pts: b.pts });
-
-      const cylinderGeo = new THREE.CylinderGeometry(b.r * 0.92, b.r, 0.28, 24);
-      const materialCyl = new THREE.MeshStandardMaterial({
-        color: b.color, emissive: b.emColor, emissiveIntensity: 0.65, metalness: 0.4
-      });
-      const mesh = new THREE.Mesh(cylinderGeo, materialCyl);
-      mesh.position.set(b.x, 0.2, b.z);
-      mesh.castShadow = true;
-      tableGroup.add(mesh);
-      bumperMeshes.push(mesh);
+      bumpers.push({ body, pts: b.pts });
+      
+      const cylinder = new THREE.Mesh(
+        new THREE.CylinderGeometry(b.r * 0.92, b.r, 0.28, 24),
+        new THREE.MeshStandardMaterial({ color: b.color, emissive: b.color, emissiveIntensity: 0.65, metalness: 0.3 })
+      );
+      cylinder.position.set(b.x, 0.2, b.z);
+      cylinder.castShadow = true;
+      tableGroup.add(cylinder);
+      bumperMeshes.push(cylinder);
     });
-
-    // ---------- FLIPPERS ----------
-    function createFlipper(isLeft = true) {
+    
+    // --- FLIPPERS com torque manual (sem hinge.setLimits problem)
+    function createFlipper(isLeft) {
       const len = CFG.flipper.length;
       const w = CFG.flipper.width;
       const h = CFG.flipper.height;
-
-      const colorMat = isLeft ? 0x2a6f9f : 0x9f3f8a;
-      const emissiveCol = isLeft ? 0x0088aa : 0xff44aa;
-
-      const meshGeo = new THREE.BoxGeometry(len, h, w);
-      const meshMat = new THREE.MeshStandardMaterial({
-        color: colorMat, metalness: 0.75, emissive: emissiveCol, emissiveIntensity: 0.45
-      });
-      const mesh = new THREE.Mesh(meshGeo, meshMat);
+      const color = isLeft ? 0x2a6f9f : 0x9f3f8a;
+      const emissive = isLeft ? 0x0088aa : 0xff66cc;
+      
+      const mesh = new THREE.Mesh(
+        new THREE.BoxGeometry(len, h, w),
+        new THREE.MeshStandardMaterial({ color, metalness: 0.75, emissive, emissiveIntensity: 0.5 })
+      );
       mesh.castShadow = true;
       tableGroup.add(mesh);
-
-      // (C) estabilidade: corpo com massa moderada + sleep
+      
       const body = new CANNON.Body({ mass: 0.85, material: matFlipper });
       body.addShape(new CANNON.Box(new CANNON.Vec3(len/2, h/2, w/2)));
-      body.allowSleep = true;
-
-      const baseX = isLeft ? -1.05 : 1.05;
+      const baseX = isLeft ? -1.08 : 1.08;
       const baseZ = 3.85;
-      body.position.set(baseX, 0.23, baseZ);
+      body.position.set(baseX, 0.24, baseZ);
       world.addBody(body);
-
+      
+      // Pivô fixo
+      const pivotOffsetX = isLeft ? -len/2 + 0.16 : len/2 - 0.16;
       const pivotBody = new CANNON.Body({ mass: 0, material: matTable });
-      pivotBody.addShape(new CANNON.Sphere(0.06));
-      const pivotOffsetX = isLeft ? -len/2 + 0.18 : len/2 - 0.18;
-      pivotBody.position.set(baseX + pivotOffsetX, 0.23, baseZ);
+      pivotBody.addShape(new CANNON.Sphere(0.05));
+      pivotBody.position.set(baseX + pivotOffsetX, 0.24, baseZ);
       world.addBody(pivotBody);
-
-      const localPivot = new CANNON.Vec3(isLeft ? -len/2 + 0.18 : len/2 - 0.18, 0, 0);
-
-      const hinge = new CANNON.HingeConstraint(body, pivotBody, {
-        pivotA: localPivot,
-        axisA: new CANNON.Vec3(0, 1, 0),
-        pivotB: new CANNON.Vec3(0, 0, 0),
-        axisB: new CANNON.Vec3(0, 1, 0)
-      });
-
-      const lowAngle  = isLeft ? -0.72 : -0.22;
-      const highAngle = isLeft ?  0.22 :  0.72;
-      hinge.setLimits(lowAngle, highAngle, 0.01);
-      hinge.enableMotor();
-      hinge.setMotorMaxForce(CFG.flipper.maxForce);
-      hinge.setMotorSpeed(0);
-      world.addConstraint(hinge);
-
-      return { mesh, body, hinge, isLeft, pivotBody };
+      
+      // LockConstraint para fixar o pivô
+      const constraint = new CANNON.LockConstraint(body, pivotBody);
+      world.addConstraint(constraint);
+      
+      // Armazenar dados para torque manual
+      let targetSpeed = 0;
+      let currentAngle = 0;
+      let angularVel = 0;
+      
+      const minAngle = isLeft ? -0.68 : -0.25;
+      const maxAngle = isLeft ? 0.25 : 0.68;
+      
+      function setMotorSpeed(speed) {
+        targetSpeed = Math.min(Math.max(speed, -22), 22);
+      }
+      
+      function update(dt) {
+        if (dt > 0.03) dt = 0.03;
+        // Suaviza velocidade
+        angularVel += (targetSpeed - angularVel) * 0.3;
+        
+        // Calcula ângulo atual a partir do quaternion
+        const quat = body.quaternion;
+        const euler = new CANNON.Vec3();
+        // Extrair ângulo em Y (simplificado)
+        const qx = quat.x, qy = quat.y, qz = quat.z, qw = quat.w;
+        let angle = Math.atan2(2 * (qw * qy + qx * qz), 1 - 2 * (qy * qy + qz * qz));
+        if (!isLeft) angle = -angle;
+        
+        // Aplica torque
+        let torque = angularVel * CFG.flipper.torque;
+        if ((angle <= minAngle && torque < 0) || (angle >= maxAngle && torque > 0)) {
+          torque = 0;
+          angularVel = 0;
+        }
+        body.applyTorque(new CANNON.Vec3(0, torque * (isLeft ? 1 : -1), 0));
+        
+        // Amortecimento
+        const av = body.angularVelocity;
+        body.angularVelocity.set(av.x * 0.97, av.y * CFG.flipper.damping, av.z * 0.97);
+      }
+      
+      return { mesh, body, setMotorSpeed, update, isLeft };
     }
-
+    
     const leftFlipper = createFlipper(true);
     const rightFlipper = createFlipper(false);
-
-    // ---------- BOLA ----------
-    const ballMeshGeo = new THREE.SphereGeometry(CFG.ballRadius, 48, 48);
-    const ballMaterial = new THREE.MeshStandardMaterial({
-      color: 0xeef5ff, metalness: 0.92, roughness: 0.12, emissive: 0x2266aa, emissiveIntensity: 0.2
-    });
-    const ballMesh = new THREE.Mesh(ballMeshGeo, ballMaterial);
+    
+    // --- Bola
+    const ballMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(CFG.ballRadius, 48, 48),
+      new THREE.MeshStandardMaterial({ color: 0xeef5ff, metalness: 0.92, roughness: 0.12, emissive: 0x2266aa, emissiveIntensity: 0.15 })
+    );
     ballMesh.castShadow = true;
-    ballMesh.receiveShadow = true;
     scene.add(ballMesh);
-
-    const ballBodyPhys = new CANNON.Body({
-      mass: 0.6,
+    
+    const ballBody = new CANNON.Body({
+      mass: 0.62,
       material: matBall,
-      linearDamping: 0.10,
-      angularDamping: 0.28
+      linearDamping: 0.1,
+      angularDamping: 0.25
     });
-    ballBodyPhys.addShape(new CANNON.Sphere(CFG.ballRadius));
-    ballBodyPhys.allowSleep = true;
-    ballBodyPhys.sleepSpeedLimit = 0.08;
-    ballBodyPhys.sleepTimeLimit = 0.2;
-    world.addBody(ballBodyPhys);
-
-    // ---------- Estado do jogo ----------
+    ballBody.addShape(new CANNON.Sphere(CFG.ballRadius));
+    world.addBody(ballBody);
+    
+    // --- Estado do jogo
     let score = 0;
     let ballsLeft = 3;
     let multiplier = 1;
     let paused = false;
-
-    let comboTimeout = null;
     let comboCount = 0;
-
-    // Plunger
+    let comboTimeout = null;
+    
+    let plungerPower = 0;
     let plungerCharging = false;
-    let plungerCharge = 0; // 0..1
-    let plungerLastTime = performance.now();
-
+    
     function updateUI() {
       scoreEl.textContent = score;
       ballsEl.textContent = ballsLeft;
       multEl.textContent = `${multiplier}x`;
-      plungerBar.style.width = `${Math.round(plungerCharge * 100)}%`;
     }
-
+    
     function resetBallToLauncher() {
-      ballBodyPhys.velocity.set(0, 0, 0);
-      ballBodyPhys.angularVelocity.set(0, 0, 0);
-      ballBodyPhys.position.set(2.2, 0.5, halfH - 1.15); // ~4.25
-      plungerCharge = 0;
-      plungerCharging = false;
-      updateUI();
+      ballBody.velocity.set(0, 0, 0);
+      ballBody.angularVelocity.set(0, 0, 0);
+      ballBody.position.set(2.3, 0.55, 4.35);
     }
-
-    function resetGame() {
-      score = 0;
-      ballsLeft = 3;
-      multiplier = 1;
-      comboCount = 0;
-      paused = false;
+    
+    function addPoints(basePts) {
+      if (paused) return;
+      const gained = basePts * multiplier;
+      score += gained;
       updateUI();
-      resetBallToLauncher();
-      showMessage("RESET ⚡ Novo jogo!", 1100);
+      showMessage(`+${gained} pts!`);
+      
+      comboCount++;
+      if (comboCount >= 3 && multiplier < 5) {
+        multiplier++;
+        updateUI();
+        showMessage(`🔥 COMBO x${multiplier}! 🔥`);
+        comboCount = 0;
+      }
+      if (comboTimeout) clearTimeout(comboTimeout);
+      comboTimeout = setTimeout(() => {
+        multiplier = 1;
+        comboCount = 0;
+        updateUI();
+      }, 3000);
     }
-
+    
     function loseBall() {
       if (paused) return;
       ballsLeft--;
       updateUI();
       if (ballsLeft <= 0) {
         paused = true;
-        showMessage(`GAME OVER! Pontuação final: ${score} 🏆`, 2800);
+        showMessage(`💀 GAME OVER! Pontuação: ${score} 💀`, 3000);
       } else {
-        showMessage("💔 Bola perdida! Próxima...", 1100);
+        showMessage("💔 Bola perdida! Próxima bola...");
         resetBallToLauncher();
       }
     }
-
-    function addPoints(basePoints) {
-      if (paused) return;
-      const gained = basePoints * multiplier;
-      score += gained;
-      updateUI();
-      showMessage(`+${gained} pts!`, 500);
-
-      comboCount++;
-      if (comboCount >= 3) {
-        multiplier = Math.min(multiplier + 1, 5);
-        showMessage(`COMBO x${multiplier}! 🔥`, 650);
-        comboCount = 0;
+    
+    function checkDrain() {
+      const pos = ballBody.position;
+      if (pos.y < -1.3 || pos.z > 7.8 || Math.abs(pos.x) > 4.2) {
+        if (ballsLeft > 0 && !paused) {
+          loseBall();
+        } else if (ballsLeft <= 0) {
+          ballBody.velocity.set(0, 0, 0);
+        } else {
+          resetBallToLauncher();
+        }
       }
-      if (multiplier > 1 && comboTimeout) clearTimeout(comboTimeout);
-      comboTimeout = setTimeout(() => {
-        multiplier = 1;
-        comboCount = 0;
-        updateUI();
-      }, 3200);
+      // Evitar que escape lateralmente
+      if (Math.abs(pos.x) > 3.85) {
+        ballBody.position.x = Math.sign(pos.x) * 3.75;
+      }
     }
-
-    // Colisão com bumpers
-    ballBodyPhys.addEventListener('collide', (e) => {
-      const other = e.body;
-      for (let i = 0; i < bumpersList.length; i++) {
-        if (other === bumpersList[i].body) {
-          addPoints(bumpersList[i].pts);
-
-          // impulso extra com controle (menos "explodido" que antes)
+    
+    // --- Plunger (segurar espaço)
+    function startCharge() {
+      if (!paused && ballsLeft > 0) plungerCharging = true;
+    }
+    
+    function releaseCharge() {
+      if (!plungerCharging || paused) {
+        plungerCharging = false;
+        plungerPower = 0;
+        plungerFill.style.height = '0%';
+        return;
+      }
+      const power = Math.min(plungerPower, 1.0);
+      const pos = ballBody.position;
+      if (pos.z > 3.7 && (pos.x > 1.3 || pos.x < -1.3)) {
+        const vx = (Math.random() - 0.5) * 1.0;
+        const vz = -7.5 - power * 6.0;
+        const vy = 2.0 + power * 1.8;
+        ballBody.velocity.set(vx, vy, vz);
+        showMessage(`🚀 LANÇAR! ${Math.floor(power * 100)}%`);
+      } else {
+        showMessage("⚠️ Posicione a bola no lançador!");
+      }
+      plungerCharging = false;
+      plungerPower = 0;
+      plungerFill.style.height = '0%';
+    }
+    
+    function updatePlungerCharge(dt) {
+      if (plungerCharging && !paused) {
+        plungerPower = Math.min(plungerPower + dt * 2.5, 1.0);
+        plungerFill.style.height = `${plungerPower * 100}%`;
+      }
+    }
+    
+    // --- Inputs
+    const keys = { left: false, right: false };
+    
+    window.addEventListener('keydown', (e) => {
+      const code = e.code;
+      if (code === 'ArrowLeft') { keys.left = true; e.preventDefault(); }
+      if (code === 'ArrowRight') { keys.right = true; e.preventDefault(); }
+      if (code === 'Space') { startCharge(); e.preventDefault(); }
+      if (code === 'KeyR') {
+        score = 0; ballsLeft = 3; multiplier = 1; paused = false; comboCount = 0;
+        updateUI(); resetBallToLauncher(); showMessage("🔄 RESET completo!");
+      }
+      if (code === 'KeyP') { paused = !paused; showMessage(paused ? "⏸️ PAUSADO" : "▶️ JOGANDO"); }
+    });
+    
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'ArrowLeft') keys.left = false;
+      if (e.code === 'ArrowRight') keys.right = false;
+      if (e.code === 'Space') releaseCharge();
+    });
+    
+    // Mobile touch
+    document.getElementById('touchLeft')?.addEventListener('touchstart', (e) => { keys.left = true; e.preventDefault(); });
+    document.getElementById('touchLeft')?.addEventListener('touchend', () => keys.left = false);
+    document.getElementById('touchRight')?.addEventListener('touchstart', (e) => { keys.right = true; e.preventDefault(); });
+    document.getElementById('touchRight')?.addEventListener('touchend', () => keys.right = false);
+    const plungerBtn = document.getElementById('touchPlunger');
+    plungerBtn?.addEventListener('touchstart', (e) => { startCharge(); e.preventDefault(); });
+    plungerBtn?.addEventListener('touchend', () => releaseCharge());
+    plungerBtn?.addEventListener('mousedown', startCharge);
+    window.addEventListener('mouseup', () => { if (plungerCharging) releaseCharge(); });
+    
+    function updateFlippers(dt) {
+      const leftSpeed = keys.left ? 20 : -14;
+      const rightSpeed = keys.right ? 20 : -14;
+      leftFlipper.setMotorSpeed(leftSpeed);
+      rightFlipper.setMotorSpeed(rightSpeed);
+      leftFlipper.update(dt);
+      rightFlipper.update(dt);
+    }
+    
+    // --- Colisão com bumpers
+    ballBody.addEventListener('collide', (e) => {
+      for (let i = 0; i < bumpers.length; i++) {
+        if (e.body === bumpers[i].body) {
+          addPoints(bumpers[i].pts);
           const normal = e.contact.ni.clone();
-          const impulseVec = new CANNON.Vec3(-normal.x, (-normal.y + 0.65), -normal.z);
-          impulseVec.scale(2.0, impulseVec);
-          ballBodyPhys.velocity.vadd(impulseVec, ballBodyPhys.velocity);
-
-          // flash visual
-          const mat = bumperMeshes[i]?.material;
-          if (mat) {
-            const old = mat.emissiveIntensity;
-            mat.emissiveIntensity = 1.25;
-            setTimeout(() => { if (mat) mat.emissiveIntensity = old; }, 140);
+          const impulse = new CANNON.Vec3(-normal.x, -normal.y + 0.6, -normal.z);
+          impulse.scale(2.4, impulse);
+          ballBody.velocity.vadd(impulse, ballBody.velocity);
+          if (bumperMeshes[i]?.material) {
+            bumperMeshes[i].material.emissiveIntensity = 1.2;
+            setTimeout(() => { if (bumperMeshes[i]?.material) bumperMeshes[i].material.emissiveIntensity = 0.65; }, 150);
           }
           break;
         }
       }
     });
-
-    // (A) Dreno e out-of-bounds mais coerente com tamanho da mesa
-    function checkDrain() {
-      const pos = ballBodyPhys.position;
-
-      // caiu abaixo da mesa
-      if (pos.y < -1.2) {
-        if (ballsLeft > 0 && !paused) loseBall();
-        return;
-      }
-
-      // passou do fundo da mesa (lado do drain) — z grande
-      const drainLineZ = halfH + 1.25; // margem após a parede inferior
-      if (pos.z > drainLineZ) {
-        if (ballsLeft > 0 && !paused) loseBall();
-        else {
-          ballBodyPhys.velocity.set(0,0,0);
-          ballBodyPhys.position.set(0, 2, 0);
+    
+    // --- Loop principal
+    let lastTime = performance.now();
+    let accumulator = 0;
+    let animTime = 0;
+    
+    function animate(now) {
+      requestAnimationFrame(animate);
+      let dt = Math.min((now - lastTime) / 1000, 0.033);
+      lastTime = now;
+      
+      if (!paused) {
+        updateFlippers(dt);
+        updatePlungerCharge(dt);
+        accumulator += dt;
+        while (accumulator >= 1/120) {
+          world.step(1/120);
+          accumulator -= 1/120;
         }
+        checkDrain();
       }
-
-      // segurança lateral
-      const maxX = halfW + 0.9;
-      if (Math.abs(pos.x) > maxX) {
-        ballBodyPhys.position.x = Math.sign(pos.x) * (maxX - 0.2);
-      }
+      
+      // Sincronização visual
+      ballMesh.position.copy(ballBody.position);
+      ballMesh.quaternion.copy(ballBody.quaternion);
+      leftFlipper.mesh.position.copy(leftFlipper.body.position);
+      leftFlipper.mesh.quaternion.copy(leftFlipper.body.quaternion);
+      rightFlipper.mesh.position.copy(rightFlipper.body.position);
+      rightFlipper.mesh.quaternion.copy(rightFlipper.body.quaternion);
+      
+      // Animação dos bumpers
+      animTime += dt;
+      bumperMeshes.forEach((mesh, idx) => {
+        if (mesh.material) {
+          mesh.material.emissiveIntensity = 0.55 + Math.sin(animTime * 3 + idx) * 0.25;
+        }
+      });
+      
+      camera.lookAt(0, 1.2, 0);
+      renderer.render(scene, camera);
     }
-
-    // (D) Plunger: área do lançador (mais precisa que o if antigo)
-    function isBallInLauncherLane() {
-      const p = ballBodyPhys.position;
-      // lane no lado direito inferior
-      const inX = (p.x > 1.55 && p.x < 2.85);
-      const inZ = (p.z > (halfH - 2.2) && p.z < (halfH - 0.35)); // ~3.2..5.05
-      const inY = (p.y > 0.05 && p.y < 1.4);
-      return inX && inZ && inY;
+    
+    resetBallToLauncher();
+    updateUI();
+    showMessage("🎯 PINBALL 2.5D | ← → | SEGURE ESPAÇO para PLUNGER", 2500);
+    animate();
+    
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    // Estrelas decorativas
+    const starPositions = [];
+    for (let i = 0; i < 1000; i++) {
+      starPositions.push((Math.random() - 0.5) * 200);
+      starPositions.push((Math.random() - 0.5) * 80);
+      starPositions.push((Math.random() - 0.5) * 80 - 40);
     }
-
-    function startChargingPlunger() {
-      if (paused) return;
-      if (!isBallInLauncherLane()) {
-        showMessage("⚠️ Coloque a bola no lançador!", 700);
-        return;
-      }
-      plungerCharging = true;
-      plungerLastTime = performance.now();
-      showMessage("🔋 Carregando...", 450);
-    }
-
-    function releasePlunger() {
-      if (paused) return;
-      if (!plungerCharging) return;
-
-      plungerCharging = false;
-
-      // converte carga (0..1) em velocidade (z negativa empurra para o topo)
-      const zVel = THREE.MathUtils.lerp(CFG.plunger.minZ, CFG.plunger.maxZ, plungerCharge);
-      const yVel = THREE.MathUtils.lerp(CFG.plunger.minY, CFG.plunger.maxY, plungerCharge);
-      const xJit = (Math.random() - 0.5) * CFG.plunger.xJitter;
-
-      ballBodyPhys.velocity.set(xJit, yVel, zVel);
-      showMessage("🚀 LAUNCH!", 420);
-
-      // reseta barra
-      plungerCharge = 0
+    const starGeometry = new THREE.BufferGeometry();
+    starGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starPositions), 3));
+    const stars = new THREE.Points(starGeometry, new THREE.PointsMaterial({ color: 0x88aaff, size: 0.07, transparent: true, opacity: 0.6 }));
+    scene.add(stars);
+  </script>
+</body>
+</html>
