@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pinball 3D (WebGL) — Demo 1 arquivo</title>
+  <style>
+    html, body { margin:0; height:100%; overflow:hidden; background:#05060a; font-family:system-ui,Segoe UI,Arial,sans-serif; }
+    #hud {
+      position: fixed; top: 12px; left: 12px; z-index: 10;
+      padding: 10px 12px; border-radius: 12px;
+      background: rgba(0,0,0,.55); color: #eaf2ff;
+      backdrop-filter: blur(6px); border: 1px solid rgba(255,255,255,.12);
+      width: min(360px, calc(100vw - 24px));
+      box-shadow: 0 12px 30px rgba(0,0,0,.45);
+    }
+    #hud h1 { font-size: 14px; margin: 0 0 6px; letter-spacing: .3px; font-weight: 700; }
+    #hud .row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pill {
+      display:inline-flex; align-items:center; gap:8px;
+      padding: 6px 10px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      font-size: 12px;
+    }
+    .pill b { color:#9dd6ff; font-weight: 800; }
+    #hint { margin-top: 8px; font-size: 12px; line-height: 1.35; opacity:.92; }
+    #hint kbd {
+      font-family: ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      font-size: 11px; padding: 2px 6px; border-radius: 6px;
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+    }
+    #toast {
+      position: fixed; right: 12px; top: 12px; z-index: 10;
+      padding: 10px 12px; border-radius: 12px;
+      background: rgba(15, 23, 42, .75); color: #eaf2ff;
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(6px);
+      max-width: min(360px, calc(100vw - 24px));
+      display:none;
+    }
+    #toast.show { display:block; }
+    canvas { display:block; }
+  </style>
+</head>
+<body>
+  <div id="hud">
+    <h1>🎱 Pinball 3D (WebGL) — Demo “1 HTML”</h1>
+    <div class="row">
+      <div class="pill">Pontuação: <b id="score">0</b></div>
+      <div class="pill">Bolas: <b id="balls">3</b></div>
+      <div class="pill">FPS: <b id="fps">—</b></div>
+    </div>
+    <div id="hint">
+      Controles:
+      <div style="margin-top:6px;">
+        <kbd>←</kbd>/<kbd>→</kbd> Flippers &nbsp; • &nbsp;
+        <kbd>Espaço</kbd> Lançar &nbsp; • &nbsp;
+        <kbd>R</kbd> Reset &nbsp; • &nbsp;
+        <kbd>P</kbd> Pausar
+      </div>
+      <div style="margin-top:6px;">
+        Mouse: arraste para girar câmera (Orbit). Scroll para zoom.
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+  <!-- OrbitControls (versão não-module, adiciona THREE.OrbitControls) -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <!-- Cannon.js (física) -->
+  <script src="https://cdn.jsdelivr.net/npm/cannon@0.6.2/build/cannon.min.js"></script>
+
+  <script>
+    // =========================================================
+    // Pinball 3D (WebGL + Cannon) — protótipo original (1 arquivo)
+    // =========================================================
+
+    // ---------- HUD ----------
+    const elScore = document.getElementById('score');
+    const elBalls = document.getElementById('balls');
+    const elFps   = document.getElementById('fps');
+    const toast   = document.getElementById('toast');
+
+    function showToast(msg, ms=1400) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(() => toast.classList.remove('show'), ms);
+    }
+
+    // Verificações rápidas (se falhar, é porque CDN não carregou)
+    if (!window.THREE) { alert("THREE.js não carregou. Abra via servidor local (http://localhost) e confira sua internet."); }
+    if (!window.CANNON) { alert("CANNON.js não carregou. Abra via servidor local (http://localhost) e confira sua internet."); }
+
+    // ---------- CONFIG ----------
+    const CFG = {
+      tilt: 0.18,
+      gravity: 16.0,
+      restitution: 0.55,
+      friction: 0.10,
+      ballRadius: 0.18,
+      flipper: { length: 1.10, width: 0.22, height: 0.14, maxForce: 55, speedUp: 18, speedDown: -12 },
+      table: { w: 6.2, h: 10.5, wall: 0.35 }
+    };
+
+    // ---------- THREE ----------
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.Fog(0x05060a, 10, 40);
+
+    const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.05, 200);
+    camera.position.set(0, 7.2, 12.8);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.target.set(0, 0.9, 0);
+    controls.maxPolarAngle = Math.PI * 0.48;
+    controls.minDistance = 6;
+    controls.maxDistance = 22;
+
+    // Luzes
+    scene.add(new THREE.AmbientLight(0x88aaff, 0.25));
+    const key = new THREE.DirectionalLight(0xffffff, 1.1);
+    key.position.set(6, 12, 8);
+    scene.add(key);
+
+    const rim = new THREE.DirectionalLight(0x66ccff, 0.55);
+    rim.position.set(-8, 6, -6);
+    scene.add(rim);
+
+    const neon1 = new THREE.PointLight(0x00e5ff, 1.1, 18, 2);
+    neon1.position.set(-2.2, 2.6, 1.5);
+    scene.add(neon1);
+
+    const neon2 = new THREE.PointLight(0xff2bd6, 0.9, 18, 2);
+    neon2.position.set(2.2, 2.4, -1.2);
+    scene.add(neon2);
+
+    // ---------- CANNON ----------
+    const world = new CANNON.World();
+    world.gravity.set(0, -CFG.gravity, 0);
+    world.broadphase = new CANNON.NaiveBroadphase();
+    world.solver.iterations = 12;
+    world.defaultContactMaterial.friction = CFG.friction;
+
+    const matBall   = new CANNON.Material("ball");
+    const matTable  = new CANNON.Material("table");
+    const matBumper = new CANNON.Material("bumper");
+    const matFlip   = new CANNON.Material("flipper");
+
+    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matTable,  { friction: 0.06, restitution: CFG.restitution }));
+    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matBumper, { friction: 0.02, restitution: 0.85 }));
+    world.addContactMaterial(new CANNON.ContactMaterial(matBall, matFlip,   { friction: 0.02, restitution: 0.65 }));
+
+    // ---------- Helpers ----------
+    function makeBoxMesh(w,h,d, color=0x101824, emissive=0x000000, emissiveIntensity=0.0) {
+      const geo = new THREE.BoxGeometry(w,h,d);
+      const mat = new THREE.MeshStandardMaterial({ color, emissive, emissiveIntensity, metalness: 0.25, roughness: 0.45 });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.receiveShadow = true;
+      return mesh;
+    }
+    function makeCylinderMesh(r,h, color=0x1c2b44, emissive=0x00e5ff, emissiveIntensity=0.25) {
+      const geo = new THREE.CylinderGeometry(r, r, h, 32);
+      const mat = new THREE.MeshStandardMaterial({ color, emissive, emissiveIntensity, metalness: 0.2, roughness: 0.35 });
+      return new THREE.Mesh(geo, mat);
+    }
+
+    // ---------- Table visual ----------
+    const tableGroup = new THREE.Group();
+    scene.add(tableGroup);
+
+    const playfieldGeo = new THREE.PlaneGeometry(CFG.table.w, CFG.table.h, 1, 1);
+    const playfieldMat = new THREE.MeshStandardMaterial({
+      color: 0x0b1220, metalness: 0.25, roughness: 0.35,
+      emissive: 0x00111a, emissiveIntensity: 0.35
+    });
+    const playfield = new THREE.Mesh(playfieldGeo, playfieldMat);
+    playfield.rotation.x = -Math.PI/2 + CFG.tilt;
+    playfield.position.y = 0;
+    tableGroup.add(playfield);
+
+    // Moldura visual
+    const wallColor = 0x111827;
+    const wallL = makeBoxMesh(CFG.table.wall, 0.6, CFG.table.h, wallColor, 0x0b5cff, 0.25);
+    wallL.position.set(-CFG.table.w/2 - CFG.table.wall/2, 0.25, 0);
+    tableGroup.add(wallL);
+
+    const wallR = makeBoxMesh(CFG.table.wall, 0.6, CFG.table.h, wallColor, 0x0b5cff, 0.25);
+    wallR.position.set(CFG.table.w/2 + CFG.table.wall/2, 0.25, 0);
+    tableGroup.add(wallR);
+
+    const wallTop = makeBoxMesh(CFG.table.w + CFG.table.wall*2, 0.6, CFG.table.wall, wallColor, 0xff2bd6, 0.22);
+    wallTop.position.set(0, 0.25, -CFG.table.h/2 - CFG.table.wall/2);
+    tableGroup.add(wallTop);
+
+    const gap = 1.15;
+    const wallBotL = makeBoxMesh((CFG.table.w-gap)/2, 0.6, CFG.table.wall, wallColor, 0x00e5ff, 0.22);
+    wallBotL.position.set(-(gap/2 + (CFG.table.w-gap)/4), 0.25, CFG.table.h/2 + CFG.table.wall/2);
+    tableGroup.add(wallBotL);
+
+    const wallBotR = makeBoxMesh((CFG.table.w-gap)/2, 0.6, CFG.table.wall, wallColor, 0x00e5ff, 0.22);
+    wallBotR.position.set((gap/2 + (CFG.table.w-gap)/4), 0.25, CFG.table.h/2 + CFG.table.wall/2);
+    tableGroup.add(wallBotR);
+
+    // ---------- Table physics ----------
+    const tablePlane = new CANNON.Body({ mass: 0, material: matTable });
+    tablePlane.addShape(new CANNON.Plane());
+    tablePlane.quaternion.setFromEuler(-Math.PI/2 + CFG.tilt, 0, 0);
+    world.addBody(tablePlane);
+
+    function addStaticBox(w,h,d, x,y,z, rotY=0) {
+      const body = new CANNON.Body({ mass:0, material: matTable });
+      body.addShape(new CANNON.Box(new CANNON.Vec3(w/2,h/2,d/2)));
+      body.position.set(x,y,z);
+      body.quaternion.setFromEuler(0, rotY, 0);
+      world.addBody(body);
+      return body;
+    }
+
+    addStaticBox(CFG.table.wall, 0.8, CFG.table.h, -CFG.table.w/2 - CFG.table.wall/2, 0.4, 0);
+    addStaticBox(CFG.table.wall, 0.8, CFG.table.h,  CFG.table.w/2 + CFG.table.wall/2, 0.4, 0);
+    addStaticBox(CFG.table.w + CFG.table.wall*2, 0.8, CFG.table.wall, 0, 0.4, -CFG.table.h/2 - CFG.table.wall/2);
+
+    addStaticBox((CFG.table.w-gap)/2, 0.8, CFG.table.wall,
+      -(gap/2 + (CFG.table.w-gap)/4), 0.4, CFG.table.h/2 + CFG.table.wall/2);
+    addStaticBox((CFG.table.w-gap)/2, 0.8, CFG.table.wall,
+      (gap/2 + (CFG.table.w-gap)/4), 0.4, CFG.table.h/2 + CFG.table.wall/2);
+
+    // ---------- Bumpers ----------
+    const bumpers = [];
+    const bumperMeshes = [];
+    const bumperPositions = [
+      { x: -1.8, z: -2.0, r: 0.32, pts: 50,  col: 0x00e5ff },
+      { x:  0.0, z: -2.6, r: 0.36, pts: 75,  col: 0xff2bd6 },
+      { x:  1.9, z: -1.9, r: 0.32, pts: 50,  col: 0x7cfc00 },
+      { x:  0.0, z: -4.2, r: 0.40, pts: 100, col: 0xffcc00 },
+    ];
+
+    bumperPositions.forEach((b) => {
+      const body = new CANNON.Body({ mass: 0, material: matBumper });
+      body.addShape(new CANNON.Sphere(b.r));
+      body.position.set(b.x, 0.35, b.z);
+      world.addBody(body);
+      bumpers.push({ body, pts: b.pts });
+
+      const mesh = makeCylinderMesh(b.r, 0.25, 0x10233d, b.col, 0.65);
+      mesh.position.set(b.x, 0.15, b.z);
+      tableGroup.add(mesh);
+      bumperMeshes.push(mesh);
+    });
+
+    // ---------- Flippers ----------
+    function createFlipper(isLeft=true) {
+      const len = CFG.flipper.length;
+      const w = CFG.flipper.width;
+      const h = CFG.flipper.height;
+
+      const mesh = makeBoxMesh(len, h, w, 0x1b2a42, isLeft ? 0x00e5ff : 0xff2bd6, 0.55);
+      mesh.position.y = 0.20;
+      tableGroup.add(mesh);
+
+      const body = new CANNON.Body({ mass: 0.65, material: matFlip });
+      body.addShape(new CANNON.Box(new CANNON.Vec3(len/2, h/2, w/2)));
+
+      const baseX = isLeft ? -0.95 : 0.95;
+      const baseZ = 3.65;
+      body.position.set(baseX, 0.20, baseZ);
+      world.addBody(body);
+
+      const pivot = new CANNON.Body({ mass: 0, material: matTable });
+      pivot.addShape(new CANNON.Sphere(0.05));
+      pivot.position.set(baseX + (isLeft ? -len/2 + 0.15 : len/2 - 0.15), 0.20, baseZ);
+      world.addBody(pivot);
+
+      const localPivotA = new CANNON.Vec3(isLeft ? -len/2 + 0.15 : len/2 - 0.15, 0, 0);
+      const hinge = new CANNON.HingeConstraint(body, pivot, {
+        pivotA: localPivotA,
+        axisA: new CANNON.Vec3(0,1,0),
+        pivotB: new CANNON.Vec3(0,0,0),
+        axisB: new CANNON.Vec3(0,1,0)
+      });
+
+      const low  = isLeft ? -0.65 : -0.15;
+      const high = isLeft ?  0.15 :  0.65;
+      hinge.setLimits(low, high, 0.01);
+      hinge.enableMotor();
+      hinge.setMotorMaxForce(CFG.flipper.maxForce);
+      hinge.setMotorSpeed(0);
+      world.addConstraint(hinge);
+
+      return { mesh, body, hinge, isLeft };
+    }
+
+    const flLeft  = createFlipper(true);
+    const flRight = createFlipper(false);
+
+    // ---------- Ball ----------
+    const ballMesh = new THREE.Mesh(
+      new THREE.SphereGeometry(CFG.ballRadius, 28, 18),
+      new THREE.MeshStandardMaterial({
+        color: 0xeaeef7, metalness: 0.85, roughness: 0.18,
+        emissive: 0x0a0f18, emissiveIntensity: 0.1
+      })
+    );
+    scene.add(ballMesh);
+
+    const ballBody = new CANNON.Body({
+      mass: 0.55, material: matBall,
+      linearDamping: 0.16, angularDamping: 0.45
+    });
+    ballBody.addShape(new CANNON.Sphere(CFG.ballRadius));
+    world.addBody(ballBody);
+
+    // ---------- Game State ----------
+    let score = 0;
+    let balls = 3;
+    let paused = false;
+
+    function resetBall(toLauncher=true) {
+      const x = 2.45, z = 4.10;
+      ballBody.velocity.set(0,0,0);
+      ballBody.angularVelocity.set(0,0,0);
+      ballBody.position.set(x, 0.45, z);
+      ballBody.quaternion.set(0,0,0,1);
+      if (!toLauncher) ballBody.position.set(0, 0.55, 0.8);
+    }
+
+    function resetGame() {
+      score = 0; balls = 3; paused = false;
+      elScore.textContent = score;
+      elBalls.textContent = balls;
+      resetBall(true);
+      showToast("Reset completo ✅");
+    }
+
+    resetBall(true);
+
+    ballBody.addEventListener("collide", function(e) {
+      const other = e.body;
+      for (const b of bumpers) {
+        if (other === b.body) {
+          score += b.pts;
+          elScore.textContent = score;
+          const n = e.contact.ni.clone();
+          const impulse = new CANNON.Vec3(-n.x, -n.y, -n.z);
+          impulse.scale(2.6, impulse);
+          ballBody.velocity.vadd(impulse, ballBody.velocity);
+          showToast(`+${b.pts} pts!`);
+          break;
+        }
+      }
+    });
+
+    // ---------- Input ----------
+    const keys = new Set();
+    window.addEventListener("keydown", (ev) => {
+      keys.add(ev.code);
+
+      if (ev.code === "KeyP") { paused = !paused; showToast(paused ? "Pausado ⏸️" : "Rodando ▶️"); }
+      if (ev.code === "KeyR") resetGame();
+
+      if (ev.code === "Space") {
+        const v = ballBody.velocity;
+        if (ballBody.position.z > 3.5 && ballBody.position.x > 1.7) {
+          v.z = -8.5;
+          v.y =  1.5;
+          v.x += (Math.random() - 0.5) * 0.35;
+          showToast("Lançou! 🚀");
+        }
+      }
+    });
+    window.addEventListener("keyup", (ev) => keys.delete(ev.code));
+
+    function updateFlippers() {
+      const L = keys.has("ArrowLeft");
+      const R = keys.has("ArrowRight");
+      flLeft.hinge.setMotorSpeed(L ? CFG.flipper.speedUp : CFG.flipper.speedDown);
+      flRight.hinge.setMotorSpeed(R ? -CFG.flipper.speedUp : -CFG.flipper.speedDown);
+    }
+
+    function checkDrain() {
+      if (ballBody.position.y < -3 || ballBody.position.z > 8) {
+        balls -= 1;
+        elBalls.textContent = balls;
+        if (balls <= 0) {
+          paused = true;
+          showToast(`Fim de jogo! Pontuação: ${score} 🏁`, 2400);
+        } else {
+          showToast("Bola perdida… 😅", 1200);
+          resetBall(true);
+        }
+      }
+    }
+
+    // ---------- Loop ----------
+    let last = performance.now();
+    let acc = 0;
+    const fixed = 1/120;
+
+    let fpsAcc = 0, fpsCount = 0, fpsLast = performance.now();
+
+    function tick(now) {
+      requestAnimationFrame(tick);
+
+      const dt = Math.min((now - last) / 1000, 0.033);
+      last = now;
+
+      fpsAcc += dt; fpsCount++;
+      if (now - fpsLast > 500) {
+        elFps.textContent = Math.round(fpsCount / fpsAcc);
+        fpsAcc = 0; fpsCount = 0; fpsLast = now;
+      }
+
+      controls.update();
+
+      if (!paused) {
+        updateFlippers();
+        acc += dt;
+        while (acc >= fixed) { world.step(fixed); acc -= fixed; }
+        checkDrain();
+      }
+
+      ballMesh.position.copy(ballBody.position);
+      ballMesh.quaternion.copy(ballBody.quaternion);
+
+      flLeft.mesh.position.copy(flLeft.body.position);
+      flLeft.mesh.quaternion.copy(flLeft.body.quaternion);
+
+      flRight.mesh.position.copy(flRight.body.position);
+      flRight.mesh.quaternion.copy(flRight.body.quaternion);
+
+      const t = now * 0.002;
+      for (let i=0;i<bumperMeshes.length;i++) bumperMeshes[i].material.emissiveIntensity = 0.45 + 0.25*Math.sin(t + i);
+
+      renderer.render(scene, camera);
+    }
+    requestAnimationFrame(tick);
+
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    showToast("Pronto! Use Espaço para lançar 🚀", 1600);
+  </script>
+</body>
+</html>
+``
