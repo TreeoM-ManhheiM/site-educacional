@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Simulador LinkedIn | Semana 6 - Perfil Profissional</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: system-ui, 'Segoe UI', 'Inter', 'Helvetica Neue', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #f0f4fa 0%, #e2e9f0 100%);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+    }
+
+    .simulator-container {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    /* cabeçalho */
+    .hero {
+      background: white;
+      border-radius: 2rem;
+      padding: 1.5rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+      text-align: center;
+      border: 1px solid #dfe9f2;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+      background: linear-gradient(135deg, #0A66C2, #1e4a76);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.3px;
+    }
+
+    .hero-badge {
+      background: #0A66C2;
+      color: white;
+      display: inline-block;
+      padding: 0.25rem 1.2rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    .sub {
+      color: #2c5a7a;
+      margin-top: 0.5rem;
+    }
+
+    /* grade principal */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 0.9fr;
+      gap: 1.8rem;
+    }
+
+    @media (max-width: 850px) {
+      .dashboard {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      body { padding: 1rem; }
+    }
+
+    /* cards */
+    .card {
+      background: white;
+      border-radius: 1.8rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      overflow: hidden;
+      border: 1px solid #e2edf7;
+      transition: all 0.2s;
+    }
+
+    .card-header {
+      background: #fafdff;
+      padding: 1.2rem 1.8rem;
+      border-bottom: 1px solid #e9f0f5;
+    }
+
+    .card-header h2 {
+      font-size: 1.5rem;
+      color: #0A66C2;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .skill-tag {
+      display: inline-block;
+      background: #eef4fa;
+      border-radius: 30px;
+      padding: 0.2rem 0.8rem;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #1e5a8a;
+      margin-right: 0.5rem;
+    }
+
+    .card-body {
+      padding: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.3rem;
+    }
+
+    label {
+      font-weight: 600;
+      display: block;
+      margin-bottom: 0.4rem;
+      color: #1f3b4c;
+      font-size: 0.85rem;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border-radius: 1rem;
+      border: 1px solid #cbdde9;
+      font-size: 0.9rem;
+      transition: 0.2s;
+      background: white;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #0A66C2;
+      box-shadow: 0 0 0 3px rgba(10,102,194,0.1);
+    }
+
+    button {
+      background: #0A66C2;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.8rem;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #084a8f;
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: #5f7f9e;
+    }
+    .btn-secondary:hover {
+      background: #3e5e7e;
+    }
+
+    .feedback-area {
+      background: #eef2fa;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-top: 1.2rem;
+      font-size: 0.85rem;
+      border-left: 5px solid #0A66C2;
+    }
+
+    .preview-card {
+      background: white;
+      border-radius: 1.8rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+      overflow: hidden;
+      position: sticky;
+      top: 1rem;
+    }
+
+    .preview-header {
+      background: #0A66C2;
+      color: white;
+      padding: 1rem 1.5rem;
+    }
+
+    .preview-header h3 {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .preview-content {
+      padding: 1.5rem;
+      min-height: 350px;
+    }
+
+    .profile-field {
+      margin-bottom: 0.8rem;
+      border-bottom: 1px dashed #e2edf7;
+      padding-bottom: 0.6rem;
+    }
+
+    .badge-complete {
+      background: #d4e3fd;
+      color: #0A66C2;
+      border-radius: 30px;
+      padding: 0.2rem 1rem;
+      font-size: 0.7rem;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    hr {
+      margin: 1rem 0;
+      border-color: #e9eef3;
+    }
+
+    .final-message {
+      background: #e1f5e8;
+      border-radius: 1rem;
+      padding: 1rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .row-2cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+    }
+
+    @media (max-width: 550px) {
+      .row-2cols { grid-template-columns: 1fr; }
+    }
+
+    /* Estilos para impressão - salvar como PDF */
+    @media print {
+      body {
+        background: white;
+        padding: 0.5cm;
+        margin: 0;
+      }
+      .dashboard {
+        display: block;
+      }
+      .card, .preview-card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        break-inside: avoid;
+      }
+      .card:first-of-type {
+        display: none;  /* Esconde o formulário na impressão */
+      }
+      .preview-card {
+        position: static;
+        margin-top: 0;
+      }
+      button, .btn-secondary, .feedback-area, #progressStatus, .hero .sub, .hero-badge, .skill-tag, .card-header .skill-tag {
+        display: none !important;
+      }
+      .hero {
+        box-shadow: none;
+        border: none;
+        text-align: center;
+        padding: 0.5rem;
+      }
+      .hero h1 {
+        color: #0A66C2;
+        background: none;
+      }
+      .preview-header {
+        background: #0A66C2;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .profile-field {
+        break-inside: avoid;
+      }
+      .preview-content {
+        padding: 0.8rem;
+      }
+      .download-print-area {
+        display: none;
+      }
+    }
+
+    .download-print-area {
+      margin-top: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+<div class="simulator-container">
+  <div class="hero">
+    <div class="hero-badge">📘 SEMANA 6 · LINKEDIN — AULA ÚNICA COMPLETA</div>
+    <h1>🚀 Simulador de Perfil Profissional</h1>
+    <p class="sub">Crie, otimize e torne seu perfil atrativo com autoconfiança, comunicação e autenticidade</p>
+  </div>
+
+  <div class="dashboard">
+    <!-- COLUNA ESQUERDA: FORMULÁRIO COMPLETO (3 pilares) -->
+    <div class="card">
+      <div class="card-header">
+        <h2>📌 Construção do seu LinkedIn</h2>
+        <div style="margin-top: 0.5rem;">
+          <span class="skill-tag">🔧 Técnicas: Criar perfil | Configurar | Aprimorar</span>
+          <span class="skill-tag">🧠 Socioemocionais: Autoconfiança | Comunicação profissional | Autenticidade</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- PARTE 1: INTRODUÇÃO (Criação de perfil) -->
+        <div style="margin-bottom: 1.5rem;">
+          <h3 style="color:#0A66C2; font-size:1.2rem; margin-bottom: 0.5rem;">📖 1. Introdução ao LinkedIn · Papel do LinkedIn</h3>
+          <p style="font-size:0.85rem; color:#2c5a7a; margin-bottom: 1rem;">O LinkedIn é a maior rede profissional: networking, oportunidades e visibilidade. Construa com <strong>autoconfiança</strong>.</p>
+          <div class="form-group">
+            <label>Nome completo *</label>
+            <input type="text" id="nomeCompleto" placeholder="Ex: Camila Rodrigues" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label>Cargo atual (headline inicial)</label>
+            <input type="text" id="cargoAtual" placeholder="Ex: Especialista em Sucesso do Cliente">
+          </div>
+          <div class="form-group">
+            <label>Resumo profissional (Sobre você)</label>
+            <textarea id="resumoProfissional" rows="2" placeholder="Fale sobre sua trajetória, propósito e o que você entrega..."></textarea>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- PARTE 2: OTIMIZAÇÃO (Comunicação profissional) -->
+        <div style="margin: 1.5rem 0;">
+          <h3 style="color:#0A66C2; font-size:1.2rem; margin-bottom: 0.5rem;">⚙️ 2. Otimização de perfil · Estratégias de perfil</h3>
+          <p style="font-size:0.85rem; color:#2c5a7a; margin-bottom: 1rem;">Melhore sua presença online com <strong>comunicação profissional</strong> e técnicas de configuração.</p>
+          <div class="form-group">
+            <label>Título profissional otimizado (ex: Designer de Produto | UX)</label>
+            <input type="text" id="tituloOtimizado" placeholder="Ex: Analista de Dados | Power BI | SQL">
+          </div>
+          <div class="form-group">
+            <label>Competências-chave (separadas por vírgula)</label>
+            <input type="text" id="competencias" placeholder="Ex: Liderança, Negociação, Python, Marketing">
+          </div>
+          <div class="form-group">
+            <label>Estilo de foto profissional (simulação)</label>
+            <select id="fotoPerfil">
+              <option value="">Selecione um estilo</option>
+              <option value="foto_executiva">📸 Executiva (terno/blazer)</option>
+              <option value="foto_criativa">🎨 Criativa (ambiente de trabalho)</option>
+              <option value="foto_sorriso">😊 Sorriso genuíno</option>
+              <option value="foto_neutra">🧑‍💼 Neutra profissional</option>
+            </select>
+          </div>
+        </div>
+
+        <hr>
+
+        <!-- PARTE 3: PERFIL ATRATIVO / BRANDING PESSOAL -->
+        <div style="margin: 1.5rem 0;">
+          <h3 style="color:#0A66C2; font-size:1.2rem; margin-bottom: 0.5rem;">✨ 3. Perfil atrativo · Branding pessoal</h3>
+          <p style="font-size:0.85rem; color:#2c5a7a; margin-bottom: 1rem;">Torne seu perfil competitivo com <strong>autenticidade</strong>. Destaque seus valores e história.</p>
+          <div class="form-group">
+            <label>Palavras-chave da sua marca pessoal</label>
+            <input type="text" id="brandingKeys" placeholder="Ex: Inovação, Resultados, Colaboração">
+          </div>
+          <div class="form-group">
+            <label>História autêntica (o que te torna único)</label>
+            <textarea id="historiaAutentica" rows="2" placeholder="Conte um pouco da sua jornada profissional com autenticidade..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Seus valores profissionais (ex: empatia, excelência)</label>
+            <input type="text" id="valores" placeholder="Ex: Ética, Criatividade, Protagonismo">
+          </div>
+        </div>
+
+        <button id="btnSalvarCompleto">💾 Salvar & Avaliar Perfil Completo</button>
+        <div id="feedbackGeral" class="feedback-area" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- COLUNA DIREITA: PREVIEW DO PERFIL + PROGRESSO + BOTÃO IMPRIMIR -->
+    <div class="preview-card">
+      <div class="preview-header">
+        <h3>👁️ Meu LinkedIn em construção</h3>
+      </div>
+      <div class="preview-content" id="livePreview">
+        <p style="color: #6c8eaa; text-align: center;">Preencha os campos ao lado e clique em "Salvar" para visualizar seu perfil profissional.</p>
+      </div>
+      <div id="progressStatus" style="padding: 0 1.5rem 1.5rem 1.5rem;"></div>
+      <div class="download-print-area" style="padding: 0 1.5rem 1.5rem 1.5rem;">
+        <button id="btnPrintProfile" class="btn-secondary" style="background:#2c5a7a;">🖨️ Salvar / Imprimir Perfil (PDF)</button>
+        <p style="font-size: 0.7rem; color: #5f7f9e; margin-top: 0.5rem; text-align: center;">Clique para gerar uma versão para impressão ou salvar como PDF.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Estado único
+  let perfil = {
+    nome: "",
+    cargo: "",
+    resumo: "",
+    tituloOtimizado: "",
+    competencias: [],
+    foto: "",
+    brandingKeys: "",
+    historia: "",
+    valores: ""
+  };
+
+  // Elementos DOM
+  const nomeInput = document.getElementById("nomeCompleto");
+  const cargoInput = document.getElementById("cargoAtual");
+  const resumoInput = document.getElementById("resumoProfissional");
+  const tituloOtimizadoInput = document.getElementById("tituloOtimizado");
+  const competenciasInput = document.getElementById("competencias");
+  const fotoSelect = document.getElementById("fotoPerfil");
+  const brandingKeysInput = document.getElementById("brandingKeys");
+  const historiaInput = document.getElementById("historiaAutentica");
+  const valoresInput = document.getElementById("valores");
+  const btnSalvar = document.getElementById("btnSalvarCompleto");
+  const feedbackDiv = document.getElementById("feedbackGeral");
+  const previewContainer = document.getElementById("livePreview");
+  const progressDiv = document.getElementById("progressStatus");
+  const btnPrint = document.getElementById("btnPrintProfile");
+
+  // Helper para escapar HTML
+  function escapeHtml(str) {
+    if (!str) return "";
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) { return c; });
+  }
+
+  // Atualizar preview e progresso
+  function updatePreviewAndProgress() {
+    let html = "";
+
+    // Seção de informações básicas
+    if (perfil.nome || perfil.cargo || perfil.resumo) {
+      html += `<div class="profile-field"><strong>👤 Nome:</strong> ${escapeHtml(perfil.nome || "—")}</div>`;
+      html += `<div class="profile-field"><strong>💼 Cargo atual:</strong> ${escapeHtml(perfil.cargo || "—")}</div>`;
+      if (perfil.resumo) html += `<div class="profile-field"><strong>📄 Sobre:</strong><br> ${escapeHtml(perfil.resumo.substring(0, 150))}${perfil.resumo.length > 150 ? '…' : ''}</div>`;
+    } else {
+      html += `<p style="color:#9aaebf;">⚡ Nenhum dado básico inserido ainda. Preencha a seção 1.</p>`;
+    }
+
+    // Otimização
+    if (perfil.tituloOtimizado || perfil.competencias.length > 0 || perfil.foto) {
+      html += `<hr>`;
+      if (perfil.tituloOtimizado) html += `<div class="profile-field"><strong>🏷️ Título profissional:</strong> ${escapeHtml(perfil.tituloOtimizado)}</div>`;
+      if (perfil.competencias.length) html += `<div class="profile-field"><strong>🔧 Competências:</strong> ${perfil.competencias.map(c => `#${escapeHtml(c)}`).join(', ')}</div>`;
+      if (perfil.foto) {
+        let fotoLabel = "";
+        if (perfil.foto === "foto_executiva") fotoLabel = "📸 Executiva";
+        else if (perfil.foto === "foto_criativa") fotoLabel = "🎨 Criativa";
+        else if (perfil.foto === "foto_sorriso") fotoLabel = "😊 Sorriso genuíno";
+        else if (perfil.foto === "foto_neutra") fotoLabel = "🧑‍💼 Neutra profissional";
+        html += `<div class="profile-field"><strong>🖼️ Foto:</strong> ${fotoLabel} (estilo simulado)</div>`;
+      }
+    }
+
+    // Branding pessoal
+    if (perfil.brandingKeys || perfil.historia || perfil.valores) {
+      html += `<hr>`;
+      if (perfil.brandingKeys) html += `<div class="profile-field"><strong>🌟 Palavras-chave da marca:</strong> ${escapeHtml(perfil.brandingKeys)}</div>`;
+      if (perfil.historia) html += `<div class="profile-field"><strong>📖 História autêntica:</strong> “${escapeHtml(perfil.historia.substring(0, 100))}${perfil.historia.length > 100 ? '…' : ''}”</div>`;
+      if (perfil.valores) html += `<div class="profile-field"><strong>💎 Valores:</strong> ${escapeHtml(perfil.valores)}</div>`;
+    }
+
+    if (!perfil.nome && !perfil.tituloOtimizado && !perfil.brandingKeys && perfil.competencias.length === 0) {
+      html = `<p style="color:#6c8eaa; text-align: center;">Preencha os campos e clique em "Salvar" para ver seu perfil profissional ganhar vida.</p>`;
+    }
+
+    previewContainer.innerHTML = html;
+
+    // CÁLCULO DE PROGRESSO E MENSAGENS SOCIOEMOCIONAIS
+    let pilar1 = (perfil.nome.trim() !== "" && (perfil.resumo.trim() !== "" || perfil.cargo.trim() !== "")) ? 1 : 0;
+    let pilar2 = (perfil.tituloOtimizado.trim() !== "" || perfil.competencias.length > 0) ? 1 : 0;
+    let pilar3 = (perfil.brandingKeys.trim() !== "" || perfil.historia.trim() !== "") ? 1 : 0;
+
+    let totalPilares = pilar1 + pilar2 + pilar3;
+    let percentual = Math.round((totalPilares / 3) * 100);
+    
+    let mensagemProgresso = "";
+    let recomendacao = "";
+    
+    if (totalPilares === 3) {
+      mensagemProgresso = `<div style="background:#dff0e4; border-radius:1rem; padding:0.8rem; text-align:center; margin-top:0.5rem;">
+                            <span style="font-weight:bold; color:#0e6b2e;">✅ 100% - PERFIL COMPLETO!</span><br>
+                            <span style="font-size:0.8rem;">🎉 Parabéns! Você integrou <strong>autoconfiança, comunicação profissional e autenticidade</strong>. Seu perfil está competitivo e atrativo.</span>
+                           </div>`;
+      recomendacao = "Excelente! Seu perfil reflete branding pessoal e estratégias avançadas.";
+    } else if (totalPilares === 2) {
+      mensagemProgresso = `<div style="background:#fff2df; border-radius:1rem; padding:0.8rem; margin-top:0.5rem;">
+                            <span>📈 Progresso: ~66% (${percentual}%)</span><br>
+                            <span style="font-size:0.8rem;">💡 Dica: Revise o pilar que falta para tornar seu perfil imbatível.</span>
+                           </div>`;
+      if (pilar1 === 0) recomendacao = "Foque em criar seu nome e resumo profissional com autoconfiança.";
+      else if (pilar2 === 0) recomendacao = "Aprimore sua comunicação profissional: adicione título ou competências.";
+      else if (pilar3 === 0) recomendacao = "Adicione autenticidade com sua história ou palavras-chave de marca pessoal.";
+    } else if (totalPilares === 1) {
+      mensagemProgresso = `<div style="background:#ffe6e6; border-radius:1rem; padding:0.8rem; margin-top:0.5rem;">
+                            <span>⚠️ Progresso: ~33%</span><br>
+                            <span style="font-size:0.8rem;">Você deu o primeiro passo! Explore as três seções para um perfil completo.</span>
+                           </div>`;
+      if (pilar1 === 1) recomendacao = "Ótimo começo! Agora otimize com competências e fortaleça seu branding pessoal.";
+      else if (pilar2 === 1) recomendacao = "Boa comunicação profissional! Adicione seus dados básicos e sua história autêntica.";
+      else if (pilar3 === 1) recomendacao = "Sua autenticidade é valiosa! Complete com informações de contato e otimização de título.";
+    } else {
+      mensagemProgresso = `<div style="background:#f0f2f5; border-radius:1rem; padding:0.8rem; margin-top:0.5rem; text-align:center;">
+                            <span>📌 Comece agora! Preencha os campos ao lado e salve.</span>
+                           </div>`;
+      recomendacao = "Preencha nome, título ou sua história para construir sua presença no LinkedIn.";
+    }
+
+    let socioMessage = "";
+    if (totalPilares === 3) socioMessage = "🏆 Você demonstrou autoconfiança, comunicação clara e autenticidade. Seu perfil está pronto para o mercado!";
+    else if (totalPilares === 2) socioMessage = "🌟 Você já possui boas bases. Continue praticando a autenticidade para se destacar.";
+    else if (totalPilares === 1) socioMessage = "🌱 Primeiro passo dado! Acredite no seu potencial e complete as áreas para fortalecer sua marca.";
+    else socioMessage = "🚀 Vamos começar? Cada informação que você adiciona aumenta sua autoconfiança profissional.";
+
+    progressDiv.innerHTML = `
+      <div style="margin-top:0.2rem;">
+        <div style="background:#e9ecef; border-radius:20px; height:8px; width:100%;"><div style="background:#0A66C2; width:${percentual}%; height:8px; border-radius:20px;"></div></div>
+        <p style="font-size:0.75rem; margin-top:0.5rem; font-weight:500;">${mensagemProgresso}</p>
+        <p style="font-size:0.8rem; margin-top:0.3rem; color:#2c3e4f;"><em>${recomendacao}</em></p>
+        <p style="font-size:0.8rem; background:#eef2fa; padding:0.5rem; border-radius:1rem; margin-top:0.6rem;">🧠 Socioemocional: ${socioMessage}</p>
+      </div>
+    `;
+  }
+
+  // Função para salvar todos os dados do formulário
+  function salvarPerfilCompleto() {
+    let nome = nomeInput.value.trim();
+    let cargo = cargoInput.value.trim();
+    let resumo = resumoInput.value.trim();
+    let tituloOtimizado = tituloOtimizadoInput.value.trim();
+    let competenciasRaw = competenciasInput.value.trim();
+    let foto = fotoSelect.value;
+    let brandingKeys = brandingKeysInput.value.trim();
+    let historia = historiaInput.value.trim();
+    let valores = valoresInput.value.trim();
+
+    let competenciasArray = [];
+    if (competenciasRaw !== "") {
+      competenciasArray = competenciasRaw.split(',').map(s => s.trim()).filter(s => s !== "");
+    }
+
+    perfil.nome = nome;
+    perfil.cargo = cargo;
+    perfil.resumo = resumo;
+    perfil.tituloOtimizado = tituloOtimizado;
+    perfil.competencias = competenciasArray;
+    perfil.foto = foto;
+    perfil.brandingKeys = brandingKeys;
+    perfil.historia = historia;
+    perfil.valores = valores;
+
+    let mensagemFeedback = "";
+    let hasError = false;
+
+    if (perfil.nome === "") {
+      mensagemFeedback += "⚠️ Adicione seu nome completo (autoconfiança começa com identidade). ";
+      hasError = true;
+    }
+    if (perfil.tituloOtimizado === "" && perfil.competencias.length === 0 && perfil.brandingKeys === "" && perfil.historia === "") {
+      mensagemFeedback += "💡 Para um perfil competitivo, preencha pelo menos título OU competências OU sua história autêntica. ";
+      hasError = true;
+    }
+
+    if (!hasError) {
+      mensagemFeedback = "✅ Perfil salvo com sucesso! Seu LinkedIn está mais forte. Agora você pode salvar/ imprimir seu perfil.";
+      feedbackDiv.style.background = "#e1f5e8";
+      feedbackDiv.style.borderLeftColor = "#0A66C2";
+    } else {
+      feedbackDiv.style.background = "#fff0e0";
+      feedbackDiv.style.borderLeftColor = "#e67e22";
+    }
+
+    feedbackDiv.style.display = "block";
+    feedbackDiv.innerHTML = mensagemFeedback;
+
+    updatePreviewAndProgress();
+    document.querySelector(".preview-card").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+
+  // Função para imprimir / salvar como PDF
+  function imprimirPerfil() {
+    // Força que os dados do preview estejam atualizados (caso o usuário não tenha clicado em salvar, mas quer imprimir)
+    // Vamos sincronizar os campos atuais com o estado antes de imprimir, para garantir.
+    let nome = nomeInput.value.trim();
+    let cargo = cargoInput.value.trim();
+    let resumo = resumoInput.value.trim();
+    let tituloOtimizado = tituloOtimizadoInput.value.trim();
+    let competenciasRaw = competenciasInput.value.trim();
+    let foto = fotoSelect.value;
+    let brandingKeys = brandingKeysInput.value.trim();
+    let historia = historiaInput.value.trim();
+    let valores = valoresInput.value.trim();
+    let competenciasArray = competenciasRaw ? competenciasRaw.split(',').map(s => s.trim()).filter(s => s !== "") : [];
+    
+    // Atualizar estado temporariamente para impressão
+    perfil.nome = nome;
+    perfil.cargo = cargo;
+    perfil.resumo = resumo;
+    perfil.tituloOtimizado = tituloOtimizado;
+    perfil.competencias = competenciasArray;
+    perfil.foto = foto;
+    perfil.brandingKeys = brandingKeys;
+    perfil.historia = historia;
+    perfil.valores = valores;
+    
+    // Atualiza preview e progresso antes de imprimir
+    updatePreviewAndProgress();
+    
+    // Dispara a impressão da página - o CSS @media print esconde o formulário e mantém apenas o preview
+    window.print();
+  }
+
+  // Eventos
+  btnSalvar.addEventListener("click", salvarPerfilCompleto);
+  btnPrint.addEventListener("click", imprimirPerfil);
+
+  // Inicialização
+  updatePreviewAndProgress();
+</script>
+</body>
+</html>
