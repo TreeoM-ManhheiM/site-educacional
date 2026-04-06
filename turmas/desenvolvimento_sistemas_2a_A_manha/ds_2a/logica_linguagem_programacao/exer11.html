@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🧩 20 Missões: For, Break e Continue (com ajuda)</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%);
+    font-family: 'Inter', system-ui, 'Segoe UI', 'Fira Code', monospace;
+    padding: 2rem;
+    color: #eef4ff;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(0, 255, 204, 0.3);
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #b3ffe0, #00ffcc);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .hero p {
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+
+  .seletor {
+    background: #0f172a;
+    padding: 0.8rem 1.5rem;
+    border-radius: 3rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    border: 1px solid #1f2937;
+  }
+
+  .seletor label {
+    font-weight: bold;
+    color: #00ffcc;
+  }
+
+  select {
+    background: #020617;
+    color: white;
+    border: 1px solid #334155;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-family: monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 280px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: rgba(18, 25, 40, 0.85);
+    backdrop-filter: blur(2px);
+    border-radius: 1.5rem;
+    border: 1px solid rgba(0, 255, 204, 0.2);
+    padding: 1.5rem;
+  }
+
+  .card h2 {
+    color: #00ffcc;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .story-box {
+    background: #0f172a;
+    border-left: 5px solid #8b5cf6;
+    padding: 1.2rem;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .story-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #c084fc;
+    margin-bottom: 0.5rem;
+  }
+
+  .dica {
+    background: #1e293b;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    color: #b9c7d9;
+    margin-bottom: 1rem;
+  }
+
+  .erro-contador {
+    background: #450a0a;
+    padding: 0.5rem;
+    border-radius: 0.8rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .ajuda-resposta {
+    background: #1e1b4b;
+    border: 1px solid #8b5cf6;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-top: 1rem;
+  }
+
+  .ajuda-resposta h4 {
+    color: #c084fc;
+    margin-bottom: 0.5rem;
+  }
+
+  .codigo-resposta {
+    background: #020617;
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    margin-bottom: 0.8rem;
+  }
+
+  .btn-ajuda {
+    background: #8b5cf6;
+    border: none;
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+
+  .paleta {
+    background: #0a0e17;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  .bloco {
+    display: inline-block;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    margin: 0.3rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.1s;
+  }
+
+  .bloco:hover {
+    background: #334155;
+    transform: scale(1.02);
+    border-color: #8b5cf6;
+  }
+
+  .codigo-area {
+    background: #020617;
+    border-radius: 1rem;
+    padding: 1rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    min-height: 200px;
+    border: 1px solid #1f2937;
+    margin-bottom: 1rem;
+  }
+
+  .linha-codigo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed #1f2937;
+    font-family: monospace;
+  }
+
+  .remover-linha {
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.7rem;
+    margin-left: 0.8rem;
+    opacity: 0.7;
+  }
+
+  .remover-linha:hover {
+    opacity: 1;
+  }
+
+  .botoes {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  button {
+    background: #334155;
+    border: none;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+  }
+
+  button.primary {
+    background: #8b5cf6;
+  }
+
+  button.primary:hover {
+    background: #a78bfa;
+    transform: scale(0.98);
+  }
+
+  button.warning {
+    background: #b45309;
+  }
+
+  button.warning:hover {
+    background: #ea580c;
+  }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    font-weight: 500;
+  }
+
+  .feedback.sucesso {
+    background: #14532d;
+    color: #bbf7d0;
+    border-left: 4px solid #22c55e;
+  }
+
+  .feedback.erro {
+    background: #450a0a;
+    color: #fecaca;
+    border-left: 4px solid #ef4444;
+  }
+
+  @media (max-width: 800px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    body {
+      padding: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <h1>🧩 20 Missões: For, Break e Continue</h1>
+    <p>Leia a história e monte o código Python clicando nos blocos na ordem certa</p>
+  </div>
+
+  <div class="seletor">
+    <label>📖 Escolha sua missão:</label>
+    <select id="missao-select"></select>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>📜 A Jornada</h2>
+      <div id="story-box" class="story-box"></div>
+      <div id="dica-box" class="dica"></div>
+      <div id="erro-contador" class="erro-contador" style="display: none;"></div>
+      <div id="ajuda-area"></div>
+    </div>
+
+    <div class="card">
+      <h2>🧩 Blocos disponíveis</h2>
+      <div id="paleta" class="paleta"></div>
+
+      <h2>📝 Seu código</h2>
+      <div id="codigo-montado" class="codigo-area"></div>
+
+      <div class="botoes">
+        <button id="verificar" class="primary">✅ Verificar</button>
+        <button id="limpar" class="warning">🗑 Limpar tudo</button>
+        <button id="resetar-missao">🔄 Reiniciar missão</button>
+      </div>
+      <div id="feedback" class="feedback"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ======================================================
+  // 20 MISSÕES (histórias + códigos esperados)
+  // ======================================================
+  const missoes = [
+    {
+      id: 0,
+      titulo: "🔁 1. Repetição simples",
+      historia: "Você é um aprendiz de mago e precisa lançar um feitiço de saudação 3 vezes. Use um loop `for` que repete a ação de imprimir 'Olá mundo!'.",
+      dica: "Use `for i in range(3):` e dentro um `print('Olá mundo!')`. A variável `i` não é usada.",
+      codigoEsperado: [
+        "for i in range(3):",
+        "    print('Olá mundo!')"
+      ]
+    },
+    {
+      id: 1,
+      titulo: "🔢 2. Contando números",
+      historia: "Um sábio pede que você mostre os números de 1 até 5, um por linha. Use um loop `for` com `range`.",
+      dica: "Lembre-se que `range(1, 6)` gera números de 1 a 5.",
+      codigoEsperado: [
+        "for i in range(1, 6):",
+        "    print(i)"
+      ]
+    },
+    {
+      id: 2,
+      titulo: "⛔ 3. Parando no 5 (break)",
+      historia: "Um explorador percorre os números de 1 a 10, mas ao encontrar o número 5 ele deve interromper o loop imediatamente. Antes de parar, ele imprime o número atual (ou seja, imprime 1,2,3,4 e para no 5 sem imprimir o 5).",
+      dica: "Use `for i in range(1,11):`, dentro um `if i == 5: break` e antes do if coloque `print(i)`.",
+      codigoEsperado: [
+        "for i in range(1, 11):",
+        "    if i == 5:",
+        "        break",
+        "    print(i)"
+      ]
+    },
+    {
+      id: 3,
+      titulo: "⏭️ 4. Pulando pares (continue)",
+      historia: "Uma feiticeira quer mostrar apenas os números ímpares entre 1 e 7. Se o número for par, ela usa `continue` para pular a impressão.",
+      dica: "`for n in range(1,8):` dentro `if n % 2 == 0: continue` e depois `print(n)`.",
+      codigoEsperado: [
+        "for n in range(1, 8):",
+        "    if n % 2 == 0:",
+        "        continue",
+        "    print(n)"
+      ]
+    },
+    {
+      id: 4,
+      titulo: "📝 5. Somando números",
+      historia: "Calcule a soma dos números de 1 a 100 usando um loop `for`. No final, exiba o resultado.",
+      dica: "Inicialize `soma = 0` antes do loop, dentro some `soma += i`, e depois do loop `print(soma)`.",
+      codigoEsperado: [
+        "soma = 0",
+        "for i in range(1, 101):",
+        "    soma += i",
+        "print(soma)"
+      ]
+    },
+    {
+      id: 5,
+      titulo: "🔀 6. Break e Continue juntos",
+      historia: "Um herói percorre a lista `['maçã', '', 'banana', 'sair', 'uva']`. Ele quer ignorar strings vazias (continue) e parar o loop ao encontrar a palavra 'sair' (break). As outras palavras ele imprime.",
+      dica: "Primeiro verifique string vazia com `if fruta == '': continue`, depois `if fruta == 'sair': break`, senão `print(fruta)`.",
+      codigoEsperado: [
+        "lista = ['maçã', '', 'banana', 'sair', 'uva']",
+        "for fruta in lista:",
+        "    if fruta == '':",
+        "        continue",
+        "    if fruta == 'sair':",
+        "        break",
+        "    print(fruta)"
+      ]
+    },
+    {
+      id: 6,
+      titulo: "🎲 7. Tabuada do 5",
+      historia: "Mostre a tabuada do 5 (5 x 1 até 5 x 10) usando um loop `for`.",
+      dica: "Use `for i in range(1,11):` e dentro `print(f'5 x {i} = {5*i}')`.",
+      codigoEsperado: [
+        "for i in range(1, 11):",
+        "    print(f'5 x {i} = {5*i}')"
+      ]
+    },
+    {
+      id: 7,
+      titulo: "❓ 8. Parar quando digitar 'sair'",
+      historia: "Peça ao usuário para digitar palavras. Use um loop infinito (`while True`) e um `break` quando a palavra for 'sair'. A cada iteração, mostre a palavra digitada.",
+      dica: "Use `while True:`, dentro `palavra = input(...)`, `if palavra == 'sair': break`, depois `print(palavra)`.",
+      codigoEsperado: [
+        "while True:",
+        "    palavra = input('Digite algo: ')",
+        "    if palavra == 'sair':",
+        "        break",
+        "    print(palavra)"
+      ]
+    },
+    {
+      id: 8,
+      titulo: "🔁 9. For com else (sem break)",
+      historia: "Use um loop `for` para percorrer os números de 1 a 3. Se o loop completar todas as iterações sem `break`, execute um `print('Loop completo')` usando `else`.",
+      dica: "Estrutura: `for i in range(1,4): print(i)` e depois `else: print(...)`.",
+      codigoEsperado: [
+        "for i in range(1, 4):",
+        "    print(i)",
+        "else:",
+        "    print('Loop completo')"
+      ]
+    },
+    {
+      id: 9,
+      titulo: "🚦 10. Pular o número 3",
+      historia: "Exiba os números de 1 a 5, mas pule o número 3 usando `continue`.",
+      dica: "`for i in range(1,6): if i == 3: continue` e depois `print(i)`.",
+      codigoEsperado: [
+        "for i in range(1, 6):",
+        "    if i == 3:",
+        "        continue",
+        "    print(i)"
+      ]
+    },
+    {
+      id: 10,
+      titulo: "🎯 11. Encontrar primeiro múltiplo de 7",
+      historia: "Percorra os números de 1 a 50. Quando encontrar o primeiro múltiplo de 7 (7, 14, ...), exiba-o e interrompa o loop com `break`.",
+      dica: "Use `for i in range(1,51): if i % 7 == 0: print(i); break`.",
+      codigoEsperado: [
+        "for i in range(1, 51):",
+        "    if i % 7 == 0:",
+        "        print(i)",
+        "        break"
+      ]
+    },
+    {
+      id: 11,
+      titulo: "📊 12. Média de 5 notas",
+      historia: "Peça 5 notas ao usuário, some-as e calcule a média. Use um loop `for` para repetir a entrada.",
+      dica: "Inicialize soma=0, use `for _ in range(5):` dentro `nota = float(input(...))`, `soma += nota`. Depois `media = soma/5` e `print(media)`.",
+      codigoEsperado: [
+        "soma = 0",
+        "for _ in range(5):",
+        "    nota = float(input('Nota: '))",
+        "    soma += nota",
+        "media = soma / 5",
+        "print(media)"
+      ]
+    },
+    {
+      id: 12,
+      titulo: "🔁 13. Loop aninhado (break interno)",
+      historia: "Use um loop `for i in range(3)` e dentro dele um `for j in range(5)`. Se `j` for igual a 2, interrompa o loop interno (break). Imprima os valores de `i` e `j` antes do break.",
+      dica: "Estrutura: `for i in range(3): for j in range(5): if j == 2: break; print(i,j)`.",
+      codigoEsperado: [
+        "for i in range(3):",
+        "    for j in range(5):",
+        "        if j == 2:",
+        "            break",
+        "        print(i, j)"
+      ]
+    },
+    {
+      id: 13,
+      titulo: "🏃 14. Continue em lista de números",
+      historia: "Dada a lista `numeros = [10, 20, 0, 30, 0, 40]`, percorra-a e pule os zeros (continue). Some os números não nulos e mostre o total.",
+      dica: "Inicie soma=0, loop, se n==0: continue, senão soma += n.",
+      codigoEsperado: [
+        "numeros = [10, 20, 0, 30, 0, 40]",
+        "soma = 0",
+        "for n in numeros:",
+        "    if n == 0:",
+        "        continue",
+        "    soma += n",
+        "print(soma)"
+      ]
+    },
+    {
+      id: 14,
+      titulo: "🛑 15. Break com entrada do usuário",
+      historia: "Pergunte ao usuário um número N. Depois, percorra de 1 a N e exiba cada número. Se o usuário digitar 'parar' durante o loop (usando input a cada iteração), interrompa.",
+      dica: "Dentro do for, peça `resp = input('Continuar? (s/n)')`, se resp for 'n', break.",
+      codigoEsperado: [
+        "N = int(input('Digite N: '))",
+        "for i in range(1, N+1):",
+        "    resp = input('Deseja parar? (s/n) ')",
+        "    if resp == 's':",
+        "        break",
+        "    print(i)"
+      ]
+    },
+    {
+      id: 15,
+      titulo: "🧩 16. For com range e step",
+      historia: "Exiba os números pares de 2 a 20 usando `range` com step 2.",
+      dica: "`for i in range(2, 21, 2): print(i)`.",
+      codigoEsperado: [
+        "for i in range(2, 21, 2):",
+        "    print(i)"
+      ]
+    },
+    {
+      id: 16,
+      titulo: "🔄 17. Continue para ignorar vogais",
+      historia: "Dada uma string `texto = 'python é legal'`, percorra cada caractere e exiba apenas as consoantes (ignore vogais usando continue).",
+      dica: "Use `for letra in texto:` e dentro `if letra in 'aeiouáéíóúãõ': continue` e depois `print(letra)`.",
+      codigoEsperado: [
+        "texto = 'python é legal'",
+        "for letra in texto:",
+        "    if letra in 'aeiouáéíóú':",
+        "        continue",
+        "    print(letra)"
+      ]
+    },
+    {
+      id: 17,
+      titulo: "🧪 18. Break em for com condição composta",
+      historia: "Percorra números de 1 a 20. Se encontrar um número divisível por 3 e por 5 ao mesmo tempo, exiba 'Encontrado!' e interrompa o loop.",
+      dica: "Condição: `if i % 3 == 0 and i % 5 == 0`.",
+      codigoEsperado: [
+        "for i in range(1, 21):",
+        "    if i % 3 == 0 and i % 5 == 0:",
+        "        print('Encontrado!')",
+        "        break"
+      ]
+    },
+    {
+      id: 18,
+      titulo: "📚 19. Soma de números até 100 com break",
+      historia: "Some números de 1 em 1 até que a soma ultrapasse 100. Use um loop `for` com `range` grande e um `break` quando a soma > 100. Exiba a soma final.",
+      dica: "Inicialize soma=0, `for i in range(1, 1000): soma+=i; if soma>100: break` depois print(soma).",
+      codigoEsperado: [
+        "soma = 0",
+        "for i in range(1, 1000):",
+        "    soma += i",
+        "    if soma > 100:",
+        "        break",
+        "print(soma)"
+      ]
+    },
+    {
+      id: 19,
+      titulo: "🏁 20. Desafio final: Tabuada interativa",
+      historia: "Crie um programa que pergunta um número N. Em seguida, usando um loop `for`, mostre a tabuada de N (de 1 a 10). A cada iteração, pergunte se o usuário quer continuar; se a resposta for 'n', interrompa o loop (break).",
+      dica: "Estrutura: N = int(input(...)); for i in range(1,11): resp = input(...); if resp == 'n': break; print(f'{N} x {i} = {N*i}')",
+      codigoEsperado: [
+        "N = int(input('Digite um número: '))",
+        "for i in range(1, 11):",
+        "    resp = input('Deseja continuar? (s/n) ')",
+        "    if resp == 'n':",
+        "        break",
+        "    print(f'{N} x {i} = {N*i}')"
+      ]
+    }
+  ];
+
+  // Elementos DOM
+  const selectMissao = document.getElementById('missao-select');
+  const storyBox = document.getElementById('story-box');
+  const dicaBox = document.getElementById('dica-box');
+  const paletaDiv = document.getElementById('paleta');
+  const codigoDiv = document.getElementById('codigo-montado');
+  const verificarBtn = document.getElementById('verificar');
+  const limparBtn = document.getElementById('limpar');
+  const resetarBtn = document.getElementById('resetar-missao');
+  const feedbackDiv = document.getElementById('feedback');
+  const erroContadorDiv = document.getElementById('erro-contador');
+  const ajudaArea = document.getElementById('ajuda-area');
+
+  let missaoAtual = 0;
+  let blocosSelecionados = [];
+  let errosMissao = 0;      // contador de erros para a missão atual
+  let ajudaMostrada = false; // se já mostrou a ajuda (para não repetir)
+
+  // Popular o select com as 20 missões
+  function popularSelect() {
+    missoes.forEach((m, idx) => {
+      const option = document.createElement('option');
+      option.value = idx;
+      option.textContent = `${idx+1}. ${m.titulo}`;
+      selectMissao.appendChild(option);
+    });
+  }
+
+  function atualizarContadorErros() {
+    if (errosMissao > 0) {
+      erroContadorDiv.style.display = 'block';
+      erroContadorDiv.innerHTML = `⚠️ Tentativas incorretas: ${errosMissao}/3. Após 3 erros, a resposta será exibida.`;
+      if (errosMissao >= 3 && !ajudaMostrada) {
+        mostrarAjudaResposta();
+      }
+    } else {
+      erroContadorDiv.style.display = 'none';
+    }
+  }
+
+  function mostrarAjudaResposta() {
+    if (ajudaMostrada) return;
+    ajudaMostrada = true;
+    const codigoCorreto = missoes[missaoAtual].codigoEsperado.join('\n');
+    ajudaArea.innerHTML = `
+      <div class="ajuda-resposta">
+        <h4>📌 Resposta correta (após 3 tentativas)</h4>
+        <div class="codigo-resposta"><pre>${codigoCorreto}</pre></div>
+        <button id="aplicar-resposta" class="btn-ajuda">✨ Aplicar esta resposta no código</button>
+        <p style="font-size:0.7rem; margin-top:0.5rem;">Você pode aplicar e depois verificar novamente.</p>
+      </div>
+    `;
+    const aplicarBtn = document.getElementById('aplicar-resposta');
+    if (aplicarBtn) {
+      aplicarBtn.addEventListener('click', () => {
+        // Substitui os blocos selecionados pelo código correto (linha a linha)
+        blocosSelecionados = [...missoes[missaoAtual].codigoEsperado];
+        exibirCodigo();
+        feedbackDiv.innerHTML = '';
+        feedbackDiv.className = '';
+        // Opcional: resetar contador de erros para não atrapalhar? Vamos manter, mas pode limpar.
+        // Para dar uma nova chance, resetamos os erros? Melhor não, mas o aluno já viu a resposta.
+        errosMissao = 0;
+        ajudaMostrada = false;
+        ajudaArea.innerHTML = '';
+        atualizarContadorErros();
+      });
+    }
+  }
+
+  function gerarPaleta() {
+    const esperado = missoes[missaoAtual].codigoEsperado;
+    let blocos = [...esperado];
+    const distracoes = [
+      "break", "continue", "print('errado')", "for i in range(5):", 
+      "    pass", "while True:", "if x == 0:", "else:", "    print('fim')",
+      "for i in range(10):", "    print(i)", "if n == 0:", "    break"
+    ];
+    for (let d of distracoes) {
+      if (!blocos.includes(d) && blocos.length < 14) blocos.push(d);
+    }
+    for (let i = blocos.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [blocos[i], blocos[j]] = [blocos[j], blocos[i]];
+    }
+    paletaDiv.innerHTML = '';
+    blocos.forEach(bloco => {
+      const blocoEl = document.createElement('div');
+      blocoEl.className = 'bloco';
+      blocoEl.textContent = bloco;
+      blocoEl.addEventListener('click', () => {
+        blocosSelecionados.push(bloco);
+        exibirCodigo();
+      });
+      paletaDiv.appendChild(blocoEl);
+    });
+  }
+
+  function exibirCodigo() {
+    codigoDiv.innerHTML = '';
+    if (blocosSelecionados.length === 0) {
+      codigoDiv.innerHTML = '<span style="color:#6b7280;">Nenhum bloco adicionado. Clique nos blocos acima.</span>';
+      return;
+    }
+    blocosSelecionados.forEach((linha, idx) => {
+      const linhaDiv = document.createElement('div');
+      linhaDiv.className = 'linha-codigo';
+      linhaDiv.innerHTML = `<code>${linha.replace(/ /g, '&nbsp;')}</code><span class="remover-linha" data-idx="${idx}">❌</span>`;
+      codigoDiv.appendChild(linhaDiv);
+    });
+    document.querySelectorAll('.remover-linha').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const idx = parseInt(e.target.getAttribute('data-idx'));
+        blocosSelecionados.splice(idx, 1);
+        exibirCodigo();
+      });
+    });
+  }
+
+  function verificar() {
+    const esperado = missoes[missaoAtual].codigoEsperado;
+    if (blocosSelecionados.length !== esperado.length) {
+      registrarErro(`Número de linhas incorreto. Você usou ${blocosSelecionados.length}, esperado ${esperado.length}.`);
+      return;
+    }
+    let correto = true;
+    for (let i = 0; i < esperado.length; i++) {
+      if (blocosSelecionados[i] !== esperado[i]) {
+        correto = false;
+        break;
+      }
+    }
+    if (correto) {
+      feedbackDiv.className = 'feedback sucesso';
+      feedbackDiv.innerHTML = `🎉 Código correto! Parabéns, você completou a missão "${missoes[missaoAtual].titulo}"!`;
+      // Resetar erros e esconder ajuda quando acertar
+      errosMissao = 0;
+      ajudaMostrada = false;
+      ajudaArea.innerHTML = '';
+      atualizarContadorErros();
+    } else {
+      registrarErro(`Código incorreto. Verifique a ordem, indentação e os blocos usados.`);
+    }
+  }
+
+  function registrarErro(mensagem) {
+    errosMissao++;
+    atualizarContadorErros();
+    feedbackDiv.className = 'feedback erro';
+    feedbackDiv.innerHTML = `❌ ${mensagem}<br>🔁 Tentativas erradas: ${errosMissao}/3.`;
+    if (errosMissao >= 3 && !ajudaMostrada) {
+      feedbackDiv.innerHTML += `<br>💡 A resposta aparecerá acima.`;
+    }
+  }
+
+  function limparTudo() {
+    blocosSelecionados = [];
+    exibirCodigo();
+    feedbackDiv.innerHTML = '';
+    // Não resetamos erros para não perder o contador, mas o aluno pode reiniciar a missão com o botão específico.
+  }
+
+  function resetarMissao() {
+    blocosSelecionados = [];
+    errosMissao = 0;
+    ajudaMostrada = false;
+    ajudaArea.innerHTML = '';
+    exibirCodigo();
+    feedbackDiv.innerHTML = '';
+    gerarPaleta(); // nova paleta embaralhada
+    atualizarContadorErros();
+  }
+
+  function carregarMissao() {
+    const m = missoes[missaoAtual];
+    storyBox.innerHTML = `<div class="story-title">${m.titulo}</div>${m.historia}`;
+    dicaBox.innerHTML = `💡 Dica: ${m.dica}`;
+    blocosSelecionados = [];
+    errosMissao = 0;
+    ajudaMostrada = false;
+    ajudaArea.innerHTML = '';
+    exibirCodigo();
+    gerarPaleta();
+    feedbackDiv.innerHTML = '';
+    atualizarContadorErros();
+  }
+
+  // Evento de troca de missão
+  selectMissao.addEventListener('change', (e) => {
+    missaoAtual = parseInt(e.target.value);
+    carregarMissao();
+  });
+
+  verificarBtn.addEventListener('click', verificar);
+  limparBtn.addEventListener('click', limparTudo);
+  resetarBtn.addEventListener('click', resetarMissao);
+
+  // Inicialização
+  popularSelect();
+  carregarMissao();
+</script>
+</body>
+</html>
