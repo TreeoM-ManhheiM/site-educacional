@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>EE. 8 de abril — Arcade Didático (Turbo)</title>
+<title>EE. 8 de abril — Arcade Didático (8 Jogos)</title>
 <style>
   * {
     box-sizing: border-box;
-    user-select: none; /* evita seleção nos toques */
+    user-select: none;
   }
   :root {
     --bg: #0b1020;
@@ -36,14 +36,13 @@
     color: var(--muted);
   }
   .container {
-    max-width: 1150px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 0 16px 32px;
   }
-  /* menu cards */
   .menu {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 18px;
   }
   .card {
@@ -100,11 +99,6 @@
     padding: 20px;
     box-shadow: 0 12px 28px rgba(0,0,0,0.5);
   }
-  /* 2048 */
-  .g2048 {
-    max-width: 520px;
-    margin: auto;
-  }
   .grid2048 {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -112,7 +106,8 @@
     background: #0f172a;
     padding: 12px;
     border-radius: 24px;
-    position: relative;
+    max-width: 400px;
+    margin: auto;
   }
   .cell {
     background: #111a2d;
@@ -148,7 +143,6 @@
     background: #0f172a;
     text-align: center;
   }
-  /* snake + tetris */
   .snakeWrap, .tetrisWrap {
     display: flex;
     flex-wrap: wrap;
@@ -162,7 +156,6 @@
     background: #0f172a;
     box-shadow: 0 8px 20px black;
   }
-  /* touch controls */
   .touch-arrows {
     display: flex;
     flex-direction: column;
@@ -192,7 +185,6 @@
     transform: translateY(2px);
     box-shadow: 0 1px 0 #0a0f1c;
   }
-  /* jogo da velha */
   .tttGrid {
     display: grid;
     grid-template-columns: repeat(3, minmax(80px, 100px));
@@ -217,7 +209,6 @@
     border-color: #facc15;
     box-shadow: 0 0 12px gold;
   }
-  /* memory */
   .memGrid {
     display: grid;
     grid-template-columns: repeat(4, minmax(70px, 90px));
@@ -267,34 +258,103 @@
     flex-wrap: wrap;
     margin-top: 12px;
   }
+  /* Flappy Bird */
+  #flappyCanvas {
+    background: #0a2f44;
+    display: block;
+    margin: 0 auto;
+  }
+  /* Campo Minado */
+  .mines-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 4px;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  .mine-cell {
+    aspect-ratio: 1 / 1;
+    background: #1f2a44;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: 0.05s linear;
+  }
+  .mine-cell.revealed {
+    background: #0f172a;
+    border: 1px solid #3b4b6e;
+  }
+  /* Forca */
+  .forca-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+  }
+  .forca-word {
+    font-size: 2rem;
+    letter-spacing: 12px;
+    font-family: monospace;
+    font-weight: bold;
+  }
+  .forca-letters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    max-width: 400px;
+    justify-content: center;
+  }
+  .forca-key {
+    background: #1e2a4a;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 1.3rem;
+    cursor: pointer;
+  }
+  .forca-key.used {
+    opacity: 0.4;
+    pointer-events: none;
+  }
   @media (max-width: 550px) {
-    .touch-btn { width: 55px; font-size: 1.8rem; }
-    .memGrid { gap: 8px; }
-    .tttCell { font-size: 2rem; }
+    .touch-btn { width: 55px; font-size: 1.5rem; }
+    .forca-word { font-size: 1.3rem; letter-spacing: 6px; }
+    .mines-grid { gap: 2px; }
   }
 </style>
 </head>
 <body>
 <header>
   <h1>🎮 EE. 8 de abril — Arcade Didático</h1>
-  <p>Snake · Tetris · 2048 · Velha · Memory | Toque ou teclado</p>
+  <p>Snake · Tetris · 2048 · Velha · Memory + Flappy · Campo Minado · Forca</p>
 </header>
 <div class="container">
-  <!-- MENU PRINCIPAL -->
   <section id="menu" class="view active">
     <div class="menu">
-      <div class="card"><h3>🐍 Snake</h3><p>Velocidade aumenta a cada 5 pontos! Toque/Setas</p><button class="btn" onclick="showView('snake')">Jogar Snake</button></div>
-      <div class="card"><h3>🧱 Tetris</h3><p>Próxima peça visível. ↑ gira, espaço desce rápido</p><button class="btn" onclick="showView('tetris')">Jogar Tetris</button></div>
-      <div class="card"><h3>🔢 2048</h3><p>Una blocos iguais. Melhor pontuação salva</p><button class="btn" onclick="showView('g2048')">Jogar 2048</button></div>
-      <div class="card"><h3>❌⭕ Velha</h3><p>Linha vencedora destacada</p><button class="btn" onclick="showView('ttt')">Jogar Velha</button></div>
-      <div class="card"><h3>🧠 Memory</h3><p>Encontre os pares, tempo de conclusão</p><button class="btn" onclick="showView('memory')">Jogar Memory</button></div>
+      <div class="card"><h3>🐍 Snake</h3><button class="btn" onclick="showView('snake')">Jogar Snake</button></div>
+      <div class="card"><h3>🧱 Tetris</h3><button class="btn" onclick="showView('tetris')">Jogar Tetris</button></div>
+      <div class="card"><h3>🔢 2048</h3><button class="btn" onclick="showView('g2048')">Jogar 2048</button></div>
+      <div class="card"><h3>❌⭕ Velha</h3><button class="btn" onclick="showView('ttt')">Jogar Velha</button></div>
+      <div class="card"><h3>🧠 Memory</h3><button class="btn" onclick="showView('memory')">Jogar Memory</button></div>
+      <div class="card"><h3>🐦 Flappy Bird</h3><button class="btn" onclick="showView('flappy')">Jogar Flappy</button></div>
+      <div class="card"><h3>💣 Campo Minado</h3><button class="btn" onclick="showView('mines')">Jogar Campo Minado</button></div>
+      <div class="card"><h3>🔤 Forca</h3><button class="btn" onclick="showView('forca')">Jogar Forca</button></div>
     </div>
   </section>
 
   <!-- SNAKE -->
   <section id="snake" class="view">
     <div class="toolbar"><div class="left"><button class="btn" onclick="goHome()">← Menu</button><strong>🐍 Snake</strong></div><div><span>Pontos: <span id="snakeScore">0</span> | Recorde: <span id="snakeBest">0</span></span><button class="btn" style="margin-left:12px" onclick="snakeStart()">🔄 Reiniciar</button></div></div>
-    <div class="panel snakeWrap"><canvas id="snakeCanvas" width="420" height="420"></canvas><div><div class="info-panel">💡 Dica: coma para crescer, evite paredes. Velocidade aumenta!</div><div class="touch-arrows"><div class="arrow-row"><button class="touch-btn" data-sdir="up">▲</button></div><div class="arrow-row"><button class="touch-btn" data-sdir="left">◀</button><button class="touch-btn" data-sdir="down">▼</button><button class="touch-btn" data-sdir="right">▶</button></div></div></div></div>
+    <div class="panel snakeWrap"><canvas id="snakeCanvas" width="420" height="420"></canvas><div><div class="info-panel">💡 Velocidade aumenta a cada 5 pontos!</div><div class="touch-arrows"><div class="arrow-row"><button class="touch-btn" data-sdir="up">▲</button></div><div class="arrow-row"><button class="touch-btn" data-sdir="left">◀</button><button class="touch-btn" data-sdir="down">▼</button><button class="touch-btn" data-sdir="right">▶</button></div></div></div></div>
   </section>
 
   <!-- TETRIS -->
@@ -306,10 +366,10 @@
   <!-- 2048 -->
   <section id="g2048" class="view">
     <div class="toolbar"><div class="left"><button class="btn" onclick="goHome()">← Menu</button><strong>2048</strong></div><div><span>Pontos: <span id="score2048">0</span> | Melhor: <span id="best2048">0</span></span><button class="btn" style="margin-left:12px" onclick="start2048()">🔄 Reiniciar</button></div></div>
-    <div class="panel g2048"><div id="grid2048" class="grid2048"></div><div id="status2048" class="status" hidden></div><div class="info-panel">← → ↑ ↓ ou deslize (toque suportado)</div></div>
+    <div class="panel"><div id="grid2048" class="grid2048"></div><div id="status2048" class="status" hidden></div><div class="info-panel">← → ↑ ↓ ou deslize</div></div>
   </section>
 
-  <!-- JOGO DA VELHA -->
+  <!-- VELHA -->
   <section id="ttt" class="view">
     <div class="toolbar"><div class="left"><button class="btn" onclick="goHome()">← Menu</button><strong>Jogo da Velha</strong></div><button class="btn" onclick="tttReset()">🔄 Reiniciar</button></div>
     <div class="panel"><div id="tttGrid" class="tttGrid"></div><p id="tttMsg" style="text-align:center; margin-top:16px; font-weight:bold;"></p></div>
@@ -320,20 +380,33 @@
     <div class="toolbar"><div class="left"><button class="btn" onclick="goHome()">← Menu</button><strong>Memory</strong></div><div><span>Jogadas: <span id="memMoves">0</span> | ⏱️ Tempo: <span id="memTimer">0</span> s</span><button class="btn" style="margin-left:12px" onclick="memStart()">🔄 Reiniciar</button></div></div>
     <div class="panel"><div id="memGrid" class="memGrid"></div><p id="memMsg" style="text-align:center; margin-top:12px"></p></div>
   </section>
+
+  <!-- FLAPPY BIRD -->
+  <section id="flappy" class="view">
+    <div class="toolbar"><div class="left"><button class="btn" onclick="goHome()">← Menu</button><strong>🐦 Flappy Bird</strong></div><div><span>Pontos: <span id="flappyScore">0</span> | Recorde: <span id="flappyBest">0</span></span><button class="btn" style="margin-left:12px" onclick="flappyStart()">🔄 Reiniciar</button></div></div>
+    <div class="panel"><canvas id="flappyCanvas" width="400" height="500"></canvas><div class="touch-arrows"><button class="touch-btn" style="width:120px" id="flappyTap">PULAR / TOCAR</button></div><p style="text-align:center">Clique ou toque no canvas ou botão para pular</p></div>
+  </section>
+
+  <!-- CAMPO MINADO -->
+  <section id="mines" class="view">
+    <div class="toolbar"><div class="left"><button class="btn" onclick="goHome()">← Menu</button><strong>💣 Campo Minado</strong></div><button class="btn" onclick="minesReset()">🔄 Reiniciar</button></div>
+    <div class="panel"><div id="minesGrid" class="mines-grid"></div><p id="minesMsg" style="text-align:center; margin-top:10px"></p></div>
+  </section>
+
+  <!-- FORCA -->
+  <section id="forca" class="view">
+    <div class="toolbar"><div class="left"><button class="btn" onclick="goHome()">← Menu</button><strong>🔤 Jogo da Forca</strong></div><div><span id="forcaErros">0</span> / 6 erros<button class="btn" style="margin-left:12px" onclick="forcaReset()">Nova palavra</button></div></div>
+    <div class="panel forca-area"><div><pre id="forcaDrawing" style="font-size:0.9rem; background:#000; padding:10px; border-radius:16px;"></pre></div><div><div id="forcaWordDisplay" class="forca-word"></div><div id="forcaLetters" class="forca-letters"></div><p id="forcaMsg" style="margin-top:12px"></p></div></div>
+  </section>
 </div>
 
 <script>
-  // ---------- UTILS / GLOBAL ----------
+  // ---------- GLOBAL ----------
   let activeView = 'menu';
-  let activeIntervals = []; // para cleanup
-  function clearGameIntervals() {
-    activeIntervals.forEach(interval => clearInterval(interval));
-    activeIntervals = [];
-  }
   function stopGameLoops() {
     if (window.snakeInterval) clearInterval(window.snakeInterval);
     if (window.tetrisAnimFrame) cancelAnimationFrame(window.tetrisAnimFrame);
-    // memory timer limpo separado
+    if (window.flappyInterval) clearInterval(window.flappyInterval);
     if (window.memTimerInterval) clearInterval(window.memTimerInterval);
   }
   function showView(id) {
@@ -346,10 +419,13 @@
     if (id === 'g2048') start2048();
     if (id === 'ttt') tttReset();
     if (id === 'memory') memStart();
+    if (id === 'flappy') flappyStart();
+    if (id === 'mines') minesReset();
+    if (id === 'forca') forcaReset();
   }
   function goHome() { showView('menu'); }
 
-  // ==================== SNAKE (velocidade dinâmica, recorde) ====================
+  // ========== SNAKE ==========
   const sCanvas = document.getElementById('snakeCanvas'), sCtx = sCanvas.getContext('2d');
   const GRID=21, CELL=420/GRID;
   let snake, apple, dir, sScore, sAlive, snakeInterval, speedMs=150;
@@ -371,16 +447,15 @@
     if(head.x<0||head.y<0||head.x>=GRID||head.y>=GRID||snake.some(p=>p.x===head.x&&p.y===head.y)){ sAlive=false; clearInterval(snakeInterval); drawSnake(); return; }
     snake.unshift(head);
     if(head.x===apple.x&&head.y===apple.y){ sScore+=10; updateSnakeBest(); apple=randApple(); document.getElementById('snakeScore').textContent=sScore;
-      // aumenta velocidade a cada 5 pontos
       let newSpeed = Math.max(70, 150 - Math.floor(sScore/5)*3);
-      if(newSpeed !== speedMs && sAlive) { speedMs = newSpeed; clearInterval(snakeInterval); snakeInterval = setInterval(snakeStep, speedMs); activeIntervals.push(snakeInterval); }
+      if(newSpeed !== speedMs && sAlive) { speedMs = newSpeed; clearInterval(snakeInterval); snakeInterval = setInterval(snakeStep, speedMs); }
     } else { snake.pop(); }
     document.getElementById('snakeScore').textContent=sScore;
     drawSnake();
   }
   function snakeStart() {
     if(snakeInterval) clearInterval(snakeInterval);
-    snakeInit(); drawSnake(); snakeInterval = setInterval(snakeStep, speedMs); activeIntervals.push(snakeInterval);
+    snakeInit(); drawSnake(); snakeInterval = setInterval(snakeStep, speedMs);
     window.snakeInterval = snakeInterval;
   }
   document.addEventListener('keydown',(e)=>{ if(activeView!=='snake') return; const k=e.key.toLowerCase(); if(['arrowup','arrowdown','arrowleft','arrowright','w','a','s','d'].includes(k)) e.preventDefault();
@@ -390,7 +465,7 @@
     const d = btn.dataset.sdir; const newDir = {up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}}[d];
     if(newDir && (newDir.x !== -dir.x || newDir.y !== -dir.y)) dir = newDir; }));
 
-  // ==================== TETRIS (próxima peça, recorde) ====================
+  // ========== TETRIS (código original, compacto) ==========
   const tCanvas=document.getElementById('tetrisCanvas'), tCtx=tCanvas.getContext('2d');
   const nextCanvas=document.getElementById('nextCanvas'), nextCtx=nextCanvas.getContext('2d');
   const COLS=10, ROWS=20, TSIZE=24;
@@ -402,7 +477,6 @@
   function tNewBoard(){ tBoard=Array.from({length:ROWS},()=>Array(COLS).fill(0)); }
   function tRotateMat(mat){ const R=mat[0].length, C=mat.length; const out=Array.from({length:R},()=>Array(C).fill(0)); for(let r=0;r<C;r++) for(let c=0;c<R;c++) out[c][C-1-r]=mat[r][c]; return out; }
   function getRandomPiece(){ const keys=Object.keys(SHAPES); const k=keys[Math.floor(Math.random()*keys.length)]; return {k, m:SHAPES[k]}; }
-  function tInitNext(){ if(!tNextPiece) tNextPiece=getRandomPiece(); }
   function tSpawn(){ tPiece = tNextPiece ? tNextPiece : getRandomPiece(); tNextPiece = getRandomPiece(); tRot=0; tX=3; tY=0; if(tCollide(0,0,tRot)){ tNewBoard(); tScore=0; tLines=0; fallDelay=500; } drawNextPiece(); }
   function tShape(){ let m=tPiece.m; for(let i=0;i<tRot;i++) m=tRotateMat(m); return m; }
   function tCollide(dx,dy,rot){ let m=tPiece.m; for(let i=0;i<rot;i++) m=tRotateMat(m); for(let r=0;r<m.length;r++) for(let c=0;c<m[0].length;c++){ if(m[r][c]){ const x=tX+c+dx, y=tY+r+dy; if(x<0||x>=COLS||y>=ROWS||(y>=0 && tBoard[y][x])) return true; } } return false; }
@@ -416,7 +490,7 @@
   document.addEventListener('keydown',(e)=>{ if(activeView!=='tetris') return; const k=e.key; if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown',' ','r'].includes(k)) e.preventDefault(); if(k==='ArrowLeft') handleTetrisAction('left'); else if(k==='ArrowRight') handleTetrisAction('right'); else if(k==='ArrowDown') handleTetrisAction('down'); else if(k==='ArrowUp') handleTetrisAction('rotate'); else if(k===' ') handleTetrisAction('hard'); });
   document.querySelectorAll('[data-tdir]').forEach(btn=> btn.addEventListener('click',()=> handleTetrisAction(btn.dataset.tdir)));
 
-  // ==================== 2048 ====================
+  // ========== 2048 ==========
   let grid2048, score2048=0, best2048=Number(localStorage.getItem('best-2048')||0); const gridEl=document.getElementById('grid2048'), scoreEl=document.getElementById('score2048'), bestEl=document.getElementById('best2048'), statusDiv=document.getElementById('status2048');
   function emptyBoard(){ return Array.from({length:4},()=>Array(4).fill(0)); }
   function cellsEmpty(){ let out=[]; for(let i=0;i<4;i++) for(let j=0;j<4;j++) if(grid2048[i][j]===0) out.push([i,j]); return out; }
@@ -431,7 +505,7 @@
   function hide2048Msg(){ statusDiv.hidden=true; }
   document.addEventListener('keydown',(e)=>{ if(activeView!=='g2048') return; const k=e.key; if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(k)) e.preventDefault(); if(k==='ArrowLeft') move2048('left'); if(k==='ArrowRight') move2048('right'); if(k==='ArrowUp') move2048('up'); if(k==='ArrowDown') move2048('down'); });
 
-  // ========== VELHA (destaque linha vencedora) ==========
+  // ========== VELHA ==========
   let tttBoard, tttTurn, tttOver, winCombo=null;
   const tttGridDiv=document.getElementById('tttGrid'), tttMsgSpan=document.getElementById('tttMsg');
   function tttReset(){ tttBoard=Array(9).fill(''); tttTurn='X'; tttOver=false; winCombo=null; tttRender(); tttMsgSpan.textContent='Vez de: X'; }
@@ -439,7 +513,7 @@
   function tttWinnerInfo(){ const L=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]; for(let combo of L){ const [a,b,c]=combo; if(tttBoard[a] && tttBoard[a]===tttBoard[b] && tttBoard[a]===tttBoard[c]) return {winner:tttBoard[a], combo}; } return {winner:null, combo:null}; }
   function tttPlay(i){ if(tttOver||tttBoard[i]) return; tttBoard[i]=tttTurn; const {winner,combo}=tttWinnerInfo(); if(winner){ tttOver=true; winCombo=combo; tttRender(); tttMsgSpan.textContent=`Vencedor: ${winner}! 🎉`; return; } if(tttBoard.every(cell=>cell)){ tttOver=true; tttMsgSpan.textContent='Empate!'; tttRender(); return; } tttTurn= tttTurn==='X'?'O':'X'; tttRender(); tttMsgSpan.textContent=`Vez de: ${tttTurn}`; }
 
-  // ========== MEMORY com temporizador ==========
+  // ========== MEMORY ==========
   const memSymbols=['🍎','🍌','🍇','🍉','🍒','🍑','🥝','🍍']; let memDeck=[], memFirst=null, memLock=false, memMoves=0, memMatched=0, memStartTime=0, memTimerInterval=null;
   const memGridDiv=document.getElementById('memGrid'), memMovesSpan=document.getElementById('memMoves'), memTimerSpan=document.getElementById('memTimer'), memMsgSpan=document.getElementById('memMsg');
   function memStopTimer(){ if(memTimerInterval){ clearInterval(memTimerInterval); memTimerInterval=null; } }
@@ -447,9 +521,34 @@
   function memStart(){ memStopTimer(); const doubled=[...memSymbols,...memSymbols]; memDeck=doubled.sort(()=>Math.random()-0.5).map((sym,idx)=>({id:idx, sym, open:false, matched:false})); memFirst=null; memLock=false; memMoves=0; memMatched=0; memRender(); memMsgSpan.textContent=''; memMovesSpan.textContent='0'; memTimerSpan.textContent='0'; memStartTimer(); }
   function memRender(){ memGridDiv.innerHTML=''; memDeck.forEach((card,i)=>{ const wrap=document.createElement('div'); wrap.className='cardM'+(card.open||card.matched?' flipped':''); const inner=document.createElement('div'); inner.className='cardInner'; const front=document.createElement('div'); front.className='face front'; front.textContent='?'; const back=document.createElement('div'); back.className='face back'; back.textContent=card.sym; inner.appendChild(front); inner.appendChild(back); wrap.appendChild(inner); wrap.addEventListener('click',()=>memFlip(i)); memGridDiv.appendChild(wrap); }); }
   function memFlip(i){ if(memLock || memDeck[i].matched || memDeck[i].open) return; memDeck[i].open=true; memRender(); if(memFirst===null){ memFirst=i; } else { memMoves++; memMovesSpan.textContent=memMoves; const a=memDeck[memFirst], b=memDeck[i]; if(a.sym===b.sym){ a.matched=b.matched=true; memMatched+=2; memFirst=null; if(memMatched===memDeck.length){ memStopTimer(); memMsgSpan.textContent=`Parabéns! Completou em ${Math.floor((Date.now()-memStartTime)/1000)}s`; } } else { memLock=true; setTimeout(()=>{ a.open=false; b.open=false; memFirst=null; memLock=false; memRender(); }, 700); } } }
-  
+
+  // ========== FLAPPY BIRD ==========
+  const flappyCanvas=document.getElementById('flappyCanvas'), fCtx=flappyCanvas.getContext('2d');
+  let fBird={y:250, vel:0}, fGravity=0.2, fJump=-4.5, fPipes=[], fScore=0, fBest=localStorage.flappyBest?parseInt(localStorage.flappyBest):0, fAlive=true, fFrame;
+  document.getElementById('flappyBest').innerText=fBest;
+  function flappyReset(){ fBird.y=250; fBird.vel=0; fPipes=[{x:400, gapY:200, width:50, gap:120}]; fScore=0; fAlive=true; document.getElementById('flappyScore').innerText='0'; }
+  function flappyDraw(){ fCtx.clearRect(0,0,400,500); fCtx.fillStyle='#0a2f44'; fCtx.fillRect(0,0,400,500); for(let p of fPipes){ fCtx.fillStyle='#2e7d32'; fCtx.fillRect(p.x,0, p.width, p.gapY); fCtx.fillRect(p.x, p.gapY+p.gap, p.width, 500-p.gapY-p.gap); } fCtx.fillStyle='#facc15'; fCtx.beginPath(); fCtx.arc(70, fBird.y, 12,0,Math.PI*2); fCtx.fill(); fCtx.fillStyle='black'; fCtx.beginPath(); fCtx.arc(65, fBird.y-3, 2,0,Math.PI*2); fCtx.fill(); if(!fAlive){ fCtx.fillStyle='white'; fCtx.font='bold 20px system-ui'; fCtx.fillText('GAME OVER',150,230); } }
+  function flappyUpdate(){ if(!fAlive) return; fBird.vel+=fGravity; fBird.y+=fBird.vel; if(fBird.y<0||fBird.y>500){ fAlive=false; return; } for(let p of fPipes){ p.x-=2; if(p.x+50<0){ fPipes.shift(); fScore++; document.getElementById('flappyScore').innerText=fScore; if(fScore>fBest){ fBest=fScore; localStorage.setItem('flappyBest',fBest); document.getElementById('flappyBest').innerText=fBest; } } } if(fPipes.length===0 || fPipes[fPipes.length-1].x<250) fPipes.push({x:400, gapY:Math.random()*200+100, width:50, gap:120}); for(let p of fPipes){ if(70+12 > p.x && 70-12 < p.x+50 && (fBird.y-12 < p.gapY || fBird.y+12 > p.gapY+p.gap)) fAlive=false; } flappyDraw(); }
+  function flappyJump(){ if(activeView==='flappy' && fAlive) fBird.vel = fJump; else if(!fAlive && activeView==='flappy') flappyStart(); }
+  function flappyStart(){ if(fFrame) clearInterval(fFrame); flappyReset(); fFrame=setInterval(flappyUpdate, 25); window.flappyInterval=fFrame; }
+  document.getElementById('flappyTap').addEventListener('click',flappyJump);
+  flappyCanvas.addEventListener('click',flappyJump);
+  document.addEventListener('keydown',(e)=>{ if(activeView==='flappy' && e.code==='Space'){ e.preventDefault(); flappyJump(); } });
+
+  // ========== CAMPO MINADO ==========
+  let minesBoard=[], minesRevealed=[], minesRows=9, minesCols=9, minesTotal=10, minesGameOver=false;
+  function minesReset(){ minesGameOver=false; minesBoard=Array(minesRows).fill().map(()=>Array(minesCols).fill(0)); let bombs=0; while(bombs<minesTotal){ let r=Math.floor(Math.random()*minesRows), c=Math.floor(Math.random()*minesCols); if(minesBoard[r][c]!==-1){ minesBoard[r][c]=-1; bombs++; } } for(let i=0;i<minesRows;i++) for(let j=0;j<minesCols;j++) if(minesBoard[i][j]!==-1){ let cnt=0; for(let di=-1;di<=1;di++) for(let dj=-1;dj<=1;dj++){ let ni=i+di, nj=j+dj; if(ni>=0 && ni<minesRows && nj>=0 && nj<minesCols && minesBoard[ni][nj]===-1) cnt++; } minesBoard[i][j]=cnt; } minesRevealed=Array(minesRows).fill().map(()=>Array(minesCols).fill(false)); minesRender(); document.getElementById('minesMsg').innerText=''; }
+  function minesReveal(r,c){ if(minesGameOver || minesRevealed[r][c]) return; minesRevealed[r][c]=true; if(minesBoard[r][c]===-1){ minesGameOver=true; document.getElementById('minesMsg').innerText='💥 Você perdeu! Reinicie.'; minesRender(); return; } if(minesBoard[r][c]===0){ for(let di=-1;di<=1;di++) for(let dj=-1;dj<=1;dj++){ let nr=r+di, nc=c+dj; if(nr>=0 && nr<minesRows && nc>=0 && nc<minesCols && !minesRevealed[nr][nc] && minesBoard[nr][nc]!==-1) minesReveal(nr,nc); } } minesRender(); let win=true; for(let i=0;i<minesRows;i++) for(let j=0;j<minesCols;j++) if(minesBoard[i][j]!==-1 && !minesRevealed[i][j]) win=false; if(win){ document.getElementById('minesMsg').innerText='🎉 Vitória! Você encontrou todas as minas!'; minesGameOver=true; } }
+  function minesRender(){ let gridDiv=document.getElementById('minesGrid'); gridDiv.innerHTML=''; for(let i=0;i<minesRows;i++) for(let j=0;j<minesCols;j++){ let cell=document.createElement('div'); cell.className='mine-cell'; if(minesRevealed[i][j]){ cell.classList.add('revealed'); if(minesBoard[i][j]===-1) cell.textContent='💣'; else cell.textContent=minesBoard[i][j]===0?'':minesBoard[i][j]; } else { cell.textContent='?'; } cell.addEventListener('click',()=>{ if(!minesGameOver) minesReveal(i,j); }); gridDiv.appendChild(cell); } }
+
+  // ========== FORCA ==========
+  const wordsList=['PROGRAMADOR','JAVASCRIPT','ESCOLA','APRENDER','JOGO','DIDATICO','COMPUTADOR','ALUNO','PROFESSOR','DESAFIO','PYTHON','HTML','CSS'];
+  let currentWord='', guessedLetters=[], wrongs=0, maxWrongs=6;
+  function forcaReset(){ currentWord=wordsList[Math.floor(Math.random()*wordsList.length)].toUpperCase(); guessedLetters=[]; wrongs=0; forcaRender(); document.getElementById('forcaMsg').innerText=''; }
+  function forcaGuess(letter){ if(wrongs>=maxWrongs || guessedLetters.includes(letter)) return; guessedLetters.push(letter); if(!currentWord.includes(letter)) wrongs++; forcaRender(); if(wrongs>=maxWrongs) document.getElementById('forcaMsg').innerText='😵 Perdeu! A palavra era '+currentWord; else if(currentWord.split('').every(l=>guessedLetters.includes(l))) document.getElementById('forcaMsg').innerText='🎉 Parabéns! Você acertou!'; }
+  function forcaRender(){ let display=currentWord.split('').map(l=>guessedLetters.includes(l)?l:'_').join(' '); document.getElementById('forcaWordDisplay').innerText=display; let lettersDiv=document.getElementById('forcaLetters'); lettersDiv.innerHTML=''; for(let i=65;i<=90;i++){ let letter=String.fromCharCode(i); let btn=document.createElement('div'); btn.className='forca-key'+(guessedLetters.includes(letter)?' used':''); btn.innerText=letter; btn.addEventListener('click',()=>forcaGuess(letter)); lettersDiv.appendChild(btn); } document.getElementById('forcaErros').innerText=wrongs; let stages=['  +---+\n  |   |\n      |\n      |\n      |\n      |\n=========', '  +---+\n  |   |\n  O   |\n      |\n      |\n      |\n=========', '  +---+\n  |   |\n  O   |\n  |   |\n      |\n      |\n=========', '  +---+\n  |   |\n  O   |\n /|   |\n      |\n      |\n=========', '  +---+\n  |   |\n  O   |\n /|\\  |\n      |\n      |\n=========', '  +---+\n  |   |\n  O   |\n /|\\  |\n /    |\n      |\n=========', '  +---+\n  |   |\n  O   |\n /|\\  |\n / \\  |\n      |\n=========']; document.getElementById('forcaDrawing').innerText=stages[wrongs]; }
+
   // Inicialização
-  snakeStart(); // apenas para pré-carregar, mas menu ativo
   window.addEventListener('load',()=>{ showView('menu'); });
 </script>
 </body>
