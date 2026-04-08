@@ -2,23 +2,76 @@
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8">
-  <title>Atari Online – River Raid</title>
+  <title>Atari Online – 9od</title>
+
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      height: 100%;
+    }
+
+    header {
+      background: #111;
+      padding: 10px;
       text-align: center;
     }
-    iframe {
-      border: none;
+
+    header button {
+      background: #222;
+      color: white;
+      border: 1px solid #444;
+      padding: 8px 14px;
+      margin: 0 5px;
+      cursor: pointer;
+    }
+
+    header button:hover {
+      background: #444;
+    }
+
+    .emulator {
+      display: none;
       width: 100vw;
-      height: 100vh;
+      height: calc(100vh - 52px);
+      border: none;
+    }
+
+    .active {
+      display: block;
     }
   </style>
+
+  <script>
+    function showEmulator(id) {
+      document.getElementById("emu2600").classList.remove("active");
+      document.getElementById("emu7800").classList.remove("active");
+      document.getElementById(id).classList.add("active");
+    }
+  </script>
 </head>
 <body>
 
+<header>
+  <strong>Atari Online – 9od</strong><br>
+  <button onclick="showEmulator('emu2600')">Atari 2600</button>
+  <button onclick="showEmulator('emu7800')">Atari 7800</button>
+</header>
+
+<!-- Atari 2600 (WebRetro / Stella core) -->
 <iframe
+  id="emu2600"
+  class="emulator active"
+  src="https://binbashbanana.github.io/webretro/">
+</iframe>
+
+<!-- Atari 7800 (JS7800) -->
+<iframe
+  id="emu7800"
+  class="emulator"
   src="https://raz0red.github.io/js7800/">
 </iframe>
 
