@@ -125,11 +125,13 @@
             font-size: 14px;
         }
 
-        /* --- ESTILOS DOS BOTÕES DOS JOGOS --- */
-        .btn-domino {
+        /* ===== BOTÕES DOS JOGOS ===== */
+
+        .btn-domino,
+        .btn-xadrez,
+        .btn-atari {
             display: inline-block;
             padding: 12px 24px;
-            background-color: #10b981;
             color: white;
             text-decoration: none;
             border-radius: 8px;
@@ -138,6 +140,10 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: 0.2s;
             text-align: center;
+        }
+
+        .btn-domino {
+            background-color: #10b981;
         }
 
         .btn-domino:hover {
@@ -146,21 +152,20 @@
         }
 
         .btn-xadrez {
-            display: inline-block;
-            padding: 12px 24px;
-            background-color: #1e293b; /* Cor escura do Xadrez */
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 18px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: 0.2s;
-            text-align: center;
+            background-color: #1e293b;
         }
 
         .btn-xadrez:hover {
             background-color: #334155;
+            transform: scale(1.05);
+        }
+
+        .btn-atari {
+            background-color: #d97706;
+        }
+
+        .btn-atari:hover {
+            background-color: #b45309;
             transform: scale(1.05);
         }
     </style>
@@ -174,23 +179,21 @@
     </header>
 
     <main>
+
         <section class="dica-pedagogica">
             <h2>Educação & Programação</h2>
             <p>
                 <strong>Paulo Freire</strong> defendia que a alfabetização deve partir do
                 <strong>todo</strong> — o contexto, a realidade e a vivência do aluno —
-                para depois chegar às <strong>partes</strong>, como letras, palavras
-                e conceitos formais.
+                para depois chegar às <strong>partes</strong>.
             </p>
             <p>
-                Seu método utiliza uma abordagem <strong>sociocultural</strong>, em que
-                o aprendizado nasce da <strong>vida, da cultura e da experiência</strong>
-                do estudante.
+                Seu método utiliza uma abordagem <strong>sociocultural</strong>,
+                em que o aprendizado nasce da <strong>vida e da experiência</strong>.
             </p>
             <p>
-                Neste laboratório, a programação é ensinada da mesma forma:
-                começamos por <strong>problemas reais</strong> e do cotidiano do aluno,
-                para então compreender os <strong>algoritmos, estruturas e códigos</strong>.
+                Neste laboratório, a programação segue o mesmo princípio:
+                começa no <strong>problema real</strong> e chega ao <strong>código</strong>.
             </p>
         </section>
 
@@ -221,14 +224,14 @@
                 <li><a href="atividade1.html">Atividades de Lógica</a></li>
                 <li><a href="loboratorio_redes.html">Laboratório de Jogos de Lógica</a></li>
             </ul>
-            
-            <div style="text-align: center; margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+
+            <div style="text-align:center; display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
                 <a href="domino/" class="btn-domino">🎮 Dominó Lógico</a>
                 <a href="xadrez/" class="btn-xadrez">♟️ Xadrez Lógico</a>
-                <a href="atari/7800.html" class="btn-atari">🕹️ Atari 7800</a>
                 <a href="atari/2600.html" class="btn-atari">🕹️ Atari 2600</a>
             </div>
         </section>
+
     </main>
 
     <footer>
@@ -239,5 +242,5 @@
     </footer>
 
 </body>
-
 </html>
+``
