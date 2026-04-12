@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title> For, Break e Continue </title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%);
+            font-family: 'Inter', system-ui, 'Segoe UI', 'Fira Code', monospace;
+            padding: 2rem;
+            color: #eef4ff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 255, 204, 0.3);
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #b3ffe0, #00ffcc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero p { font-size: 1.1rem; color: #b9c7d9; margin-top: 0.5rem; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+        .card {
+            background: rgba(18, 25, 40, 0.75);
+            backdrop-filter: blur(2px);
+            border-radius: 1.75rem;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            transition: 0.2s;
+            overflow: hidden;
+        }
+        .card:hover { transform: translateY(-4px); border-color: rgba(0, 255, 204, 0.5); }
+        .card-header {
+            background: rgba(0, 30, 30, 0.5);
+            padding: 0.9rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+        }
+        .card-header h3 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #b3ffe0;
+        }
+        .card-header h3:before { content: "🐍"; font-size: 1.2rem; }
+        .code-block {
+            background: #0a0e17;
+            padding: 0.8rem 1.2rem;
+            margin: 1rem 1.2rem;
+            border-radius: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            border-left: 3px solid #00ffcc;
+            white-space: pre-wrap;
+            color: #d6deeb;
+        }
+        .controls {
+            padding: 0 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .control-group {
+            background: #111a24;
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .control-group label {
+            font-size: 0.75rem;
+            color: #9ccfd8;
+        }
+        input, select {
+            background: #020617;
+            border: 1px solid #334155;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            width: auto;
+        }
+        .action-bar {
+            display: flex;
+            gap: 0.8rem;
+            padding: 0 1.2rem 0.8rem 1.2rem;
+        }
+        .btn {
+            border: none;
+            background: #1e2a3a;
+            color: #e2e8f0;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-primary {
+            background: #0f2c2c;
+            color: #00ffcc;
+            border: 1px solid #00ffcc80;
+        }
+        .btn-primary:hover {
+            background: #00ccaa20;
+            border-color: #00ffcc;
+            transform: scale(0.97);
+        }
+        .btn-secondary:hover { background: #2d3b4b; }
+        .console-area {
+            background: #03060c;
+            border-top: 1px solid #1f2a3a;
+            padding: 1rem 1.2rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .console-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #5f7f9e;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .log-content { color: #bbd4f0; }
+        .log-line {
+            border-left: 2px solid #2c6e6e;
+            padding-left: 8px;
+            margin: 4px 0;
+            font-size: 0.75rem;
+        }
+        .log-break { color: #ffb86c; border-left-color: #ffaa44; }
+        .log-continue { color: #8be9fd; border-left-color: #6ac8ff; }
+        footer {
+            text-align: center;
+            background: rgba(0, 20, 20, 0.5);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 750px) {
+            body { padding: 1rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🔄 20 Missões: for, break & continue</h1>
+        <p>▶ Altere os valores e veja como o loop se comporta!</p>
+    </div>
+    <div class="grid" id="examplesGrid"></div>
+    <footer>
+        <h3 style="color:#00ffcc;">🎯 Teste diferentes valores!</h3>
+        <p style="font-size:0.8rem;">Cada missão permite modificar parâmetros como range, valor de break, etc. Execute e observe o console.</p>
+    </footer>
+</div>
+
+<script>
+    // Definição das 20 missões com parâmetros editáveis
+    const missoes = [
+        { // 1
+            title: "1. For simples (range variável)",
+            codeExemplo: "for i in range(1, 6):\n    print(i)",
+            controls: [
+                { label: "Início:", type: "number", default: 1, id: "start" },
+                { label: "Fim:", type: "number", default: 6, id: "end" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 1;
+                let end = parseInt(params.end) || 6;
+                for (let i = start; i < end; i++) {
+                    logger(`i = ${i}`, "info");
+                }
+                logger("Loop finalizado.", "info");
+            }
+        },
+        { // 2
+            title: "2. For com step (pular de 2 em 2)",
+            codeExemplo: "for i in range(0, 10, 2):\n    print(i)",
+            controls: [
+                { label: "Início:", type: "number", default: 0, id: "start" },
+                { label: "Fim:", type: "number", default: 10, id: "end" },
+                { label: "Step:", type: "number", default: 2, id: "step" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 0;
+                let end = parseInt(params.end) || 10;
+                let step = parseInt(params.step) || 2;
+                for (let i = start; i < end; i += step) {
+                    logger(`i = ${i}`, "info");
+                }
+                logger("Loop finalizado.", "info");
+            }
+        },
+        { // 3
+            title: "3. Break ao encontrar um valor específico",
+            codeExemplo: "for i in range(1, 11):\n    if i == 5:\n        break\n    print(i)",
+            controls: [
+                { label: "Início:", type: "number", default: 1, id: "start" },
+                { label: "Fim:", type: "number", default: 11, id: "end" },
+                { label: "Break no valor:", type: "number", default: 5, id: "breakVal" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 1;
+                let end = parseInt(params.end) || 11;
+                let breakVal = parseInt(params.breakVal) || 5;
+                for (let i = start; i < end; i++) {
+                    if (i === breakVal) {
+                        logger(`Valor ${i} encontrado → BREAK`, "break");
+                        break;
+                    }
+                    logger(`i = ${i}`, "info");
+                }
+                logger("Execução encerrada.", "info");
+            }
+        },
+        { // 4
+            title: "4. Continue: pular números pares",
+            codeExemplo: "for n in range(1, 8):\n    if n % 2 == 0:\n        continue\n    print(n)",
+            controls: [
+                { label: "Início:", type: "number", default: 1, id: "start" },
+                { label: "Fim:", type: "number", default: 8, id: "end" },
+                { label: "Pular se múltiplo de:", type: "number", default: 2, id: "mod" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 1;
+                let end = parseInt(params.end) || 8;
+                let mod = parseInt(params.mod) || 2;
+                for (let n = start; n < end; n++) {
+                    if (n % mod === 0) {
+                        logger(`n = ${n} é múltiplo de ${mod} → CONTINUE`, "continue");
+                        continue;
+                    }
+                    logger(`n = ${n} (impresso)`, "info");
+                }
+                logger("Fim.", "info");
+            }
+        },
+        { // 5
+            title: "5. Soma de 1 até N",
+            codeExemplo: "soma = 0\nfor i in range(1, N+1):\n    soma += i\nprint(soma)",
+            controls: [
+                { label: "N (até onde somar):", type: "number", default: 100, id: "N" }
+            ],
+            run: (params, logger) => {
+                let N = parseInt(params.N) || 100;
+                let soma = 0;
+                for (let i = 1; i <= N; i++) {
+                    soma += i;
+                    if (i % 20 === 0) logger(`... soma parcial (${i}): ${soma}`, "info");
+                }
+                logger(`Soma de 1 até ${N} = ${soma}`, "info");
+            }
+        },
+        { // 6
+            title: "6. Break e Continue com lista (adicione itens)",
+            codeExemplo: "lista = ['maçã', '', 'banana', 'sair', 'uva']\nfor fruta in lista:\n    if fruta == '': continue\n    if fruta == 'sair': break\n    print(fruta)",
+            controls: [
+                { label: "Itens (separados por vírgula):", type: "text", default: "maçã,,banana,sair,uva", id: "lista" },
+                { label: "Palavra que quebra:", type: "text", default: "sair", id: "breakWord" },
+                { label: "Palavra que pula (vazio):", type: "text", default: "", id: "continueWord" }
+            ],
+            run: (params, logger) => {
+                let listaRaw = params.lista || "maçã,,banana,sair,uva";
+                let lista = listaRaw.split(',').map(s => s.trim());
+                let breakWord = params.breakWord || "sair";
+                let continueWord = params.continueWord || "";
+                for (let fruta of lista) {
+                    if (fruta === continueWord) {
+                        logger(`'${fruta}' (vazio) → CONTINUE`, "continue");
+                        continue;
+                    }
+                    if (fruta === breakWord) {
+                        logger(`'${breakWord}' encontrado → BREAK`, "break");
+                        break;
+                    }
+                    logger(`fruta: ${fruta}`, "info");
+                }
+                logger("Execução finalizada.", "info");
+            }
+        },
+        { // 7
+            title: "7. Tabuada de um número N",
+            codeExemplo: "for i in range(1, 11):\n    print(f'{N} x {i} = {N*i}')",
+            controls: [
+                { label: "N (tabuada):", type: "number", default: 5, id: "N" },
+                { label: "Até qual multiplicador?", type: "number", default: 10, id: "max" }
+            ],
+            run: (params, logger) => {
+                let N = parseInt(params.N) || 5;
+                let max = parseInt(params.max) || 10;
+                for (let i = 1; i <= max; i++) {
+                    logger(`${N} x ${i} = ${N*i}`, "info");
+                }
+                logger("Tabuada completa.", "info");
+            }
+        },
+        { // 8
+            title: "8. For com else (sem break)",
+            codeExemplo: "for i in range(1, 4):\n    print(i)\nelse:\n    print('Loop completo')",
+            controls: [
+                { label: "Início:", type: "number", default: 1, id: "start" },
+                { label: "Fim:", type: "number", default: 4, id: "end" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 1;
+                let end = parseInt(params.end) || 4;
+                for (let i = start; i < end; i++) {
+                    logger(`i = ${i}`, "info");
+                }
+                logger("Loop completo (else executado)", "info");
+            }
+        },
+        { // 9
+            title: "9. Continue: pular um número específico",
+            codeExemplo: "for i in range(1, 6):\n    if i == 3:\n        continue\n    print(i)",
+            controls: [
+                { label: "Início:", type: "number", default: 1, id: "start" },
+                { label: "Fim:", type: "number", default: 6, id: "end" },
+                { label: "Número a pular:", type: "number", default: 3, id: "skip" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 1;
+                let end = parseInt(params.end) || 6;
+                let skip = parseInt(params.skip) || 3;
+                for (let i = start; i < end; i++) {
+                    if (i === skip) {
+                        logger(`i = ${skip} → CONTINUE (pular)`, "continue");
+                        continue;
+                    }
+                    logger(`i = ${i}`, "info");
+                }
+                logger("Loop finalizado.", "info");
+            }
+        },
+        { // 10
+            title: "10. Encontrar primeiro múltiplo de um valor",
+            codeExemplo: "for i in range(1, 51):\n    if i % 7 == 0:\n        print(i)\n        break",
+            controls: [
+                { label: "Início:", type: "number", default: 1, id: "start" },
+                { label: "Fim:", type: "number", default: 51, id: "end" },
+                { label: "Múltiplo de:", type: "number", default: 7, id: "mult" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 1;
+                let end = parseInt(params.end) || 51;
+                let mult = parseInt(params.mult) || 7;
+                for (let i = start; i < end; i++) {
+                    if (i % mult === 0) {
+                        logger(`Primeiro múltiplo de ${mult}: ${i} → BREAK`, "break");
+                        break;
+                    }
+                    logger(`i = ${i} (não é múltiplo)`, "info");
+                }
+                logger("Execução encerrada.", "info");
+            }
+        },
+        { // 11
+            title: "11. Média de N notas (digite notas)",
+            codeExemplo: "soma = 0\nfor _ in range(quant):\n    nota = float(input('Nota:'))\n    soma += nota\nmedia = soma/quant",
+            controls: [
+                { label: "Quantidade de notas:", type: "number", default: 5, id: "quant" }
+            ],
+            run: (params, logger) => {
+                let quant = parseInt(params.quant) || 5;
+                let soma = 0;
+                for (let i = 1; i <= quant; i++) {
+                    let nota = parseFloat(prompt(`Digite a nota ${i}:`));
+                    if (isNaN(nota)) nota = 0;
+                    soma += nota;
+                    logger(`Nota ${i}: ${nota} → soma parcial: ${soma}`, "info");
+                }
+                let media = soma / quant;
+                logger(`Média final: ${media.toFixed(2)}`, "info");
+            }
+        },
+        { // 12
+            title: "12. Loop aninhado com break interno",
+            codeExemplo: "for i in range(3):\n    for j in range(5):\n        if j == 2: break\n        print(i,j)",
+            controls: [
+                { label: "Linhas (i):", type: "number", default: 3, id: "rows" },
+                { label: "Colunas (j):", type: "number", default: 5, id: "cols" },
+                { label: "Break no j =", type: "number", default: 2, id: "breakAt" }
+            ],
+            run: (params, logger) => {
+                let rows = parseInt(params.rows) || 3;
+                let cols = parseInt(params.cols) || 5;
+                let breakAt = parseInt(params.breakAt) || 2;
+                for (let i = 0; i < rows; i++) {
+                    for (let j = 0; j < cols; j++) {
+                        if (j === breakAt) {
+                            logger(`i=${i}, j=${j} → break interno`, "break");
+                            break;
+                        }
+                        logger(`i=${i}, j=${j}`, "info");
+                    }
+                }
+                logger("Loops aninhados concluídos.", "info");
+            }
+        },
+        { // 13
+            title: "13. Continue em lista (pular zeros)",
+            codeExemplo: "numeros = [10,20,0,30,0,40]\nsoma=0\nfor n in numeros:\n    if n==0: continue\n    soma+=n",
+            controls: [
+                { label: "Lista (separada por vírgula):", type: "text", default: "10,20,0,30,0,40", id: "lista" },
+                { label: "Valor a pular:", type: "number", default: 0, id: "skipVal" }
+            ],
+            run: (params, logger) => {
+                let listaRaw = params.lista || "10,20,0,30,0,40";
+                let numeros = listaRaw.split(',').map(v => parseFloat(v.trim()));
+                let skipVal = parseFloat(params.skipVal) || 0;
+                let soma = 0;
+                for (let n of numeros) {
+                    if (n === skipVal) {
+                        logger(`Valor ${skipVal} → CONTINUE`, "continue");
+                        continue;
+                    }
+                    soma += n;
+                    logger(`Adicionando ${n} → soma atual: ${soma}`, "info");
+                }
+                logger(`Soma total: ${soma}`, "info");
+            }
+        },
+        { // 14
+            title: "14. Break com condição composta (múltiplo de dois números)",
+            codeExemplo: "for i in range(1,21):\n    if i % 3 == 0 and i % 5 == 0:\n        print('Encontrado!')\n        break",
+            controls: [
+                { label: "Início:", type: "number", default: 1, id: "start" },
+                { label: "Fim:", type: "number", default: 21, id: "end" },
+                { label: "Divisor 1:", type: "number", default: 3, id: "d1" },
+                { label: "Divisor 2:", type: "number", default: 5, id: "d2" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 1;
+                let end = parseInt(params.end) || 21;
+                let d1 = parseInt(params.d1) || 3;
+                let d2 = parseInt(params.d2) || 5;
+                for (let i = start; i < end; i++) {
+                    if (i % d1 === 0 && i % d2 === 0) {
+                        logger(`i = ${i} é múltiplo de ${d1} e ${d2} → BREAK`, "break");
+                        break;
+                    }
+                    logger(`i = ${i}`, "info");
+                }
+                logger("Execução encerrada.", "info");
+            }
+        },
+        { // 15
+            title: "15. Soma até ultrapassar um limite",
+            codeExemplo: "soma=0\nfor i in range(1,1000):\n    soma+=i\n    if soma>100: break\nprint(soma)",
+            controls: [
+                { label: "Limite (soma >):", type: "number", default: 100, id: "limite" }
+            ],
+            run: (params, logger) => {
+                let limite = parseInt(params.limite) || 100;
+                let soma = 0;
+                for (let i = 1; i < 1000; i++) {
+                    soma += i;
+                    if (soma > limite) {
+                        logger(`Soma ${soma} ultrapassou ${limite} após adicionar ${i} → BREAK`, "break");
+                        break;
+                    }
+                    logger(`i=${i}, soma=${soma}`, "info");
+                }
+                logger(`Soma final: ${soma}`, "info");
+            }
+        },
+        { // 16
+            title: "16. For com step e continue (pular múltiplos)",
+            codeExemplo: "for i in range(2,21,2):\n    if i % 6 == 0: continue\n    print(i)",
+            controls: [
+                { label: "Início:", type: "number", default: 2, id: "start" },
+                { label: "Fim:", type: "number", default: 21, id: "end" },
+                { label: "Step:", type: "number", default: 2, id: "step" },
+                { label: "Pular múltiplos de:", type: "number", default: 6, id: "skipMult" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 2;
+                let end = parseInt(params.end) || 21;
+                let step = parseInt(params.step) || 2;
+                let skipMult = parseInt(params.skipMult) || 6;
+                for (let i = start; i < end; i += step) {
+                    if (i % skipMult === 0) {
+                        logger(`${i} é múltiplo de ${skipMult} → CONTINUE`, "continue");
+                        continue;
+                    }
+                    logger(`i = ${i}`, "info");
+                }
+                logger("Loop finalizado.", "info");
+            }
+        },
+        { // 17
+            title: "17. For com interação do usuário (break condicional)",
+            codeExemplo: "N = int(input())\nfor i in range(1,N+1):\n    resp = input('Parar? (s/n)')\n    if resp=='s': break\n    print(i)",
+            controls: [
+                { label: "N (número de iterações):", type: "number", default: 10, id: "N" }
+            ],
+            run: (params, logger) => {
+                let N = parseInt(params.N) || 10;
+                for (let i = 1; i <= N; i++) {
+                    let resp = prompt(`Iteração ${i}/${N}. Deseja parar? (s/n)`);
+                    if (resp && resp.toLowerCase() === 's') {
+                        logger(`Usuário interrompeu na iteração ${i} → BREAK`, "break");
+                        break;
+                    }
+                    logger(`Valor impresso: ${i}`, "info");
+                }
+                logger("Simulação finalizada.", "info");
+            }
+        },
+        { // 18
+            title: "18. Continue para ignorar letras específicas",
+            codeExemplo: "texto = 'python é legal'\nfor letra in texto:\n    if letra in 'aeiou': continue\n    print(letra)",
+            controls: [
+                { label: "Texto:", type: "text", default: "python é legal", id: "texto" },
+                { label: "Letras a ignorar:", type: "text", default: "aeiouáéíóú", id: "ignorar" }
+            ],
+            run: (params, logger) => {
+                let texto = params.texto || "python é legal";
+                let ignorar = params.ignorar || "aeiouáéíóú";
+                for (let letra of texto) {
+                    if (ignorar.includes(letra)) {
+                        logger(`'${letra}' ignorado → CONTINUE`, "continue");
+                        continue;
+                    }
+                    logger(`Caractere: '${letra}'`, "info");
+                }
+                logger("Processamento concluído.", "info");
+            }
+        },
+        { // 19
+            title: "19. Encontrar número primo após um limite",
+            codeExemplo: "for i in range(1,51):\n    if i % 2 == 0: continue\n    if i > 30 and i % 3 !=0 and i % 5 !=0:\n        print(i); break",
+            controls: [
+                { label: "Início:", type: "number", default: 1, id: "start" },
+                { label: "Fim:", type: "number", default: 51, id: "end" },
+                { label: "Limite mínimo para break:", type: "number", default: 30, id: "limite" }
+            ],
+            run: (params, logger) => {
+                let start = parseInt(params.start) || 1;
+                let end = parseInt(params.end) || 51;
+                let limite = parseInt(params.limite) || 30;
+                for (let i = start; i < end; i++) {
+                    if (i % 2 === 0) {
+                        logger(`${i} é par → CONTINUE`, "continue");
+                        continue;
+                    }
+                    if (i > limite && i % 3 !== 0 && i % 5 !== 0) {
+                        logger(`Número primo (ou não múltiplo de 3/5) encontrado: ${i} → BREAK`, "break");
+                        break;
+                    }
+                    logger(`ímpar: ${i}`, "info");
+                }
+                logger("Fim.", "info");
+            }
+        },
+        { // 20
+            title: "20. Desafio final: Tabuada interativa com break",
+            codeExemplo: "N = int(input())\nfor i in range(1,11):\n    resp = input('Continuar? (s/n)')\n    if resp == 'n': break\n    print(f'{N} x {i} = {N*i}')",
+            controls: [
+                { label: "N (tabuada):", type: "number", default: 7, id: "N" },
+                { label: "Até qual multiplicador?", type: "number", default: 10, id: "max" }
+            ],
+            run: (params, logger) => {
+                let N = parseInt(params.N) || 7;
+                let max = parseInt(params.max) || 10;
+                for (let i = 1; i <= max; i++) {
+                    let resp = prompt(`Tabuada do ${N} - ${i}/${max}. Continuar? (s/n)`);
+                    if (resp && resp.toLowerCase() === 'n') {
+                        logger(`Usuário interrompeu na linha ${i} → BREAK`, "break");
+                        break;
+                    }
+                    logger(`${N} x ${i} = ${N*i}`, "info");
+                }
+                logger("Desafio concluído.", "info");
+            }
+        }
+    ];
+
+    function buildCard(mission, idx) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        
+        const header = document.createElement('div');
+        header.className = 'card-header';
+        const titleEl = document.createElement('h3');
+        titleEl.innerText = mission.title;
+        header.appendChild(titleEl);
+        
+        const codeDiv = document.createElement('div');
+        codeDiv.className = 'code-block';
+        codeDiv.innerHTML = `<pre style="margin:0;">${mission.codeExemplo}</pre>`;
+        
+        const controlsDiv = document.createElement('div');
+        controlsDiv.className = 'controls';
+        const controlValues = {};
+        mission.controls.forEach(ctrl => {
+            const group = document.createElement('div');
+            group.className = 'control-group';
+            const label = document.createElement('label');
+            label.innerText = ctrl.label;
+            const input = document.createElement('input');
+            input.type = ctrl.type;
+            input.value = ctrl.default;
+            input.id = `ctrl-${idx}-${ctrl.id}`;
+            group.appendChild(label);
+            group.appendChild(input);
+            controlsDiv.appendChild(group);
+            controlValues[ctrl.id] = input;
+        });
+        
+        const actionBar = document.createElement('div');
+        actionBar.className = 'action-bar';
+        const runBtn = document.createElement('button');
+        runBtn.className = 'btn btn-primary';
+        runBtn.innerHTML = '▶ Executar com esses valores';
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'btn btn-secondary';
+        clearBtn.innerHTML = '🗑 Limpar Log';
+        
+        const consoleDiv = document.createElement('div');
+        consoleDiv.className = 'console-area';
+        const consoleHeader = document.createElement('div');
+        consoleHeader.className = 'console-title';
+        consoleHeader.innerHTML = `<span>📟 CONSOLE</span><span>🐍 simulação</span>`;
+        const logContent = document.createElement('div');
+        logContent.className = 'log-content';
+        consoleDiv.appendChild(consoleHeader);
+        consoleDiv.appendChild(logContent);
+        
+        actionBar.appendChild(runBtn);
+        actionBar.appendChild(clearBtn);
+        card.appendChild(header);
+        card.appendChild(codeDiv);
+        card.appendChild(controlsDiv);
+        card.appendChild(actionBar);
+        card.appendChild(consoleDiv);
+        
+        const logger = (msg, type = "info") => {
+            const logDiv = document.createElement('div');
+            logDiv.className = `log-line ${type === 'break' ? 'log-break' : (type === 'continue' ? 'log-continue' : 'log-info')}`;
+            const prefix = type === 'break' ? '🔴 BREAK: ' : (type === 'continue' ? '🟢 CONTINUE: ' : 'ℹ️ ');
+            logDiv.innerHTML = `${prefix}${msg}`;
+            logContent.appendChild(logDiv);
+            logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+        
+        const clearLog = () => {
+            logContent.innerHTML = '';
+            const initMsg = document.createElement('div');
+            initMsg.className = 'log-line log-info';
+            initMsg.innerHTML = '⚡ Pronto. Altere os valores e execute.';
+            logContent.appendChild(initMsg);
+        };
+        clearLog();
+        
+        let isRunning = false;
+        const runSimulation = () => {
+            if (isRunning) {
+                logger("Aguardando fim da execução anterior...", "info");
+                return;
+            }
+            isRunning = true;
+            runBtn.disabled = true;
+            runBtn.style.opacity = "0.6";
+            try {
+                const params = {};
+                for (let [key, input] of Object.entries(controlValues)) {
+                    params[key] = input.value;
+                }
+                mission.run(params, logger);
+            } catch (err) {
+                logger(`Erro: ${err.message}`, "info");
+            } finally {
+                isRunning = false;
+                runBtn.disabled = false;
+                runBtn.style.opacity = "1";
+                logger("✅ Simulação finalizada.", "info");
+            }
+        };
+        
+        runBtn.addEventListener('click', runSimulation);
+        clearBtn.addEventListener('click', () => {
+            if (isRunning) {
+                logger("Não pode limpar durante execução.", "info");
+                return;
+            }
+            clearLog();
+        });
+        
+        return card;
+    }
+    
+    const grid = document.getElementById('examplesGrid');
+    missoes.forEach((m, i) => {
+        grid.appendChild(buildCard(m, i));
+    });
+</script>
+</body>
+</html>
