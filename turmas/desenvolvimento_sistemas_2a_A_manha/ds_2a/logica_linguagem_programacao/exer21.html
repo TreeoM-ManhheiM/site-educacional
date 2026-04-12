@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🧩 20 Missões: SE, Operadores Lógicos e Condições Encadeadas</title>
+<!-- EmailJS SDK -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+  (function() {
+    emailjs.init({
+      publicKey: "ikG65_WxFRdkk2Gqr",
+    });
+  })();
+</script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%); font-family: 'Inter', 'Fira Code', monospace; padding: 2rem; color: #eef4ff; }
+  .container { max-width: 1400px; margin: 0 auto; }
+  .hero { text-align: center; margin-bottom: 2rem; border-bottom: 2px solid rgba(255,100,100,0.3); }
+  .hero h1 { font-size: 2.5rem; background: linear-gradient(135deg, #ffb3b3, #ff6666); background-clip: text; -webkit-background-clip: text; color: transparent; }
+  .status-bar { background: #0f172a; padding: 0.8rem 1.5rem; border-radius: 3rem; margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; border: 1px solid #1f2937; flex-wrap: wrap; }
+  .missao-indicador { background: #020617; padding: 0.3rem 1rem; border-radius: 2rem; font-family: monospace; font-size: 1.1rem; }
+  .pontuacao { background: #020617; padding: 0.3rem 1rem; border-radius: 2rem; font-family: monospace; font-size: 1.1rem; color: #ffb347; }
+  .seletor { background: #0f172a; padding: 0.8rem 1.5rem; border-radius: 3rem; margin-bottom: 2rem; display: flex; justify-content: center; gap: 1rem; border: 1px solid #1f2937; }
+  select { background: #020617; color: white; border: 1px solid #334155; padding: 0.5rem 1rem; border-radius: 2rem; font-family: monospace; min-width: 280px; }
+  .progresso-container { background: #0f172a; border-radius: 1.5rem; padding: 1rem; margin-bottom: 2rem; border: 1px solid #1f2937; }
+  .progresso-titulo { display: flex; justify-content: space-between; margin-bottom: 1rem; font-weight: bold; color: #ffb3b3; }
+  .grid-progresso { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 0.5rem; }
+  .missao-card { background: #1e293b; border-radius: 0.8rem; padding: 0.5rem; text-align: center; cursor: pointer; transition: 0.2s; border: 1px solid #334155; }
+  .missao-card:hover { transform: scale(1.02); border-color: #ff6666; }
+  .missao-card.concluida { background: #14532d; border-color: #22c55e; }
+  .missao-card.bloqueada { background: #450a0a; border-color: #ef4444; }
+  .missao-card.pendente { background: #1e293b; border-color: #334155; }
+  .missao-numero { font-weight: bold; font-size: 0.9rem; }
+  .missao-status { font-size: 0.7rem; margin-top: 0.2rem; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .card { background: rgba(18,25,40,0.85); border-radius: 1.5rem; border: 1px solid rgba(255,100,100,0.2); padding: 1.5rem; }
+  .card h2 { color: #ff6666; margin-bottom: 1rem; }
+  .story-box { background: #0f172a; border-left: 5px solid #ff6666; padding: 1.2rem; border-radius: 1rem; margin-bottom: 1rem; line-height: 1.5; }
+  .story-title { font-size: 1.2rem; font-weight: bold; color: #ff8888; margin-bottom: 0.5rem; }
+  .dica { background: #1e293b; padding: 0.8rem; border-radius: 1rem; font-size: 0.85rem; margin-bottom: 1rem; color: #b9c7d9; }
+  .erro-contador { background: #450a0a; padding: 0.5rem; border-radius: 0.8rem; text-align: center; margin-top: 0.5rem; font-size: 0.8rem; }
+  .bloqueio-msg { background: #7f1a1a; padding: 0.5rem; border-radius: 0.8rem; text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: #ffcccc; font-weight: bold; }
+  .paleta { background: #0a0e17; border-radius: 1rem; padding: 1rem; margin-bottom: 1.5rem; max-height: 250px; overflow-y: auto; }
+  .bloco { display: inline-block; background: #1e293b; border: 1px solid #334155; border-radius: 0.5rem; padding: 0.4rem 0.9rem; margin: 0.3rem; font-family: monospace; cursor: pointer; transition: 0.1s; }
+  .bloco:hover { background: #334155; border-color: #ff6666; transform: scale(1.02); }
+  .bloco.desabilitado, .bloco.bloqueado { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
+  .codigo-area { background: #020617; border-radius: 1rem; padding: 1rem; font-family: monospace; min-height: 200px; border: 1px solid #1f2937; margin-bottom: 1rem; white-space: pre-wrap; }
+  .linha-codigo { display: flex; justify-content: space-between; align-items: center; padding: 0.3rem 0; border-bottom: 1px dashed #1f2937; }
+  .remover-linha { color: #ef4444; cursor: pointer; font-size: 0.7rem; margin-left: 0.8rem; }
+  .botoes { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 1rem; }
+  button { background: #334155; border: none; color: white; padding: 0.5rem 1.2rem; border-radius: 2rem; cursor: pointer; font-weight: 600; }
+  button.primary { background: #ff6666; }
+  button.success { background: #22c55e; }
+  button.warning { background: #b45309; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .feedback { margin-top: 1rem; padding: 0.8rem; border-radius: 1rem; }
+  .feedback.sucesso { background: #14532d; color: #bbf7d0; border-left: 4px solid #22c55e; }
+  .feedback.erro { background: #450a0a; color: #fecaca; border-left: 4px solid #ef4444; }
+  .terminal { background: #0a0e17; border-radius: 1rem; margin-top: 1rem; border: 1px solid #334155; overflow: hidden; }
+  .terminal-header { background: #1e293b; padding: 0.5rem 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .terminal-dot { width: 12px; height: 12px; border-radius: 50%; background: #22c55e; }
+  .terminal-dot.red { background: #ef4444; }
+  .terminal-dot.yellow { background: #eab308; }
+  .terminal-title { font-size: 0.8rem; color: #94a3b8; margin-left: 0.5rem; }
+  .terminal-content { padding: 1rem; font-family: monospace; font-size: 0.8rem; color: #86efac; background: #020617; min-height: 150px; max-height: 250px; overflow-y: auto; white-space: pre-wrap; }
+  .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); justify-content: center; align-items: center; z-index: 1000; }
+  .modal-content { background: #0f172a; border-radius: 1.5rem; padding: 1.5rem; width: 90%; max-width: 500px; border: 1px solid #ff6666; }
+  .modal-input { background: #020617; border: 1px solid #334155; padding: 0.8rem; border-radius: 0.5rem; color: white; width: 100%; margin: 1rem 0; }
+  .modal-buttons { display: flex; justify-content: flex-end; gap: 1rem; margin-top: 1rem; }
+  .btn-enviar { background: #22c55e; }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } body { padding: 1rem; } .grid-progresso { grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="hero"><h1>🧩 20 Missões: SE, Operadores Lógicos e Condições Encadeadas</h1><p>Leia a história e monte o código clicando nos blocos na ordem certa</p></div>
+  
+  <div class="status-bar">
+    <div class="missao-indicador">📌 Missão atual: <span id="missao-atual-num">1</span> / 20</div>
+    <div class="pontuacao">⭐ Pontuação: <span id="pontuacao-valor">0.0</span> / 10</div>
+    <button id="btn-enviar-nota" class="success" style="display: none;">📧 Enviar resultado</button>
+  </div>
+
+  <!-- Painel de progresso visual -->
+  <div class="progresso-container">
+    <div class="progresso-titulo">
+      <span>📊 Progresso das Missões</span>
+      <span id="progresso-contador">0/20 concluídas</span>
+    </div>
+    <div id="grid-progresso" class="grid-progresso"></div>
+    <div style="margin-top: 0.8rem; font-size: 0.8rem; display: flex; gap: 1rem; justify-content: center;">
+      <span><span style="background:#14532d; display:inline-block; width:12px; height:12px; border-radius:2px;"></span> Concluída</span>
+      <span><span style="background:#450a0a; display:inline-block; width:12px; height:12px; border-radius:2px;"></span> Bloqueada</span>
+      <span><span style="background:#1e293b; display:inline-block; width:12px; height:12px; border-radius:2px;"></span> Não iniciada</span>
+    </div>
+  </div>
+
+  <div class="seletor"><label>📖 Ou escolha pelo seletor:</label><select id="missao-select"></select></div>
+  <div class="grid">
+    <div class="card"><h2>📜 A Jornada</h2><div id="story-box" class="story-box"></div><div id="dica-box" class="dica"></div><div id="erro-contador" class="erro-contador" style="display: none;"></div><div id="bloqueio-msg" class="bloqueio-msg" style="display: none;"></div></div>
+    <div class="card"><h2>🧩 Blocos disponíveis</h2><div id="paleta" class="paleta"></div><h2>📝 Seu código</h2><div id="codigo-montado" class="codigo-area"></div><div class="botoes"><button id="verificar" class="primary">✅ Verificar</button><button id="rodar" class="success">▶️ Rodar Código</button><button id="limpar" class="warning">🗑 Limpar tudo</button><button id="resetar-missao">🔄 Reiniciar missão</button></div><div id="feedback" class="feedback"></div><div class="terminal" id="terminal" style="display: none;"><div class="terminal-header"><div class="terminal-dot red"></div><div class="terminal-dot yellow"></div><div class="terminal-dot"></div><span class="terminal-title">🐍 Python - Simulador</span><button id="fechar-terminal" style="margin-left: auto; background: #334155; padding: 0.2rem 0.5rem;">✕</button></div><div id="terminal-output" class="terminal-content">⚙️ Executando código...</div></div></div>
+  </div>
+</div>
+
+<!-- Modal de envio de nota -->
+<div id="envio-modal" class="modal">
+  <div class="modal-content">
+    <h3>📧 Enviar resultado</h3>
+    <p>Parabéns! Você concluiu todas as 20 missões. Preencha seus dados para enviar a nota por e-mail.</p>
+    <input type="text" id="aluno-nome" class="modal-input" placeholder="Seu nome completo">
+    <input type="text" id="aluno-turma" class="modal-input" placeholder="Sua turma / série">
+    <div class="modal-buttons">
+      <button id="cancelar-envio">Cancelar</button>
+      <button id="confirmar-envio" class="btn-enviar">✉️ Enviar e-mail</button>
+    </div>
+    <div id="status-envio" style="margin-top: 0.5rem; font-size: 0.8rem;"></div>
+  </div>
+</div>
+
+<div id="input-modal" class="modal"><div class="modal-content"><h3>📥 Entrada do programa</h3><p id="modal-prompt">Digite o valor:</p><input type="text" id="modal-input" class="modal-input"><div class="modal-buttons"><button id="modal-cancelar">Cancelar</button><button id="modal-confirmar" class="primary">OK</button></div></div></div>
+
+<script>
+  // ==================== 20 MISSÕES ====================
+  const missoes = [
+    { id:0, titulo:"🔍 1. Verificando maioridade (SE)", 
+      historia:"Você é o guardião do portal da cidade dos adultos. Para permitir a entrada, deve verificar a idade de cada visitante. Crie um programa que pergunte a idade e, se for maior ou igual a 18, libere a passagem com a mensagem 'Você é maior de idade'.",
+      dica:"Use `if idade >= 18:` e dentro `print('Você é maior de idade')`",
+      codigoEsperado:["idade = int(input('Digite sua idade: '))","if idade >= 18:","    print('Você é maior de idade')"] },
+    { id:1, titulo:"🔢 2. Número positivo (SE)", 
+      historia:"No reino dos números, apenas os positivos podem entrar no castelo da luz. Faça um programa que peça um número e, se ele for maior que zero, anuncie 'Número positivo'.",
+      dica:"Use `if numero > 0:` e depois o print",
+      codigoEsperado:["numero = float(input('Digite um número: '))","if numero > 0:","    print('Número positivo')"] },
+    { id:2, titulo:"✅ 3. Verificando aprovação (SE/ELSE)", 
+      historia:"Você é o mestre da escola de magia. Após as provas, os alunos precisam saber se foram aprovados (nota >= 6) ou reprovados. Crie um sistema que leia a nota e exiba o resultado.",
+      dica:"Use `if nota >= 6:` com else",
+      codigoEsperado:["nota = float(input('Digite a nota: '))","if nota >= 6:","    print('Aprovado')","else:","    print('Reprovado')"] },
+    { id:3, titulo:"🌡️ 4. Verificando temperatura (SE/ELSE)", 
+      historia:"O termômetro da vila está quebrado. Ajude os moradores: se a temperatura for maior que 30°C, avise 'Está quente!'; caso contrário, 'Está fresco!'.",
+      dica:"Estrutura if-else simples",
+      codigoEsperado:["temp = float(input('Digite a temperatura: '))","if temp > 30:","    print('Está quente!')","else:","    print('Está fresco!')"] },
+    { id:4, titulo:"🔗 5. Operador AND (E)", 
+      historia:"O guardião do baú secreto só o abre se o número digitado estiver entre 10 e 20 (inclusive). Crie um programa que diga 'Dentro do intervalo' quando a condição for satisfeita.",
+      dica:"Condição: `if numero >= 10 and numero <= 20:`",
+      codigoEsperado:["numero = int(input('Digite um número: '))","if numero >= 10 and numero <= 20:","    print('Dentro do intervalo')"] },
+    { id:5, titulo:"🔀 6. Operador OR (OU)", 
+      historia:"Um número maluco é considerado 'fora da faixa normal' se for negativo ou maior que 100. Ajude o sábio a identificar esses números exibindo a mensagem correta.",
+      dica:"Use `if numero < 0 or numero > 100:`",
+      codigoEsperado:["numero = float(input('Digite um número: '))","if numero < 0 or numero > 100:","    print('Número fora da faixa normal')"] },
+    { id:6, titulo:"🚫 7. Operador NOT (NÃO)", 
+      historia:"O sistema de segurança do castelo está com a variável 'ligado' como False. Use o operador NOT para verificar se está desligado e mostre 'Sistema desativado'.",
+      dica:"`if not ligado:` ou `if ligado == False:`",
+      codigoEsperado:["ligado = False","if not ligado:","    print('Sistema desativado')"] },
+    { id:7, titulo:"🎯 8. AND e OR combinados", 
+      historia:"A porta secreta se abre se o usuário for 'admin' E a senha for '123', OU se o código de emergência for 9999. Implemente essa lógica e exiba 'Acesso permitido' quando a condição for verdadeira.",
+      dica:"`if (usuario == 'admin' and senha == '123') or codigo == 9999:`",
+      codigoEsperado:["usuario = input('Usuário: ')","senha = input('Senha: ')","codigo = int(input('Código: '))","if (usuario == 'admin' and senha == '123') or codigo == 9999:","    print('Acesso permitido')"] },
+    { id:8, titulo:"📊 9. Faixa etária com AND", 
+      historia:"O clube dos adolescentes aceita apenas pessoas com idade entre 13 e 19 anos. Crie um programa que diga 'É adolescente' para quem está nessa faixa.",
+      dica:"`if idade >= 13 and idade <= 19:`",
+      codigoEsperado:["idade = int(input('Digite a idade: '))","if idade >= 13 and idade <= 19:","    print('É adolescente')"] },
+    { id:9, titulo:"⚡ 10. Múltiplas condições com OR", 
+      historia:"O mago das letras precisa identificar vogais. Peça uma letra e, se for 'a', 'e', 'i', 'o' ou 'u', mostre 'É vogal'.",
+      dica:"`if letra == 'a' or letra == 'e' ...`",
+      codigoEsperado:["letra = input('Digite uma letra: ').lower()","if letra == 'a' or letra == 'e' or letra == 'i' or letra == 'o' or letra == 'u':","    print('É vogal')"] },
+    { id:10, titulo:"📈 11. Notas com conceitos (elif)", 
+      historia:"Na academia dos heróis, as notas ganham conceitos: A (>=9), B (>=7), C (>=5), D (<5). Crie um programa que leia a nota e mostre o conceito.",
+      dica:"Use estrutura if-elif-else com condições decrescentes",
+      codigoEsperado:["nota = float(input('Digite a nota: '))","if nota >= 9:","    print('Conceito A')","elif nota >= 7:","    print('Conceito B')","elif nota >= 5:","    print('Conceito C')","else:","    print('Conceito D')"] },
+    { id:11, titulo:"💰 12. Desconto progressivo (elif)", 
+      historia:"A loja do dragão oferece descontos: valor < 100 → 0%; entre 100 e 500 → 5%; entre 500 e 1000 → 10%; >=1000 → 15%. Calcule o desconto e exiba-o.",
+      dica:"Use if-elif-else com operadores de comparação",
+      codigoEsperado:["valor = float(input('Digite o valor: '))","if valor < 100:","    desconto = 0","elif valor < 500:","    desconto = 5","elif valor < 1000:","    desconto = 10","else:","    desconto = 15","print(f'Desconto: {desconto}%')"] },
+    { id:12, titulo:"👶 13. Classificação por idade (elif)", 
+      historia:"O oráculo classifica as pessoas em: Criança (0-12), Adolescente (13-17), Adulto (18-59), Idoso (60+). Faça um programa que diga a categoria.",
+      dica:"Use elif para cada faixa etária",
+      codigoEsperado:["idade = int(input('Digite a idade: '))","if idade <= 12:","    print('Criança')","elif idade <= 17:","    print('Adolescente')","elif idade <= 59:","    print('Adulto')","else:","    print('Idoso')"] },
+    { id:13, titulo:"🏆 14. IMC com categorias (elif)", 
+      historia:"O médico da vila quer calcular o IMC (peso / altura²) e classificar: abaixo do peso (<18.5), normal (18.5-24.9), sobrepeso (25-29.9), obesidade (>=30). Ajude-o.",
+      dica:"IMC = peso / (altura ** 2)",
+      codigoEsperado:["peso = float(input('Peso (kg): '))","altura = float(input('Altura (m): '))","imc = peso / (altura ** 2)","if imc < 18.5:","    print('Abaixo do peso')","elif imc < 25:","    print('Peso normal')","elif imc < 30:","    print('Sobrepeso')","else:","    print('Obesidade')"] },
+    { id:14, titulo:"📅 15. Dia da semana (elif)", 
+      historia:"O calendário mágico funciona com números: 1=domingo, 2=segunda... 7=sábado. Crie um programa que leia um número e mostre o dia correspondente. Se for inválido, avise.",
+      dica:"Use elif para cada número",
+      codigoEsperado:["dia = int(input('Digite um número (1-7): '))","if dia == 1:","    print('Domingo')","elif dia == 2:","    print('Segunda')","elif dia == 3:","    print('Terça')","elif dia == 4:","    print('Quarta')","elif dia == 5:","    print('Quinta')","elif dia == 6:","    print('Sexta')","elif dia == 7:","    print('Sábado')","else:","    print('Número inválido')"] },
+    { id:15, titulo:"🎓 16. Situação acadêmica (elif)", 
+      historia:"Na escola de feitiçaria, as notas definem: >=7 → Aprovado, >=5 → Recuperação, <5 → Reprovado. Implemente essa lógica.",
+      dica:"Estrutura if-elif-else",
+      codigoEsperado:["nota = float(input('Digite a nota: '))","if nota >= 7:","    print('Aprovado')","elif nota >= 5:","    print('Recuperação')","else:","    print('Reprovado')"] },
+    { id:16, titulo:"🏥 17. Risco cardiovascular (elif + operadores)", 
+      historia:"O médico do reino avalia risco: se idade>60 OU pressão>140 → 'Risco alto'; senão, se idade>40 → 'Risco médio'; caso contrário → 'Risco baixo'. Crie o programa.",
+      dica:"Combine operadores lógicos com elif",
+      codigoEsperado:["idade = int(input('Idade: '))","pressao = int(input('Pressão sistólica: '))","if idade > 60 or pressao > 140:","    print('Risco alto')","elif idade > 40:","    print('Risco médio')","else:","    print('Risco baixo')"] },
+    { id:17, titulo:"🎮 18. Nível de jogo (elif aninhado)", 
+      historia:"No jogo do guerreiro, a pontuação define o nível: <1000 → Iniciante; <5000 → Intermediário; <10000 → Avançado; >=10000 → Mestre. Mostre o nível.",
+      dica:"Use if-elif-else para classificar",
+      codigoEsperado:["pontos = int(input('Pontuação: '))","if pontos < 1000:","    print('Iniciante')","elif pontos < 5000:","    print('Intermediário')","elif pontos < 10000:","    print('Avançado')","else:","    print('Mestre')"] },
+    { id:18, titulo:"💳 19. Cálculo de imposto (elif)", 
+      historia:"O tesoureiro real calcula o imposto: salário <=2000 → isento; <=5000 → 10%; <=10000 → 15%; >10000 → 25%. Exiba o valor do imposto.",
+      dica:"Use if-elif com operadores de comparação",
+      codigoEsperado:["salario = float(input('Salário: '))","if salario <= 2000:","    imposto = 0","elif salario <= 5000:","    imposto = salario * 0.10","elif salario <= 10000:","    imposto = salario * 0.15","else:","    imposto = salario * 0.25","print(f'Imposto: R$ {imposto:.2f}')"] },
+    { id:19, titulo:"🏁 20. Desafio final: Validação completa", 
+      historia:"O sistema de segurança do castelo tem três níveis: admin+123 → 'Acesso total'; user+456 → 'Acesso limitado'; usuário inválido → 'Usuário não cadastrado'; senha errada → 'Acesso negado'. Implemente a validação completa.",
+      dica:"Use if-elif-else com operadores lógicos",
+      codigoEsperado:["usuario = input('Usuário: ')","senha = input('Senha: ')","if usuario == 'admin' and senha == '123':","    print('Acesso total')","elif usuario == 'user' and senha == '456':","    print('Acesso limitado')","elif usuario != 'admin' and usuario != 'user':","    print('Usuário não cadastrado')","else:","    print('Acesso negado')"] }
+  ];
+
+  // DOM elements
+  const selectMissao = document.getElementById('missao-select');
+  const storyBox = document.getElementById('story-box');
+  const dicaBox = document.getElementById('dica-box');
+  const paletaDiv = document.getElementById('paleta');
+  const codigoDiv = document.getElementById('codigo-montado');
+  const verificarBtn = document.getElementById('verificar');
+  const rodarBtn = document.getElementById('rodar');
+  const limparBtn = document.getElementById('limpar');
+  const resetarBtn = document.getElementById('resetar-missao');
+  const feedbackDiv = document.getElementById('feedback');
+  const erroContadorDiv = document.getElementById('erro-contador');
+  const bloqueioMsgDiv = document.getElementById('bloqueio-msg');
+  const terminalDiv = document.getElementById('terminal');
+  const terminalOutput = document.getElementById('terminal-output');
+  const fecharTerminalBtn = document.getElementById('fechar-terminal');
+  const modal = document.getElementById('input-modal');
+  const modalPrompt = document.getElementById('modal-prompt');
+  const modalInput = document.getElementById('modal-input');
+  const modalConfirmar = document.getElementById('modal-confirmar');
+  const modalCancelar = document.getElementById('modal-cancelar');
+  const missaoAtualSpan = document.getElementById('missao-atual-num');
+  const pontuacaoSpan = document.getElementById('pontuacao-valor');
+  const btnEnviarNota = document.getElementById('btn-enviar-nota');
+  const envioModal = document.getElementById('envio-modal');
+  const alunoNome = document.getElementById('aluno-nome');
+  const alunoTurma = document.getElementById('aluno-turma');
+  const cancelarEnvio = document.getElementById('cancelar-envio');
+  const confirmarEnvio = document.getElementById('confirmar-envio');
+  const statusEnvio = document.getElementById('status-envio');
+  const gridProgresso = document.getElementById('grid-progresso');
+  const progressoContador = document.getElementById('progresso-contador');
+
+  let missaoAtual = 0;
+  let blocosSelecionados = [];
+  let errosMissaoAtual = 0;
+  let pendingInputResolver = null;
+
+  let missoesBloqueadas = new Array(20).fill(false);
+  let pontuacaoTotal = 0;
+  let missoesPontuadas = new Array(20).fill(false);
+  let envioRealizado = false;
+
+  // ========== FUNÇÕES DE PROGRESSO VISUAL ==========
+  function atualizarGridProgresso() {
+    gridProgresso.innerHTML = '';
+    let concluidas = 0;
+    for (let i = 0; i < 20; i++) {
+      const concluida = missoesPontuadas[i];
+      const bloqueada = missoesBloqueadas[i];
+      const statusClass = concluida ? 'concluida' : (bloqueada ? 'bloqueada' : 'pendente');
+      const statusText = concluida ? '✓' : (bloqueada ? '✗' : '○');
+      if (concluida || bloqueada) concluidas++;
+      
+      const card = document.createElement('div');
+      card.className = `missao-card ${statusClass}`;
+      card.innerHTML = `<div class="missao-numero">${i+1}</div><div class="missao-status">${statusText}</div>`;
+      card.addEventListener('click', (function(idx) {
+        return function() { irParaMissao(idx); };
+      })(i));
+      gridProgresso.appendChild(card);
+    }
+    progressoContador.textContent = `${concluidas}/20 concluídas`;
+    // Verifica se todas estão concluídas para mostrar botão de envio
+    if (concluidas === 20 && !envioRealizado) {
+      btnEnviarNota.style.display = 'inline-block';
+    } else {
+      btnEnviarNota.style.display = 'none';
+    }
+  }
+
+  function irParaMissao(idx) {
+    if (idx !== missaoAtual) {
+      missaoAtual = idx;
+      selectMissao.value = idx;
+      carregarMissao();
+    }
+  }
+
+  // ========== FUNÇÕES DE PONTUAÇÃO E BLOQUEIO ==========
+  function atualizarPontuacaoUI() {
+    pontuacaoSpan.textContent = pontuacaoTotal.toFixed(1);
+  }
+
+  function adicionarPontuacao(missaoId) {
+    if (!missoesPontuadas[missaoId]) {
+      missoesPontuadas[missaoId] = true;
+      pontuacaoTotal += 0.5;
+      atualizarPontuacaoUI();
+      atualizarGridProgresso();
+    }
+  }
+
+  function aplicarEstadoBloqueio() {
+    const bloqueada = missoesBloqueadas[missaoAtual];
+    if (bloqueada) {
+      bloqueioMsgDiv.style.display = 'block';
+      bloqueioMsgDiv.innerHTML = '🚫 Esta missão foi bloqueada após 3 tentativas erradas. Você não pode mais tentar resolvê-la. 🚫';
+      verificarBtn.disabled = true;
+      limparBtn.disabled = true;
+      resetarBtn.disabled = false;
+      document.querySelectorAll('.bloco').forEach(bloco => {
+        bloco.classList.add('bloqueado');
+      });
+      erroContadorDiv.style.display = 'none';
+    } else {
+      bloqueioMsgDiv.style.display = 'none';
+      verificarBtn.disabled = false;
+      limparBtn.disabled = false;
+      resetarBtn.disabled = false;
+      document.querySelectorAll('.bloco').forEach(bloco => {
+        bloco.classList.remove('bloqueado');
+      });
+      atualizarContadorErros();
+    }
+  }
+
+  function atualizarContadorErros() {
+    if (missoesBloqueadas[missaoAtual]) {
+      erroContadorDiv.style.display = 'none';
+      return;
+    }
+    if (errosMissaoAtual > 0) {
+      erroContadorDiv.style.display = 'block';
+      erroContadorDiv.innerHTML = `⚠️ Tentativas erradas: ${errosMissaoAtual}/3`;
+    } else {
+      erroContadorDiv.style.display = 'none';
+    }
+  }
+
+  function registrarErro(msg) {
+    if (missoesBloqueadas[missaoAtual]) return;
+    errosMissaoAtual++;
+    atualizarContadorErros();
+    feedbackDiv.className = 'feedback erro';
+    feedbackDiv.innerHTML = `❌ ${msg}<br>🔁 Tentativas: ${errosMissaoAtual}/3`;
+
+    if (errosMissaoAtual >= 3) {
+      missoesBloqueadas[missaoAtual] = true;
+      feedbackDiv.innerHTML += `<br>🚫 Você atingiu 3 erros. Esta missão está bloqueada!`;
+      aplicarEstadoBloqueio();
+      atualizarGridProgresso(); // atualiza painel
+    }
+  }
+
+  function verificar() {
+    if (missoesBloqueadas[missaoAtual]) {
+      feedbackDiv.className = 'feedback erro';
+      feedbackDiv.innerHTML = '❌ Missão bloqueada. Não é possível verificar.';
+      return;
+    }
+
+    const esperado = missoes[missaoAtual].codigoEsperado;
+    if (blocosSelecionados.length !== esperado.length) {
+      registrarErro(`Nº linhas incorreto. Você usou ${blocosSelecionados.length}, esperado ${esperado.length}.`);
+      return;
+    }
+    let correto = true;
+    for (let i = 0; i < esperado.length; i++) {
+      if (blocosSelecionados[i] !== esperado[i]) {
+        correto = false;
+        break;
+      }
+    }
+    if (correto) {
+      if (!missoesPontuadas[missaoAtual]) {
+        adicionarPontuacao(missaoAtual);
+        feedbackDiv.className = 'feedback sucesso';
+        feedbackDiv.innerHTML = `🎉 Correto! Missão "${missoes[missaoAtual].titulo}" concluída! +0,5 ponto 🎉`;
+      } else {
+        feedbackDiv.className = 'feedback sucesso';
+        feedbackDiv.innerHTML = `🎉 Correto! Missão "${missoes[missaoAtual].titulo}" já havia sido concluída. 🎉`;
+      }
+      errosMissaoAtual = 0;
+      atualizarContadorErros();
+      atualizarGridProgresso();
+    } else {
+      registrarErro('Código incorreto.');
+    }
+  }
+
+  function limparTudo() {
+    if (missoesBloqueadas[missaoAtual]) {
+      feedbackDiv.className = 'feedback erro';
+      feedbackDiv.innerHTML = '❌ Missão bloqueada. Não é possível limpar.';
+      return;
+    }
+    blocosSelecionados = [];
+    exibirCodigo();
+    feedbackDiv.innerHTML = '';
+  }
+
+  function resetarMissao() {
+    if (missoesBloqueadas[missaoAtual]) {
+      blocosSelecionados = [];
+      exibirCodigo();
+      feedbackDiv.innerHTML = 'Missão bloqueada. Não é possível reverter o bloqueio.';
+      return;
+    }
+    blocosSelecionados = [];
+    errosMissaoAtual = 0;
+    exibirCodigo();
+    feedbackDiv.innerHTML = '';
+    gerarPaleta();
+    atualizarContadorErros();
+    terminalDiv.style.display = 'none';
+  }
+
+  function carregarMissao() {
+    const m = missoes[missaoAtual];
+    storyBox.innerHTML = `<div class="story-title">${m.titulo}</div>${m.historia}`;
+    dicaBox.innerHTML = `💡 Dica: ${m.dica}`;
+    blocosSelecionados = [];
+    errosMissaoAtual = 0;
+    exibirCodigo();
+    gerarPaleta();
+    feedbackDiv.innerHTML = '';
+    atualizarContadorErros();
+    terminalDiv.style.display = 'none';
+    missaoAtualSpan.textContent = missaoAtual + 1;
+    atualizarPontuacaoUI();
+    aplicarEstadoBloqueio();
+  }
+
+  function gerarPaleta() {
+    const esperado = missoes[missaoAtual].codigoEsperado;
+    let blocos = [...esperado];
+    const distracoes = ["if x>0:","else:","elif x==0:","print('Teste')","while True:","break","continue","    pass","if a and b:"];
+    for (let d of distracoes) if (!blocos.includes(d) && blocos.length < 14) blocos.push(d);
+    for (let i = blocos.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [blocos[i], blocos[j]] = [blocos[j], blocos[i]];
+    }
+    paletaDiv.innerHTML = '';
+    blocos.forEach(bloco => {
+      let el = document.createElement('div');
+      el.className = 'bloco';
+      el.textContent = bloco;
+      el.addEventListener('click', () => {
+        if (missoesBloqueadas[missaoAtual]) return;
+        blocosSelecionados.push(bloco);
+        exibirCodigo();
+      });
+      paletaDiv.appendChild(el);
+    });
+    if (missoesBloqueadas[missaoAtual]) {
+      document.querySelectorAll('.bloco').forEach(bloco => {
+        bloco.classList.add('bloqueado');
+      });
+    }
+  }
+
+  function exibirCodigo() {
+    codigoDiv.innerHTML = '';
+    if (blocosSelecionados.length === 0) {
+      codigoDiv.innerHTML = '<span style="color:#6b7280;">Nenhum bloco adicionado. Clique nos blocos acima.</span>';
+      return;
+    }
+    blocosSelecionados.forEach((linha, idx) => {
+      let linhaDiv = document.createElement('div');
+      linhaDiv.className = 'linha-codigo';
+      linhaDiv.innerHTML = `<code>${linha.replace(/ /g, '&nbsp;')}</code><span class="remover-linha" data-idx="${idx}">❌</span>`;
+      codigoDiv.appendChild(linhaDiv);
+    });
+    document.querySelectorAll('.remover-linha').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (missoesBloqueadas[missaoAtual]) return;
+        let idx = parseInt(e.target.getAttribute('data-idx'));
+        blocosSelecionados.splice(idx, 1);
+        exibirCodigo();
+      });
+    });
+  }
+
+  // ========== SIMULADOR PYTHON (RESUMIDO, MESMO DO ANTERIOR) ==========
+  async function rodarCodigo() {
+    if (missoesBloqueadas[missaoAtual]) {
+      feedbackDiv.className = 'feedback erro';
+      feedbackDiv.innerHTML = '❌ Missão bloqueada. Não é possível executar o código.';
+      return;
+    }
+    if (blocosSelecionados.length === 0) {
+      feedbackDiv.className = 'feedback erro';
+      feedbackDiv.innerHTML = '❌ Monte o código primeiro!';
+      return;
+    }
+    terminalDiv.style.display = 'block';
+    terminalOutput.innerHTML = '<div>🐍 Executando código...</div>';
+    let linhas = blocosSelecionados;
+    let vars = {};
+    let i = 0;
+
+    function printToTerminal(...args) { terminalOutput.innerHTML += `<div>> ${args.join(' ')}</div>`; }
+    async function inputAsync(promptText) {
+      return new Promise(resolve => {
+        pendingInputResolver = resolve;
+        modalPrompt.textContent = promptText || 'Digite um valor:';
+        modalInput.value = '';
+        modal.style.display = 'flex';
+      });
+    }
+    function parseValue(str) {
+      str = str.trim();
+      if (str === '') return '';
+      if (str === 'True') return true;
+      if (str === 'False') return false;
+      let num = Number(str);
+      if (!isNaN(num) && str !== '') return num;
+      if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) return str.slice(1, -1);
+      return str;
+    }
+    function evaluateExpression(expr) {
+      try {
+        let jsExpr = expr;
+        for (let [k, v] of Object.entries(vars)) {
+          let valStr = typeof v === 'string' ? `'${v}'` : v;
+          jsExpr = jsExpr.replace(new RegExp(`\\b${k}\\b`, 'g'), valStr);
+        }
+        return Function('"use strict";return (' + jsExpr + ')')();
+      } catch(e) { return expr; }
+    }
+    function evaluateCondition(cond) {
+      try {
+        let jsCond = cond.replace(/ and /g, ' && ').replace(/ or /g, ' || ').replace(/ not /g, ' ! ');
+        for (let [k, v] of Object.entries(vars)) {
+          let valStr = typeof v === 'string' ? `'${v}'` : v;
+          jsCond = jsCond.replace(new RegExp(`\\b${k}\\b`, 'g'), valStr);
+        }
+        return Function('"use strict";return (' + jsCond + ')')();
+      } catch(e) { return false; }
+    }
+    function getIndent(line) { return line.search(/\S/); }
+    function extractPrintContent(line) {
+      let match = line.match(/print\((.*)\)/);
+      if (!match) return '';
+      let content = match[1].trim();
+      if (content.startsWith("'") && content.endsWith("'")) return content.slice(1, -1);
+      if (content.startsWith('"') && content.endsWith('"')) return content.slice(1, -1);
+      if (content.startsWith("f'") && content.endsWith("'")) {
+        let inner = content.slice(2, -1);
+        return inner.replace(/{(\w+)}/g, (_, v) => vars[v] !== undefined ? vars[v] : `{${v}}`);
+      }
+      if (content.startsWith('f"') && content.endsWith('"')) {
+        let inner = content.slice(2, -1);
+        return inner.replace(/{(\w+)}/g, (_, v) => vars[v] !== undefined ? vars[v] : `{${v}}`);
+      }
+      if (vars[content] !== undefined) return String(vars[content]);
+      try { return String(evaluateExpression(content)); } catch(e) { return content; }
+    }
+
+    async function executeLine(line) {
+      let trimmed = line.trim();
+      if (trimmed === '' || trimmed.startsWith('#')) return;
+      if (trimmed.includes('input(')) {
+        let promptMatch = trimmed.match(/input\(['"]([^'"]*)['"]\)/);
+        let promptText = promptMatch ? promptMatch[1] : '';
+        let userVal = await inputAsync(promptText);
+        let parsed = parseValue(userVal);
+        let varMatch = line.match(/^(\w+)\s*=/);
+        if (varMatch) vars[varMatch[1]] = parsed;
+        return;
+      }
+      if (trimmed.startsWith('print(')) {
+        printToTerminal(extractPrintContent(trimmed));
+        return;
+      }
+      if (trimmed.startsWith('if ')) {
+        let condition = trimmed.slice(3, -1).trim();
+        let condResult = evaluateCondition(condition);
+        let blockIndent = getIndent(line) + 2;
+        if (condResult) {
+          i++;
+          while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) {
+            await executeLine(linhas[i]);
+            i++;
+          }
+          i--;
+          while (i+1 < linhas.length && getIndent(linhas[i+1]) === getIndent(line) && (linhas[i+1].trim().startsWith('elif ') || linhas[i+1].trim() === 'else:')) {
+            i++;
+            let skipIndent = getIndent(line) + 2;
+            while (i+1 < linhas.length && getIndent(linhas[i+1]) >= skipIndent) i++;
+          }
+        } else {
+          i++;
+          while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) i++;
+          i--;
+          while (i+1 < linhas.length && getIndent(linhas[i+1]) === getIndent(line)) {
+            let nextLine = linhas[i+1].trim();
+            if (nextLine.startsWith('elif ')) {
+              i++;
+              let elifCond = nextLine.slice(5, -1).trim();
+              if (evaluateCondition(elifCond)) {
+                i++;
+                while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) {
+                  await executeLine(linhas[i]);
+                  i++;
+                }
+                i--;
+                break;
+              } else {
+                i++;
+                while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) i++;
+                i--;
+              }
+            } else if (nextLine === 'else:') {
+              i++;
+              i++;
+              while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) {
+                await executeLine(linhas[i]);
+                i++;
+              }
+              i--;
+              break;
+            } else break;
+          }
+        }
+        return;
+      }
+      if (trimmed.startsWith('elif ') || trimmed === 'else:') return;
+      if (trimmed.includes('=') && !trimmed.startsWith('if')) {
+        let eqIdx = trimmed.indexOf('=');
+        let varName = trimmed.slice(0, eqIdx).trim();
+        let expression = trimmed.slice(eqIdx+1).trim();
+        if (varName.includes(',') && expression.includes(',')) {
+          let varsList = varName.split(',').map(v=>v.trim());
+          let exprsList = expression.split(',').map(e=>e.trim());
+          for (let idx=0; idx<varsList.length; idx++) vars[varsList[idx]] = evaluateExpression(exprsList[idx]);
+        } else {
+          vars[varName] = evaluateExpression(expression);
+        }
+        return;
+      }
+    }
+
+    i = 0;
+    while (i < linhas.length) {
+      let line = linhas[i];
+      if (line.trim() === '' || line.trim().startsWith('#')) { i++; continue; }
+      await executeLine(line);
+      i++;
+    }
+    terminalOutput.innerHTML += '<div>✅ Execução finalizada.</div>';
+  }
+
+  // ========== ENVIO EMAIL ==========
+  function enviarEmail(nome, turma, nota) {
+    const templateParams = {
+      nome: nome,
+      serie: turma,
+      nota: nota.toFixed(1)
+    };
+
+    emailjs.send('service_94cnpvm', 'template_kvt866g', templateParams)
+      .then(function(response) {
+        statusEnvio.innerHTML = '<span style="color: #22c55e;">✅ E-mail enviado com sucesso!</span>';
+        setTimeout(() => {
+          envioModal.style.display = 'none';
+          btnEnviarNota.style.display = 'none';
+          envioRealizado = true;
+        }, 2000);
+      }, function(error) {
+        statusEnvio.innerHTML = '<span style="color: #ef4444;">❌ Erro ao enviar. Tente novamente.</span>';
+        console.error('Erro EmailJS:', error);
+      });
+  }
+
+  btnEnviarNota.addEventListener('click', () => {
+    envioModal.style.display = 'flex';
+    statusEnvio.innerHTML = '';
+    alunoNome.value = '';
+    alunoTurma.value = '';
+  });
+
+  cancelarEnvio.addEventListener('click', () => {
+    envioModal.style.display = 'none';
+  });
+
+  confirmarEnvio.addEventListener('click', () => {
+    const nome = alunoNome.value.trim();
+    const turma = alunoTurma.value.trim();
+    if (nome === '' || turma === '') {
+      statusEnvio.innerHTML = '<span style="color: #ef4444;">❌ Preencha nome e turma!</span>';
+      return;
+    }
+    statusEnvio.innerHTML = '<span style="color: #ffb347;">⏳ Enviando e-mail...</span>';
+    enviarEmail(nome, turma, pontuacaoTotal);
+  });
+
+  // ========== EVENTOS GERAIS ==========
+  function popularSelect() {
+    missoes.forEach((m, i) => {
+      let opt = document.createElement('option');
+      opt.value = i;
+      opt.textContent = `${i+1}. ${m.titulo}`;
+      selectMissao.appendChild(opt);
+    });
+  }
+
+  selectMissao.addEventListener('change', (e) => {
+    missaoAtual = parseInt(e.target.value);
+    carregarMissao();
+  });
+  verificarBtn.addEventListener('click', verificar);
+  rodarBtn.addEventListener('click', rodarCodigo);
+  limparBtn.addEventListener('click', limparTudo);
+  resetarBtn.addEventListener('click', resetarMissao);
+  fecharTerminalBtn.addEventListener('click', () => terminalDiv.style.display = 'none');
+  modalConfirmar.addEventListener('click', () => { if (pendingInputResolver) pendingInputResolver(modalInput.value); modal.style.display = 'none'; pendingInputResolver = null; });
+  modalCancelar.addEventListener('click', () => { if (pendingInputResolver) pendingInputResolver(''); modal.style.display = 'none'; pendingInputResolver = null; });
+
+  popularSelect();
+  carregarMissao();
+  atualizarGridProgresso(); // inicializa painel
+</script>
+</body>
+</html>
