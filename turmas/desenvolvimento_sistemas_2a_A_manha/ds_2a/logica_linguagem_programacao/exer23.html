@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>🔄 20 Missões: While, Break, Continue e Operadores</title>
+<!-- EmailJS SDK -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="text/javascript">
+  (function() {
+    emailjs.init({
+      publicKey: "ikG65_WxFRdkk2Gqr",
+    });
+  })();
+</script>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%);
+    font-family: 'Inter', system-ui, 'Segoe UI', 'Fira Code', monospace;
+    padding: 2rem;
+    color: #eef4ff;
+  }
+
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid rgba(100, 255, 200, 0.3);
+  }
+
+  .hero h1 {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #b3ffcc, #64ffda);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+
+  .hero p {
+    color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+
+  .status-bar {
+    background: #0f172a;
+    padding: 0.8rem 1.5rem;
+    border-radius: 3rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid #1f2937;
+    flex-wrap: wrap;
+  }
+
+  .missao-indicador {
+    background: #020617;
+    padding: 0.3rem 1rem;
+    border-radius: 2rem;
+    font-family: monospace;
+    font-size: 1.1rem;
+  }
+
+  .pontuacao {
+    background: #020617;
+    padding: 0.3rem 1rem;
+    border-radius: 2rem;
+    font-family: monospace;
+    font-size: 1.1rem;
+    color: #ffb347;
+  }
+
+  .progresso-container {
+    background: #0f172a;
+    border-radius: 1.5rem;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border: 1px solid #1f2937;
+  }
+
+  .progresso-titulo {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: #64ffda;
+  }
+
+  .grid-progresso {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .missao-card {
+    background: #1e293b;
+    border-radius: 0.8rem;
+    padding: 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid #334155;
+  }
+
+  .missao-card:hover {
+    transform: scale(1.02);
+    border-color: #64ffda;
+  }
+
+  .missao-card.concluida {
+    background: #14532d;
+    border-color: #22c55e;
+  }
+
+  .missao-card.bloqueada {
+    background: #450a0a;
+    border-color: #ef4444;
+  }
+
+  .missao-card.pendente {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .missao-numero {
+    font-weight: bold;
+    font-size: 0.9rem;
+  }
+
+  .missao-status {
+    font-size: 0.7rem;
+    margin-top: 0.2rem;
+  }
+
+  .seletor {
+    background: #0f172a;
+    padding: 0.8rem 1.5rem;
+    border-radius: 3rem;
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: center;
+    border: 1px solid #1f2937;
+  }
+
+  .seletor label {
+    font-weight: bold;
+    color: #64ffda;
+  }
+
+  select {
+    background: #020617;
+    color: white;
+    border: 1px solid #334155;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-family: monospace;
+    font-size: 1rem;
+    cursor: pointer;
+    min-width: 280px;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: rgba(18, 25, 40, 0.85);
+    backdrop-filter: blur(2px);
+    border-radius: 1.5rem;
+    border: 1px solid rgba(100, 255, 200, 0.2);
+    padding: 1.5rem;
+  }
+
+  .card h2 {
+    color: #64ffda;
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .story-box {
+    background: #0f172a;
+    border-left: 5px solid #64ffda;
+    padding: 1.2rem;
+    border-radius: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.5;
+  }
+
+  .story-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #64ffda;
+    margin-bottom: 0.5rem;
+  }
+
+  .dica {
+    background: #1e293b;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    font-size: 0.85rem;
+    color: #b9c7d9;
+    margin-bottom: 1rem;
+  }
+
+  .erro-contador {
+    background: #450a0a;
+    padding: 0.5rem;
+    border-radius: 0.8rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+  }
+
+  .bloqueio-msg {
+    background: #7f1a1a;
+    padding: 0.5rem;
+    border-radius: 0.8rem;
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: #ffcccc;
+    font-weight: bold;
+  }
+
+  .paleta {
+    background: #0a0e17;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    max-height: 250px;
+    overflow-y: auto;
+  }
+
+  .bloco {
+    display: inline-block;
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.9rem;
+    margin: 0.3rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: 0.1s;
+  }
+
+  .bloco:hover {
+    background: #334155;
+    transform: scale(1.02);
+    border-color: #64ffda;
+  }
+
+  .bloco.bloqueado {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+
+  .codigo-area {
+    background: #020617;
+    border-radius: 1rem;
+    padding: 1rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85rem;
+    white-space: pre-wrap;
+    min-height: 200px;
+    border: 1px solid #1f2937;
+    margin-bottom: 1rem;
+  }
+
+  .linha-codigo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.3rem 0;
+    border-bottom: 1px dashed #1f2937;
+    font-family: monospace;
+  }
+
+  .remover-linha {
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.7rem;
+    margin-left: 0.8rem;
+    opacity: 0.7;
+  }
+
+  .remover-linha:hover {
+    opacity: 1;
+  }
+
+  .botoes {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+  }
+
+  button {
+    background: #334155;
+    border: none;
+    color: white;
+    padding: 0.5rem 1.2rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s;
+  }
+
+  button.primary {
+    background: #64ffda;
+    color: #0a0f1a;
+  }
+
+  button.primary:hover {
+    background: #7effe0;
+    transform: scale(0.98);
+  }
+
+  button.warning {
+    background: #b45309;
+  }
+
+  button.warning:hover {
+    background: #ea580c;
+  }
+
+  button.success {
+    background: #22c55e;
+  }
+
+  button.success:hover {
+    background: #4ade80;
+  }
+
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .feedback {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    font-weight: 500;
+  }
+
+  .feedback.sucesso {
+    background: #14532d;
+    color: #bbf7d0;
+    border-left: 4px solid #22c55e;
+  }
+
+  .feedback.erro {
+    background: #450a0a;
+    color: #fecaca;
+    border-left: 4px solid #ef4444;
+  }
+
+  .terminal {
+    background: #0a0e17;
+    border-radius: 1rem;
+    margin-top: 1rem;
+    border: 1px solid #334155;
+    overflow: hidden;
+  }
+
+  .terminal-header {
+    background: #1e293b;
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border-bottom: 1px solid #334155;
+  }
+
+  .terminal-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #22c55e;
+  }
+
+  .terminal-dot.red {
+    background: #ef4444;
+  }
+
+  .terminal-dot.yellow {
+    background: #eab308;
+  }
+
+  .terminal-title {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-left: 0.5rem;
+  }
+
+  .terminal-content {
+    padding: 1rem;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.8rem;
+    color: #86efac;
+    background: #020617;
+    min-height: 150px;
+    max-height: 250px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+  }
+
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+
+  .modal-content {
+    background: #0f172a;
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid #64ffda;
+  }
+
+  .modal-content h3 {
+    color: #64ffda;
+    margin-bottom: 1rem;
+  }
+
+  .modal-input {
+    background: #020617;
+    border: 1px solid #334155;
+    padding: 0.8rem;
+    border-radius: 0.5rem;
+    color: white;
+    width: 100%;
+    margin: 1rem 0;
+    font-family: monospace;
+  }
+
+  .modal-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+  }
+
+  .btn-enviar {
+    background: #22c55e;
+  }
+
+  @media (max-width: 800px) {
+    .grid {
+      grid-template-columns: 1fr;
+    }
+    body {
+      padding: 1rem;
+    }
+    .grid-progresso {
+      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="hero">
+    <h1>🔄 20 Missões: While, Break, Continue e Operadores</h1>
+    <p>Leia a história e monte o código clicando nos blocos na ordem certa</p>
+  </div>
+
+  <div class="status-bar">
+    <div class="missao-indicador">📌 Missão atual: <span id="missao-atual-num">1</span> / 20</div>
+    <div class="pontuacao">⭐ Pontuação: <span id="pontuacao-valor">0.0</span> / 10</div>
+    <button id="btn-enviar-nota" class="success" style="display: none;">📧 Enviar resultado</button>
+  </div>
+
+  <div class="progresso-container">
+    <div class="progresso-titulo">
+      <span>📊 Progresso das Missões</span>
+      <span id="progresso-contador">0/20 concluídas</span>
+    </div>
+    <div id="grid-progresso" class="grid-progresso"></div>
+    <div style="margin-top: 0.8rem; font-size: 0.8rem; display: flex; gap: 1rem; justify-content: center;">
+      <span><span style="background:#14532d; display:inline-block; width:12px; height:12px; border-radius:2px;"></span> Concluída</span>
+      <span><span style="background:#450a0a; display:inline-block; width:12px; height:12px; border-radius:2px;"></span> Bloqueada</span>
+      <span><span style="background:#1e293b; display:inline-block; width:12px; height:12px; border-radius:2px;"></span> Não iniciada</span>
+    </div>
+  </div>
+
+  <div class="seletor">
+    <label>📖 Ou escolha pelo seletor:</label>
+    <select id="missao-select"></select>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>📜 A Jornada</h2>
+      <div id="story-box" class="story-box"></div>
+      <div id="dica-box" class="dica"></div>
+      <div id="erro-contador" class="erro-contador" style="display: none;"></div>
+      <div id="bloqueio-msg" class="bloqueio-msg" style="display: none;"></div>
+    </div>
+
+    <div class="card">
+      <h2>🧩 Blocos disponíveis</h2>
+      <div id="paleta" class="paleta"></div>
+
+      <h2>📝 Seu código</h2>
+      <div id="codigo-montado" class="codigo-area"></div>
+
+      <div class="botoes">
+        <button id="verificar" class="primary">✅ Verificar</button>
+        <button id="rodar" class="success">▶️ Rodar Código</button>
+        <button id="limpar" class="warning">🗑 Limpar tudo</button>
+        <button id="resetar-missao">🔄 Reiniciar missão</button>
+      </div>
+      <div id="feedback" class="feedback"></div>
+      
+      <div class="terminal" id="terminal" style="display: none;">
+        <div class="terminal-header">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot"></div>
+          <span class="terminal-title">🐍 Python 3.12 - Modo Interativo</span>
+          <button id="fechar-terminal" style="margin-left: auto; background: #334155; padding: 0.2rem 0.5rem; font-size: 0.7rem;">✕ Fechar</button>
+        </div>
+        <div id="terminal-output" class="terminal-content">
+          <div class="terminal-prompt"><span>$</span><span>Executando código...</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de decisão após acerto -->
+<div id="decisao-modal" class="modal">
+  <div class="modal-content">
+    <h3>🎉 Missão concluída!</h3>
+    <p>Você acertou o código! O que deseja fazer agora?</p>
+    <div class="modal-buttons">
+      <button id="btn-testar-codigo" class="success">▶️ Testar código</button>
+      <button id="btn-proxima-missao" class="primary">➡️ Próxima missão</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de envio de nota -->
+<div id="envio-modal" class="modal">
+  <div class="modal-content">
+    <h3>📧 Enviar resultado</h3>
+    <p>Parabéns! Você concluiu todas as 20 missões. Preencha seus dados para enviar a nota por e-mail.</p>
+    <input type="text" id="aluno-nome" class="modal-input" placeholder="Seu nome completo">
+    <input type="text" id="aluno-turma" class="modal-input" placeholder="Sua turma / série">
+    <div class="modal-buttons">
+      <button id="cancelar-envio">Cancelar</button>
+      <button id="confirmar-envio" class="btn-enviar">✉️ Enviar e-mail</button>
+    </div>
+    <div id="status-envio" style="margin-top: 0.5rem; font-size: 0.8rem;"></div>
+  </div>
+</div>
+
+<!-- Modal para inputs do usuário -->
+<div id="input-modal" class="modal">
+  <div class="modal-content">
+    <h3>📥 Entrada do programa</h3>
+    <p id="modal-prompt" style="color: #94a3b8;">Digite o valor solicitado:</p>
+    <input type="text" id="modal-input" class="modal-input" autocomplete="off">
+    <div class="modal-buttons">
+      <button id="modal-cancelar">Cancelar</button>
+      <button id="modal-confirmar" class="primary">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==================== 20 MISSÕES (WHILE, BREAK, CONTINUE) ====================
+  const missoes = [
+    { id: 0, titulo: "🔄 1. While simples - Contagem regressiva", historia: "Use um loop `while` para exibir números de 5 até 1 (decrescente). Inicialize `contador = 5` e decremente até 0.", dica: "Use `while contador > 0:` e dentro `print(contador)` e `contador -= 1`", codigoEsperado: ["contador = 5","while contador > 0:","    print(contador)","    contador -= 1"] },
+    { id: 1, titulo: "➕ 2. While - Soma até 100", historia: "Some números de 1 até atingir ou ultrapassar 100. Use while com uma variável `soma` e outra `numero` que incrementa.", dica: "`soma = 0`, `numero = 1`, while soma < 100: soma += numero; numero += 1", codigoEsperado: ["soma = 0","numero = 1","while soma < 100:","    soma += numero","    numero += 1","print(soma)"] },
+    { id: 2, titulo: "⛔ 3. Break - Menu interativo", historia: "Crie um loop infinito `while True` que pede um comando. Se o usuário digitar 'sair', use `break` para encerrar.", dica: "`while True:` dentro `comando = input('Digite algo: ')` e `if comando == 'sair': break`", codigoEsperado: ["while True:","    comando = input('Digite um comando (ou \"sair\"): ')","    if comando == 'sair':","        break","    print(f'Você digitou: {comando}')"] },
+    { id: 3, titulo: "⏭️ 4. Continue - Números ímpares", historia: "Use while de 1 a 10. Se o número for par, use `continue` para pular a impressão. Imprima apenas os ímpares.", dica: "`numero = 1`, while numero <= 10: if numero % 2 == 0: numero += 1; continue; print(numero); numero += 1", codigoEsperado: ["numero = 1","while numero <= 10:","    if numero % 2 == 0:","        numero += 1","        continue","    print(numero)","    numero += 1"] },
+    { id: 4, titulo: "🔢 5. While com operador AND", historia: "Percorra números de 1 a 20, mas pare quando encontrar um número divisível por 3 E por 5 ao mesmo tempo (múltiplo de 15). Use break.", dica: "`i = 1`, while i <= 20: if i % 3 == 0 and i % 5 == 0: break; print(i); i += 1", codigoEsperado: ["i = 1","while i <= 20:","    if i % 3 == 0 and i % 5 == 0:","        break","    print(i)","    i += 1"] },
+    { id: 5, titulo: "🔀 6. While com operador OR", historia: "Peça números até que o usuário digite 0 OU um número negativo. Use `while True` com `if` e `break`.", dica: "`while True:` dentro `num = int(input())` e `if num == 0 or num < 0: break`", codigoEsperado: ["while True:","    num = int(input('Digite um número (0 ou negativo para parar): '))","    if num == 0 or num < 0:","        break","    print(f'Você digitou: {num}')"] },
+    { id: 6, titulo: "🚫 7. While com operador NOT", historia: "Peça uma senha. Enquanto a senha NÃO for '1234', continue pedindo. Use `not` no operador.", dica: "`senha = ''`, `while not senha == '1234':` e dentro `senha = input()`", codigoEsperado: ["senha = ''","while not senha == '1234':","    senha = input('Digite a senha: ')","print('Acesso liberado!')"] },
+    { id: 7, titulo: "🎲 8. While - Tabuada interativa", historia: "Peça um número e mostre sua tabuada do 1 ao 10 usando while.", dica: "`n = int(input())`, `i = 1`, while i <= 10: print(f'{n} x {i} = {n*i}'); i += 1", codigoEsperado: ["n = int(input('Digite um número: '))","i = 1","while i <= 10:","    print(f'{n} x {i} = {n*i}')","    i += 1"] },
+    { id: 8, titulo: "📝 9. Break - Encontrando primo", historia: "Verifique se um número é primo. Percorra divisores de 2 até o número-1. Se encontrar um divisor, use break.", dica: "`num = int(input())`, `i = 2`, while i < num: if num % i == 0: break; i += 1", codigoEsperado: ["num = int(input('Digite um número: '))","i = 2","while i < num:","    if num % i == 0:","        print(f'{num} não é primo')","        break","    i += 1","else:","    print(f'{num} é primo')"] },
+    { id: 9, titulo: "🔄 10. Continue - Pulando múltiplos de 3", historia: "Use while para exibir números de 1 a 20, mas pule (continue) os múltiplos de 3.", dica: "`i = 1`, while i <= 20: if i % 3 == 0: i += 1; continue; print(i); i += 1", codigoEsperado: ["i = 1","while i <= 20:","    if i % 3 == 0:","        i += 1","        continue","    print(i)","    i += 1"] },
+    { id: 10, titulo: "💡 11. While - Validação de entrada", historia: "Peça um número entre 1 e 10. Enquanto não estiver nesse intervalo, continue pedindo.", dica: "`num = 0`, while num < 1 or num > 10: num = int(input())", codigoEsperado: ["num = 0","while num < 1 or num > 10:","    num = int(input('Digite um número entre 1 e 10: '))","print(f'Número válido: {num}')"] },
+    { id: 11, titulo: "🧮 12. While - Fatorial", historia: "Calcule o fatorial de um número usando while. Ex: 5! = 5*4*3*2*1 = 120.", dica: "`n = int(input())`, `fatorial = 1`, while n > 0: fatorial *= n; n -= 1", codigoEsperado: ["n = int(input('Digite um número: '))","fatorial = 1","original = n","while n > 0:","    fatorial *= n","    n -= 1","print(f'{original}! = {fatorial}')"] },
+    { id: 12, titulo: "🎯 13. Break e Continue combinados", historia: "Percorra números de 1 a 50. Pule os números pares (continue). Se encontrar um número primo maior que 30, pare (break).", dica: "Use while com if para par, continue para pares, e break na condição especial", codigoEsperado: ["i = 1","while i <= 50:","    if i % 2 == 0:","        i += 1","        continue","    if i > 30 and i % 2 != 0 and i % 3 != 0 and i % 5 != 0:","        print(f'Primo encontrado: {i}')","        break","    print(i)","    i += 1"] },
+    { id: 13, titulo: "🏦 14. While - Caixa eletrônico", historia: "Simule um caixa eletrônico. Inicie com saldo = 1000. Enquanto True, pergunte valor do saque. Se saldo insuficiente, continue pedindo. Se digitar 0, break.", dica: "`saldo = 1000`, while True: saque = int(input()); if saque == 0: break; if saque > saldo: continue; saldo -= saque", codigoEsperado: ["saldo = 1000","while True:","    saque = int(input('Digite o valor do saque (0 para sair): '))","    if saque == 0:","        break","    if saque > saldo:","        print('Saldo insuficiente!')","        continue","    saldo -= saque","    print(f'Saque realizado. Saldo atual: {saldo}')"] },
+    { id: 14, titulo: "🎮 15. While - Adivinhação", historia: "Crie um jogo onde o usuário tenta adivinhar um número secreto (42). Use while True, break quando acertar.", dica: "`secreto = 42`, while True: palpite = int(input()); if palpite == secreto: break; else: print('Errou!')", codigoEsperado: ["secreto = 42","while True:","    palpite = int(input('Adivinhe o número secreto: '))","    if palpite == secreto:","        print('Acertou!')","        break","    else:","        print('Tente novamente!')"] },
+    { id: 15, titulo: "📊 16. While - Média de notas", historia: "Peça notas até que o usuário digite -1. Calcule a média das notas válidas (ignore notas negativas usando continue).", dica: "`soma = 0`, `cont = 0`, while True: nota = float(input()); if nota == -1: break; if nota < 0: continue; soma += nota; cont += 1", codigoEsperado: ["soma = 0","contador = 0","while True:","    nota = float(input('Digite a nota (-1 para sair): '))","    if nota == -1:","        break","    if nota < 0:","        continue","    soma += nota","    contador += 1","if contador > 0:","    media = soma / contador","    print(f'Média: {media:.2f}')"] },
+    { id: 16, titulo: "🔄 17. While aninhado - Break interno", historia: "Use while aninhado (i de 1 a 3, j de 1 a 5). Se j for 3, interrompa o loop interno com break.", dica: "`i = 1`, while i <= 3: j = 1; while j <= 5: if j == 3: break; print(i,j); j += 1; i += 1", codigoEsperado: ["i = 1","while i <= 3:","    j = 1","    while j <= 5:","        if j == 3:","            break","        print(i, j)","        j += 1","    i += 1"] },
+    { id: 17, titulo: "🔍 18. While - Fibonacci", historia: "Gere a sequência de Fibonacci até ultrapassar 1000. Use while e pare quando o termo > 1000.", dica: "`a, b = 0, 1`, while a <= 1000: print(a); a, b = b, a + b", codigoEsperado: ["a, b = 0, 1","while a <= 1000:","    print(a)","    a, b = b, a + b"] },
+    { id: 18, titulo: "⚡ 19. While com operadores compostos", historia: "Peça um número. Enquanto ele não for maior que 50 E menor que 100, continue pedindo. Use AND.", dica: "`num = 0`, while not (num > 50 and num < 100): num = int(input())", codigoEsperado: ["num = 0","while not (num > 50 and num < 100):","    num = int(input('Digite um número entre 51 e 99: '))","print(f'Número aceito: {num}')"] },
+    { id: 19, titulo: "🏁 20. Desafio final - Sistema de login com tentativas", historia: "Crie um sistema de login com 3 tentativas. Use while, break se acertar, e continue se errar (com contador de tentativas).", dica: "`tentativas = 0`, while tentativas < 3: usuario = input(); senha = input(); if usuario == 'admin' and senha == '123': print('Acesso liberado'); break; else: tentativas += 1; continue; else: print('Conta bloqueada')", codigoEsperado: ["tentativas = 0","while tentativas < 3:","    usuario = input('Usuário: ')","    senha = input('Senha: ')","    if usuario == 'admin' and senha == '123':","        print('Acesso liberado!')","        break","    else:","        tentativas += 1","        print(f'Senha incorreta! Tentativas restantes: {3 - tentativas}')","        continue","else:","    print('Conta bloqueada! Muitas tentativas.')"] }
+  ];
+
+  // ==================== DOM ELEMENTOS ====================
+  const selectMissao = document.getElementById('missao-select');
+  const storyBox = document.getElementById('story-box');
+  const dicaBox = document.getElementById('dica-box');
+  const paletaDiv = document.getElementById('paleta');
+  const codigoDiv = document.getElementById('codigo-montado');
+  const verificarBtn = document.getElementById('verificar');
+  const rodarBtn = document.getElementById('rodar');
+  const limparBtn = document.getElementById('limpar');
+  const resetarBtn = document.getElementById('resetar-missao');
+  const feedbackDiv = document.getElementById('feedback');
+  const erroContadorDiv = document.getElementById('erro-contador');
+  const bloqueioMsgDiv = document.getElementById('bloqueio-msg');
+  const terminalDiv = document.getElementById('terminal');
+  const terminalOutput = document.getElementById('terminal-output');
+  const fecharTerminalBtn = document.getElementById('fechar-terminal');
+  const modalInputDiv = document.getElementById('input-modal');
+  const modalPrompt = document.getElementById('modal-prompt');
+  const modalInput = document.getElementById('modal-input');
+  const modalConfirmar = document.getElementById('modal-confirmar');
+  const modalCancelar = document.getElementById('modal-cancelar');
+  const missaoAtualSpan = document.getElementById('missao-atual-num');
+  const pontuacaoSpan = document.getElementById('pontuacao-valor');
+  const btnEnviarNota = document.getElementById('btn-enviar-nota');
+  const envioModal = document.getElementById('envio-modal');
+  const alunoNome = document.getElementById('aluno-nome');
+  const alunoTurma = document.getElementById('aluno-turma');
+  const cancelarEnvio = document.getElementById('cancelar-envio');
+  const confirmarEnvio = document.getElementById('confirmar-envio');
+  const statusEnvio = document.getElementById('status-envio');
+  const gridProgresso = document.getElementById('grid-progresso');
+  const progressoContador = document.getElementById('progresso-contador');
+  const decisaoModal = document.getElementById('decisao-modal');
+  const btnTestarCodigo = document.getElementById('btn-testar-codigo');
+  const btnProximaMissao = document.getElementById('btn-proxima-missao');
+
+  let missaoAtual = 0;
+  let blocosSelecionados = [];
+  let errosMissaoAtual = 0;
+  let pendingInputResolver = null;
+  let missaoConcluida = false; // impede múltiplos acertos na mesma missão
+
+  // Estado do progresso
+  let missoesBloqueadas = new Array(20).fill(false);
+  let pontuacaoTotal = 0;
+  let missoesPontuadas = new Array(20).fill(false);
+  let envioRealizado = false;
+
+  // ==================== FUNÇÕES DE PROGRESSO ====================
+  function atualizarPontuacaoUI() {
+    pontuacaoSpan.textContent = pontuacaoTotal.toFixed(1);
+  }
+
+  function adicionarPontuacao(missaoId) {
+    if (!missoesPontuadas[missaoId]) {
+      missoesPontuadas[missaoId] = true;
+      pontuacaoTotal += 0.5;
+      atualizarPontuacaoUI();
+      atualizarGridProgresso();
+    }
+  }
+
+  function atualizarGridProgresso() {
+    gridProgresso.innerHTML = '';
+    let concluidas = 0;
+    for (let i = 0; i < 20; i++) {
+      const concluida = missoesPontuadas[i];
+      const bloqueada = missoesBloqueadas[i];
+      const statusClass = concluida ? 'concluida' : (bloqueada ? 'bloqueada' : 'pendente');
+      const statusText = concluida ? '✓' : (bloqueada ? '✗' : '○');
+      if (concluida || bloqueada) concluidas++;
+      
+      const card = document.createElement('div');
+      card.className = `missao-card ${statusClass}`;
+      card.innerHTML = `<div class="missao-numero">${i+1}</div><div class="missao-status">${statusText}</div>`;
+      card.addEventListener('click', (function(idx) {
+        return function() { irParaMissao(idx); };
+      })(i));
+      gridProgresso.appendChild(card);
+    }
+    progressoContador.textContent = `${concluidas}/20 concluídas`;
+    if (concluidas === 20 && !envioRealizado) {
+      btnEnviarNota.style.display = 'inline-block';
+    } else {
+      btnEnviarNota.style.display = 'none';
+    }
+  }
+
+  function irParaMissao(idx) {
+    if (idx !== missaoAtual) {
+      missaoAtual = idx;
+      selectMissao.value = idx;
+      carregarMissao();
+    }
+  }
+
+  // ==================== BLOQUEIO E VERIFICAÇÃO ====================
+  function aplicarEstadoBloqueio() {
+    const bloqueada = missoesBloqueadas[missaoAtual];
+    if (bloqueada) {
+      bloqueioMsgDiv.style.display = 'block';
+      bloqueioMsgDiv.innerHTML = '🚫 Esta missão foi bloqueada após 3 tentativas erradas. Você não pode mais tentar resolvê-la. 🚫';
+      verificarBtn.disabled = true;
+      limparBtn.disabled = true;
+      resetarBtn.disabled = false;
+      document.querySelectorAll('.bloco').forEach(bloco => {
+        bloco.classList.add('bloqueado');
+      });
+      erroContadorDiv.style.display = 'none';
+    } else {
+      bloqueioMsgDiv.style.display = 'none';
+      verificarBtn.disabled = false;
+      limparBtn.disabled = false;
+      resetarBtn.disabled = false;
+      document.querySelectorAll('.bloco').forEach(bloco => {
+        bloco.classList.remove('bloqueado');
+      });
+      atualizarContadorErros();
+    }
+  }
+
+  function atualizarContadorErros() {
+    if (missoesBloqueadas[missaoAtual]) {
+      erroContadorDiv.style.display = 'none';
+      return;
+    }
+    if (errosMissaoAtual > 0) {
+      erroContadorDiv.style.display = 'block';
+      erroContadorDiv.innerHTML = `⚠️ Tentativas erradas: ${errosMissaoAtual}/3`;
+    } else {
+      erroContadorDiv.style.display = 'none';
+    }
+  }
+
+  function registrarErro(msg) {
+    if (missoesBloqueadas[missaoAtual] || missaoConcluida) return;
+    errosMissaoAtual++;
+    atualizarContadorErros();
+    feedbackDiv.className = 'feedback erro';
+    feedbackDiv.innerHTML = `❌ ${msg}<br>🔁 Tentativas: ${errosMissaoAtual}/3`;
+
+    if (errosMissaoAtual >= 3) {
+      missoesBloqueadas[missaoAtual] = true;
+      feedbackDiv.innerHTML += `<br>🚫 Você atingiu 3 erros. Esta missão está bloqueada!`;
+      aplicarEstadoBloqueio();
+      atualizarGridProgresso();
+    }
+  }
+
+  function verificar() {
+    if (missoesBloqueadas[missaoAtual] || missaoConcluida) {
+      feedbackDiv.className = 'feedback erro';
+      feedbackDiv.innerHTML = '❌ Missão bloqueada ou já concluída. Não é possível verificar novamente.';
+      return;
+    }
+
+    const esperado = missoes[missaoAtual].codigoEsperado;
+    if (blocosSelecionados.length !== esperado.length) {
+      registrarErro(`Nº linhas incorreto. Você usou ${blocosSelecionados.length}, esperado ${esperado.length}.`);
+      return;
+    }
+    let correto = true;
+    for (let i = 0; i < esperado.length; i++) {
+      if (blocosSelecionados[i] !== esperado[i]) {
+        correto = false;
+        break;
+      }
+    }
+    if (correto) {
+      missaoConcluida = true;
+      adicionarPontuacao(missaoAtual);
+      feedbackDiv.className = 'feedback sucesso';
+      feedbackDiv.innerHTML = `🎉 Correto! Missão ${missaoAtual+1} concluída! +0,5 ponto 🎉`;
+      // Desabilitar interação após acerto
+      verificarBtn.disabled = true;
+      limparBtn.disabled = true;
+      document.querySelectorAll('.bloco').forEach(bloco => {
+        bloco.classList.add('bloqueado');
+      });
+      // Exibir modal de decisão
+      decisaoModal.style.display = 'flex';
+    } else {
+      registrarErro('Código incorreto.');
+    }
+  }
+
+  // ==================== FUNÇÕES DE BLOCOS E CÓDIGO ====================
+  function gerarPaleta() {
+    const esperado = missoes[missaoAtual].codigoEsperado;
+    let blocos = [...esperado];
+    const distracoes = ["for i in range(10):","if x > 0:","else:","elif x == 0:","    pass","print('Teste')","break","continue","while True:","    i += 1","    i -= 1","soma = 0","numero = 1","    print(i)"];
+    for (let d of distracoes) if (!blocos.includes(d) && blocos.length < 16) blocos.push(d);
+    for (let i = blocos.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [blocos[i], blocos[j]] = [blocos[j], blocos[i]]; }
+    paletaDiv.innerHTML = '';
+    blocos.forEach(bloco => {
+      const blocoEl = document.createElement('div');
+      blocoEl.className = 'bloco';
+      blocoEl.textContent = bloco;
+      blocoEl.addEventListener('click', () => {
+        if (missoesBloqueadas[missaoAtual] || missaoConcluida) return;
+        blocosSelecionados.push(bloco);
+        exibirCodigo();
+      });
+      paletaDiv.appendChild(blocoEl);
+    });
+    if (missoesBloqueadas[missaoAtual] || missaoConcluida) {
+      document.querySelectorAll('.bloco').forEach(bloco => {
+        bloco.classList.add('bloqueado');
+      });
+    }
+  }
+
+  function exibirCodigo() {
+    codigoDiv.innerHTML = '';
+    if (blocosSelecionados.length === 0) {
+      codigoDiv.innerHTML = '<span style="color:#6b7280;">Nenhum bloco adicionado. Clique nos blocos acima.</span>';
+      return;
+    }
+    blocosSelecionados.forEach((linha, idx) => {
+      const linhaDiv = document.createElement('div');
+      linhaDiv.className = 'linha-codigo';
+      linhaDiv.innerHTML = `<code>${linha.replace(/ /g, '&nbsp;')}</code><span class="remover-linha" data-idx="${idx}">❌</span>`;
+      codigoDiv.appendChild(linhaDiv);
+    });
+    document.querySelectorAll('.remover-linha').forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (missoesBloqueadas[missaoAtual] || missaoConcluida) return;
+        const idx = parseInt(e.target.getAttribute('data-idx'));
+        blocosSelecionados.splice(idx, 1);
+        exibirCodigo();
+      });
+    });
+  }
+
+  function limparTudo() {
+    if (missoesBloqueadas[missaoAtual] || missaoConcluida) {
+      feedbackDiv.className = 'feedback erro';
+      feedbackDiv.innerHTML = '❌ Missão bloqueada ou já concluída. Não é possível limpar.';
+      return;
+    }
+    blocosSelecionados = [];
+    exibirCodigo();
+    feedbackDiv.innerHTML = '';
+  }
+
+  function resetarMissao() {
+    if (missoesBloqueadas[missaoAtual]) {
+      blocosSelecionados = [];
+      exibirCodigo();
+      feedbackDiv.innerHTML = 'Missão bloqueada. Não é possível reverter o bloqueio.';
+      return;
+    }
+    if (missaoConcluida) {
+      feedbackDiv.innerHTML = 'Missão já concluída. Use o painel de progresso para ir para outra.';
+      return;
+    }
+    blocosSelecionados = [];
+    errosMissaoAtual = 0;
+    exibirCodigo();
+    feedbackDiv.innerHTML = '';
+    gerarPaleta();
+    atualizarContadorErros();
+    terminalDiv.style.display = 'none';
+  }
+
+  function carregarMissao() {
+    missaoConcluida = missoesPontuadas[missaoAtual] || missoesBloqueadas[missaoAtual];
+    const m = missoes[missaoAtual];
+    storyBox.innerHTML = `<div class="story-title">${m.titulo}</div>${m.historia}`;
+    dicaBox.innerHTML = `💡 Dica: ${m.dica}`;
+    blocosSelecionados = [];
+    errosMissaoAtual = 0;
+    exibirCodigo();
+    gerarPaleta();
+    feedbackDiv.innerHTML = '';
+    atualizarContadorErros();
+    terminalDiv.style.display = 'none';
+    missaoAtualSpan.textContent = missaoAtual + 1;
+    atualizarPontuacaoUI();
+    aplicarEstadoBloqueio();
+    if (missaoConcluida) {
+      verificarBtn.disabled = true;
+      limparBtn.disabled = true;
+      document.querySelectorAll('.bloco').forEach(bloco => {
+        bloco.classList.add('bloqueado');
+      });
+      feedbackDiv.innerHTML = missaoConcluida ? (missoesPontuadas[missaoAtual] ? '✅ Missão já concluída!' : '🚫 Missão bloqueada!') : '';
+    }
+  }
+
+  // ==================== SIMULADOR PYTHON (adaptado para while/break/continue) ====================
+  async function rodarCodigo() {
+    if (blocosSelecionados.length === 0) {
+      feedbackDiv.className = 'feedback erro';
+      feedbackDiv.innerHTML = '❌ Monte o código primeiro!';
+      return;
+    }
+    terminalDiv.style.display = 'block';
+    terminalOutput.innerHTML = '<div>🐍 Executando código...</div>';
+    
+    let linhas = blocosSelecionados;
+    let vars = {};
+    let i = 0;
+
+    function printToTerminal(...args) { terminalOutput.innerHTML += `<div>> ${args.join(' ')}</div>`; }
+    async function inputAsync(promptText) {
+      return new Promise(resolve => {
+        pendingInputResolver = resolve;
+        modalPrompt.textContent = promptText || 'Digite um valor:';
+        modalInput.value = '';
+        modalInputDiv.style.display = 'flex';
+      });
+    }
+    function parseValue(str) {
+      str = str.trim();
+      if (str === '') return '';
+      if (str === 'True') return true;
+      if (str === 'False') return false;
+      let num = Number(str);
+      if (!isNaN(num) && str !== '') return num;
+      if ((str.startsWith('"') && str.endsWith('"')) || (str.startsWith("'") && str.endsWith("'"))) return str.slice(1, -1);
+      return str;
+    }
+    function evaluateExpression(expr) {
+      try {
+        let jsExpr = expr;
+        for (let [k, v] of Object.entries(vars)) {
+          let valStr = typeof v === 'string' ? `'${v}'` : v;
+          jsExpr = jsExpr.replace(new RegExp(`\\b${k}\\b`, 'g'), valStr);
+        }
+        return Function('"use strict";return (' + jsExpr + ')')();
+      } catch(e) { return expr; }
+    }
+    function evaluateCondition(cond) {
+      try {
+        let jsCond = cond.replace(/ and /g, ' && ').replace(/ or /g, ' || ').replace(/ not /g, ' ! ');
+        for (let [k, v] of Object.entries(vars)) {
+          let valStr = typeof v === 'string' ? `'${v}'` : v;
+          jsCond = jsCond.replace(new RegExp(`\\b${k}\\b`, 'g'), valStr);
+        }
+        return Function('"use strict";return (' + jsCond + ')')();
+      } catch(e) { return false; }
+    }
+    function getIndent(line) { return line.search(/\S/); }
+
+    async function executeLine(line) {
+      let trimmed = line.trim();
+      if (trimmed === '' || trimmed.startsWith('#')) return;
+      
+      if (trimmed.includes('input(')) {
+        let promptMatch = trimmed.match(/input\(['"]([^'"]*)['"]\)/);
+        let promptText = promptMatch ? promptMatch[1] : '';
+        let userVal = await inputAsync(promptText);
+        let parsed = parseValue(userVal);
+        let varMatch = line.match(/^(\w+)\s*=/);
+        if (varMatch) vars[varMatch[1]] = parsed;
+        return;
+      }
+      
+      if (trimmed.startsWith('print(')) {
+        let match = trimmed.match(/print\((.*)\)/);
+        if (match) {
+          let content = match[1];
+          if (content.match(/^['"].*['"]$/)) {
+            printToTerminal(content.slice(1, -1));
+          } else if (vars[content] !== undefined) {
+            printToTerminal(vars[content]);
+          } else {
+            printToTerminal(content);
+          }
+        }
+        return;
+      }
+      
+      if (trimmed.includes('=') && !trimmed.startsWith('if') && !trimmed.startsWith('while') && !trimmed.startsWith('elif')) {
+        let eqIdx = trimmed.indexOf('=');
+        let varName = trimmed.slice(0, eqIdx).trim();
+        let expression = trimmed.slice(eqIdx + 1).trim();
+        if (varName.includes(',') && expression.includes(',')) {
+          let varsList = varName.split(',').map(v => v.trim());
+          let exprsList = expression.split(',').map(e => e.trim());
+          for (let idx = 0; idx < varsList.length; idx++) {
+            vars[varsList[idx]] = evaluateExpression(exprsList[idx]);
+          }
+        } else {
+          vars[varName] = evaluateExpression(expression);
+        }
+        return;
+      }
+    }
+
+    async function execute() {
+      i = 0;
+      while (i < linhas.length) {
+        let line = linhas[i];
+        let trimmed = line.trim();
+        let indent = getIndent(line);
+        
+        if (trimmed === '') { i++; continue; }
+        
+        // WHILE
+        if (trimmed.startsWith('while ')) {
+          let condition = trimmed.slice(6, -1).trim();
+          let loopStart = i;
+          let loopBody = [];
+          let bodyIndent = indent + 2;
+          i++;
+          while (i < linhas.length && getIndent(linhas[i]) >= bodyIndent) {
+            loopBody.push(linhas[i]);
+            i++;
+          }
+          let running = true;
+          while (running && evaluateCondition(condition)) {
+            let savedI = i;
+            i = loopStart + 1;
+            for (let bodyLine of loopBody) {
+              let bodyTrimmed = bodyLine.trim();
+              if (bodyTrimmed === 'break') { running = false; break; }
+              if (bodyTrimmed === 'continue') break;
+              await executeLine(bodyLine);
+            }
+            i = savedI;
+          }
+          continue;
+        }
+        
+        // IF/ELIF/ELSE
+        if (trimmed.startsWith('if ')) {
+          let condition = trimmed.slice(3, -1).trim();
+          let blockIndent = indent + 2;
+          let found = false;
+          if (evaluateCondition(condition)) {
+            i++;
+            while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) {
+              await executeLine(linhas[i]);
+              i++;
+            }
+            // Pular elif/else
+            while (i < linhas.length) {
+              let nextTrim = linhas[i].trim();
+              let nextIndent = getIndent(linhas[i]);
+              if (nextIndent === indent && (nextTrim.startsWith('elif ') || nextTrim === 'else:')) {
+                i++;
+                let skipIndent = indent + 2;
+                while (i < linhas.length && getIndent(linhas[i]) >= skipIndent) i++;
+              } else break;
+            }
+          } else {
+            i++;
+            while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) i++;
+            while (i < linhas.length) {
+              let nextTrim = linhas[i].trim();
+              let nextIndent = getIndent(linhas[i]);
+              if (nextIndent !== indent) break;
+              if (nextTrim.startsWith('elif ')) {
+                let elifCond = nextTrim.slice(5, -1).trim();
+                if (evaluateCondition(elifCond)) {
+                  i++;
+                  while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) {
+                    await executeLine(linhas[i]);
+                    i++;
+                  }
+                  found = true;
+                  break;
+                } else {
+                  i++;
+                  while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) i++;
+                }
+              } else if (nextTrim === 'else:') {
+                if (!found) {
+                  i++;
+                  while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) {
+                    await executeLine(linhas[i]);
+                    i++;
+                  }
+                } else {
+                  i++;
+                  while (i < linhas.length && getIndent(linhas[i]) >= blockIndent) i++;
+                }
+                break;
+              } else break;
+            }
+          }
+          continue;
+        }
+        
+        await executeLine(line);
+        i++;
+      }
+    }
+    
+    try {
+      await execute();
+      terminalOutput.innerHTML += '<div>✅ Execução finalizada.</div>';
+    } catch(e) {
+      terminalOutput.innerHTML += `<div style="color:#ef4444;">❌ Erro: ${e.message}</div>`;
+    }
+  }
+
+  // ==================== ENVIO EMAIL ====================
+  function enviarEmail(nome, turma, nota) {
+    const templateParams = { nome: nome, serie: turma, nota: nota.toFixed(1) };
+    emailjs.send('service_94cnpvm', 'template_kvt866g', templateParams)
+      .then(() => {
+        statusEnvio.innerHTML = '<span style="color: #22c55e;">✅ E-mail enviado com sucesso!</span>';
+        setTimeout(() => {
+          envioModal.style.display = 'none';
+          btnEnviarNota.style.display = 'none';
+          envioRealizado = true;
+        }, 2000);
+      }, (error) => {
+        statusEnvio.innerHTML = '<span style="color: #ef4444;">❌ Erro ao enviar. Tente novamente.</span>';
+        console.error(error);
+      });
+  }
+
+  btnEnviarNota.addEventListener('click', () => {
+    envioModal.style.display = 'flex';
+    statusEnvio.innerHTML = '';
+    alunoNome.value = '';
+    alunoTurma.value = '';
+  });
+  cancelarEnvio.addEventListener('click', () => envioModal.style.display = 'none');
+  confirmarEnvio.addEventListener('click', () => {
+    const nome = alunoNome.value.trim();
+    const turma = alunoTurma.value.trim();
+    if (!nome || !turma) {
+      statusEnvio.innerHTML = '<span style="color:#ef4444;">❌ Preencha nome e turma!</span>';
+      return;
+    }
+    statusEnvio.innerHTML = '<span style="color:#ffb347;">⏳ Enviando e-mail...</span>';
+    enviarEmail(nome, turma, pontuacaoTotal);
+  });
+
+  // ==================== MODAL DE DECISÃO APÓS ACERTO ====================
+  btnTestarCodigo.addEventListener('click', () => {
+    decisaoModal.style.display = 'none';
+    rodarCodigo();
+  });
+  btnProximaMissao.addEventListener('click', () => {
+    decisaoModal.style.display = 'none';
+    // Avançar para a próxima missão (se existir)
+    if (missaoAtual + 1 < missoes.length) {
+      missaoAtual++;
+      selectMissao.value = missaoAtual;
+      carregarMissao();
+    } else {
+      // Se já na última, apenas fecha modal
+      feedbackDiv.innerHTML = '<span style="color:#22c55e;">Parabéns! Você concluiu todas as missões. Use o botão "Enviar resultado" acima.</span>';
+    }
+  });
+
+  // ==================== EVENTOS GERAIS ====================
+  function popularSelect() {
+    missoes.forEach((m, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = `${idx+1}. ${m.titulo}`;
+      selectMissao.appendChild(opt);
+    });
+  }
+  selectMissao.addEventListener('change', (e) => {
+    missaoAtual = parseInt(e.target.value);
+    carregarMissao();
+  });
+  verificarBtn.addEventListener('click', verificar);
+  rodarBtn.addEventListener('click', rodarCodigo);
+  limparBtn.addEventListener('click', limparTudo);
+  resetarBtn.addEventListener('click', resetarMissao);
+  fecharTerminalBtn.addEventListener('click', () => terminalDiv.style.display = 'none');
+  modalConfirmar.addEventListener('click', () => { if (pendingInputResolver) { pendingInputResolver(modalInput.value); pendingInputResolver = null; } modalInputDiv.style.display = 'none'; });
+  modalCancelar.addEventListener('click', () => { if (pendingInputResolver) { pendingInputResolver(''); pendingInputResolver = null; } modalInputDiv.style.display = 'none'; });
+
+  popularSelect();
+  carregarMissao();
+  atualizarGridProgresso();
+</script>
+</body>
+</html>
