@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Simulador: For, Break, Continue</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ 
+    startOnLoad: false, 
+    theme: "dark", 
+    securityLevel: "loose",
+    fontFamily: "monospace"
+  });
+  window.mermaid = mermaid;
+</script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, Arial, sans-serif; background: #0b0f17; color: #e5e7eb; }
+  header { padding: 12px 20px; border-bottom: 1px solid #1f2937; background: #0f172a; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  select { padding: 8px 12px; border-radius: 6px; background: #020617; color: #e5e7eb; border: 1px solid #334155; cursor: pointer; font-size: 14px; font-weight: bold; }
+  button { background: #3b82f6; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  button:hover { background: #2563eb; }
+  
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+  
+  .cheat-sheet { background: #1e293b; border-left: 5px solid #f59e0b; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+  .cheat-sheet strong { color: #f59e0b; font-size: 16px; width: 100%; margin-bottom: 5px; }
+  .cheat-item { background: #0f172a; padding: 8px 12px; border-radius: 6px; border: 1px solid #334155; font-size: 14px; }
+  .cheat-item span { color: #5eead4; font-family: monospace; font-weight: bold; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; min-height: 70vh; }
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; }
+  h2 { margin-top: 0; font-size: 18px; color: #94a3b8; margin-bottom: 12px; border-bottom: 1px solid #1f2937; padding-bottom: 8px; }
+  
+  #mmd { background: #020617; border-radius: 8px; padding: 15px; min-height: 400px; overflow: auto; display: flex; justify-content: center; }
+  pre { background: #020617; padding: 15px; border-radius: 8px; overflow: auto; font-family: 'Fira Code', monospace; font-size: 14px; border: 1px solid #1e293b; flex-grow: 1; margin: 0; color: #5eead4; white-space: pre; line-height: 1.5; }
+  
+  .hint { color: #9ca3af; font-size: 13px; margin-top: 15px; padding: 10px; background: #1e293b; border-radius: 6px; border-left: 4px solid #3b82f6; }
+</style>
+</head>
+<body>
+
+<header>
+  <strong>🧩 Loop FOR com break e continue</strong>
+  <select id="sel"></select>
+  <button onclick="window.resetar()">🔄 Reiniciar Exercício</button>
+</header>
+
+<div class="container">
+  <div class="cheat-sheet">
+    <strong>Explicando o FOR:</strong>
+    <div class="cheat-item">🔄 <span>for i in range()</span> → loop com contador</div>
+    <div class="cheat-item">🤔 <span>if</span> → define a condição</div>
+    <div class="cheat-item">🛑 <span>break</span> → para tudo (sai do loop)</div>
+    <div class="cheat-item">⏭️ <span>continue</span> → pula só aquela iteração (volta pro início)</div>
+  </div>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Fluxograma do Loop</h2>
+      <div id="mmd"></div>
+      <div class="hint">💡 <b>Instrução:</b> Clique nos blocos de cima para baixo. Leia os comentários que surgem no código!</div>
+    </section>
+
+    <section class="card">
+      <h2>Código Python Gerado</h2>
+      <pre id="code"></pre>
+    </section>
+  </main>
+</div>
+
+<script>
+// =================== MOTOR DE GERAÇÃO PARA FOR ===================
+function gerarFluxoFor(varName, rangeInicio, rangeFim, step, condBreak, condContinue, txtNorm) {
+  // Cria um fluxograma baseado em for com range, break e continue
+  return `flowchart TD
+    A(["Início"]) --> B["for ${varName} in range(${rangeInicio}, ${rangeFim}, ${step}):"]
+    B -- "Iteração" --> C{"if ${condContinue}:"}
+    C -- "Sim" --> D[/"continue"/]
+    D -. "Pula e volta" .-> B
+    C -- "Não" --> E{"if ${condBreak}:"}
+    E -- "Sim" --> F[/"break"/]
+    F -. "Para tudo" .-> Z(["Fim"])
+    E -- "Não" --> G["print('${txtNorm}')"]
+    G -. "Próxima iteração" .-> B
+    B -- "Fim do range" --> Z
+    click A call passo("s")
+    click B call passo("forLoop")
+    click C call passo("ifCont")
+    click D call passo("cont")
+    click E call passo("ifBreak")
+    click F call passo("brk")
+    click G call passo("prt")
+    click Z call passo("fim")`;
+}
+
+// Função para gerar blocos de código comentados (estilo RPG)
+function gbFor(titulo, varName, rangeInicio, rangeFim, step, 
+              condContinue, msgContinue, c_continue,
+              condBreak, msgBreak, c_break,
+              msgNormal, c_normal,
+              msgFim, c_fim) {
+  return {
+    s: `# ${titulo}\n`,
+    forLoop: `for ${varName} in range(${rangeInicio}, ${rangeFim}, ${step}):  # Loop de 0 a 9\n`,
+    ifCont: `    if ${condContinue}:  # Se a condição for verdadeira\n`,
+    cont: `        print("${msgContinue}")  # ${c_continue}\n        continue  # Pula o resto e vai para a próxima iteração\n\n`,
+    ifBreak: `    if ${condBreak}:  # Se a condição de parada for verdadeira\n`,
+    brk: `        print("${msgBreak}")  # ${c_break}\n        break  # Interrompe o loop completamente\n\n`,
+    prt: `    # ${c_normal}\n    print(f"${msgNormal}")\n\n`,
+    fim: `# ${c_fim}\nprint("${msgFim}")\n`
+  };
+}
+
+// =================== 20 EXERCÍCIOS COM FOR, BREAK E CONTINUE ===================
+const EX = {
+  "01": {
+    nome: "01. Contagem Regressiva (for com range)",
+    fluxo: gerarFluxoFor("i", "5", "0", "-1", "i == 2", "i == 4", "Número: {i}"),
+    blocos: gbFor(
+      "Contagem decrescente de 5 a 0",
+      "i", "5", "0", "-1",
+      "i == 4", "⚠️ Pulando o 4!", "Aviso de número pulado",
+      "i == 2", "🛑 Parou no 2!", "Interrompeu o loop",
+      "Contagem: {i}", "Exibe o número atual",
+      "Fim da contagem.", "Mensagem final"
+    )
+  },
+  "02": {
+    nome: "02. Apenas ímpares (continue)",
+    fluxo: gerarFluxoFor("n", "1", "11", "1", "n % 2 == 0", "n == 9", "Número ímpar: {n}"),
+    blocos: gbFor(
+      "Imprimindo apenas ímpares",
+      "n", "1", "11", "1",
+      "n % 2 == 0", "🔁 Par detectado, continuando...", "Pula os pares",
+      "n == 9", "🚫 Nove é proibido!", "Break ao chegar no 9",
+      "Ímpar: {n}", "Mostra o número ímpar",
+      "Loop finalizado.", "Fim do programa"
+    )
+  },
+  "03": {
+    nome: "03. Soma até 100 (break)",
+    fluxo: gerarFluxoFor("i", "1", "1000", "1", "soma > 100", "i == 50", "Acumulando... soma={soma}"),
+    blocos: gbFor(
+      "Soma de números até ultrapassar 100",
+      "i", "1", "1000", "1",
+      "soma > 100", "💰 Soma ultrapassou 100! Continuando...", "Condição do continue (nunca usada aqui)",
+      "soma > 100", "💥 Soma excedeu 100! Break", "Interrompe ao ultrapassar",
+      "soma atual: {soma}", "Exibe o valor parcial",
+      "Soma final = {soma}", "Resultado após o loop"
+    )
+  },
+  "04": {
+    nome: "04. For com step e continue",
+    fluxo: gerarFluxoFor("x", "0", "20", "2", "x % 6 == 0", "x == 12", "Valor: {x}"),
+    blocos: gbFor(
+      "Números pares pulando múltiplos de 6",
+      "x", "0", "20", "2",
+      "x % 6 == 0", "🔁 Múltiplo de 6 ignorado", "Pula números divisíveis por 6",
+      "x == 12", "⛔ Número 12 bloqueado!", "Break ao chegar no 12",
+      "Número aceito: {x}", "Mostra os valores permitidos",
+      "Fim da iteração.", "Mensagem final"
+    )
+  },
+  "05": {
+    nome: "05. Lista de compras com break",
+    fluxo: gerarFluxoFor("item", "0", "len(lista)", "1", "item == 'sair'", "item == ''", "Item: {item}"),
+    blocos: gbFor(
+      "Percorrendo uma lista até achar 'sair'",
+      "item", "0", "len(lista)", "1",
+      "item == ''", "📦 Item vazio, continuar", "Pula itens vazios",
+      "item == 'sair'", "🚪 'sair' encontrado, break", "Interrompe o loop",
+      "Produto: {item}", "Exibe o produto atual",
+      "Fim da lista.", "Encerramento"
+    )
+  },
+  "06": {
+    nome: "06. For aninhado com break interno",
+    fluxo: gerarFluxoFor("i", "0", "3", "1", "j == 2", "i == 1", "Par: ({i},{j})"),
+    blocos: gbFor(
+      "Loop duplo com break no j",
+      "i", "0", "3", "1",
+      "j == 2", "⏩ Pulando j=2", "Continue interno (exemplo)",
+      "j == 2", "🔴 Break no j=2", "Interrompe o loop interno",
+      "Coordenada ({i},{j})", "Exibe a posição",
+      "Fim dos loops.", "Mensagem final"
+    )
+  },
+  "07": {
+    nome: "07. For em string (continue vogais)",
+    fluxo: gerarFluxoFor("letra", "0", "len(texto)", "1", "letra in 'aeiou'", "letra == 'x'", "Letra: {letra}"),
+    blocos: gbFor(
+      "Filtrando consoantes de uma string",
+      "letra", "0", "len(texto)", "1",
+      "letra in 'aeiou'", "🔇 Vogal ignorada", "Pula vogais",
+      "letra == 'x'", "❌ Letra 'x' é proibida", "Break ao encontrar x",
+      "Consoante: {letra}", "Mostra apenas consoantes",
+      "Texto processado.", "Fim"
+    )
+  },
+  "08": {
+    nome: "08. For com range decrescente",
+    fluxo: gerarFluxoFor("c", "10", "0", "-2", "c == 4", "c == 6", "Contador: {c}"),
+    blocos: gbFor(
+      "Contagem regressiva de 2 em 2",
+      "c", "10", "0", "-2",
+      "c == 6", "🔁 Pulando o 6", "Pula o número 6",
+      "c == 4", "🛑 Parou no 4!", "Break ao chegar no 4",
+      "Número: {c}", "Exibe o valor atual",
+      "Fim da contagem.", "Encerrado"
+    )
+  },
+  "09": {
+    nome: "09. For com condição composta (break)",
+    fluxo: gerarFluxoFor("i", "1", "51", "1", "i % 10 == 0", "i % 3 == 0 and i % 5 == 0", "Valor: {i}"),
+    blocos: gbFor(
+      "Parar ao encontrar múltiplo de 3 e 5",
+      "i", "1", "51", "1",
+      "i % 10 == 0", "🔁 Múltiplo de 10 ignorado", "Pula números redondos",
+      "i % 3 == 0 and i % 5 == 0", "🎯 Múltiplo de 15 encontrado!", "Break",
+      "Número: {i}", "Exibe o valor",
+      "Loop finalizado.", "Fim"
+    )
+  },
+  "10": {
+    nome: "10. For com else (sem break)",
+    fluxo: gerarFluxoFor("n", "1", "5", "1", "n == 3", "n == 10", "Número: {n}"),
+    blocos: gbFor(
+      "For com else (executa se não houver break)",
+      "n", "1", "5", "1",
+      "n == 3", "🔁 Pulando o 3", "Continue no 3",
+      "n == 10", "⛔ Nunca acontece", "Break nunca será acionado",
+      "Número: {n}", "Imprime o valor",
+      "Loop completo sem break!", "Else do for"
+    )
+  },
+  "11": {
+    nome: "11. For com lista e break",
+    fluxo: gerarFluxoFor("fruta", "0", "len(frutas)", "1", "fruta == 'banana'", "fruta == 'uva'", "Fruta: {fruta}"),
+    blocos: gbFor(
+      "Percorrendo frutas até achar 'uva'",
+      "fruta", "0", "len(frutas)", "1",
+      "fruta == 'banana'", "🍌 Banana ignorada", "Continue para banana",
+      "fruta == 'uva'", "🍇 Uva encontrada! Break", "Interrompe",
+      "Fruta: {fruta}", "Mostra a fruta",
+      "Fim da cesta.", "Mensagem final"
+    )
+  },
+  "12": {
+    nome: "12. For com acumulador (break no limite)",
+    fluxo: gerarFluxoFor("i", "1", "101", "1", "acum > 500", "i == 50", "Acumulado: {acum}"),
+    blocos: gbFor(
+      "Acumulando até ultrapassar 500",
+      "i", "1", "101", "1",
+      "acum > 500", "📈 Já passou de 500? Continue", "Pula (não usado)",
+      "acum > 500", "💣 Estouro! Break", "Interrompe ao ultrapassar",
+      "Soma parcial: {acum}", "Exibe o valor",
+      "Soma final: {acum}", "Resultado"
+    )
+  },
+  "13": {
+    nome: "13. For em dicionário (continue em chave específica)",
+    fluxo: gerarFluxoFor("chave", "0", "len(dados)", "1", "chave == 'pular'", "chave == 'sair'", "Valor: {dados[chave]}"),
+    blocos: gbFor(
+      "Iterando sobre dicionário",
+      "chave", "0", "len(dados)", "1",
+      "chave == 'pular'", "⏩ Chave 'pular' ignorada", "Continue",
+      "chave == 'sair'", "🚪 Chave 'sair' encontrada", "Break",
+      "Valor: {valor}", "Exibe o valor",
+      "Fim do dicionário.", "Encerrado"
+    )
+  },
+  "14": {
+    nome: "14. For com step negativo e break",
+    fluxo: gerarFluxoFor("i", "10", "-1", "-1", "i == 7", "i == 3", "Número: {i}"),
+    blocos: gbFor(
+      "Contagem decrescente pulando o 7",
+      "i", "10", "-1", "-1",
+      "i == 7", "🔁 Sete é ignorado", "Continue no 7",
+      "i == 3", "🛑 Parou no 3!", "Break",
+      "Número: {i}", "Mostra o valor",
+      "Fim da contagem.", "Mensagem"
+    )
+  },
+  "15": {
+    nome: "15. For com continue e break misturados",
+    fluxo: gerarFluxoFor("n", "1", "21", "1", "n % 2 == 0", "n > 15", "Número ímpar: {n}"),
+    blocos: gbFor(
+      "Mostra ímpares até 15",
+      "n", "1", "21", "1",
+      "n % 2 == 0", "🔁 Par ignorado", "Pula pares",
+      "n > 15", "⛔ Maior que 15, para", "Break",
+      "Ímpar: {n}", "Exibe o número",
+      "Loop finalizado.", "Fim"
+    )
+  },
+  "16": {
+    nome: "16. For em range com passo e break no primo",
+    fluxo: gerarFluxoFor("p", "2", "30", "1", "p % 2 == 0", "p % 3 == 0 and p % 5 == 0", "Testando: {p}"),
+    blocos: gbFor(
+      "Procurando primo múltiplo de 3 e 5",
+      "p", "2", "30", "1",
+      "p % 2 == 0", "🔁 Par ignorado", "Continue",
+      "p % 3 == 0 and p % 5 == 0", "🔍 Múltiplo de 15 encontrado", "Break",
+      "Número: {p}", "Exibe o valor",
+      "Fim da busca.", "Mensagem"
+    )
+  },
+  "17": {
+    nome: "17. For com lista aninhada (break interno)",
+    fluxo: gerarFluxoFor("linha", "0", "len(matriz)", "1", "col == 2", "col == 4", "Elemento: {matriz[linha][col]}"),
+    blocos: gbFor(
+      "Percorrendo matriz com break na coluna",
+      "linha", "0", "len(matriz)", "1",
+      "col == 2", "⏩ Coluna 2 ignorada", "Continue",
+      "col == 4", "🔴 Quebra na coluna 4", "Break interno",
+      "Valor: {valor}", "Exibe o elemento",
+      "Matriz processada.", "Fim"
+    )
+  },
+  "18": {
+    nome: "18. For com continue para pular números repetidos",
+    fluxo: gerarFluxoFor("num", "0", "len(numeros)", "1", "num in vistos", "num == 99", "Número novo: {num}"),
+    blocos: gbFor(
+      "Ignorando números duplicados",
+      "num", "0", "len(numeros)", "1",
+      "num in vistos", "🔁 Repetido ignorado", "Continue",
+      "num == 99", "🚫 Número 99 proibido", "Break",
+      "Adicionando: {num}", "Exibe o número",
+      "Lista processada.", "Fim"
+    )
+  },
+  "19": {
+    nome: "19. For com else e break (não executado)",
+    fluxo: gerarFluxoFor("i", "1", "11", "1", "i == 5", "i == 10", "Número: {i}"),
+    blocos: gbFor(
+      "For com else que não será executado (break acontece)",
+      "i", "1", "11", "1",
+      "i == 5", "🔁 Pulando o 5", "Continue",
+      "i == 10", "⛔ Break no 10", "Break",
+      "Número: {i}", "Exibe",
+      "Else não será executado", "Mensagem final (não alcançada)"
+    )
+  },
+  "20": {
+    nome: "20. Desafio final: for com break e continue avançado",
+    fluxo: gerarFluxoFor("x", "1", "51", "1", "x % 7 == 0", "x % 13 == 0", "Valor: {x}"),
+    blocos: gbFor(
+      "Pula múltiplos de 7 e para no múltiplo de 13",
+      "x", "1", "51", "1",
+      "x % 7 == 0", "🔁 Múltiplo de 7 ignorado", "Continue",
+      "x % 13 == 0", "🎯 Múltiplo de 13 encontrado!", "Break",
+      "Número: {x}", "Exibe o valor",
+      "Desafio concluído!", "Fim"
+    )
+  }
+};
+
+// =================== LÓGICA DE FUNCIONAMENTO (igual ao original) ===================
+const sel = document.getElementById('sel');
+const mmd = document.getElementById('mmd');
+const code = document.getElementById('code');
+let atual = null;
+let usados = new Set();
+
+for(const k in EX){
+  const opt = document.createElement('option');
+  opt.value = k;
+  opt.textContent = EX[k].nome;
+  sel.appendChild(opt);
+}
+
+async function render() {
+  const k = sel.value;
+  atual = EX[k];
+  usados.clear();
+  code.textContent = "";
+  
+  mmd.removeAttribute('data-processed');
+  mmd.innerHTML = atual.fluxo;
+  
+  if(window.mermaid) {
+    try {
+      await window.mermaid.run({ nodes: [mmd] });
+    } catch(e) {
+      console.error("Erro no Mermaid:", e);
+    }
+  }
+}
+
+window.passo = function(id) {
+  if(!atual || usados.has(id)) return;
+  
+  const snippet = atual.blocos[id];
+  if(snippet) {
+    code.textContent += snippet;
+    usados.add(id);
+    code.scrollTop = code.scrollHeight;
+  }
+};
+
+window.resetar = function() {
+  render();
+};
+
+sel.addEventListener('change', render);
+setTimeout(render, 500);
+</script>
+</body>
+</html>
