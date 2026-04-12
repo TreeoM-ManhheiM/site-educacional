@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Simulador: While, If, Break, Continue</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+  mermaid.initialize({ 
+    startOnLoad: false, 
+    theme: "dark", 
+    securityLevel: "loose",
+    fontFamily: "monospace"
+  });
+  window.mermaid = mermaid;
+</script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, Arial, sans-serif; background: #0b0f17; color: #e5e7eb; }
+  header { padding: 12px 20px; border-bottom: 1px solid #1f2937; background: #0f172a; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  select { padding: 8px 12px; border-radius: 6px; background: #020617; color: #e5e7eb; border: 1px solid #334155; cursor: pointer; font-size: 14px; font-weight: bold; }
+  button { background: #3b82f6; border: none; color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  button:hover { background: #2563eb; }
+  
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+  
+  .cheat-sheet { background: #1e293b; border-left: 5px solid #f59e0b; padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center; }
+  .cheat-sheet strong { color: #f59e0b; font-size: 16px; width: 100%; margin-bottom: 5px; }
+  .cheat-item { background: #0f172a; padding: 8px 12px; border-radius: 6px; border: 1px solid #334155; font-size: 14px; }
+  .cheat-item span { color: #5eead4; font-family: monospace; font-weight: bold; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 20px; min-height: 70vh; }
+  .card { background: #111827; border: 1px solid #1f2937; border-radius: 8px; padding: 20px; display: flex; flex-direction: column; }
+  h2 { margin-top: 0; font-size: 18px; color: #94a3b8; margin-bottom: 12px; border-bottom: 1px solid #1f2937; padding-bottom: 8px; }
+  
+  #mmd { background: #020617; border-radius: 8px; padding: 15px; min-height: 400px; overflow: auto; display: flex; justify-content: center; }
+  /* O pre agora tem espaço de sobra para mostrar os seus comentários sem quebrar linhas de forma feia */
+  pre { background: #020617; padding: 15px; border-radius: 8px; overflow: auto; font-family: 'Fira Code', monospace; font-size: 14px; border: 1px solid #1e293b; flex-grow: 1; margin: 0; color: #5eead4; white-space: pre; line-height: 1.5; }
+  
+  .hint { color: #9ca3af; font-size: 13px; margin-top: 15px; padding: 10px; background: #1e293b; border-radius: 6px; border-left: 4px solid #3b82f6; }
+</style>
+</head>
+<body>
+
+<header>
+  <strong>🧩 Lógica de Loops Comentada</strong>
+  <select id="sel"></select>
+  <button onclick="window.resetar()">🔄 Reiniciar Exercício</button>
+</header>
+
+<div class="container">
+  <div class="cheat-sheet">
+    <strong>Explicando simples:</strong>
+    <div class="cheat-item">🔁 <span>while</span> → cria o loop</div>
+    <div class="cheat-item">🤔 <span>if</span> → define a condição</div>
+    <div class="cheat-item">🛑 <span>break</span> → para tudo (sai do loop)</div>
+    <div class="cheat-item">⏭️ <span>continue</span> → pula só aquela vez (volta pro início)</div>
+  </div>
+
+  <main class="grid">
+    <section class="card">
+      <h2>Radar Lógico (Fluxograma)</h2>
+      <div id="mmd"></div>
+      <div class="hint">💡 <b>Instrução:</b> Clique nos blocos de cima para baixo. Leia os comentários que surgem no código!</div>
+    </section>
+
+    <section class="card">
+      <h2>Código Python Gerado</h2>
+      <pre id="code"></pre>
+    </section>
+  </main>
+</div>
+
+<script>
+// =================== MOTOR DE GERAÇÃO ===================
+// Função para desenhar o diagrama de forma automatizada
+function gerarFluxo(varName, condLoop, acaoLoop, condCont, condBreak, txtNorm) {
+  return `flowchart TD
+    A(["Início"]) --> B["${varName}"]
+    B --> C{"while ${condLoop}:"}
+    C -- "Loop" --> D["${acaoLoop}"]
+    D --> E{"if ${condCont}:"}
+    E -- "Sim" --> F[/"continue"/]
+    F -. "Pula e volta" .-> C
+    E -- "Não" --> G{"if ${condBreak}:"}
+    G -- "Sim" --> H[/"break"/]
+    H -. "Para tudo" .-> Z(["Fim"])
+    G -- "Não" --> I["print('${txtNorm}')"]
+    I -. "Volta pro início" .-> C
+    C -- "Falso" --> Z
+    click A call passo("s")
+    click B call passo("var")
+    click C call passo("wh")
+    click D call passo("inc")
+    click E call passo("if1")
+    click F call passo("cont")
+    click G call passo("if2")
+    click H call passo("brk")
+    click I call passo("prt")
+    click Z call passo("fim")`;
+}
+
+// O SEU PADRÃO DE COMENTÁRIOS: Função que monta os blocos exatamente iguais ao seu exemplo do RPG
+function gb(titulo, vName, vVal, c_var, cond, c_wh, inc, c_inc, if1, c_if1, p1, c_p1, if2, c_if2, p2, c_p2, pNorm, c_pn, pFim, c_fim) {
+  return {
+    s: `# ${titulo}\n`,
+    var: `${vName} = ${vVal}  # ${c_var}\n\n`,
+    wh: `while ${cond}:  # ${c_wh}\n`,
+    inc: `    ${inc}  # ${c_inc}\n\n`,
+    if1: `    if ${if1}:  # ${c_if1}\n        print("${p1}")  # ${c_p1}\n`,
+    cont: `        continue  # Pula o restante do código e volta para o início do loop\n\n`,
+    if2: `    if ${if2}:  # ${c_if2}\n        print("${p2}")  # ${c_p2}\n`,
+    brk: `        break  # Interrompe o loop completamente\n\n`,
+    prt: `    # ${c_pn}\n    print(f"${pNorm}")\n\n`,
+    fim: `# ${c_fim}\nprint("${pFim}")\n`
+  };
+}
+
+// =================== OS 20 EXERCÍCIOS 100% COMENTADOS ===================
+const EX = {
+  "01": {
+    nome: "01. Cyberpunk Download",
+    fluxo: gerarFluxo("pct = 0", "pct < 100", "pct += 20", "pct == 60", "pct > 100", "Baixando"),
+    blocos: gb(
+      "Nível 01: Cyberpunk Download",
+      "pct", "0", "Define a percentagem inicial do download",
+      "pct < 100", "Loop roda enquanto o download não for concluído",
+      "pct += 20", "A cada rodada baixa 20% do ficheiro",
+      "pct == 60", "Se o download travar nos 60%",
+      "⚠️ Perda de pacotes... pulando.", "Aviso de ficheiro corrompido",
+      "pct > 100", "Se a percentagem ultrapassar os 100% (Bug)",
+      "🔴 Erro crítico de buffer!", "Mensagem de falha catastrófica",
+      "✅ Baixado: {pct}%", "Exibe o progresso atual do download",
+      "Arquivo concluído.", "Executa após o fim do loop"
+    )
+  },
+  "02": {
+    nome: "02. Radar Espacial (Asteroides)",
+    fluxo: gerarFluxo("dist = 50", "dist > 0", "dist -= 10", "dist == 30", "dist == 10", "Aproximando"),
+    blocos: gb(
+      "Nível 02: Radar Espacial",
+      "dist", "50", "Define a distância inicial até ao planeta",
+      "dist > 0", "Loop roda enquanto não chegar ao destino",
+      "dist -= 10", "A cada rodada a nave avança 10km",
+      "dist == 30", "Se a distância for exatamente 30km",
+      "☄️ Asteroide detectado! Desviando...", "Mensagem de manobra evasiva",
+      "dist == 10", "Se chegar muito perto da base militar",
+      "🛰️ Base alcançada! Iniciando acoplagem.", "Mensagem de fim de rota",
+      "🚀 Distância: {dist}km", "Exibe o radar da nave atualizado",
+      "Navegação encerrada.", "Executa após o fim do loop"
+    )
+  },
+  "03": {
+    nome: "03. Hackeando o Cofre",
+    fluxo: gerarFluxo("tentativa = 0", "tentativa < 5", "tentativa += 1", "tentativa == 3", "tentativa == 5", "Testando"),
+    blocos: gb(
+      "Nível 03: Hackeando o Cofre",
+      "tentativa", "0", "Define o contador de senhas testadas",
+      "tentativa < 5", "Loop roda enquanto tiver tentativas disponíveis",
+      "tentativa += 1", "A cada rodada gasta uma tentativa",
+      "tentativa == 3", "Se chegar na terceira tentativa suspeita",
+      "⏳ Firewall detectou anomalia. Pausa de segurança...", "Mensagem de bloqueio temporário",
+      "tentativa == 5", "Se esgotar o limite máximo de testes",
+      "🚨 ALARME! Sistema bloqueado!", "Mensagem de invasão falhada",
+      "🔓 Injetando código de força bruta... Tentativa {tentativa}", "Exibe o log do ataque hacker",
+      "Conexão encerrada.", "Executa após o fim do loop"
+    )
+  },
+  "04": {
+    nome: "04. Tanque de Oxigénio",
+    fluxo: gerarFluxo("oxi = 100", "oxi > 0", "oxi -= 20", "oxi == 40", "oxi == 0", "Respirando"),
+    blocos: gb(
+      "Nível 04: Mergulho Profundo",
+      "oxi", "100", "Define o oxigénio inicial do mergulhador",
+      "oxi > 0", "Loop roda enquanto houver ar no tanque",
+      "oxi -= 20", "A cada rodada consome 20% do oxigénio",
+      "oxi == 40", "Se o oxigénio cair para 40%",
+      "⚠️ Tosse violenta! Poupando fôlego.", "Mensagem de alerta corporal",
+      "oxi == 0", "Se o tanque esvaziar completamente",
+      "💀 Sem ar! Apagão iminente...", "Mensagem de falha letal",
+      "🤿 Nível de O2: {oxi}%", "Exibe o visor da máscara de mergulho",
+      "Resgate acionado.", "Executa após o fim do loop"
+    )
+  },
+  "05": {
+    nome: "05. Corrida de Fórmula 1",
+    fluxo: gerarFluxo("volta = 0", "volta < 10", "volta += 1", "volta == 4", "volta == 8", "Acelerando"),
+    blocos: gb(
+      "Nível 05: Fórmula 1",
+      "volta", "0", "Define o início da corrida",
+      "volta < 10", "Loop roda enquanto a corrida não terminar (10 voltas)",
+      "volta += 1", "A cada rodada completa uma volta",
+      "volta == 4", "Se chegar à volta número 4",
+      "🏎️ Pit-stop obrigatório! Troca de pneus.", "Mensagem de ida aos boxes",
+      "volta == 8", "Se chegar à volta número 8",
+      "💥 Motor estourou! Fumo na pista!", "Mensagem de abandono da corrida",
+      "🏁 Completando volta {volta}", "Exibe a cronometragem no ecrã",
+      "Fim do Grande Prémio.", "Executa após o fim do loop"
+    )
+  },
+  "06": {
+    nome: "06. Forja do Ferreiro",
+    fluxo: gerarFluxo("temp = 0", "temp < 100", "temp += 20", "temp == 40", "temp >= 100", "Aquecendo"),
+    blocos: gb(
+      "Nível 06: A Fornalha",
+      "temp", "0", "Define a temperatura inicial do forno",
+      "temp < 100", "Loop roda até a temperatura chegar aos 100 graus",
+      "temp += 20", "A cada rodada o fogo aumenta 20 graus",
+      "temp == 40", "Se a fornalha estiver em 40 graus",
+      "💨 Libertando vapor em excesso.", "Mensagem de despressurização",
+      "temp >= 100", "Se a temperatura atingir a fusão do metal",
+      "🔥 Derretimento completo! Apagar o fogo.", "Mensagem de sucesso térmico",
+      "⚒️ Fornalha a {temp} graus.", "Exibe o termómetro do ferreiro",
+      "Espada forjada.", "Executa após o fim do loop"
+    )
+  },
+  "07": {
+    nome: "07. Invasão Zumbi",
+    fluxo: gerarFluxo("balas = 5", "balas > 0", "balas -= 1", "balas == 3", "balas == 0", "Tiro"),
+    blocos: gb(
+      "Nível 07: Apocalipse Zumbi",
+      "balas", "5", "Define a munição inicial da arma",
+      "balas > 0", "Loop roda enquanto ainda tiver balas",
+      "balas -= 1", "A cada rodada dispara um tiro (perde 1 bala)",
+      "balas == 3", "Se restarem apenas 3 balas",
+      "🧟 Zumbi baixou-se! O tiro falhou.", "Mensagem de erro de mira",
+      "balas == 0", "Se gastar a última bala",
+      "🩸 Arma encravou! Corre para viver!", "Mensagem de fuga",
+      "🔫 Tiro certeiro! Balas restantes: {balas}", "Exibe o inventário do jogador",
+      "Fim da horda zumbi.", "Executa após o fim do loop"
+    )
+  },
+  "08": {
+    nome: "08. Bateria do Drone",
+    fluxo: gerarFluxo("bat = 100", "bat > 0", "bat -= 25", "bat == 50", "bat == 0", "Voando"),
+    blocos: gb(
+      "Nível 08: Drone Espião",
+      "bat", "100", "Define a bateria inicial do drone",
+      "bat > 0", "Loop roda enquanto houver bateria",
+      "bat -= 25", "A cada rodada o motor consome 25% de bateria",
+      "bat == 50", "Se a bateria estiver a meio (50%)",
+      "🦅 Ataque de gaivota! Manobra evasiva.", "Mensagem de obstáculo no ar",
+      "bat == 0", "Se a bateria acabar totalmente",
+      "🪫 Sem energia. Pouso de emergência!", "Mensagem de perda do drone",
+      "🚁 Drone estabilizado. Bateria: {bat}%", "Exibe a telemetria do controlo",
+      "Retorno à base.", "Executa após o fim do loop"
+    )
+  },
+  "09": {
+    nome: "09. Scanner de Vírus",
+    fluxo: gerarFluxo("arq = 0", "arq < 10", "arq += 2", "arq == 4", "arq == 8", "Limpando"),
+    blocos: gb(
+      "Nível 09: Antivírus de Sistema",
+      "arq", "0", "Define o início da varredura nos ficheiros",
+      "arq < 10", "Loop roda até analisar 10 pastas",
+      "arq += 2", "A cada rodada analisa 2 ficheiros em simultâneo",
+      "arq == 4", "Ao passar pelo quarto ficheiro",
+      "🛡️ Falso positivo ignorado pelo firewall.", "Mensagem de segurança normal",
+      "arq == 8", "Ao detetar uma ameaça no oitavo ficheiro",
+      "💀 RANSOMWARE DETETADO! Cortando rede.", "Mensagem de infeção fatal",
+      "🔎 Ficheiro {arq} limpo de ameaças.", "Exibe o log da varredura",
+      "Scan finalizado.", "Executa após o fim do loop"
+    )
+  },
+  "10": {
+    nome: "10. Escavação Arqueológica",
+    fluxo: gerarFluxo("metro = 0", "metro < 50", "metro += 10", "metro == 20", "metro == 40", "Cavando"),
+    blocos: gb(
+      "Nível 10: Escavação T-Rex",
+      "metro", "0", "Define o nível inicial do solo",
+      "metro < 50", "Loop roda até cavar 50 metros",
+      "metro += 10", "A cada rodada o trator cava 10 metros",
+      "metro == 20", "Ao atingir 20 metros de profundidade",
+      "🪨 Rocha impenetrável. Desviando broca.", "Mensagem de obstáculo terrestre",
+      "metro == 40", "Ao atingir a camada de 40 metros",
+      "🏺 Esqueleto inteiro de T-Rex encontrado!", "Mensagem de sucesso histórico",
+      "⛏️ Profundidade atual: {metro}m.", "Exibe o radar geológico",
+      "Expedição concluída.", "Executa após o fim do loop"
+    )
+  },
+  "11": {
+    nome: "11. Batalha RPG (O seu Exemplo!)",
+    fluxo: gerarFluxo("hp = 50", "hp > 0", "hp -= 10", "hp == 30", "hp == 0", "Atacando"),
+    blocos: gb(
+      "Nível 11: Chefe RPG",
+      "hp", "50", "Define a vida inicial do chefe",
+      "hp > 0", "Loop roda enquanto o chefe ainda tiver vida",
+      "hp -= 10", "A cada rodada o chefe perde 10 de HP",
+      "hp == 30", "Se a vida chegar em 30",
+      "🛡️ Inimigo usou escudo. Dano ignorado.", "Mensagem de defesa",
+      "hp == 0", "Se a vida chegar a zero",
+      "☠️ O herói tombou...", "Mensagem de derrota",
+      "⚔️ Golpe acertou! Inimigo com {hp} HP.", "Exibe o dano restante do chefe",
+      "Tela de Game Over.", "Executa após o fim do loop"
+    )
+  },
+  "12": {
+    nome: "12. Sinal Wi-Fi",
+    fluxo: gerarFluxo("ping = 10", "ping < 100", "ping += 20", "ping == 50", "ping > 80", "Conectado"),
+    blocos: gb(
+      "Nível 12: Conexão Instável",
+      "ping", "10", "Define a latência inicial da rede em ms",
+      "ping < 100", "Loop roda enquanto a latência for aceitável",
+      "ping += 20", "A cada rodada o lag da rede sobe 20ms",
+      "ping == 50", "Se o lag bater nos 50ms",
+      "📡 Micro-corte na rede. Reestabelecendo...", "Mensagem de falha breve",
+      "ping > 80", "Se o lag for impossível para jogar",
+      "🔌 Fio roído pelo cão! Desconectado.", "Mensagem de queda de rede",
+      "📶 Ping em {ping}ms. Pacotes enviados.", "Exibe a estabilidade da internet",
+      "Offline do servidor.", "Executa após o fim do loop"
+    )
+  },
+  "13": {
+    nome: "13. Fábrica de Robôs",
+    fluxo: gerarFluxo("peca = 0", "peca < 5", "peca += 1", "peca == 2", "peca == 4", "Montando"),
+    blocos: gb(
+      "Nível 13: Montagem Automática",
+      "peca", "0", "Define o início da passadeira mecânica",
+      "peca < 5", "Loop roda até montar as 5 partes do robô",
+      "peca += 1", "A cada rodada adiciona 1 braço/perna",
+      "peca == 2", "Ao chegar na segunda peça do robô",
+      "🔩 Parafuso solto. Descartando peça atual.", "Mensagem de controlo de qualidade",
+      "peca == 4", "Ao chegar na parte central do robô",
+      "🤖 Chip queimado! Linha de produção parada.", "Mensagem de erro mecânico",
+      "⚙️ Parte {peca} soldada com sucesso.", "Exibe o robô a ganhar forma",
+      "Luzes da fábrica apagadas.", "Executa após o fim do loop"
+    )
+  },
+  "14": {
+    nome: "14. Apanha Moedas",
+    fluxo: gerarFluxo("moeda = 0", "moeda < 100", "moeda += 25", "moeda == 50", "moeda >= 100", "Apanhando"),
+    blocos: gb(
+      "Nível 14: Jogo Arcade",
+      "moeda", "0", "Define a carteira inicial do Mário",
+      "moeda < 100", "Loop roda até juntar 100 moedas para ganhar a vida",
+      "moeda += 25", "A cada rodada encontra um bloco com 25 moedas",
+      "moeda == 50", "Quando a carteira chegar a meia centena",
+      "🍄 Cogumelo falso! Cuidado onde pisas.", "Mensagem de obstáculo no mapa",
+      "moeda >= 100", "Ao atingir a meta milionária",
+      "⭐ 1-UP! Estrela do poder desbloqueada.", "Mensagem de recompensa máxima",
+      "🪙 Tilim! Conta atual: {moeda} moedas.", "Exibe o placar do jogador",
+      "Passou de fase.", "Executa após o fim do loop"
+    )
+  },
+  "15": {
+    nome: "15. Código de Barras",
+    fluxo: gerarFluxo("item = 0", "item < 6", "item += 2", "item == 2", "item == 6", "Bip"),
+    blocos: gb(
+      "Nível 15: Caixa de Supermercado",
+      "item", "0", "Define o início da fila de compras",
+      "item < 6", "Loop roda até passar 6 itens da passadeira",
+      "item += 2", "A cada rodada a funcionária regista 2 itens",
+      "item == 2", "Ao ler o segundo código de barras",
+      "🥫 Código de barras rasgado. Inserir manual.", "Mensagem de erro de leitura",
+      "item == 6", "Ao passar o último produto do cliente",
+      "🛒 Total a pagar gerado. Sacos fechados.", "Mensagem de finalização",
+      "🛒 Bip! Item número {item} cobrado.", "Exibe o som clássico do mercado",
+      "Obrigado volte sempre.", "Executa após o fim do loop"
+    )
+  },
+  "16": {
+    nome: "16. Treinamento Jedi",
+    fluxo: gerarFluxo("forca = 0", "forca < 100", "forca += 25", "forca == 50", "forca == 100", "Meditando"),
+    blocos: gb(
+      "Nível 16: Templo Jedi",
+      "forca", "0", "Define o foco mental do aprendiz",
+      "forca < 100", "Loop roda até dominar o lado luminoso",
+      "forca += 25", "A cada rodada medita e ganha 25% de energia",
+      "forca == 50", "Na metade do caminho para a paz interior",
+      "💨 O aprendiz lembrou-se do passado. Foco perdido.", "Mensagem de perturbação",
+      "forca == 100", "Ao atingir o poder de um Mestre",
+      "⚔️ Um Lorde Sith aproxima-se! Acordar!", "Mensagem de perigo iminente",
+      "🧘‍♂️ Concentração a {forca}%. Calma...", "Exibe a aura espiritual",
+      "O treino terminou.", "Executa após o fim do loop"
+    )
+  },
+  "17": {
+    nome: "17. Elevador Preso",
+    fluxo: gerarFluxo("andar = 0", "andar < 10", "andar += 2", "andar == 4", "andar == 8", "Subindo"),
+    blocos: gb(
+      "Nível 17: Arranha-Céus",
+      "andar", "0", "Define o início da viagem no rés-do-chão",
+      "andar < 10", "Loop roda até chegar ao décimo andar",
+      "andar += 2", "A cada rodada o elevador rápido pula 2 andares",
+      "andar == 4", "Ao passar em frente ao andar 4",
+      "🚧 Andar comercial fechado. Ignorando botão.", "Mensagem de bloqueio do prédio",
+      "andar == 8", "Ao chegar bem perto do topo",
+      "🛑 Energia cortada! Preso entre andares.", "Mensagem de pânico no poço",
+      "🏢 Ding! Passando pelo andar {andar}.", "Exibe o placar luminoso",
+      "Bombeiros chamados.", "Executa após o fim do loop"
+    )
+  },
+  "18": {
+    nome: "18. Decifrando o Papiro",
+    fluxo: gerarFluxo("linha = 0", "linha < 5", "linha += 1", "linha == 2", "linha == 4", "Lendo"),
+    blocos: gb(
+      "Nível 18: Tumba do Faraó",
+      "linha", "0", "Define a primeira linha do hieroglifo",
+      "linha < 5", "Loop roda até ler o papiro por inteiro",
+      "linha += 1", "A cada rodada o sábio traduz um pedaço",
+      "linha == 2", "Na segunda frase misteriosa",
+      "📜 A tinta desvaneceu. Nada para traduzir aqui.", "Mensagem de texto apagado",
+      "linha == 4", "Antes de ler o fim do feitiço",
+      "💎 O mapa do tesouro abriu-se! Esconder papiro.", "Mensagem de vitória épica",
+      "🔍 A lupa foca na frase número {linha}.", "Exibe a tradução simultânea",
+      "Aventura concluída.", "Executa após o fim do loop"
+    )
+  },
+  "19": {
+    nome: "19. Rota de Fuga",
+    fluxo: gerarFluxo("saida = 10", "saida > 0", "saida -= 2", "saida == 6", "saida == 2", "Correndo"),
+    blocos: gb(
+      "Nível 19: Fuga de Alcatraz",
+      "saida", "10", "Define a distância até ao barco de fuga",
+      "saida > 0", "Loop roda até a distância ser nula",
+      "saida -= 2", "A cada rodada rasteja silenciosamente 2 metros",
+      "saida == 6", "A meio do corredor principal",
+      "👮 Guarda virou a esquina! Atrás do caixote!", "Mensagem de ação furtiva",
+      "saida == 2", "Quase a chegar na água",
+      "🚪 O portão enferrujou! Não abre! ABORTAR!", "Mensagem de cerco fechado",
+      "🏃 O coração bate rápido. Faltam {saida}m.", "Exibe o desespero do prisioneiro",
+      "A sirene tocou.", "Executa após o fim do loop"
+    )
+  },
+  "20": {
+    nome: "20. Lançamento do Foguetão",
+    fluxo: gerarFluxo("tempo = 10", "tempo > 0", "tempo -= 2", "tempo == 6", "tempo == 2", "Contagem"),
+    blocos: gb(
+      "Nível 20: Houston, temos um problema",
+      "tempo", "10", "Define o início da contagem regressiva",
+      "tempo > 0", "Loop roda até a descolagem ocorrer (0)",
+      "tempo -= 2", "A cada rodada o relógio tira 2 segundos",
+      "tempo == 6", "Aos 6 segundos para a ignição",
+      "🔧 Válvula de gás oscilando. Re-calibrando sistema.", "Mensagem de alerta na torre",
+      "tempo == 2", "No segundo exato de premir o botão vermelho",
+      "🛑 INCÊNDIO NO PROPULSOR! ABORTAR MISSÃO!", "Mensagem de desastre evitado",
+      "⏱️ Contagem: T-Minus {tempo} segundos...", "Exibe a voz no megafone",
+      "Transmissão cortada.", "Executa após o fim do loop"
+    )
+  }
+};
+
+// =================== LÓGICA DE FUNCIONAMENTO ESTÁVEL ===================
+const sel = document.getElementById('sel');
+const mmd = document.getElementById('mmd');
+const code = document.getElementById('code');
+let atual = null;
+let usados = new Set();
+
+for(const k in EX){
+  const opt = document.createElement('option');
+  opt.value = k;
+  opt.textContent = EX[k].nome;
+  sel.appendChild(opt);
+}
+
+async function render() {
+  const k = sel.value;
+  atual = EX[k];
+  usados.clear();
+  code.textContent = "";
+  
+  mmd.removeAttribute('data-processed');
+  mmd.innerHTML = atual.fluxo;
+  
+  if(window.mermaid) {
+    try {
+      await window.mermaid.run({ nodes: [mmd] });
+    } catch(e) {
+      console.error("Erro no Mermaid:", e);
+    }
+  }
+}
+
+window.passo = function(id) {
+  if(!atual || usados.has(id)) return;
+  
+  const snippet = atual.blocos[id];
+  if(snippet) {
+    code.textContent += snippet;
+    usados.add(id);
+    code.scrollTop = code.scrollHeight;
+  }
+};
+
+window.resetar = function() {
+  render();
+};
+
+sel.addEventListener('change', render);
+setTimeout(render, 500);
+
+</script>
+</body>
+</html>
