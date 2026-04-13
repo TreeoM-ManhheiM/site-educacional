@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Osciloscópio Didático - Camada Física</title>
+    <title>Osciloscópio Didático - Modulações da Camada Física</title>
     <style>
         * {
             box-sizing: border-box;
@@ -93,10 +93,6 @@
             margin-top: 8px;
         }
 
-        .exercise-area {
-            margin-top: 8px;
-        }
-
         .exercise-area input {
             width: 100%;
             background: #1a1a1a;
@@ -107,7 +103,6 @@
             margin-bottom: 12px;
             font-size: 0.85rem;
             outline: none;
-            transition: 0.2s;
         }
 
         .exercise-area input:focus {
@@ -128,7 +123,6 @@
 
         .btn-check:hover {
             background: #3e8a74;
-            transform: scale(1.01);
         }
 
         .feedback {
@@ -247,13 +241,24 @@
             border-bottom: 1px solid #222;
             background: #050505;
         }
+
+        .mod-info {
+            font-size: 0.75rem;
+            color: #aaa;
+            margin-top: 8px;
+            padding: 8px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
+    <!-- Equipamentos da Camada Física -->
     <div class="card">
-        <h3>🔌 Equipamentos – Camada Física EE. 8 de Abril</h3>
+        <h3>🔌 Equipamentos – Camada Física</h3>
         <div class="equip-grid">
             <div class="equip-btn" data-equip="repetidor">🔁 Repetidor</div>
             <div class="equip-btn" data-equip="hub">📡 Hub</div>
@@ -268,11 +273,11 @@
         </div>
     </div>
 
+    <!-- Exercício obrigatório -->
     <div class="card">
-        <h3>📝 Exercício obrigatório</h3>
+        <h3>📝 Exercício</h3>
         <p style="font-size: 0.85rem; margin-bottom: 12px;"><strong>Cite dois equipamentos que operam na camada física:</strong></p>
         <div class="exercise-area">
-            <!-- PLACEHOLDERS REMOVIDOS -->
             <input type="text" id="equip1" autocomplete="off">
             <input type="text" id="equip2" autocomplete="off">
             <button id="checkExerciseBtn" class="btn-check">✓ Verificar respostas</button>
@@ -283,15 +288,18 @@
         </div>
     </div>
 
-    <div class="card" style="background: #0a150f;">
-        <h3>🎓 Dica para prova</h3>
-        <p style="font-size: 0.8rem;">Equipamentos de camada física <strong>NÃO</strong> tomam decisões com base em endereços. Eles apenas repetem, amplificam ou convertem sinais.</p>
+    <!-- Explicação da modulação atual -->
+    <div class="card">
+        <h3>📖 Modulação Ativa</h3>
+        <div id="modExplanation" class="mod-info">
+            Selecione uma modulação no painel inferior.
+        </div>
     </div>
 </div>
 
 <div class="main-view">
     <header>
-        <div style="font-weight: bold; font-size: 0.9rem;">📊 OSCILOSCÓPIO DIGITAL - CAMADA FÍSICA</div>
+        <div style="font-weight: bold; font-size: 0.9rem;">📊 OSCILOSCÓPIO - CAMADA FÍSICA</div>
         <div class="bit-stream-header" id="bitStreamDisplay">-- bits --</div>
         <div style="font-size: 0.75rem;">Modulação: <span id="modTag">ASK</span></div>
     </header>
@@ -312,11 +320,12 @@
             </select>
         </div>
         <div class="stat-group">
-            <span class="stat-label">Taxa (simulada)</span>
-            <span class="stat-val" id="rateInfo">1 bit/símbolo</span>
+            <span class="stat-label">Ruído (SNR)</span>
+            <input type="range" id="snrSlider" min="0" max="100" value="100" style="width:100px">
+            <span id="snrPercent" style="font-size:0.7rem;">100%</span>
         </div>
         <div class="stat-group">
-            <span class="stat-label">Dados baixados</span>
+            <span class="stat-label">Dados simulados</span>
             <span class="stat-val" id="downloadedMb">0.00 MB</span>
         </div>
         <button id="playPauseBtn">▶ INICIAR</button>
@@ -329,6 +338,7 @@
 </div>
 
 <script>
+    // ---------- ELEMENTOS ----------
     const canvas = document.getElementById('scopeCanvas');
     const ctx = canvas.getContext('2d');
     const modSelect = document.getElementById('modSelect');
@@ -336,9 +346,11 @@
     const resetBtn = document.getElementById('resetBtn');
     const downloadedSpan = document.getElementById('downloadedMb');
     const currentBitSpan = document.getElementById('currentBitVal');
-    const rateSpan = document.getElementById('rateInfo');
     const modTagSpan = document.getElementById('modTag');
     const bitStreamDiv = document.getElementById('bitStreamDisplay');
+    const snrSlider = document.getElementById('snrSlider');
+    const snrPercent = document.getElementById('snrPercent');
+    const modExplanation = document.getElementById('modExplanation');
 
     let isRunning = false;
     let offset = 0;
@@ -346,6 +358,19 @@
     const BIT_WIDTH_PX = 120;
     let bitBuffer = Array.from({ length: 40 }, () => Math.round(Math.random()));
 
+    // Descrições das modulações para aprendizado
+    function updateModExplanation() {
+        const type = modSelect.value;
+        if (type === 'ask') {
+            modExplanation.innerHTML = `<strong>ASK (Amplitude Shift Keying)</strong><br>Bit 1 → amplitude alta (maior oscilação)<br>Bit 0 → amplitude baixa (oscilação pequena)<br>✦ Sensível a ruído de amplitude.`;
+        } else if (type === 'fsk') {
+            modExplanation.innerHTML = `<strong>FSK (Frequency Shift Keying)</strong><br>Bit 1 → frequência alta (onda mais apertada)<br>Bit 0 → frequência baixa (onda mais larga)<br>✦ Mais robusta contra ruído de amplitude.`;
+        } else {
+            modExplanation.innerHTML = `<strong>QAM (Quadrature Amplitude Modulation)</strong><br>4-QAM: cada símbolo = 2 bits.<br>Varia amplitude e fase (0° ou 180°).<br>✦ Maior eficiência espectral.`;
+        }
+    }
+
+    // Equipamentos
     const equipamentosDesc = {
         repetidor: "🔁 Repetidor: Regenera o sinal elétrico/óptico para aumentar a distância. Atua exclusivamente na camada física (não lê endereços).",
         hub: "📡 Hub: Conecta vários dispositivos em estrela, repetindo o sinal para todas as portas. Equipamento de camada física pura.",
@@ -361,12 +386,10 @@
         });
     });
 
+    // Exercício
     function validarEquipamento(resposta) {
         const resp = resposta.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        const validos = [
-            'repetidor', 'hub', 'placa de rede', 'placa rede', 'nic', 'placa de rede (nic)',
-            'transceiver', 'dsu', 'csu', 'dsu/csu', 'bridge'
-        ];
+        const validos = ['repetidor', 'hub', 'placa de rede', 'placa rede', 'nic', 'transceiver', 'dsu', 'csu', 'bridge'];
         return validos.some(valido => resp.includes(valido) || valido.includes(resp));
     }
 
@@ -378,7 +401,7 @@
         const feedbackDiv = document.getElementById('exerciseFeedback');
 
         if (val1 && val2 && ans1.trim() !== ans2.trim()) {
-            feedbackDiv.innerHTML = "✅ CORRETO! Ambos são equipamentos da camada física. Parabéns!";
+            feedbackDiv.innerHTML = "✅ CORRETO! Ambos são equipamentos da camada física.";
             feedbackDiv.style.backgroundColor = "#1e3a2e";
             feedbackDiv.style.color = "#b0ffd0";
         } else if (val1 && !val2) {
@@ -392,12 +415,11 @@
             feedbackDiv.style.backgroundColor = "#4a1a1a";
         }
         setTimeout(() => {
-            if(feedbackDiv.innerHTML.includes("CORRETO")) {
-                setTimeout(() => feedbackDiv.style.backgroundColor = "", 2000);
-            }
-        }, 2500);
+            feedbackDiv.style.backgroundColor = "";
+        }, 3000);
     });
 
+    // Desenho do osciloscópio
     function resizeCanvas() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
@@ -425,6 +447,20 @@
         ctx.lineTo(canvas.width, canvas.height / 2);
         ctx.strokeStyle = "#333";
         ctx.stroke();
+    }
+
+    let noiseAmount = 0;
+    snrSlider.addEventListener('input', () => {
+        noiseAmount = (100 - snrSlider.value) / 100;
+        snrPercent.innerText = snrSlider.value + "%";
+    });
+
+    function addNoise(y) {
+        if (noiseAmount > 0) {
+            let noise = (Math.random() - 0.5) * 40 * noiseAmount;
+            return y + noise;
+        }
+        return y;
     }
 
     function draw() {
@@ -456,7 +492,7 @@
                     y = Math.sin(worldX * 0.12) * (bit === 1 ? 80 : 15);
                 } else if (type === 'fsk') {
                     y = Math.sin(worldX * (bit === 1 ? 0.26 : 0.09)) * 70;
-                } else {
+                } else { // qam
                     let nextBit = (bitIndex + 1 < bitBuffer.length) ? bitBuffer[bitIndex + 1] : bit;
                     let symbol = (bit << 1) | nextBit;
                     let amplitude = (symbol & 2) ? 85 : 35;
@@ -464,14 +500,14 @@
                     y = Math.sin(worldX * 0.12 + phase) * amplitude;
                     if (Math.abs(x - centerX) < 2) {
                         currentBitSpan.innerHTML = `${bit}${nextBit}`;
-                        rateSpan.innerText = "2 bits/símbolo";
                     }
                 }
 
                 if (type !== 'qam' && Math.abs(x - centerX) < 2) {
-                    currentBitSpan.innerText = bit;
-                    rateSpan.innerText = "1 bit/símbolo";
+                    currentBitSpan.innerHTML = bit;
                 }
+
+                y = addNoise(y);
 
                 if (firstPoint) {
                     ctx.moveTo(x, midY + y);
@@ -486,18 +522,20 @@
         ctx.stroke();
         ctx.shadowBlur = 0;
 
+        // Mostrar bits ao redor do centro
         const activeIdx = Math.floor(bitBuffer.length / 2);
         const start = Math.max(0, activeIdx - 5);
         const end = Math.min(bitBuffer.length, activeIdx + 6);
-        const bitsSlice = bitBuffer.slice(start, end);
         let htmlStream = '';
-        bitsSlice.forEach((b, i) => {
-            const isCenter = (start + i) === activeIdx;
-            htmlStream += `<span style="color:${isCenter ? '#00ff9d' : '#aaa'}; font-weight:${isCenter ? 'bold' : 'normal'}">${b}</span>`;
-        });
+        for (let i = start; i < end; i++) {
+            const isCenter = (i === activeIdx);
+            htmlStream += `<span style="color:${isCenter ? '#00ff9d' : '#aaa'}; font-weight:${isCenter ? 'bold' : 'normal'}">${bitBuffer[i]}</span>`;
+        }
         bitStreamDiv.innerHTML = htmlStream;
     }
 
+    // Animação da transmissão
+    let animationId = null;
     function animate() {
         if (!isRunning) return;
         offset += 5;
@@ -509,30 +547,35 @@
             downloadedSpan.innerText = downloadedMB.toFixed(2) + " MB";
         }
         draw();
-        requestAnimationFrame(animate);
+        animationId = requestAnimationFrame(animate);
     }
 
     function toggleSimulation() {
         isRunning = !isRunning;
         playPauseBtn.innerText = isRunning ? "⏸ PAUSAR" : "▶ INICIAR";
-        if (isRunning) animate();
+        if (isRunning) {
+            if (animationId) cancelAnimationFrame(animationId);
+            animate();
+        } else {
+            if (animationId) cancelAnimationFrame(animationId);
+        }
     }
 
     function resetSimulation() {
         isRunning = false;
         offset = 0;
         downloadedMB = 0;
-        bitBuffer = Array.from({ length: 40 }, () => Math.round(Math.random()));
         downloadedSpan.innerText = "0.00 MB";
+        bitBuffer = Array.from({ length: 40 }, () => Math.round(Math.random()));
         playPauseBtn.innerText = "▶ INICIAR";
+        if (animationId) cancelAnimationFrame(animationId);
         draw();
     }
 
     function updateModulationUI() {
         const type = modSelect.value;
         modTagSpan.innerText = type.toUpperCase();
-        if (type === 'qam') rateSpan.innerText = "2 bits/símbolo";
-        else rateSpan.innerText = "1 bit/símbolo";
+        updateModExplanation();
         draw();
     }
 
@@ -540,6 +583,7 @@
     playPauseBtn.addEventListener('click', toggleSimulation);
     resetBtn.addEventListener('click', resetSimulation);
 
+    // Inicialização
     resizeCanvas();
     updateModulationUI();
     draw();
