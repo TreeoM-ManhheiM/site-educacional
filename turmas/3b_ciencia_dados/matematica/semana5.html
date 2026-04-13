@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Equação da Reta – Passo a Passo Completo (Melhorado)</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Fira Code', monospace;
+            background: linear-gradient(145deg, #f0f4f8 0%, #e2e8f0 100%);
+            padding: 20px;
+            color: #1e293b;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #1e4a6e, #0f2b3d);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .input-panel {
+            background: white;
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .input-group {
+            background: #f8fafc;
+            padding: 12px 18px;
+            border-radius: 20px;
+            min-width: 200px;
+        }
+        .input-group label { font-weight: 600; font-size: 0.8rem; color: #1e4a6e; display: block; margin-bottom: 5px; }
+        .input-group input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 30px; font-family: monospace; font-size: 1rem; }
+        button {
+            background: #1e4a6e; color: white; border: none; padding: 10px 24px; border-radius: 40px;
+            font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 0.9rem;
+        }
+        button:hover { background: #0f3b5a; transform: scale(0.97); }
+        .btn-secondary { background: #4b6e8a; }
+        .btn-clear { background: #9ca3af; color: #1e293b; }
+        .graph-zone {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            margin-bottom: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+        }
+        .canvas-container {
+            background: #fefefe;
+            border-radius: 16px;
+            padding: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        canvas {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 0 0 1px #cbd5e1;
+            width: 100%;
+            height: auto;
+            max-width: 500px;
+            aspect-ratio: 1/1;
+        }
+        .graph-info {
+            flex: 1;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 20px;
+        }
+        .tabs {
+            display: flex; gap: 8px; justify-content: center; margin-bottom: 24px; flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: white; border: none; padding: 10px 18px; font-size: 0.85rem;
+            font-weight: bold; border-radius: 40px; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); color: #1e4a6e;
+        }
+        .tab-btn.active { background: #1e4a6e; color: white; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px);} to { opacity: 1; transform: translateY(0);} }
+        .method-card {
+            background: white; border-radius: 24px; padding: 24px; margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06); border-left: 6px solid #1e4a6e;
+        }
+        .method-card h3 { color: #1e4a6e; margin-bottom: 12px; font-size: 1.3rem; }
+        .step {
+            background: #fef9e3; padding: 10px 15px; border-radius: 12px; margin: 8px 0;
+            font-family: monospace; font-size: 0.9rem; line-height: 1.4;
+        }
+        .result {
+            font-weight: bold; color: #0f3b5a; background: #e6f0fa; padding: 12px;
+            border-radius: 12px; margin-top: 12px; font-family: monospace; font-size: 1rem;
+        }
+        .sub-step {
+            margin-left: 20px; border-left: 3px solid #cbd5e1; padding-left: 12px; margin-top: 6px;
+        }
+        .matrix {
+            font-family: 'Courier New', monospace;
+            background: #f1f5f9;
+            padding: 8px 12px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 5px 0;
+            white-space: pre;
+        }
+        .error-msg {
+            background: #fee2e2;
+            border-left: 4px solid #ef4444;
+            padding: 12px;
+            border-radius: 12px;
+            color: #991b1b;
+        }
+        @media (max-width: 800px) {
+            .input-panel { flex-direction: column; align-items: stretch; }
+            .tab-btn { padding: 6px 12px; font-size: 0.75rem; }
+            .graph-zone { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📐 Equação da Reta – Passo a Passo Detalhado</h1>
+        <p>Todos os métodos | Cada operação matemática explicitada | Gráfico interativo</p>
+    </header>
+
+    <div class="input-panel">
+        <div class="input-group">
+            <label>📌 Ponto A (x₁, y₁)</label>
+            <input type="number" id="x1" value="0" step="any"> , 
+            <input type="number" id="y1" value="0" step="any">
+        </div>
+        <div class="input-group">
+            <label>📌 Ponto B (x₂, y₂)</label>
+            <input type="number" id="x2" value="1" step="any"> , 
+            <input type="number" id="y2" value="1" step="any">
+        </div>
+        <button id="calcularBtn">🚀 Calcular e Mostrar Passos</button>
+        <button id="limparBtn" class="btn-clear">🗑 Limpar (0,0) e (1,1)</button>
+        <button id="exemploAleatorio" class="btn-secondary">🎲 Exemplo aleatório</button>
+    </div>
+
+    <div class="graph-zone">
+        <div class="canvas-container">
+            <canvas id="retaCanvas" width="500" height="500" style="width:100%; height:auto; max-width:500px; aspect-ratio:1/1"></canvas>
+        </div>
+        <div class="graph-info">
+            <h3>📊 Visualização</h3>
+            <p id="infoPontos">📍 A: ( , ) &nbsp; 📍 B: ( , )</p>
+            <p id="infoReta"></p>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="basicos">📐 Métodos Básicos</button>
+        <button class="tab-btn" data-tab="geometricos">📏 Métodos Geométricos</button>
+        <button class="tab-btn" data-tab="avancados">📈 Métodos Avançados</button>
+        <button class="tab-btn" data-tab="modernos">🤖 Métodos Computacionais</button>
+    </div>
+
+    <div id="basicos" class="tab-content active"></div>
+    <div id="geometricos" class="tab-content"></div>
+    <div id="avancados" class="tab-content"></div>
+    <div id="modernos" class="tab-content"></div>
+</div>
+
+<script>
+    // ========== VARIÁVEIS GLOBAIS ==========
+    let x1, y1, x2, y2;
+    let m, b, A, B, C;
+    let dx, dy;
+    let pontosCoincidentes = false;
+
+    // ========== FUNÇÕES AUXILIARES ==========
+    function formatNum(v, dec = 6) {
+        let rounded = Number(v).toFixed(dec);
+        return Math.abs(rounded) < 1e-9 ? "0" : rounded;
+    }
+
+    function formatFraction(num, den) {
+        if (Math.abs(den) < 1e-12) return "indefinido";
+        let frac = num / den;
+        if (Math.abs(frac - Math.round(frac)) < 1e-8) return Math.round(frac).toString();
+        return `${num}/${den}`;
+    }
+
+    // ========== CÁLCULO PRINCIPAL ==========
+    function recalcularTudo() {
+        x1 = parseFloat(document.getElementById('x1').value);
+        y1 = parseFloat(document.getElementById('y1').value);
+        x2 = parseFloat(document.getElementById('x2').value);
+        y2 = parseFloat(document.getElementById('y2').value);
+        if (isNaN(x1) || isNaN(y1) || isNaN(x2) || isNaN(y2)) return;
+
+        dx = x2 - x1;
+        dy = y2 - y1;
+        pontosCoincidentes = (Math.abs(dx) < 1e-12 && Math.abs(dy) < 1e-12);
+
+        if (pontosCoincidentes) {
+            // Exibir mensagem de erro e limpar os métodos
+            document.getElementById('basicos').innerHTML = `<div class="method-card"><div class="error-msg">⚠️ Os pontos A e B são coincidentes! Não é possível definir uma reta única.</div></div>`;
+            document.getElementById('geometricos').innerHTML = `<div class="method-card"><div class="error-msg">⚠️ Pontos coincidentes – reta indeterminada.</div></div>`;
+            document.getElementById('avancados').innerHTML = `<div class="method-card"><div class="error-msg">⚠️ Não é possível realizar aproximações.</div></div>`;
+            document.getElementById('modernos').innerHTML = `<div class="method-card"><div class="error-msg">⚠️ Métodos computacionais não se aplicam.</div></div>`;
+            desenharGraficoErro();
+            document.getElementById('infoPontos').innerHTML = `📍 A: (${x1}, ${y1}) &nbsp; 📍 B: (${x2}, ${y2}) (coincidentes)`;
+            document.getElementById('infoReta').innerHTML = `❌ Reta indefinida – pontos iguais.`;
+            return;
+        }
+
+        if (Math.abs(dx) < 1e-12) {
+            m = Infinity;
+            b = undefined;
+            A = 1; B = 0; C = -x1;
+        } else {
+            m = dy / dx;
+            b = y1 - m * x1;
+            A = dy;
+            B = -dx;
+            C = -(A * x1 + B * y1);
+        }
+
+        desenharGrafico();
+        document.getElementById('infoPontos').innerHTML = `📍 A: (${x1}, ${y1}) &nbsp; 📍 B: (${x2}, ${y2})`;
+        if (Math.abs(dx) < 1e-12) {
+            document.getElementById('infoReta').innerHTML = `📏 Reta vertical: x = ${x1}`;
+        } else {
+            document.getElementById('infoReta').innerHTML = `📏 Equação reduzida: y = ${formatNum(m)}x + ${formatNum(b)}`;
+        }
+
+        document.getElementById('basicos').innerHTML = gerarBasicos();
+        document.getElementById('geometricos').innerHTML = gerarGeometricos();
+        document.getElementById('avancados').innerHTML = gerarAvancados();
+        document.getElementById('modernos').innerHTML = gerarModernos();
+        configurarGradiente();
+    }
+
+    // ========== GRÁFICO (melhorado) ==========
+    function desenharGrafico() {
+        const canvas = document.getElementById('retaCanvas');
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const margin = 60;
+        const xMinCanvas = margin, xMaxCanvas = w - margin;
+        const yMinCanvas = h - margin, yMaxCanvas = margin;
+
+        let todosX = [x1, x2];
+        let todosY = [y1, y2];
+        if (!pontosCoincidentes && Math.abs(dx) > 1e-12) {
+            const xMinDataExt = Math.min(x1, x2) - 1;
+            const xMaxDataExt = Math.max(x1, x2) + 1;
+            todosX.push(xMinDataExt, xMaxDataExt);
+            todosY.push(m * xMinDataExt + b, m * xMaxDataExt + b);
+        }
+        let xMinData = Math.min(...todosX, 0);
+        let xMaxData = Math.max(...todosX, 0);
+        let yMinData = Math.min(...todosY, 0);
+        let yMaxData = Math.max(...todosY, 0);
+        let rangeX = xMaxData - xMinData;
+        let rangeY = yMaxData - yMinData;
+        if (rangeX < 0.1) { xMinData -= 1; xMaxData += 1; rangeX = 2; }
+        if (rangeY < 0.1) { yMinData -= 1; yMaxData += 1; rangeY = 2; }
+        // Margem extra para visualização
+        xMinData -= rangeX * 0.15;
+        xMaxData += rangeX * 0.15;
+        yMinData -= rangeY * 0.15;
+        yMaxData += rangeY * 0.15;
+
+        function toCanvasX(x) { return xMinCanvas + (x - xMinData) / (xMaxData - xMinData) * (xMaxCanvas - xMinCanvas); }
+        function toCanvasY(y) { return yMinCanvas - (y - yMinData) / (yMaxData - yMinData) * (yMinCanvas - yMaxCanvas); }
+
+        // Grade e eixos
+        ctx.save();
+        ctx.strokeStyle = '#cbd5e1';
+        ctx.fillStyle = '#1e293b';
+        ctx.lineWidth = 0.8;
+        ctx.font = '11px monospace';
+
+        const xStep = Math.pow(10, Math.floor(Math.log10(rangeX/5)));
+        let xStart = Math.ceil(xMinData / xStep) * xStep;
+        for (let x = xStart; x <= xMaxData; x += xStep) {
+            let cx = toCanvasX(x);
+            if (cx >= xMinCanvas && cx <= xMaxCanvas) {
+                ctx.beginPath(); ctx.moveTo(cx, yMinCanvas-3); ctx.lineTo(cx, yMinCanvas+3); ctx.stroke();
+                ctx.fillText(x.toFixed(2), cx-10, yMinCanvas+15);
+                ctx.beginPath(); ctx.moveTo(cx, yMinCanvas); ctx.lineTo(cx, yMaxCanvas); ctx.stroke();
+            }
+        }
+        const yStep = Math.pow(10, Math.floor(Math.log10(rangeY/5)));
+        let yStart = Math.ceil(yMinData / yStep) * yStep;
+        for (let y = yStart; y <= yMaxData; y += yStep) {
+            let cy = toCanvasY(y);
+            if (cy >= yMaxCanvas && cy <= yMinCanvas) {
+                ctx.beginPath(); ctx.moveTo(xMinCanvas-3, cy); ctx.lineTo(xMinCanvas+3, cy); ctx.stroke();
+                ctx.fillText(y.toFixed(2), xMinCanvas-30, cy+4);
+                ctx.beginPath(); ctx.moveTo(xMinCanvas, cy); ctx.lineTo(xMaxCanvas, cy); ctx.stroke();
+            }
+        }
+
+        ctx.beginPath(); ctx.lineWidth = 1.5; ctx.strokeStyle = '#1e293b';
+        let yZero = toCanvasY(0);
+        if (yZero >= yMaxCanvas && yZero <= yMinCanvas) {
+            ctx.moveTo(xMinCanvas, yZero); ctx.lineTo(xMaxCanvas, yZero); ctx.stroke();
+        }
+        let xZero = toCanvasX(0);
+        if (xZero >= xMinCanvas && xZero <= xMaxCanvas) {
+            ctx.moveTo(xZero, yMaxCanvas); ctx.lineTo(xZero, yMinCanvas); ctx.stroke();
+        }
+
+        // Desenhar a reta
+        if (!pontosCoincidentes) {
+            if (Math.abs(dx) > 1e-12) {
+                let x1p = xMinData, x2p = xMaxData;
+                let y1p = m * x1p + b, y2p = m * x2p + b;
+                let cx1 = toCanvasX(x1p), cy1 = toCanvasY(y1p);
+                let cx2 = toCanvasX(x2p), cy2 = toCanvasY(y2p);
+                ctx.beginPath(); ctx.moveTo(cx1, cy1); ctx.lineTo(cx2, cy2);
+                ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; ctx.stroke();
+            } else {
+                let cx = toCanvasX(x1);
+                ctx.beginPath(); ctx.moveTo(cx, yMaxCanvas); ctx.lineTo(cx, yMinCanvas);
+                ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3; ctx.stroke();
+            }
+        }
+
+        function desenharPonto(x, y, cor, label) {
+            let cx = toCanvasX(x), cy = toCanvasY(y);
+            ctx.beginPath(); ctx.arc(cx, cy, 7, 0, 2*Math.PI);
+            ctx.fillStyle = cor; ctx.fill();
+            ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+            ctx.fillStyle = '#1e293b'; ctx.font = 'bold 12px monospace';
+            ctx.fillText(label, cx+10, cy-8);
+            ctx.fillStyle = '#0f3b5a'; ctx.font = '10px monospace';
+            ctx.fillText(`(${formatNum(x,2)}, ${formatNum(y,2)})`, cx+10, cy+2);
+        }
+        desenharPonto(x1, y1, '#3b82f6', 'A');
+        desenharPonto(x2, y2, '#3b82f6', 'B');
+        ctx.restore();
+    }
+
+    function desenharGraficoErro() {
+        const canvas = document.getElementById('retaCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#fee2e2';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#991b1b';
+        ctx.font = '16px monospace';
+        ctx.fillText("Pontos coincidentes", canvas.width/2-100, canvas.height/2);
+    }
+
+    // ========== MÉTODOS BÁSICOS ==========
+    function gerarBasicos() {
+        if (pontosCoincidentes) return `<div class="method-card"><div class="error-msg">⚠️ Pontos coincidentes – não é possível definir uma reta.</div></div>`;
+        if (Math.abs(dx) < 1e-12) {
+            return `<div class="method-card"><h3>📉 Equação Reduzida</h3><div class="result">Reta vertical x = ${formatNum(x1)}</div>
+                    <div class="method-card"><h3>📐 Equação Geral</h3><div class="result">x - ${formatNum(x1)} = 0</div></div>`;
+        }
+
+        // Reduzida
+        let redu = `<div class="step"><strong>1. Cálculo do coeficiente angular m:</strong><br>
+        m = (y₂ - y₁) / (x₂ - x₁)<br>
+        = (${y2} - ${y1}) / (${x2} - ${x1})<br>
+        = ${dy} / ${dx}<br>
+        = ${formatNum(m)}</div>`;
+        redu += `<div class="step"><strong>2. Cálculo do coeficiente linear b (usando ponto A):</strong><br>
+        y₁ = m·x₁ + b → b = y₁ - m·x₁<br>
+        b = ${y1} - (${formatNum(m)} · ${x1})<br>
+        = ${y1} - ${(m*x1).toFixed(8)}<br>
+        = ${formatNum(b)}</div>`;
+        redu += `<div class="result">✅ Equação reduzida: <strong>y = ${formatNum(m)}x + ${formatNum(b)}</strong></div>`;
+
+        // Geral
+        let geral = `<div class="step"><strong>Coeficientes a partir da forma (y - y₁)/(y₂ - y₁) = (x - x₁)/(x₂ - x₁):</strong><br>
+        A = (y₂ - y₁) = ${dy}<br>
+        B = -(x₂ - x₁) = -${dx}<br>
+        C = -(A·x₁ + B·y₁) = -(${dy}·${x1} + (${-dx})·${y1})<br>
+        = -(${dy*x1} + ${-dx*y1})<br>
+        = -(${(dy*x1 - dx*y1).toFixed(8)})<br>
+        = ${formatNum(C)}</div>`;
+        geral += `<div class="result">✅ Equação geral: <strong>${formatNum(A)}x + ${formatNum(B)}y + ${formatNum(C)} = 0</strong></div>`;
+
+        // Dois pontos
+        let doisP = `<div class="step"><strong>Fórmula fundamental:</strong> (y - y₁)/(y₂ - y₁) = (x - x₁)/(x₂ - x₁)</div>`;
+        doisP += `<div class="step">Substituindo: (y - ${y1}) / ${dy} = (x - ${x1}) / ${dx}</div>`;
+        doisP += `<div class="step">Multiplicando em cruz: ${dx}·(y - ${y1}) = ${dy}·(x - ${x1})</div>`;
+        doisP += `<div class="step">Distributiva: ${dx}y - ${dx*y1} = ${dy}x - ${dy*x1}</div>`;
+        doisP += `<div class="step">Isolando y: ${dx}y = ${dy}x - ${dy*x1} + ${dx*y1}</div>`;
+        doisP += `<div class="step">y = (${dy}/${dx})x + (${-dy*x1 + dx*y1})/${dx}</div>`;
+        doisP += `<div class="sub-step">-dy·x₁ + dx·y₁ = -(${dy}·${x1}) + (${dx}·${y1}) = ${(-dy*x1).toFixed(6)} + ${(dx*y1).toFixed(6)} = ${(-dy*x1 + dx*y1).toFixed(6)}</div>`;
+        doisP += `<div class="result">✅ y = ${formatNum(m)}x + ${formatNum(b)}</div>`;
+
+        // Cramer
+        const det = x1*1 - 1*x2;
+        const detM = y1*1 - 1*y2;
+        const detB = x1*y2 - y1*x2;
+        let cramer = `<div class="step"><strong>Sistema linear a partir dos pontos:</strong><br>
+        (1) ${y1} = m·${x1} + b<br>
+        (2) ${y2} = m·${x2} + b</div>`;
+        cramer += `<div class="step"><strong>Determinante principal Δ = |x₁ 1; x₂ 1|</strong> = ${x1}·1 - 1·${x2} = ${det}</div>`;
+        cramer += `<div class="step"><strong>Determinante Δm = |y₁ 1; y₂ 1|</strong> = ${y1}·1 - 1·${y2} = ${detM}</div>`;
+        cramer += `<div class="step"><strong>Determinante Δb = |x₁ y₁; x₂ y₂|</strong> = ${x1}·${y2} - ${y1}·${x2} = ${detB}</div>`;
+        cramer += `<div class="step"><strong>Solução:</strong> m = Δm/Δ = ${detM}/${det} = ${formatNum(m)}<br>
+        b = Δb/Δ = ${detB}/${det} = ${formatNum(b)}</div>`;
+        cramer += `<div class="result">✅ y = ${formatNum(m)}x + ${formatNum(b)}</div>`;
+
+        // Matricial
+        let mat = `<div class="step"><strong>Sistema na forma matricial:</strong> ⎡ ${x1}  1 ⎤ ⎡ m ⎤ = ⎡ ${y1} ⎤<br>
+        ⎣ ${x2}  1 ⎦ ⎣ b ⎦   ⎣ ${y2} ⎦</div>`;
+        mat += `<div class="step">Determinante da matriz: det = ${x1}·1 - 1·${x2} = ${det}</div>`;
+        mat += `<div class="step">Matriz inversa: M⁻¹ = (1/${det})·⎡ 1  -1 ⎤<br>⎣ -${x2}  ${x1} ⎦</div>`;
+        mat += `<div class="step">Multiplicando: ⎡ m ⎤ = (1/${det}) · ⎡ 1·${y1} + (-1)·${y2} ⎤<br>
+        ⎣ b ⎦               ⎣ -${x2}·${y1} + ${x1}·${y2} ⎦</div>`;
+        mat += `<div class="sub-step">1·${y1} + (-1)·${y2} = ${y1} - ${y2} = ${(y1-y2).toFixed(6)}</div>`;
+        mat += `<div class="sub-step">-${x2}·${y1} + ${x1}·${y2} = ${-x2*y1} + ${x1*y2} = ${(-x2*y1 + x1*y2).toFixed(6)}</div>`;
+        mat += `<div class="step">Portanto, m = ${formatNum(m)} e b = ${formatNum(b)}</div>`;
+        mat += `<div class="result">✅ y = ${formatNum(m)}x + ${formatNum(b)}</div>`;
+
+        return `
+            <div class="method-card"><h3>📉 Equação Reduzida (y = mx + b)</h3>${redu}</div>
+            <div class="method-card"><h3>📐 Equação Geral (Ax + By + C = 0)</h3>${geral}</div>
+            <div class="method-card"><h3>🔹 Método dos Dois Pontos</h3>${doisP}</div>
+            <div class="method-card"><h3>🔢 Método de Cramer</h3>${cramer}</div>
+            <div class="method-card"><h3>🧮 Método Matricial</h3>${mat}</div>
+        `;
+    }
+
+    // ========== MÉTODOS GEOMÉTRICOS ==========
+    function gerarGeometricos() {
+        if (pontosCoincidentes) return `<div class="method-card"><div class="error-msg">⚠️ Pontos coincidentes</div></div>`;
+        if (Math.abs(dx) < 1e-12) {
+            return `<div class="method-card"><h3>📍 Ponto-Inclinação</h3><div class="result">Reta vertical, inclinação indefinida.</div></div>
+                    <div class="method-card"><h3>✂️ Segmentária</h3><div class="result">Não existe.</div></div>
+                    <div class="method-card"><h3>🔄 Contínua</h3><div class="result">(x - ${x1})/0 = (y - y₁)/1</div></div>
+                    <div class="method-card"><h3>➡️ Paramétrica</h3><div class="result">x = ${x1}, y = ${y1} + t·${dy}</div></div>`;
+        }
+
+        let pontoInc = `<div class="step"><strong>Fórmula:</strong> y - y₁ = m (x - x₁)</div>`;
+        pontoInc += `<div class="step">m = ${formatNum(m)}</div>`;
+        pontoInc += `<div class="step">Usando A(${x1},${y1}): y - ${y1} = ${formatNum(m)} (x - ${x1})</div>`;
+        pontoInc += `<div class="step">Distribuindo: y - ${y1} = ${formatNum(m)}x - ${(m*x1).toFixed(8)}</div>`;
+        pontoInc += `<div class="step">y = ${formatNum(m)}x - ${(m*x1).toFixed(8)} + ${y1}</div>`;
+        pontoInc += `<div class="step">y = ${formatNum(m)}x + ${formatNum(b)}</div>`;
+        pontoInc += `<div class="result">✅ y = ${formatNum(m)}x + ${formatNum(b)}</div>`;
+
+        const a_int = -b / m;
+        const b_int = b;
+        let segment = ``;
+        if (Math.abs(b) < 1e-12) {
+            segment = `<div class="result">⚠️ Reta passa pela origem, não tem forma segmentária.</div>`;
+        } else {
+            segment = `<div class="step"><strong>Intercepto x (a):</strong> y=0 → 0 = mx + b → x = -b/m = ${formatNum(a_int)}</div>`;
+            segment += `<div class="step"><strong>Intercepto y (b):</strong> x=0 → y = b = ${formatNum(b_int)}</div>`;
+            segment += `<div class="step">Forma segmentária: x/a + y/b = 1 → x/${formatNum(a_int)} + y/${formatNum(b_int)} = 1</div>`;
+            segment += `<div class="result">✅ ${formatNum(1/a_int)}x + ${formatNum(1/b_int)}y = 1</div>`;
+        }
+
+        let cont = `<div class="step"><strong>Forma contínua:</strong> (x - x₁)/Δx = (y - y₁)/Δy</div>`;
+        cont += `<div class="step">Δx = ${dx}, Δy = ${dy}</div>`;
+        cont += `<div class="step">(x - ${x1})/${dx} = (y - ${y1})/${dy}</div>`;
+        cont += `<div class="step">Multiplicando em cruz: ${dy}(x - ${x1}) = ${dx}(y - ${y1})</div>`;
+        cont += `<div class="step">Desenvolvendo: ${dy}x - ${dy*x1} = ${dx}y - ${dx*y1}</div>`;
+        cont += `<div class="result">✅ (x,y) = (${x1},${y1}) + t·(${dx},${dy})</div>`;
+
+        let param = `<div class="step"><strong>Vetor diretor:</strong> v = (Δx, Δy) = (${dx}, ${dy})</div>`;
+        param += `<div class="step"><strong>Ponto base:</strong> A(${x1},${y1})</div>`;
+        param += `<div class="result">✅ x = ${x1} + ${dx}·t<br>y = ${y1} + ${dy}·t , t ∈ ℝ</div>`;
+
+        return `
+            <div class="method-card"><h3>📍 Forma Ponto-Inclinação</h3>${pontoInc}</div>
+            <div class="method-card"><h3>✂️ Forma Segmentária</h3>${segment}</div>
+            <div class="method-card"><h3>🔄 Forma Contínua (simétrica)</h3>${cont}</div>
+            <div class="method-card"><h3>➡️ Forma Paramétrica</h3>${param}</div>
+        `;
+    }
+
+    // ========== MÉTODOS AVANÇADOS ==========
+    function gerarAvancados() {
+        if (pontosCoincidentes) return `<div class="method-card"><div class="error-msg">⚠️ Pontos coincidentes</div></div>`;
+        if (Math.abs(dx) < 1e-12) {
+            return `<div class="method-card"><h3>📊 Aproximação Linear</h3><div class="result">Não aplicável (reta vertical)</div></div>`;
+        }
+        let aprox = `<div class="step"><strong>Derivada da função linear:</strong> f(x) = ${formatNum(m)}x + ${formatNum(b)} → f'(x) = ${formatNum(m)}</div>`;
+        aprox += `<div class="step"><strong>Aproximação em torno de x = ${x1}:</strong> f(x) ≈ f(${x1}) + f'(${x1})(x - ${x1})</div>`;
+        aprox += `<div class="step">f(${x1}) = ${y1}, f'(${x1}) = ${formatNum(m)}</div>`;
+        aprox += `<div class="step">f(x) ≈ ${y1} + ${formatNum(m)}(x - ${x1}) = ${formatNum(m)}x + ${formatNum(b)}</div>`;
+        aprox += `<div class="result">✅ Aproximação coincide exatamente com a reta original.</div>`;
+
+        let taylor = `<div class="step"><strong>Série de Taylor de 1ª ordem em torno de x = ${x1}:</strong><br>
+        f(x) = f(${x1}) + f'(${x1})(x-${x1}) + R₂</div>`;
+        taylor += `<div class="step">f(${x1}) = ${y1}, f'(${x1}) = ${formatNum(m)}</div>`;
+        taylor += `<div class="step">f(x) ≈ ${y1} + ${formatNum(m)}(x-${x1}) = ${formatNum(m)}x + ${formatNum(b)}</div>`;
+        taylor += `<div class="result">✅ Série de Taylor reproduz exatamente a reta.</div>`;
+
+        const n = 2;
+        const somaX = x1+x2, somaY = y1+y2, somaXY = x1*y1 + x2*y2, somaX2 = x1*x1 + x2*x2;
+        const mReg = (n*somaXY - somaX*somaY) / (n*somaX2 - somaX*somaX);
+        const bReg = (somaY - mReg*somaX) / n;
+        let reg = `<div class="step"><strong>Regressão linear (mínimos quadrados):</strong><br>
+        n = 2<br>
+        Σx = ${x1} + ${x2} = ${somaX}<br>
+        Σy = ${y1} + ${y2} = ${somaY}<br>
+        Σxy = ${x1}·${y1} + ${x2}·${y2} = ${somaXY}<br>
+        Σx² = ${x1}² + ${x2}² = ${somaX2}</div>`;
+        reg += `<div class="step">m = (n·Σxy - Σx·Σy) / (n·Σx² - (Σx)²)<br>
+        = (2·${somaXY} - ${somaX}·${somaY}) / (2·${somaX2} - ${somaX}²)<br>
+        = ${formatNum(mReg)}</div>`;
+        reg += `<div class="step">b = (Σy - m·Σx)/n = (${somaY} - ${formatNum(mReg)}·${somaX})/2 = ${formatNum(bReg)}</div>`;
+        reg += `<div class="result">✅ Reta de regressão: y = ${formatNum(mReg)}x + ${formatNum(bReg)} (coincide com a reta exata)</div>`;
+
+        return `
+            <div class="method-card"><h3>📊 Aproximação Linear (derivada)</h3>${aprox}</div>
+            <div class="method-card"><h3>📈 Série de Taylor (1ª ordem)</h3>${taylor}</div>
+            <div class="method-card"><h3>📉 Regressão Linear (Mínimos Quadrados)</h3>${reg}</div>
+        `;
+    }
+
+    // ========== MÉTODOS COMPUTACIONAIS ==========
+    function gerarModernos() {
+        if (pontosCoincidentes) return `<div class="method-card"><div class="error-msg">⚠️ Pontos coincidentes</div></div>`;
+        if (Math.abs(dx) < 1e-12) {
+            return `<div class="method-card"><h3>📐 Mínimos Quadrados</h3><div class="result">Não aplicável</div></div>`;
+        }
+        const n = 2;
+        const somaX = x1+x2, somaY = y1+y2, somaXY = x1*y1 + x2*y2, somaX2 = x1*x1 + x2*x2;
+        const mQ = (n*somaXY - somaX*somaY) / (n*somaX2 - somaX*somaX);
+        const bQ = (somaY - mQ*somaX) / n;
+
+        let minimos = `<div class="step"><strong>Sistema normal (mínimos quadrados):</strong><br>
+        ⎡ n    Σx ⎤ ⎡ b ⎤ = ⎡ Σy ⎤<br>
+        ⎣ Σx  Σx²⎦ ⎣ m ⎦   ⎣ Σxy⎦</div>`;
+        minimos += `<div class="step">Substituindo: ⎡ 2   ${somaX} ⎤ ⎡ b ⎤ = ⎡ ${somaY} ⎤<br>
+        ⎣ ${somaX}  ${somaX2} ⎦ ⎣ m ⎦   ⎣ ${somaXY} ⎦</div>`;
+        minimos += `<div class="step">Determinante: Δ = 2·${somaX2} - ${somaX}·${somaX} = ${(2*somaX2 - somaX*somaX).toFixed(8)}</div>`;
+        minimos += `<div class="step">b = (${somaY}·${somaX2} - ${somaX}·${somaXY}) / Δ = ${formatNum(bQ)}</div>`;
+        minimos += `<div class="step">m = (2·${somaXY} - ${somaX}·${somaY}) / Δ = ${formatNum(mQ)}</div>`;
+        minimos += `<div class="result">✅ y = ${formatNum(mQ)}x + ${formatNum(bQ)}</div>`;
+
+        let matricialAv = `<div class="step"><strong>Matriz de Vandermonde:</strong> X = ⎡ ${x1}  1 ⎤ , Y = ⎡ ${y1} ⎤<br>
+        ⎣ ${x2}  1 ⎦       ⎣ ${y2} ⎦</div>`;
+        matricialAv += `<div class="step">XᵀX = ⎡ ${x1}²+${x2}²  ${x1}+${x2} ⎤ = ⎡ ${(x1*x1 + x2*x2).toFixed(6)}  ${somaX} ⎤<br>
+        ⎣ ${x1}+${x2}       2 ⎦   ⎣ ${somaX}      2 ⎦</div>`;
+        matricialAv += `<div class="step">XᵀY = ⎡ ${x1}·${y1} + ${x2}·${y2} ⎤ = ⎡ ${somaXY} ⎤<br>
+        ⎣ ${y1}+${y2} ⎦       ⎣ ${somaY} ⎦</div>`;
+        matricialAv += `<div class="step">Resolvendo (XᵀX)β = XᵀY → β = (XᵀX)⁻¹ XᵀY, obtemos m = ${formatNum(mQ)}, b = ${formatNum(bQ)}</div>`;
+        matricialAv += `<div class="result">✅ y = ${formatNum(mQ)}x + ${formatNum(bQ)}</div>`;
+
+        let gradienteHtml = `<div class="step"><strong>Gradiente descendente (otimização iterativa):</strong><br>
+        Inicializamos m₀ = 0, b₀ = 0. Taxa de aprendizado α = 0.01, iterações = 1000.<br>
+        Função de custo: E = (1/2) Σ (yᵢ - (m xᵢ + b))².<br>
+        Atualizações: m ← m - α·(∂E/∂m), b ← b - α·(∂E/∂b).<br>
+        Após o treinamento, converge para os valores exatos.</div>
+        <button id="executarGradienteDet" style="margin-top:8px;">⚡ Simular Gradiente Descendente (com logs)</button>
+        <div id="gradienteLogsModerno" style="margin-top:12px;"></div>`;
+
+        return `
+            <div class="method-card"><h3>📐 Mínimos Quadrados (Sistema Normal)</h3>${minimos}</div>
+            <div class="method-card"><h3>🧮 Método Matricial (pseudo-inversa)</h3>${matricialAv}</div>
+            <div class="method-card"><h3>⚡ Gradiente Descendente (Machine Learning)</h3>${gradienteHtml}</div>
+        `;
+    }
+
+    // ========== GRADIENTE DESCENDENTE ==========
+    function configurarGradiente() {
+        const btn = document.getElementById('executarGradienteDet');
+        if (btn) {
+            btn.removeEventListener('click', simularGradiente);
+            btn.addEventListener('click', simularGradiente);
+        }
+    }
+
+    function simularGradiente() {
+        const logsDiv = document.getElementById('gradienteLogsModerno');
+        if (!logsDiv) return;
+        logsDiv.innerHTML = '<div class="step">🔄 Iniciando gradiente descendente...</div>';
+        let m_est = 0, b_est = 0;
+        const alpha = 0.01;
+        const iteracoes = 1000;
+        const pontos = [[x1, y1], [x2, y2]];
+        let logText = '';
+        for (let iter = 1; iter <= iteracoes; iter++) {
+            let grad_m = 0, grad_b = 0;
+            for (let [x, y] of pontos) {
+                const y_pred = m_est * x + b_est;
+                const erro = y_pred - y;
+                grad_m += erro * x;
+                grad_b += erro;
+            }
+            grad_m /= pontos.length;
+            grad_b /= pontos.length;
+            m_est -= alpha * grad_m;
+            b_est -= alpha * grad_b;
+            if (iter % 200 === 0) logText += `<div class="sub-step">Iteração ${iter}: m = ${m_est.toFixed(6)}, b = ${b_est.toFixed(6)}</div>`;
+        }
+        logText += `<div class="result">✅ Resultado final (aproximado): m = ${m_est.toFixed(6)}, b = ${b_est.toFixed(6)}</div>`;
+        logText += `<div class="step">Valores exatos (teóricos): m = ${formatNum(m)}, b = ${formatNum(b)}</div>`;
+        logsDiv.innerHTML = logText;
+    }
+
+    // ========== EVENTOS E INICIALIZAÇÃO ==========
+    document.getElementById('calcularBtn').addEventListener('click', () => {
+        recalcularTudo();
+        setTimeout(configurarGradiente, 50);
+    });
+    document.getElementById('limparBtn').addEventListener('click', () => {
+        document.getElementById('x1').value = 0;
+        document.getElementById('y1').value = 0;
+        document.getElementById('x2').value = 1;
+        document.getElementById('y2').value = 1;
+        recalcularTudo();
+        setTimeout(configurarGradiente, 50);
+    });
+    document.getElementById('exemploAleatorio').addEventListener('click', () => {
+        let x1r = Math.floor(Math.random() * 12) - 6;
+        let y1r = Math.floor(Math.random() * 12) - 6;
+        let x2r = x1r + Math.floor(Math.random() * 8) + 1;
+        let y2r = y1r + Math.floor(Math.random() * 8) - 4;
+        document.getElementById('x1').value = x1r;
+        document.getElementById('y1').value = y1r;
+        document.getElementById('x2').value = x2r;
+        document.getElementById('y2').value = y2r;
+        recalcularTudo();
+        setTimeout(configurarGradiente, 50);
+    });
+
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            contents.forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    recalcularTudo();
+    setTimeout(configurarGradiente, 100);
+</script>
+</body>
+</html>
