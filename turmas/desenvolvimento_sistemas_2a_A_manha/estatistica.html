@@ -1,237 +1,373 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Simulador Educacional de Banco de Dados EE. 8 de Abril - 2026 - Prof° Eder(SQLite)</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Prontuário Escolar - 200 Alunos</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-<style>
-body{
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  background: #f4f6f8;
-}
-header{
-  background: #2c3e50;
-  color: #fff;
-  padding: 16px;
-}
-main{
-  padding: 20px;
-}
-.panel{
-  background: #fff;
-  padding: 15px;
-  border-radius: 6px;
-  margin-bottom: 20px;
-}
-textarea{
-  width: 100%;
-  height: 150px;
-  font-family: monospace;
-  font-size: 14px;
-}
-button{
-  padding: 8px 12px;
-  margin: 4px;
-  cursor: pointer;
-}
-table{
-  border-collapse: collapse;
-  width: 100%;
-  margin-top: 10px;
-}
-th, td{
-  border: 1px solid #ccc;
-  padding: 6px;
-  text-align: left;
-}
-pre{
-  background: #eee;
-  padding: 10px;
-  white-space: pre-wrap;
-}
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      background: #f0f2f5;
+      padding: 20px;
+      color: #1e293b;
+    }
 
-/* Mapa visual */
-.flow{
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-.flow .box{
-  background: #e3eaf0;
-  padding: 12px;
-  border-radius: 6px;
-  min-width: 220px;
-}
-.flow ul{
-  padding-left: 18px;
-  margin: 6px 0 0 0;
-}
-.flow strong{
-  display: block;
-  margin-bottom: 6px;
-}
-</style>
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0f2b3d, #1e4a6e);
+      color: white;
+      padding: 24px 30px;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    header p {
+      margin-top: 8px;
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .stats {
+      background: #e9ecef;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid #dee2e6;
+    }
+
+    .badge {
+      background: #1e4a6e;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-weight: bold;
+      font-size: 0.85rem;
+    }
+
+    .filtro {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .filtro input {
+      padding: 8px 14px;
+      border: 1px solid #ccc;
+      border-radius: 30px;
+      width: 260px;
+      font-size: 0.9rem;
+    }
+
+    button {
+      background: #2c6e9e;
+      border: none;
+      color: white;
+      padding: 8px 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #1e4a6e;
+    }
+
+    .tabela-wrapper {
+      overflow-x: auto;
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    th {
+      background: #eef2f5;
+      padding: 14px 10px;
+      text-align: left;
+      position: sticky;
+      top: 0;
+      background-color: #e9ecef;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    .situacao-regular {
+      color: #15803d;
+      font-weight: bold;
+    }
+    .situacao-irregular {
+      color: #b91c1c;
+      font-weight: bold;
+    }
+    .situacao-transferido {
+      color: #d97706;
+    }
+    .situacao-concluinte {
+      color: #0f3b5c;
+    }
+
+    footer {
+      padding: 16px 24px;
+      background: #f8fafc;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #475569;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 700px) {
+      th, td { font-size: 0.75rem; padding: 8px 6px; }
+      .filtro input { width: 180px; }
+      header h1 { font-size: 1.3rem; }
+    }
+  </style>
 </head>
-
 <body>
+<div class="container">
+  <header>
+    <h1>📚 Prontuário Escolar • 200 Alunos</h1>
+    <p>Base de dados fictícia com nome, CPF, RG, endereço completo, cidade e situação acadêmica.</p>
+  </header>
 
-<header>
-  <h2>Simulador Educacional de Banco de Dados</h2>
-  <p>SQLite no Browser • SQL Real • Ambiente Didático Controlado</p>
-</header>
-
-<main>
-
-<!-- MAPA VISUAL DOS FLUXOS -->
-<div class="panel">
-  <h3>🗺️ Mapa dos Fluxos SQL (por nível)</h3>
-
-  <div class="flow">
-    <div class="box">
-      <strong>🔰 Básico (CRUD)</strong>
-      <ul>
-        <li>CREATE</li>
-        <li>INSERT</li>
-        <li>SELECT</li>
-        <li>UPDATE</li>
-        <li>DELETE</li>
-      </ul>
-    </div>
-
-    <div class="box">
-      <strong>🔶 Intermediário</strong>
-      <ul>
-        <li>ALTER</li>
-        <li>WHERE</li>
-        <li>ORDER BY</li>
-        <li>GROUP BY</li>
-        <li>JOIN</li>
-      </ul>
-    </div>
-
-    <div class="box">
-      <strong>🔷 Avançado (Administração)</strong>
-      <ul>
-        <li>BEGIN / COMMIT</li>
-        <li>ROLLBACK</li>
-        <li>BACKUP (.sql)</li>
-        <li>RESTORE (.sql)</li>
-        <li>GRANT / REVOKE (conceitual)</li>
-      </ul>
+  <div class="stats">
+    <div class="badge" id="totalAlunos">Total: 200 alunos</div>
+    <div class="filtro">
+      <input type="text" id="filtroNome" placeholder="🔍 Filtrar por nome, CPF ou cidade..." onkeyup="filtrarTabela()">
+      <button onclick="limparFiltro()">Limpar filtro</button>
     </div>
   </div>
 
-  <p>
-    👉 O simulador inicia sempre em memória.<br>
-    👉 Backup e restore são feitos via arquivo <strong>.sql</strong>.
-  </p>
+  <div class="tabela-wrapper">
+    <table id="tabelaAlunos">
+      <thead>
+        <tr>
+          <th>#</th><th>Nome completo</th><th>CPF</th><th>RG</th><th>Endereço</th><th>Cidade</th><th>Situação</th>
+        </tr>
+      </thead>
+      <tbody id="corpoTabela">
+        <!-- preenchido via JS -->
+      </tbody>
+    </table>
+  </div>
+  <footer>
+    Dados gerados aleatoriamente conforme padrões brasileiros • Fins exclusivamente educacionais e demonstrativos
+  </footer>
 </div>
-
-<!-- PAINEL SQL -->
-<div class="panel">
-  <h3>⌨️ Painel de Controle SQL</h3>
-
-  <textarea id="sqlInput">
-CREATE TABLE alunos (
-  id INTEGER PRIMARY KEY,
-  nome TEXT,
-  email TEXT
-);
-
-INSERT INTO alunos (nome, email)
-VALUES ('Ana', 'ana@email.com');
-
-SELECT * FROM alunos;
-  </textarea>
-
-  <br>
-
-  <button onclick="runSQL()">▶ Executar SQL</button>
-  <button onclick="downloadSQL()">💾 Salvar .sql</button>
-  <input type="file" id="fileInput" accept=".sql" onchange="uploadSQL()">
-</div>
-
-<!-- RESULTADO -->
-<div class="panel">
-  <h3>📊 Resultado</h3>
-  <div id="result"></div>
-</div>
-
-<!-- SQL EXECUTADO -->
-<div class="panel">
-  <h3>🧾 SQL Executado</h3>
-  <pre id="executed"></pre>
-</div>
-
-</main>
-
-<!-- SQLite no Browser -->
-<script src="https://unpkg.com/sql.js@1.8.0/dist/sql-wasm.js"></script>
 
 <script>
-let db;
+  // --------------------------------------------------------------
+  // 1. Listas de nomes, sobrenomes, ruas, cidades, situações
+  // --------------------------------------------------------------
+  const nomes = [
+    "Ana", "Bruno", "Carla", "Daniel", "Eduarda", "Felipe", "Gabriela", "Henrique", "Isabela", "João",
+    "Karina", "Lucas", "Mariana", "Nicolas", "Olivia", "Paulo", "Quintino", "Rafaela", "Samuel", "Tatiane",
+    "Ursula", "Vitor", "Wagner", "Ximena", "Yasmin", "Zilda", "Arthur", "Beatriz", "Caio", "Débora",
+    "Elisa", "Fabio", "Gustavo", "Heloísa", "Igor", "Júlia", "Larissa", "Marcelo", "Natália", "Otávio"
+  ];
+  const sobrenomes = [
+    "Silva", "Souza", "Costa", "Oliveira", "Pereira", "Rodrigues", "Almeida", "Nascimento", "Lima", "Araújo",
+    "Fernandes", "Gomes", "Martins", "Rocha", "Ribeiro", "Alves", "Barbosa", "Freitas", "Mendes", "Nunes",
+    "Carvalho", "Dias", "Fonseca", "Moraes", "Peixoto", "Queiroz", "Teixeira", "Vieira", "Xavier", "Zanetti"
+  ];
+  const ruas = [
+    "Rua das Flores", "Avenida Brasil", "Rua XV de Novembro", "Rua Amazonas", "Alameda Santos", "Rua José Bonifácio",
+    "Avenida Paulista", "Rua da Paz", "Travessa dos Coqueiros", "Rua do Comércio", "Avenida Central", "Rua Monteiro Lobato",
+    "Rua das Acácias", "Praça da República", "Rua Tiradentes", "Avenida Getúlio Vargas", "Rua Bela Vista", "Rua do Sol",
+    "Rua das Palmeiras", "Rua Ipiranga", "Rua São João", "Avenida Rio Branco", "Rua Duque de Caxias"
+  ];
+  const cidades = [
+    "São Paulo", "Rio de Janeiro", "Belo Horizonte", "Porto Alegre", "Salvador", "Curitiba", "Brasília",
+    "Fortaleza", "Recife", "Manaus", "Goiânia", "Belém", "Campinas", "São Luís", "Natal", "Maceió",
+    "Cuiabá", "Florianópolis", "João Pessoa", "Aracaju", "Teresina", "Vitória", "Campo Grande", "Ribeirão Preto"
+  ];
+  const situacoes = [
+    { texto: "Regular", classe: "situacao-regular" },
+    { texto: "Irregular (documentação pendente)", classe: "situacao-irregular" },
+    { texto: "Transferido", classe: "situacao-transferido" },
+    { texto: "Concluinte", classe: "situacao-concluinte" },
+    { texto: "Matrícula trancada", classe: "situacao-irregular" },
+    { texto: "Em processo de validação", classe: "situacao-regular" }
+  ];
 
-initSqlJs({
-  locateFile: f => `https://unpkg.com/sql.js@1.8.0/dist/${f}`
-}).then(SQL => {
-  db = new SQL.Database();
-});
-
-function runSQL(){
-  const sql = sqlInput.value;
-  result.innerHTML = '';
-
-  try{
-    const res = db.exec(sql);
-    executed.textContent = sql;
-
-    if(res.length === 0){
-      result.innerHTML = '<p>✅ Comando executado com sucesso.</p>';
-      return;
-    }
-
-    res.forEach(t => {
-      let html = '<table><tr>';
-      t.columns.forEach(c => html += `<th>${c}</th>`);
-      html += '</tr>';
-
-      t.values.forEach(r => {
-        html += '<tr>';
-        r.forEach(v => html += `<td>${v}</td>`);
-        html += '</tr>';
-      });
-
-      html += '</table>';
-      result.innerHTML += html;
-    });
-
-  }catch(e){
-    result.innerHTML = `<p style="color:red">❌ Erro: ${e.message}</p>`;
+  // --------------------------------------------------------------
+  // 2. Funções auxiliares para gerar dados válidos (formato BR)
+  // --------------------------------------------------------------
+  function gerarCPF() {
+    // Gera CPF aleatório no formato 000.000.000-00
+    const n1 = Math.floor(Math.random() * 10);
+    const n2 = Math.floor(Math.random() * 10);
+    const n3 = Math.floor(Math.random() * 10);
+    const n4 = Math.floor(Math.random() * 10);
+    const n5 = Math.floor(Math.random() * 10);
+    const n6 = Math.floor(Math.random() * 10);
+    const n7 = Math.floor(Math.random() * 10);
+    const n8 = Math.floor(Math.random() * 10);
+    const n9 = Math.floor(Math.random() * 10);
+    let d1 = 0, d2 = 0;
+    // Cálculo simplificado (para demonstração)
+    let soma = n1*10 + n2*9 + n3*8 + n4*7 + n5*6 + n6*5 + n7*4 + n8*3 + n9*2;
+    let resto = soma % 11;
+    d1 = resto < 2 ? 0 : 11 - resto;
+    soma = n1*11 + n2*10 + n3*9 + n4*8 + n5*7 + n6*6 + n7*5 + n8*4 + n9*3 + d1*2;
+    resto = soma % 11;
+    d2 = resto < 2 ? 0 : 11 - resto;
+    return `${n1}${n2}${n3}.${n4}${n5}${n6}.${n7}${n8}${n9}-${d1}${d2}`;
   }
-}
 
-function downloadSQL(){
-  const blob = new Blob([sqlInput.value], { type: 'text/sql' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'backup.sql';
-  a.click();
-  URL.revokeObjectURL(a.href);
-}
+  function gerarRG() {
+    // RG fictício: 2 letras + 8 dígitos (ex: MG-12.345.678-9)
+    const uf = ["SP","RJ","MG","RS","BA","PR","SC","PE","CE","GO"][Math.floor(Math.random()*10)];
+    const num = Math.floor(Math.random() * 90000000) + 10000000;
+    const digito = Math.floor(Math.random() * 10);
+    return `${uf}-${num.toString().slice(0,2)}.${num.toString().slice(2,5)}.${num.toString().slice(5,8)}-${digito}`;
+  }
 
-function uploadSQL(){
-  const file = fileInput.files[0];
-  if(!file) return;
+  function gerarNumeroEndereco() {
+    return Math.floor(Math.random() * 2000) + 1;
+  }
 
-  const reader = new FileReader();
-  reader.onload = e => {
-    sqlInput.value = e.target.result;
-  };
-  reader.readAsText(file);
-}
+  function gerarComplemento() {
+    const comp = ["apto", "casa", "bloco", "sala", "conjunto", ""];
+    const r = Math.random();
+    if (r < 0.3) return `, ${comp[Math.floor(Math.random()*4)]} ${Math.floor(Math.random()*300)+1}`;
+    return "";
+  }
+
+  // --------------------------------------------------------------
+  // 3. Gerar 200 alunos únicos (com IDs sequenciais)
+  // --------------------------------------------------------------
+  const alunos = [];
+  const cpfsUsados = new Set();
+  const rgsUsados = new Set();
+
+  for (let i = 1; i <= 200; i++) {
+    // Nome completo
+    const nome = nomes[Math.floor(Math.random() * nomes.length)];
+    const sobrenome = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
+    const nomeCompleto = `${nome} ${sobrenome}`;
+    
+    // CPF único (garantia de não repetir, pelo menos dentro do array)
+    let cpf;
+    do { cpf = gerarCPF(); } while (cpfsUsados.has(cpf));
+    cpfsUsados.add(cpf);
+    
+    // RG único
+    let rg;
+    do { rg = gerarRG(); } while (rgsUsados.has(rg));
+    rgsUsados.add(rg);
+    
+    // Endereço
+    const rua = ruas[Math.floor(Math.random() * ruas.length)];
+    const numero = gerarNumeroEndereco();
+    const complemento = gerarComplemento();
+    const endereco = `${rua}, ${numero}${complemento}`;
+    
+    // Cidade
+    const cidade = cidades[Math.floor(Math.random() * cidades.length)];
+    
+    // Situação / Tipo de prontuário
+    const situacaoObj = situacoes[Math.floor(Math.random() * situacoes.length)];
+    const situacao = situacaoObj.texto;
+    const classeSituacao = situacaoObj.classe;
+    
+    alunos.push({
+      id: i,
+      nome: nomeCompleto,
+      cpf: cpf,
+      rg: rg,
+      endereco: endereco,
+      cidade: cidade,
+      situacao: situacao,
+      classe: classeSituacao
+    });
+  }
+
+  // --------------------------------------------------------------
+  // 4. Renderização da tabela + filtro dinâmico
+  // --------------------------------------------------------------
+  function renderizarTabela(filtro = "") {
+    const tbody = document.getElementById("corpoTabela");
+    tbody.innerHTML = "";
+    const filtroLower = filtro.toLowerCase();
+    let contador = 0;
+    
+    for (const aluno of alunos) {
+      const matchNome = aluno.nome.toLowerCase().includes(filtroLower);
+      const matchCpf = aluno.cpf.includes(filtroLower);
+      const matchCidade = aluno.cidade.toLowerCase().includes(filtroLower);
+      if (filtro !== "" && !(matchNome || matchCpf || matchCidade)) continue;
+      
+      contador++;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${aluno.id}</td>
+        <td><strong>${aluno.nome}</strong></td>
+        <td>${aluno.cpf}</td>
+        <td>${aluno.rg}</td>
+        <td>${aluno.endereco}</td>
+        <td>${aluno.cidade}</td>
+        <td class="${aluno.classe}">📋 ${aluno.situacao}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+    
+    // Atualiza contador visível
+    const totalSpan = document.getElementById("totalAlunos");
+    if (filtro !== "") {
+      totalSpan.innerHTML = `Filtrado: ${contador} / 200 alunos`;
+    } else {
+      totalSpan.innerHTML = `Total: 200 alunos`;
+    }
+  }
+
+  function filtrarTabela() {
+    const input = document.getElementById("filtroNome");
+    renderizarTabela(input.value);
+  }
+
+  function limparFiltro() {
+    document.getElementById("filtroNome").value = "";
+    renderizarTabela("");
+  }
+
+  // Inicializa a tabela com todos os dados
+  renderizarTabela("");
 </script>
-
 </body>
 </html>
