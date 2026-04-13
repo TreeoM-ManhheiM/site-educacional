@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Simulador - Comunicação Profissional | Pitch com lista de critérios</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(145deg, #e9f0f5 0%, #d9e2ec 100%);
+            padding: 20px;
+            color: #1e2a3e;
+        }
+        .container { max-width: 1300px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #1e4a6e, #0f2b3d);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .tabs {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            color: #1e4a6e;
+        }
+        .tab-btn.active {
+            background: #1e4a6e;
+            color: white;
+        }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+        .card {
+            background: white;
+            border-radius: 28px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        }
+        .card h2 {
+            font-size: 1.7rem;
+            margin-bottom: 12px;
+            color: #0f2b3d;
+        }
+        .skill-tag {
+            display: inline-block;
+            background: #eef2ff;
+            color: #1e4a6e;
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 0.75rem;
+            margin-right: 10px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #ccd7e4;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            margin-top: 8px;
+            background: #fefefe;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        button {
+            background: #1e4a6e;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            margin-top: 12px;
+        }
+        button:hover { background: #0f3b5a; transform: scale(0.97); }
+        .feedback {
+            background: #eef2fa;
+            border-left: 6px solid #1e4a6e;
+            padding: 16px;
+            border-radius: 20px;
+            margin-top: 20px;
+        }
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+        .checklist li {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checklist input {
+            width: 20px;
+            margin: 0;
+            pointer-events: none;
+        }
+        .result-summary {
+            margin-top: 12px;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            border-radius: 30px;
+            background: #e9ecef;
+        }
+        @media (max-width: 700px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .tab-btn { padding: 8px 18px; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>📬 Comunicação Profissional</h1>
+        <p>Semana 7 · E-mail · Vídeo currículo · Pitch pessoal (lista de critérios)</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" data-tab="tab1">✉️ E-mail & Carta</button>
+        <button class="tab-btn" data-tab="tab2">🎥 Vídeo currículo</button>
+        <button class="tab-btn" data-tab="tab3">🎤 Pitch pessoal</button>
+    </div>
+
+    <!-- ==================== PITCH PESSOAL (LISTA DE CRITÉRIOS) ==================== -->
+    <div id="tab3" class="tab-content">
+        <div class="card">
+            <h2>🎤 Pitch Pessoal (elevator pitch)</h2>
+            <div class="skill-tag">📌 Habilidade técnica: Criar pitch</div>
+            <div class="skill-tag">🧠 Socioemocional: Persuasão</div>
+            <div class="grid-2">
+                <div>
+                    <label>👤 Seu nome:</label>
+                    <input type="text" id="pitchNome" placeholder="Digite seu nome completo" value="Rafaela Santos">
+                    <label>💼 Profissão / área:</label>
+                    <input type="text" id="pitchProfissao" placeholder="Ex: Analista de Marketing" value="Analista de Dados">
+                    <label>✨ Seu diferencial (1 frase):</label>
+                    <input type="text" id="pitchDiferencial" placeholder="Ex: Transformo dados em insights" value="transformo dados brutos em insights estratégicos">
+                    <label>🎯 Objetivo profissional:</label>
+                    <input type="text" id="pitchObjetivo" placeholder="Ex: Oportunidade em Business Intelligence" value="uma oportunidade para aplicar minha capacidade analítica em projetos de Business Intelligence">
+                    <button id="gerarPitch">⚡ Gerar pitch personalizado</button>
+                </div>
+                <div>
+                    <label>📢 Seu pitch (até 60 palavras):</label>
+                    <textarea id="pitchTexto" rows="6" placeholder="Digite aqui seu pitch..."></textarea>
+                    <button id="avaliarPitch">🔍 Avaliar pitch automaticamente</button>
+                </div>
+            </div>
+            <div id="pitchFeedback" class="feedback">
+                <strong>📋 Critérios avaliados automaticamente:</strong>
+                <ul class="checklist" id="pitchChecklist">
+                    <li><input type="checkbox" disabled> <span id="pitchCrit1">Apresentação clara (nome e área)</span></li>
+                    <li><input type="checkbox" disabled> <span id="pitchCrit2">Mostra valor / diferencial</span></li>
+                    <li><input type="checkbox" disabled> <span id="pitchCrit3">Menciona resultado ou conquista</span></li>
+                    <li><input type="checkbox" disabled> <span id="pitchCrit4">Termina com chamada para ação</span></li>
+                    <li><input type="checkbox" disabled> <span id="pitchCrit5">Duração adequada (40-100 palavras)</span></li>
+                </ul>
+                <div id="pitchSummary" class="result-summary"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== E-MAIL ==================== -->
+    <div id="tab1" class="tab-content active">
+        <div class="card">
+            <h2>✉️ E-mail profissional</h2>
+            <div class="grid-2">
+                <div>
+                    <label>📧 Destinatário:</label>
+                    <input type="text" id="emailTo" placeholder="ex: rh@empresa.com">
+                    <label>📝 Assunto:</label>
+                    <input type="text" id="emailSubject" placeholder="Ex: Candidatura à vaga">
+                    <label>💬 Corpo do e-mail:</label>
+                    <textarea id="emailBody" rows="8" placeholder="Escreva aqui seu e-mail..."></textarea>
+                </div>
+                <div>
+                    <label>📄 Carta formal:</label>
+                    <textarea id="cartaTexto" rows="8" placeholder="Escreva aqui sua carta..."></textarea>
+                    <button id="copiarCarta">📋 Copiar modelo de carta</button>
+                </div>
+            </div>
+            <button id="avaliarEmail">✅ Avaliar e-mail</button>
+            <div id="emailFeedback" class="feedback">
+                <strong>🔍 Critérios:</strong>
+                <ul class="checklist" id="emailChecklist">
+                    <li><input type="checkbox" disabled> <span id="emailCrit1">Assunto claro</span></li>
+                    <li><input type="checkbox" disabled> <span id="emailCrit2">Saudação adequada</span></li>
+                    <li><input type="checkbox" disabled> <span id="emailCrit3">Objetivo explícito</span></li>
+                    <li><input type="checkbox" disabled> <span id="emailCrit4">Linguagem formal</span></li>
+                    <li><input type="checkbox" disabled> <span id="emailCrit5">Encerramento com nome</span></li>
+                </ul>
+                <div id="emailSummary" class="result-summary"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== VÍDEO CURRÍCULO ==================== -->
+    <div id="tab2" class="tab-content">
+        <div class="card">
+            <h2>🎥 Roteiro para Vídeo currículo</h2>
+            <div class="grid-2">
+                <div>
+                    <label>🎬 Seu nome / título:</label>
+                    <input type="text" id="videoNome" placeholder="Ex: Ana Silva - Analista">
+                    <label>📜 Roteiro:</label>
+                    <textarea id="roteiroVideo" rows="8" placeholder="Escreva o roteiro..."></textarea>
+                </div>
+                <div>
+                    <label>📊 Critérios:</label>
+                    <ul class="checklist" id="videoChecklist">
+                        <li><input type="checkbox" disabled> <span id="videoCrit1">Apresentação clara</span></li>
+                        <li><input type="checkbox" disabled> <span id="videoCrit2">Experiência/diferencial</span></li>
+                        <li><input type="checkbox" disabled> <span id="videoCrit3">Tamanho adequado</span></li>
+                        <li><input type="checkbox" disabled> <span id="videoCrit4">Objetivo explícito</span></li>
+                        <li><input type="checkbox" disabled> <span id="videoCrit5">Linguagem positiva</span></li>
+                    </ul>
+                    <button id="avaliarVideo">🎬 Analisar roteiro</button>
+                    <div id="videoFeedback" class="feedback">
+                        <div id="videoSummary" class="result-summary"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== ABAS ==========
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tabId = btn.getAttribute('data-tab');
+            tabs.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            contents.forEach(c => c.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    // ========== FUNÇÃO AUXILIAR ==========
+    function atualizarCritério(critId, checkbox, condicao, textoBase, detalhe = "") {
+        const span = document.getElementById(critId);
+        const cb = checkbox;
+        if (condicao) {
+            cb.checked = true;
+            span.innerHTML = `${textoBase} ✅ detectado ${detalhe}`;
+        } else {
+            cb.checked = false;
+            span.innerHTML = `${textoBase} ❌ não detectado ${detalhe}`;
+        }
+    }
+
+    // ========== E-MAIL (com resumo) ==========
+    function avaliarEmail() {
+        const assunto = document.getElementById('emailSubject').value.trim();
+        const corpo = document.getElementById('emailBody').value.toLowerCase();
+        const assuntoOk = assunto.length > 5 && assunto.split(/\s+/).length >= 3;
+        const saudacaoOk = /(prezado|olá|caro|estimado|senhor|senhora)/i.test(corpo);
+        const objetivoOk = /(candidatar|vaga|estágio|oportunidade|solicito|gostaria de|pretendo|busco)/i.test(corpo);
+        const linguagemOk = /(obrigado|grato|atenciosamente|respeitosamente|agradeço)/i.test(corpo);
+        const ultimaLinha = corpo.split('\n').pop();
+        const encerramentoOk = /(atenciosamente|sinceramente|att)/i.test(corpo) && /[a-zá-ú]{3,}/i.test(ultimaLinha);
+        
+        const checks = document.querySelectorAll('#emailChecklist input');
+        atualizarCritério('emailCrit1', checks[0], assuntoOk, 'Assunto claro');
+        atualizarCritério('emailCrit2', checks[1], saudacaoOk, 'Saudação adequada');
+        atualizarCritério('emailCrit3', checks[2], objetivoOk, 'Objetivo explícito');
+        atualizarCritério('emailCrit4', checks[3], linguagemOk, 'Linguagem formal');
+        atualizarCritério('emailCrit5', checks[4], encerramentoOk, 'Encerramento com nome');
+        
+        const total = [assuntoOk, saudacaoOk, objetivoOk, linguagemOk, encerramentoOk].filter(Boolean).length;
+        document.getElementById('emailSummary').innerHTML = `✅ ${total}/5 critérios atendidos.`;
+    }
+    document.getElementById('avaliarEmail').addEventListener('click', avaliarEmail);
+    document.getElementById('copiarCarta').addEventListener('click', () => {
+        document.getElementById('cartaTexto').value = `[Local], [Data]\n\nÀ [Empresa]\nAssunto: [Motivo]\n\nPrezados(as),\n\nVenho por meio desta...\n\nAtenciosamente,\n[Seu Nome]`;
+        alert("Modelo copiado! Substitua os [ ] por dados reais.");
+    });
+
+    // ========== VÍDEO ==========
+    function avaliarVideo() {
+        const nomeCampo = document.getElementById('videoNome').value.trim();
+        const roteiro = document.getElementById('roteiroVideo').value.trim();
+        const palavras = roteiro.split(/\s+/).length;
+        const temNomeCampo = nomeCampo.length >= 3;
+        const temNomeTexto = /\b(ana|joão|maria|josé|carlos|paula|rafael|rafaela|juliana|fernanda|pedro|leticia|bruno|camila|ricardo|amanda|gabriel|beatriz|lucas|isabela|felipe|aline|rodrigo|tatiane|thiago)\b/i.test(roteiro);
+        const apresentacaoOk = temNomeCampo || temNomeTexto;
+        const experienciaOk = /(experiência|anos|habilidade|diferencial|domínio|projetos|trabalhei|atuei|reduzi|aumentei)/i.test(roteiro);
+        const tamanhoOk = palavras >= 70 && palavras <= 200;
+        const objetivoOk = /(busco|oportunidade|vaga|contribuir|pretendo)/i.test(roteiro);
+        const linguagemOk = /(criatividade|inovação|apaixonado|determinado|resultados|proatividade|foco)/i.test(roteiro);
+        
+        const checks = document.querySelectorAll('#videoChecklist input');
+        atualizarCritério('videoCrit1', checks[0], apresentacaoOk, 'Apresentação clara');
+        atualizarCritério('videoCrit2', checks[1], experienciaOk, 'Experiência/diferencial');
+        atualizarCritério('videoCrit3', checks[2], tamanhoOk, `Tamanho (${palavras} palavras)`);
+        atualizarCritério('videoCrit4', checks[3], objetivoOk, 'Objetivo explícito');
+        atualizarCritério('videoCrit5', checks[4], linguagemOk, 'Linguagem positiva');
+        
+        const total = [apresentacaoOk, experienciaOk, tamanhoOk, objetivoOk, linguagemOk].filter(Boolean).length;
+        document.getElementById('videoSummary').innerHTML = `✅ ${total}/5 critérios atendidos.`;
+    }
+    document.getElementById('avaliarVideo').addEventListener('click', avaliarVideo);
+
+    // ========== PITCH (LISTA DE CRITÉRIOS COM RESUMO) ==========
+    document.getElementById('gerarPitch').addEventListener('click', () => {
+        const nome = document.getElementById('pitchNome').value.trim() || "seu nome";
+        const profissao = document.getElementById('pitchProfissao').value.trim() || "profissional";
+        const diferencial = document.getElementById('pitchDiferencial').value.trim() || "um diferencial";
+        const objetivo = document.getElementById('pitchObjetivo').value.trim() || "oportunidades";
+        const pitch = `Olá, sou ${nome}, ${profissao}. Meu diferencial é ${diferencial}. Busco ${objetivo}. Vamos conversar?`;
+        document.getElementById('pitchTexto').value = pitch;
+    });
+
+    function avaliarPitch() {
+        const nomeCampo = document.getElementById('pitchNome').value.trim();
+        const pitch = document.getElementById('pitchTexto').value.trim();
+        const palavras = pitch.split(/\s+/).length;
+        const temNomeCampo = nomeCampo.length >= 3;
+        const temNomeTexto = /\b(ana|joão|maria|josé|carlos|paula|rafael|rafaela|juliana|fernanda|pedro|leticia|bruno|camila|ricardo|amanda|gabriel|beatriz|lucas|isabela|felipe|aline|rodrigo|tatiane|thiago)\b/i.test(pitch);
+        const apresentacaoOk = temNomeCampo || temNomeTexto;
+        const valorOk = /(diferencial|transformo|ajudo|resolvo|capacidade|habilidade|expertise)/i.test(pitch);
+        const resultadoOk = /(resultado|conquista|aumentei|reduzi|ganhei|entreguei|impacto|%|\d+)/i.test(pitch);
+        const acaoOk = /(vamos conversar|entre em contato|agendar|marcar|entrevista|reunião|conectar)/i.test(pitch);
+        const duracaoOk = palavras >= 40 && palavras <= 100;
+        
+        const checks = document.querySelectorAll('#pitchChecklist input');
+        atualizarCritério('pitchCrit1', checks[0], apresentacaoOk, 'Apresentação clara (nome e área)');
+        atualizarCritério('pitchCrit2', checks[1], valorOk, 'Mostra valor / diferencial');
+        atualizarCritério('pitchCrit3', checks[2], resultadoOk, 'Menciona resultado ou conquista');
+        atualizarCritério('pitchCrit4', checks[3], acaoOk, 'Termina com chamada para ação');
+        atualizarCritério('pitchCrit5', checks[4], duracaoOk, `Duração adequada (${palavras} palavras)`);
+        
+        const total = [apresentacaoOk, valorOk, resultadoOk, acaoOk, duracaoOk].filter(Boolean).length;
+        document.getElementById('pitchSummary').innerHTML = `✅ ${total}/5 critérios atendidos.`;
+    }
+    document.getElementById('avaliarPitch').addEventListener('click', avaliarPitch);
+</script>
+</body>
+</html>
