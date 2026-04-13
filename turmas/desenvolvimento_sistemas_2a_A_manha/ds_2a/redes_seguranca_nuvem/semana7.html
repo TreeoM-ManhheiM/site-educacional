@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Osciloscópio Didático - Modulações da Camada Física</title>
+    <title>Osciloscópio Didático EE. 8 de Abril - Modulações da Camada Física</title>
     <style>
         * {
             box-sizing: border-box;
@@ -29,7 +29,7 @@
         }
 
         .sidebar {
-            width: 300px;
+            width: 320px;
             background: #0c0c0c;
             border-right: 1px solid #2a2a2a;
             display: flex;
@@ -166,11 +166,25 @@
             position: absolute;
             left: 50%;
             top: 0;
-            width: 1px;
+            width: 2px;
             height: 100%;
-            background: rgba(255, 68, 68, 0.5);
+            background: rgba(255, 68, 68, 0.6);
             z-index: 2;
             pointer-events: none;
+        }
+
+        .bit-highlight {
+            position: absolute;
+            left: 50%;
+            width: 60px;
+            transform: translateX(-50%);
+            top: 0;
+            bottom: 0;
+            background: rgba(0, 255, 157, 0.08);
+            border-left: 1px dashed rgba(0,255,157,0.3);
+            border-right: 1px dashed rgba(0,255,157,0.3);
+            pointer-events: none;
+            z-index: 1;
         }
 
         .dock {
@@ -243,13 +257,25 @@
         }
 
         .mod-info {
-            font-size: 0.75rem;
-            color: #aaa;
+            font-size: 0.8rem;
+            color: #ddd;
             margin-top: 8px;
-            padding: 8px;
+            padding: 10px;
             background: #1a1a1a;
             border-radius: 12px;
+            text-align: left;
+            border-left: 3px solid var(--neon);
+        }
+
+        .mod-dynamic {
+            background: #0a0a0a;
+            padding: 8px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9rem;
             text-align: center;
+            color: var(--neon);
         }
     </style>
 </head>
@@ -288,11 +314,14 @@
         </div>
     </div>
 
-    <!-- Explicação da modulação atual -->
+    <!-- Modulação Ativa com indicador dinâmico -->
     <div class="card">
-        <h3>📖 Modulação Ativa</h3>
-        <div id="modExplanation" class="mod-info">
+        <h3>📡 Modulação Ativa</h3>
+        <div id="modStaticDesc" class="mod-info">
             Selecione uma modulação no painel inferior.
+        </div>
+        <div id="modDynamicIndicator" class="mod-dynamic">
+            Aguardando sinal...
         </div>
     </div>
 </div>
@@ -308,6 +337,7 @@
     <div class="axis-label" style="top: 48%; color: #aaa;">0V</div>
     <div class="axis-label" style="top: 78%;">-5V (0 lógico)</div>
     <div class="trigger-line"></div>
+    <div class="bit-highlight"></div> <!-- Destaque do bit central -->
     <canvas id="scopeCanvas"></canvas>
 
     <div class="dock">
@@ -350,7 +380,8 @@
     const bitStreamDiv = document.getElementById('bitStreamDisplay');
     const snrSlider = document.getElementById('snrSlider');
     const snrPercent = document.getElementById('snrPercent');
-    const modExplanation = document.getElementById('modExplanation');
+    const modStaticDesc = document.getElementById('modStaticDesc');
+    const modDynamicIndicator = document.getElementById('modDynamicIndicator');
 
     let isRunning = false;
     let offset = 0;
@@ -358,15 +389,43 @@
     const BIT_WIDTH_PX = 120;
     let bitBuffer = Array.from({ length: 40 }, () => Math.round(Math.random()));
 
-    // Descrições das modulações para aprendizado
-    function updateModExplanation() {
+    // Descrições estáticas da modulação
+    function updateStaticDesc() {
         const type = modSelect.value;
         if (type === 'ask') {
-            modExplanation.innerHTML = `<strong>ASK (Amplitude Shift Keying)</strong><br>Bit 1 → amplitude alta (maior oscilação)<br>Bit 0 → amplitude baixa (oscilação pequena)<br>✦ Sensível a ruído de amplitude.`;
+            modStaticDesc.innerHTML = `<strong>ASK (Amplitude Shift Keying)</strong><br>Bit 1 → amplitude alta (maior oscilação)<br>Bit 0 → amplitude baixa (oscilação pequena)<br>✦ Sensível a ruído de amplitude.`;
         } else if (type === 'fsk') {
-            modExplanation.innerHTML = `<strong>FSK (Frequency Shift Keying)</strong><br>Bit 1 → frequência alta (onda mais apertada)<br>Bit 0 → frequência baixa (onda mais larga)<br>✦ Mais robusta contra ruído de amplitude.`;
+            modStaticDesc.innerHTML = `<strong>FSK (Frequency Shift Keying)</strong><br>Bit 1 → frequência alta (onda mais apertada)<br>Bit 0 → frequência baixa (onda mais larga)<br>✦ Mais robusta contra ruído de amplitude.`;
         } else {
-            modExplanation.innerHTML = `<strong>QAM (Quadrature Amplitude Modulation)</strong><br>4-QAM: cada símbolo = 2 bits.<br>Varia amplitude e fase (0° ou 180°).<br>✦ Maior eficiência espectral.`;
+            modStaticDesc.innerHTML = `<strong>QAM (Quadrature Amplitude Modulation)</strong><br>4-QAM: cada símbolo = 2 bits.<br>Varia amplitude e fase (0° ou 180°).<br>✦ Maior eficiência espectral.`;
+        }
+    }
+
+    // Atualização dinâmica baseada no bit/símbolo atual
+    let currentDynamicValue = { bit: null, symbol: null };
+    function updateDynamicIndicator(bit, symbolBits = null) {
+        const type = modSelect.value;
+        if (type === 'ask') {
+            if (bit === 1) {
+                modDynamicIndicator.innerHTML = `🔵 Bit ATUAL = <strong style="font-size:1.2rem;">1</strong> → Amplitude ALTA (oscilação forte)`;
+            } else {
+                modDynamicIndicator.innerHTML = `⚫ Bit ATUAL = <strong style="font-size:1.2rem;">0</strong> → Amplitude BAIXA (oscilação fraca)`;
+            }
+        } else if (type === 'fsk') {
+            if (bit === 1) {
+                modDynamicIndicator.innerHTML = `🔵 Bit ATUAL = <strong style="font-size:1.2rem;">1</strong> → Frequência ALTA (onda mais apertada)`;
+            } else {
+                modDynamicIndicator.innerHTML = `⚫ Bit ATUAL = <strong style="font-size:1.2rem;">0</strong> → Frequência BAIXA (onda mais larga)`;
+            }
+        } else if (type === 'qam' && symbolBits) {
+            const bits = symbolBits.split('');
+            const b1 = bits[0], b2 = bits[1];
+            let desc = '';
+            if (b1 === '1' && b2 === '1') desc = 'Amplitude ALTA + Fase 0°';
+            else if (b1 === '1' && b2 === '0') desc = 'Amplitude BAIXA + Fase 0°';
+            else if (b1 === '0' && b2 === '1') desc = 'Amplitude ALTA + Fase 180°';
+            else desc = 'Amplitude BAIXA + Fase 180°';
+            modDynamicIndicator.innerHTML = `🎯 Símbolo ATUAL = <strong>${symbolBits}</strong> → ${desc}`;
         }
     }
 
@@ -419,7 +478,7 @@
         }, 3000);
     });
 
-    // Desenho do osciloscópio
+    // Desenho
     function resizeCanvas() {
         canvas.width = canvas.clientWidth;
         canvas.height = canvas.clientHeight;
@@ -480,6 +539,8 @@
         ctx.shadowColor = "#0f0";
 
         let firstPoint = true;
+        let currentBit = null;
+        let currentSymbolBits = null;
 
         for (let x = 0; x < canvas.width; x++) {
             let worldX = x + offset - centerX;
@@ -490,8 +551,18 @@
 
                 if (type === 'ask') {
                     y = Math.sin(worldX * 0.12) * (bit === 1 ? 80 : 15);
+                    if (Math.abs(x - centerX) < 2) {
+                        currentBit = bit;
+                        currentBitSpan.innerHTML = bit;
+                        updateDynamicIndicator(bit);
+                    }
                 } else if (type === 'fsk') {
                     y = Math.sin(worldX * (bit === 1 ? 0.26 : 0.09)) * 70;
+                    if (Math.abs(x - centerX) < 2) {
+                        currentBit = bit;
+                        currentBitSpan.innerHTML = bit;
+                        updateDynamicIndicator(bit);
+                    }
                 } else { // qam
                     let nextBit = (bitIndex + 1 < bitBuffer.length) ? bitBuffer[bitIndex + 1] : bit;
                     let symbol = (bit << 1) | nextBit;
@@ -499,12 +570,10 @@
                     let phase = (symbol & 1) ? 0 : Math.PI;
                     y = Math.sin(worldX * 0.12 + phase) * amplitude;
                     if (Math.abs(x - centerX) < 2) {
-                        currentBitSpan.innerHTML = `${bit}${nextBit}`;
+                        currentSymbolBits = `${bit}${nextBit}`;
+                        currentBitSpan.innerHTML = currentSymbolBits;
+                        updateDynamicIndicator(null, currentSymbolBits);
                     }
-                }
-
-                if (type !== 'qam' && Math.abs(x - centerX) < 2) {
-                    currentBitSpan.innerHTML = bit;
                 }
 
                 y = addNoise(y);
@@ -534,7 +603,7 @@
         bitStreamDiv.innerHTML = htmlStream;
     }
 
-    // Animação da transmissão
+    // Animação
     let animationId = null;
     function animate() {
         if (!isRunning) return;
@@ -575,7 +644,7 @@
     function updateModulationUI() {
         const type = modSelect.value;
         modTagSpan.innerText = type.toUpperCase();
-        updateModExplanation();
+        updateStaticDesc();
         draw();
     }
 
