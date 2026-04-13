@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Simulador - Comunicação Profissional | Pitch com lista de critérios</title>
+    <title>Simulador - Comunicação Profissional | Relatório para Impressão</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -131,6 +131,37 @@
             border-radius: 30px;
             background: #e9ecef;
         }
+        .print-btn-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .print-btn {
+            background: #22c55e;
+            padding: 14px 32px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: inline-block;
+        }
+        .print-btn:hover { background: #16a34a; }
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .print-report, .print-report * {
+                visibility: visible;
+            }
+            .print-report {
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                padding: 20px;
+                font-family: 'Segoe UI', Arial, sans-serif;
+            }
+            .no-print {
+                display: none;
+            }
+        }
         @media (max-width: 700px) {
             .grid-2 { grid-template-columns: 1fr; }
             .tab-btn { padding: 8px 18px; font-size: 0.9rem; }
@@ -141,7 +172,7 @@
 <div class="container">
     <header>
         <h1>📬 Comunicação Profissional</h1>
-        <p>Semana 7 · E-mail · Vídeo currículo · Pitch pessoal (lista de critérios)</p>
+        <p>Semana 7 · E-mail · Vídeo currículo · Pitch pessoal · Relatório final</p>
     </header>
 
     <div class="tabs">
@@ -150,42 +181,9 @@
         <button class="tab-btn" data-tab="tab3">🎤 Pitch pessoal</button>
     </div>
 
-    <!-- ==================== PITCH PESSOAL (LISTA DE CRITÉRIOS) ==================== -->
-    <div id="tab3" class="tab-content">
-        <div class="card">
-            <h2>🎤 Pitch Pessoal (elevator pitch)</h2>
-            <div class="skill-tag">📌 Habilidade técnica: Criar pitch</div>
-            <div class="skill-tag">🧠 Socioemocional: Persuasão</div>
-            <div class="grid-2">
-                <div>
-                    <label>👤 Seu nome:</label>
-                    <input type="text" id="pitchNome" placeholder="Digite seu nome completo" value="Rafaela Santos">
-                    <label>💼 Profissão / área:</label>
-                    <input type="text" id="pitchProfissao" placeholder="Ex: Analista de Marketing" value="Analista de Dados">
-                    <label>✨ Seu diferencial (1 frase):</label>
-                    <input type="text" id="pitchDiferencial" placeholder="Ex: Transformo dados em insights" value="transformo dados brutos em insights estratégicos">
-                    <label>🎯 Objetivo profissional:</label>
-                    <input type="text" id="pitchObjetivo" placeholder="Ex: Oportunidade em Business Intelligence" value="uma oportunidade para aplicar minha capacidade analítica em projetos de Business Intelligence">
-                    <button id="gerarPitch">⚡ Gerar pitch personalizado</button>
-                </div>
-                <div>
-                    <label>📢 Seu pitch (até 60 palavras):</label>
-                    <textarea id="pitchTexto" rows="6" placeholder="Digite aqui seu pitch..."></textarea>
-                    <button id="avaliarPitch">🔍 Avaliar pitch automaticamente</button>
-                </div>
-            </div>
-            <div id="pitchFeedback" class="feedback">
-                <strong>📋 Critérios avaliados automaticamente:</strong>
-                <ul class="checklist" id="pitchChecklist">
-                    <li><input type="checkbox" disabled> <span id="pitchCrit1">Apresentação clara (nome e área)</span></li>
-                    <li><input type="checkbox" disabled> <span id="pitchCrit2">Mostra valor / diferencial</span></li>
-                    <li><input type="checkbox" disabled> <span id="pitchCrit3">Menciona resultado ou conquista</span></li>
-                    <li><input type="checkbox" disabled> <span id="pitchCrit4">Termina com chamada para ação</span></li>
-                    <li><input type="checkbox" disabled> <span id="pitchCrit5">Duração adequada (40-100 palavras)</span></li>
-                </ul>
-                <div id="pitchSummary" class="result-summary"></div>
-            </div>
-        </div>
+    <!-- Botão de impressão (só aparece quando tudo estiver 5/5) -->
+    <div id="printBtnContainer" class="print-btn-container no-print" style="display: none;">
+        <button id="printReportBtn" class="print-btn">🖨️ Imprimir relatório de conquista</button>
     </div>
 
     <!-- ==================== E-MAIL ==================== -->
@@ -250,6 +248,49 @@
             </div>
         </div>
     </div>
+
+    <!-- ==================== PITCH PESSOAL ==================== -->
+    <div id="tab3" class="tab-content">
+        <div class="card">
+            <h2>🎤 Pitch Pessoal (elevator pitch)</h2>
+            <div class="grid-2">
+                <div>
+                    <label>👤 Seu nome:</label>
+                    <input type="text" id="pitchNome" placeholder="Digite seu nome completo">
+                    <label>💼 Profissão / área:</label>
+                    <input type="text" id="pitchProfissao" placeholder="Ex: Analista de Marketing">
+                    <label>✨ Seu diferencial (1 frase):</label>
+                    <input type="text" id="pitchDiferencial" placeholder="Ex: Transformo dados em insights">
+                    <label>🎯 Objetivo profissional:</label>
+                    <input type="text" id="pitchObjetivo" placeholder="Ex: Oportunidade em Business Intelligence">
+                    <button id="gerarPitch">⚡ Gerar pitch personalizado</button>
+                </div>
+                <div>
+                    <label>📢 Seu pitch (até 60 palavras):</label>
+                    <textarea id="pitchTexto" rows="6" placeholder="Digite aqui seu pitch..."></textarea>
+                    <button id="avaliarPitch">🔍 Avaliar pitch automaticamente</button>
+                </div>
+            </div>
+            <div id="pitchFeedback" class="feedback">
+                <strong>📋 Critérios:</strong>
+                <ul class="checklist" id="pitchChecklist">
+                    <li><input type="checkbox" disabled> <span id="pitchCrit1">Apresentação clara (nome e área)</span></li>
+                    <li><input type="checkbox" disabled> <span id="pitchCrit2">Mostra valor / diferencial</span></li>
+                    <li><input type="checkbox" disabled> <span id="pitchCrit3">Menciona resultado ou conquista</span></li>
+                    <li><input type="checkbox" disabled> <span id="pitchCrit4">Termina com chamada para ação</span></li>
+                    <li><input type="checkbox" disabled> <span id="pitchCrit5">Duração adequada (40-100 palavras)</span></li>
+                </ul>
+                <div id="pitchSummary" class="result-summary"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Área para impressão (escondida até o clique) -->
+<div class="print-report" style="display: none;">
+    <h2 style="text-align:center;">📄 Relatório de Comunicação Profissional</h2>
+    <div id="reportContent"></div>
+    <p style="text-align:center; margin-top:30px;">Documento gerado automaticamente pelo simulador.</p>
 </div>
 
 <script>
@@ -279,7 +320,22 @@
         }
     }
 
-    // ========== E-MAIL (com resumo) ==========
+    // ========== CONTROLE DO BOTÃO DE IMPRESSÃO ==========
+    function verificarConquistaTotal() {
+        // Obtém os totais de cada módulo (valores armazenados em data attributes ou variáveis)
+        const emailTotal = parseInt(document.getElementById('emailSummary').innerText.match(/\d+/)?.[0] || 0);
+        const videoTotal = parseInt(document.getElementById('videoSummary').innerText.match(/\d+/)?.[0] || 0);
+        const pitchTotal = parseInt(document.getElementById('pitchSummary').innerText.match(/\d+/)?.[0] || 0);
+        
+        const btnContainer = document.getElementById('printBtnContainer');
+        if (emailTotal === 5 && videoTotal === 5 && pitchTotal === 5) {
+            btnContainer.style.display = 'block';
+        } else {
+            btnContainer.style.display = 'none';
+        }
+    }
+
+    // ========== E-MAIL ==========
     function avaliarEmail() {
         const assunto = document.getElementById('emailSubject').value.trim();
         const corpo = document.getElementById('emailBody').value.toLowerCase();
@@ -299,6 +355,7 @@
         
         const total = [assuntoOk, saudacaoOk, objetivoOk, linguagemOk, encerramentoOk].filter(Boolean).length;
         document.getElementById('emailSummary').innerHTML = `✅ ${total}/5 critérios atendidos.`;
+        verificarConquistaTotal();
     }
     document.getElementById('avaliarEmail').addEventListener('click', avaliarEmail);
     document.getElementById('copiarCarta').addEventListener('click', () => {
@@ -328,10 +385,11 @@
         
         const total = [apresentacaoOk, experienciaOk, tamanhoOk, objetivoOk, linguagemOk].filter(Boolean).length;
         document.getElementById('videoSummary').innerHTML = `✅ ${total}/5 critérios atendidos.`;
+        verificarConquistaTotal();
     }
     document.getElementById('avaliarVideo').addEventListener('click', avaliarVideo);
 
-    // ========== PITCH (LISTA DE CRITÉRIOS COM RESUMO) ==========
+    // ========== PITCH ==========
     document.getElementById('gerarPitch').addEventListener('click', () => {
         const nome = document.getElementById('pitchNome').value.trim() || "seu nome";
         const profissao = document.getElementById('pitchProfissao').value.trim() || "profissional";
@@ -362,8 +420,95 @@
         
         const total = [apresentacaoOk, valorOk, resultadoOk, acaoOk, duracaoOk].filter(Boolean).length;
         document.getElementById('pitchSummary').innerHTML = `✅ ${total}/5 critérios atendidos.`;
+        verificarConquistaTotal();
     }
     document.getElementById('avaliarPitch').addEventListener('click', avaliarPitch);
+
+    // ========== IMPRESSÃO DO RELATÓRIO ==========
+    function gerarRelatorio() {
+        const reportDiv = document.getElementById('reportContent');
+        const dataAtual = new Date().toLocaleDateString('pt-BR');
+        
+        // Capturar dados de cada módulo
+        const emailDestinatario = document.getElementById('emailTo').value;
+        const emailAssunto = document.getElementById('emailSubject').value;
+        const emailCorpo = document.getElementById('emailBody').value;
+        const cartaTexto = document.getElementById('cartaTexto').value;
+        
+        const videoNome = document.getElementById('videoNome').value;
+        const videoRoteiro = document.getElementById('roteiroVideo').value;
+        
+        const pitchNome = document.getElementById('pitchNome').value;
+        const pitchProfissao = document.getElementById('pitchProfissao').value;
+        const pitchDiferencial = document.getElementById('pitchDiferencial').value;
+        const pitchObjetivo = document.getElementById('pitchObjetivo').value;
+        const pitchTexto = document.getElementById('pitchTexto').value;
+        
+        // Obter totais
+        const emailTotal = document.getElementById('emailSummary').innerText.match(/\d+/)?.[0] || 0;
+        const videoTotal = document.getElementById('videoSummary').innerText.match(/\d+/)?.[0] || 0;
+        const pitchTotal = document.getElementById('pitchSummary').innerText.match(/\d+/)?.[0] || 0;
+        const notaFinal = ((parseInt(emailTotal) + parseInt(videoTotal) + parseInt(pitchTotal)) / 3).toFixed(1);
+        
+        reportDiv.innerHTML = `
+            <p><strong>Data de emissão:</strong> ${dataAtual}</p>
+            <hr>
+            <h3>✉️ E-mail profissional</h3>
+            <p><strong>Destinatário:</strong> ${emailDestinatario || '—'}</p>
+            <p><strong>Assunto:</strong> ${emailAssunto || '—'}</p>
+            <p><strong>Corpo do e-mail:</strong></p>
+            <pre style="background:#f4f4f4; padding:10px; border-radius:8px;">${emailCorpo || '—'}</pre>
+            <p><strong>Carta formal:</strong></p>
+            <pre style="background:#f4f4f4; padding:10px; border-radius:8px;">${cartaTexto || '—'}</pre>
+            <p><strong>Critérios atingidos:</strong> ${emailTotal}/5</p>
+            
+            <h3>🎥 Vídeo currículo</h3>
+            <p><strong>Nome / título:</strong> ${videoNome || '—'}</p>
+            <p><strong>Roteiro:</strong></p>
+            <pre style="background:#f4f4f4; padding:10px; border-radius:8px;">${videoRoteiro || '—'}</pre>
+            <p><strong>Critérios atingidos:</strong> ${videoTotal}/5</p>
+            
+            <h3>🎤 Pitch pessoal</h3>
+            <p><strong>Nome:</strong> ${pitchNome || '—'}</p>
+            <p><strong>Profissão/área:</strong> ${pitchProfissao || '—'}</p>
+            <p><strong>Diferencial:</strong> ${pitchDiferencial || '—'}</p>
+            <p><strong>Objetivo:</strong> ${pitchObjetivo || '—'}</p>
+            <p><strong>Pitch completo:</strong></p>
+            <pre style="background:#f4f4f4; padding:10px; border-radius:8px;">${pitchTexto || '—'}</pre>
+            <p><strong>Critérios atingidos:</strong> ${pitchTotal}/5</p>
+            
+            <hr>
+            <h3>🏆 Resumo final</h3>
+            <p><strong>E-mail:</strong> ${emailTotal}/5 | <strong>Vídeo:</strong> ${videoTotal}/5 | <strong>Pitch:</strong> ${pitchTotal}/5</p>
+            <p><strong>Nota final (média):</strong> ${notaFinal} / 10</p>
+            <p><strong>Status:</strong> ${(emailTotal == 5 && videoTotal == 5 && pitchTotal == 5) ? '✅ Todos os critérios conquistados! Parabéns!' : '⚠️ Alguns critérios ainda não foram atingidos. Continue praticando!'}</p>
+        `;
+    }
+    
+    document.getElementById('printReportBtn').addEventListener('click', () => {
+        gerarRelatorio();
+        const printWindow = window.open('', '_blank');
+        const reportHtml = document.querySelector('.print-report').cloneNode(true);
+        reportHtml.style.display = 'block';
+        printWindow.document.write(`
+            <html>
+            <head><title>Relatório de Comunicação Profissional</title>
+            <style>
+                body { font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; }
+                pre { background: #f4f4f4; padding: 10px; border-radius: 8px; white-space: pre-wrap; }
+                h3 { color: #1e4a6e; margin-top: 20px; }
+                hr { margin: 20px 0; }
+            </style>
+            </head>
+            <body>${reportHtml.innerHTML}</body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    });
+    
+    // Inicialização: verifica se já há conquistas (caso o aluno já tenha avaliado antes)
+    setTimeout(verificarConquistaTotal, 500);
 </script>
 </body>
 </html>
