@@ -1,373 +1,397 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>Prontuário Escolar - 200 Alunos</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-      background: #f0f2f5;
-      padding: 20px;
-      color: #1e293b;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-
-    header {
-      background: linear-gradient(135deg, #0f2b3d, #1e4a6e);
-      color: white;
-      padding: 24px 30px;
-    }
-
-    header h1 {
-      font-size: 1.8rem;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    header p {
-      margin-top: 8px;
-      opacity: 0.9;
-      font-size: 0.95rem;
-    }
-
-    .stats {
-      background: #e9ecef;
-      padding: 12px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      border-bottom: 1px solid #dee2e6;
-    }
-
-    .badge {
-      background: #1e4a6e;
-      color: white;
-      padding: 6px 14px;
-      border-radius: 40px;
-      font-weight: bold;
-      font-size: 0.85rem;
-    }
-
-    .filtro {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .filtro input {
-      padding: 8px 14px;
-      border: 1px solid #ccc;
-      border-radius: 30px;
-      width: 260px;
-      font-size: 0.9rem;
-    }
-
-    button {
-      background: #2c6e9e;
-      border: none;
-      color: white;
-      padding: 8px 18px;
-      border-radius: 30px;
-      cursor: pointer;
-      font-weight: bold;
-      transition: 0.2s;
-    }
-
-    button:hover {
-      background: #1e4a6e;
-    }
-
-    .tabela-wrapper {
-      overflow-x: auto;
-      max-height: 65vh;
-      overflow-y: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-    }
-
-    th {
-      background: #eef2f5;
-      padding: 14px 10px;
-      text-align: left;
-      position: sticky;
-      top: 0;
-      background-color: #e9ecef;
-      border-bottom: 2px solid #cbd5e1;
-    }
-
-    td {
-      padding: 10px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    tr:hover {
-      background: #f8fafc;
-    }
-
-    .situacao-regular {
-      color: #15803d;
-      font-weight: bold;
-    }
-    .situacao-irregular {
-      color: #b91c1c;
-      font-weight: bold;
-    }
-    .situacao-transferido {
-      color: #d97706;
-    }
-    .situacao-concluinte {
-      color: #0f3b5c;
-    }
-
-    footer {
-      padding: 16px 24px;
-      background: #f8fafc;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #475569;
-      border-top: 1px solid #e2e8f0;
-    }
-
-    @media (max-width: 700px) {
-      th, td { font-size: 0.75rem; padding: 8px 6px; }
-      .filtro input { width: 180px; }
-      header h1 { font-size: 1.3rem; }
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Simulador SQLite Educacional (Melhorado) - Prof° Eder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 0;
+    background: #f4f6f8;
+  }
+  header {
+    background: #2c3e50;
+    color: white;
+    padding: 16px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  header h2 { margin: 0 0 5px; }
+  header p { margin: 0; opacity: 0.8; }
+  main { padding: 20px; max-width: 1400px; margin: auto; }
+  .panel {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  textarea {
+    width: 100%;
+    height: 180px;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background: #fefefe;
+  }
+  button {
+    padding: 8px 16px;
+    margin: 5px 5px 0 0;
+    background: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+  }
+  button:hover { background: #2980b9; }
+  .btn-danger { background: #e74c3c; }
+  .btn-danger:hover { background: #c0392b; }
+  .btn-secondary { background: #7f8c8d; }
+  .btn-secondary:hover { background: #6c7a7a; }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 12px;
+    overflow-x: auto;
+    display: block;
+  }
+  th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  th { background: #eef2f5; }
+  pre {
+    background: #f0f0f0;
+    padding: 12px;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 13px;
+    margin: 10px 0 0;
+  }
+  .flow {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+  }
+  .flow .box {
+    background: #e9f0f5;
+    padding: 12px;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 200px;
+  }
+  .schema-table {
+    background: #f9f9f9;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .badge {
+    display: inline-block;
+    background: #2c3e50;
+    color: white;
+    border-radius: 20px;
+    padding: 2px 10px;
+    font-size: 12px;
+    margin-left: 8px;
+  }
+  hr { margin: 15px 0; }
+</style>
 </head>
 <body>
-<div class="container">
-  <header>
-    <h1>📚 Prontuário Escolar • 200 Alunos</h1>
-    <p>Base de dados fictícia com nome, CPF, RG, endereço completo, cidade e situação acadêmica.</p>
-  </header>
 
-  <div class="stats">
-    <div class="badge" id="totalAlunos">Total: 200 alunos</div>
-    <div class="filtro">
-      <input type="text" id="filtroNome" placeholder="🔍 Filtrar por nome, CPF ou cidade..." onkeyup="filtrarTabela()">
-      <button onclick="limparFiltro()">Limpar filtro</button>
-    </div>
-  </div>
+<header>
+  <h2>📚 Simulador SQLite – Banco de Dados Educacional</h2>
+  <p>Execute SQL real, explore, faça backup e aprenda com exemplos prontos!</p>
+</header>
 
-  <div class="tabela-wrapper">
-    <table id="tabelaAlunos">
-      <thead>
-        <tr>
-          <th>#</th><th>Nome completo</th><th>CPF</th><th>RG</th><th>Endereço</th><th>Cidade</th><th>Situação</th>
-        </tr>
-      </thead>
-      <tbody id="corpoTabela">
-        <!-- preenchido via JS -->
-      </tbody>
-    </table>
+<main>
+
+<!-- Mapa conceitual -->
+<div class="panel">
+  <h3>🗺️ Tópicos abordados</h3>
+  <div class="flow">
+    <div class="box"><strong>🔰 Básico</strong><ul><li>CREATE TABLE</li><li>INSERT</li><li>SELECT</li><li>UPDATE</li><li>DELETE</li></ul></div>
+    <div class="box"><strong>🔶 Intermediário</strong><ul><li>ALTER TABLE</li><li>WHERE / ORDER BY</li><li>GROUP BY / HAVING</li><li>JOIN (INNER, LEFT)</li></ul></div>
+    <div class="box"><strong>🔷 Avançado</strong><ul><li>BEGIN / COMMIT / ROLLBACK</li><li>BACKUP / RESTORE (.sql)</li><li>Índices (CREATE INDEX)</li></ul></div>
   </div>
-  <footer>
-    Dados gerados aleatoriamente conforme padrões brasileiros • Fins exclusivamente educacionais e demonstrativos
-  </footer>
 </div>
 
+<!-- Editor e controles -->
+<div class="panel">
+  <h3>⌨️ Editor SQL <span class="badge">Ctrl+Enter = Executar</span></h3>
+  <textarea id="sqlInput" placeholder="Digite seus comandos SQL aqui...">-- Exemplo inicial: cria tabela, insere dados e consulta
+CREATE TABLE IF NOT EXISTS alunos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome TEXT NOT NULL,
+  email TEXT UNIQUE,
+  nota REAL
+);
+
+INSERT INTO alunos (nome, email, nota) VALUES ('Ana', 'ana@email.com', 8.5);
+INSERT INTO alunos (nome, email, nota) VALUES ('Bruno', 'bruno@email.com', 7.0);
+
+SELECT * FROM alunos;</textarea>
+  <br>
+  <button onclick="executarSQL()">▶ Executar</button>
+  <button onclick="carregarExemplo('crud')">📋 Exemplo CRUD</button>
+  <button onclick="carregarExemplo('join')">🔗 Exemplo JOIN</button>
+  <button onclick="carregarExemplo('group')">📊 GROUP BY</button>
+  <button onclick="resetarBanco()" class="btn-danger">🗑 Resetar Banco</button>
+  <button onclick="downloadBackup()" class="btn-secondary">💾 Salvar .sql</button>
+  <label class="btn-secondary" style="display:inline-block; padding:8px 16px; border-radius:6px; background:#7f8c8d; cursor:pointer;">
+    📂 Carregar .sql <input type="file" id="fileInput" accept=".sql" style="display:none" onchange="uploadSQL()">
+  </label>
+  <button onclick="mostrarEsquema()" class="btn-secondary">📋 Mostrar Esquema</button>
+</div>
+
+<!-- Resultado da consulta -->
+<div class="panel">
+  <h3>📊 Resultado</h3>
+  <div id="resultArea"></div>
+</div>
+
+<!-- Último SQL e esquema -->
+<div class="panel">
+  <h3>🧾 Último SQL executado</h3>
+  <pre id="executedSQL"></pre>
+  <div id="schemaArea" style="margin-top: 15px;"></div>
+</div>
+
+</main>
+
+<script src="https://unpkg.com/sql.js@1.8.0/dist/sql-wasm.js"></script>
 <script>
-  // --------------------------------------------------------------
-  // 1. Listas de nomes, sobrenomes, ruas, cidades, situações
-  // --------------------------------------------------------------
-  const nomes = [
-    "Ana", "Bruno", "Carla", "Daniel", "Eduarda", "Felipe", "Gabriela", "Henrique", "Isabela", "João",
-    "Karina", "Lucas", "Mariana", "Nicolas", "Olivia", "Paulo", "Quintino", "Rafaela", "Samuel", "Tatiane",
-    "Ursula", "Vitor", "Wagner", "Ximena", "Yasmin", "Zilda", "Arthur", "Beatriz", "Caio", "Débora",
-    "Elisa", "Fabio", "Gustavo", "Heloísa", "Igor", "Júlia", "Larissa", "Marcelo", "Natália", "Otávio"
-  ];
-  const sobrenomes = [
-    "Silva", "Souza", "Costa", "Oliveira", "Pereira", "Rodrigues", "Almeida", "Nascimento", "Lima", "Araújo",
-    "Fernandes", "Gomes", "Martins", "Rocha", "Ribeiro", "Alves", "Barbosa", "Freitas", "Mendes", "Nunes",
-    "Carvalho", "Dias", "Fonseca", "Moraes", "Peixoto", "Queiroz", "Teixeira", "Vieira", "Xavier", "Zanetti"
-  ];
-  const ruas = [
-    "Rua das Flores", "Avenida Brasil", "Rua XV de Novembro", "Rua Amazonas", "Alameda Santos", "Rua José Bonifácio",
-    "Avenida Paulista", "Rua da Paz", "Travessa dos Coqueiros", "Rua do Comércio", "Avenida Central", "Rua Monteiro Lobato",
-    "Rua das Acácias", "Praça da República", "Rua Tiradentes", "Avenida Getúlio Vargas", "Rua Bela Vista", "Rua do Sol",
-    "Rua das Palmeiras", "Rua Ipiranga", "Rua São João", "Avenida Rio Branco", "Rua Duque de Caxias"
-  ];
-  const cidades = [
-    "São Paulo", "Rio de Janeiro", "Belo Horizonte", "Porto Alegre", "Salvador", "Curitiba", "Brasília",
-    "Fortaleza", "Recife", "Manaus", "Goiânia", "Belém", "Campinas", "São Luís", "Natal", "Maceió",
-    "Cuiabá", "Florianópolis", "João Pessoa", "Aracaju", "Teresina", "Vitória", "Campo Grande", "Ribeirão Preto"
-  ];
-  const situacoes = [
-    { texto: "Regular", classe: "situacao-regular" },
-    { texto: "Irregular (documentação pendente)", classe: "situacao-irregular" },
-    { texto: "Transferido", classe: "situacao-transferido" },
-    { texto: "Concluinte", classe: "situacao-concluinte" },
-    { texto: "Matrícula trancada", classe: "situacao-irregular" },
-    { texto: "Em processo de validação", classe: "situacao-regular" }
-  ];
+let db = null;
+let lastResult = null;
 
-  // --------------------------------------------------------------
-  // 2. Funções auxiliares para gerar dados válidos (formato BR)
-  // --------------------------------------------------------------
-  function gerarCPF() {
-    // Gera CPF aleatório no formato 000.000.000-00
-    const n1 = Math.floor(Math.random() * 10);
-    const n2 = Math.floor(Math.random() * 10);
-    const n3 = Math.floor(Math.random() * 10);
-    const n4 = Math.floor(Math.random() * 10);
-    const n5 = Math.floor(Math.random() * 10);
-    const n6 = Math.floor(Math.random() * 10);
-    const n7 = Math.floor(Math.random() * 10);
-    const n8 = Math.floor(Math.random() * 10);
-    const n9 = Math.floor(Math.random() * 10);
-    let d1 = 0, d2 = 0;
-    // Cálculo simplificado (para demonstração)
-    let soma = n1*10 + n2*9 + n3*8 + n4*7 + n5*6 + n6*5 + n7*4 + n8*3 + n9*2;
-    let resto = soma % 11;
-    d1 = resto < 2 ? 0 : 11 - resto;
-    soma = n1*11 + n2*10 + n3*9 + n4*8 + n5*7 + n6*6 + n7*5 + n8*4 + n9*3 + d1*2;
-    resto = soma % 11;
-    d2 = resto < 2 ? 0 : 11 - resto;
-    return `${n1}${n2}${n3}.${n4}${n5}${n6}.${n7}${n8}${n9}-${d1}${d2}`;
-  }
-
-  function gerarRG() {
-    // RG fictício: 2 letras + 8 dígitos (ex: MG-12.345.678-9)
-    const uf = ["SP","RJ","MG","RS","BA","PR","SC","PE","CE","GO"][Math.floor(Math.random()*10)];
-    const num = Math.floor(Math.random() * 90000000) + 10000000;
-    const digito = Math.floor(Math.random() * 10);
-    return `${uf}-${num.toString().slice(0,2)}.${num.toString().slice(2,5)}.${num.toString().slice(5,8)}-${digito}`;
-  }
-
-  function gerarNumeroEndereco() {
-    return Math.floor(Math.random() * 2000) + 1;
-  }
-
-  function gerarComplemento() {
-    const comp = ["apto", "casa", "bloco", "sala", "conjunto", ""];
-    const r = Math.random();
-    if (r < 0.3) return `, ${comp[Math.floor(Math.random()*4)]} ${Math.floor(Math.random()*300)+1}`;
-    return "";
-  }
-
-  // --------------------------------------------------------------
-  // 3. Gerar 200 alunos únicos (com IDs sequenciais)
-  // --------------------------------------------------------------
-  const alunos = [];
-  const cpfsUsados = new Set();
-  const rgsUsados = new Set();
-
-  for (let i = 1; i <= 200; i++) {
-    // Nome completo
-    const nome = nomes[Math.floor(Math.random() * nomes.length)];
-    const sobrenome = sobrenomes[Math.floor(Math.random() * sobrenomes.length)];
-    const nomeCompleto = `${nome} ${sobrenome}`;
-    
-    // CPF único (garantia de não repetir, pelo menos dentro do array)
-    let cpf;
-    do { cpf = gerarCPF(); } while (cpfsUsados.has(cpf));
-    cpfsUsados.add(cpf);
-    
-    // RG único
-    let rg;
-    do { rg = gerarRG(); } while (rgsUsados.has(rg));
-    rgsUsados.add(rg);
-    
-    // Endereço
-    const rua = ruas[Math.floor(Math.random() * ruas.length)];
-    const numero = gerarNumeroEndereco();
-    const complemento = gerarComplemento();
-    const endereco = `${rua}, ${numero}${complemento}`;
-    
-    // Cidade
-    const cidade = cidades[Math.floor(Math.random() * cidades.length)];
-    
-    // Situação / Tipo de prontuário
-    const situacaoObj = situacoes[Math.floor(Math.random() * situacoes.length)];
-    const situacao = situacaoObj.texto;
-    const classeSituacao = situacaoObj.classe;
-    
-    alunos.push({
-      id: i,
-      nome: nomeCompleto,
-      cpf: cpf,
-      rg: rg,
-      endereco: endereco,
-      cidade: cidade,
-      situacao: situacao,
-      classe: classeSituacao
+// Inicializa o banco em memória
+function initDB() {
+  return initSqlJs({ locateFile: f => `https://unpkg.com/sql.js@1.8.0/dist/${f}` })
+    .then(SQL => {
+      db = new SQL.Database();
+      // Cria uma tabela de exemplo para demonstração (se não existir)
+      db.run("CREATE TABLE IF NOT EXISTS alunos (id INTEGER PRIMARY KEY AUTOINCREMENT, nome TEXT, email TEXT, nota REAL)");
+      return db;
     });
-  }
+}
 
-  // --------------------------------------------------------------
-  // 4. Renderização da tabela + filtro dinâmico
-  // --------------------------------------------------------------
-  function renderizarTabela(filtro = "") {
-    const tbody = document.getElementById("corpoTabela");
-    tbody.innerHTML = "";
-    const filtroLower = filtro.toLowerCase();
-    let contador = 0;
-    
-    for (const aluno of alunos) {
-      const matchNome = aluno.nome.toLowerCase().includes(filtroLower);
-      const matchCpf = aluno.cpf.includes(filtroLower);
-      const matchCidade = aluno.cidade.toLowerCase().includes(filtroLower);
-      if (filtro !== "" && !(matchNome || matchCpf || matchCidade)) continue;
-      
-      contador++;
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${aluno.id}</td>
-        <td><strong>${aluno.nome}</strong></td>
-        <td>${aluno.cpf}</td>
-        <td>${aluno.rg}</td>
-        <td>${aluno.endereco}</td>
-        <td>${aluno.cidade}</td>
-        <td class="${aluno.classe}">📋 ${aluno.situacao}</td>
-      `;
-      tbody.appendChild(tr);
-    }
-    
-    // Atualiza contador visível
-    const totalSpan = document.getElementById("totalAlunos");
-    if (filtro !== "") {
-      totalSpan.innerHTML = `Filtrado: ${contador} / 200 alunos`;
+// Executa SQL principal
+async function executarSQL() {
+  if (!db) await initDB();
+  const sql = document.getElementById('sqlInput').value;
+  const resultDiv = document.getElementById('resultArea');
+  const executedPre = document.getElementById('executedSQL');
+  executedPre.textContent = sql;
+  resultDiv.innerHTML = '<em>⏳ Executando...</em>';
+
+  try {
+    // Suporte a múltiplos statements (sql.js já suporta)
+    const resultados = db.exec(sql);
+    resultDiv.innerHTML = '';
+
+    if (resultados.length === 0) {
+      resultDiv.innerHTML = '<p>✅ Comando executado com sucesso (nenhum resultado retornado).</p>';
     } else {
-      totalSpan.innerHTML = `Total: 200 alunos`;
+      for (let i = 0; i < resultados.length; i++) {
+        const res = resultados[i];
+        let html = `<td><h4>Resultado ${i+1}</h4>`;
+        html += '<table>';
+        res.columns.forEach(col => html += `<th>${col}</th>`);
+        html += '</tr>';
+        for (let row of res.values) {
+          html += '<tr>';
+          row.forEach(cell => html += `<td>${cell === null ? 'NULL' : cell}</td>`);
+          html += '</tr>';
+        }
+        html += '</table>';
+        resultDiv.innerHTML += html;
+      }
+    }
+  } catch (err) {
+    resultDiv.innerHTML = `<p style="color:red">❌ Erro: ${err.message}</p>`;
+    console.error(err);
+  }
+}
+
+// Carregar exemplos prontos
+function carregarExemplo(tipo) {
+  const area = document.getElementById('sqlInput');
+  if (tipo === 'crud') {
+    area.value = `-- CRUD completo
+CREATE TABLE IF NOT EXISTS produtos (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  nome TEXT,
+  preco REAL
+);
+
+INSERT INTO produtos (nome, preco) VALUES ('Caneta', 1.50);
+INSERT INTO produtos (nome, preco) VALUES ('Caderno', 12.90);
+
+SELECT * FROM produtos;
+
+UPDATE produtos SET preco = 2.00 WHERE nome = 'Caneta';
+
+DELETE FROM produtos WHERE nome = 'Caderno';
+
+SELECT * FROM produtos;`;
+  } else if (tipo === 'join') {
+    area.value = `-- Exemplo de JOIN entre duas tabelas
+CREATE TABLE IF NOT EXISTS clientes (
+  id INTEGER PRIMARY KEY,
+  nome TEXT
+);
+
+CREATE TABLE IF NOT EXISTS pedidos (
+  id INTEGER PRIMARY KEY,
+  cliente_id INTEGER,
+  produto TEXT
+);
+
+INSERT INTO clientes VALUES (1, 'Ana'), (2, 'Bruno');
+INSERT INTO pedidos VALUES (1, 1, 'Notebook'), (2, 1, 'Mouse'), (3, 2, 'Teclado');
+
+SELECT clientes.nome, pedidos.produto
+FROM clientes
+INNER JOIN pedidos ON clientes.id = pedidos.cliente_id;`;
+  } else if (tipo === 'group') {
+    area.value = `-- GROUP BY com funções agregadas
+CREATE TABLE IF NOT EXISTS vendas (
+  id INTEGER,
+  vendedor TEXT,
+  valor REAL
+);
+
+INSERT INTO vendas VALUES (1, 'Ana', 100), (2, 'Ana', 200), (3, 'Bruno', 150), (4, 'Bruno', 50);
+
+SELECT vendedor, SUM(valor) as total, COUNT(*) as qtd
+FROM vendas
+GROUP BY vendedor
+ORDER BY total DESC;`;
+  }
+  executarSQL(); // executa automaticamente após carregar
+}
+
+// Resetar banco (limpa tudo e recria)
+async function resetarBanco() {
+  if (confirm('⚠️ Isso apagará TODOS os dados e tabelas. Deseja continuar?')) {
+    await initDB();
+    document.getElementById('sqlInput').value = '-- Banco resetado. Agora você pode começar do zero.\nSELECT "Banco recriado com sucesso!" as status;';
+    executarSQL();
+    document.getElementById('schemaArea').innerHTML = '';
+  }
+}
+
+// Download do dump SQL (backup)
+function downloadBackup() {
+  if (!db) return alert('Banco não inicializado.');
+  const exportData = db.export();
+  const bytes = new Uint8Array(exportData);
+  // Cria um dump SQL a partir do conteúdo binário? Mais fácil exportar o schema + dados.
+  // sql.js não tem método direto para gerar .sql textual, mas podemos salvar o estado binário.
+  // Para fins didáticos, vamos salvar os comandos SQL atuais? Melhor: exportar como .sql com comandos.
+  // Vamos gerar um dump textual (simples) percorrendo todas as tabelas.
+  const stmts = [];
+  const tables = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+  if (tables.length && tables[0].values) {
+    for (let row of tables[0].values) {
+      const tableName = row[0];
+      // schema
+      const schemaRes = db.exec(`SELECT sql FROM sqlite_master WHERE type='table' AND name='${tableName}'`);
+      if (schemaRes.length && schemaRes[0].values.length) {
+        stmts.push(schemaRes[0].values[0][0] + ';');
+      }
+      // dados
+      const dataRes = db.exec(`SELECT * FROM ${tableName}`);
+      if (dataRes.length && dataRes[0].values.length) {
+        for (let rowData of dataRes[0].values) {
+          const cols = dataRes[0].columns;
+          const vals = rowData.map(v => v === null ? 'NULL' : (typeof v === 'string' ? `'${v.replace(/'/g, "''")}'` : v));
+          stmts.push(`INSERT INTO ${tableName} (${cols.join(',')}) VALUES (${vals.join(',')});`);
+        }
+      }
     }
   }
+  const dump = stmts.join('\n');
+  const blob = new Blob([dump], { type: 'text/sql' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `backup_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.sql`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
-  function filtrarTabela() {
-    const input = document.getElementById("filtroNome");
-    renderizarTabela(input.value);
+// Upload de arquivo .sql
+function uploadSQL() {
+  const file = document.getElementById('fileInput').files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('sqlInput').value = e.target.result;
+    alert('Arquivo carregado no editor. Clique em "Executar" para rodar os comandos.');
+  };
+  reader.readAsText(file);
+}
+
+// Mostrar esquema atual do banco (listar tabelas e colunas)
+async function mostrarEsquema() {
+  if (!db) await initDB();
+  const schemaDiv = document.getElementById('schemaArea');
+  try {
+    const tablesRes = db.exec("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'");
+    if (!tablesRes.length || tablesRes[0].values.length === 0) {
+      schemaDiv.innerHTML = '<p>📭 Nenhuma tabela criada ainda.</p>';
+      return;
+    }
+    let html = '<h4>📚 Estrutura do Banco</h4>';
+    for (let row of tablesRes[0].values) {
+      const tableName = row[0];
+      const pragma = db.exec(`PRAGMA table_info(${tableName})`);
+      html += `<strong>📌 ${tableName}</strong> <button onclick="executarSQLCustom('SELECT * FROM ${tableName}')" style="margin-left:10px; font-size:12px;">Ver dados</button><br>`;
+      if (pragma.length) {
+        html += '^<ul>';
+        for (let col of pragma[0].values) {
+          html += `<li>${col[1]} (${col[2]})${col[3] ? ' 🔑 PK' : ''}</li>`;
+        }
+        html += '</ul>';
+      }
+    }
+    schemaDiv.innerHTML = html;
+  } catch(e) {
+    schemaDiv.innerHTML = `<p style="color:red">Erro ao ler esquema: ${e.message}</p>`;
   }
+}
 
-  function limparFiltro() {
-    document.getElementById("filtroNome").value = "";
-    renderizarTabela("");
-  }
+// Função auxiliar para executar SQL específico (usada no esquema)
+window.executarSQLCustom = function(sql) {
+  document.getElementById('sqlInput').value = sql;
+  executarSQL();
+};
 
-  // Inicializa a tabela com todos os dados
-  renderizarTabela("");
+// Inicialização e atalho Ctrl+Enter
+window.onload = async () => {
+  await initDB();
+  executarSQL();  // executa o exemplo inicial
+  document.getElementById('sqlInput').addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      executarSQL();
+    }
+  });
+};
+
+// Garantir que variáveis globais estão acessíveis
+window.executarSQL = executarSQL;
+window.carregarExemplo = carregarExemplo;
+window.resetarBanco = resetarBanco;
+window.downloadBackup = downloadBackup;
+window.mostrarEsquema = mostrarEsquema;
 </script>
 </body>
 </html>
