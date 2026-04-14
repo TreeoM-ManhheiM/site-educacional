@@ -3,11 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Selenium IDE Semana 8 – Casos de Teste e Automação</title>
+    <title>Simulador Semana 8 – Casos de Teste e Automação</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f0f2f5;
@@ -28,10 +26,7 @@
             padding: 15px 20px;
             text-align: center;
         }
-        .main-content {
-            display: flex;
-            flex-wrap: wrap;
-        }
+        .main-content { display: flex; flex-wrap: wrap; }
         .ide-panel {
             width: 350px;
             background: #ecf0f1;
@@ -56,18 +51,9 @@
             font-weight: bold;
             transition: 0.2s;
         }
-        .toolbar button:hover {
-            background: #2c3e50;
-            transform: scale(1.02);
-        }
-        .record-active {
-            background: #e74c3c !important;
-            box-shadow: 0 0 5px red;
-        }
-        .loop-active {
-            background: #f39c12 !important;
-            box-shadow: 0 0 5px orange;
-        }
+        .toolbar button:hover { background: #2c3e50; transform: scale(1.02); }
+        .record-active { background: #e74c3c !important; box-shadow: 0 0 5px red; }
+        .loop-active { background: #f39c12 !important; box-shadow: 0 0 5px orange; }
         .command-list-container {
             background: #fff;
             border-radius: 12px;
@@ -77,11 +63,7 @@
             max-height: 300px;
             box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
         }
-        .command-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+        .command-list { list-style: none; padding: 0; margin: 0; }
         .command-list li {
             font-family: monospace;
             background: #f9f9f9;
@@ -98,9 +80,7 @@
             gap: 10px;
             font-size: 0.8rem;
         }
-        .loop-config label {
-            font-weight: bold;
-        }
+        .loop-config label { font-weight: bold; }
         .loop-config input {
             width: 70px;
             padding: 4px;
@@ -138,9 +118,6 @@
             margin-bottom: 10px;
             flex-wrap: wrap;
         }
-        .log-header h3 {
-            margin: 0;
-        }
         .log-header button {
             background: #3498db;
             border: none;
@@ -164,16 +141,9 @@
             margin-bottom: 5px;
             word-break: break-all;
         }
-        .log-time {
-            color: #f39c12;
-            font-weight: bold;
-        }
-        .log-action {
-            color: #2ecc71;
-        }
-        .log-error {
-            color: #e74c3c;
-        }
+        .log-time { color: #f39c12; font-weight: bold; }
+        .log-action { color: #2ecc71; }
+        .log-error { color: #e74c3c; }
         .scenarios-area {
             flex: 1;
             padding: 20px;
@@ -196,21 +166,10 @@
             transition: 0.2s;
             font-weight: bold;
         }
-        .tab-btn.active {
-            background: #3498db;
-            color: white;
-        }
-        .scenario {
-            display: none;
-            animation: fade 0.3s;
-        }
-        .scenario.active-scenario {
-            display: block;
-        }
-        @keyframes fade {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        .tab-btn.active { background: #3498db; color: white; }
+        .scenario { display: none; animation: fade 0.3s; }
+        .scenario.active-scenario { display: block; }
+        @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
         .mock-card {
             background: #fef9e4;
             border: 1px solid #f1c40f;
@@ -218,14 +177,8 @@
             padding: 20px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
         input, textarea {
             width: 100%;
             padding: 8px 12px;
@@ -257,17 +210,6 @@
             font-size: 0.8rem;
             border-top: 1px solid #bdc3c7;
         }
-        #secretMessage {
-            transition: opacity 0.3s ease, transform 0.2s ease;
-            opacity: 0;
-            transform: scale(0.9);
-            display: none;
-        }
-        #secretMessage.show {
-            display: block !important;
-            opacity: 1;
-            transform: scale(1);
-        }
         .highlight {
             animation: blink 0.3s ease-in-out 2;
             box-shadow: 0 0 0 2px #f1c40f, 0 0 0 4px #f39c12;
@@ -278,6 +220,18 @@
             50% { box-shadow: 0 0 0 4px #f39c12; }
             100% { box-shadow: 0 0 0 0 #f1c40f; }
         }
+        /* Estilos para múltiplas páginas */
+        .page { display: none; }
+        .page.active-page { display: block; }
+        .nav-links { margin-bottom: 15px; display: flex; gap: 10px; }
+        .nav-links button {
+            background: #3498db;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
         @media (max-width: 1000px) {
             .log-panel { width: 300px; }
             .ide-panel { width: 300px; }
@@ -287,8 +241,8 @@
 <body>
 <div class="container">
     <header>
-        <h1>Semana 8 – Casos de Teste e Automação</h1>
-        <p>Grave, reproduza, veja os logs e exporte o relatorio do teste.</p>
+        <h1>Simulador Selenium IDE </h1>
+        <p>Grave, reproduza com espera inteligente, elementos dinamicos e navegacao.</p>
     </header>
     <div class="main-content">
         <div class="ide-panel">
@@ -323,9 +277,12 @@
                 <button class="tab-btn" data-scenario="cadastro">Cadastro</button>
                 <button class="tab-btn" data-scenario="formulario">Contato</button>
                 <button class="tab-btn" data-scenario="validacao">Validacao</button>
+                <button class="tab-btn" data-scenario="espera">Espera Inteligente</button>
+                <button class="tab-btn" data-scenario="ajax">AJAX Dinamico</button>
+                <button class="tab-btn" data-scenario="multipaginas">Multiplas Paginas</button>
             </div>
 
-            <!-- Login -->
+            <!-- Login (original) -->
             <div id="scenario-login" class="scenario active-scenario">
                 <div class="mock-card">
                     <h3>Login</h3>
@@ -335,7 +292,8 @@
                     <div id="loginFeedback" class="feedback" style="display:none;"></div>
                 </div>
             </div>
-            <!-- Cadastro -->
+
+            <!-- Cadastro (original) -->
             <div id="scenario-cadastro" class="scenario">
                 <div class="mock-card">
                     <h3>Cadastro</h3>
@@ -346,7 +304,8 @@
                     <div id="cadFeedback" class="feedback" style="display:none;"></div>
                 </div>
             </div>
-            <!-- Contato -->
+
+            <!-- Contato (original) -->
             <div id="scenario-formulario" class="scenario">
                 <div class="mock-card">
                     <h3>Contato</h3>
@@ -357,7 +316,8 @@
                     <div id="contatoFeedback" class="feedback" style="display:none;"></div>
                 </div>
             </div>
-            <!-- Validacao -->
+
+            <!-- Validacao (original) -->
             <div id="scenario-validacao" class="scenario">
                 <div class="mock-card">
                     <h3>Validacao de pagina</h3>
@@ -370,6 +330,59 @@
                     </div>
                     <button id="assertVisibleBtn" class="mock-btn recordable" style="background:#3498db;">Assert visivel</button>
                     <div id="assertResult" style="margin-top:10px; font-weight:bold;"></div>
+                </div>
+            </div>
+
+            <!-- Espera Inteligente (WebDriverWait didático) -->
+            <div id="scenario-espera" class="scenario">
+                <div class="mock-card">
+                    <h3>Espera Inteligente (WebDriverWait)</h3>
+                    <p>O botao abaixo so fica clicavel apos 3 segundos. Na reproducao, o simulador aguarda ate 5 segundos pelo elemento.</p>
+                    <button id="slowButton" class="mock-btn recordable" disabled style="background:#95a5a6;">Aguardando...</button>
+                    <div id="waitFeedback" class="feedback" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- AJAX Dinamico (elementos que aparecem depois) -->
+            <div id="scenario-ajax" class="scenario">
+                <div class="mock-card">
+                    <h3>Elemento Dinamico (AJAX fake)</h3>
+                    <p>Clique em "Carregar dados" e apos 2 segundos um novo campo aparecera.</p>
+                    <button id="loadAjaxBtn" class="mock-btn recordable" style="background:#f39c12;">Carregar dados (AJAX fake)</button>
+                    <div id="dynamicFieldContainer" style="margin-top: 15px;"></div>
+                    <div id="ajaxFeedback" class="feedback" style="display:none;"></div>
+                </div>
+            </div>
+
+            <!-- Multiplas Paginas (navegacao simulada com pushState) - CORRIGIDO -->
+            <div id="scenario-multipaginas" class="scenario">
+                <div class="mock-card">
+                    <h3>Multiplas Paginas (navegacao simulada)</h3>
+                    <div class="nav-links">
+                        <!-- Botões com classe recordable para gravação -->
+                        <button id="goPage1Btn" class="mock-btn recordable" style="background:#3498db;">Pagina 1</button>
+                        <button id="goPage2Btn" class="mock-btn recordable" style="background:#3498db;">Pagina 2</button>
+                        <button id="goPage3Btn" class="mock-btn recordable" style="background:#3498db;">Pagina 3</button>
+                    </div>
+                    <div id="page1" class="page active-page">
+                        <h4>Pagina 1 - Home</h4>
+                        <p>Conteudo da pagina inicial.</p>
+                        <input type="text" id="page1Input" placeholder="Campo pagina 1" class="recordable">
+                        <button id="page1Btn" class="mock-btn recordable">Clique Pagina 1</button>
+                    </div>
+                    <div id="page2" class="page">
+                        <h4>Pagina 2 - Sobre</h4>
+                        <p>Informacoes sobre o site.</p>
+                        <input type="text" id="page2Input" placeholder="Campo pagina 2" class="recordable">
+                        <button id="page2Btn" class="mock-btn recordable">Clique Pagina 2</button>
+                    </div>
+                    <div id="page3" class="page">
+                        <h4>Pagina 3 - Contato</h4>
+                        <p>Formulario de contato.</p>
+                        <input type="text" id="page3Input" placeholder="Campo pagina 3" class="recordable">
+                        <button id="page3Btn" class="mock-btn recordable">Clique Pagina 3</button>
+                    </div>
+                    <div id="navFeedback" class="feedback" style="display:none;"></div>
                 </div>
             </div>
         </div>
@@ -393,7 +406,6 @@
     let commands = [];
     let playing = false;
     let loopActive = false;
-    let loopTimeoutId = null;
     let testStartTime = null;
 
     // Elementos DOM
@@ -410,7 +422,7 @@
     const testDurationInput = document.getElementById('testDuration');
     const logContainer = document.getElementById('logContainer');
 
-    // ==================== FUNCOES DE LOG (SEM EMOJIS) ====================
+    // ==================== FUNCOES DE LOG ====================
     function addLogEntry(message, type = 'info') {
         const entry = document.createElement('div');
         entry.className = 'log-entry';
@@ -433,6 +445,19 @@
         addLogEntry(msg, success ? 'action' : 'error');
     }
 
+    // ==================== ESPERA INTELIGENTE (WebDriverWait didático) ====================
+    async function waitForElement(selector, timeout = 5000, interval = 100) {
+        const start = Date.now();
+        while (Date.now() - start < timeout) {
+            const el = document.querySelector(selector);
+            if (el && el.offsetParent !== null) { // visivel
+                return el;
+            }
+            await new Promise(r => setTimeout(r, interval));
+        }
+        throw new Error(`Timeout de ${timeout}ms: elemento "${selector}" nao ficou visivel`);
+    }
+
     // ==================== GERENCIAMENTO DE COMANDOS ====================
     function renderCommands() {
         if (commands.length === 0) {
@@ -453,13 +478,16 @@
         addLogEntry(`Gravado: ${action.toUpperCase()} em ${selector}${value ? ' = '+value : ''}`, 'success');
     }
 
-    // ==================== EXECUCAO COM HIGHLIGHT E LOG ====================
+    // ==================== EXECUCAO COM ESPERA INTELIGENTE ====================
     async function executeCommand(cmd) {
-        const el = document.querySelector(cmd.selector);
-        if (!el) {
-            addLogEntry(`ERRO: Elemento nao encontrado - ${cmd.selector}`, 'error');
+        let el;
+        try {
+            el = await waitForElement(cmd.selector, 5000);
+        } catch (err) {
+            addLogEntry(`ERRO: ${err.message}`, 'error');
             return false;
         }
+
         el.classList.add('highlight');
         setTimeout(() => el.classList.remove('highlight'), 400);
         
@@ -484,18 +512,11 @@
                     setTimeout(() => assertDiv.innerHTML = '', 1500);
                 }
             }
-            await new Promise(r => setTimeout(r, 350));
+            await new Promise(r => setTimeout(r, 200));
             return true;
         } catch (err) {
             addLogEntry(`Erro ao executar ${cmd.action}: ${err.message}`, 'error');
             return false;
-        }
-    }
-
-    async function runSequence() {
-        for (let cmd of commands) {
-            if (!loopActive && !playing) break;
-            await executeCommand(cmd);
         }
     }
 
@@ -569,31 +590,33 @@
         addLogEntry('Lista de comandos limpa.', 'action');
     }
 
-    // ==================== EXPORTACAO PARA PYTHON (MODIFICADO) ====================
+    // ==================== EXPORTACAO PARA PYTHON ====================
     function exportCommandsToPython() {
         let code = `# Comandos exportados do simulador - Selenium WebDriver (Python)\n`;
         code += `from selenium import webdriver\n`;
         code += `from selenium.webdriver.common.by import By\n`;
+        code += `from selenium.webdriver.support.ui import WebDriverWait\n`;
+        code += `from selenium.webdriver.support import expected_conditions as EC\n`;
         code += `import time\n\n`;
         code += `driver = webdriver.Chrome()\n`;
         code += `driver.get("https://9od.com.br/simulado")  # URL de exemplo\n\n`;
         
         commands.forEach(cmd => {
             if (cmd.action === 'click') {
-                code += `driver.find_element(By.CSS_SELECTOR, "${cmd.selector}").click()\n`;
+                code += `WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "${cmd.selector}"))).click()\n`;
             } else if (cmd.action === 'type') {
-                // Escapa aspas duplas no valor
                 let escapedValue = cmd.value.replace(/"/g, '\\"');
-                code += `driver.find_element(By.CSS_SELECTOR, "${cmd.selector}").send_keys("${escapedValue}")\n`;
+                code += `elem = WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "${cmd.selector}")))\n`;
+                code += `elem.send_keys("${escapedValue}")\n`;
             } else if (cmd.action === 'assertVisible') {
                 code += `# Assertiva: elemento "${cmd.selector}" deve estar visivel\n`;
-                code += `assert driver.find_element(By.CSS_SELECTOR, "${cmd.selector}").is_displayed()\n`;
+                code += `assert WebDriverWait(driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, "${cmd.selector}")))\n`;
             }
         });
         
         code += `\n# Fechar navegador\ndriver.quit()\n`;
         exportCodePre.textContent = code;
-        addLogEntry('Comandos exportados para codigo Python.', 'success');
+        addLogEntry('Comandos exportados para codigo Python (com WebDriverWait).', 'success');
     }
 
     // ==================== CAPTURA DE EVENTOS PARA GRAVACAO ====================
@@ -648,7 +671,7 @@
     loopTimedBtn.onclick = () => { if (loopActive) stopLoop(); else startTimedLoop(); };
     stopTestBtn.onclick = () => { stopAll(); addLogEntry('Teste interrompido pelo usuario.', 'error'); };
     clearBtn.onclick = () => clearCommands();
-    exportCommandsBtn.onclick = () => exportCommandsToPython();   // Chamada para Python
+    exportCommandsBtn.onclick = () => exportCommandsToPython();
     exportLogBtn.onclick = () => exportLogToTxt();
 
     function exportLogToTxt() {
@@ -657,13 +680,8 @@
         logText += `Total de comandos gravados: ${commands.length}\n`;
         logText += `Duracao configurada: ${testDurationInput.value} min\n`;
         logText += "===============================================\n\n";
-        
         const logEntries = document.querySelectorAll('#logContainer .log-entry');
-        logEntries.forEach(entry => {
-            let rawText = entry.innerText;
-            logText += rawText + "\n";
-        });
-        
+        logEntries.forEach(entry => { logText += entry.innerText + "\n"; });
         const blob = new Blob([logText], { type: 'text/plain' });
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
@@ -676,7 +694,8 @@
         addLogEntry('Log salvo como arquivo .txt', 'success');
     }
 
-    // ==================== FEEDBACKS DOS CENARIOS (SEM EMOJIS) ====================
+    // ==================== CENARIOS ESPECIFICOS ====================
+    // Feedbacks originais
     document.getElementById('loginSubmitBtn')?.addEventListener('click', () => {
         let fb = document.getElementById('loginFeedback');
         fb.style.display = 'block';
@@ -696,7 +715,7 @@
         setTimeout(() => fb.style.display = 'none', 1500);
     });
 
-    // Validacao com animacao
+    // Validacao
     const showBtn = document.getElementById('showMsgBtn');
     const hideBtn = document.getElementById('hideMsgBtn');
     const secretMsg = document.getElementById('secretMessage');
@@ -725,7 +744,74 @@
         });
     }
 
-    // Troca de abas
+    // ===== ESPERA INTELIGENTE: botao que habilita apos 3 segundos =====
+    const slowButton = document.getElementById('slowButton');
+    if (slowButton) {
+        setTimeout(() => {
+            slowButton.disabled = false;
+            slowButton.style.background = '#27ae60';
+            slowButton.textContent = 'Botao agora esta clicavel!';
+            addLogEntry('Elemento #slowButton ficou visivel/habilitado apos 3 segundos.', 'success');
+        }, 3000);
+        slowButton.addEventListener('click', () => {
+            let fb = document.getElementById('waitFeedback');
+            fb.style.display = 'block';
+            fb.innerHTML = 'Botao clicado! (demonstracao de espera inteligente)';
+            setTimeout(() => fb.style.display = 'none', 1500);
+        });
+    }
+
+    // ===== AJAX DINAMICO: insere campo apos 2 segundos =====
+    const loadAjaxBtn = document.getElementById('loadAjaxBtn');
+    if (loadAjaxBtn) {
+        loadAjaxBtn.addEventListener('click', () => {
+            const container = document.getElementById('dynamicFieldContainer');
+            container.innerHTML = '<p style="color: #f39c12;">Carregando dados...</p>';
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div class="form-group">
+                        <label>Campo dinamico (AJAX):</label>
+                        <input type="text" id="dynamicField" class="recordable" placeholder="Este campo apareceu apos 2 segundos">
+                    </div>
+                `;
+                addLogEntry('Elemento #dynamicField foi inserido no DOM (AJAX fake).', 'success');
+                setupRecording(); // reconfigura gravacao para o novo campo
+            }, 2000);
+        });
+    }
+
+    // ===== MULTIPLAS PAGINAS (navegacao simulada com pushState) =====
+    function showPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
+        document.getElementById(`page${pageId}`).classList.add('active-page');
+        // Simula mudanca de URL na barra de endereco (apenas didatico)
+        history.pushState({}, '', `#pagina${pageId}`);
+        addLogEntry(`Navegacao simulada para Pagina ${pageId} (URL alterada para #pagina${pageId})`, 'action');
+    }
+    document.getElementById('goPage1Btn')?.addEventListener('click', () => showPage(1));
+    document.getElementById('goPage2Btn')?.addEventListener('click', () => showPage(2));
+    document.getElementById('goPage3Btn')?.addEventListener('click', () => showPage(3));
+    // Botoes das paginas (feedback)
+    document.getElementById('page1Btn')?.addEventListener('click', () => {
+        let fb = document.getElementById('navFeedback');
+        fb.style.display = 'block';
+        fb.innerHTML = 'Clique na Pagina 1';
+        setTimeout(() => fb.style.display = 'none', 1000);
+    });
+    document.getElementById('page2Btn')?.addEventListener('click', () => {
+        let fb = document.getElementById('navFeedback');
+        fb.style.display = 'block';
+        fb.innerHTML = 'Clique na Pagina 2';
+        setTimeout(() => fb.style.display = 'none', 1000);
+    });
+    document.getElementById('page3Btn')?.addEventListener('click', () => {
+        let fb = document.getElementById('navFeedback');
+        fb.style.display = 'block';
+        fb.innerHTML = 'Clique na Pagina 3';
+        setTimeout(() => fb.style.display = 'none', 1000);
+    });
+
+    // ==================== TROCA DE ABAS ====================
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             document.querySelectorAll('.scenario').forEach(sc => sc.classList.remove('active-scenario'));
@@ -736,10 +822,11 @@
         });
     });
 
-    // Inicializacao
+    // ==================== INICIALIZACAO ====================
     setupRecording();
     clearCommands();
-    addLogEntry('Simulador pronto. Defina a duracao (ex: 2 min) e clique em "Loop (2 min)" apos gravar comandos.', 'success');
+    addLogEntry('Simulador pronto. Defina a duracao e clique em "Loop (2 min)" apos gravar comandos.', 'success');
+    addLogEntry('Novos cenarios: Espera Inteligente, AJAX Dinamico, Multiplas Paginas.', 'info');
 </script>
 </body>
 </html>
