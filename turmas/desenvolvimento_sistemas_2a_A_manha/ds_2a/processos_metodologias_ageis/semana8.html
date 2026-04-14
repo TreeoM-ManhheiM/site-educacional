@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Selenium IDE - Com Logs e Exportacao</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1600px;
+            margin: auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .ide-panel {
+            width: 350px;
+            background: #ecf0f1;
+            border-right: 1px solid #bdc3c7;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+        .toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .toolbar button {
+            background: #34495e;
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .toolbar button:hover {
+            background: #2c3e50;
+            transform: scale(1.02);
+        }
+        .record-active {
+            background: #e74c3c !important;
+            box-shadow: 0 0 5px red;
+        }
+        .loop-active {
+            background: #f39c12 !important;
+            box-shadow: 0 0 5px orange;
+        }
+        .command-list-container {
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px;
+            margin-bottom: 20px;
+            overflow-y: auto;
+            max-height: 300px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+        }
+        .command-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .command-list li {
+            font-family: monospace;
+            background: #f9f9f9;
+            margin: 6px 0;
+            padding: 8px;
+            border-left: 4px solid #3498db;
+            font-size: 0.85rem;
+        }
+        .loop-config {
+            margin: 10px 0;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.8rem;
+        }
+        .loop-config label {
+            font-weight: bold;
+        }
+        .loop-config input {
+            width: 70px;
+            padding: 4px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        .export-area {
+            background: #fff;
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        .export-area pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 8px;
+            overflow-x: auto;
+            font-size: 0.7rem;
+            margin: 10px 0 0;
+        }
+        .log-panel {
+            width: 400px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border-left: 1px solid #bdc3c7;
+        }
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .log-header h3 {
+            margin: 0;
+        }
+        .log-header button {
+            background: #3498db;
+            border: none;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        .log-container {
+            background: #1a252f;
+            border-radius: 12px;
+            padding: 10px;
+            height: 500px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        .log-entry {
+            border-bottom: 1px solid #34495e;
+            padding: 5px;
+            margin-bottom: 5px;
+            word-break: break-all;
+        }
+        .log-time {
+            color: #f39c12;
+            font-weight: bold;
+        }
+        .log-action {
+            color: #2ecc71;
+        }
+        .log-error {
+            color: #e74c3c;
+        }
+        .scenarios-area {
+            flex: 1;
+            padding: 20px;
+            background: #ffffff;
+        }
+        .scenario-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border-radius: 30px 30px 0 0;
+            transition: 0.2s;
+            font-weight: bold;
+        }
+        .tab-btn.active {
+            background: #3498db;
+            color: white;
+        }
+        .scenario {
+            display: none;
+            animation: fade 0.3s;
+        }
+        .scenario.active-scenario {
+            display: block;
+        }
+        @keyframes fade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .mock-card {
+            background: #fef9e4;
+            border: 1px solid #f1c40f;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        button.mock-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #e8f8f5;
+            color: #0e6251;
+        }
+        footer {
+            background: #ecf0f1;
+            text-align: center;
+            padding: 12px;
+            font-size: 0.8rem;
+            border-top: 1px solid #bdc3c7;
+        }
+        #secretMessage {
+            transition: opacity 0.3s ease, transform 0.2s ease;
+            opacity: 0;
+            transform: scale(0.9);
+            display: none;
+        }
+        #secretMessage.show {
+            display: block !important;
+            opacity: 1;
+            transform: scale(1);
+        }
+        .highlight {
+            animation: blink 0.3s ease-in-out 2;
+            box-shadow: 0 0 0 2px #f1c40f, 0 0 0 4px #f39c12;
+            border-radius: 8px;
+        }
+        @keyframes blink {
+            0% { box-shadow: 0 0 0 0 #f1c40f; }
+            50% { box-shadow: 0 0 0 4px #f39c12; }
+            100% { box-shadow: 0 0 0 0 #f1c40f; }
+        }
+        @media (max-width: 1000px) {
+            .log-panel { width: 300px; }
+            .ide-panel { width: 300px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Simulador Selenium IDE - Com Logs em Tempo Real</h1>
+        <p>Grave, reproduza, veja os logs e exporte o relatorio do teste.</p>
+    </header>
+    <div class="main-content">
+        <div class="ide-panel">
+            <div class="toolbar">
+                <button id="recordBtn">Record</button>
+                <button id="playBtn">Play (uma vez)</button>
+                <button id="loopTimedBtn">Loop (2 min)</button>
+                <button id="stopTestBtn">Parar Teste</button>
+                <button id="clearBtn">Clear</button>
+            </div>
+            <div class="loop-config">
+                <label>Duracao (min):</label>
+                <input type="number" id="testDuration" value="2" step="0.5" min="0.1"> min
+                <label>Intervalo entre loops:</label>
+                <input type="number" id="loopDelay" value="1" step="0.5" min="0.3"> s
+            </div>
+            <div class="command-list-container">
+                <h4>Comandos gravados:</h4>
+                <ul id="commandList" class="command-list">
+                    <li style="color:gray;">Nenhum comando ainda.</li>
+                </ul>
+            </div>
+            <div class="export-area">
+                <button id="exportCommandsBtn">Exportar comandos (Java)</button>
+                <pre id="exportCode">// Codigo sera gerado aqui</pre>
+            </div>
+        </div>
+
+        <div class="scenarios-area">
+            <div class="scenario-tabs">
+                <button class="tab-btn active" data-scenario="login">Login</button>
+                <button class="tab-btn" data-scenario="cadastro">Cadastro</button>
+                <button class="tab-btn" data-scenario="formulario">Contato</button>
+                <button class="tab-btn" data-scenario="validacao">Validacao</button>
+            </div>
+
+            <!-- Login -->
+            <div id="scenario-login" class="scenario active-scenario">
+                <div class="mock-card">
+                    <h3>Login</h3>
+                    <div class="form-group"><label>Usuario:</label><input type="text" id="loginUser" class="recordable"></div>
+                    <div class="form-group"><label>Senha:</label><input type="password" id="loginPass" class="recordable"></div>
+                    <button id="loginSubmitBtn" class="mock-btn recordable">Entrar</button>
+                    <div id="loginFeedback" class="feedback" style="display:none;"></div>
+                </div>
+            </div>
+            <!-- Cadastro -->
+            <div id="scenario-cadastro" class="scenario">
+                <div class="mock-card">
+                    <h3>Cadastro</h3>
+                    <div class="form-group"><label>Nome:</label><input type="text" id="cadNome" class="recordable"></div>
+                    <div class="form-group"><label>E-mail:</label><input type="email" id="cadEmail" class="recordable"></div>
+                    <div class="form-group"><label>Senha:</label><input type="password" id="cadSenha" class="recordable"></div>
+                    <button id="cadastrarBtn" class="mock-btn recordable">Cadastrar</button>
+                    <div id="cadFeedback" class="feedback" style="display:none;"></div>
+                </div>
+            </div>
+            <!-- Contato -->
+            <div id="scenario-formulario" class="scenario">
+                <div class="mock-card">
+                    <h3>Contato</h3>
+                    <div class="form-group"><label>Nome:</label><input type="text" id="contatoNome" class="recordable"></div>
+                    <div class="form-group"><label>Mensagem:</label><textarea id="contatoMsg" rows="3" class="recordable"></textarea></div>
+                    <div class="form-group"><label><input type="checkbox" id="termosCheck" class="recordable"> Aceito termos</label></div>
+                    <button id="enviarContatoBtn" class="mock-btn recordable">Enviar</button>
+                    <div id="contatoFeedback" class="feedback" style="display:none;"></div>
+                </div>
+            </div>
+            <!-- Validacao -->
+            <div id="scenario-validacao" class="scenario">
+                <div class="mock-card">
+                    <h3>Validacao de pagina</h3>
+                    <div style="display: flex; gap: 10px;">
+                        <button id="showMsgBtn" class="mock-btn recordable" style="background:#f39c12;">Mostrar mensagem</button>
+                        <button id="hideMsgBtn" class="mock-btn recordable" style="background:#95a5a6;">Esconder</button>
+                    </div>
+                    <div id="secretMessage" style="margin:15px 0; padding:10px; background:#fff3cd; border-radius:8px; display:none;">
+                        Mensagem secreta!
+                    </div>
+                    <button id="assertVisibleBtn" class="mock-btn recordable" style="background:#3498db;">Assert visivel</button>
+                    <div id="assertResult" style="margin-top:10px; font-weight:bold;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="log-panel">
+            <div class="log-header">
+                <h3>Log de Execucao (tempo real)</h3>
+                <button id="exportLogBtn">Salvar Log (.txt)</button>
+            </div>
+            <div id="logContainer" class="log-container">
+                <div class="log-entry">Sistema pronto. Ative Record e grave acoes.</div>
+            </div>
+        </div>
+    </div>
+    <footer>Loop com duracao definida + logs detalhados. Use "Parar Teste" para interromper e salvar o log.</footer>
+</div>
+
+<script>
+    // ==================== ESTADO GLOBAL ====================
+    let recording = false;
+    let commands = [];
+    let playing = false;
+    let loopActive = false;
+    let loopTimeoutId = null;
+    let testStartTime = null;
+
+    // Elementos DOM
+    const recordBtn = document.getElementById('recordBtn');
+    const playBtn = document.getElementById('playBtn');
+    const loopTimedBtn = document.getElementById('loopTimedBtn');
+    const stopTestBtn = document.getElementById('stopTestBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const exportCommandsBtn = document.getElementById('exportCommandsBtn');
+    const exportLogBtn = document.getElementById('exportLogBtn');
+    const commandListEl = document.getElementById('commandList');
+    const exportCodePre = document.getElementById('exportCode');
+    const loopDelayInput = document.getElementById('loopDelay');
+    const testDurationInput = document.getElementById('testDuration');
+    const logContainer = document.getElementById('logContainer');
+
+    // ==================== FUNCOES DE LOG (SEM EMOJIS) ====================
+    function addLogEntry(message, type = 'info') {
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        const now = new Date();
+        const timestamp = now.toLocaleTimeString('pt-BR', { hour12: false }) + '.' + String(now.getMilliseconds()).padStart(3, '0');
+        let prefix = '';
+        if (type === 'action') prefix = '[ACAO] ';
+        else if (type === 'error') prefix = '[ERRO] ';
+        else if (type === 'success') prefix = '[OK] ';
+        else prefix = '[INFO] ';
+        entry.innerHTML = `<span class="log-time">[${timestamp}]</span> ${prefix}<span class="log-action">${message}</span>`;
+        logContainer.appendChild(entry);
+        entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        while (logContainer.children.length > 500) logContainer.removeChild(logContainer.firstChild);
+    }
+
+    function logAction(cmd, success = true) {
+        let msg = `${cmd.action.toUpperCase()} | ${cmd.selector}`;
+        if (cmd.value) msg += ` | valor: "${cmd.value}"`;
+        addLogEntry(msg, success ? 'action' : 'error');
+    }
+
+    // ==================== GERENCIAMENTO DE COMANDOS ====================
+    function renderCommands() {
+        if (commands.length === 0) {
+            commandListEl.innerHTML = '<li style="color:gray;">Nenhum comando. Ative Record e interaja.</li>';
+            return;
+        }
+        commandListEl.innerHTML = commands.map((cmd, i) => {
+            let txt = `${i+1}. ${cmd.action.toUpperCase()} | ${cmd.selector}`;
+            if (cmd.value) txt += ` | "${cmd.value}"`;
+            return `<li>${txt}</li>`;
+        }).join('');
+    }
+
+    function addCommand(action, selector, value = '') {
+        if (!recording) return;
+        commands.push({ action, selector, value });
+        renderCommands();
+        addLogEntry(`Gravado: ${action.toUpperCase()} em ${selector}${value ? ' = '+value : ''}`, 'success');
+    }
+
+    // ==================== EXECUCAO COM HIGHLIGHT E LOG ====================
+    async function executeCommand(cmd) {
+        const el = document.querySelector(cmd.selector);
+        if (!el) {
+            addLogEntry(`ERRO: Elemento nao encontrado - ${cmd.selector}`, 'error');
+            return false;
+        }
+        el.classList.add('highlight');
+        setTimeout(() => el.classList.remove('highlight'), 400);
+        
+        try {
+            if (cmd.action === 'click') {
+                el.click();
+                el.dispatchEvent(new Event('click', { bubbles: true }));
+                logAction(cmd, true);
+            } else if (cmd.action === 'type') {
+                el.value = cmd.value;
+                el.dispatchEvent(new Event('input', { bubbles: true }));
+                el.dispatchEvent(new Event('change', { bubbles: true }));
+                logAction(cmd, true);
+            } else if (cmd.action === 'assertVisible') {
+                const isVisible = (el.style.display === 'block' || el.classList.contains('show'));
+                const assertMsg = isVisible ? 'Assert OK: elemento visivel' : 'Assert falhou: elemento invisivel';
+                addLogEntry(`${cmd.selector} -> ${assertMsg}`, isVisible ? 'success' : 'error');
+                const assertDiv = document.getElementById('assertResult');
+                if (assertDiv) {
+                    assertDiv.innerHTML = isVisible ? 'ASSERT OK' : 'ASSERT FALHOU';
+                    assertDiv.style.color = isVisible ? 'green' : 'red';
+                    setTimeout(() => assertDiv.innerHTML = '', 1500);
+                }
+            }
+            await new Promise(r => setTimeout(r, 350));
+            return true;
+        } catch (err) {
+            addLogEntry(`Erro ao executar ${cmd.action}: ${err.message}`, 'error');
+            return false;
+        }
+    }
+
+    async function runSequence() {
+        for (let cmd of commands) {
+            if (!loopActive && !playing) break;
+            await executeCommand(cmd);
+        }
+    }
+
+    async function playOnce() {
+        if (playing || loopActive) return;
+        playing = true;
+        addLogEntry('Iniciando execucao unica...', 'action');
+        for (let cmd of commands) {
+            if (!playing) break;
+            await executeCommand(cmd);
+        }
+        playing = false;
+        addLogEntry('Execucao unica finalizada.', 'success');
+    }
+
+    async function startTimedLoop() {
+        if (commands.length === 0) {
+            alert('Nenhum comando gravado. Grave algo primeiro.');
+            return;
+        }
+        if (loopActive) {
+            addLogEntry('Loop ja esta em execucao. Pare antes de iniciar outro.', 'error');
+            return;
+        }
+        stopAll();
+        loopActive = true;
+        const durationMinutes = parseFloat(testDurationInput.value) || 2;
+        const durationMs = durationMinutes * 60 * 1000;
+        testStartTime = Date.now();
+        
+        addLogEntry(`Iniciando loop automatico por ${durationMinutes} minuto(s).`, 'success');
+        
+        (async () => {
+            while (loopActive) {
+                const elapsed = Date.now() - testStartTime;
+                if (elapsed >= durationMs) {
+                    addLogEntry(`Tempo limite de ${durationMinutes} min atingido. Parando loop.`, 'success');
+                    stopLoop();
+                    break;
+                }
+                for (let cmd of commands) {
+                    if (!loopActive) break;
+                    await executeCommand(cmd);
+                }
+                if (!loopActive) break;
+                const delay = (parseFloat(loopDelayInput.value) || 1) * 1000;
+                await new Promise(r => setTimeout(r, delay));
+            }
+        })();
+        
+        loopTimedBtn.classList.add('loop-active');
+        loopTimedBtn.textContent = 'Loop em andamento...';
+    }
+
+    function stopLoop() {
+        loopActive = false;
+        loopTimedBtn.classList.remove('loop-active');
+        loopTimedBtn.textContent = 'Loop (2 min)';
+        addLogEntry('Loop interrompido manualmente ou por tempo.', 'action');
+    }
+
+    function stopAll() {
+        if (loopActive) stopLoop();
+        if (playing) playing = false;
+    }
+
+    function clearCommands() {
+        stopAll();
+        commands = [];
+        renderCommands();
+        addLogEntry('Lista de comandos limpa.', 'action');
+    }
+
+    // ==================== EXPORTACOES ====================
+    function exportCommandsToJava() {
+        let code = `// Comandos exportados do simulador\nWebDriver driver = new ChromeDriver();\n`;
+        commands.forEach(cmd => {
+            if (cmd.action === 'click')
+                code += `driver.findElement(By.cssSelector("${cmd.selector}")).click();\n`;
+            else if (cmd.action === 'type')
+                code += `driver.findElement(By.cssSelector("${cmd.selector}")).sendKeys("${cmd.value.replace(/"/g, '\\"')}");\n`;
+            else if (cmd.action === 'assertVisible')
+                code += `// Assertiva: elemento "${cmd.selector}" deve estar visivel\nAssert.assertTrue(driver.findElement(By.cssSelector("${cmd.selector}")).isDisplayed());\n`;
+        });
+        exportCodePre.textContent = code;
+        addLogEntry('Comandos exportados para codigo Java.', 'success');
+    }
+
+    function exportLogToTxt() {
+        let logText = "=== LOG DE TESTE - SIMULADOR SELENIUM IDE ===\n";
+        logText += `Data: ${new Date().toLocaleString()}\n`;
+        logText += `Total de comandos gravados: ${commands.length}\n`;
+        logText += `Duracao configurada: ${testDurationInput.value} min\n`;
+        logText += "===============================================\n\n";
+        
+        const logEntries = document.querySelectorAll('#logContainer .log-entry');
+        logEntries.forEach(entry => {
+            let rawText = entry.innerText;
+            logText += rawText + "\n";
+        });
+        
+        const blob = new Blob([logText], { type: 'text/plain' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = `log_teste_${new Date().toISOString().slice(0,19)}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        addLogEntry('Log salvo como arquivo .txt', 'success');
+    }
+
+    // ==================== CAPTURA DE EVENTOS PARA GRAVACAO ====================
+    function setupRecording() {
+        const recordables = document.querySelectorAll('.recordable');
+        recordables.forEach(el => {
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                el.removeEventListener('input', inputHandler);
+                el.addEventListener('input', inputHandler);
+            } else if (el.tagName === 'BUTTON') {
+                el.removeEventListener('click', clickHandler);
+                el.addEventListener('click', clickHandler);
+            }
+        });
+        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.removeEventListener('change', changeHandler);
+            cb.addEventListener('change', changeHandler);
+        });
+    }
+
+    function inputHandler(e) {
+        if (!recording) return;
+        let sel = e.target.id ? `#${e.target.id}` : e.target.tagName.toLowerCase();
+        addCommand('type', sel, e.target.value);
+    }
+    function clickHandler(e) {
+        if (!recording) return;
+        let sel = e.target.id ? `#${e.target.id}` : e.target.tagName.toLowerCase();
+        addCommand('click', sel);
+    }
+    function changeHandler(e) {
+        if (!recording) return;
+        let sel = e.target.id ? `#${e.target.id}` : e.target.tagName.toLowerCase();
+        addCommand('type', sel, e.target.checked ? 'true' : 'false');
+    }
+
+    // ==================== EVENTOS DOS BOTOES PRINCIPAIS ====================
+    recordBtn.onclick = () => {
+        recording = !recording;
+        if (recording) {
+            recordBtn.classList.add('record-active');
+            recordBtn.textContent = 'Gravando...';
+            stopAll();
+            addLogEntry('Modo GRAVACAO ativado. Interaja com os cenarios.', 'success');
+        } else {
+            recordBtn.classList.remove('record-active');
+            recordBtn.textContent = 'Record';
+            addLogEntry('Gravacao desativada.', 'action');
+        }
+    };
+    playBtn.onclick = () => { if (commands.length) playOnce(); else alert('Grave comandos primeiro.'); };
+    loopTimedBtn.onclick = () => { if (loopActive) stopLoop(); else startTimedLoop(); };
+    stopTestBtn.onclick = () => { stopAll(); addLogEntry('Teste interrompido pelo usuario.', 'error'); };
+    clearBtn.onclick = () => clearCommands();
+    exportCommandsBtn.onclick = () => exportCommandsToJava();
+    exportLogBtn.onclick = () => exportLogToTxt();
+
+    // ==================== FEEDBACKS DOS CENARIOS (SEM EMOJIS) ====================
+    document.getElementById('loginSubmitBtn')?.addEventListener('click', () => {
+        let fb = document.getElementById('loginFeedback');
+        fb.style.display = 'block';
+        fb.innerHTML = 'Login simulado!';
+        setTimeout(() => fb.style.display = 'none', 1500);
+    });
+    document.getElementById('cadastrarBtn')?.addEventListener('click', () => {
+        let fb = document.getElementById('cadFeedback');
+        fb.style.display = 'block';
+        fb.innerHTML = 'Cadastro realizado!';
+        setTimeout(() => fb.style.display = 'none', 1500);
+    });
+    document.getElementById('enviarContatoBtn')?.addEventListener('click', () => {
+        let fb = document.getElementById('contatoFeedback');
+        fb.style.display = 'block';
+        fb.innerHTML = 'Mensagem enviada!';
+        setTimeout(() => fb.style.display = 'none', 1500);
+    });
+
+    // Validacao com animacao
+    const showBtn = document.getElementById('showMsgBtn');
+    const hideBtn = document.getElementById('hideMsgBtn');
+    const secretMsg = document.getElementById('secretMessage');
+    if (showBtn) {
+        showBtn.addEventListener('click', () => {
+            secretMsg.classList.add('show');
+            secretMsg.style.display = 'block';
+            setTimeout(() => secretMsg.classList.remove('show'), 500);
+        });
+    }
+    if (hideBtn) {
+        hideBtn.addEventListener('click', () => {
+            secretMsg.classList.remove('show');
+            secretMsg.style.display = 'none';
+        });
+    }
+    const assertBtn = document.getElementById('assertVisibleBtn');
+    if (assertBtn) {
+        assertBtn.addEventListener('click', () => {
+            const visivel = (secretMsg.style.display === 'block' || secretMsg.classList.contains('show'));
+            if (recording) addCommand('assertVisible', '#secretMessage', visivel ? 'visivel' : 'invisivel');
+            const assertDiv = document.getElementById('assertResult');
+            assertDiv.innerHTML = visivel ? 'ASSERT OK' : 'ASSERT FALHOU';
+            assertDiv.style.color = visivel ? 'green' : 'red';
+            setTimeout(() => assertDiv.innerHTML = '', 2000);
+        });
+    }
+
+    // Troca de abas
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.scenario').forEach(sc => sc.classList.remove('active-scenario'));
+            document.getElementById(`scenario-${btn.dataset.scenario}`).classList.add('active-scenario');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            setupRecording();
+        });
+    });
+
+    // Inicializacao
+    setupRecording();
+    clearCommands();
+    addLogEntry('Simulador pronto. Defina a duracao (ex: 2 min) e clique em "Loop (2 min)" apos gravar comandos.', 'success');
+</script>
+</body>
+</html>
