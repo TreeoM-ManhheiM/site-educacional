@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador Selenium IDE - Com Logs e Exportacao</title>
+    <title>Simulador Selenium IDE - Com Logs e Exportacao Python</title>
     <style>
         * {
             box-sizing: border-box;
@@ -287,7 +287,7 @@
 <body>
 <div class="container">
     <header>
-        <h1>Simulador Selenium IDE - Com Logs em Tempo Real</h1>
+        <h1>Simulador Selenium IDE - Com Logs e Exportacao Python</h1>
         <p>Grave, reproduza, veja os logs e exporte o relatorio do teste.</p>
     </header>
     <div class="main-content">
@@ -312,8 +312,8 @@
                 </ul>
             </div>
             <div class="export-area">
-                <button id="exportCommandsBtn">Exportar comandos (Java)</button>
-                <pre id="exportCode">// Codigo sera gerado aqui</pre>
+                <button id="exportCommandsBtn">Exportar comandos (Python)</button>
+                <pre id="exportCode">// Codigo Python sera gerado aqui</pre>
             </div>
         </div>
 
@@ -569,44 +569,31 @@
         addLogEntry('Lista de comandos limpa.', 'action');
     }
 
-    // ==================== EXPORTACOES ====================
-    function exportCommandsToJava() {
-        let code = `// Comandos exportados do simulador\nWebDriver driver = new ChromeDriver();\n`;
+    // ==================== EXPORTACAO PARA PYTHON (MODIFICADO) ====================
+    function exportCommandsToPython() {
+        let code = `# Comandos exportados do simulador - Selenium WebDriver (Python)\n`;
+        code += `from selenium import webdriver\n`;
+        code += `from selenium.webdriver.common.by import By\n`;
+        code += `import time\n\n`;
+        code += `driver = webdriver.Chrome()\n`;
+        code += `driver.get("https://9od.com.br/simulado")  # URL de exemplo\n\n`;
+        
         commands.forEach(cmd => {
-            if (cmd.action === 'click')
-                code += `driver.findElement(By.cssSelector("${cmd.selector}")).click();\n`;
-            else if (cmd.action === 'type')
-                code += `driver.findElement(By.cssSelector("${cmd.selector}")).sendKeys("${cmd.value.replace(/"/g, '\\"')}");\n`;
-            else if (cmd.action === 'assertVisible')
-                code += `// Assertiva: elemento "${cmd.selector}" deve estar visivel\nAssert.assertTrue(driver.findElement(By.cssSelector("${cmd.selector}")).isDisplayed());\n`;
+            if (cmd.action === 'click') {
+                code += `driver.find_element(By.CSS_SELECTOR, "${cmd.selector}").click()\n`;
+            } else if (cmd.action === 'type') {
+                // Escapa aspas duplas no valor
+                let escapedValue = cmd.value.replace(/"/g, '\\"');
+                code += `driver.find_element(By.CSS_SELECTOR, "${cmd.selector}").send_keys("${escapedValue}")\n`;
+            } else if (cmd.action === 'assertVisible') {
+                code += `# Assertiva: elemento "${cmd.selector}" deve estar visivel\n`;
+                code += `assert driver.find_element(By.CSS_SELECTOR, "${cmd.selector}").is_displayed()\n`;
+            }
         });
+        
+        code += `\n# Fechar navegador\ndriver.quit()\n`;
         exportCodePre.textContent = code;
-        addLogEntry('Comandos exportados para codigo Java.', 'success');
-    }
-
-    function exportLogToTxt() {
-        let logText = "=== LOG DE TESTE - SIMULADOR SELENIUM IDE ===\n";
-        logText += `Data: ${new Date().toLocaleString()}\n`;
-        logText += `Total de comandos gravados: ${commands.length}\n`;
-        logText += `Duracao configurada: ${testDurationInput.value} min\n`;
-        logText += "===============================================\n\n";
-        
-        const logEntries = document.querySelectorAll('#logContainer .log-entry');
-        logEntries.forEach(entry => {
-            let rawText = entry.innerText;
-            logText += rawText + "\n";
-        });
-        
-        const blob = new Blob([logText], { type: 'text/plain' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.href = url;
-        link.download = `log_teste_${new Date().toISOString().slice(0,19)}.txt`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        addLogEntry('Log salvo como arquivo .txt', 'success');
+        addLogEntry('Comandos exportados para codigo Python.', 'success');
     }
 
     // ==================== CAPTURA DE EVENTOS PARA GRAVACAO ====================
@@ -661,8 +648,33 @@
     loopTimedBtn.onclick = () => { if (loopActive) stopLoop(); else startTimedLoop(); };
     stopTestBtn.onclick = () => { stopAll(); addLogEntry('Teste interrompido pelo usuario.', 'error'); };
     clearBtn.onclick = () => clearCommands();
-    exportCommandsBtn.onclick = () => exportCommandsToJava();
+    exportCommandsBtn.onclick = () => exportCommandsToPython();   // Chamada para Python
     exportLogBtn.onclick = () => exportLogToTxt();
+
+    function exportLogToTxt() {
+        let logText = "=== LOG DE TESTE - SIMULADOR SELENIUM IDE ===\n";
+        logText += `Data: ${new Date().toLocaleString()}\n`;
+        logText += `Total de comandos gravados: ${commands.length}\n`;
+        logText += `Duracao configurada: ${testDurationInput.value} min\n`;
+        logText += "===============================================\n\n";
+        
+        const logEntries = document.querySelectorAll('#logContainer .log-entry');
+        logEntries.forEach(entry => {
+            let rawText = entry.innerText;
+            logText += rawText + "\n";
+        });
+        
+        const blob = new Blob([logText], { type: 'text/plain' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.href = url;
+        link.download = `log_teste_${new Date().toISOString().slice(0,19)}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        addLogEntry('Log salvo como arquivo .txt', 'success');
+    }
 
     // ==================== FEEDBACKS DOS CENARIOS (SEM EMOJIS) ====================
     document.getElementById('loginSubmitBtn')?.addEventListener('click', () => {
