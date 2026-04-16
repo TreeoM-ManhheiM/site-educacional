@@ -212,11 +212,10 @@
     let motorXadrez = new Chess();
     let tabuleiroVisual = null;
     let minhaCor = 'w';
-    let meuPapel = 'espectador'; // 'jogador' ou 'espectador'
+    let meuPapel = 'espectador';
     let jogoIniciado = false;
     let salaAtual = '';
 
-    // ---------- Funções auxiliares ----------
     function formatarTempo(segundos) {
         if (segundos === undefined || segundos === null) return '--:--';
         const mins = Math.floor(segundos / 60);
@@ -244,14 +243,14 @@
     }
 
     function desistir() {
-        if (confirm('Tem certeza que deseja desistir?')) {
+        if (jogoIniciado && meuPapel === 'jogador' && confirm('Tem certeza que deseja desistir?')) {
             socket.emit('desistir');
         }
     }
 
     function oferecerEmpate() {
+        if (!jogoIniciado || meuPapel !== 'jogador') return;
         socket.emit('oferecerEmpate');
-        alert('Proposta de empate enviada ao adversário.');
     }
 
     function enviarMensagem() {
@@ -263,7 +262,15 @@
         }
     }
 
-    // ---------- Socket Events ----------
+    function voltarParaLobby() {
+        jogoIniciado = false;
+        document.getElementById('area-jogo').style.display = 'none';
+        document.getElementById('lobby').style.display = 'block';
+        document.getElementById('painel-historico').style.display = 'none';
+        document.getElementById('btn-pronto').disabled = false;
+        document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+    }
+
     socket.on('connect', () => {
         document.getElementById('status-conexao').innerText = "✅ Conectado";
     });
@@ -337,7 +344,6 @@
     });
 
     socket.on('estadoAtual', (dados) => {
-        // Para espectadores que entram com jogo em andamento
         motorXadrez.load(dados.fen);
         tabuleiroVisual.position(dados.fen);
         if (dados.historico) {
@@ -368,6 +374,9 @@
         alert(dados.mensagem);
         jogoIniciado = false;
         document.getElementById('status-jogo').innerHTML = dados.mensagem;
+        setTimeout(() => {
+            voltarParaLobby();
+        }, 1000);
     });
 
     socket.on('novaMensagem', (msg) => {
@@ -386,10 +395,10 @@
     });
 
     socket.on('empateRecusado', (dados) => {
-        alert(`${dados.por} recusou o empate.`);
+        alert(`${dados.por} recusou a oferta de empate.`);
     });
 
-    // ---------- Configuração do Tabuleiro ----------
+    // Configuração do Tabuleiro
     function aoComecarArrastar(source, piece, position, orientation) {
         if (!jogoIniciado || meuPapel !== 'jogador') return false;
         if (motorXadrez.game_over()) return false;
@@ -444,7 +453,6 @@
     };
     tabuleiroVisual = Chessboard('meu-tabuleiro', config);
 
-    // Permitir enviar mensagem com Enter
     document.getElementById('input-mensagem').addEventListener('keypress', (e) => {
         if (e.key === 'Enter') enviarMensagem();
     });
