@@ -1,138 +1,202 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <title>Xadrez Lógico ♟️ — Laboratório de Computação</title>
-
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
-
     <style>
-        /* ESTILO PADRÃO: LABORATÓRIO DE COMPUTAÇÃO */
+        * { box-sizing: border-box; }
         body {
             margin: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
             background: #f4f6f8;
             color: #333;
-            text-align: center;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
-
         header {
             background: linear-gradient(135deg, #1e293b, #334155);
             color: white;
-            padding: 30px 20px;
+            padding: 20px;
             text-align: center;
         }
-
         header h1 { margin: 0; font-size: 28px; }
         header p { font-size: 14px; margin-top: 5px; opacity: 0.9; }
-
         .btn-header-regras {
             display: inline-block;
-            margin-top: 15px;
-            background: rgba(255, 255, 255, 0.15);
+            margin-top: 10px;
+            background: rgba(255,255,255,0.15);
             color: white;
-            padding: 8px 18px;
+            padding: 6px 16px;
             text-decoration: none;
             border-radius: 20px;
-            font-weight: bold;
             font-size: 13px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: 0.3s;
+            border: 1px solid rgba(255,255,255,0.3);
         }
-        .btn-header-regras:hover { background: rgba(255, 255, 255, 0.3); }
-
         main {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
         }
-
-        .game-container {
+        .coluna-esquerda {
+            flex: 2;
+            min-width: 300px;
+        }
+        .coluna-direita {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .game-container, .painel-container {
             background: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
         }
-
         #status-conexao { color: #64748b; font-size: 13px; margin-bottom: 10px; }
-
         .painel-info {
             background: #e5edff;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border: 1px solid #c7d2fe;
             color: #1e3a8a;
             font-weight: bold;
         }
-
         .destaque { color: #2563eb; }
         .alerta-xeque { color: #ef4444; font-weight: bold; animation: piscar 1s infinite; }
-        
         @keyframes piscar { 50% { opacity: 0.5; } }
-
-        button { 
-            padding: 12px 20px; 
-            border-radius: 8px; 
-            border: none; 
-            cursor: pointer; 
-            font-weight: bold; 
+        button {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            background: #e2e8f0;
+            color: #1e293b;
         }
-
-        .btn-conectar { background: #10b981; color: white; }
-        .btn-pronto { background: #3b82f6; color: white; width: 100%; }
-
-        input { padding: 10px; border-radius: 6px; border: 1px solid #cbd5e1; margin: 5px; }
-        li { list-style: none; background: #f1f5f9; margin: 5px; padding: 10px; border-radius: 5px; text-align: left; }
-        
-        /* Centralizar o tabuleiro */
-        #meu-tabuleiro {
+        button.primary { background: #3b82f6; color: white; }
+        button.success { background: #10b981; color: white; }
+        button.warning { background: #f59e0b; color: white; }
+        button.danger { background: #ef4444; color: white; }
+        input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            margin: 5px 0;
             width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
         }
+        #meu-tabuleiro { width: 100%; max-width: 500px; margin: 0 auto; }
+        .relogio-container {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+        }
+        .relogio {
+            background: #1e293b;
+            color: #facc15;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: monospace;
+            font-size: 1.2em;
+        }
+        .historico-lista {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .chat-mensagens {
+            height: 200px;
+            overflow-y: auto;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .chat-input {
+            display: flex;
+            gap: 5px;
+        }
+        .chat-input input {
+            flex: 1;
+        }
+        .badge {
+            background: #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; }
     </style>
 </head>
-
 <body>
-
 <header>
     <h1>Xadrez Lógico ♟️</h1>
     <p>Projeto Integrado — Laboratório de Computação</p>
     <a href="regras.html" target="_blank" class="btn-header-regras">📖 VER REGRAS DO JOGO</a>
 </header>
-
 <main>
-    <div id="status-conexao">Conectando...</div>
+    <div class="coluna-esquerda">
+        <div id="status-conexao">Conectando...</div>
 
-    <div id="tela-login" class="game-container">
-        <h2>Entrar na Partida de Xadrez</h2>
-        <input type="text" id="input-apelido" placeholder="Seu Nome">
-        <input type="text" id="input-sala" placeholder="Sala (ex: mesa1)">
-        <br><br>
-        <button onclick="entrar()" class="btn-conectar">CONECTAR AO SERVIDOR</button>
-    </div>
-
-    <div id="lobby" class="game-container" style="display:none;">
-        <h3>Aguardando Oponente (Máximo 2 jogadores):</h3>
-        <ul id="lista-alunos" style="padding:0;"></ul>
-        <button onclick="marcarPronto()" class="btn-pronto">ESTOU PRONTO / INICIAR</button>
-    </div>
-
-    <div id="area-jogo" style="display:none;">
-        <div class="painel-info">
-            <div>Sua Cor: <span id="minha-cor" class="destaque">---</span></div>
-            <div>Turno das: <span id="vez-atual" class="destaque">Brancas</span></div>
-            <div id="status-jogo" class="destaque">Partida em andamento</div>
+        <div id="tela-login" class="game-container">
+            <h2>Entrar na Partida</h2>
+            <input type="text" id="input-apelido" placeholder="Seu Nome">
+            <input type="text" id="input-sala" placeholder="Sala (ex: mesa1)">
+            <br><br>
+            <button onclick="entrar()" class="success">CONECTAR</button>
         </div>
 
-        <div class="game-container">
+        <div id="lobby" class="game-container" style="display:none;">
+            <h3>🕹️ Lobby</h3>
+            <div id="info-sala"></div>
+            <ul id="lista-alunos" style="padding:0;"></ul>
+            <button id="btn-pronto" onclick="marcarPronto()" class="primary" style="width:100%;">ESTOU PRONTO</button>
+        </div>
+
+        <div id="area-jogo" style="display:none;">
+            <div class="painel-info">
+                <div>Sua Cor: <span id="minha-cor" class="destaque">---</span></div>
+                <div>Turno: <span id="vez-atual" class="destaque">Brancas</span></div>
+                <div id="status-jogo" class="destaque">Partida em andamento</div>
+            </div>
+            <div class="relogio-container">
+                <div class="relogio" id="relogio-brancas">⚪ 10:00</div>
+                <div class="relogio" id="relogio-pretas">⚫ 10:00</div>
+            </div>
             <div id="meu-tabuleiro"></div>
+            <div class="flex-row" style="margin-top:15px;">
+                <button onclick="desistir()" class="danger">🏳️ Desistir</button>
+                <button onclick="oferecerEmpate()" class="warning">🤝 Oferecer Empate</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="coluna-direita">
+        <div id="painel-historico" class="painel-container" style="display:none;">
+            <h3>📜 Histórico</h3>
+            <div id="historico" class="historico-lista"></div>
+        </div>
+        <div id="painel-chat" class="painel-container" style="display:none;">
+            <h3>💬 Chat da Sala</h3>
+            <div id="chat-mensagens" class="chat-mensagens"></div>
+            <div class="chat-input">
+                <input type="text" id="input-mensagem" placeholder="Digite sua mensagem...">
+                <button onclick="enviarMensagem()">Enviar</button>
+            </div>
         </div>
     </div>
 </main>
@@ -144,98 +208,224 @@
 
 <script>
     const socket = io("https://motor-xadrez.onrender.com");
-    
-    let motorXadrez = new Chess(); 
-    let tabuleiroVisual = null; 
-    let minhaCor = 'w'; 
+
+    let motorXadrez = new Chess();
+    let tabuleiroVisual = null;
+    let minhaCor = 'w';
+    let meuPapel = 'espectador'; // 'jogador' ou 'espectador'
+    let jogoIniciado = false;
+    let salaAtual = '';
+
+    // ---------- Funções auxiliares ----------
+    function formatarTempo(segundos) {
+        if (segundos === undefined || segundos === null) return '--:--';
+        const mins = Math.floor(segundos / 60);
+        const secs = segundos % 60;
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
 
     function entrar() {
-        const apelido = document.getElementById('input-apelido').value;
-        const sala = document.getElementById('input-sala').value;
-        if(apelido && sala) {
-            socket.emit('entrarSala', { apelido, sala });
-            document.getElementById('tela-login').style.display = 'none';
-        }
+        const apelido = document.getElementById('input-apelido').value.trim();
+        const sala = document.getElementById('input-sala').value.trim();
+        if (!apelido || !sala) return alert('Preencha nome e sala!');
+        salaAtual = sala;
+        socket.emit('entrarSala', { apelido, sala });
+        document.getElementById('tela-login').style.display = 'none';
+        document.getElementById('lobby').style.display = 'block';
+        document.getElementById('painel-chat').style.display = 'block';
     }
 
     function marcarPronto() {
-        socket.emit('marcarPronto');
+        if (meuPapel === 'jogador') {
+            socket.emit('marcarPronto');
+            document.getElementById('btn-pronto').disabled = true;
+            document.getElementById('btn-pronto').innerText = 'Aguardando oponente...';
+        }
     }
 
+    function desistir() {
+        if (confirm('Tem certeza que deseja desistir?')) {
+            socket.emit('desistir');
+        }
+    }
+
+    function oferecerEmpate() {
+        socket.emit('oferecerEmpate');
+        alert('Proposta de empate enviada ao adversário.');
+    }
+
+    function enviarMensagem() {
+        const input = document.getElementById('input-mensagem');
+        const msg = input.value.trim();
+        if (msg) {
+            socket.emit('enviarMensagem', msg);
+            input.value = '';
+        }
+    }
+
+    // ---------- Socket Events ----------
     socket.on('connect', () => {
-        document.getElementById('status-conexao').innerText = "✅ Conectado ao Servidor";
+        document.getElementById('status-conexao').innerText = "✅ Conectado";
+    });
+
+    socket.on('disconnect', () => {
+        document.getElementById('status-conexao').innerText = "❌ Desconectado";
+    });
+
+    socket.on('erro', (msg) => alert(msg));
+
+    socket.on('definirPapel', (dados) => {
+        meuPapel = dados.papel;
+        if (meuPapel === 'jogador') {
+            minhaCor = dados.cor;
+            document.getElementById('minha-cor').innerText = (minhaCor === 'w') ? '⚪ Brancas' : '⚫ Pretas';
+        } else {
+            document.getElementById('minha-cor').innerText = '👀 Espectador';
+        }
     });
 
     socket.on('estadoLobby', (dados) => {
-        const lobby = document.getElementById('lobby');
-        const jogo = document.getElementById('area-jogo');
-        
-        if (dados.rodando) { 
-            lobby.style.display = 'none'; 
-            jogo.style.display = 'block'; 
-            
-            // CORREÇÃO: Avisa o tabuleiro para recalcular o tamanho agora que está visível
+        const lobbyDiv = document.getElementById('lobby');
+        const jogoDiv = document.getElementById('area-jogo');
+        const infoSala = document.getElementById('info-sala');
+
+        let html = `<p>Sala: <strong>${salaAtual}</strong> | Jogadores: ${dados.jogadoresInfo.length}/2`;
+        if (dados.espectadores.length > 0) html += ` | Espectadores: ${dados.espectadores.length}`;
+        html += '</p>';
+        infoSala.innerHTML = html;
+
+        let lista = '';
+        dados.jogadoresInfo.forEach(j => {
+            lista += `<li>👤 ${j.nome} (${j.cor === 'w' ? 'Brancas' : 'Pretas'}) ${j.pronto ? '✅' : '⏳'}</li>`;
+        });
+        dados.espectadores.forEach(e => {
+            lista += `<li>👁️ ${e} (espectador)</li>`;
+        });
+        document.getElementById('lista-alunos').innerHTML = lista;
+
+        if (dados.rodando) {
+            lobbyDiv.style.display = 'none';
+            jogoDiv.style.display = 'block';
+            document.getElementById('painel-historico').style.display = 'block';
+            jogoIniciado = true;
             if (tabuleiroVisual) tabuleiroVisual.resize();
-        } else { 
-            lobby.style.display = 'block'; 
-            document.getElementById('lista-alunos').innerHTML = dados.jogadoresInfo.map(j => `<li>👤 ${j.nome} ${j.pronto ? '✅' : '⏳'}</li>`).join(''); 
+        } else {
+            lobbyDiv.style.display = 'block';
+            jogoDiv.style.display = 'none';
+            document.getElementById('painel-historico').style.display = 'none';
+            document.getElementById('btn-pronto').disabled = false;
+            document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
         }
     });
 
     socket.on('iniciarPartida', (dados) => {
-        minhaCor = dados.cor; 
-        document.getElementById('minha-cor').innerText = (minhaCor === 'w') ? "⚪ Brancas" : "⚫ Pretas";
-        
-        // CORREÇÃO: Garante o tamanho certo antes de virar as peças
-        if (tabuleiroVisual) tabuleiroVisual.resize();
-
-        tabuleiroVisual.orientation(minhaCor === 'w' ? 'white' : 'black');
-        motorXadrez.reset();
-        tabuleiroVisual.start();
+        minhaCor = dados.cor;
+        jogoIniciado = true;
+        if (minhaCor !== 'espectador') {
+            document.getElementById('minha-cor').innerText = (minhaCor === 'w') ? '⚪ Brancas' : '⚫ Pretas';
+        } else {
+            document.getElementById('minha-cor').innerText = '👀 Espectador';
+        }
+        motorXadrez.load(dados.fen || 'start');
+        tabuleiroVisual.position(motorXadrez.fen(), false);
+        if (minhaCor !== 'espectador') {
+            tabuleiroVisual.orientation(minhaCor === 'w' ? 'white' : 'black');
+        } else {
+            tabuleiroVisual.orientation('white');
+        }
         atualizarStatus();
     });
 
-    socket.on('jogadaFeita', (fen) => {
-        motorXadrez.load(fen);
-        tabuleiroVisual.position(fen);
+    socket.on('estadoAtual', (dados) => {
+        // Para espectadores que entram com jogo em andamento
+        motorXadrez.load(dados.fen);
+        tabuleiroVisual.position(dados.fen);
+        if (dados.historico) {
+            document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
+        }
+        if (dados.tempos) {
+            document.getElementById('relogio-brancas').innerText = `⚪ ${formatarTempo(dados.tempos.w)}`;
+            document.getElementById('relogio-pretas').innerText = `⚫ ${formatarTempo(dados.tempos.b)}`;
+        }
         atualizarStatus();
     });
 
-    function aoComecarArrastar (source, piece, position, orientation) {
+    socket.on('jogadaFeita', (dados) => {
+        motorXadrez.load(dados.fen);
+        tabuleiroVisual.position(dados.fen);
+        if (dados.historico) {
+            document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
+        }
+        atualizarStatus();
+    });
+
+    socket.on('atualizarTempo', (tempos) => {
+        document.getElementById('relogio-brancas').innerText = `⚪ ${formatarTempo(tempos.w)}`;
+        document.getElementById('relogio-pretas').innerText = `⚫ ${formatarTempo(tempos.b)}`;
+    });
+
+    socket.on('fimDeJogo', (dados) => {
+        alert(dados.mensagem);
+        jogoIniciado = false;
+        document.getElementById('status-jogo').innerHTML = dados.mensagem;
+    });
+
+    socket.on('novaMensagem', (msg) => {
+        const div = document.getElementById('chat-mensagens');
+        const hora = new Date(msg.timestamp).toLocaleTimeString();
+        div.innerHTML += `<div><strong>${msg.remetente}</strong> <span class="badge">${hora}</span>: ${msg.texto}</div>`;
+        div.scrollTop = div.scrollHeight;
+    });
+
+    socket.on('propostaEmpate', (dados) => {
+        if (confirm(`${dados.de} ofereceu empate. Aceitar?`)) {
+            socket.emit('responderEmpate', { aceito: true, de: dados.de });
+        } else {
+            socket.emit('responderEmpate', { aceito: false, de: dados.de });
+        }
+    });
+
+    socket.on('empateRecusado', (dados) => {
+        alert(`${dados.por} recusou o empate.`);
+    });
+
+    // ---------- Configuração do Tabuleiro ----------
+    function aoComecarArrastar(source, piece, position, orientation) {
+        if (!jogoIniciado || meuPapel !== 'jogador') return false;
         if (motorXadrez.game_over()) return false;
         if ((motorXadrez.turn() === 'w' && piece.search(/^b/) !== -1) ||
             (motorXadrez.turn() === 'b' && piece.search(/^w/) !== -1)) {
             return false;
         }
         if (motorXadrez.turn() !== minhaCor) return false;
+        return true;
     }
 
-    function aoSoltarPeca (source, target) {
+    function aoSoltarPeca(source, target) {
+        if (!jogoIniciado || meuPapel !== 'jogador') return 'snapback';
         let movimento = motorXadrez.move({
             from: source,
             to: target,
             promotion: 'q'
         });
-
         if (movimento === null) return 'snapback';
-
-        socket.emit('fazerJogada', motorXadrez.fen());
+        socket.emit('fazerJogada', { from: source, to: target, promotion: 'q' });
         atualizarStatus();
     }
 
-    function aposMovimento (oldPos, newPos) {
+    function aposMovimento(oldPos, newPos) {
         tabuleiroVisual.position(motorXadrez.fen());
     }
 
-    function atualizarStatus () {
+    function atualizarStatus() {
         let statusHTML = '';
         let vez = motorXadrez.turn() === 'w' ? '⚪ Brancas' : '⚫ Pretas';
         document.getElementById('vez-atual').innerText = vez;
 
         if (motorXadrez.in_checkmate()) {
-            statusHTML = '🏆 Fim de Jogo: Xeque-Mate!';
+            statusHTML = '🏆 Xeque-Mate!';
         } else if (motorXadrez.in_draw()) {
-            statusHTML = '🤝 Fim de Jogo: Empate!';
+            statusHTML = '🤝 Empate!';
         } else if (motorXadrez.in_check()) {
             statusHTML = '<span class="alerta-xeque">⚠️ REI EM XEQUE!</span>';
         } else {
@@ -244,7 +434,6 @@
         document.getElementById('status-jogo').innerHTML = statusHTML;
     }
 
-    // Configuração com as peças direto da internet
     let config = {
         draggable: true,
         position: 'start',
@@ -253,9 +442,12 @@
         onDrop: aoSoltarPeca,
         onSnapEnd: aposMovimento
     };
-    
     tabuleiroVisual = Chessboard('meu-tabuleiro', config);
 
+    // Permitir enviar mensagem com Enter
+    document.getElementById('input-mensagem').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') enviarMensagem();
+    });
 </script>
 </body>
 </html>
