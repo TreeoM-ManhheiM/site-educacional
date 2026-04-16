@@ -215,6 +215,7 @@
     let meuPapel = 'espectador';
     let jogoIniciado = false;
     let salaAtual = '';
+    let meuSocketId = '';
 
     function formatarTempo(segundos) {
         if (segundos === undefined || segundos === null) return '--:--';
@@ -250,6 +251,7 @@
 
     function oferecerEmpate() {
         if (!jogoIniciado || meuPapel !== 'jogador') return;
+        console.log('Oferecendo empate...');
         socket.emit('oferecerEmpate');
     }
 
@@ -272,7 +274,9 @@
     }
 
     socket.on('connect', () => {
+        meuSocketId = socket.id;
         document.getElementById('status-conexao').innerText = "✅ Conectado";
+        console.log('Conectado ao servidor. Meu ID:', meuSocketId);
     });
 
     socket.on('disconnect', () => {
@@ -289,6 +293,7 @@
         } else {
             document.getElementById('minha-cor').innerText = '👀 Espectador';
         }
+        console.log('Papel definido:', meuPapel, minhaCor);
     });
 
     socket.on('estadoLobby', (dados) => {
@@ -341,6 +346,7 @@
             tabuleiroVisual.orientation('white');
         }
         atualizarStatus();
+        console.log('Partida iniciada. Minha cor:', minhaCor);
     });
 
     socket.on('estadoAtual', (dados) => {
@@ -386,7 +392,14 @@
         div.scrollTop = div.scrollHeight;
     });
 
+    // Evento de proposta de empate - agora com filtro de destinatário
     socket.on('propostaEmpate', (dados) => {
+        console.log('Evento propostaEmpate recebido:', dados);
+        // Verifica se a proposta é para este socket
+        if (dados.para !== meuSocketId) {
+            console.log('Proposta não é para mim, ignorando.');
+            return;
+        }
         if (confirm(`${dados.de} ofereceu empate. Aceitar?`)) {
             socket.emit('responderEmpate', { aceito: true, de: dados.de });
         } else {
