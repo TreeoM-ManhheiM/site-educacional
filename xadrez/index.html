@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Xadrez Lógico ♟️ — Laboratório de Computação</title>
     <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
     <style>
@@ -96,7 +97,13 @@
             margin: 5px 0;
             width: 100%;
         }
-        #meu-tabuleiro { width: 100%; max-width: 500px; margin: 0 auto; }
+        /* 🔧 CORREÇÃO MOBILE: impede rolagem ao arrastar peças */
+        #meu-tabuleiro {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            touch-action: none;
+        }
         .relogio-container {
             display: flex;
             justify-content: space-between;
@@ -392,10 +399,8 @@
         div.scrollTop = div.scrollHeight;
     });
 
-    // Evento de proposta de empate - agora com filtro de destinatário
     socket.on('propostaEmpate', (dados) => {
         console.log('Evento propostaEmpate recebido:', dados);
-        // Verifica se a proposta é para este socket
         if (dados.para !== meuSocketId) {
             console.log('Proposta não é para mim, ignorando.');
             return;
