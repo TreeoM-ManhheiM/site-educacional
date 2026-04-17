@@ -78,7 +78,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
         .baralho-vira {
             display: flex;
@@ -86,7 +86,7 @@
             justify-content: center;
             gap: 25px;
             background: rgba(0,0,0,0.2);
-            padding: 15px 25px;
+            padding: 10px 20px;
             border-radius: 60px;
             backdrop-filter: blur(4px);
         }
@@ -124,12 +124,12 @@
             box-shadow: 0 5px 0 #7a5c2e;
             border: 2px solid #e0b354;
         }
-        /* Cartas na mesa (jogadas) */
+        /* Cartas na mesa (jogadas na rodada atual) */
         .cartas-na-mesa {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             justify-content: center;
-            margin-top: 10px;
+            margin-top: 5px;
             min-height: 110px;
         }
         .carta-mesa {
@@ -147,7 +147,27 @@
         }
         .carta-mesa.ouros, .carta-mesa.copas { color: #c41e3a; }
         .carta-mesa.paus, .carta-mesa.espadas { color: #1e1e1e; }
-        /* Cartas do jogador (mão) */
+        /* Placar de mãos */
+        .placar-maos {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 10px 0;
+        }
+        .maos-equipe {
+            display: flex;
+            gap: 8px;
+        }
+        .mao-indicator {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: #3a3a3a;
+            border: 2px solid #b58a4a;
+        }
+        .mao-vencida-A { background: #1e5fb4; box-shadow: 0 0 10px #3b82f6; }
+        .mao-vencida-B { background: #b91c1c; box-shadow: 0 0 10px #ef4444; }
+        /* Mão do jogador */
         .minha-mao {
             margin-top: 30px;
             background: rgba(20, 30, 15, 0.7);
@@ -176,7 +196,6 @@
         .carta-mao.ouros, .carta-mao.copas { color: #c41e3a; }
         .carta-mao.paus, .carta-mao.espadas { color: #1e1e1e; }
 
-        /* Ações */
         .acoes-jogo {
             margin-top: 25px;
             display: flex;
@@ -204,7 +223,6 @@
             font-weight: bold;
             box-shadow: 0 6px 0 #3e4a52;
         }
-        /* Placar */
         .placar-container {
             display: flex;
             justify-content: space-between;
@@ -241,7 +259,6 @@
 </head>
 <body>
 <div class="game-wrapper">
-    <!-- Status Conexão -->
     <div id="status-conexao" class="mb-2 text-center text-white">Conectando...</div>
 
     <!-- Tela Login -->
@@ -265,22 +282,34 @@
         <button id="btn-pronto" class="btn btn-success w-100" onclick="marcarPronto()">ESTOU PRONTO</button>
     </div>
 
-    <!-- Tela Jogo (mesa redonda) -->
+    <!-- Tela Jogo -->
     <div id="tela-jogo" style="display:none; width:100%;">
         <div class="placar-container">
             <span>⚪ Equipe A: <span id="placar-equipe-a">0</span></span>
             <span>⚫ Equipe B: <span id="placar-equipe-b">0</span></span>
         </div>
+        <!-- Placar de mãos -->
+        <div class="placar-maos">
+            <div class="maos-equipe" id="maos-equipe-A">
+                <div class="mao-indicator" id="mao-A-1"></div>
+                <div class="mao-indicator" id="mao-A-2"></div>
+                <div class="mao-indicator" id="mao-A-3"></div>
+            </div>
+            <div class="maos-equipe" id="maos-equipe-B">
+                <div class="mao-indicator" id="mao-B-1"></div>
+                <div class="mao-indicator" id="mao-B-2"></div>
+                <div class="mao-indicator" id="mao-B-3"></div>
+            </div>
+        </div>
+
         <div id="indicador-vez" class="status-vez text-center">Vez de: <span id="nome-vez">---</span></div>
 
         <div class="mesa-redonda">
-            <!-- Jogadores serão preenchidos dinamicamente -->
             <div id="jogador-top" class="jogador jogador-top"></div>
             <div id="jogador-right" class="jogador jogador-right"></div>
             <div id="jogador-bottom" class="jogador jogador-bottom"></div>
             <div id="jogador-left" class="jogador jogador-left"></div>
 
-            <!-- Centro da mesa: baralho + vira + cartas jogadas -->
             <div class="centro-mesa">
                 <div class="baralho-vira">
                     <div class="monte-cartas" title="Monte de compra"></div>
@@ -290,12 +319,10 @@
             </div>
         </div>
 
-        <!-- Mão do jogador -->
         <div class="minha-mao text-center">
             <div id="minhas-cartas" class="d-flex justify-content-center flex-wrap"></div>
         </div>
 
-        <!-- Ações -->
         <div class="acoes-jogo">
             <button class="btn-truco" onclick="pedirTruco()">🗣️ TRUCO!</button>
             <button class="btn-desistir" onclick="desistir()">🏳️ Desistir</button>
@@ -312,8 +339,8 @@
     const socket = io("https://motor-truco.onrender.com");
     let minhaSala = '', minhasCartas = [], meuId = '', modoJogo = '1x1';
     let jogadoresSala = [];
+    let placarRodadas = { A: 0, B: 0 }; // Para controlar mãos vencidas na partida atual
 
-    // UI elements
     const statusConexao = document.getElementById('status-conexao');
     const telaLogin = document.getElementById('tela-login');
     const telaLobby = document.getElementById('tela-lobby');
@@ -363,11 +390,9 @@
     });
 
     function atualizarJogadoresNaMesa(jogadores) {
-        // Limpa todas as posições
         ['top','right','bottom','left'].forEach(pos => {
             document.getElementById(`jogador-${pos}`).innerHTML = '';
         });
-        // Distribui os jogadores nas posições fixas (sentido horário a partir do topo)
         const posicoes = ['top', 'right', 'bottom', 'left'];
         jogadores.forEach((jog, index) => {
             if (index >= 4) return;
@@ -381,15 +406,31 @@
         });
     }
 
+    function atualizarPlacarMaos(rodadasA, rodadasB) {
+        placarRodadas.A = rodadasA || 0;
+        placarRodadas.B = rodadasB || 0;
+        for (let i = 1; i <= 3; i++) {
+            const elA = document.getElementById(`mao-A-${i}`);
+            const elB = document.getElementById(`mao-B-${i}`);
+            if (elA) {
+                elA.classList.remove('mao-vencida-A');
+                if (i <= placarRodadas.A) elA.classList.add('mao-vencida-A');
+            }
+            if (elB) {
+                elB.classList.remove('mao-vencida-B');
+                if (i <= placarRodadas.B) elB.classList.add('mao-vencida-B');
+            }
+        }
+    }
+
     socket.on('iniciarMao', ({ cartas, vira, manilhas, pontuacao, equipe, rodada }) => {
         minhasCartas = cartas;
         document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
         document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
-        // Exibe vira (sem mencionar manilhas)
+        atualizarPlacarMaos(0, 0); // Reinicia placar de mãos
         const viraDiv = document.getElementById('carta-vira');
         viraDiv.className = `carta-vira-exibida ${vira.naipe}`;
         viraDiv.innerHTML = `${vira.valor} ${naipeIcone(vira.naipe)}`;
-        // Atualiza jogadores na mesa
         atualizarJogadoresNaMesa(jogadoresSala);
         renderizarMinhasCartas();
         document.getElementById('cartas-mesa').innerHTML = '';
@@ -427,7 +468,7 @@
     });
 
     socket.on('novaRodada', ({ rodada }) => {
-        document.getElementById('cartas-mesa').innerHTML = '';
+        document.getElementById('cartas-mesa').innerHTML = ''; // Limpa cartas da rodada anterior
     });
 
     socket.on('atualizarVez', ({ jogadorId }) => {
@@ -435,16 +476,21 @@
         if (jogador) {
             document.getElementById('nome-vez').innerText = jogador.nome;
         }
-        // Atualiza indicador visual nas cadeiras
         document.querySelectorAll('.vez-indicator').forEach(el => el.innerHTML = '');
         const vezEl = document.getElementById(`vez-${jogadorId}`);
         if (vezEl) vezEl.innerHTML = '🎲 VEZ';
+    });
+
+    // Atualiza placar de mãos durante a partida
+    socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => {
+        atualizarPlacarMaos(rodadasA, rodadasB);
     });
 
     socket.on('fimDeMao', ({ pontuacao, vencedorMao, pontosGanhos }) => {
         document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
         document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
         alert(`🏆 Equipe ${vencedorMao} venceu a mão (+${pontosGanhos})`);
+        atualizarPlacarMaos(0, 0); // Reseta para próxima mão
     });
 
     socket.on('fimDeJogo', ({ vencedor, pontuacao }) => {
