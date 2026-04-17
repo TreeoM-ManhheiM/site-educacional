@@ -6,20 +6,58 @@
     <title>Truco Paulista ♣️ — Laboratório de Computação</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        body { background: #1e3c72; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); min-height: 100vh; font-family: 'Segoe UI', Arial, sans-serif; }
-        .game-container { background: rgba(255,255,255,0.95); border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.3); padding: 25px; }
-        .carta { width: 80px; height: 112px; background: white; border-radius: 10px; box-shadow: 0 5px 10px rgba(0,0,0,0.3); display: inline-flex; justify-content: center; align-items: center; margin: 5px; font-size: 28px; font-weight: bold; transition: transform 0.2s; cursor: pointer; }
+        body { 
+            background: #1e3c72; 
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); 
+            min-height: 100vh; 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+        }
+        .game-container { 
+            background: rgba(255,255,255,0.95); 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); 
+            padding: 25px; 
+            margin-top: 20px;
+        }
+        .carta { 
+            width: 80px; 
+            height: 112px; 
+            background: white; 
+            border-radius: 10px; 
+            box-shadow: 0 5px 10px rgba(0,0,0,0.3); 
+            display: inline-flex; 
+            justify-content: center; 
+            align-items: center; 
+            margin: 5px; 
+            font-size: 28px; 
+            font-weight: bold; 
+            transition: transform 0.2s; 
+            cursor: pointer;
+            position: relative;
+        }
         .carta:hover { transform: translateY(-10px); }
         .carta.ouros, .carta.copas { color: #dc3545; }
         .carta.paus, .carta.espadas { color: #212529; }
         .carta.vira { border: 4px solid #ffc107; }
         .carta.manilha { border: 4px solid #28a745; }
-        .mesa { min-height: 130px; background: rgba(0,100,0,0.1); border-radius: 15px; padding: 15px; margin: 10px 0; }
+        .mesa { 
+            min-height: 130px; 
+            background: rgba(0,100,0,0.1); 
+            border-radius: 15px; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border: 2px dashed #ccc;
+        }
         .jogador-tag { background: #0d6efd; color: white; padding: 5px 15px; border-radius: 30px; }
         .equipe-a { background: #0d6efd; }
         .equipe-b { background: #dc3545; }
         .btn-truco { background: #ffc107; border: none; color: #000; font-weight: bold; }
         .btn-truco:hover { background: #e0a800; }
+        .status-badge {
+            font-size: 1rem;
+            padding: 8px 16px;
+            border-radius: 30px;
+        }
     </style>
 </head>
 <body>
@@ -29,6 +67,8 @@
             <p class="text-light">Laboratório de Computação</p>
             <a href="regras.html" target="_blank" class="btn btn-outline-light">📖 Ver Regras</a>
         </div>
+
+        <div id="status-conexao" class="text-center text-white mb-2">Conectando...</div>
 
         <div id="tela-login" class="game-container">
             <h3 class="text-center mb-3">Entrar na Sala</h3>
@@ -56,13 +96,24 @@
 
         <div id="tela-jogo" class="game-container" style="display: none;">
             <div class="row mb-3">
-                <div class="col-6"><h4>Equipe A: <span id="placar-equipe-a">0</span></h4></div>
-                <div class="col-6 text-end"><h4>Equipe B: <span id="placar-equipe-b">0</span></h4></div>
+                <div class="col-6">
+                    <h4>
+                        <span class="badge equipe-a">Equipe A</span> 
+                        <span id="placar-equipe-a" class="ms-2">0</span>
+                    </h4>
+                </div>
+                <div class="col-6 text-end">
+                    <h4>
+                        <span class="badge equipe-b">Equipe B</span> 
+                        <span id="placar-equipe-b" class="ms-2">0</span>
+                    </h4>
+                </div>
             </div>
             <div class="mesa" id="cartas-oponente"></div>
             <div class="text-center mb-3">
                 <span class="badge bg-warning text-dark p-2 fs-6">🃏 Vira: <span id="carta-vira"></span></span>
                 <span class="badge bg-success p-2 fs-6">⭐ Manilhas: <span id="manilhas-info"></span></span>
+                <span class="badge bg-secondary p-2 fs-6">🔄 Rodada: <span id="rodada-atual">1</span>/3</span>
             </div>
             <div class="mesa" id="cartas-mesa"></div>
             <div class="mt-3">
@@ -70,90 +121,235 @@
                 <div id="minhas-cartas" class="d-flex justify-content-center flex-wrap"></div>
             </div>
             <div class="d-flex justify-content-center gap-2 mt-4">
-                <button class="btn btn-truco" onclick="pedirTruco()">TRUCO!</button>
-                <button class="btn btn-danger" onclick="desistir()">Desistir</button>
+                <button class="btn btn-truco" onclick="pedirTruco()">🗣️ TRUCO!</button>
+                <button class="btn btn-danger" onclick="desistir()">🏳️ Desistir</button>
+            </div>
+            <div id="acoes-truco" style="display: none;" class="mt-3 text-center">
+                <button class="btn btn-success me-2" onclick="responderTruco(true)">ACEITAR</button>
+                <button class="btn btn-secondary" onclick="responderTruco(false)">CORRER</button>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script>
+        // 🔗 CONEXÃO COM O SERVIDOR NO RENDER
         const socket = io("https://motor-truco.onrender.com");
-        let minhaSala, minhasCartas, estadoAtual = {};
+        
+        let minhaSala = '';
+        let minhasCartas = [];
+        let meuId = '';
+        let estadoAtual = {};
+        let modoJogo = '1x1';
+
+        // Elementos da UI
+        const statusConexao = document.getElementById('status-conexao');
+        const telaLogin = document.getElementById('tela-login');
+        const telaLobby = document.getElementById('tela-lobby');
+        const telaJogo = document.getElementById('tela-jogo');
+        const infoSala = document.getElementById('info-sala');
+        const listaJogadores = document.getElementById('lista-jogadores');
+        const placarA = document.getElementById('placar-equipe-a');
+        const placarB = document.getElementById('placar-equipe-b');
+        const cartaVira = document.getElementById('carta-vira');
+        const manilhasInfo = document.getElementById('manilhas-info');
+        const rodadaAtual = document.getElementById('rodada-atual');
+        const cartasMesa = document.getElementById('cartas-mesa');
+        const cartasOponente = document.getElementById('cartas-oponente');
+        const minhasCartasDiv = document.getElementById('minhas-cartas');
+        const acoesTruco = document.getElementById('acoes-truco');
+
+        // Eventos de conexão
+        socket.on('connect', () => {
+            meuId = socket.id;
+            statusConexao.innerHTML = '✅ Conectado ao servidor';
+            statusConexao.classList.remove('text-warning');
+            statusConexao.classList.add('text-success');
+        });
+
+        socket.on('disconnect', () => {
+            statusConexao.innerHTML = '❌ Desconectado - Tentando reconectar...';
+            statusConexao.classList.remove('text-success');
+            statusConexao.classList.add('text-warning');
+        });
+
+        socket.on('connect_error', () => {
+            statusConexao.innerHTML = '❌ Erro de conexão - Verifique sua internet';
+        });
 
         function entrarSala() {
             const apelido = document.getElementById('input-apelido').value.trim();
             const sala = document.getElementById('input-sala').value.trim();
-            const modo = document.getElementById('select-modo').value;
+            modoJogo = document.getElementById('select-modo').value;
+            
             if (!apelido || !sala) return alert('Preencha nome e sala!');
+            
             minhaSala = sala;
-            socket.emit('entrarSala', { apelido, sala, modo });
-            document.getElementById('tela-login').style.display = 'none';
-            document.getElementById('tela-lobby').style.display = 'block';
+            socket.emit('entrarSala', { apelido, sala, modo: modoJogo });
+            
+            telaLogin.style.display = 'none';
+            telaLobby.style.display = 'block';
+        }
+
+        function marcarPronto() {
+            socket.emit('marcarPronto');
+            document.getElementById('btn-pronto').disabled = true;
+            document.getElementById('btn-pronto').innerText = 'Aguardando jogadores...';
         }
 
         socket.on('atualizarLobby', ({ jogadores, modo, estado }) => {
-            document.getElementById('info-sala').innerHTML = `Sala: ${minhaSala} | Modo: ${modo} | Jogadores: ${jogadores.length}/${modo === '2x2' ? 4 : 2}`;
+            const capacidade = modo === '2x2' ? 4 : 2;
+            infoSala.innerHTML = `Sala: ${minhaSala} | Modo: ${modo} | Jogadores: ${jogadores.length}/${capacidade}`;
+            
             let lista = '';
             jogadores.forEach(j => {
-                lista += `<li class="list-group-item d-flex justify-content-between">
-                    <span>👤 ${j.nome} <span class="badge ${j.equipe === 'A' ? 'bg-primary' : 'bg-danger'}">Equipe ${j.equipe}</span></span>
+                const isMe = j.id === meuId;
+                lista += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        👤 ${j.nome} ${isMe ? '(Você)' : ''} 
+                        <span class="badge ${j.equipe === 'A' ? 'bg-primary' : 'bg-danger'}">Equipe ${j.equipe}</span>
+                    </span>
+                    ${j.pronto ? '<span class="badge bg-success">✅ Pronto</span>' : '<span class="badge bg-secondary">⏳ Aguardando</span>'}
                 </li>`;
             });
-            document.getElementById('lista-jogadores').innerHTML = lista;
+            listaJogadores.innerHTML = lista;
+
+            // Se o jogo já iniciou, esconde lobby
+            if (estado === 'jogando') {
+                telaLobby.style.display = 'none';
+                telaJogo.style.display = 'block';
+            }
         });
 
         socket.on('jogoIniciado', () => {
-            document.getElementById('tela-lobby').style.display = 'none';
-            document.getElementById('tela-jogo').style.display = 'block';
+            telaLobby.style.display = 'none';
+            telaJogo.style.display = 'block';
         });
 
-        socket.on('iniciarMao', ({ cartas, vira, manilhas, pontuacao, equipe }) => {
+        socket.on('iniciarMao', ({ cartas, vira, manilhas, pontuacao, equipe, rodada }) => {
             minhasCartas = cartas;
             atualizarPlacar(pontuacao);
-            document.getElementById('carta-vira').innerText = `${vira.valor} de ${vira.naipe}`;
-            document.getElementById('manilhas-info').innerText = manilhas.map(m => `${m.valor} de ${m.naipe}`).join(', ');
+            cartaVira.innerText = `${vira.valor} ${naipeIcone(vira.naipe)} de ${vira.naipe}`;
+            manilhasInfo.innerText = manilhas.map(m => `${m.valor}${naipeIcone(m.naipe)}`).join(' ');
+            rodadaAtual.innerText = rodada || 1;
+            
             renderizarMinhasCartas();
-        });
-
-        function renderizarMinhasCartas() {
-            const container = document.getElementById('minhas-cartas');
-            container.innerHTML = '';
-            minhasCartas.forEach(carta => {
-                const div = document.createElement('div');
-                div.className = `carta ${carta.naipe}`;
-                div.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
-                div.onclick = () => jogarCarta(carta);
-                container.appendChild(div);
+            cartasMesa.innerHTML = '';
+            cartasOponente.innerHTML = '';
+            acoesTruco.style.display = 'none';
+            
+            // Destacar manilhas visualmente
+            document.querySelectorAll('.carta').forEach(el => {
+                const valor = el.getAttribute('data-valor');
+                const naipe = el.getAttribute('data-naipe');
+                if (manilhas.some(m => m.valor === valor && m.naipe === naipe)) {
+                    el.classList.add('manilha');
+                }
             });
-        }
+        });
 
         function naipeIcone(naipe) {
             const icones = { 'paus': '♣', 'copas': '♥', 'espadas': '♠', 'ouros': '♦' };
             return icones[naipe] || '';
         }
 
+        function renderizarMinhasCartas() {
+            minhasCartasDiv.innerHTML = '';
+            minhasCartas.forEach(carta => {
+                const div = document.createElement('div');
+                div.className = `carta ${carta.naipe}`;
+                div.setAttribute('data-valor', carta.valor);
+                div.setAttribute('data-naipe', carta.naipe);
+                div.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
+                div.onclick = () => jogarCarta(carta);
+                minhasCartasDiv.appendChild(div);
+            });
+        }
+
         function jogarCarta(carta) {
+            // Remove a carta da mão localmente (feedback visual)
+            minhasCartas = minhasCartas.filter(c => !(c.valor === carta.valor && c.naipe === carta.naipe));
+            renderizarMinhasCartas();
             socket.emit('jogarCarta', carta);
         }
 
-        socket.on('cartaJogada', ({ jogadorId, carta }) => {
+        socket.on('cartaJogada', ({ jogadorId, carta, equipe }) => {
             const mesa = document.getElementById('cartas-mesa');
-            mesa.innerHTML += `<div class="carta ${carta.naipe}">${carta.valor} ${naipeIcone(carta.naipe)}</div>`;
+            const cartaDiv = document.createElement('div');
+            cartaDiv.className = `carta ${carta.naipe}`;
+            cartaDiv.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
+            
+            // Adiciona indicador de qual equipe jogou
+            const badge = document.createElement('span');
+            badge.className = `badge ${equipe === 'A' ? 'bg-primary' : 'bg-danger'} ms-1`;
+            badge.style.fontSize = '0.6rem';
+            badge.innerText = equipe;
+            cartaDiv.appendChild(badge);
+            
+            mesa.appendChild(cartaDiv);
+        });
+
+        socket.on('novaRodada', ({ rodada }) => {
+            rodadaAtual.innerText = rodada;
+            cartasMesa.innerHTML = ''; // Limpa a mesa para nova rodada
+        });
+
+        socket.on('atualizarVez', ({ jogadorId }) => {
+            const isMinhaVez = jogadorId === meuId;
+            if (isMinhaVez) {
+                // Pode adicionar um indicador visual de "Sua vez"
+            }
         });
 
         socket.on('fimDeMao', ({ pontuacao, vencedorMao, pontosGanhos }) => {
             atualizarPlacar(pontuacao);
-            alert(`Equipe ${vencedorMao} venceu a mão e ganhou ${pontosGanhos} ponto(s)!`);
+            alert(`🏆 Equipe ${vencedorMao} venceu a mão e ganhou ${pontosGanhos} ponto(s)!`);
+            acoesTruco.style.display = 'none';
+        });
+
+        socket.on('fimDeJogo', ({ vencedor, pontuacao }) => {
+            alert(`🎉 Equipe ${vencedor} venceu o jogo! Placar final: ${pontuacao.A} x ${pontuacao.B}`);
+            // Voltar ao lobby
+            telaJogo.style.display = 'none';
+            telaLobby.style.display = 'block';
+            document.getElementById('btn-pronto').disabled = false;
+            document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
         });
 
         function atualizarPlacar(pontuacao) {
-            document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
-            document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
+            placarA.innerText = pontuacao.A || 0;
+            placarB.innerText = pontuacao.B || 0;
         }
 
-        function pedirTruco() { socket.emit('pedirTruco'); }
-        function desistir() { socket.emit('desistir'); }
+        function pedirTruco() {
+            socket.emit('pedirTruco');
+        }
+
+        socket.on('trucoPedido', ({ valor }) => {
+            acoesTruco.style.display = 'block';
+            // Armazena o valor do truco para resposta
+            window.valorTruco = valor;
+        });
+
+        function responderTruco(aceitou) {
+            socket.emit('responderTruco', { aceitou });
+            acoesTruco.style.display = 'none';
+        }
+
+        socket.on('trucoAceito', ({ novaAposta }) => {
+            alert(`Truco aceito! A mão agora vale ${novaAposta} pontos.`);
+        });
+
+        function desistir() {
+            if (confirm('Tem certeza que deseja desistir da mão?')) {
+                socket.emit('desistir');
+            }
+        }
+
+        // Tratamento de erros
+        socket.on('erro', (msg) => {
+            alert('❌ ' + msg);
+        });
     </script>
 </body>
 </html>
