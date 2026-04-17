@@ -208,11 +208,16 @@
             box-shadow: 0 8px 0 #7a5c2e;
             border: 2px solid #e0b354;
             cursor: pointer;
-            transition: transform 0.15s;
+            transition: transform 0.15s, opacity 0.2s;
         }
         .carta-mao:hover { transform: translateY(-10px); }
         .carta-mao.ouros, .carta-mao.copas { color: #c41e3a; }
         .carta-mao.paus, .carta-mao.espadas { color: #1e1e1e; }
+        .carta-mao.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
 
         .acoes-jogo {
             margin-top: 25px;
@@ -370,6 +375,8 @@
     let minhaSala = '', minhasCartas = [], meuId = '', modoJogo = '1x1';
     let jogadoresSala = [];
     let equipeDoJogador = null;
+    let minhaVez = false;           // <--- NOVA FLAG
+    let cartaJogadaTemp = null;     // <--- Para restaurar em caso de erro
 
     const statusConexao = document.getElementById('status-conexao');
     const telaLogin = document.getElementById('tela-login');
@@ -486,6 +493,8 @@
         document.getElementById('cartas-mesa').innerHTML = '';
         document.getElementById('acoes-truco').style.display = 'none';
         document.getElementById('valor-aposta').innerText = '1';
+        minhaVez = false;
+        cartaJogadaTemp = null;
     });
 
     function naipeIcone(naipe) {
@@ -498,6 +507,7 @@
         minhasCartas.forEach(carta => {
             const div = document.createElement('div');
             div.className = `carta-mao ${carta.naipe}`;
+            if (!minhaVez) div.classList.add('disabled');
             div.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
             div.onclick = () => jogarCarta(carta);
             container.appendChild(div);
@@ -505,7 +515,13 @@
     }
 
     function jogarCarta(carta) {
-        minhasCartas = minhasCartas.filter(c => !(c.valor===carta.valor && c.naipe===carta.naipe));
+        if (!minhaVez) {
+            showToast('Não é sua vez!', 'warning');
+            return;
+        }
+        // Remove a carta localmente e guarda para possível restauração
+        cartaJogadaTemp = carta;
+        minhasCartas = minhasCartas.filter(c => !(c.valor === carta.valor && c.naipe === carta.naipe));
         renderizarMinhasCartas();
         socket.emit('jogarCarta', carta);
     }
@@ -538,6 +554,10 @@
         document.querySelectorAll('.vez-indicator').forEach(el => el.innerHTML = '');
         const vezEl = document.getElementById(`vez-${jogadorId}`);
         if (vezEl) vezEl.innerHTML = '🎲 VEZ';
+
+        // Atualiza flag de vez
+        minhaVez = (jogadorId === meuId);
+        renderizarMinhasCartas(); // Re-renderiza para aplicar/remover classe disabled
     });
 
     socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => atualizarPlacarMaos(rodadasA, rodadasB));
@@ -594,7 +614,16 @@
     }
     function desistir() { if (confirm('Desistir da mão?')) socket.emit('desistir'); }
 
-    socket.on('erro', msg => showToast(msg, 'danger'));
+    // Tratamento de erro: restaura a carta se o servidor recusar a jogada
+    socket.on('erro', (msg) => {
+        showToast(msg, 'danger');
+        // Se havia uma carta temporariamente removida, restaura
+        if (cartaJogadaTemp) {
+            minhasCartas.push(cartaJogadaTemp);
+            cartaJogadaTemp = null;
+            renderizarMinhasCartas();
+        }
+    });
 </script>
 </body>
 </html>
