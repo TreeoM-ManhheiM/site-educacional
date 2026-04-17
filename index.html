@@ -129,7 +129,8 @@
 
         .btn-domino,
         .btn-xadrez,
-        .btn-atari {
+        .btn-atari,
+        .btn-truco {
             display: inline-block;
             padding: 12px 24px;
             color: white;
@@ -166,6 +167,15 @@
 
         .btn-atari:hover {
             background-color: #b45309;
+            transform: scale(1.05);
+        }
+
+        .btn-truco {
+            background-color: #8b5cf6;
+        }
+
+        .btn-truco:hover {
+            background-color: #7c3aed;
             transform: scale(1.05);
         }
     </style>
@@ -223,6 +233,7 @@
             <div style="text-align:center; display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
                 <a href="domino/" class="btn-domino">🎮 Dominó Lógico</a>
                 <a href="xadrez/" class="btn-xadrez">♟️ Xadrez Lógico</a>
+                <a href="truco/" class="btn-truco">🃏 Truco Paulista</a>
                 <a href="atari/2600.html" class="btn-atari">🕹️ Emulador ALL ROMS</a>
             </div>
         </section>
@@ -238,4 +249,3 @@
 
 </body>
 </html>
-``
