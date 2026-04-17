@@ -44,7 +44,7 @@
             box-shadow: 0 5px 0 #0a0a0a;
             color: #ffd966;
             font-weight: bold;
-            border: 1px solid #b58a4a;
+            border: 2px solid #b58a4a;
             backdrop-filter: blur(2px);
             transform: translate(-50%, -50%);
         }
@@ -266,7 +266,10 @@
             margin-bottom: 10px;
             color: #ffd966;
             border: 1px solid #b58a4a;
+            transition: background 0.3s;
         }
+        .status-vez.equipe-A-bg { background: #1e5fb4; }
+        .status-vez.equipe-B-bg { background: #b91c1c; }
         @media (max-width: 700px) {
             .mesa-redonda { width: 450px; height: 450px; }
             .jogador { width: 90px; font-size: 0.8rem; }
@@ -499,7 +502,14 @@
 
     socket.on('atualizarVez', ({ jogadorId }) => {
         const jogador = jogadoresSala.find(j => j.id === jogadorId);
-        if (jogador) document.getElementById('nome-vez').innerText = jogador.nome;
+        const indicador = document.getElementById('indicador-vez');
+        const nomeSpan = document.getElementById('nome-vez');
+        if (jogador) {
+            nomeSpan.innerText = jogador.nome;
+            // Aplica classe de cor de fundo conforme equipe
+            indicador.classList.remove('equipe-A-bg', 'equipe-B-bg');
+            indicador.classList.add(jogador.equipe === 'A' ? 'equipe-A-bg' : 'equipe-B-bg');
+        }
         document.querySelectorAll('.vez-indicator').forEach(el => el.innerHTML = '');
         const vezEl = document.getElementById(`vez-${jogadorId}`);
         if (vezEl) vezEl.innerHTML = '🎲 VEZ';
