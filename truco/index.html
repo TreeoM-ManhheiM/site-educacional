@@ -124,7 +124,9 @@
             box-shadow: 0 5px 0 #7a5c2e;
             border: 2px solid #e0b354;
         }
-        /* Cartas na mesa (jogadas na rodada atual) */
+        .carta-vira-exibida.ouros, .carta-vira-exibida.copas { color: #c41e3a; }
+        .carta-vira-exibida.paus, .carta-vira-exibida.espadas { color: #1e1e1e; }
+        /* Cartas na mesa */
         .cartas-na-mesa {
             display: flex;
             gap: 10px;
@@ -144,12 +146,11 @@
             font-size: 2.2rem;
             font-weight: bold;
             box-shadow: 0 5px 0 #7a5c2e;
-            border: 4px solid #e0b354; /* Borda padrão, será sobrescrita */
+            border: 4px solid #e0b354;
             position: relative;
         }
         .carta-mesa.ouros, .carta-mesa.copas { color: #c41e3a; }
         .carta-mesa.paus, .carta-mesa.espadas { color: #1e1e1e; }
-        /* Indicador de equipe na carta */
         .carta-mesa.equipe-A-border { border-color: #1e5fb4; box-shadow: 0 5px 0 #0f2c4e, 0 0 10px #3b82f6; }
         .carta-mesa.equipe-B-border { border-color: #b91c1c; box-shadow: 0 5px 0 #6e1010, 0 0 10px #ef4444; }
         .carta-equipe-selo {
@@ -181,14 +182,15 @@
             gap: 8px;
         }
         .mao-indicator {
-            width: 25px;
-            height: 25px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: #3a3a3a;
-            border: 2px solid #b58a4a;
+            border: 3px solid #b58a4a;
+            transition: background 0.3s;
         }
-        .mao-vencida-A { background: #1e5fb4; box-shadow: 0 0 10px #3b82f6; }
-        .mao-vencida-B { background: #b91c1c; box-shadow: 0 0 10px #ef4444; }
+        .mao-vencida-A { background: #1e5fb4; box-shadow: 0 0 12px #3b82f6; }
+        .mao-vencida-B { background: #b91c1c; box-shadow: 0 0 12px #ef4444; }
         /* Mão do jogador */
         .minha-mao {
             margin-top: 30px;
@@ -265,7 +267,6 @@
             color: #ffd966;
             border: 1px solid #b58a4a;
         }
-        /* Responsividade */
         @media (max-width: 700px) {
             .mesa-redonda { width: 450px; height: 450px; }
             .jogador { width: 90px; font-size: 0.8rem; }
@@ -283,7 +284,6 @@
 <div class="game-wrapper">
     <div id="status-conexao" class="mb-2 text-center text-white">Conectando...</div>
 
-    <!-- Tela Login -->
     <div id="tela-login" class="bg-dark p-4 rounded-4 text-white" style="max-width:400px; background: #1e2b1a !important;">
         <h3 class="text-center">🃏 Entrar na Sala</h3>
         <input type="text" class="form-control mb-2" id="input-apelido" placeholder="Seu Nome">
@@ -296,7 +296,6 @@
         <div class="mt-3 text-center"><a href="regras.html" target="_blank" class="text-warning">📖 Ver Regras</a></div>
     </div>
 
-    <!-- Tela Lobby -->
     <div id="tela-lobby" class="bg-dark p-4 rounded-4 text-white" style="display:none; max-width:500px; background: #1e2b1a !important;">
         <h3>🕹️ Lobby</h3>
         <div id="info-sala" class="alert alert-secondary"></div>
@@ -304,13 +303,11 @@
         <button id="btn-pronto" class="btn btn-success w-100" onclick="marcarPronto()">ESTOU PRONTO</button>
     </div>
 
-    <!-- Tela Jogo -->
     <div id="tela-jogo" style="display:none; width:100%;">
         <div class="placar-container">
             <span>⚪ Equipe A: <span id="placar-equipe-a">0</span></span>
             <span>⚫ Equipe B: <span id="placar-equipe-b">0</span></span>
         </div>
-        <!-- Placar de mãos -->
         <div class="placar-maos">
             <div class="maos-equipe" id="maos-equipe-A">
                 <div class="mao-indicator" id="mao-A-1"></div>
@@ -362,6 +359,7 @@
     let minhaSala = '', minhasCartas = [], meuId = '', modoJogo = '1x1';
     let jogadoresSala = [];
     let placarRodadas = { A: 0, B: 0 };
+    let equipeDoJogador = null;
 
     const statusConexao = document.getElementById('status-conexao');
     const telaLogin = document.getElementById('tela-login');
@@ -390,6 +388,7 @@
 
     socket.on('atualizarLobby', ({ jogadores, modo, estado }) => {
         jogadoresSala = jogadores;
+        modoJogo = modo;
         const capacidade = modo === '2x2' ? 4 : 2;
         document.getElementById('info-sala').innerHTML = `Sala: ${minhaSala} | Modo: ${modo} | ${jogadores.length}/${capacidade}`;
         let lista = '';
@@ -411,21 +410,37 @@
         telaJogo.style.display = 'block';
     });
 
-    function atualizarJogadoresNaMesa(jogadores) {
+    function posicionarJogadores(jogadores, modo) {
+        // Esconde todas as cadeiras primeiro
         ['top','right','bottom','left'].forEach(pos => {
             document.getElementById(`jogador-${pos}`).innerHTML = '';
         });
-        const posicoes = ['top', 'right', 'bottom', 'left'];
-        jogadores.forEach((jog, index) => {
-            if (index >= 4) return;
-            const pos = posicoes[index];
-            const div = document.getElementById(`jogador-${pos}`);
-            div.innerHTML = `
-                <div class="nome">${jog.nome}</div>
-                <span class="equipe-badge ${jog.equipe==='A'?'equipe-A':'equipe-B'}"></span>
-                <div class="vez-indicator" id="vez-${jog.id}"></div>
-            `;
-        });
+        if (modo === '1x1') {
+            // Apenas top e bottom (oponente e você)
+            const jogTop = jogadores.find(j => j.id !== meuId) || jogadores[0];
+            const jogBottom = jogadores.find(j => j.id === meuId) || jogadores[1];
+            if (jogTop) preencherCadeira('top', jogTop);
+            if (jogBottom) preencherCadeira('bottom', jogBottom);
+        } else {
+            // 2x2: parceiros opostos (A: top/bottom, B: left/right)
+            // Ordena para garantir que equipe A fique top/bottom
+            const equipeA = jogadores.filter(j => j.equipe === 'A');
+            const equipeB = jogadores.filter(j => j.equipe === 'B');
+            // Top: primeiro da equipe A (ou qualquer)
+            if (equipeA[0]) preencherCadeira('top', equipeA[0]);
+            if (equipeA[1]) preencherCadeira('bottom', equipeA[1]);
+            if (equipeB[0]) preencherCadeira('left', equipeB[0]);
+            if (equipeB[1]) preencherCadeira('right', equipeB[1]);
+        }
+    }
+
+    function preencherCadeira(pos, jogador) {
+        const div = document.getElementById(`jogador-${pos}`);
+        div.innerHTML = `
+            <div class="nome">${jogador.nome}</div>
+            <span class="equipe-badge ${jogador.equipe==='A'?'equipe-A':'equipe-B'}"></span>
+            <div class="vez-indicator" id="vez-${jogador.id}"></div>
+        `;
     }
 
     function atualizarPlacarMaos(rodadasA, rodadasB) {
@@ -445,15 +460,16 @@
         }
     }
 
-    socket.on('iniciarMao', ({ cartas, vira, manilhas, pontuacao, equipe, rodada }) => {
+    socket.on('iniciarMao', ({ cartas, vira, pontuacao, equipe }) => {
         minhasCartas = cartas;
+        equipeDoJogador = equipe;
         document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
         document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
         atualizarPlacarMaos(0, 0);
         const viraDiv = document.getElementById('carta-vira');
         viraDiv.className = `carta-vira-exibida ${vira.naipe}`;
         viraDiv.innerHTML = `${vira.valor} ${naipeIcone(vira.naipe)}`;
-        atualizarJogadoresNaMesa(jogadoresSala);
+        posicionarJogadores(jogadoresSala, modoJogo);
         renderizarMinhasCartas();
         document.getElementById('cartas-mesa').innerHTML = '';
         document.getElementById('acoes-truco').style.display = 'none';
@@ -486,7 +502,6 @@
         const div = document.createElement('div');
         div.className = `carta-mesa ${carta.naipe} equipe-${equipe}-border`;
         div.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
-        // Adiciona selo da equipe
         const selo = document.createElement('span');
         selo.className = `carta-equipe-selo selo-${equipe}`;
         selo.innerText = equipe;
@@ -495,7 +510,6 @@
     });
 
     socket.on('novaRodada', ({ rodada }) => {
-        // Só limpa a mesa quando uma nova rodada começar
         document.getElementById('cartas-mesa').innerHTML = '';
     });
 
@@ -509,14 +523,17 @@
         if (vezEl) vezEl.innerHTML = '🎲 VEZ';
     });
 
+    // Evento crucial: o servidor deve emitir quando uma rodada é vencida
     socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => {
         atualizarPlacarMaos(rodadasA, rodadasB);
     });
 
+    // Fallback: se o servidor não emitir, tentamos deduzir pelo evento de fim de mão
     socket.on('fimDeMao', ({ pontuacao, vencedorMao, pontosGanhos }) => {
         document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
         document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
         alert(`🏆 Equipe ${vencedorMao} venceu a mão (+${pontosGanhos})`);
+        // Resetar placar de rodadas para próxima mão
         atualizarPlacarMaos(0, 0);
     });
 
