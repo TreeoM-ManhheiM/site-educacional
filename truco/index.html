@@ -21,7 +21,6 @@
             min-height: 100vh;
             padding: 20px;
         }
-        /* MESA REDONDA */
         .mesa-redonda {
             position: relative;
             width: 600px;
@@ -33,7 +32,6 @@
             border: 12px solid #5a3e1b;
             margin: 0 auto;
         }
-        /* CADEIRAS / JOGADORES */
         .jogador {
             position: absolute;
             width: 120px;
@@ -69,7 +67,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        /* CENTRO DA MESA */
         .centro-mesa {
             position: absolute;
             top: 50%;
@@ -126,7 +123,6 @@
         }
         .carta-vira-exibida.ouros, .carta-vira-exibida.copas { color: #c41e3a; }
         .carta-vira-exibida.paus, .carta-vira-exibida.espadas { color: #1e1e1e; }
-        /* Cartas na mesa */
         .cartas-na-mesa {
             display: flex;
             gap: 10px;
@@ -170,7 +166,6 @@
         }
         .selo-A { background: #1e5fb4; }
         .selo-B { background: #b91c1c; }
-        /* Placar de mãos */
         .placar-maos {
             display: flex;
             justify-content: center;
@@ -191,7 +186,6 @@
         }
         .mao-vencida-A { background: #1e5fb4; box-shadow: 0 0 12px #3b82f6; }
         .mao-vencida-B { background: #b91c1c; box-shadow: 0 0 12px #ef4444; }
-        /* Mão do jogador */
         .minha-mao {
             margin-top: 30px;
             background: rgba(20, 30, 15, 0.7);
@@ -270,6 +264,13 @@
         }
         .status-vez.equipe-A-bg { background: #1e5fb4; }
         .status-vez.equipe-B-bg { background: #b91c1c; }
+        .toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+        }
+        .aposta-indicator {
+            background: #e0a800; color: #1a1a1a; padding: 5px 20px;
+            border-radius: 30px; font-weight: bold; display: inline-block;
+        }
         @media (max-width: 700px) {
             .mesa-redonda { width: 450px; height: 450px; }
             .jogador { width: 90px; font-size: 0.8rem; }
@@ -286,6 +287,7 @@
 <body>
 <div class="game-wrapper">
     <div id="status-conexao" class="mb-2 text-center text-white">Conectando...</div>
+    <div class="toast-container"></div>
 
     <div id="tela-login" class="bg-dark p-4 rounded-4 text-white" style="max-width:400px; background: #1e2b1a !important;">
         <h3 class="text-center">🃏 Entrar na Sala</h3>
@@ -324,6 +326,10 @@
             </div>
         </div>
 
+        <div class="d-flex justify-content-center my-2">
+            <span class="aposta-indicator">💰 Aposta: <span id="valor-aposta">1</span> ponto(s)</span>
+        </div>
+
         <div id="indicador-vez" class="status-vez text-center">Vez de: <span id="nome-vez">---</span></div>
 
         <div class="mesa-redonda">
@@ -351,12 +357,14 @@
         </div>
         <div id="acoes-truco" style="display:none;" class="text-center mt-3">
             <button class="btn btn-success me-2" onclick="responderTruco(true)">ACEITAR</button>
+            <button class="btn btn-warning me-2" onclick="aumentarTruco()">AUMENTAR</button>
             <button class="btn btn-secondary" onclick="responderTruco(false)">CORRER</button>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const socket = io("https://motor-truco.onrender.com");
     let minhaSala = '', minhasCartas = [], meuId = '', modoJogo = '1x1';
@@ -367,6 +375,23 @@
     const telaLogin = document.getElementById('tela-login');
     const telaLobby = document.getElementById('tela-lobby');
     const telaJogo = document.getElementById('tela-jogo');
+
+    function showToast(message, type = 'info') {
+        const container = document.querySelector('.toast-container');
+        const toastEl = document.createElement('div');
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+        toastEl.setAttribute('role', 'alert');
+        toastEl.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        container.appendChild(toastEl);
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+        setTimeout(() => toastEl.remove(), 5000);
+    }
 
     socket.on('connect', () => { meuId = socket.id; statusConexao.innerHTML = '✅ Conectado'; });
     socket.on('disconnect', () => { statusConexao.innerHTML = '❌ Desconectado'; });
@@ -460,6 +485,7 @@
         renderizarMinhasCartas();
         document.getElementById('cartas-mesa').innerHTML = '';
         document.getElementById('acoes-truco').style.display = 'none';
+        document.getElementById('valor-aposta').innerText = '1';
     });
 
     function naipeIcone(naipe) {
@@ -506,7 +532,6 @@
         const nomeSpan = document.getElementById('nome-vez');
         if (jogador) {
             nomeSpan.innerText = jogador.nome;
-            // Aplica classe de cor de fundo conforme equipe
             indicador.classList.remove('equipe-A-bg', 'equipe-B-bg');
             indicador.classList.add(jogador.equipe === 'A' ? 'equipe-A-bg' : 'equipe-B-bg');
         }
@@ -517,28 +542,59 @@
 
     socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => atualizarPlacarMaos(rodadasA, rodadasB));
 
-    socket.on('fimDeMao', ({ pontuacao }) => {
+    socket.on('fimDeMao', ({ pontuacao, vencedorMao, pontosGanhos }) => {
         document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
         document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
+        showToast(`Equipe ${vencedorMao} venceu a mão (+${pontosGanhos} pontos)`, 'success');
         atualizarPlacarMaos(0, 0);
     });
 
-    socket.on('fimDeJogo', () => {
+    socket.on('fimDeJogo', ({ vencedor }) => {
+        showToast(`🏆 Equipe ${vencedor} venceu o jogo!`, 'success');
         telaJogo.style.display = 'none';
         telaLobby.style.display = 'block';
         document.getElementById('btn-pronto').disabled = false;
         document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
     });
 
+    // --- Truco ---
+    socket.on('atualizarAposta', ({ aposta }) => {
+        document.getElementById('valor-aposta').innerText = aposta;
+    });
+
+    socket.on('trucoPedido', ({ valor, de }) => {
+        showToast(`${de} pediu TRUCO! (${valor} pontos)`, 'warning');
+        document.getElementById('acoes-truco').style.display = 'block';
+        window.trucoValor = valor;
+    });
+
+    socket.on('trucoPedidoEnviado', ({ valor }) => {
+        showToast(`Você pediu TRUCO! Aguardando resposta...`, 'info');
+    });
+
+    socket.on('trucoAceito', ({ novaAposta }) => {
+        showToast(`Truco aceito! Mão agora vale ${novaAposta} pontos.`, 'success');
+        document.getElementById('acoes-truco').style.display = 'none';
+    });
+
+    socket.on('trucoAumentado', ({ de, valor }) => {
+        showToast(`${de} aumentou para ${valor} pontos!`, 'warning');
+        document.getElementById('acoes-truco').style.display = 'block';
+        window.trucoValor = valor;
+    });
+
     function pedirTruco() { socket.emit('pedirTruco'); }
-    socket.on('trucoPedido', () => document.getElementById('acoes-truco').style.display = 'block');
     function responderTruco(aceitou) {
         socket.emit('responderTruco', { aceitou });
         document.getElementById('acoes-truco').style.display = 'none';
     }
-    socket.on('trucoAceito', ({ novaAposta }) => alert(`Truco aceito! Mão vale ${novaAposta} pontos.`));
+    function aumentarTruco() {
+        socket.emit('responderTruco', { aceitou: false, aumentar: true });
+        document.getElementById('acoes-truco').style.display = 'none';
+    }
     function desistir() { if (confirm('Desistir da mão?')) socket.emit('desistir'); }
-    socket.on('erro', msg => alert('❌ ' + msg));
+
+    socket.on('erro', msg => showToast(msg, 'danger'));
 </script>
 </body>
 </html>
