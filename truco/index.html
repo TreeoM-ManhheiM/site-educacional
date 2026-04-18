@@ -6,7 +6,6 @@
     <title>Truco Paulista ♣️ — Laboratório de Computação</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        /* (todo o seu CSS permanece igual) */
         body {
             background: #1a2a1f;
             background-image: radial-gradient(circle at 20% 30%, #2d4a2a, #0f1a0e);
@@ -532,6 +531,7 @@
     let equipeDoJogador = null;
     let minhaVez = false;
     let cartaJogadaTemp = null;
+    let viraAtual = null;
 
     // Histórico da mão atual (mini cartas)
     let historicoRodadas = [];
@@ -614,12 +614,13 @@
     }
 
     // --- Histórico completo da partida (modal) ---
-    function adicionarMaoAoHistorico(vencedorMao, pontosGanhos, apostaFinal) {
+    function adicionarMaoAoHistorico(vencedorMao, pontosGanhos, apostaFinal, vira) {
         historicoPartida.push({
             numero: numeroMaoAtual++,
             vencedor: vencedorMao,
             pontosGanhos: pontosGanhos,
             aposta: apostaFinal,
+            vira: vira,
             rodadas: historicoRodadas.map(r => ({
                 cartas: r.cartas.map(c => ({ carta: {...c.carta}, equipe: c.equipe })),
                 vencedor: r.vencedor
@@ -637,6 +638,9 @@
             historicoPartida.forEach(mao => {
                 html += `<div class="mb-4 p-3 border rounded" style="border-color: #b58a4a !important;">`;
                 html += `<h5>Mão ${mao.numero} — Vencedor: Equipe ${mao.vencedor} (+${mao.pontosGanhos} pontos) | Aposta: ${mao.aposta}</h5>`;
+                if (mao.vira) {
+                    html += `<p class="mb-1"><strong>Vira:</strong> ${mao.vira.valor}${naipeIcone(mao.vira.naipe)}</p>`;
+                }
                 mao.rodadas.forEach((rodada, idx) => {
                     html += `<div class="ms-3 mb-2">`;
                     html += `<strong>Rodada ${idx+1}:</strong> `;
@@ -697,7 +701,6 @@
         }
     });
 
-    // 🆕 Ao iniciar um novo jogo, limpa o histórico da partida
     socket.on('jogoIniciado', () => {
         telaLobby.style.display = 'none';
         telaJogo.style.display = 'block';
@@ -749,6 +752,7 @@
         const viraDiv = document.getElementById('carta-vira');
         viraDiv.className = `carta-vira-exibida ${vira.naipe}`;
         viraDiv.innerHTML = `${vira.valor} ${naipeIcone(vira.naipe)}`;
+        viraAtual = vira;
         posicionarJogadores(jogadoresSala, modoJogo);
         renderizarMinhasCartas();
         document.getElementById('cartas-mesa').innerHTML = '';
@@ -833,7 +837,7 @@
         document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
         showToast(`Equipe ${vencedorMao} venceu a mão (+${pontosGanhos} pontos)`, 'success');
         atualizarPlacarMaos(0, 0);
-        adicionarMaoAoHistorico(vencedorMao, pontosGanhos, parseInt(document.getElementById('valor-aposta').innerText));
+        adicionarMaoAoHistorico(vencedorMao, pontosGanhos, parseInt(document.getElementById('valor-aposta').innerText), viraAtual);
         limparHistorico();
     });
 
@@ -843,7 +847,6 @@
         telaLobby.style.display = 'block';
         document.getElementById('btn-pronto').disabled = false;
         document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
-        // Exibe o histórico acumulado (não limpa aqui, a limpeza ocorrerá no próximo jogoIniciado)
         setTimeout(() => mostrarHistoricoPartida(), 500);
     });
 
