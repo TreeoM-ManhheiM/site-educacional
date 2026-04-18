@@ -375,8 +375,8 @@
     let minhaSala = '', minhasCartas = [], meuId = '', modoJogo = '1x1';
     let jogadoresSala = [];
     let equipeDoJogador = null;
-    let minhaVez = false;           // <--- NOVA FLAG
-    let cartaJogadaTemp = null;     // <--- Para restaurar em caso de erro
+    let minhaVez = false;
+    let cartaJogadaTemp = null;
 
     const statusConexao = document.getElementById('status-conexao');
     const telaLogin = document.getElementById('tela-login');
@@ -519,7 +519,6 @@
             showToast('Não é sua vez!', 'warning');
             return;
         }
-        // Remove a carta localmente e guarda para possível restauração
         cartaJogadaTemp = carta;
         minhasCartas = minhasCartas.filter(c => !(c.valor === carta.valor && c.naipe === carta.naipe));
         renderizarMinhasCartas();
@@ -555,9 +554,8 @@
         const vezEl = document.getElementById(`vez-${jogadorId}`);
         if (vezEl) vezEl.innerHTML = '🎲 VEZ';
 
-        // Atualiza flag de vez
         minhaVez = (jogadorId === meuId);
-        renderizarMinhasCartas(); // Re-renderiza para aplicar/remover classe disabled
+        renderizarMinhasCartas();
     });
 
     socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => atualizarPlacarMaos(rodadasA, rodadasB));
@@ -577,7 +575,6 @@
         document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
     });
 
-    // --- Truco ---
     socket.on('atualizarAposta', ({ aposta }) => {
         document.getElementById('valor-aposta').innerText = aposta;
     });
@@ -614,10 +611,8 @@
     }
     function desistir() { if (confirm('Desistir da mão?')) socket.emit('desistir'); }
 
-    // Tratamento de erro: restaura a carta se o servidor recusar a jogada
     socket.on('erro', (msg) => {
         showToast(msg, 'danger');
-        // Se havia uma carta temporariamente removida, restaura
         if (cartaJogadaTemp) {
             minhasCartas.push(cartaJogadaTemp);
             cartaJogadaTemp = null;
