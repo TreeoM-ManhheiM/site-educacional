@@ -6,6 +6,7 @@
     <title>Truco Paulista ♣️ — Laboratório de Computação</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
+        /* ===== ESTILOS MANTIDOS (idênticos ao seu código) ===== */
         body {
             background: #1a2a1f;
             background-image: radial-gradient(circle at 20% 30%, #2d4a2a, #0f1a0e);
@@ -876,6 +877,21 @@
     function responderTruco(aceitou) { socket.emit('responderTruco', { aceitou }); document.getElementById('acoes-truco').style.display = 'none'; }
     function aumentarTruco() { socket.emit('responderTruco', { aceitou: false, aumentar: true }); document.getElementById('acoes-truco').style.display = 'none'; }
     function desistir() { if (confirm('Desistir da mão?')) socket.emit('desistir'); }
+
+    // 🆕 Quando um jogador sai durante a partida
+    socket.on('jogadorSaiu', ({ nome, mensagem }) => {
+        showToast(mensagem, 'warning');
+        voltarParaLobby();
+    });
+
+    function voltarParaLobby() {
+        if (telaJogo.style.display !== 'none') {
+            telaJogo.style.display = 'none';
+            telaLobby.style.display = 'block';
+            document.getElementById('btn-pronto').disabled = false;
+            document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+        }
+    }
 
     socket.on('erro', (msg) => {
         showToast(msg, 'danger');
