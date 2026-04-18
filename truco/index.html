@@ -1,673 +1,327 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Truco Paulista ♣️ — Laboratório de Computação</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <style>
-        body {
-            background: #1a2a1f;
-            background-image: radial-gradient(circle at 20% 30%, #2d4a2a, #0f1a0e);
-            min-height: 100vh;
-            font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
-            color: #f0e6d2;
-        }
-        .game-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .mesa-redonda {
-            position: relative;
-            width: 600px;
-            height: 600px;
-            background: #2d5a27;
-            background: radial-gradient(circle at 30% 30%, #3e7a36, #1d3e18);
-            border-radius: 50%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 30px #1a2e15;
-            border: 12px solid #5a3e1b;
-            margin: 0 auto;
-        }
-        .jogador {
-            position: absolute;
-            width: 120px;
-            text-align: center;
-            background: rgba(30, 20, 10, 0.8);
-            padding: 8px 5px;
-            border-radius: 40px 40px 20px 20px;
-            box-shadow: 0 5px 0 #0a0a0a;
-            color: #ffd966;
-            font-weight: bold;
-            border: 2px solid #b58a4a;
-            backdrop-filter: blur(2px);
-            transform: translate(-50%, -50%);
-        }
-        .jogador-top { top: -10px; left: 50%; }
-        .jogador-right { top: 50%; right: -70px; transform: translate(0, -50%); }
-        .jogador-bottom { bottom: -30px; left: 50%; transform: translate(-50%, 0); }
-        .jogador-left { top: 50%; left: -70px; transform: translate(0, -50%); }
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
 
-        .jogador .nome { font-size: 1rem; }
-        .jogador .equipe-badge {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            margin: 0 3px;
-        }
-        .equipe-A { background: #1e5fb4; box-shadow: 0 0 8px #3b82f6; }
-        .equipe-B { background: #b91c1c; box-shadow: 0 0 8px #ef4444; }
-        .vez-indicator {
-            color: #ffd700;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .centro-mesa {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        .baralho-vira {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 25px;
-            background: rgba(0,0,0,0.2);
-            padding: 10px 20px;
-            border-radius: 60px;
-            backdrop-filter: blur(4px);
-        }
-        .monte-cartas {
-            width: 70px;
-            height: 100px;
-            background: repeating-linear-gradient(45deg, #1e3a5f, #1e3a5f 8px, #15273f 8px, #15273f 16px);
-            border-radius: 8px;
-            box-shadow: -3px 3px 8px black;
-            border: 2px solid #b58a4a;
-            position: relative;
-        }
-        .monte-cartas::after {
-            content: "🃏";
-            position: absolute;
-            bottom: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2c2c2c;
-            color: #ccc;
-            font-size: 0.7rem;
-            padding: 2px 8px;
-            border-radius: 20px;
-        }
-        .carta-vira-exibida {
-            width: 70px;
-            height: 100px;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            font-weight: bold;
-            box-shadow: 0 5px 0 #7a5c2e;
-            border: 2px solid #e0b354;
-        }
-        .carta-vira-exibida.ouros, .carta-vira-exibida.copas { color: #c41e3a; }
-        .carta-vira-exibida.paus, .carta-vira-exibida.espadas { color: #1e1e1e; }
-        .cartas-na-mesa {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 5px;
-            min-height: 110px;
-        }
-        .carta-mesa {
-            width: 70px;
-            height: 100px;
-            background: white;
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            font-weight: bold;
-            box-shadow: 0 5px 0 #7a5c2e;
-            border: 4px solid #e0b354;
-            position: relative;
-        }
-        .carta-mesa.ouros, .carta-mesa.copas { color: #c41e3a; }
-        .carta-mesa.paus, .carta-mesa.espadas { color: #1e1e1e; }
-        .carta-mesa.equipe-A-border { border-color: #1e5fb4; box-shadow: 0 5px 0 #0f2c4e, 0 0 10px #3b82f6; }
-        .carta-mesa.equipe-B-border { border-color: #b91c1c; box-shadow: 0 5px 0 #6e1010, 0 0 10px #ef4444; }
-        .carta-equipe-selo {
-            position: absolute;
-            bottom: -8px;
-            right: -8px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            color: white;
-            border: 2px solid white;
-        }
-        .selo-A { background: #1e5fb4; }
-        .selo-B { background: #b91c1c; }
-        .placar-maos {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 10px 0;
-        }
-        .maos-equipe {
-            display: flex;
-            gap: 8px;
-        }
-        .mao-indicator {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #3a3a3a;
-            border: 3px solid #b58a4a;
-            transition: background 0.3s;
-        }
-        .mao-vencida-A { background: #1e5fb4; box-shadow: 0 0 12px #3b82f6; }
-        .mao-vencida-B { background: #b91c1c; box-shadow: 0 0 12px #ef4444; }
-        .minha-mao {
-            margin-top: 30px;
-            background: rgba(20, 30, 15, 0.7);
-            padding: 20px 30px;
-            border-radius: 60px;
-            backdrop-filter: blur(4px);
-            border: 1px solid #b58a4a;
-        }
-        .carta-mao {
-            width: 80px;
-            height: 115px;
-            background: white;
-            border-radius: 10px;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 0 6px;
-            box-shadow: 0 8px 0 #7a5c2e;
-            border: 2px solid #e0b354;
-            cursor: pointer;
-            transition: transform 0.15s, opacity 0.2s;
-        }
-        .carta-mao:hover { transform: translateY(-10px); }
-        .carta-mao.ouros, .carta-mao.copas { color: #c41e3a; }
-        .carta-mao.paus, .carta-mao.espadas { color: #1e1e1e; }
-        .carta-mao.disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
+const app = express();
+app.use(cors());
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
 
-        .acoes-jogo {
-            margin-top: 25px;
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-        }
-        .btn-truco {
-            background: #e0a800;
-            border: none;
-            color: #1a1a1a;
-            font-weight: bold;
-            padding: 12px 30px;
-            font-size: 1.4rem;
-            border-radius: 40px;
-            box-shadow: 0 6px 0 #7a5c2e;
-            transition: 0.1s;
-        }
-        .btn-truco:hover { background: #ffc107; transform: translateY(-2px); box-shadow: 0 8px 0 #7a5c2e; }
-        .btn-desistir {
-            background: #6c757d;
-            border: none;
-            color: white;
-            padding: 12px 25px;
-            border-radius: 40px;
-            font-weight: bold;
-            box-shadow: 0 6px 0 #3e4a52;
-        }
+const NAIPES = ['paus', 'copas', 'espadas', 'ouros'];
+const VALORES = ['4', '5', '6', '7', 'Q', 'J', 'K', 'A', '2', '3'];
+const PONTOS_PARA_VENCER = 12;
+const VALORES_APOSTA = [1, 3, 6, 9, 12];
 
-        /* PLACAR ESTILO LED */
-        .placar-led-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            max-width: 500px;
-            margin: 15px auto;
-            padding: 10px 20px;
-            background: #1e1e1e;
-            border-radius: 60px;
-            box-shadow: inset 0 0 10px #000, 0 5px 0 #0a0a0a;
-            border: 1px solid #b58a4a;
-        }
-        .led-equipe {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .led-badge {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.5rem;
-            color: white;
-            box-shadow: 0 0 10px currentColor;
-        }
-        .led-badge.azul { background: #1e5fb4; box-shadow: 0 0 15px #3b82f6; }
-        .led-badge.vermelho { background: #b91c1c; box-shadow: 0 0 15px #ef4444; }
-        .led-display {
-            background: #0c0c0c;
-            padding: 8px 20px;
-            border-radius: 20px;
-            border: 2px solid #444;
-            box-shadow: inset 0 0 8px black;
-        }
-        .led-numero {
-            font-family: 'Courier New', 'Lucida Sans Typewriter', monospace;
-            font-size: 3.5rem;
-            font-weight: bold;
-            color: #ffd966;
-            text-shadow: 0 0 15px #ffb700;
-            line-height: 1;
-            min-width: 70px;
-            text-align: center;
-        }
-        .status-vez {
-            background: #1e3a5f;
-            padding: 8px 20px;
-            border-radius: 30px;
-            display: inline-block;
-            margin-bottom: 10px;
-            color: #ffd966;
-            border: 1px solid #b58a4a;
-            transition: background 0.3s;
-        }
-        .status-vez.equipe-A-bg { background: #1e5fb4; }
-        .status-vez.equipe-B-bg { background: #b91c1c; }
-        .toast-container {
-            position: fixed; top: 20px; right: 20px; z-index: 9999;
-        }
-        .aposta-indicator {
-            background: #e0a800; color: #1a1a1a; padding: 5px 20px;
-            border-radius: 30px; font-weight: bold; display: inline-block;
-        }
-        @media (max-width: 700px) {
-            .mesa-redonda { width: 450px; height: 450px; }
-            .jogador { width: 90px; font-size: 0.8rem; }
-            .jogador-right { right: -50px; }
-            .jogador-left { left: -50px; }
-            .carta-mao { width: 60px; height: 90px; font-size: 1.8rem; }
-            .led-numero { font-size: 2.5rem; min-width: 50px; }
-        }
-        @media (max-width: 500px) {
-            .mesa-redonda { width: 350px; height: 350px; }
-            .jogador { width: 70px; }
-        }
-    </style>
-</head>
-<body>
-<div class="game-wrapper">
-    <div id="status-conexao" class="mb-2 text-center text-white">Conectando...</div>
-    <div class="toast-container"></div>
+let salas = {};
 
-    <div id="tela-login" class="bg-dark p-4 rounded-4 text-white" style="max-width:400px; background: #1e2b1a !important;">
-        <h3 class="text-center">🃏 Entrar na Sala</h3>
-        <input type="text" class="form-control mb-2" id="input-apelido" placeholder="Seu Nome">
-        <input type="text" class="form-control mb-2" id="input-sala" placeholder="Nome da Sala">
-        <select class="form-select mb-3" id="select-modo">
-            <option value="1x1">1x1 (Individual)</option>
-            <option value="2x2">2x2 (Duplas)</option>
-        </select>
-        <button class="btn btn-success w-100" onclick="entrarSala()">Conectar</button>
-        <div class="mt-3 text-center"><a href="regras.html" target="_blank" class="text-warning">📖 Ver Regras</a></div>
-    </div>
+function criarBaralho() {
+    let baralho = [];
+    NAIPES.forEach(naipe => VALORES.forEach(valor => baralho.push({ naipe, valor })));
+    return embaralhar(baralho);
+}
+function embaralhar(baralho) {
+    for (let i = baralho.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [baralho[i], baralho[j]] = [baralho[j], baralho[i]];
+    }
+    return baralho;
+}
+function definirManilhas(vira) {
+    let indiceVira = VALORES.indexOf(vira.valor);
+    let valorManilha = VALORES[(indiceVira + 1) % VALORES.length];
+    return NAIPES.map(naipe => ({ naipe, valor: valorManilha }));
+}
+function compararCartas(carta1, carta2, manilhas) {
+    const manilha1 = manilhas.find(m => m.naipe === carta1.naipe && m.valor === carta1.valor);
+    const manilha2 = manilhas.find(m => m.naipe === carta2.naipe && m.valor === carta2.valor);
+    if (manilha1 && !manilha2) return 1;
+    if (!manilha1 && manilha2) return -1;
+    if (manilha1 && manilha2) {
+        const forcaNaipe = { 'paus': 4, 'copas': 3, 'espadas': 2, 'ouros': 1 };
+        return forcaNaipe[carta1.naipe] - forcaNaipe[carta2.naipe];
+    }
+    const forcaCarta = { '3': 10, '2': 9, 'A': 8, 'K': 7, 'J': 6, 'Q': 5, '7': 4, '6': 3, '5': 2, '4': 1 };
+    return forcaCarta[carta1.valor] - forcaCarta[carta2.valor];
+}
 
-    <div id="tela-lobby" class="bg-dark p-4 rounded-4 text-white" style="display:none; max-width:500px; background: #1e2b1a !important;">
-        <h3>🕹️ Lobby</h3>
-        <div id="info-sala" class="alert alert-secondary"></div>
-        <ul id="lista-jogadores" class="list-group mb-3"></ul>
-        <button id="btn-pronto" class="btn btn-success w-100" onclick="marcarPronto()">ESTOU PRONTO</button>
-    </div>
+function passarVez(salaId) {
+    const sala = salas[salaId];
+    let indiceAtual = sala.ordemJogadores.indexOf(sala.jogadorAtual);
+    let proximo = (indiceAtual + 1) % sala.ordemJogadores.length;
+    sala.jogadorAtual = sala.ordemJogadores[proximo];
+    io.to(salaId).emit('atualizarVez', { jogadorId: sala.jogadorAtual });
+}
 
-    <div id="tela-jogo" style="display:none; width:100%;">
-        <!-- PLACAR ESTILO LED -->
-        <div class="placar-led-container">
-            <div class="led-equipe">
-                <div class="led-badge azul">A</div>
-                <div class="led-display"><span id="placar-equipe-a" class="led-numero">0</span></div>
-            </div>
-            <div class="led-equipe">
-                <div class="led-display"><span id="placar-equipe-b" class="led-numero">0</span></div>
-                <div class="led-badge vermelho">B</div>
-            </div>
-        </div>
-
-        <div class="placar-maos">
-            <div class="maos-equipe" id="maos-equipe-A">
-                <div class="mao-indicator" id="mao-A-1"></div>
-                <div class="mao-indicator" id="mao-A-2"></div>
-                <div class="mao-indicator" id="mao-A-3"></div>
-            </div>
-            <div class="maos-equipe" id="maos-equipe-B">
-                <div class="mao-indicator" id="mao-B-1"></div>
-                <div class="mao-indicator" id="mao-B-2"></div>
-                <div class="mao-indicator" id="mao-B-3"></div>
-            </div>
-        </div>
-
-        <div class="d-flex justify-content-center my-2">
-            <span class="aposta-indicator">💰 Aposta: <span id="valor-aposta">1</span> ponto(s)</span>
-        </div>
-
-        <div id="indicador-vez" class="status-vez text-center">Vez de: <span id="nome-vez">---</span></div>
-
-        <div class="mesa-redonda">
-            <div id="jogador-top" class="jogador jogador-top"></div>
-            <div id="jogador-right" class="jogador jogador-right"></div>
-            <div id="jogador-bottom" class="jogador jogador-bottom"></div>
-            <div id="jogador-left" class="jogador jogador-left"></div>
-
-            <div class="centro-mesa">
-                <div class="baralho-vira">
-                    <div class="monte-cartas" title="Monte de compra"></div>
-                    <div id="carta-vira" class="carta-vira-exibida"></div>
-                </div>
-                <div id="cartas-mesa" class="cartas-na-mesa"></div>
-            </div>
-        </div>
-
-        <div class="minha-mao text-center">
-            <div id="minhas-cartas" class="d-flex justify-content-center flex-wrap"></div>
-        </div>
-
-        <div class="acoes-jogo">
-            <button class="btn-truco" onclick="pedirTruco()">🗣️ TRUCO!</button>
-            <button class="btn-desistir" onclick="desistir()">🏳️ Desistir</button>
-        </div>
-        <div id="acoes-truco" style="display:none;" class="text-center mt-3">
-            <button class="btn btn-success me-2" onclick="responderTruco(true)">ACEITAR</button>
-            <button class="btn btn-warning me-2" onclick="aumentarTruco()">AUMENTAR</button>
-            <button class="btn btn-secondary" onclick="responderTruco(false)">CORRER</button>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    const socket = io("https://motor-truco.onrender.com");
-    let minhaSala = '', minhasCartas = [], meuId = '', modoJogo = '1x1';
-    let jogadoresSala = [];
-    let equipeDoJogador = null;
-    let minhaVez = false;
-    let cartaJogadaTemp = null;
-
-    const statusConexao = document.getElementById('status-conexao');
-    const telaLogin = document.getElementById('tela-login');
-    const telaLobby = document.getElementById('tela-lobby');
-    const telaJogo = document.getElementById('tela-jogo');
-
-    function showToast(message, type = 'info') {
-        const container = document.querySelector('.toast-container');
-        const toastEl = document.createElement('div');
-        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
-        toastEl.setAttribute('role', 'alert');
-        toastEl.innerHTML = `
-            <div class="d-flex">
-                <div class="toast-body">${message}</div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-            </div>
-        `;
-        container.appendChild(toastEl);
-        const toast = new bootstrap.Toast(toastEl);
-        toast.show();
-        setTimeout(() => toastEl.remove(), 5000);
+function verificarFimRodada(salaId) {
+    const sala = salas[salaId];
+    if (sala.cartasNaMesa.length < sala.ordemJogadores.length) {
+        passarVez(salaId);
+        return;
     }
 
-    socket.on('connect', () => { meuId = socket.id; statusConexao.innerHTML = '✅ Conectado'; });
-    socket.on('disconnect', () => { statusConexao.innerHTML = '❌ Desconectado'; });
-
-    function entrarSala() {
-        const apelido = document.getElementById('input-apelido').value.trim();
-        const sala = document.getElementById('input-sala').value.trim();
-        modoJogo = document.getElementById('select-modo').value;
-        if (!apelido || !sala) return alert('Preencha nome e sala!');
-        minhaSala = sala;
-        socket.emit('entrarSala', { apelido, sala, modo: modoJogo });
-        telaLogin.style.display = 'none';
-        telaLobby.style.display = 'block';
-    }
-
-    function marcarPronto() {
-        socket.emit('marcarPronto');
-        document.getElementById('btn-pronto').disabled = true;
-        document.getElementById('btn-pronto').innerText = 'Aguardando...';
-    }
-
-    socket.on('atualizarLobby', ({ jogadores, modo, estado }) => {
-        jogadoresSala = jogadores;
-        modoJogo = modo;
-        const capacidade = modo === '2x2' ? 4 : 2;
-        document.getElementById('info-sala').innerHTML = `Sala: ${minhaSala} | Modo: ${modo} | ${jogadores.length}/${capacidade}`;
-        let lista = '';
-        jogadores.forEach(j => {
-            lista += `<li class="list-group-item d-flex justify-content-between bg-dark text-white">
-                <span>👤 ${j.nome} <span class="badge ${j.equipe==='A'?'bg-primary':'bg-danger'}">Eq ${j.equipe}</span></span>
-                ${j.pronto ? '✅' : '⏳'}
-            </li>`;
-        });
-        document.getElementById('lista-jogadores').innerHTML = lista;
-        if (estado === 'jogando') {
-            telaLobby.style.display = 'none';
-            telaJogo.style.display = 'block';
-        }
+    let melhorPorEquipe = { 'A': null, 'B': null };
+    sala.cartasNaMesa.forEach(jogada => {
+        let melhor = melhorPorEquipe[jogada.equipe];
+        if (!melhor || compararCartas(jogada.carta, melhor.carta, sala.manilhas) > 0)
+            melhorPorEquipe[jogada.equipe] = jogada;
     });
 
-    socket.on('jogoIniciado', () => {
-        telaLobby.style.display = 'none';
-        telaJogo.style.display = 'block';
-    });
+    let resultado = compararCartas(melhorPorEquipe['A'].carta, melhorPorEquipe['B'].carta, sala.manilhas);
 
-    function posicionarJogadores(jogadores, modo) {
-        ['top','right','bottom','left'].forEach(pos => document.getElementById(`jogador-${pos}`).innerHTML = '');
-        if (modo === '1x1') {
-            const jogTop = jogadores.find(j => j.id !== meuId) || jogadores[0];
-            const jogBottom = jogadores.find(j => j.id === meuId) || jogadores[1];
-            if (jogTop) preencherCadeira('top', jogTop);
-            if (jogBottom) preencherCadeira('bottom', jogBottom);
+    // *** REGRA DE EMPATE COM TRATAMENTO NA 3ª RODADA ***
+    if (resultado === 0) {
+        // Se for a terceira rodada, força desempate por naipe da carta mais alta
+        if (sala.rodadaAtual === 3) {
+            // Determina o vencedor pela força do naipe da carta mais alta (já incluso na função compararCartas)
+            // Como resultado deu 0, significa que as cartas têm mesmo valor e são ambas manilhas ou ambas não-manilhas.
+            // A função compararCartas já considera naipes para manilhas; para não-manilhas, naipe não influencia.
+            // Mas no desempate de não-manilhas iguais, a regra é que vence a primeira carta jogada? Ou maior naipe?
+            // Vamos adotar: em caso de empate total (mesmo valor e mesmo status de manilha), vence quem tiver a carta de maior naipe (Paus > Copas > Espadas > Ouros).
+            const forcaNaipe = { 'paus': 4, 'copas': 3, 'espadas': 2, 'ouros': 1 };
+            const naipeA = melhorPorEquipe['A'].carta.naipe;
+            const naipeB = melhorPorEquipe['B'].carta.naipe;
+            const equipeVencedora = forcaNaipe[naipeA] > forcaNaipe[naipeB] ? 'A' : 'B';
+            
+            sala.placarRodadas[equipeVencedora]++;
+            sala.ultimoVencedorRodada = melhorPorEquipe[equipeVencedora].jogadorId;
+            io.to(salaId).emit('atualizarPlacarRodadas', { rodadasA: sala.placarRodadas['A'], rodadasB: sala.placarRodadas['B'] });
+            finalizarMao(salaId, sala.placarRodadas['A'] >= 2 ? 'A' : 'B');
         } else {
-            const equipeA = jogadores.filter(j => j.equipe === 'A');
-            const equipeB = jogadores.filter(j => j.equipe === 'B');
-            if (equipeA[0]) preencherCadeira('top', equipeA[0]);
-            if (equipeA[1]) preencherCadeira('bottom', equipeA[1]);
-            if (equipeB[0]) preencherCadeira('left', equipeB[0]);
-            if (equipeB[1]) preencherCadeira('right', equipeB[1]);
+            // Empate nas 1ª ou 2ª rodadas: apenas avança para a próxima rodada
+            sala.ultimoVencedorRodada = sala.cartasNaMesa[sala.cartasNaMesa.length - 1].jogadorId;
+            iniciarRodada(salaId);
         }
+        return;
     }
 
-    function preencherCadeira(pos, jogador) {
-        const div = document.getElementById(`jogador-${pos}`);
-        div.innerHTML = `
-            <div class="nome">${jogador.nome}</div>
-            <span class="equipe-badge ${jogador.equipe==='A'?'equipe-A':'equipe-B'}"></span>
-            <div class="vez-indicator" id="vez-${jogador.id}"></div>
-        `;
+    // Se não empatou, há um vencedor para a rodada
+    const equipeVencedora = resultado > 0 ? 'A' : 'B';
+    sala.placarRodadas[equipeVencedora]++;
+    sala.ultimoVencedorRodada = melhorPorEquipe[equipeVencedora].jogadorId;
+
+    io.to(salaId).emit('atualizarPlacarRodadas', { rodadasA: sala.placarRodadas['A'], rodadasB: sala.placarRodadas['B'] });
+
+    // Verifica se a mão terminou (alguém fez 2 pontos)
+    if (sala.placarRodadas['A'] >= 2 || sala.placarRodadas['B'] >= 2) {
+        finalizarMao(salaId, sala.placarRodadas['A'] >= 2 ? 'A' : 'B');
+    } else {
+        iniciarRodada(salaId);
+    }
+}
+
+function iniciarRodada(salaId) {
+    const sala = salas[salaId];
+    sala.rodadaAtual++;
+    sala.cartasNaMesa = [];
+    
+    if (sala.rodadaAtual === 1) {
+        sala.jogadorAtual = sala.ordemJogadores[sala.jogadorQueIniciaProximaMao];
+    } else {
+        sala.jogadorAtual = sala.ultimoVencedorRodada;
     }
 
-    function atualizarPlacarMaos(rodadasA, rodadasB) {
-        for (let i = 1; i <= 3; i++) {
-            const elA = document.getElementById(`mao-A-${i}`);
-            const elB = document.getElementById(`mao-B-${i}`);
-            if (elA) elA.classList.toggle('mao-vencida-A', i <= rodadasA);
-            if (elB) elB.classList.toggle('mao-vencida-B', i <= rodadasB);
-        }
+    io.to(salaId).emit('novaRodada', { rodada: sala.rodadaAtual });
+    io.to(salaId).emit('atualizarVez', { jogadorId: sala.jogadorAtual });
+}
+
+function finalizarMao(salaId, equipeVencedora) {
+    const sala = salas[salaId];
+    let pontos = sala.apostaAtual;
+    sala.pontuacao[equipeVencedora] += pontos;
+    io.to(salaId).emit('fimDeMao', { pontuacao: sala.pontuacao, vencedorMao: equipeVencedora, pontosGanhos: pontos });
+
+    if (sala.pontuacao[equipeVencedora] >= PONTOS_PARA_VENCER) {
+        io.to(salaId).emit('fimDeJogo', { vencedor: equipeVencedora, pontuacao: sala.pontuacao });
+        sala.estado = 'aguardando';
+        sala.jogadores.forEach(j => j.pronto = false);
+        io.to(salaId).emit('atualizarLobby', { jogadores: sala.jogadores, modo: sala.modo, estado: sala.estado });
+    } else {
+        sala.jogadorQueIniciaProximaMao = (sala.jogadorQueIniciaProximaMao + 1) % sala.ordemJogadores.length;
+        iniciarNovaMao(salaId);
+    }
+}
+
+function iniciarNovaMao(salaId) {
+    const sala = salas[salaId];
+    sala.baralho = criarBaralho();
+    sala.vira = sala.baralho.pop();
+    sala.manilhas = definirManilhas(sala.vira);
+    sala.maos = {};
+    sala.jogadores.forEach(j => sala.maos[j.id] = [sala.baralho.pop(), sala.baralho.pop(), sala.baralho.pop()]);
+    sala.rodadaAtual = 0;
+    sala.cartasNaMesa = [];
+    sala.apostaAtual = 1;
+    sala.placarRodadas = { 'A': 0, 'B': 0 };
+    sala.ultimoVencedorRodada = null;
+    sala.ordemJogadores = sala.jogadores.map(j => j.id);
+    sala.truco = { pendente: false, desafiante: null, desafiado: null, valorProposto: 3 };
+    if (sala.jogadorQueIniciaProximaMao === undefined) {
+        sala.jogadorQueIniciaProximaMao = 0;
     }
 
-    socket.on('iniciarMao', ({ cartas, vira, pontuacao, equipe }) => {
-        minhasCartas = cartas;
-        equipeDoJogador = equipe;
-        document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
-        document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
-        atualizarPlacarMaos(0, 0);
-        const viraDiv = document.getElementById('carta-vira');
-        viraDiv.className = `carta-vira-exibida ${vira.naipe}`;
-        viraDiv.innerHTML = `${vira.valor} ${naipeIcone(vira.naipe)}`;
-        posicionarJogadores(jogadoresSala, modoJogo);
-        renderizarMinhasCartas();
-        document.getElementById('cartas-mesa').innerHTML = '';
-        document.getElementById('acoes-truco').style.display = 'none';
-        document.getElementById('valor-aposta').innerText = '1';
-        minhaVez = false;
-        cartaJogadaTemp = null;
-    });
-
-    function naipeIcone(naipe) {
-        return { 'paus':'♣', 'copas':'♥', 'espadas':'♠', 'ouros':'♦' }[naipe] || '';
-    }
-
-    function renderizarMinhasCartas() {
-        const container = document.getElementById('minhas-cartas');
-        container.innerHTML = '';
-        minhasCartas.forEach(carta => {
-            const div = document.createElement('div');
-            div.className = `carta-mao ${carta.naipe}`;
-            if (!minhaVez) div.classList.add('disabled');
-            div.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
-            div.onclick = () => jogarCarta(carta);
-            container.appendChild(div);
+    sala.jogadores.forEach(j => {
+        io.to(j.id).emit('iniciarMao', {
+            cartas: sala.maos[j.id],
+            vira: sala.vira,
+            pontuacao: sala.pontuacao,
+            equipe: j.equipe
         });
+    });
+    iniciarRodada(salaId);
+    io.to(salaId).emit('atualizarAposta', { aposta: 1 });
+}
+
+// ---------- TRUCO ----------
+function pedirTruco(salaId, socketId) {
+    const sala = salas[salaId];
+    if (!sala || sala.estado !== 'jogando') return;
+    const jogador = sala.jogadores.find(j => j.id === socketId);
+    if (!jogador) return;
+
+    if (sala.truco.pendente) {
+        io.to(socketId).emit('erro', 'Já existe um pedido de truco aguardando resposta.');
+        return;
     }
 
-    function jogarCarta(carta) {
-        if (!minhaVez) {
-            showToast('Não é sua vez!', 'warning');
-            return;
+    const indiceAtual = VALORES_APOSTA.indexOf(sala.apostaAtual);
+    if (indiceAtual === VALORES_APOSTA.length - 1) return;
+
+    const proximoValor = VALORES_APOSTA[indiceAtual + 1];
+    const adversarios = sala.jogadores.filter(j => j.equipe !== jogador.equipe);
+    sala.truco = {
+        pendente: true,
+        desafiante: jogador.equipe,
+        desafiado: adversarios.map(a => a.id),
+        valorProposto: proximoValor
+    };
+
+    adversarios.forEach(adv => io.to(adv.id).emit('trucoPedido', { valor: proximoValor, de: jogador.nome }));
+    io.to(socketId).emit('trucoPedidoEnviado', { valor: proximoValor });
+}
+
+function responderTruco(salaId, socketId, aceitou, aumentar) {
+    const sala = salas[salaId];
+    if (!sala || !sala.truco.pendente) return;
+    const jogador = sala.jogadores.find(j => j.id === socketId);
+    if (!jogador) return;
+
+    if (jogador.equipe === sala.truco.desafiante) {
+        io.to(socketId).emit('erro', 'A resposta é da equipe adversária.');
+        return;
+    }
+
+    const desafianteEquipe = sala.truco.desafiante;
+    const valorProposto = sala.truco.valorProposto;
+
+    if (aceitou) {
+        sala.apostaAtual = valorProposto;
+        sala.truco = { pendente: false, desafiante: null, desafiado: null, valorProposto: 0 };
+        io.to(salaId).emit('trucoAceito', { novaAposta: sala.apostaAtual });
+        io.to(salaId).emit('atualizarAposta', { aposta: sala.apostaAtual });
+    } else if (aumentar) {
+        const indiceAtual = VALORES_APOSTA.indexOf(valorProposto);
+        if (indiceAtual === VALORES_APOSTA.length - 1) return;
+        const novoValor = VALORES_APOSTA[indiceAtual + 1];
+        const adversarios = sala.jogadores.filter(j => j.equipe !== jogador.equipe);
+        sala.truco = {
+            pendente: true,
+            desafiante: jogador.equipe,
+            desafiado: adversarios.map(a => a.id),
+            valorProposto: novoValor
+        };
+        io.to(salaId).emit('trucoAumentado', { de: jogador.nome, valor: novoValor });
+        adversarios.forEach(adv => io.to(adv.id).emit('trucoPedido', { valor: novoValor, de: jogador.nome }));
+    } else {
+        // Correr
+        sala.truco = { pendente: false, desafiante: null, desafiado: null, valorProposto: 0 };
+        finalizarMao(salaId, desafianteEquipe);
+    }
+}
+
+// ---------- Socket ----------
+io.on('connection', (socket) => {
+    console.log('🃏 Conectado:', socket.id);
+
+    socket.on('entrarSala', ({ apelido, sala: nomeSala, modo }) => {
+        socket.join(nomeSala);
+        socket.sala = nomeSala;
+        socket.apelido = apelido;
+
+        if (!salas[nomeSala]) {
+            salas[nomeSala] = {
+                jogadores: [], espectadores: [], modo: modo || '1x1', estado: 'aguardando',
+                pontuacao: { 'A': 0, 'B': 0 }, jogadorQueIniciaProximaMao: 0
+            };
         }
-        cartaJogadaTemp = carta;
-        minhasCartas = minhasCartas.filter(c => !(c.valor === carta.valor && c.naipe === carta.naipe));
-        renderizarMinhasCartas();
-        socket.emit('jogarCarta', carta);
-    }
+        const sala = salas[nomeSala];
+        const capacidade = sala.modo === '2x2' ? 4 : 2;
+        if (sala.jogadores.length >= capacidade) return socket.emit('erro', 'Sala cheia');
 
-    socket.on('cartaJogada', ({ jogadorId, carta, equipe }) => {
-        const mesa = document.getElementById('cartas-mesa');
-        const div = document.createElement('div');
-        div.className = `carta-mesa ${carta.naipe} equipe-${equipe}-border`;
-        div.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
-        const selo = document.createElement('span');
-        selo.className = `carta-equipe-selo selo-${equipe}`;
-        selo.innerText = equipe;
-        div.appendChild(selo);
-        mesa.appendChild(div);
+        const equipe = (sala.jogadores.filter(j => j.equipe === 'A').length <=
+                       sala.jogadores.filter(j => j.equipe === 'B').length) ? 'A' : 'B';
+        sala.jogadores.push({ id: socket.id, nome: apelido, equipe, pronto: false });
+        io.to(nomeSala).emit('atualizarLobby', { jogadores: sala.jogadores, modo: sala.modo, estado: sala.estado });
     });
 
-    socket.on('novaRodada', () => {
-        document.getElementById('cartas-mesa').innerHTML = '';
-    });
+    socket.on('marcarPronto', () => {
+        const sala = salas[socket.sala];
+        if (!sala) return;
+        const jogador = sala.jogadores.find(j => j.id === socket.id);
+        if (jogador) jogador.pronto = true;
+        io.to(socket.sala).emit('atualizarLobby', { jogadores: sala.jogadores, modo: sala.modo, estado: sala.estado });
 
-    socket.on('atualizarVez', ({ jogadorId }) => {
-        const jogador = jogadoresSala.find(j => j.id === jogadorId);
-        const indicador = document.getElementById('indicador-vez');
-        const nomeSpan = document.getElementById('nome-vez');
-        if (jogador) {
-            nomeSpan.innerText = jogador.nome;
-            indicador.classList.remove('equipe-A-bg', 'equipe-B-bg');
-            indicador.classList.add(jogador.equipe === 'A' ? 'equipe-A-bg' : 'equipe-B-bg');
-        }
-        document.querySelectorAll('.vez-indicator').forEach(el => el.innerHTML = '');
-        const vezEl = document.getElementById(`vez-${jogadorId}`);
-        if (vezEl) vezEl.innerHTML = '🎲 VEZ';
-
-        minhaVez = (jogadorId === meuId);
-        renderizarMinhasCartas();
-    });
-
-    socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => atualizarPlacarMaos(rodadasA, rodadasB));
-
-    socket.on('fimDeMao', ({ pontuacao, vencedorMao, pontosGanhos }) => {
-        document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
-        document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
-        showToast(`Equipe ${vencedorMao} venceu a mão (+${pontosGanhos} pontos)`, 'success');
-        atualizarPlacarMaos(0, 0);
-    });
-
-    socket.on('fimDeJogo', ({ vencedor }) => {
-        showToast(`🏆 Equipe ${vencedor} venceu o jogo!`, 'success');
-        telaJogo.style.display = 'none';
-        telaLobby.style.display = 'block';
-        document.getElementById('btn-pronto').disabled = false;
-        document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
-    });
-
-    socket.on('atualizarAposta', ({ aposta }) => {
-        document.getElementById('valor-aposta').innerText = aposta;
-    });
-
-    socket.on('trucoPedido', ({ valor, de }) => {
-        showToast(`${de} pediu TRUCO! (${valor} pontos)`, 'warning');
-        document.getElementById('acoes-truco').style.display = 'block';
-        window.trucoValor = valor;
-    });
-
-    socket.on('trucoPedidoEnviado', ({ valor }) => {
-        showToast(`Você pediu TRUCO! Aguardando resposta...`, 'info');
-    });
-
-    socket.on('trucoAceito', ({ novaAposta }) => {
-        showToast(`Truco aceito! Mão agora vale ${novaAposta} pontos.`, 'success');
-        document.getElementById('acoes-truco').style.display = 'none';
-    });
-
-    socket.on('trucoAumentado', ({ de, valor }) => {
-        showToast(`${de} aumentou para ${valor} pontos!`, 'warning');
-        document.getElementById('acoes-truco').style.display = 'block';
-        window.trucoValor = valor;
-    });
-
-    function pedirTruco() { socket.emit('pedirTruco'); }
-    function responderTruco(aceitou) {
-        socket.emit('responderTruco', { aceitou });
-        document.getElementById('acoes-truco').style.display = 'none';
-    }
-    function aumentarTruco() {
-        socket.emit('responderTruco', { aceitou: false, aumentar: true });
-        document.getElementById('acoes-truco').style.display = 'none';
-    }
-    function desistir() { if (confirm('Desistir da mão?')) socket.emit('desistir'); }
-
-    socket.on('erro', (msg) => {
-        showToast(msg, 'danger');
-        if (cartaJogadaTemp) {
-            minhasCartas.push(cartaJogadaTemp);
-            cartaJogadaTemp = null;
-            renderizarMinhasCartas();
+        const capacidade = sala.modo === '2x2' ? 4 : 2;
+        if (sala.jogadores.length === capacidade && sala.jogadores.every(j => j.pronto) && sala.estado === 'aguardando') {
+            sala.estado = 'jogando';
+            sala.pontuacao = { 'A': 0, 'B': 0 };
+            io.to(socket.sala).emit('jogoIniciado');
+            iniciarNovaMao(socket.sala);
         }
     });
-</script>
-</body>
-</html>
+
+    socket.on('jogarCarta', (carta) => {
+        const sala = salas[socket.sala];
+        if (!sala || sala.estado !== 'jogando') return;
+        if (sala.jogadorAtual !== socket.id) return socket.emit('erro', 'Não é sua vez');
+
+        const jogador = sala.jogadores.find(j => j.id === socket.id);
+        const mao = sala.maos[jogador.id];
+        const index = mao.findIndex(c => c.naipe === carta.naipe && c.valor === carta.valor);
+        if (index === -1) return socket.emit('erro', 'Carta inválida');
+
+        mao.splice(index, 1);
+        sala.cartasNaMesa.push({ jogadorId: jogador.id, equipe: jogador.equipe, carta });
+
+        io.to(socket.sala).emit('cartaJogada', { jogadorId: jogador.id, carta, equipe: jogador.equipe });
+
+        if (sala.cartasNaMesa.length === sala.ordemJogadores.length) {
+            verificarFimRodada(socket.sala);
+        } else {
+            passarVez(socket.sala);
+        }
+    });
+
+    socket.on('pedirTruco', () => pedirTruco(socket.sala, socket.id));
+
+    socket.on('responderTruco', ({ aceitou, aumentar }) => {
+        responderTruco(socket.sala, socket.id, aceitou, aumentar || false);
+    });
+
+    socket.on('desistir', () => {
+        const sala = salas[socket.sala];
+        if (!sala || sala.estado !== 'jogando') return;
+        const jogador = sala.jogadores.find(j => j.id === socket.id);
+        if (jogador) finalizarMao(socket.sala, jogador.equipe === 'A' ? 'B' : 'A');
+    });
+
+    socket.on('disconnect', () => {
+        const sala = salas[socket.sala];
+        if (!sala) return;
+        sala.jogadores = sala.jogadores.filter(j => j.id !== socket.id);
+        if (sala.jogadores.length === 0) delete salas[socket.sala];
+        else io.to(socket.sala).emit('atualizarLobby', { jogadores: sala.jogadores, modo: sala.modo, estado: sala.estado });
+    });
+});
+
+server.listen(process.env.PORT || 3000, () => console.log('🃏 Motor de Truco rodando'));
