@@ -822,13 +822,21 @@
         renderizarMinhasCartas();
     });
 
+    // 🆕 ATUALIZAÇÃO DO PLACAR DE RODADAS (GARANTE EXIBIÇÃO DO VENCEDOR NA 3ª RODADA)
     socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => {
         atualizarPlacarMaos(rodadasA, rodadasB);
         if (historicoRodadas.length > 0) {
             const ultima = historicoRodadas[historicoRodadas.length-1];
             if (!ultima.vencedor) {
-                if (rodadasA > (historicoRodadas.slice(0,-1).reduce((a,r)=>a+(r.vencedor==='A'?1:0),0))) definirVencedorRodadaHistorico('A');
-                else if (rodadasB > (historicoRodadas.slice(0,-1).reduce((a,r)=>a+(r.vencedor==='B'?1:0),0))) definirVencedorRodadaHistorico('B');
+                // Calcula quantas rodadas cada equipe já venceu antes da rodada atual
+                const anteriorA = historicoRodadas.slice(0,-1).reduce((acc, r) => acc + (r.vencedor === 'A' ? 1 : 0), 0);
+                const anteriorB = historicoRodadas.slice(0,-1).reduce((acc, r) => acc + (r.vencedor === 'B' ? 1 : 0), 0);
+                // O novo total enviado pelo servidor
+                if (rodadasA > anteriorA) {
+                    definirVencedorRodadaHistorico('A');
+                } else if (rodadasB > anteriorB) {
+                    definirVencedorRodadaHistorico('B');
+                }
             }
         }
     });
