@@ -6,8 +6,390 @@
     <title>Truco Paulista ♣️ — Laboratório de Computação</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
-        /* (todo o CSS anterior permanece igual) */
-        /* ... */
+        body {
+            background: #1a2a1f;
+            background-image: radial-gradient(circle at 20% 30%, #2d4a2a, #0f1a0e);
+            min-height: 100vh;
+            font-family: 'Segoe UI', 'Trebuchet MS', sans-serif;
+            color: #f0e6d2;
+        }
+        .game-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .mesa-redonda {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            background: #2d5a27;
+            background: radial-gradient(circle at 30% 30%, #3e7a36, #1d3e18);
+            border-radius: 50%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6), inset 0 0 30px #1a2e15;
+            border: 12px solid #5a3e1b;
+            margin: 0 auto;
+        }
+        .jogador {
+            position: absolute;
+            width: 120px;
+            text-align: center;
+            background: rgba(30, 20, 10, 0.8);
+            padding: 8px 5px;
+            border-radius: 40px 40px 20px 20px;
+            box-shadow: 0 5px 0 #0a0a0a;
+            color: #ffd966;
+            font-weight: bold;
+            border: 2px solid #b58a4a;
+            backdrop-filter: blur(2px);
+            transform: translate(-50%, -50%);
+        }
+        .jogador-top { top: -10px; left: 50%; }
+        .jogador-right { top: 50%; right: -70px; transform: translate(0, -50%); }
+        .jogador-bottom { bottom: -30px; left: 50%; transform: translate(-50%, 0); }
+        .jogador-left { top: 50%; left: -70px; transform: translate(0, -50%); }
+
+        .jogador .nome { font-size: 1rem; }
+        .jogador .equipe-badge {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 3px;
+        }
+        .equipe-A { background: #1e5fb4; box-shadow: 0 0 8px #3b82f6; }
+        .equipe-B { background: #b91c1c; box-shadow: 0 0 8px #ef4444; }
+        .vez-indicator {
+            color: #ffd700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .centro-mesa {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .baralho-vira {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+            background: rgba(0,0,0,0.2);
+            padding: 10px 20px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+        .monte-cartas {
+            width: 70px;
+            height: 100px;
+            background: repeating-linear-gradient(45deg, #1e3a5f, #1e3a5f 8px, #15273f 8px, #15273f 16px);
+            border-radius: 8px;
+            box-shadow: -3px 3px 8px black;
+            border: 2px solid #b58a4a;
+            position: relative;
+        }
+        .monte-cartas::after {
+            content: "🃏";
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2c2c2c;
+            color: #ccc;
+            font-size: 0.7rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        .carta-vira-exibida {
+            width: 70px;
+            height: 100px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #7a5c2e;
+            border: 2px solid #e0b354;
+        }
+        .carta-vira-exibida.ouros, .carta-vira-exibida.copas { color: #c41e3a; }
+        .carta-vira-exibida.paus, .carta-vira-exibida.espadas { color: #1e1e1e; }
+        .cartas-na-mesa {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 5px;
+            min-height: 110px;
+        }
+        .carta-mesa {
+            width: 70px;
+            height: 100px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.2rem;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #7a5c2e;
+            border: 4px solid #e0b354;
+            position: relative;
+        }
+        .carta-mesa.ouros, .carta-mesa.copas { color: #c41e3a; }
+        .carta-mesa.paus, .carta-mesa.espadas { color: #1e1e1e; }
+        .carta-mesa.equipe-A-border { border-color: #1e5fb4; box-shadow: 0 5px 0 #0f2c4e, 0 0 10px #3b82f6; }
+        .carta-mesa.equipe-B-border { border-color: #b91c1c; box-shadow: 0 5px 0 #6e1010, 0 0 10px #ef4444; }
+        .carta-equipe-selo {
+            position: absolute;
+            bottom: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+            border: 2px solid white;
+        }
+        .selo-A { background: #1e5fb4; }
+        .selo-B { background: #b91c1c; }
+        .rodada-separador {
+            width: 100%;
+            text-align: center;
+            color: #ffd966;
+            font-size: 0.8rem;
+            margin: 5px 0;
+            border-bottom: 1px dashed #b58a4a;
+            line-height: 0.1em;
+        }
+        .placar-maos {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 10px 0;
+        }
+        .maos-equipe {
+            display: flex;
+            gap: 8px;
+        }
+        .mao-indicator {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #3a3a3a;
+            border: 3px solid #b58a4a;
+            transition: background 0.3s;
+        }
+        .mao-vencida-A { background: #1e5fb4; box-shadow: 0 0 12px #3b82f6; }
+        .mao-vencida-B { background: #b91c1c; box-shadow: 0 0 12px #ef4444; }
+
+        /* PAINEL DE HISTÓRICO DA MÃO ATUAL (MINI CARTAS) */
+        .historico-mao {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px auto;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid #b58a4a;
+            max-width: 500px;
+            flex-wrap: wrap;
+        }
+        .historico-rodada {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(30,30,30,0.6);
+            padding: 5px 10px;
+            border-radius: 30px;
+            border-left: 6px solid #e0b354;
+        }
+        .historico-rodada.vencedor-A { border-left-color: #1e5fb4; background: rgba(30,91,180,0.2); }
+        .historico-rodada.vencedor-B { border-left-color: #b91c1c; background: rgba(185,28,28,0.2); }
+        .mini-carta {
+            width: 35px;
+            height: 50px;
+            background: white;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 3px 0 #7a5c2e;
+            border: 2px solid #e0b354;
+            margin: 0 2px;
+        }
+        .mini-carta.ouros, .mini-carta.copas { color: #c41e3a; }
+        .mini-carta.paus, .mini-carta.espadas { color: #1e1e1e; }
+        .mini-selo {
+            font-size: 0.5rem;
+            background: #333;
+            color: white;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -8px;
+        }
+
+        .minha-mao {
+            margin-top: 30px;
+            background: rgba(20, 30, 15, 0.7);
+            padding: 20px 30px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+            border: 1px solid #b58a4a;
+        }
+        .carta-mao {
+            width: 80px;
+            height: 115px;
+            background: white;
+            border-radius: 10px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 0 6px;
+            box-shadow: 0 8px 0 #7a5c2e;
+            border: 2px solid #e0b354;
+            cursor: pointer;
+            transition: transform 0.15s, opacity 0.2s;
+        }
+        .carta-mao:hover { transform: translateY(-10px); }
+        .carta-mao.ouros, .carta-mao.copas { color: #c41e3a; }
+        .carta-mao.paus, .carta-mao.espadas { color: #1e1e1e; }
+        .carta-mao.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .acoes-jogo {
+            margin-top: 25px;
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+        .btn-truco {
+            background: #e0a800;
+            border: none;
+            color: #1a1a1a;
+            font-weight: bold;
+            padding: 12px 30px;
+            font-size: 1.4rem;
+            border-radius: 40px;
+            box-shadow: 0 6px 0 #7a5c2e;
+            transition: 0.1s;
+        }
+        .btn-truco:hover { background: #ffc107; transform: translateY(-2px); box-shadow: 0 8px 0 #7a5c2e; }
+        .btn-desistir {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 40px;
+            font-weight: bold;
+            box-shadow: 0 6px 0 #3e4a52;
+        }
+        .btn-historico {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            box-shadow: 0 6px 0 #3e4a52;
+        }
+
+        .placar-led-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            margin: 15px auto;
+            padding: 10px 20px;
+            background: #1e1e1e;
+            border-radius: 60px;
+            box-shadow: inset 0 0 10px #000, 0 5px 0 #0a0a0a;
+            border: 1px solid #b58a4a;
+        }
+        .led-equipe {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .led-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: 0 0 10px currentColor;
+        }
+        .led-badge.azul { background: #1e5fb4; box-shadow: 0 0 15px #3b82f6; }
+        .led-badge.vermelho { background: #b91c1c; box-shadow: 0 0 15px #ef4444; }
+        .led-display {
+            background: #0c0c0c;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid #444;
+            box-shadow: inset 0 0 8px black;
+        }
+        .led-numero {
+            font-family: 'Courier New', 'Lucida Sans Typewriter', monospace;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #ffd966;
+            text-shadow: 0 0 15px #ffb700;
+            line-height: 1;
+            min-width: 70px;
+            text-align: center;
+        }
+        .status-vez {
+            background: #1e3a5f;
+            padding: 8px 20px;
+            border-radius: 30px;
+            display: inline-block;
+            margin-bottom: 10px;
+            color: #ffd966;
+            border: 1px solid #b58a4a;
+            transition: background 0.3s;
+        }
+        .status-vez.equipe-A-bg { background: #1e5fb4; }
+        .status-vez.equipe-B-bg { background: #b91c1c; }
+        .toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+        }
+        .aposta-indicator {
+            background: #e0a800; color: #1a1a1a; padding: 5px 20px;
+            border-radius: 30px; font-weight: bold; display: inline-block;
+        }
         .modal-content {
             background: #1e2b1a;
             color: #f0e6d2;
@@ -19,28 +401,110 @@
         .modal-footer {
             border-top: 1px solid #b58a4a;
         }
-        .btn-historico {
-            background: #6c757d;
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            box-shadow: 0 6px 0 #3e4a52;
+        @media (max-width: 700px) {
+            .mesa-redonda { width: 450px; height: 450px; }
+            .jogador { width: 90px; font-size: 0.8rem; }
+            .jogador-right { right: -50px; }
+            .jogador-left { left: -50px; }
+            .carta-mao { width: 60px; height: 90px; font-size: 1.8rem; }
+            .led-numero { font-size: 2.5rem; min-width: 50px; }
+            .mini-carta { width: 28px; height: 40px; font-size: 1rem; }
         }
-        /* Estilo para log no modal */
-        .log-partida {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            background: #0f1a0e;
-            padding: 10px;
-            border-radius: 8px;
-            color: #d4c9a6;
+        @media (max-width: 500px) {
+            .mesa-redonda { width: 350px; height: 350px; }
+            .jogador { width: 70px; }
         }
     </style>
 </head>
 <body>
-<!-- (todo o HTML até os botões permanece igual) -->
+<div class="game-wrapper">
+    <div id="status-conexao" class="mb-2 text-center text-white">Conectando...</div>
+    <div class="toast-container"></div>
+
+    <div id="tela-login" class="bg-dark p-4 rounded-4 text-white" style="max-width:400px; background: #1e2b1a !important;">
+        <h3 class="text-center">🃏 Entrar na Sala</h3>
+        <input type="text" class="form-control mb-2" id="input-apelido" placeholder="Seu Nome">
+        <input type="text" class="form-control mb-2" id="input-sala" placeholder="Nome da Sala">
+        <select class="form-select mb-3" id="select-modo">
+            <option value="1x1">1x1 (Individual)</option>
+            <option value="2x2">2x2 (Duplas)</option>
+        </select>
+        <button class="btn btn-success w-100" onclick="entrarSala()">Conectar</button>
+        <div class="mt-3 text-center"><a href="regras.html" target="_blank" class="text-warning">📖 Ver Regras</a></div>
+    </div>
+
+    <div id="tela-lobby" class="bg-dark p-4 rounded-4 text-white" style="display:none; max-width:500px; background: #1e2b1a !important;">
+        <h3>🕹️ Lobby</h3>
+        <div id="info-sala" class="alert alert-secondary"></div>
+        <ul id="lista-jogadores" class="list-group mb-3"></ul>
+        <button id="btn-pronto" class="btn btn-success w-100" onclick="marcarPronto()">ESTOU PRONTO</button>
+    </div>
+
+    <div id="tela-jogo" style="display:none; width:100%;">
+        <div class="placar-led-container">
+            <div class="led-equipe">
+                <div class="led-badge azul">A</div>
+                <div class="led-display"><span id="placar-equipe-a" class="led-numero">0</span></div>
+            </div>
+            <div class="led-equipe">
+                <div class="led-display"><span id="placar-equipe-b" class="led-numero">0</span></div>
+                <div class="led-badge vermelho">B</div>
+            </div>
+        </div>
+
+        <div class="placar-maos">
+            <div class="maos-equipe" id="maos-equipe-A">
+                <div class="mao-indicator" id="mao-A-1"></div>
+                <div class="mao-indicator" id="mao-A-2"></div>
+                <div class="mao-indicator" id="mao-A-3"></div>
+            </div>
+            <div class="maos-equipe" id="maos-equipe-B">
+                <div class="mao-indicator" id="mao-B-1"></div>
+                <div class="mao-indicator" id="mao-B-2"></div>
+                <div class="mao-indicator" id="mao-B-3"></div>
+            </div>
+        </div>
+
+        <!-- Painel de histórico da mão atual (mini cartas) -->
+        <div id="historico-mao" class="historico-mao"></div>
+
+        <div class="d-flex justify-content-center my-2">
+            <span class="aposta-indicator">💰 Aposta: <span id="valor-aposta">1</span> ponto(s)</span>
+        </div>
+
+        <div id="indicador-vez" class="status-vez text-center">Vez de: <span id="nome-vez">---</span></div>
+
+        <div class="mesa-redonda">
+            <div id="jogador-top" class="jogador jogador-top"></div>
+            <div id="jogador-right" class="jogador jogador-right"></div>
+            <div id="jogador-bottom" class="jogador jogador-bottom"></div>
+            <div id="jogador-left" class="jogador jogador-left"></div>
+
+            <div class="centro-mesa">
+                <div class="baralho-vira">
+                    <div class="monte-cartas" title="Monte de compra"></div>
+                    <div id="carta-vira" class="carta-vira-exibida"></div>
+                </div>
+                <div id="cartas-mesa" class="cartas-na-mesa"></div>
+            </div>
+        </div>
+
+        <div class="minha-mao text-center">
+            <div id="minhas-cartas" class="d-flex justify-content-center flex-wrap"></div>
+        </div>
+
+        <div class="acoes-jogo">
+            <button class="btn-truco" onclick="pedirTruco()">🗣️ TRUCO!</button>
+            <button class="btn-desistir" onclick="desistir()">🏳️ Desistir</button>
+            <button class="btn-historico" onclick="mostrarHistoricoPartida()">📋 Histórico</button>
+        </div>
+        <div id="acoes-truco" style="display:none;" class="text-center mt-3">
+            <button class="btn btn-success me-2" onclick="responderTruco(true)">ACEITAR</button>
+            <button class="btn btn-warning me-2" onclick="aumentarTruco()">AUMENTAR</button>
+            <button class="btn btn-secondary" onclick="responderTruco(false)">CORRER</button>
+        </div>
+    </div>
+</div>
 
 <!-- Modal Histórico da Partida -->
 <div class="modal fade" id="modalHistorico" tabindex="-1" aria-hidden="true">
@@ -61,7 +525,6 @@
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // --- Variáveis globais (mantidas) ---
     const socket = io("https://motor-truco.onrender.com");
     let minhaSala = '', minhasCartas = [], meuId = '', modoJogo = '1x1';
     let jogadoresSala = [];
@@ -69,19 +532,85 @@
     let minhaVez = false;
     let cartaJogadaTemp = null;
 
-    let historicoRodadas = [];       // mão atual (mini cartas)
-    let historicoPartida = [];       // acumula todas as mãos da partida
+    // Histórico da mão atual (mini cartas)
+    let historicoRodadas = [];
+    // Histórico completo da partida (todas as mãos)
+    let historicoPartida = [];
     let numeroMaoAtual = 1;
 
-    // --- Funções auxiliares (showToast, naipeIcone, etc.) mantidas ---
-    function showToast(message, type = 'info') { /* ... */ }
-    function naipeIcone(naipe) { /* ... */ }
+    const statusConexao = document.getElementById('status-conexao');
+    const telaLogin = document.getElementById('tela-login');
+    const telaLobby = document.getElementById('tela-lobby');
+    const telaJogo = document.getElementById('tela-jogo');
+    const historicoDiv = document.getElementById('historico-mao');
+
+    function showToast(message, type = 'info') {
+        const container = document.querySelector('.toast-container');
+        const toastEl = document.createElement('div');
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+        toastEl.setAttribute('role', 'alert');
+        toastEl.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        container.appendChild(toastEl);
+        const toast = new bootstrap.Toast(toastEl);
+        toast.show();
+        setTimeout(() => toastEl.remove(), 5000);
+    }
+
+    function naipeIcone(naipe) {
+        return { 'paus':'♣', 'copas':'♥', 'espadas':'♠', 'ouros':'♦' }[naipe] || '';
+    }
 
     // --- Histórico da mão atual (mini cartas) ---
-    function renderizarHistorico() { /* ... */ }
-    function adicionarCartaAoHistorico(carta, equipe) { /* ... */ }
-    function definirVencedorRodadaHistorico(equipeVencedora) { /* ... */ }
-    function limparHistorico() { historicoRodadas = []; renderizarHistorico(); }
+    function renderizarHistorico() {
+        if (!historicoDiv) return;
+        let html = '';
+        historicoRodadas.forEach((rodada) => {
+            const vencedorClass = rodada.vencedor === 'A' ? 'vencedor-A' : (rodada.vencedor === 'B' ? 'vencedor-B' : '');
+            html += `<div class="historico-rodada ${vencedorClass}">`;
+            html += `<span style="color:#ffd966; margin-right:5px;">R${rodada.rodada}</span>`;
+            rodada.cartas.forEach(item => {
+                const carta = item.carta;
+                const equipe = item.equipe;
+                html += `<div class="mini-carta ${carta.naipe}" style="border-color: ${equipe==='A'?'#1e5fb4':'#b91c1c'}">`;
+                html += `${carta.valor} ${naipeIcone(carta.naipe)}`;
+                html += `<span class="mini-selo" style="background:${equipe==='A'?'#1e5fb4':'#b91c1c'}">${equipe}</span>`;
+                html += `</div>`;
+            });
+            if (rodada.vencedor) {
+                html += `<span style="margin-left:5px; font-weight:bold; color:${rodada.vencedor==='A'?'#3b82f6':'#ef4444'}">🏆</span>`;
+            }
+            html += `</div>`;
+        });
+        historicoDiv.innerHTML = html || '<span style="color:#aaa; font-size:0.9rem;">🃏 Aguardando primeira rodada...</span>';
+    }
+
+    function adicionarCartaAoHistorico(carta, equipe) {
+        let rodadaAtual = historicoRodadas.length > 0 ? historicoRodadas[historicoRodadas.length-1].rodada : 1;
+        if (historicoRodadas.length === 0 || (historicoRodadas.length > 0 && historicoRodadas[historicoRodadas.length-1].cartas.length === 2)) {
+            rodadaAtual = historicoRodadas.length + 1;
+            historicoRodadas.push({ rodada: rodadaAtual, cartas: [], vencedor: null });
+        }
+        const ultimaRodada = historicoRodadas[historicoRodadas.length-1];
+        ultimaRodada.cartas.push({ carta, equipe });
+        renderizarHistorico();
+    }
+
+    function definirVencedorRodadaHistorico(equipeVencedora) {
+        if (historicoRodadas.length === 0) return;
+        const ultimaRodada = historicoRodadas[historicoRodadas.length-1];
+        ultimaRodada.vencedor = equipeVencedora;
+        renderizarHistorico();
+    }
+
+    function limparHistorico() {
+        historicoRodadas = [];
+        renderizarHistorico();
+    }
 
     // --- Histórico completo da partida (modal) ---
     function adicionarMaoAoHistorico(vencedorMao, pontosGanhos, apostaFinal) {
@@ -103,62 +632,186 @@
         if (historicoPartida.length === 0) {
             conteudo.innerHTML = '<p class="text-center text-warning">Nenhuma mão foi concluída ainda.</p>';
         } else {
-            let html = '<div class="log-partida">';
+            let html = '';
             historicoPartida.forEach(mao => {
-                html += `<div class="mb-3 pb-2 border-bottom border-secondary">`;
-                html += `<strong>Mão ${mao.numero}</strong> — Vencedor: Equipe ${mao.vencedor} (+${mao.pontosGanhos} pts) | Aposta: ${mao.aposta}<br>`;
+                html += `<div class="mb-4 p-3 border rounded" style="border-color: #b58a4a !important;">`;
+                html += `<h5>Mão ${mao.numero} — Vencedor: Equipe ${mao.vencedor} (+${mao.pontosGanhos} pontos) | Aposta: ${mao.aposta}</h5>`;
                 mao.rodadas.forEach((rodada, idx) => {
-                    html += `&nbsp;&nbsp;Rodada ${idx+1}: `;
+                    html += `<div class="ms-3 mb-2">`;
+                    html += `<strong>Rodada ${idx+1}:</strong> `;
                     rodada.cartas.forEach(c => {
-                        html += `${c.carta.valor}${naipeIcone(c.carta.naipe)} (${c.equipe}) `;
+                        html += `<span class="badge bg-dark me-1">${c.carta.valor}${naipeIcone(c.carta.naipe)} (${c.equipe})</span>`;
                     });
                     if (rodada.vencedor) {
-                        html += `→ 🏆 ${rodada.vencedor}`;
+                        html += `<span class="badge ${rodada.vencedor === 'A' ? 'bg-primary' : 'bg-danger'}">🏆 ${rodada.vencedor}</span>`;
                     } else {
-                        html += `→ Empate`;
+                        html += `<span class="badge bg-secondary">Empate</span>`;
                     }
-                    html += '<br>';
+                    html += `</div>`;
                 });
                 html += `</div>`;
             });
-            html += '</div>';
             conteudo.innerHTML = html;
         }
         modal.show();
     }
 
     // --- Socket Events ---
-    socket.on('connect', () => { /* ... */ });
-    socket.on('disconnect', () => { /* ... */ });
+    socket.on('connect', () => { meuId = socket.id; statusConexao.innerHTML = '✅ Conectado'; });
+    socket.on('disconnect', () => { statusConexao.innerHTML = '❌ Desconectado'; });
 
-    function entrarSala() { /* ... */ }
-    function marcarPronto() { /* ... */ }
+    function entrarSala() {
+        const apelido = document.getElementById('input-apelido').value.trim();
+        const sala = document.getElementById('input-sala').value.trim();
+        modoJogo = document.getElementById('select-modo').value;
+        if (!apelido || !sala) return alert('Preencha nome e sala!');
+        minhaSala = sala;
+        socket.emit('entrarSala', { apelido, sala, modo: modoJogo });
+        telaLogin.style.display = 'none';
+        telaLobby.style.display = 'block';
+    }
 
-    socket.on('atualizarLobby', ({ jogadores, modo, estado }) => { /* ... */ });
+    function marcarPronto() {
+        socket.emit('marcarPronto');
+        document.getElementById('btn-pronto').disabled = true;
+        document.getElementById('btn-pronto').innerText = 'Aguardando...';
+    }
 
-    socket.on('jogoIniciado', () => {
-        telaLobby.style.display = 'none';
-        telaJogo.style.display = 'block';
-        // 🆕 Ao iniciar um novo jogo, limpa o histórico da partida
-        historicoPartida = [];
-        numeroMaoAtual = 1;
+    socket.on('atualizarLobby', ({ jogadores, modo, estado }) => {
+        jogadoresSala = jogadores;
+        modoJogo = modo;
+        const capacidade = modo === '2x2' ? 4 : 2;
+        document.getElementById('info-sala').innerHTML = `Sala: ${minhaSala} | Modo: ${modo} | ${jogadores.length}/${capacidade}`;
+        let lista = '';
+        jogadores.forEach(j => {
+            lista += `<li class="list-group-item d-flex justify-content-between bg-dark text-white">
+                <span>👤 ${j.nome} <span class="badge ${j.equipe==='A'?'bg-primary':'bg-danger'}">Eq ${j.equipe}</span></span>
+                ${j.pronto ? '✅' : '⏳'}
+            </li>`;
+        });
+        document.getElementById('lista-jogadores').innerHTML = lista;
+        if (estado === 'jogando') {
+            telaLobby.style.display = 'none';
+            telaJogo.style.display = 'block';
+        }
     });
 
-    // ... (demais funções de posicionamento, renderização de cartas, etc.)
+    socket.on('jogoIniciado', () => { telaLobby.style.display = 'none'; telaJogo.style.display = 'block'; });
+
+    function posicionarJogadores(jogadores, modo) {
+        ['top','right','bottom','left'].forEach(pos => document.getElementById(`jogador-${pos}`).innerHTML = '');
+        if (modo === '1x1') {
+            const jogTop = jogadores.find(j => j.id !== meuId) || jogadores[0];
+            const jogBottom = jogadores.find(j => j.id === meuId) || jogadores[1];
+            if (jogTop) preencherCadeira('top', jogTop);
+            if (jogBottom) preencherCadeira('bottom', jogBottom);
+        } else {
+            const equipeA = jogadores.filter(j => j.equipe === 'A');
+            const equipeB = jogadores.filter(j => j.equipe === 'B');
+            if (equipeA[0]) preencherCadeira('top', equipeA[0]);
+            if (equipeA[1]) preencherCadeira('bottom', equipeA[1]);
+            if (equipeB[0]) preencherCadeira('left', equipeB[0]);
+            if (equipeB[1]) preencherCadeira('right', equipeB[1]);
+        }
+    }
+
+    function preencherCadeira(pos, jogador) {
+        const div = document.getElementById(`jogador-${pos}`);
+        div.innerHTML = `
+            <div class="nome">${jogador.nome}</div>
+            <span class="equipe-badge ${jogador.equipe==='A'?'equipe-A':'equipe-B'}"></span>
+            <div class="vez-indicator" id="vez-${jogador.id}"></div>
+        `;
+    }
+
+    function atualizarPlacarMaos(rodadasA, rodadasB) {
+        for (let i = 1; i <= 3; i++) {
+            const elA = document.getElementById(`mao-A-${i}`);
+            const elB = document.getElementById(`mao-B-${i}`);
+            if (elA) elA.classList.toggle('mao-vencida-A', i <= rodadasA);
+            if (elB) elB.classList.toggle('mao-vencida-B', i <= rodadasB);
+        }
+    }
 
     socket.on('iniciarMao', ({ cartas, vira, pontuacao, equipe }) => {
-        // ... (código existente)
-        limparHistorico(); // limpa só o da mão atual
+        minhasCartas = cartas;
+        equipeDoJogador = equipe;
+        document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
+        document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
+        atualizarPlacarMaos(0, 0);
+        const viraDiv = document.getElementById('carta-vira');
+        viraDiv.className = `carta-vira-exibida ${vira.naipe}`;
+        viraDiv.innerHTML = `${vira.valor} ${naipeIcone(vira.naipe)}`;
+        posicionarJogadores(jogadoresSala, modoJogo);
+        renderizarMinhasCartas();
+        document.getElementById('cartas-mesa').innerHTML = '';
+        document.getElementById('acoes-truco').style.display = 'none';
+        document.getElementById('valor-aposta').innerText = '1';
+        minhaVez = false;
+        cartaJogadaTemp = null;
+        limparHistorico();
     });
 
+    function renderizarMinhasCartas() {
+        const container = document.getElementById('minhas-cartas');
+        container.innerHTML = '';
+        minhasCartas.forEach(carta => {
+            const div = document.createElement('div');
+            div.className = `carta-mao ${carta.naipe}`;
+            if (!minhaVez) div.classList.add('disabled');
+            div.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
+            div.onclick = () => jogarCarta(carta);
+            container.appendChild(div);
+        });
+    }
+
+    function jogarCarta(carta) {
+        if (!minhaVez) { showToast('Não é sua vez!', 'warning'); return; }
+        cartaJogadaTemp = carta;
+        minhasCartas = minhasCartas.filter(c => !(c.valor === carta.valor && c.naipe === carta.naipe));
+        renderizarMinhasCartas();
+        socket.emit('jogarCarta', carta);
+    }
+
     socket.on('cartaJogada', ({ jogadorId, carta, equipe }) => {
-        // ... (código existente)
+        const mesa = document.getElementById('cartas-mesa');
+        const div = document.createElement('div');
+        div.className = `carta-mesa ${carta.naipe} equipe-${equipe}-border`;
+        div.innerHTML = `${carta.valor} ${naipeIcone(carta.naipe)}`;
+        const selo = document.createElement('span');
+        selo.className = `carta-equipe-selo selo-${equipe}`;
+        selo.innerText = equipe;
+        div.appendChild(selo);
+        mesa.appendChild(div);
         adicionarCartaAoHistorico(carta, equipe);
+    });
+
+    socket.on('novaRodada', ({ rodada }) => {
+        const mesa = document.getElementById('cartas-mesa');
+        const separador = document.createElement('div');
+        separador.className = 'rodada-separador';
+        separador.innerText = `Rodada ${rodada}`;
+        mesa.appendChild(separador);
+    });
+
+    socket.on('atualizarVez', ({ jogadorId }) => {
+        const jogador = jogadoresSala.find(j => j.id === jogadorId);
+        const indicador = document.getElementById('indicador-vez');
+        const nomeSpan = document.getElementById('nome-vez');
+        if (jogador) {
+            nomeSpan.innerText = jogador.nome;
+            indicador.classList.remove('equipe-A-bg', 'equipe-B-bg');
+            indicador.classList.add(jogador.equipe === 'A' ? 'equipe-A-bg' : 'equipe-B-bg');
+        }
+        document.querySelectorAll('.vez-indicator').forEach(el => el.innerHTML = '');
+        const vezEl = document.getElementById(`vez-${jogadorId}`);
+        if (vezEl) vezEl.innerHTML = '🎲 VEZ';
+        minhaVez = (jogadorId === meuId);
+        renderizarMinhasCartas();
     });
 
     socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => {
         atualizarPlacarMaos(rodadasA, rodadasB);
-        // 🆕 Atualiza vencedor da última rodada no histórico da mão
         if (historicoRodadas.length > 0) {
             const ultima = historicoRodadas[historicoRodadas.length-1];
             if (!ultima.vencedor) {
@@ -183,16 +836,37 @@
         telaLobby.style.display = 'block';
         document.getElementById('btn-pronto').disabled = false;
         document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
-        // Exibe o histórico acumulado (não limpa aqui)
         setTimeout(() => mostrarHistoricoPartida(), 500);
+        historicoPartida = [];
+        numeroMaoAtual = 1;
     });
 
-    // ... (restante dos eventos de truco, erro, etc.)
+    socket.on('atualizarAposta', ({ aposta }) => { document.getElementById('valor-aposta').innerText = aposta; });
+
+    socket.on('trucoPedido', ({ valor, de }) => {
+        showToast(`${de} pediu TRUCO! (${valor} pontos)`, 'warning');
+        document.getElementById('acoes-truco').style.display = 'block';
+        window.trucoValor = valor;
+        const btnAumentar = document.querySelector('#acoes-truco .btn-warning');
+        if (btnAumentar) btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
+    });
+    socket.on('trucoPedidoEnviado', () => showToast(`Você pediu TRUCO! Aguardando resposta...`, 'info'));
+    socket.on('trucoAceito', ({ novaAposta }) => {
+        showToast(`Truco aceito! Mão agora vale ${novaAposta} pontos.`, 'success');
+        document.getElementById('acoes-truco').style.display = 'none';
+    });
+    socket.on('trucoAumentado', ({ de, valor }) => {
+        showToast(`${de} aumentou para ${valor} pontos!`, 'warning');
+        document.getElementById('acoes-truco').style.display = 'block';
+        window.trucoValor = valor;
+        const btnAumentar = document.querySelector('#acoes-truco .btn-warning');
+        if (btnAumentar) btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
+    });
 
     function pedirTruco() { socket.emit('pedirTruco'); }
-    function responderTruco(aceitou) { /* ... */ }
-    function aumentarTruco() { /* ... */ }
-    function desistir() { /* ... */ }
+    function responderTruco(aceitou) { socket.emit('responderTruco', { aceitou }); document.getElementById('acoes-truco').style.display = 'none'; }
+    function aumentarTruco() { socket.emit('responderTruco', { aceitou: false, aumentar: true }); document.getElementById('acoes-truco').style.display = 'none'; }
+    function desistir() { if (confirm('Desistir da mão?')) socket.emit('desistir'); }
 
     socket.on('erro', (msg) => {
         showToast(msg, 'danger');
