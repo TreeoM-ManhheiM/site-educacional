@@ -125,6 +125,7 @@
         .carta-vira-exibida.paus, .carta-vira-exibida.espadas { color: #1e1e1e; }
         .cartas-na-mesa {
             display: flex;
+            flex-wrap: wrap;
             gap: 10px;
             justify-content: center;
             margin-top: 5px;
@@ -166,6 +167,15 @@
         }
         .selo-A { background: #1e5fb4; }
         .selo-B { background: #b91c1c; }
+        .rodada-separador {
+            width: 100%;
+            text-align: center;
+            color: #ffd966;
+            font-size: 0.8rem;
+            margin: 5px 0;
+            border-bottom: 1px dashed #b58a4a;
+            line-height: 0.1em;
+        }
         .placar-maos {
             display: flex;
             justify-content: center;
@@ -247,7 +257,6 @@
             box-shadow: 0 6px 0 #3e4a52;
         }
 
-        /* PLACAR ESTILO LED */
         .placar-led-container {
             display: flex;
             justify-content: space-between;
@@ -538,7 +547,7 @@
         viraDiv.innerHTML = `${vira.valor} ${naipeIcone(vira.naipe)}`;
         posicionarJogadores(jogadoresSala, modoJogo);
         renderizarMinhasCartas();
-        document.getElementById('cartas-mesa').innerHTML = '';
+        document.getElementById('cartas-mesa').innerHTML = ''; // LIMPA A MESA NO INÍCIO DA MÃO
         document.getElementById('acoes-truco').style.display = 'none';
         document.getElementById('valor-aposta').innerText = '1';
         minhaVez = false;
@@ -585,8 +594,13 @@
         mesa.appendChild(div);
     });
 
-    socket.on('novaRodada', () => {
-        document.getElementById('cartas-mesa').innerHTML = '';
+    socket.on('novaRodada', ({ rodada }) => {
+        // Adiciona um separador visual para indicar a nova rodada, sem limpar as cartas anteriores
+        const mesa = document.getElementById('cartas-mesa');
+        const separador = document.createElement('div');
+        separador.className = 'rodada-separador';
+        separador.innerText = `Rodada ${rodada}`;
+        mesa.appendChild(separador);
     });
 
     socket.on('atualizarVez', ({ jogadorId }) => {
