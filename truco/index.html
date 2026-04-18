@@ -197,7 +197,7 @@
         .mao-vencida-A { background: #1e5fb4; box-shadow: 0 0 12px #3b82f6; }
         .mao-vencida-B { background: #b91c1c; box-shadow: 0 0 12px #ef4444; }
 
-        /* 🆕 PAINEL DE HISTÓRICO DA MÃO */
+        /* PAINEL DE HISTÓRICO DA MÃO ATUAL (MINI CARTAS) */
         .historico-mao {
             display: flex;
             justify-content: center;
@@ -312,6 +312,15 @@
             font-weight: bold;
             box-shadow: 0 6px 0 #3e4a52;
         }
+        .btn-historico {
+            background: #6c757d;
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            box-shadow: 0 6px 0 #3e4a52;
+        }
 
         .placar-led-container {
             display: flex;
@@ -381,6 +390,17 @@
             background: #e0a800; color: #1a1a1a; padding: 5px 20px;
             border-radius: 30px; font-weight: bold; display: inline-block;
         }
+        .modal-content {
+            background: #1e2b1a;
+            color: #f0e6d2;
+            border: 2px solid #b58a4a;
+        }
+        .modal-header {
+            border-bottom: 1px solid #b58a4a;
+        }
+        .modal-footer {
+            border-top: 1px solid #b58a4a;
+        }
         @media (max-width: 700px) {
             .mesa-redonda { width: 450px; height: 450px; }
             .jogador { width: 90px; font-size: 0.8rem; }
@@ -445,7 +465,7 @@
             </div>
         </div>
 
-        <!-- 🆕 PAINEL DE HISTÓRICO DA MÃO (MINI CARTAS) -->
+        <!-- Painel de histórico da mão atual (mini cartas) -->
         <div id="historico-mao" class="historico-mao"></div>
 
         <div class="d-flex justify-content-center my-2">
@@ -476,11 +496,28 @@
         <div class="acoes-jogo">
             <button class="btn-truco" onclick="pedirTruco()">🗣️ TRUCO!</button>
             <button class="btn-desistir" onclick="desistir()">🏳️ Desistir</button>
+            <button class="btn-historico" onclick="mostrarHistoricoPartida()">📋 Histórico</button>
         </div>
         <div id="acoes-truco" style="display:none;" class="text-center mt-3">
             <button class="btn btn-success me-2" onclick="responderTruco(true)">ACEITAR</button>
             <button class="btn btn-warning me-2" onclick="aumentarTruco()">AUMENTAR</button>
             <button class="btn btn-secondary" onclick="responderTruco(false)">CORRER</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Histórico da Partida -->
+<div class="modal fade" id="modalHistorico" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">📜 Histórico da Partida</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="conteudo-historico"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
         </div>
     </div>
 </div>
@@ -495,8 +532,11 @@
     let minhaVez = false;
     let cartaJogadaTemp = null;
 
-    // 🆕 Histórico da mão atual (armazena cartas jogadas por rodada)
-    let historicoRodadas = []; // cada elemento: { rodada: 1, cartas: [{carta, equipe}], vencedor: 'A' ou null }
+    // Histórico da mão atual (mini cartas)
+    let historicoRodadas = [];
+    // Histórico completo da partida (todas as mãos)
+    let historicoPartida = [];
+    let numeroMaoAtual = 1;
 
     const statusConexao = document.getElementById('status-conexao');
     const telaLogin = document.getElementById('tela-login');
@@ -521,11 +561,15 @@
         setTimeout(() => toastEl.remove(), 5000);
     }
 
-    // 🆕 Renderiza o painel de histórico com base no array historicoRodadas
+    function naipeIcone(naipe) {
+        return { 'paus':'♣', 'copas':'♥', 'espadas':'♠', 'ouros':'♦' }[naipe] || '';
+    }
+
+    // --- Histórico da mão atual (mini cartas) ---
     function renderizarHistorico() {
         if (!historicoDiv) return;
         let html = '';
-        historicoRodadas.forEach((rodada, idx) => {
+        historicoRodadas.forEach((rodada) => {
             const vencedorClass = rodada.vencedor === 'A' ? 'vencedor-A' : (rodada.vencedor === 'B' ? 'vencedor-B' : '');
             html += `<div class="historico-rodada ${vencedorClass}">`;
             html += `<span style="color:#ffd966; margin-right:5px;">R${rodada.rodada}</span>`;
@@ -545,11 +589,9 @@
         historicoDiv.innerHTML = html || '<span style="color:#aaa; font-size:0.9rem;">🃏 Aguardando primeira rodada...</span>';
     }
 
-    // 🆕 Adiciona uma carta ao histórico da rodada atual
     function adicionarCartaAoHistorico(carta, equipe) {
         let rodadaAtual = historicoRodadas.length > 0 ? historicoRodadas[historicoRodadas.length-1].rodada : 1;
         if (historicoRodadas.length === 0 || (historicoRodadas.length > 0 && historicoRodadas[historicoRodadas.length-1].cartas.length === 2)) {
-            // Cria nova rodada
             rodadaAtual = historicoRodadas.length + 1;
             historicoRodadas.push({ rodada: rodadaAtual, cartas: [], vencedor: null });
         }
@@ -558,7 +600,6 @@
         renderizarHistorico();
     }
 
-    // 🆕 Define o vencedor da última rodada
     function definirVencedorRodadaHistorico(equipeVencedora) {
         if (historicoRodadas.length === 0) return;
         const ultimaRodada = historicoRodadas[historicoRodadas.length-1];
@@ -566,12 +607,56 @@
         renderizarHistorico();
     }
 
-    // 🆕 Limpa o histórico ao iniciar nova mão
     function limparHistorico() {
         historicoRodadas = [];
         renderizarHistorico();
     }
 
+    // --- Histórico completo da partida (modal) ---
+    function adicionarMaoAoHistorico(vencedorMao, pontosGanhos, apostaFinal) {
+        historicoPartida.push({
+            numero: numeroMaoAtual++,
+            vencedor: vencedorMao,
+            pontosGanhos: pontosGanhos,
+            aposta: apostaFinal,
+            rodadas: historicoRodadas.map(r => ({
+                cartas: r.cartas.map(c => ({ carta: {...c.carta}, equipe: c.equipe })),
+                vencedor: r.vencedor
+            }))
+        });
+    }
+
+    function mostrarHistoricoPartida() {
+        const modal = new bootstrap.Modal(document.getElementById('modalHistorico'));
+        const conteudo = document.getElementById('conteudo-historico');
+        if (historicoPartida.length === 0) {
+            conteudo.innerHTML = '<p class="text-center text-warning">Nenhuma mão foi concluída ainda.</p>';
+        } else {
+            let html = '';
+            historicoPartida.forEach(mao => {
+                html += `<div class="mb-4 p-3 border rounded" style="border-color: #b58a4a !important;">`;
+                html += `<h5>Mão ${mao.numero} — Vencedor: Equipe ${mao.vencedor} (+${mao.pontosGanhos} pontos) | Aposta: ${mao.aposta}</h5>`;
+                mao.rodadas.forEach((rodada, idx) => {
+                    html += `<div class="ms-3 mb-2">`;
+                    html += `<strong>Rodada ${idx+1}:</strong> `;
+                    rodada.cartas.forEach(c => {
+                        html += `<span class="badge bg-dark me-1">${c.carta.valor}${naipeIcone(c.carta.naipe)} (${c.equipe})</span>`;
+                    });
+                    if (rodada.vencedor) {
+                        html += `<span class="badge ${rodada.vencedor === 'A' ? 'bg-primary' : 'bg-danger'}">🏆 ${rodada.vencedor}</span>`;
+                    } else {
+                        html += `<span class="badge bg-secondary">Empate</span>`;
+                    }
+                    html += `</div>`;
+                });
+                html += `</div>`;
+            });
+            conteudo.innerHTML = html;
+        }
+        modal.show();
+    }
+
+    // --- Socket Events ---
     socket.on('connect', () => { meuId = socket.id; statusConexao.innerHTML = '✅ Conectado'; });
     socket.on('disconnect', () => { statusConexao.innerHTML = '❌ Desconectado'; });
 
@@ -611,10 +696,7 @@
         }
     });
 
-    socket.on('jogoIniciado', () => {
-        telaLobby.style.display = 'none';
-        telaJogo.style.display = 'block';
-    });
+    socket.on('jogoIniciado', () => { telaLobby.style.display = 'none'; telaJogo.style.display = 'block'; });
 
     function posicionarJogadores(jogadores, modo) {
         ['top','right','bottom','left'].forEach(pos => document.getElementById(`jogador-${pos}`).innerHTML = '');
@@ -667,12 +749,8 @@
         document.getElementById('valor-aposta').innerText = '1';
         minhaVez = false;
         cartaJogadaTemp = null;
-        limparHistorico(); // 🆕
+        limparHistorico();
     });
-
-    function naipeIcone(naipe) {
-        return { 'paus':'♣', 'copas':'♥', 'espadas':'♠', 'ouros':'♦' }[naipe] || '';
-    }
 
     function renderizarMinhasCartas() {
         const container = document.getElementById('minhas-cartas');
@@ -688,10 +766,7 @@
     }
 
     function jogarCarta(carta) {
-        if (!minhaVez) {
-            showToast('Não é sua vez!', 'warning');
-            return;
-        }
+        if (!minhaVez) { showToast('Não é sua vez!', 'warning'); return; }
         cartaJogadaTemp = carta;
         minhasCartas = minhasCartas.filter(c => !(c.valor === carta.valor && c.naipe === carta.naipe));
         renderizarMinhasCartas();
@@ -708,8 +783,6 @@
         selo.innerText = equipe;
         div.appendChild(selo);
         mesa.appendChild(div);
-
-        // 🆕 Adiciona ao histórico
         adicionarCartaAoHistorico(carta, equipe);
     });
 
@@ -733,22 +806,17 @@
         document.querySelectorAll('.vez-indicator').forEach(el => el.innerHTML = '');
         const vezEl = document.getElementById(`vez-${jogadorId}`);
         if (vezEl) vezEl.innerHTML = '🎲 VEZ';
-
         minhaVez = (jogadorId === meuId);
         renderizarMinhasCartas();
     });
 
     socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => {
         atualizarPlacarMaos(rodadasA, rodadasB);
-        // 🆕 Atualiza o vencedor da última rodada no histórico (inferido pelo placar)
         if (historicoRodadas.length > 0) {
             const ultima = historicoRodadas[historicoRodadas.length-1];
             if (!ultima.vencedor) {
-                // tenta inferir comparando com placar anterior? Melhor receber evento específico, mas por simplicidade:
-                // O servidor não envia o vencedor da rodada explicitamente, então faremos uma inferência simples:
-                // Na verdade, o servidor envia 'Vencedor da rodada: X' nos logs, mas não via socket.
-                // Para não complicar, vamos apenas confiar no evento 'atualizarPlacarRodadas' e no fato de que a última rodada teve um vencedor.
-                // Vou adicionar um evento personalizado no servidor depois, mas por ora, deixamos sem indicação de vencedor no histórico.
+                if (rodadasA > (historicoRodadas.slice(0,-1).reduce((a,r)=>a+(r.vencedor==='A'?1:0),0))) definirVencedorRodadaHistorico('A');
+                else if (rodadasB > (historicoRodadas.slice(0,-1).reduce((a,r)=>a+(r.vencedor==='B'?1:0),0))) definirVencedorRodadaHistorico('B');
             }
         }
     });
@@ -758,6 +826,8 @@
         document.getElementById('placar-equipe-b').innerText = pontuacao.B || 0;
         showToast(`Equipe ${vencedorMao} venceu a mão (+${pontosGanhos} pontos)`, 'success');
         atualizarPlacarMaos(0, 0);
+        adicionarMaoAoHistorico(vencedorMao, pontosGanhos, parseInt(document.getElementById('valor-aposta').innerText));
+        limparHistorico();
     });
 
     socket.on('fimDeJogo', ({ vencedor }) => {
@@ -766,11 +836,12 @@
         telaLobby.style.display = 'block';
         document.getElementById('btn-pronto').disabled = false;
         document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+        setTimeout(() => mostrarHistoricoPartida(), 500);
+        historicoPartida = [];
+        numeroMaoAtual = 1;
     });
 
-    socket.on('atualizarAposta', ({ aposta }) => {
-        document.getElementById('valor-aposta').innerText = aposta;
-    });
+    socket.on('atualizarAposta', ({ aposta }) => { document.getElementById('valor-aposta').innerText = aposta; });
 
     socket.on('trucoPedido', ({ valor, de }) => {
         showToast(`${de} pediu TRUCO! (${valor} pontos)`, 'warning');
@@ -779,16 +850,11 @@
         const btnAumentar = document.querySelector('#acoes-truco .btn-warning');
         if (btnAumentar) btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
     });
-
-    socket.on('trucoPedidoEnviado', ({ valor }) => {
-        showToast(`Você pediu TRUCO! Aguardando resposta...`, 'info');
-    });
-
+    socket.on('trucoPedidoEnviado', () => showToast(`Você pediu TRUCO! Aguardando resposta...`, 'info'));
     socket.on('trucoAceito', ({ novaAposta }) => {
         showToast(`Truco aceito! Mão agora vale ${novaAposta} pontos.`, 'success');
         document.getElementById('acoes-truco').style.display = 'none';
     });
-
     socket.on('trucoAumentado', ({ de, valor }) => {
         showToast(`${de} aumentou para ${valor} pontos!`, 'warning');
         document.getElementById('acoes-truco').style.display = 'block';
@@ -798,23 +864,13 @@
     });
 
     function pedirTruco() { socket.emit('pedirTruco'); }
-    function responderTruco(aceitou) {
-        socket.emit('responderTruco', { aceitou });
-        document.getElementById('acoes-truco').style.display = 'none';
-    }
-    function aumentarTruco() {
-        socket.emit('responderTruco', { aceitou: false, aumentar: true });
-        document.getElementById('acoes-truco').style.display = 'none';
-    }
+    function responderTruco(aceitou) { socket.emit('responderTruco', { aceitou }); document.getElementById('acoes-truco').style.display = 'none'; }
+    function aumentarTruco() { socket.emit('responderTruco', { aceitou: false, aumentar: true }); document.getElementById('acoes-truco').style.display = 'none'; }
     function desistir() { if (confirm('Desistir da mão?')) socket.emit('desistir'); }
 
     socket.on('erro', (msg) => {
         showToast(msg, 'danger');
-        if (cartaJogadaTemp) {
-            minhasCartas.push(cartaJogadaTemp);
-            cartaJogadaTemp = null;
-            renderizarMinhasCartas();
-        }
+        if (cartaJogadaTemp) { minhasCartas.push(cartaJogadaTemp); cartaJogadaTemp = null; renderizarMinhasCartas(); }
     });
 </script>
 </body>
