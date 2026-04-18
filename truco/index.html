@@ -640,10 +640,15 @@
         document.getElementById('valor-aposta').innerText = aposta;
     });
 
+    // 🟢 CORREÇÃO: esconder botão AUMENTAR quando valor = 12
     socket.on('trucoPedido', ({ valor, de }) => {
         showToast(`${de} pediu TRUCO! (${valor} pontos)`, 'warning');
         document.getElementById('acoes-truco').style.display = 'block';
         window.trucoValor = valor;
+        const btnAumentar = document.querySelector('#acoes-truco .btn-warning');
+        if (btnAumentar) {
+            btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
+        }
     });
 
     socket.on('trucoPedidoEnviado', ({ valor }) => {
@@ -655,10 +660,15 @@
         document.getElementById('acoes-truco').style.display = 'none';
     });
 
+    // 🟢 CORREÇÃO: esconder botão AUMENTAR quando valor = 12
     socket.on('trucoAumentado', ({ de, valor }) => {
         showToast(`${de} aumentou para ${valor} pontos!`, 'warning');
         document.getElementById('acoes-truco').style.display = 'block';
         window.trucoValor = valor;
+        const btnAumentar = document.querySelector('#acoes-truco .btn-warning');
+        if (btnAumentar) {
+            btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
+        }
     });
 
     function pedirTruco() { socket.emit('pedirTruco'); }
