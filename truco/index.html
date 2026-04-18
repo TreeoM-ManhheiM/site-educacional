@@ -246,16 +246,56 @@
             font-weight: bold;
             box-shadow: 0 6px 0 #3e4a52;
         }
-        .placar-container {
+
+        /* PLACAR ESTILO LED */
+        .placar-led-container {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             width: 100%;
             max-width: 500px;
             margin: 15px auto;
-            color: #ffd966;
+            padding: 10px 20px;
+            background: #1e1e1e;
+            border-radius: 60px;
+            box-shadow: inset 0 0 10px #000, 0 5px 0 #0a0a0a;
+            border: 1px solid #b58a4a;
+        }
+        .led-equipe {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .led-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-weight: bold;
             font-size: 1.5rem;
-            text-shadow: 2px 2px 0 #00000050;
+            color: white;
+            box-shadow: 0 0 10px currentColor;
+        }
+        .led-badge.azul { background: #1e5fb4; box-shadow: 0 0 15px #3b82f6; }
+        .led-badge.vermelho { background: #b91c1c; box-shadow: 0 0 15px #ef4444; }
+        .led-display {
+            background: #0c0c0c;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 2px solid #444;
+            box-shadow: inset 0 0 8px black;
+        }
+        .led-numero {
+            font-family: 'Courier New', 'Lucida Sans Typewriter', monospace;
+            font-size: 3.5rem;
+            font-weight: bold;
+            color: #ffd966;
+            text-shadow: 0 0 15px #ffb700;
+            line-height: 1;
+            min-width: 70px;
+            text-align: center;
         }
         .status-vez {
             background: #1e3a5f;
@@ -282,6 +322,7 @@
             .jogador-right { right: -50px; }
             .jogador-left { left: -50px; }
             .carta-mao { width: 60px; height: 90px; font-size: 1.8rem; }
+            .led-numero { font-size: 2.5rem; min-width: 50px; }
         }
         @media (max-width: 500px) {
             .mesa-redonda { width: 350px; height: 350px; }
@@ -314,10 +355,18 @@
     </div>
 
     <div id="tela-jogo" style="display:none; width:100%;">
-        <div class="placar-container">
-            <span>⚪ Equipe A: <span id="placar-equipe-a">0</span></span>
-            <span>⚫ Equipe B: <span id="placar-equipe-b">0</span></span>
+        <!-- PLACAR ESTILO LED -->
+        <div class="placar-led-container">
+            <div class="led-equipe">
+                <div class="led-badge azul">A</div>
+                <div class="led-display"><span id="placar-equipe-a" class="led-numero">0</span></div>
+            </div>
+            <div class="led-equipe">
+                <div class="led-display"><span id="placar-equipe-b" class="led-numero">0</span></div>
+                <div class="led-badge vermelho">B</div>
+            </div>
         </div>
+
         <div class="placar-maos">
             <div class="maos-equipe" id="maos-equipe-A">
                 <div class="mao-indicator" id="mao-A-1"></div>
