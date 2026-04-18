@@ -547,7 +547,7 @@
         viraDiv.innerHTML = `${vira.valor} ${naipeIcone(vira.naipe)}`;
         posicionarJogadores(jogadoresSala, modoJogo);
         renderizarMinhasCartas();
-        document.getElementById('cartas-mesa').innerHTML = ''; // LIMPA A MESA NO INÍCIO DA MÃO
+        document.getElementById('cartas-mesa').innerHTML = '';
         document.getElementById('acoes-truco').style.display = 'none';
         document.getElementById('valor-aposta').innerText = '1';
         minhaVez = false;
@@ -595,7 +595,6 @@
     });
 
     socket.on('novaRodada', ({ rodada }) => {
-        // Adiciona um separador visual para indicar a nova rodada, sem limpar as cartas anteriores
         const mesa = document.getElementById('cartas-mesa');
         const separador = document.createElement('div');
         separador.className = 'rodada-separador';
