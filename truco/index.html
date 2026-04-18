@@ -196,6 +196,62 @@
         }
         .mao-vencida-A { background: #1e5fb4; box-shadow: 0 0 12px #3b82f6; }
         .mao-vencida-B { background: #b91c1c; box-shadow: 0 0 12px #ef4444; }
+
+        /* 🆕 PAINEL DE HISTÓRICO DA MÃO */
+        .historico-mao {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 10px auto;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 40px;
+            backdrop-filter: blur(4px);
+            border: 1px solid #b58a4a;
+            max-width: 500px;
+            flex-wrap: wrap;
+        }
+        .historico-rodada {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(30,30,30,0.6);
+            padding: 5px 10px;
+            border-radius: 30px;
+            border-left: 6px solid #e0b354;
+        }
+        .historico-rodada.vencedor-A { border-left-color: #1e5fb4; background: rgba(30,91,180,0.2); }
+        .historico-rodada.vencedor-B { border-left-color: #b91c1c; background: rgba(185,28,28,0.2); }
+        .mini-carta {
+            width: 35px;
+            height: 50px;
+            background: white;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 3px 0 #7a5c2e;
+            border: 2px solid #e0b354;
+            margin: 0 2px;
+        }
+        .mini-carta.ouros, .mini-carta.copas { color: #c41e3a; }
+        .mini-carta.paus, .mini-carta.espadas { color: #1e1e1e; }
+        .mini-selo {
+            font-size: 0.5rem;
+            background: #333;
+            color: white;
+            border-radius: 50%;
+            width: 14px;
+            height: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: -8px;
+        }
+
         .minha-mao {
             margin-top: 30px;
             background: rgba(20, 30, 15, 0.7);
@@ -332,6 +388,7 @@
             .jogador-left { left: -50px; }
             .carta-mao { width: 60px; height: 90px; font-size: 1.8rem; }
             .led-numero { font-size: 2.5rem; min-width: 50px; }
+            .mini-carta { width: 28px; height: 40px; font-size: 1rem; }
         }
         @media (max-width: 500px) {
             .mesa-redonda { width: 350px; height: 350px; }
@@ -388,6 +445,9 @@
             </div>
         </div>
 
+        <!-- 🆕 PAINEL DE HISTÓRICO DA MÃO (MINI CARTAS) -->
+        <div id="historico-mao" class="historico-mao"></div>
+
         <div class="d-flex justify-content-center my-2">
             <span class="aposta-indicator">💰 Aposta: <span id="valor-aposta">1</span> ponto(s)</span>
         </div>
@@ -435,10 +495,14 @@
     let minhaVez = false;
     let cartaJogadaTemp = null;
 
+    // 🆕 Histórico da mão atual (armazena cartas jogadas por rodada)
+    let historicoRodadas = []; // cada elemento: { rodada: 1, cartas: [{carta, equipe}], vencedor: 'A' ou null }
+
     const statusConexao = document.getElementById('status-conexao');
     const telaLogin = document.getElementById('tela-login');
     const telaLobby = document.getElementById('tela-lobby');
     const telaJogo = document.getElementById('tela-jogo');
+    const historicoDiv = document.getElementById('historico-mao');
 
     function showToast(message, type = 'info') {
         const container = document.querySelector('.toast-container');
@@ -455,6 +519,57 @@
         const toast = new bootstrap.Toast(toastEl);
         toast.show();
         setTimeout(() => toastEl.remove(), 5000);
+    }
+
+    // 🆕 Renderiza o painel de histórico com base no array historicoRodadas
+    function renderizarHistorico() {
+        if (!historicoDiv) return;
+        let html = '';
+        historicoRodadas.forEach((rodada, idx) => {
+            const vencedorClass = rodada.vencedor === 'A' ? 'vencedor-A' : (rodada.vencedor === 'B' ? 'vencedor-B' : '');
+            html += `<div class="historico-rodada ${vencedorClass}">`;
+            html += `<span style="color:#ffd966; margin-right:5px;">R${rodada.rodada}</span>`;
+            rodada.cartas.forEach(item => {
+                const carta = item.carta;
+                const equipe = item.equipe;
+                html += `<div class="mini-carta ${carta.naipe}" style="border-color: ${equipe==='A'?'#1e5fb4':'#b91c1c'}">`;
+                html += `${carta.valor} ${naipeIcone(carta.naipe)}`;
+                html += `<span class="mini-selo" style="background:${equipe==='A'?'#1e5fb4':'#b91c1c'}">${equipe}</span>`;
+                html += `</div>`;
+            });
+            if (rodada.vencedor) {
+                html += `<span style="margin-left:5px; font-weight:bold; color:${rodada.vencedor==='A'?'#3b82f6':'#ef4444'}">🏆</span>`;
+            }
+            html += `</div>`;
+        });
+        historicoDiv.innerHTML = html || '<span style="color:#aaa; font-size:0.9rem;">🃏 Aguardando primeira rodada...</span>';
+    }
+
+    // 🆕 Adiciona uma carta ao histórico da rodada atual
+    function adicionarCartaAoHistorico(carta, equipe) {
+        let rodadaAtual = historicoRodadas.length > 0 ? historicoRodadas[historicoRodadas.length-1].rodada : 1;
+        if (historicoRodadas.length === 0 || (historicoRodadas.length > 0 && historicoRodadas[historicoRodadas.length-1].cartas.length === 2)) {
+            // Cria nova rodada
+            rodadaAtual = historicoRodadas.length + 1;
+            historicoRodadas.push({ rodada: rodadaAtual, cartas: [], vencedor: null });
+        }
+        const ultimaRodada = historicoRodadas[historicoRodadas.length-1];
+        ultimaRodada.cartas.push({ carta, equipe });
+        renderizarHistorico();
+    }
+
+    // 🆕 Define o vencedor da última rodada
+    function definirVencedorRodadaHistorico(equipeVencedora) {
+        if (historicoRodadas.length === 0) return;
+        const ultimaRodada = historicoRodadas[historicoRodadas.length-1];
+        ultimaRodada.vencedor = equipeVencedora;
+        renderizarHistorico();
+    }
+
+    // 🆕 Limpa o histórico ao iniciar nova mão
+    function limparHistorico() {
+        historicoRodadas = [];
+        renderizarHistorico();
     }
 
     socket.on('connect', () => { meuId = socket.id; statusConexao.innerHTML = '✅ Conectado'; });
@@ -552,6 +667,7 @@
         document.getElementById('valor-aposta').innerText = '1';
         minhaVez = false;
         cartaJogadaTemp = null;
+        limparHistorico(); // 🆕
     });
 
     function naipeIcone(naipe) {
@@ -592,6 +708,9 @@
         selo.innerText = equipe;
         div.appendChild(selo);
         mesa.appendChild(div);
+
+        // 🆕 Adiciona ao histórico
+        adicionarCartaAoHistorico(carta, equipe);
     });
 
     socket.on('novaRodada', ({ rodada }) => {
@@ -619,7 +738,20 @@
         renderizarMinhasCartas();
     });
 
-    socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => atualizarPlacarMaos(rodadasA, rodadasB));
+    socket.on('atualizarPlacarRodadas', ({ rodadasA, rodadasB }) => {
+        atualizarPlacarMaos(rodadasA, rodadasB);
+        // 🆕 Atualiza o vencedor da última rodada no histórico (inferido pelo placar)
+        if (historicoRodadas.length > 0) {
+            const ultima = historicoRodadas[historicoRodadas.length-1];
+            if (!ultima.vencedor) {
+                // tenta inferir comparando com placar anterior? Melhor receber evento específico, mas por simplicidade:
+                // O servidor não envia o vencedor da rodada explicitamente, então faremos uma inferência simples:
+                // Na verdade, o servidor envia 'Vencedor da rodada: X' nos logs, mas não via socket.
+                // Para não complicar, vamos apenas confiar no evento 'atualizarPlacarRodadas' e no fato de que a última rodada teve um vencedor.
+                // Vou adicionar um evento personalizado no servidor depois, mas por ora, deixamos sem indicação de vencedor no histórico.
+            }
+        }
+    });
 
     socket.on('fimDeMao', ({ pontuacao, vencedorMao, pontosGanhos }) => {
         document.getElementById('placar-equipe-a').innerText = pontuacao.A || 0;
@@ -640,15 +772,12 @@
         document.getElementById('valor-aposta').innerText = aposta;
     });
 
-    // 🟢 CORREÇÃO: esconder botão AUMENTAR quando valor = 12
     socket.on('trucoPedido', ({ valor, de }) => {
         showToast(`${de} pediu TRUCO! (${valor} pontos)`, 'warning');
         document.getElementById('acoes-truco').style.display = 'block';
         window.trucoValor = valor;
         const btnAumentar = document.querySelector('#acoes-truco .btn-warning');
-        if (btnAumentar) {
-            btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
-        }
+        if (btnAumentar) btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
     });
 
     socket.on('trucoPedidoEnviado', ({ valor }) => {
@@ -660,15 +789,12 @@
         document.getElementById('acoes-truco').style.display = 'none';
     });
 
-    // 🟢 CORREÇÃO: esconder botão AUMENTAR quando valor = 12
     socket.on('trucoAumentado', ({ de, valor }) => {
         showToast(`${de} aumentou para ${valor} pontos!`, 'warning');
         document.getElementById('acoes-truco').style.display = 'block';
         window.trucoValor = valor;
         const btnAumentar = document.querySelector('#acoes-truco .btn-warning');
-        if (btnAumentar) {
-            btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
-        }
+        if (btnAumentar) btnAumentar.style.display = valor === 12 ? 'none' : 'inline-block';
     });
 
     function pedirTruco() { socket.emit('pedirTruco'); }
