@@ -9,7 +9,7 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Arial, sans-serif;
-            background: #d9c8a9; /* fundo areia */
+            background: #d9c8a9;
             color: #3e2e1f;
             display: flex;
             flex-direction: column;
@@ -101,7 +101,7 @@
             width: 100%;
         }
 
-        /* --- LAYOUT MESA DE MANCALA (KALAHS LATERAIS) --- */
+        /* --- LAYOUT MESA DE MANCALA --- */
         .mesa-mancala {
             display: flex;
             align-items: stretch;
@@ -180,7 +180,39 @@
             cursor: not-allowed;
         }
 
-        /* Para mobile */
+        /* Toast de notificação */
+        .toast-captura {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #2d6a4f;
+            color: #f5e6d3;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            z-index: 1000;
+            animation: slideUp 0.3s ease-out, fadeOut 0.5s ease-in 2.5s forwards;
+            border: 2px solid #f9e7d4;
+        }
+
+        @keyframes slideUp {
+            from { bottom: 0; opacity: 0; }
+            to { bottom: 30px; opacity: 1; }
+        }
+        @keyframes fadeOut {
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* Destaque rápido na captura (opcional, via classe) */
+        .casa.destaque-captura {
+            background: #f9e076;
+            box-shadow: inset 0 -8px 0 #c9a227, 0 6px 0 #8b6e1c, 0 0 15px gold;
+            transition: 0.2s;
+        }
+
         @media (max-width: 650px) {
             .casa {
                 width: 55px;
@@ -258,22 +290,18 @@
                 <div id="status-jogo" class="destaque">Partida em andamento</div>
             </div>
             
-            <!-- Mesa de Mancala (Kalahs laterais) -->
+            <!-- Mesa de Mancala -->
             <div class="mesa-mancala">
-                <!-- Kalah Esquerdo (Jogador Sul) -->
                 <div class="kalah-lateral" id="kalah-sul-container">
                     <span style="font-size:14px; margin-bottom:5px;">SUL</span>
                     <span class="kalah-conteudo" id="kalah-sul">0</span>
                 </div>
 
                 <div class="area-central">
-                    <!-- Fileira do Norte (superior) -->
                     <div class="fileira-casas" id="casas-norte"></div>
-                    <!-- Fileira do Sul (inferior) -->
                     <div class="fileira-casas" id="casas-sul"></div>
                 </div>
 
-                <!-- Kalah Direito (Jogador Norte) -->
                 <div class="kalah-lateral" id="kalah-norte-container">
                     <span style="font-size:14px; margin-bottom:5px;">NORTE</span>
                     <span class="kalah-conteudo" id="kalah-norte">0</span>
@@ -311,6 +339,7 @@
     const socket = io("https://motor-mancala.onrender.com");
 
     let estadoAtual = null;
+    let estadoAnterior = null; // para detectar capturas
     let meuLado = 'espectador';
     let jogoIniciado = false;
     let salaAtual = '';
@@ -320,6 +349,39 @@
     const casasNorteDiv = document.getElementById('casas-norte');
     const kalahSulSpan = document.getElementById('kalah-sul');
     const kalahNorteSpan = document.getElementById('kalah-norte');
+
+    // Função para exibir toast de captura
+    function mostrarNotificacaoCaptura(mensagem) {
+        const toast = document.createElement('div');
+        toast.className = 'toast-captura';
+        toast.textContent = mensagem;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // Detecta captura comparando estado anterior e novo
+    function detectarCaptura(antigo, novo) {
+        if (!antigo) return null;
+        
+        for (let i = 0; i < 14; i++) {
+            // Procura uma casa que foi de 1 para 0 (possível captura)
+            if (antigo.tabuleiro[i] === 1 && novo.tabuleiro[i] === 0) {
+                let oposto;
+                if (i >= 0 && i <= 5) oposto = 12 - i;
+                else if (i >= 7 && i <= 12) oposto = 12 - i;
+                else continue;
+                
+                // Verifica se a casa oposta também zerou e o kalah correspondente aumentou
+                if (antigo.tabuleiro[oposto] > 0 && novo.tabuleiro[oposto] === 0) {
+                    const kalahIdx = (i <= 5) ? 6 : 13;
+                    const sementesCapturadas = antigo.tabuleiro[oposto] + 1; // +1 da última semente
+                    const jogador = (kalahIdx === 6) ? 'Sul' : 'Norte';
+                    return { jogador, quantidade: sementesCapturadas, casa: i, oposta: oposto };
+                }
+            }
+        }
+        return null;
+    }
 
     function renderizarTabuleiro(estado) {
         if (!estado) return;
@@ -337,7 +399,7 @@
         }
         casasSulDiv.innerHTML = htmlSul;
 
-        // Casas Norte (12 até 7) - ordem visual correta
+        // Casas Norte (12 até 7)
         let htmlNorte = '';
         for (let i = 12; i >= 7; i--) {
             const sementes = tab[i];
@@ -415,6 +477,7 @@
 
     function voltarParaLobby() {
         jogoIniciado = false;
+        estadoAnterior = null;
         document.getElementById('area-jogo').style.display = 'none';
         document.getElementById('lobby').style.display = 'block';
         document.getElementById('painel-historico').style.display = 'none';
@@ -473,20 +536,45 @@
         }
         jogoIniciado = true;
         estadoAtual = dados.estado;
+        estadoAnterior = null; // reset ao iniciar nova partida
         atualizarInterface();
     });
 
     socket.on('estadoAtual', (estado) => {
+        estadoAnterior = estadoAtual ? {...estadoAtual} : null;
         estadoAtual = estado;
         atualizarInterface();
     });
 
     socket.on('jogadaFeita', (dados) => {
+        // Guarda estado anterior antes de atualizar
+        const estadoAntes = estadoAtual ? {
+            tabuleiro: [...estadoAtual.tabuleiro],
+            turno: estadoAtual.turno,
+            gameOver: estadoAtual.gameOver,
+            vencedor: estadoAtual.vencedor
+        } : null;
+        
         estadoAtual = dados.estado;
         atualizarInterface();
+        
         if (dados.historico) {
             document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
         }
+        
+        // Verifica se houve captura
+        const captura = detectarCaptura(estadoAntes, estadoAtual);
+        if (captura) {
+            mostrarNotificacaoCaptura(`🌱 Captura! +${captura.quantidade} sementes para ${captura.jogador}`);
+            // Destaque rápido nas casas envolvidas
+            const casas = document.querySelectorAll(`[data-casa="${captura.casa}"], [data-casa="${captura.oposta}"]`);
+            casas.forEach(c => {
+                c.classList.add('destaque-captura');
+                setTimeout(() => c.classList.remove('destaque-captura'), 1000);
+            });
+        }
+        
+        estadoAnterior = estadoAntes;
     });
 
     socket.on('fimDeJogo', (dados) => {
