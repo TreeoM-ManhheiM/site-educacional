@@ -84,13 +84,7 @@
             margin: 5px 0;
             width: 100%;
         }
-
-        /* Canvas do Tabuleiro */
-        .tabuleiro-container {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0;
-        }
+        .tabuleiro-container { display: flex; justify-content: center; margin: 10px 0; }
         canvas {
             background: #d9b382;
             border-radius: 20px;
@@ -99,7 +93,6 @@
             max-width: 100%;
             height: auto;
         }
-
         .historico-lista {
             max-height: 200px;
             overflow-y: auto;
@@ -139,6 +132,7 @@
             color: black;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
+        .dado.usado { opacity: 0.4; }
     </style>
 </head>
 <body>
@@ -174,7 +168,7 @@
             </div>
             
             <div class="tabuleiro-container">
-                <canvas id="boardCanvas" width="600" height="400"></canvas>
+                <canvas id="boardCanvas" width="700" height="400"></canvas>
             </div>
 
             <div class="dados-container" id="dados-display">
@@ -184,10 +178,11 @@
 
             <div class="flex-row">
                 <button id="btn-rolar" onclick="rolarDados()" class="primary">🎲 Rolar Dados</button>
+                <button onclick="confirmarMovimentos()" class="success" id="btn-confirmar" style="display:none;">✅ Confirmar</button>
+                <button onclick="cancelarMovimentos()" class="warning" id="btn-cancelar" style="display:none;">↩️ Cancelar</button>
                 <button onclick="desistir()" class="danger">🏳️ Desistir</button>
-                <button onclick="oferecerEmpate()" class="warning">🤝 Empate</button>
             </div>
-            <p style="font-size:14px; margin-top:10px;">Clique na peça e depois no destino (ou use os botões)</p>
+            <p style="font-size:14px; margin-top:10px;">Clique nas peças para selecionar origem e destino (múltiplos movimentos)</p>
         </div>
     </div>
 
@@ -211,15 +206,16 @@
 <script>
     const socket = io("https://motor-gamao.onrender.com");
     let estadoAtual = null;
-    let meuLado = 0; // 1 ou -1
+    let meuLado = 0;
     let jogoIniciado = false;
     let salaAtual = '';
-    let selectedPiece = null; // { from }
+    let movimentosPendentes = [];
+    let pecaSelecionada = null; // { from }
 
     const canvas = document.getElementById('boardCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Funções de desenho
+    // ========== DESENHO DO TABULEIRO ==========
     function desenharTabuleiro() {
         if (!estadoAtual) return;
         const board = estadoAtual.board;
@@ -228,17 +224,165 @@
         const w = canvas.width, h = canvas.height;
         ctx.clearRect(0, 0, w, h);
 
-        // Desenha fundo e triângulos (simplificado)
-        // ... (implementação completa no código final)
+        // Fundo
+        ctx.fillStyle = '#d9b382';
+        ctx.fillRect(0, 0, w, h);
+
+        // Triângulos (24 pontos)
+        const triWidth = (w - 100) / 12;
+        for (let i = 0; i < 24; i++) {
+            const col = Math.floor(i / 2);
+            const isTop = i % 2 === 0;
+            const x = 50 + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
+            const y = isTop ? 50 : h - 100;
+            const height = 120;
+            ctx.fillStyle = (i % 2 === 0) ? '#8b5e3c' : '#5d3a1a';
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + triWidth/2, isTop ? y + height : y - height);
+            ctx.lineTo(x - triWidth/2, isTop ? y + height : y - height);
+            ctx.closePath();
+            ctx.fill();
+            ctx.strokeStyle = '#f5e6d3';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        // Desenha peças
+        for (let i = 0; i < 24; i++) {
+            const count = board[i];
+            if (count === 0) continue;
+            const player = count > 0 ? 1 : -1;
+            const absCount = Math.abs(count);
+            const col = Math.floor(i / 2);
+            const isTop = i % 2 === 0;
+            const x = 50 + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
+            const baseY = isTop ? 70 : h - 80;
+            const step = 15;
+            for (let j = 0; j < absCount; j++) {
+                const offsetY = isTop ? j * step : -j * step;
+                ctx.beginPath();
+                ctx.arc(x, baseY + offsetY, 10, 0, 2 * Math.PI);
+                ctx.fillStyle = player === 1 ? '#a04030' : '#f5e6d3';
+                ctx.fill();
+                ctx.strokeStyle = '#2b1a0e';
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+        }
+
+        // Barra
+        if (bar[0] > 0) {
+            for (let i = 0; i < bar[0]; i++) {
+                ctx.beginPath();
+                ctx.arc(w/2, 180 + i*15, 10, 0, 2*Math.PI);
+                ctx.fillStyle = '#a04030';
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+        if (bar[1] > 0) {
+            for (let i = 0; i < bar[1]; i++) {
+                ctx.beginPath();
+                ctx.arc(w/2, 220 - i*15, 10, 0, 2*Math.PI);
+                ctx.fillStyle = '#f5e6d3';
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+
+        // Home (contadores)
+        ctx.font = 'bold 16px Arial';
+        ctx.fillStyle = '#f5e6d3';
+        ctx.fillText(`🏠 Vermelho: ${home[0]}`, 10, 30);
+        ctx.fillText(`🏠 Branco: ${home[1]}`, w-120, 30);
     }
 
-    // Eventos de clique no canvas
+    // ========== INTERAÇÃO ==========
+    function getPointFromClick(x, y) {
+        const w = canvas.width, h = canvas.height;
+        const triWidth = (w - 100) / 12;
+        for (let i = 0; i < 24; i++) {
+            const col = Math.floor(i / 2);
+            const isTop = i % 2 === 0;
+            const cx = 50 + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
+            const cy = isTop ? 50 + 60 : h - 100 - 60;
+            const dist = Math.sqrt((x-cx)**2 + (y-cy)**2);
+            if (dist < 40) return i;
+        }
+        if (x > w/2 - 30 && x < w/2 + 30) {
+            if (y > 150 && y < 250) return 24; // barra jogador 1
+            if (y > 250 && y < 350) return 25; // barra jogador 2
+        }
+        return -1;
+    }
+
     canvas.addEventListener('click', (e) => {
-        if (!jogoIniciado || meuLado === 0) return;
-        // Lógica para selecionar peça e destino (omitida por brevidade, mas presente no código final)
+        if (!jogoIniciado || meuLado === 0 || estadoAtual.turn !== meuLado || estadoAtual.rollPhase) return;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        const point = getPointFromClick(x, y);
+        if (point === -1) return;
+
+        if (pecaSelecionada === null) {
+            // Selecionar origem
+            const from = point;
+            const count = (from === 24) ? estadoAtual.bar[0] : (from === 25) ? estadoAtual.bar[1] : estadoAtual.board[from];
+            if ((meuLado === 1 && count > 0) || (meuLado === -1 && count < 0)) {
+                pecaSelecionada = { from };
+                desenharTabuleiro();
+                ctx.beginPath();
+                ctx.arc(x, y, 15, 0, 2*Math.PI);
+                ctx.strokeStyle = 'gold';
+                ctx.lineWidth = 4;
+                ctx.stroke();
+            }
+        } else {
+            // Selecionar destino
+            const to = point;
+            movimentosPendentes.push({ from: pecaSelecionada.from, to });
+            pecaSelecionada = null;
+            atualizarBotoes();
+            desenharTabuleiro();
+        }
     });
 
-    // Socket events
+    function atualizarBotoes() {
+        document.getElementById('btn-confirmar').style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
+        document.getElementById('btn-cancelar').style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
+        document.getElementById('btn-rolar').style.display = movimentosPendentes.length > 0 ? 'none' : 'inline-block';
+    }
+
+    function confirmarMovimentos() {
+        if (movimentosPendentes.length === 0) return;
+        socket.emit('moverPecas', { moves: movimentosPendentes });
+        movimentosPendentes = [];
+        pecaSelecionada = null;
+        atualizarBotoes();
+    }
+
+    function cancelarMovimentos() {
+        movimentosPendentes = [];
+        pecaSelecionada = null;
+        atualizarBotoes();
+        desenharTabuleiro();
+    }
+
+    function rolarDados() {
+        socket.emit('rolarDados');
+    }
+
+    // ========== ANIMAÇÃO DE MOVIMENTO ==========
+    function animarMovimento(moves, duracao = 2000) {
+        // Implementação simplificada: apenas redesenharemos após um timeout
+        // Em uma versão completa, você poderia animar as coordenadas
+        setTimeout(() => desenharTabuleiro(), duracao);
+    }
+
+    // ========== SOCKET EVENTS ==========
     function entrar() {
         const apelido = document.getElementById('input-apelido').value.trim();
         const sala = document.getElementById('input-sala').value.trim();
@@ -253,10 +397,6 @@
     function marcarPronto() {
         socket.emit('marcarPronto');
         document.getElementById('btn-pronto').disabled = true;
-    }
-
-    function rolarDados() {
-        socket.emit('rolarDados');
     }
 
     function desistir() {
@@ -284,30 +424,45 @@
     });
 
     socket.on('estadoLobby', (dados) => {
-        // Atualiza lista de jogadores e controla exibição do lobby/jogo
+        document.getElementById('info-sala').innerHTML = `<p>Sala: <strong>${salaAtual}</strong> | Jogadores: ${dados.jogadoresInfo.length}/2</p>`;
+        let lista = '';
+        dados.jogadoresInfo.forEach(j => lista += `<li>👤 ${j.nome} (${j.lado === 1 ? 'Vermelho' : 'Branco'}) ${j.pronto ? '✅' : '⏳'}</li>`);
+        dados.espectadores.forEach(e => lista += `<li>👁️ ${e} (espectador)</li>`);
+        document.getElementById('lista-alunos').innerHTML = lista;
+        if (dados.rodando) {
+            document.getElementById('lobby').style.display = 'none';
+            document.getElementById('area-jogo').style.display = 'block';
+            document.getElementById('painel-historico').style.display = 'block';
+            jogoIniciado = true;
+        }
     });
 
     socket.on('iniciarPartida', (dados) => {
         jogoIniciado = true;
         estadoAtual = dados.estado;
+        if (dados.lado !== 'espectador') meuLado = dados.lado;
+        desenharTabuleiro();
         document.getElementById('lobby').style.display = 'none';
         document.getElementById('area-jogo').style.display = 'block';
-        document.getElementById('painel-historico').style.display = 'block';
-        desenharTabuleiro();
     });
 
     socket.on('estadoAtual', (estado) => {
         estadoAtual = estado;
         desenharTabuleiro();
-        atualizarDados(estado.dice);
+        atualizarDados(estado.dice, estado.diceUsed);
         document.getElementById('vez-atual').innerText = estado.turn === meuLado ? 'Seu turno' : 'Aguardando';
     });
 
-    socket.on('dadosRolados', ({ dice }) => atualizarDados(dice));
+    socket.on('dadosRolados', ({ dice }) => {
+        atualizarDados(dice, [false, false]);
+        document.getElementById('btn-rolar').style.display = 'none';
+    });
 
-    function atualizarDados(dice) {
+    function atualizarDados(dice, used) {
         document.getElementById('dado1').innerText = dice[0] || '?';
         document.getElementById('dado2').innerText = dice[1] || '?';
+        document.getElementById('dado1').classList.toggle('usado', used[0]);
+        document.getElementById('dado2').classList.toggle('usado', used[1]);
     }
 
     socket.on('jogadaFeita', (dados) => {
@@ -316,6 +471,8 @@
         if (dados.historico) {
             document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
         }
+        animarMovimento(dados.moves);
+        document.getElementById('btn-rolar').style.display = estadoAtual.rollPhase ? 'inline-block' : 'none';
     });
 
     socket.on('fimDeJogo', (dados) => {
@@ -331,6 +488,8 @@
         div.innerHTML += `<div><strong>${msg.remetente}</strong>: ${msg.texto}</div>`;
         div.scrollTop = div.scrollHeight;
     });
+
+    document.getElementById('input-mensagem').addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
 </script>
 </body>
 </html>
