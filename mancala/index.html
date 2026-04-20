@@ -240,8 +240,10 @@
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-    // Altere para o endereço do seu servidor no Render
-    const socket = io("http://localhost:3000");
+    // =============================================
+    // CONFIGURAÇÃO: Endereço do servidor no Render
+    // =============================================
+    const socket = io("https://motor-mancala.onrender.com");
 
     let estadoAtual = null;
     let meuLado = 'espectador'; // 'sul', 'norte' ou 'espectador'
