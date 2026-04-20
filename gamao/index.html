@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Mancala Lógico 🌱 — Laboratório de Computação</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f4f6f8;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        header {
+            background: linear-gradient(135deg, #2d6a4f, #40916c);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        header h1 { margin: 0; font-size: 28px; }
+        header p { font-size: 14px; margin-top: 5px; opacity: 0.9; }
+        .btn-header-regras {
+            display: inline-block;
+            margin-top: 10px;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 6px 16px;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 13px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        main {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 0 20px;
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .coluna-esquerda {
+            flex: 2;
+            min-width: 300px;
+        }
+        .coluna-direita {
+            flex: 1;
+            min-width: 250px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .game-container, .painel-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        #status-conexao { color: #64748b; font-size: 13px; margin-bottom: 10px; }
+        .painel-info {
+            background: #d8f3dc;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 15px;
+            border: 1px solid #95d5b2;
+            color: #1b4332;
+            font-weight: bold;
+        }
+        .destaque { color: #2d6a4f; }
+        button {
+            padding: 10px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        button.primary { background: #40916c; color: white; }
+        button.success { background: #2d6a4f; color: white; }
+        button.warning { background: #e9c46a; color: #1e293b; }
+        button.danger { background: #e63946; color: white; }
+        input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            margin: 5px 0;
+            width: 100%;
+        }
+        .tabuleiro-mancala {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .kalah {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            width: 100%;
+        }
+        .kalah-norte, .kalah-sul {
+            background: #b7e4c7;
+            border: 3px solid #2d6a4f;
+            border-radius: 40px;
+            padding: 15px 30px;
+            font-size: 28px;
+            font-weight: bold;
+            min-width: 120px;
+            text-align: center;
+        }
+        .linha-casas {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .casa {
+            width: 70px;
+            height: 70px;
+            background: #f8f9fa;
+            border: 3px solid #2d6a4f;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .casa.vazia { background: #e9ecef; color: #aaa; }
+        .casa.selecionavel:hover { background: #d8f3dc; transform: scale(1.05); }
+        .casa.desabilitada { opacity: 0.5; cursor: not-allowed; }
+        .historico-lista {
+            max-height: 200px;
+            overflow-y: auto;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        .chat-mensagens {
+            height: 200px;
+            overflow-y: auto;
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        .chat-input {
+            display: flex;
+            gap: 5px;
+        }
+        .chat-input input {
+            flex: 1;
+        }
+        .badge {
+            background: #cbd5e1;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Mancala Lógico 🌱</h1>
+    <p>Projeto Integrado — Laboratório de Computação</p>
+    <a href="regras.html" target="_blank" class="btn-header-regras">📖 VER REGRAS DO JOGO</a>
+</header>
+<main>
+    <div class="coluna-esquerda">
+        <div id="status-conexao">Conectando...</div>
+
+        <div id="tela-login" class="game-container">
+            <h2>Entrar na Partida</h2>
+            <input type="text" id="input-apelido" placeholder="Seu Nome">
+            <input type="text" id="input-sala" placeholder="Sala (ex: mesa1)">
+            <br><br>
+            <button onclick="entrar()" class="success">CONECTAR</button>
+        </div>
+
+        <div id="lobby" class="game-container" style="display:none;">
+            <h3>🕹️ Lobby</h3>
+            <div id="info-sala"></div>
+            <ul id="lista-alunos" style="padding:0;"></ul>
+            <button id="btn-pronto" onclick="marcarPronto()" class="primary" style="width:100%;">ESTOU PRONTO</button>
+        </div>
+
+        <div id="area-jogo" style="display:none;">
+            <div class="painel-info">
+                <div>Seu Lado: <span id="meu-lado" class="destaque">---</span></div>
+                <div>Turno: <span id="vez-atual" class="destaque">Sul</span></div>
+                <div id="status-jogo" class="destaque">Partida em andamento</div>
+            </div>
+            
+            <!-- Tabuleiro de Mancala -->
+            <div class="tabuleiro-mancala">
+                <div class="kalah">
+                    <div class="kalah-norte" id="kalah-norte">0</div>
+                </div>
+                <div class="linha-casas" id="casas-norte"></div>
+                <div class="linha-casas" id="casas-sul"></div>
+                <div class="kalah">
+                    <div class="kalah-sul" id="kalah-sul">0</div>
+                </div>
+            </div>
+
+            <div class="flex-row" style="margin-top:15px;">
+                <button onclick="desistir()" class="danger">🏳️ Desistir</button>
+                <button onclick="oferecerEmpate()" class="warning">🤝 Oferecer Empate</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="coluna-direita">
+        <div id="painel-historico" class="painel-container" style="display:none;">
+            <h3>📜 Histórico</h3>
+            <div id="historico" class="historico-lista"></div>
+        </div>
+        <div id="painel-chat" class="painel-container" style="display:none;">
+            <h3>💬 Chat da Sala</h3>
+            <div id="chat-mensagens" class="chat-mensagens"></div>
+            <div class="chat-input">
+                <input type="text" id="input-mensagem" placeholder="Digite sua mensagem...">
+                <button onclick="enviarMensagem()">Enviar</button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+    // Altere para o endereço do seu servidor no Render
+    const socket = io("http://localhost:3000");
+
+    let estadoAtual = null;
+    let meuLado = 'espectador'; // 'sul', 'norte' ou 'espectador'
+    let jogoIniciado = false;
+    let salaAtual = '';
+    let meuSocketId = '';
+
+    // Elementos do DOM
+    const casasSulDiv = document.getElementById('casas-sul');
+    const casasNorteDiv = document.getElementById('casas-norte');
+    const kalahSulSpan = document.getElementById('kalah-sul');
+    const kalahNorteSpan = document.getElementById('kalah-norte');
+
+    function renderizarTabuleiro(estado) {
+        if (!estado) return;
+        const tab = estado.tabuleiro;
+        
+        // Atualiza kalahs
+        kalahSulSpan.textContent = tab[6];
+        kalahNorteSpan.textContent = tab[13];
+
+        // Renderiza casas do Sul (índices 0-5, esquerda para direita)
+        let htmlSul = '';
+        for (let i = 0; i < 6; i++) {
+            const sementes = tab[i];
+            const classes = `casa ${sementes === 0 ? 'vazia' : ''} ${podeJogar(i) ? 'selecionavel' : 'desabilitada'}`;
+            htmlSul += `<div class="${classes}" data-casa="${i}" onclick="clicarCasa(${i})">${sementes}</div>`;
+        }
+        casasSulDiv.innerHTML = htmlSul;
+
+        // Renderiza casas do Norte (índices 12 até 7, da esquerda para direita na tela)
+        let htmlNorte = '';
+        for (let i = 12; i >= 7; i--) {
+            const sementes = tab[i];
+            const classes = `casa ${sementes === 0 ? 'vazia' : ''} ${podeJogar(i) ? 'selecionavel' : 'desabilitada'}`;
+            htmlNorte += `<div class="${classes}" data-casa="${i}" onclick="clicarCasa(${i})">${sementes}</div>`;
+        }
+        casasNorteDiv.innerHTML = htmlNorte;
+    }
+
+    function podeJogar(casa) {
+        if (!jogoIniciado || meuLado === 'espectador') return false;
+        if (estadoAtual.gameOver) return false;
+        if (estadoAtual.turno !== meuLado) return false;
+        if (meuLado === 'sul' && (casa < 0 || casa > 5)) return false;
+        if (meuLado === 'norte' && (casa < 7 || casa > 12)) return false;
+        return estadoAtual.tabuleiro[casa] > 0;
+    }
+
+    function clicarCasa(casa) {
+        if (!podeJogar(casa)) return;
+        socket.emit('fazerJogada', { casa: casa });
+    }
+
+    function atualizarInterface() {
+        if (estadoAtual) {
+            renderizarTabuleiro(estadoAtual);
+            document.getElementById('vez-atual').innerText = estadoAtual.turno === 'sul' ? 'Sul' : 'Norte';
+            if (estadoAtual.gameOver) {
+                let msg = estadoAtual.vencedor === 'sul' ? 'Sul venceu!' : (estadoAtual.vencedor === 'norte' ? 'Norte venceu!' : 'Empate!');
+                document.getElementById('status-jogo').innerText = `🏆 ${msg}`;
+            } else {
+                document.getElementById('status-jogo').innerText = 'Partida em andamento';
+            }
+        }
+    }
+
+    // Socket events
+    function entrar() {
+        const apelido = document.getElementById('input-apelido').value.trim();
+        const sala = document.getElementById('input-sala').value.trim();
+        if (!apelido || !sala) return alert('Preencha nome e sala!');
+        salaAtual = sala;
+        socket.emit('entrarSala', { apelido, sala });
+        document.getElementById('tela-login').style.display = 'none';
+        document.getElementById('lobby').style.display = 'block';
+        document.getElementById('painel-chat').style.display = 'block';
+    }
+
+    function marcarPronto() {
+        if (meuLado !== 'espectador') {
+            socket.emit('marcarPronto');
+            document.getElementById('btn-pronto').disabled = true;
+            document.getElementById('btn-pronto').innerText = 'Aguardando oponente...';
+        }
+    }
+
+    function desistir() {
+        if (jogoIniciado && meuLado !== 'espectador' && confirm('Tem certeza que deseja desistir?')) {
+            socket.emit('desistir');
+        }
+    }
+
+    function oferecerEmpate() {
+        if (!jogoIniciado || meuLado === 'espectador') return;
+        socket.emit('oferecerEmpate');
+    }
+
+    function enviarMensagem() {
+        const input = document.getElementById('input-mensagem');
+        const msg = input.value.trim();
+        if (msg) {
+            socket.emit('enviarMensagem', msg);
+            input.value = '';
+        }
+    }
+
+    function voltarParaLobby() {
+        jogoIniciado = false;
+        document.getElementById('area-jogo').style.display = 'none';
+        document.getElementById('lobby').style.display = 'block';
+        document.getElementById('painel-historico').style.display = 'none';
+        document.getElementById('btn-pronto').disabled = false;
+        document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+    }
+
+    socket.on('connect', () => {
+        meuSocketId = socket.id;
+        document.getElementById('status-conexao').innerText = "✅ Conectado";
+    });
+
+    socket.on('disconnect', () => {
+        document.getElementById('status-conexao').innerText = "❌ Desconectado";
+    });
+
+    socket.on('erro', (msg) => alert(msg));
+
+    socket.on('definirPapel', (dados) => {
+        meuLado = dados.papel === 'jogador' ? dados.lado : 'espectador';
+        document.getElementById('meu-lado').innerText = meuLado === 'sul' ? 'Sul' : (meuLado === 'norte' ? 'Norte' : 'Espectador');
+    });
+
+    socket.on('estadoLobby', (dados) => {
+        const infoSala = document.getElementById('info-sala');
+        let html = `<p>Sala: <strong>${salaAtual}</strong> | Jogadores: ${dados.jogadoresInfo.length}/2`;
+        if (dados.espectadores.length > 0) html += ` | Espectadores: ${dados.espectadores.length}`;
+        html += '</p>';
+        infoSala.innerHTML = html;
+
+        let lista = '';
+        dados.jogadoresInfo.forEach(j => {
+            lista += `<li>👤 ${j.nome} (${j.lado === 'sul' ? 'Sul' : 'Norte'}) ${j.pronto ? '✅' : '⏳'}</li>`;
+        });
+        dados.espectadores.forEach(e => {
+            lista += `<li>👁️ ${e} (espectador)</li>`;
+        });
+        document.getElementById('lista-alunos').innerHTML = lista;
+
+        if (dados.rodando) {
+            document.getElementById('lobby').style.display = 'none';
+            document.getElementById('area-jogo').style.display = 'block';
+            document.getElementById('painel-historico').style.display = 'block';
+            jogoIniciado = true;
+        } else {
+            document.getElementById('lobby').style.display = 'block';
+            document.getElementById('area-jogo').style.display = 'none';
+            document.getElementById('painel-historico').style.display = 'none';
+        }
+    });
+
+    socket.on('iniciarPartida', (dados) => {
+        if (dados.lado !== 'espectador') {
+            meuLado = dados.lado;
+            document.getElementById('meu-lado').innerText = meuLado === 'sul' ? 'Sul' : 'Norte';
+        }
+        jogoIniciado = true;
+        estadoAtual = dados.estado;
+        atualizarInterface();
+    });
+
+    socket.on('estadoAtual', (estado) => {
+        estadoAtual = estado;
+        atualizarInterface();
+    });
+
+    socket.on('jogadaFeita', (dados) => {
+        estadoAtual = dados.estado;
+        atualizarInterface();
+        if (dados.historico) {
+            document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
+        }
+        if (dados.turnoExtra) {
+            // Poderia mostrar uma notificação de "jogue novamente"
+        }
+    });
+
+    socket.on('fimDeJogo', (dados) => {
+        alert(dados.mensagem);
+        jogoIniciado = false;
+        document.getElementById('status-jogo').innerHTML = dados.mensagem;
+        setTimeout(() => {
+            voltarParaLobby();
+        }, 1000);
+    });
+
+    socket.on('novaMensagem', (msg) => {
+        const div = document.getElementById('chat-mensagens');
+        const hora = new Date(msg.timestamp).toLocaleTimeString();
+        div.innerHTML += `<div><strong>${msg.remetente}</strong> <span class="badge">${hora}</span>: ${msg.texto}</div>`;
+        div.scrollTop = div.scrollHeight;
+    });
+
+    socket.on('propostaEmpate', (dados) => {
+        if (dados.para !== meuSocketId) return;
+        if (confirm(`${dados.de} ofereceu empate. Aceitar?`)) {
+            socket.emit('responderEmpate', { aceito: true, de: dados.de });
+        } else {
+            socket.emit('responderEmpate', { aceito: false, de: dados.de });
+        }
+    });
+
+    socket.on('empateRecusado', (dados) => {
+        alert(`${dados.por} recusou a oferta de empate.`);
+    });
+
+    document.getElementById('input-mensagem').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') enviarMensagem();
+    });
+</script>
+</body>
+</html>
