@@ -3,100 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regras do Mancala — Laboratório de Computação</title>
+    <title>Regras do Gamão</title>
     <style>
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f4f6f8;
-            color: #333;
-            line-height: 1.6;
-        }
-        header {
-            background: linear-gradient(135deg, #2d6a4f, #40916c);
-            color: white;
-            padding: 40px 20px;
-            text-align: center;
-        }
-        header h1 { margin: 0; font-size: 32px; }
-        header p { font-size: 16px; margin-top: 10px; opacity: 0.9; }
-        main {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        .container-regras {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-        }
-        h2 {
-            color: #1b4332;
-            border-bottom: 2px solid #d8f3dc;
-            padding-bottom: 8px;
-            margin-top: 30px;
-        }
-        h3 {
-            color: #2d6a4f;
-            margin-bottom: 5px;
-        }
-        ul { padding-left: 20px; }
-        li { margin-bottom: 10px; }
-        .btn-voltar {
-            display: block;
-            width: fit-content;
-            margin: 30px auto 0;
-            background: #40916c;
-            color: white;
-            padding: 12px 24px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            text-align: center;
-            transition: 0.3s;
-        }
-        .btn-voltar:hover {
-            background: #2d6a4f;
-            transform: translateY(-2px);
-        }
+        body { font-family: 'Segoe UI', sans-serif; background: #1e4d2b; color: #f5e6d3; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: #2d6a4f; padding: 30px; border-radius: 20px; }
+        h1, h2 { color: #e6c7a2; }
+        a { color: #a77b55; }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Regras do Mancala (Kalah) 🌱</h1>
-        <p>Aprenda a jogar este clássico jogo de estratégia africano</p>
-    </header>
-    <main>
-        <div class="container-regras">
-            <h2>🎯 Objetivo</h2>
-            <p>Coletar mais sementes no seu <strong>Kalah</strong> (depósito) do que o oponente. O jogo termina quando um dos lados ficar sem sementes nas suas seis casas.</p>
-
-            <h2>🧩 Componentes</h2>
-            <ul>
-                <li><strong>Tabuleiro:</strong> 6 casas para cada jogador + 2 depósitos (Kalahs).</li>
-                <li><strong>Sementes:</strong> 4 sementes por casa no início (total de 48).</li>
-            </ul>
-
-            <h2>🔄 Como Jogar</h2>
-            <ol>
-                <li>O jogador da vez escolhe uma de suas casas (que contenha sementes).</li>
-                <li>Pega todas as sementes dessa casa e as distribui, uma a uma, nas casas seguintes no sentido <strong>anti-horário</strong>.</li>
-                <li>Pula-se o Kalah do oponente, mas <strong>não</strong> o próprio Kalah.</li>
-                <li>Se a última semente cair no <strong>seu próprio Kalah</strong>, você ganha um <strong>turno extra</strong> e joga novamente.</li>
-                <li>Se a última semente cair em uma <strong>casa vazia</strong> do seu lado, e a casa oposta (do adversário) tiver sementes, você <strong>captura</strong> todas as sementes da casa oposta + a semente que acabou de colocar, levando tudo para o seu Kalah.</li>
-            </ol>
-
-            <h2>🏁 Fim da Partida</h2>
-            <p>Quando um jogador não tiver mais sementes em nenhuma de suas casas, o jogo termina. O oponente recolhe todas as sementes restantes em suas casas e as coloca em seu próprio Kalah. Vence quem tiver mais sementes no Kalah.</p>
-
-            <h2>💡 Dicas Estratégicas</h2>
-            <ul>
-                <li>Planeje seus movimentos para ganhar turnos extras (caindo no Kalah).</li>
-                <li>Observe as oportunidades de captura.</li>
-                <li>Evite deixar casas vazias que possam ser usadas pelo adversário para capturar.</li>
-            </ul>
-        </div>
-      </main>
+    <div class="container">
+        <h1>Regras do Gamão</h1>
+        <p>O objetivo é mover todas as suas 15 peças para o seu quadrante interno e depois removê-las do tabuleiro.</p>
+        <h2>Preparação</h2>
+        <p>Cada jogador começa com 15 peças. A disposição inicial é padrão.</p>
+        <h2>Como Jogar</h2>
+        <p>Os jogadores alternam turnos. Em cada turno, você rola dois dados e move uma ou duas peças de acordo com os números. Se tirar números iguais, você joga o dobro de movimentos.</p>
+        <p>Uma peça não pode parar em um ponto ocupado por duas ou mais peças do oponente. Se parar em um ponto com apenas uma peça adversária, ela é capturada e vai para a barra.</p>
+        <h2>Removendo Peças</h2>
+        <p>Quando todas as suas peças estiverem no seu quadrante interno, você pode começar a removê-las usando os números dos dados.</p>
+        <a href="index.html">← Voltar ao Jogo</a>
+    </div>
 </body>
 </html>
