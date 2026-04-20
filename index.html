@@ -130,7 +130,8 @@
         .btn-domino,
         .btn-xadrez,
         .btn-atari,
-        .btn-truco {
+        .btn-truco,
+        .btn-gamao {
             display: inline-block;
             padding: 12px 24px;
             color: white;
@@ -178,6 +179,15 @@
             background-color: #7c3aed;
             transform: scale(1.05);
         }
+
+        .btn-gamao {
+            background-color: #b45309; /* tom âmbar/madeira */
+        }
+
+        .btn-gamao:hover {
+            background-color: #92400e;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 
@@ -217,7 +227,8 @@
             <div style="text-align:center; display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
                 <a href="domino/" class="btn-domino">🎮 Dominó Lógico</a>
                 <a href="xadrez/" class="btn-xadrez">♟️ Xadrez Lógico</a>
-                <a href="mancala/index.html" class="btn-xadrez">🟤 Mancala</a>
+                <a href="mancala/" class="btn-xadrez">🟤 Mancala</a>
+                <a href="gamao/" class="btn-gamao">🎲 Gamão Lógico</a>
                 <a href="truco/" class="btn-truco">🃏 Truco Paulista</a>
                 <a href="atari/2600.html" class="btn-atari">🕹️ Emulador ALL ROMS</a>
             </div>
