@@ -101,7 +101,7 @@
             width: 100%;
         }
 
-        /* --- LAYOUT MESA DE MANCALA --- */
+        /* --- LAYOUT MESA DE MANCALA (KALAHS INVERTIDOS) --- */
         .mesa-mancala {
             display: flex;
             align-items: stretch;
@@ -116,7 +116,6 @@
 
         .kalah-lateral {
             width: 80px;
-            background: #7c5e3a;
             border-radius: 40px;
             display: flex;
             flex-direction: column;
@@ -124,9 +123,19 @@
             justify-content: center;
             color: #f9e7d4;
             font-weight: bold;
-            box-shadow: inset 0 -5px 0 #4d2f1a, 0 5px 0 #4d2f1a;
+            box-shadow: inset 0 -5px 0 rgba(0,0,0,0.2), 0 5px 0 rgba(0,0,0,0.2);
             border: 2px solid #e6c7a2;
             margin: 0 5px;
+        }
+
+        /* Cores específicas para cada lado */
+        .kalah-sul {
+            background: #8b2a2a; /* vermelho escuro */
+            box-shadow: inset 0 -5px 0 #5a1a1a, 0 5px 0 #5a1a1a;
+        }
+        .kalah-norte {
+            background: #2c2c2c; /* preto/cinza escuro */
+            box-shadow: inset 0 -5px 0 #1a1a1a, 0 5px 0 #1a1a1a;
         }
 
         .kalah-conteudo {
@@ -206,7 +215,6 @@
             to { opacity: 0; visibility: hidden; }
         }
 
-        /* Destaque rápido na captura (opcional, via classe) */
         .casa.destaque-captura {
             background: #f9e076;
             box-shadow: inset 0 -8px 0 #c9a227, 0 6px 0 #8b6e1c, 0 0 15px gold;
@@ -290,21 +298,23 @@
                 <div id="status-jogo" class="destaque">Partida em andamento</div>
             </div>
             
-            <!-- Mesa de Mancala -->
+            <!-- Mesa de Mancala: Kalah Norte (esquerda), fileiras centrais, Kalah Sul (direita) -->
             <div class="mesa-mancala">
-                <div class="kalah-lateral" id="kalah-sul-container">
-                    <span style="font-size:14px; margin-bottom:5px;">SUL</span>
-                    <span class="kalah-conteudo" id="kalah-sul">0</span>
+                <!-- Kalah Esquerdo: Norte (preto) -->
+                <div class="kalah-lateral kalah-norte" id="kalah-norte-container">
+                    <span class="kalah-conteudo" id="kalah-norte">0</span>
                 </div>
 
                 <div class="area-central">
+                    <!-- Fileira do Norte (superior) -->
                     <div class="fileira-casas" id="casas-norte"></div>
+                    <!-- Fileira do Sul (inferior) -->
                     <div class="fileira-casas" id="casas-sul"></div>
                 </div>
 
-                <div class="kalah-lateral" id="kalah-norte-container">
-                    <span style="font-size:14px; margin-bottom:5px;">NORTE</span>
-                    <span class="kalah-conteudo" id="kalah-norte">0</span>
+                <!-- Kalah Direito: Sul (vermelho) -->
+                <div class="kalah-lateral kalah-sul" id="kalah-sul-container">
+                    <span class="kalah-conteudo" id="kalah-sul">0</span>
                 </div>
             </div>
 
@@ -339,7 +349,7 @@
     const socket = io("https://motor-mancala.onrender.com");
 
     let estadoAtual = null;
-    let estadoAnterior = null; // para detectar capturas
+    let estadoAnterior = null;
     let meuLado = 'espectador';
     let jogoIniciado = false;
     let salaAtual = '';
@@ -350,7 +360,6 @@
     const kalahSulSpan = document.getElementById('kalah-sul');
     const kalahNorteSpan = document.getElementById('kalah-norte');
 
-    // Função para exibir toast de captura
     function mostrarNotificacaoCaptura(mensagem) {
         const toast = document.createElement('div');
         toast.className = 'toast-captura';
@@ -359,22 +368,17 @@
         setTimeout(() => toast.remove(), 3000);
     }
 
-    // Detecta captura comparando estado anterior e novo
     function detectarCaptura(antigo, novo) {
         if (!antigo) return null;
-        
         for (let i = 0; i < 14; i++) {
-            // Procura uma casa que foi de 1 para 0 (possível captura)
             if (antigo.tabuleiro[i] === 1 && novo.tabuleiro[i] === 0) {
                 let oposto;
                 if (i >= 0 && i <= 5) oposto = 12 - i;
                 else if (i >= 7 && i <= 12) oposto = 12 - i;
                 else continue;
-                
-                // Verifica se a casa oposta também zerou e o kalah correspondente aumentou
                 if (antigo.tabuleiro[oposto] > 0 && novo.tabuleiro[oposto] === 0) {
                     const kalahIdx = (i <= 5) ? 6 : 13;
-                    const sementesCapturadas = antigo.tabuleiro[oposto] + 1; // +1 da última semente
+                    const sementesCapturadas = antigo.tabuleiro[oposto] + 1;
                     const jogador = (kalahIdx === 6) ? 'Sul' : 'Norte';
                     return { jogador, quantidade: sementesCapturadas, casa: i, oposta: oposto };
                 }
@@ -386,11 +390,9 @@
     function renderizarTabuleiro(estado) {
         if (!estado) return;
         const tab = estado.tabuleiro;
-        
         kalahSulSpan.textContent = tab[6];
         kalahNorteSpan.textContent = tab[13];
 
-        // Casas Sul (0-5)
         let htmlSul = '';
         for (let i = 0; i < 6; i++) {
             const sementes = tab[i];
@@ -399,7 +401,6 @@
         }
         casasSulDiv.innerHTML = htmlSul;
 
-        // Casas Norte (12 até 7)
         let htmlNorte = '';
         for (let i = 12; i >= 7; i--) {
             const sementes = tab[i];
@@ -498,7 +499,7 @@
 
     socket.on('definirPapel', (dados) => {
         meuLado = dados.papel === 'jogador' ? dados.lado : 'espectador';
-        document.getElementById('meu-lado').innerText = meuLado === 'sul' ? 'Sul' : (meuLado === 'norte' ? 'Norte' : 'Espectador');
+        document.getElementById('meu-lado').innerText = meuLado === 'sul' ? 'Sul (Vermelho)' : (meuLado === 'norte' ? 'Norte (Preto)' : 'Espectador');
     });
 
     socket.on('estadoLobby', (dados) => {
@@ -510,7 +511,7 @@
 
         let lista = '';
         dados.jogadoresInfo.forEach(j => {
-            lista += `<li>👤 ${j.nome} (${j.lado === 'sul' ? 'Sul' : 'Norte'}) ${j.pronto ? '✅' : '⏳'}</li>`;
+            lista += `<li>👤 ${j.nome} (${j.lado === 'sul' ? 'Vermelho' : 'Preto'}) ${j.pronto ? '✅' : '⏳'}</li>`;
         });
         dados.espectadores.forEach(e => {
             lista += `<li>👁️ ${e} (espectador)</li>`;
@@ -532,11 +533,11 @@
     socket.on('iniciarPartida', (dados) => {
         if (dados.lado !== 'espectador') {
             meuLado = dados.lado;
-            document.getElementById('meu-lado').innerText = meuLado === 'sul' ? 'Sul' : 'Norte';
+            document.getElementById('meu-lado').innerText = meuLado === 'sul' ? 'Sul (Vermelho)' : 'Norte (Preto)';
         }
         jogoIniciado = true;
         estadoAtual = dados.estado;
-        estadoAnterior = null; // reset ao iniciar nova partida
+        estadoAnterior = null;
         atualizarInterface();
     });
 
@@ -547,7 +548,6 @@
     });
 
     socket.on('jogadaFeita', (dados) => {
-        // Guarda estado anterior antes de atualizar
         const estadoAntes = estadoAtual ? {
             tabuleiro: [...estadoAtual.tabuleiro],
             turno: estadoAtual.turno,
@@ -562,11 +562,9 @@
             document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
         }
         
-        // Verifica se houve captura
         const captura = detectarCaptura(estadoAntes, estadoAtual);
         if (captura) {
             mostrarNotificacaoCaptura(`🌱 Captura! +${captura.quantidade} sementes para ${captura.jogador}`);
-            // Destaque rápido nas casas envolvidas
             const casas = document.querySelectorAll(`[data-casa="${captura.casa}"], [data-casa="${captura.oposta}"]`);
             casas.forEach(c => {
                 c.classList.add('destaque-captura');
