@@ -129,11 +129,11 @@
         }
 
         /* Cores específicas para cada lado */
-        .kalah-sul {
+        .kalah-vermelho {
             background: #8b2a2a; /* vermelho escuro */
             box-shadow: inset 0 -5px 0 #5a1a1a, 0 5px 0 #5a1a1a;
         }
-        .kalah-norte {
+        .kalah-preto {
             background: #2c2c2c; /* preto/cinza escuro */
             box-shadow: inset 0 -5px 0 #1a1a1a, 0 5px 0 #1a1a1a;
         }
@@ -294,27 +294,27 @@
         <div id="area-jogo" style="display:none;">
             <div class="painel-info">
                 <div>Seu Lado: <span id="meu-lado" class="destaque">---</span></div>
-                <div>Turno: <span id="vez-atual" class="destaque">Sul</span></div>
+                <div>Turno: <span id="vez-atual" class="destaque">Vermelho</span></div>
                 <div id="status-jogo" class="destaque">Partida em andamento</div>
             </div>
             
-            <!-- Mesa de Mancala: Kalah Norte (esquerda), fileiras centrais, Kalah Sul (direita) -->
+            <!-- Mesa de Mancala: Kalah Preto (esquerda), fileiras centrais, Kalah Vermelho (direita) -->
             <div class="mesa-mancala">
-                <!-- Kalah Esquerdo: Norte (preto) -->
-                <div class="kalah-lateral kalah-norte" id="kalah-norte-container">
-                    <span class="kalah-conteudo" id="kalah-norte">0</span>
+                <!-- Kalah Esquerdo: Preto -->
+                <div class="kalah-lateral kalah-preto" id="kalah-preto-container">
+                    <span class="kalah-conteudo" id="kalah-preto">0</span>
                 </div>
 
                 <div class="area-central">
-                    <!-- Fileira do Norte (superior) -->
-                    <div class="fileira-casas" id="casas-norte"></div>
-                    <!-- Fileira do Sul (inferior) -->
-                    <div class="fileira-casas" id="casas-sul"></div>
+                    <!-- Fileira do Preto (superior) -->
+                    <div class="fileira-casas" id="casas-preto"></div>
+                    <!-- Fileira do Vermelho (inferior) -->
+                    <div class="fileira-casas" id="casas-vermelho"></div>
                 </div>
 
-                <!-- Kalah Direito: Sul (vermelho) -->
-                <div class="kalah-lateral kalah-sul" id="kalah-sul-container">
-                    <span class="kalah-conteudo" id="kalah-sul">0</span>
+                <!-- Kalah Direito: Vermelho -->
+                <div class="kalah-lateral kalah-vermelho" id="kalah-vermelho-container">
+                    <span class="kalah-conteudo" id="kalah-vermelho">0</span>
                 </div>
             </div>
 
@@ -350,15 +350,22 @@
 
     let estadoAtual = null;
     let estadoAnterior = null;
-    let meuLado = 'espectador';
+    let meuLado = 'espectador'; // 'vermelho', 'preto' ou 'espectador'
     let jogoIniciado = false;
     let salaAtual = '';
     let meuSocketId = '';
 
-    const casasSulDiv = document.getElementById('casas-sul');
-    const casasNorteDiv = document.getElementById('casas-norte');
-    const kalahSulSpan = document.getElementById('kalah-sul');
-    const kalahNorteSpan = document.getElementById('kalah-norte');
+    // Mapeamento dos nomes de lado para cores (o servidor ainda usa 'sul'/'norte')
+    const ladoParaCor = {
+        'sul': 'Vermelho',
+        'norte': 'Preto'
+    };
+
+    // Elementos do DOM renomeados para cores
+    const casasVermelhoDiv = document.getElementById('casas-vermelho');
+    const casasPretoDiv = document.getElementById('casas-preto');
+    const kalahVermelhoSpan = document.getElementById('kalah-vermelho');
+    const kalahPretoSpan = document.getElementById('kalah-preto');
 
     function mostrarNotificacaoCaptura(mensagem) {
         const toast = document.createElement('div');
@@ -379,7 +386,7 @@
                 if (antigo.tabuleiro[oposto] > 0 && novo.tabuleiro[oposto] === 0) {
                     const kalahIdx = (i <= 5) ? 6 : 13;
                     const sementesCapturadas = antigo.tabuleiro[oposto] + 1;
-                    const jogador = (kalahIdx === 6) ? 'Sul' : 'Norte';
+                    const jogador = (kalahIdx === 6) ? 'Vermelho' : 'Preto';
                     return { jogador, quantidade: sementesCapturadas, casa: i, oposta: oposto };
                 }
             }
@@ -390,32 +397,37 @@
     function renderizarTabuleiro(estado) {
         if (!estado) return;
         const tab = estado.tabuleiro;
-        kalahSulSpan.textContent = tab[6];
-        kalahNorteSpan.textContent = tab[13];
+        
+        // Atualiza kalahs (índices 6 = vermelho/sul, 13 = preto/norte)
+        kalahVermelhoSpan.textContent = tab[6];
+        kalahPretoSpan.textContent = tab[13];
 
-        let htmlSul = '';
+        // Casas do Vermelho (inferior) - índices 0 a 5
+        let htmlVermelho = '';
         for (let i = 0; i < 6; i++) {
             const sementes = tab[i];
             const classes = `casa ${sementes === 0 ? 'vazia' : ''} ${podeJogar(i) ? 'selecionavel' : 'desabilitada'}`;
-            htmlSul += `<div class="${classes}" data-casa="${i}" onclick="clicarCasa(${i})">${sementes}</div>`;
+            htmlVermelho += `<div class="${classes}" data-casa="${i}" onclick="clicarCasa(${i})">${sementes}</div>`;
         }
-        casasSulDiv.innerHTML = htmlSul;
+        casasVermelhoDiv.innerHTML = htmlVermelho;
 
-        let htmlNorte = '';
+        // Casas do Preto (superior) - índices 12 até 7 (esquerda para direita na tela)
+        let htmlPreto = '';
         for (let i = 12; i >= 7; i--) {
             const sementes = tab[i];
             const classes = `casa ${sementes === 0 ? 'vazia' : ''} ${podeJogar(i) ? 'selecionavel' : 'desabilitada'}`;
-            htmlNorte += `<div class="${classes}" data-casa="${i}" onclick="clicarCasa(${i})">${sementes}</div>`;
+            htmlPreto += `<div class="${classes}" data-casa="${i}" onclick="clicarCasa(${i})">${sementes}</div>`;
         }
-        casasNorteDiv.innerHTML = htmlNorte;
+        casasPretoDiv.innerHTML = htmlPreto;
     }
 
     function podeJogar(casa) {
         if (!jogoIniciado || meuLado === 'espectador') return false;
         if (estadoAtual.gameOver) return false;
         if (estadoAtual.turno !== meuLado) return false;
-        if (meuLado === 'sul' && (casa < 0 || casa > 5)) return false;
-        if (meuLado === 'norte' && (casa < 7 || casa > 12)) return false;
+        // Verifica se a casa pertence ao lado do jogador
+        if (meuLado === 'vermelho' && (casa < 0 || casa > 5)) return false;
+        if (meuLado === 'preto' && (casa < 7 || casa > 12)) return false;
         return estadoAtual.tabuleiro[casa] > 0;
     }
 
@@ -427,10 +439,22 @@
     function atualizarInterface() {
         if (estadoAtual) {
             renderizarTabuleiro(estadoAtual);
-            document.getElementById('vez-atual').innerText = estadoAtual.turno === 'sul' ? 'Sul' : 'Norte';
+            // Traduz turno para cor
+            const turnoCor = estadoAtual.turno === 'sul' ? 'Vermelho' : 'Preto';
+            document.getElementById('vez-atual').innerText = turnoCor;
+            
             if (estadoAtual.gameOver) {
-                let msg = estadoAtual.vencedor === 'sul' ? 'Sul venceu!' : (estadoAtual.vencedor === 'norte' ? 'Norte venceu!' : 'Empate!');
-                document.getElementById('status-jogo').innerText = `🏆 ${msg}`;
+                let msg = '';
+                const ptsVermelho = estadoAtual.tabuleiro[6];
+                const ptsPreto = estadoAtual.tabuleiro[13];
+                if (estadoAtual.vencedor === 'sul') {
+                    msg = `🏆 Vermelho venceu com ${ptsVermelho} pontos! (Preto: ${ptsPreto})`;
+                } else if (estadoAtual.vencedor === 'norte') {
+                    msg = `🏆 Preto venceu com ${ptsPreto} pontos! (Vermelho: ${ptsVermelho})`;
+                } else {
+                    msg = `🤝 Empate! Ambos com ${ptsVermelho} pontos.`;
+                }
+                document.getElementById('status-jogo').innerHTML = msg;
             } else {
                 document.getElementById('status-jogo').innerText = 'Partida em andamento';
             }
@@ -498,8 +522,15 @@
     socket.on('erro', (msg) => alert(msg));
 
     socket.on('definirPapel', (dados) => {
-        meuLado = dados.papel === 'jogador' ? dados.lado : 'espectador';
-        document.getElementById('meu-lado').innerText = meuLado === 'sul' ? 'Sul (Vermelho)' : (meuLado === 'norte' ? 'Norte (Preto)' : 'Espectador');
+        if (dados.papel === 'jogador') {
+            // O servidor envia 'sul' ou 'norte'
+            meuLado = dados.lado; // 'sul' ou 'norte'
+            const cor = ladoParaCor[meuLado] || meuLado;
+            document.getElementById('meu-lado').innerText = cor;
+        } else {
+            meuLado = 'espectador';
+            document.getElementById('meu-lado').innerText = 'Espectador';
+        }
     });
 
     socket.on('estadoLobby', (dados) => {
@@ -511,7 +542,8 @@
 
         let lista = '';
         dados.jogadoresInfo.forEach(j => {
-            lista += `<li>👤 ${j.nome} (${j.lado === 'sul' ? 'Vermelho' : 'Preto'}) ${j.pronto ? '✅' : '⏳'}</li>`;
+            const cor = ladoParaCor[j.lado] || j.lado;
+            lista += `<li>👤 ${j.nome} (${cor}) ${j.pronto ? '✅' : '⏳'}</li>`;
         });
         dados.espectadores.forEach(e => {
             lista += `<li>👁️ ${e} (espectador)</li>`;
@@ -532,8 +564,9 @@
 
     socket.on('iniciarPartida', (dados) => {
         if (dados.lado !== 'espectador') {
-            meuLado = dados.lado;
-            document.getElementById('meu-lado').innerText = meuLado === 'sul' ? 'Sul (Vermelho)' : 'Norte (Preto)';
+            meuLado = dados.lado; // 'sul' ou 'norte'
+            const cor = ladoParaCor[meuLado] || meuLado;
+            document.getElementById('meu-lado').innerText = cor;
         }
         jogoIniciado = true;
         estadoAtual = dados.estado;
@@ -576,9 +609,28 @@
     });
 
     socket.on('fimDeJogo', (dados) => {
-        alert(dados.mensagem);
+        // O servidor ainda envia 'sul'/'norte' no vencedor
+        let vencedorCor = '';
+        if (dados.vencedor === 'sul') vencedorCor = 'Vermelho';
+        else if (dados.vencedor === 'norte') vencedorCor = 'Preto';
+        
+        let mensagem = dados.mensagem;
+        // Se o servidor mandar uma mensagem padrão, podemos complementar com a pontuação
+        if (estadoAtual) {
+            const ptsVermelho = estadoAtual.tabuleiro[6];
+            const ptsPreto = estadoAtual.tabuleiro[13];
+            if (dados.vencedor === 'sul') {
+                mensagem = `🏆 Vermelho venceu com ${ptsVermelho} pontos! (Preto: ${ptsPreto})`;
+            } else if (dados.vencedor === 'norte') {
+                mensagem = `🏆 Preto venceu com ${ptsPreto} pontos! (Vermelho: ${ptsVermelho})`;
+            } else {
+                mensagem = `🤝 Empate! Ambos com ${ptsVermelho} pontos.`;
+            }
+        }
+        
+        alert(mensagem);
         jogoIniciado = false;
-        document.getElementById('status-jogo').innerHTML = dados.mensagem;
+        document.getElementById('status-jogo').innerHTML = mensagem;
         setTimeout(voltarParaLobby, 1000);
     });
 
