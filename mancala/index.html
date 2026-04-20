@@ -94,7 +94,7 @@
             margin: 5px 0;
             width: 100%;
         }
-        /* Layout Horizontal do Mancala */
+        /* Layout Horizontal do Mancala (Kalah na direita de cada jogador) */
         .tabuleiro-mancala {
             display: flex;
             flex-direction: column;
@@ -106,7 +106,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
             width: 100%;
         }
         .linha-casas {
@@ -139,6 +138,7 @@
             justify-content: center;
             font-size: 28px;
             font-weight: bold;
+            margin: 0 10px;
         }
         .casa.vazia { background: #e9ecef; color: #aaa; }
         .casa.selecionavel:hover { background: #d8f3dc; transform: scale(1.05); }
@@ -174,8 +174,8 @@
 
         @media (max-width: 600px) {
             .casa {
-                width: 50px;
-                height: 50px;
+                width: 45px;
+                height: 45px;
                 font-size: 18px;
             }
             .kalah {
@@ -183,7 +183,6 @@
                 height: 120px;
                 font-size: 24px;
             }
-            .jogador-area { gap: 5px; }
             .linha-casas { gap: 5px; }
         }
     </style>
@@ -220,18 +219,18 @@
                 <div id="status-jogo" class="destaque">Partida em andamento</div>
             </div>
             
-            <!-- Tabuleiro de Mancala (Horizontal) -->
+            <!-- Tabuleiro de Mancala: Kalah na direita de cada jogador -->
             <div class="tabuleiro-mancala">
-                <!-- Jogador Norte (superior) -->
+                <!-- Jogador Norte (superior): Kalah à esquerda, depois casas 12..7 (esquerda para direita) -->
                 <div class="jogador-area">
                     <div class="kalah" id="kalah-norte">0</div>
                     <div class="linha-casas" id="casas-norte"></div>
                 </div>
                 
-                <!-- Jogador Sul (inferior) -->
+                <!-- Jogador Sul (inferior): casas 0..5 à esquerda, Kalah à direita -->
                 <div class="jogador-area">
-                    <div class="kalah" id="kalah-sul">0</div>
                     <div class="linha-casas" id="casas-sul"></div>
+                    <div class="kalah" id="kalah-sul">0</div>
                 </div>
             </div>
 
