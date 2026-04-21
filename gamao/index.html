@@ -97,10 +97,10 @@
             overflow-x: auto;
         }
         canvas {
-            background: #d9b382;
-            border-radius: 20px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-            border: 5px solid #6b4226;
+            background: radial-gradient(circle at center, #deb887 0%, #c19a6b 60%, #8b5a2b 100%);
+            border-radius: 24px;
+            border: 10px solid #4a2c14;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.4), 0 15px 35px rgba(0,0,0,0.6);
             width: 100%;
             height: auto;
             cursor: pointer;
@@ -245,31 +245,38 @@
     let salaAtual = '';
     let movimentosPendentes = [];
     let pecaSelecionada = null;
-    let legalMoves = [];  // movimentos válidos recebidos do servidor
+    let legalMoves = [];
 
     const canvas = document.getElementById('boardCanvas');
     const ctx = canvas.getContext('2d');
-
-    // ==================== CONFIGURAÇÕES DO TABULEIRO CLÁSSICO ====================
     const w = 1000, h = 600;
     canvas.width = w; canvas.height = h;
-    
-    // Dimensões dos triângulos (pontos)
-    const boardMarginX = 80;     // margem esquerda/direita
-    const boardTopY = 70;        // topo da área de jogo (início dos triângulos superiores)
-    const boardBottomY = h - 70; // base dos triângulos inferiores
-    const pointWidth = (w - 2 * boardMarginX) / 12;  // largura de cada par de triângulos (cada casa ocupa metade)
-    const pointHeight = 150;      // altura dos triângulos
-    
-    // Coordenadas da barra central
-    const barX = w/2 - 30;
-    const barW = 60;
-    const barTopY = boardTopY + pointHeight + 10;
-    const barBottomY = boardBottomY - pointHeight - 10;
+
+    // ==================== CONFIGURAÇÕES DO TABULEIRO CLÁSSICO ====================
+    const boardMarginX = 80;
+    const boardTopY = 60;
+    const boardBottomY = h - 60;
+    const pointWidth = (w - 2 * boardMarginX) / 12;
+    const pointHeight = 130;
+    const barX = w/2 - 35;
+    const barW = 70;
+    const barTopY = boardTopY + pointHeight + 5;
+    const barBottomY = boardBottomY - pointHeight - 5;
     const barHeight = barBottomY - barTopY;
 
-    // ========== FUNÇÕES DE DESENHO ==========
-    function desenharTriangulo(x, y, largura, altura, paraCima, corClara) {
+    // Função para desenhar triângulos com gradiente (visual clássico)
+    function desenharTriangulo(x, y, largura, altura, paraCima, claro) {
+        const grad = ctx.createLinearGradient(
+            x, y,
+            x, paraCima ? y - altura : y + altura
+        );
+        if (claro) {
+            grad.addColorStop(0, '#f3d6ad');
+            grad.addColorStop(1, '#d2a679');
+        } else {
+            grad.addColorStop(0, '#9c5a2e');
+            grad.addColorStop(1, '#6b3e1e');
+        }
         ctx.beginPath();
         if (paraCima) {
             ctx.moveTo(x, y);
@@ -281,9 +288,9 @@
             ctx.lineTo(x + largura, y);
         }
         ctx.closePath();
-        ctx.fillStyle = corClara ? '#e8c99e' : '#b57c48';
+        ctx.fillStyle = grad;
         ctx.fill();
-        ctx.strokeStyle = '#4a2c14';
+        ctx.strokeStyle = '#3a1f0f';
         ctx.lineWidth = 1.5;
         ctx.stroke();
     }
@@ -291,156 +298,153 @@
     function desenharTabuleiro() {
         if (!estadoAtual) return;
         
-        // Fundo da mesa
+        // Fundo da mesa (já aplicado pelo CSS, mas reforçamos)
+        ctx.clearRect(0, 0, w, h);
         ctx.fillStyle = '#c9a87b';
         ctx.fillRect(0, 0, w, h);
-        ctx.strokeStyle = '#5a3a22';
-        ctx.lineWidth = 8;
-        ctx.strokeRect(5, 5, w-10, h-10);
+        
+        // Divisão central clássica (faixa vertical escura)
+        ctx.fillStyle = '#6b4226';
+        ctx.fillRect(w/2 - 6, boardTopY, 12, boardBottomY - boardTopY);
         
         // Desenha os 24 triângulos (pontos)
-        // Índice 0 = canto superior direito (ponto 1 para o jogador vermelho)
-        // Ordem: linha de cima da direita para esquerda, linha de baixo da esquerda para direita
         for (let i = 0; i < 12; i++) {
-            // Triângulos superiores (lado vermelho, virados para baixo)
-            const xSup = boardMarginX + i * pointWidth;
+            const x = boardMarginX + i * pointWidth;
             const corClaraSup = (Math.floor(i/2) % 2 === 0);
-            desenharTriangulo(xSup, boardTopY, pointWidth, pointHeight, false, corClaraSup);
-            
-            // Triângulos inferiores (lado branco, virados para cima)
-            const xInf = boardMarginX + i * pointWidth;
             const corClaraInf = (Math.floor(i/2) % 2 === 1);
-            desenharTriangulo(xInf, boardBottomY, pointWidth, pointHeight, true, corClaraInf);
-        }
-        
-        // Números das casas (tradicional: 1 a 12 em cima, 13 a 24 embaixo)
-        ctx.font = "bold 14px 'Segoe UI'";
-        ctx.fillStyle = "#2c1a0c";
-        for (let i = 0; i < 12; i++) {
-            const x = boardMarginX + i * pointWidth + pointWidth/2;
-            // Casas superiores: numeradas de 12 a 1 (da esquerda p/ direita? Tradicional: 1 no canto direito superior)
-            // Vamos seguir a convenção: casa 1 no canto superior direito, casa 12 no superior esquerdo.
-            let numSup = 12 - i;
-            ctx.fillText(numSup.toString(), x, boardTopY - 10);
+            // Triângulo superior (virado para baixo)
+            desenharTriangulo(x, boardTopY, pointWidth, pointHeight, false, corClaraSup);
+            // Triângulo inferior (virado para cima)
+            desenharTriangulo(x, boardBottomY, pointWidth, pointHeight, true, corClaraInf);
             
-            // Casas inferiores: 13 no canto inferior esquerdo, 24 no canto inferior direito
-            let numInf = 13 + i;
-            ctx.fillText(numInf.toString(), x, boardBottomY + 25);
+            // Números das casas
+            ctx.fillStyle = '#2c1a0c';
+            ctx.font = "bold 14px 'Segoe UI'";
+            ctx.shadowBlur = 0;
+            ctx.fillText(12 - i, x + pointWidth/2 - 5, boardTopY - 8);
+            ctx.fillText(13 + i, x + pointWidth/2 - 5, boardBottomY + 22);
         }
         
-        // Barra central
+        // Barra central (com textura de madeira)
         ctx.fillStyle = '#8b6946';
         ctx.fillRect(barX, barTopY, barW, barHeight);
+        ctx.fillStyle = '#c9a87b';
+        for (let i = 0; i < 3; i++) {
+            ctx.fillRect(barX + 10 + i*15, barTopY + 10, 5, barHeight - 20);
+        }
         ctx.strokeStyle = '#4a2c14';
         ctx.lineWidth = 3;
         ctx.strokeRect(barX, barTopY, barW, barHeight);
         ctx.fillStyle = "#f5e6d3";
         ctx.font = "bold 16px 'Segoe UI'";
-        ctx.fillText("BARRA", barX+12, barTopY + barHeight/2);
+        ctx.fillText("BARRA", barX+18, barTopY + barHeight/2);
         
         // Áreas de saída (home)
-        ctx.fillStyle = "#4a7a5c";
+        ctx.fillStyle = '#4a7a5c';
+        ctx.shadowBlur = 0;
         ctx.fillRect(20, 20, 100, 50);
         ctx.fillRect(w-120, 20, 100, 50);
         ctx.fillStyle = "#f5e6d3";
         ctx.font = "bold 14px";
         ctx.fillText("CASA VERMELHA", 25, 50);
         ctx.fillText("CASA BRANCA", w-115, 50);
+        ctx.fillStyle = "#ffd966";
+        ctx.font = "bold 18px";
+        ctx.fillText(`${estadoAtual.home[0]}`, 80, 58);
+        ctx.fillText(`${estadoAtual.home[1]}`, w-65, 58);
         
-        // Desenha as peças
-        const board = estadoAtual.board;
-        const bar = estadoAtual.bar;
-        const home = estadoAtual.home;
-        
-        // Peças nos triângulos superiores (índices 0..11 -> casas 1..12 do lado vermelho)
+        // Desenha peças nos triângulos superiores (índices 0..11 -> casas 1..12)
         for (let i = 0; i < 12; i++) {
-            const idx = 11 - i; // mapeamento: i=0 (casa 1) -> board[11]; i=11 (casa 12) -> board[0]
-            const qtd = board[idx];
+            const idx = 11 - i;
+            const qtd = estadoAtual.board[idx];
             if (qtd === 0) continue;
             const x = boardMarginX + i * pointWidth + pointWidth/2;
-            const yBase = boardTopY + 10;
+            const yBase = boardTopY + 18;
             const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
-            const absQtd = Math.abs(qtd);
-            for (let j = 0; j < Math.min(absQtd, 5); j++) {
+            const absQ = Math.abs(qtd);
+            const maxVisible = 7;
+            for (let j = 0; j < Math.min(absQ, maxVisible); j++) {
                 ctx.beginPath();
-                ctx.arc(x, yBase + j * 16, 12, 0, 2*Math.PI);
+                ctx.arc(x, yBase + j * 14, 11, 0, 2*Math.PI);
                 ctx.fillStyle = cor;
                 ctx.fill();
                 ctx.strokeStyle = '#2b1a0e';
                 ctx.lineWidth = 1.5;
                 ctx.stroke();
-                if (absQtd > 5 && j === 4) {
-                    ctx.fillStyle = '#333';
-                    ctx.font = "bold 12px";
-                    ctx.fillText("+"+(absQtd-5), x+8, yBase+70);
-                }
+            }
+            if (absQ > maxVisible) {
+                ctx.fillStyle = '#222';
+                ctx.font = 'bold 12px';
+                ctx.fillText(`+${absQ - maxVisible}`, x+12, yBase + (maxVisible-1)*14 + 10);
             }
         }
         
-        // Peças nos triângulos inferiores (índices 12..23 -> casas 13..24 lado branco)
+        // Peças nos triângulos inferiores (índices 12..23)
         for (let i = 0; i < 12; i++) {
             const idx = 12 + i;
-            const qtd = board[idx];
+            const qtd = estadoAtual.board[idx];
             if (qtd === 0) continue;
             const x = boardMarginX + i * pointWidth + pointWidth/2;
-            const yBase = boardBottomY - 30;
+            const yBase = boardBottomY - 28;
             const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
-            const absQtd = Math.abs(qtd);
-            for (let j = 0; j < Math.min(absQtd, 5); j++) {
+            const absQ = Math.abs(qtd);
+            const maxVisible = 7;
+            for (let j = 0; j < Math.min(absQ, maxVisible); j++) {
                 ctx.beginPath();
-                ctx.arc(x, yBase - j * 16, 12, 0, 2*Math.PI);
+                ctx.arc(x, yBase - j * 14, 11, 0, 2*Math.PI);
                 ctx.fillStyle = cor;
                 ctx.fill();
                 ctx.stroke();
-                if (absQtd > 5 && j === 4) {
-                    ctx.fillStyle = '#333';
-                    ctx.fillText("+"+(absQtd-5), x+8, yBase-70);
-                }
+            }
+            if (absQ > maxVisible) {
+                ctx.fillStyle = '#222';
+                ctx.font = 'bold 12px';
+                ctx.fillText(`+${absQ - maxVisible}`, x+12, yBase - (maxVisible-1)*14 - 10);
             }
         }
         
         // Peças na barra
-        if (bar[0] > 0) {
-            for (let j = 0; j < Math.min(bar[0], 6); j++) {
+        if (estadoAtual.bar[0] > 0) {
+            for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) {
                 ctx.beginPath();
-                ctx.arc(barX+30, barTopY + 20 + j*20, 12, 0, 2*Math.PI);
+                ctx.arc(barX+35, barTopY + 25 + j*18, 11, 0, 2*Math.PI);
                 ctx.fillStyle = '#c73b2a';
                 ctx.fill();
                 ctx.stroke();
             }
-            if (bar[0] > 6) ctx.fillText("+"+(bar[0]-6), barX+45, barTopY+130);
+            if (estadoAtual.bar[0] > 6) {
+                ctx.fillStyle = '#222';
+                ctx.fillText(`+${estadoAtual.bar[0]-6}`, barX+50, barTopY+130);
+            }
         }
-        if (bar[1] > 0) {
-            for (let j = 0; j < Math.min(bar[1], 6); j++) {
+        if (estadoAtual.bar[1] > 0) {
+            for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) {
                 ctx.beginPath();
-                ctx.arc(barX+30, barBottomY - 20 - j*20, 12, 0, 2*Math.PI);
+                ctx.arc(barX+35, barBottomY - 25 - j*18, 11, 0, 2*Math.PI);
                 ctx.fillStyle = '#f0e6d0';
                 ctx.fill();
                 ctx.stroke();
             }
-            if (bar[1] > 6) ctx.fillText("+"+(bar[1]-6), barX+45, barBottomY-130);
+            if (estadoAtual.bar[1] > 6) {
+                ctx.fillStyle = '#222';
+                ctx.fillText(`+${estadoAtual.bar[1]-6}`, barX+50, barBottomY-130);
+            }
         }
-        
-        // Contadores das casas
-        ctx.font = "bold 18px";
-        ctx.fillStyle = "#ffd966";
-        ctx.fillText(`${home[0]}`, 70, 55);
-        ctx.fillText(`${home[1]}`, w-70, 55);
         
         // Destaque da peça selecionada
         if (pecaSelecionada !== null) {
             const from = pecaSelecionada.from;
             let cx, cy;
-            if (from === 24) { cx = barX+30; cy = barTopY+30; }
-            else if (from === 25) { cx = barX+30; cy = barBottomY-30; }
+            if (from === 24) { cx = barX+35; cy = barTopY+30; }
+            else if (from === 25) { cx = barX+35; cy = barBottomY-30; }
             else if (from < 12) {
                 const i = 11 - from;
                 cx = boardMarginX + i * pointWidth + pointWidth/2;
-                cy = boardTopY + 20;
+                cy = boardTopY + 25;
             } else {
                 const i = from - 12;
                 cx = boardMarginX + i * pointWidth + pointWidth/2;
-                cy = boardBottomY - 30;
+                cy = boardBottomY - 35;
             }
             ctx.beginPath();
             ctx.arc(cx, cy, 18, 0, 2*Math.PI);
@@ -461,16 +465,16 @@
             destinos.forEach(to => {
                 if (to === -1) return;
                 let cx, cy;
-                if (to === 24) { cx = barX+30; cy = barTopY+30; }
-                else if (to === 25) { cx = barX+30; cy = barBottomY-30; }
+                if (to === 24) { cx = barX+35; cy = barTopY+30; }
+                else if (to === 25) { cx = barX+35; cy = barBottomY-30; }
                 else if (to < 12) {
                     const i = 11 - to;
                     cx = boardMarginX + i * pointWidth + pointWidth/2;
-                    cy = boardTopY + 20;
+                    cy = boardTopY + 25;
                 } else {
                     const i = to - 12;
                     cx = boardMarginX + i * pointWidth + pointWidth/2;
-                    cy = boardBottomY - 30;
+                    cy = boardBottomY - 35;
                 }
                 ctx.beginPath();
                 ctx.arc(cx, cy, 20, 0, 2*Math.PI);
@@ -483,21 +487,20 @@
     
     // ========== DETECÇÃO DE CLIQUE (mapeamento preciso) ==========
     function getPointFromClick(mouseX, mouseY) {
-        // Verifica barra
+        // Barra
         if (mouseX >= barX && mouseX <= barX+barW) {
-            if (mouseY >= barTopY && mouseY <= barTopY+80) return 24; // barra vermelha
-            if (mouseY >= barBottomY-80 && mouseY <= barBottomY) return 25; // barra branca
+            if (mouseY >= barTopY && mouseY <= barTopY+80) return 24;
+            if (mouseY >= barBottomY-80 && mouseY <= barBottomY) return 25;
         }
-        // Triângulos superiores (casas 1 a 12, índices 0..11)
+        // Triângulos superiores
         for (let i = 0; i < 12; i++) {
             const x0 = boardMarginX + i * pointWidth;
             const x1 = x0 + pointWidth;
             if (mouseX >= x0 && mouseX <= x1 && mouseY >= boardTopY && mouseY <= boardTopY + pointHeight) {
-                // índice do ponto no board: 11 - i (casa tradicional 1 = board[11])
                 return 11 - i;
             }
         }
-        // Triângulos inferiores (casas 13 a 24, índices 12..23)
+        // Triângulos inferiores
         for (let i = 0; i < 12; i++) {
             const x0 = boardMarginX + i * pointWidth;
             const x1 = x0 + pointWidth;
@@ -520,7 +523,6 @@
         if (point === -1) return;
         
         if (pecaSelecionada === null) {
-            // Selecionar peça própria
             let count;
             if (point === 24) count = estadoAtual.bar[0];
             else if (point === 25) count = estadoAtual.bar[1];
@@ -545,7 +547,7 @@
         }
     });
     
-    // ========== CONTROLE DO JOGO ==========
+    // ========== CONTROLE DO JOGO (sem alterações) ==========
     function atualizarInterface() {
         if (!estadoAtual) return;
         desenharTabuleiro();
@@ -616,7 +618,7 @@
     function rolarDados() { socket.emit('rolarDados'); }
     function desistir() { if (confirm('Desistir da partida?')) socket.emit('desistir'); }
     
-    // ========== EVENTOS SOCKET ==========
+    // ========== EVENTOS SOCKET (MANTIDOS) ==========
     function entrar() {
         const apelido = document.getElementById('input-apelido').value.trim();
         const sala = document.getElementById('input-sala').value.trim();
