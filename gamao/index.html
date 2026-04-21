@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Lógico 🎲 — Laboratório de Computação</title>
+    <title>Gamão Lógico 🎲 — Edição Premium</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -252,19 +252,23 @@
     const w = 1000, h = 600;
     canvas.width = w; canvas.height = h;
 
-    // ==================== CONFIGURAÇÕES DO TABULEIRO CLÁSSICO ====================
-    const boardMarginX = 80;
-    const boardTopY = 60;
-    const boardBottomY = h - 60;
-    const pointWidth = (w - 2 * boardMarginX) / 12;
-    const pointHeight = 130;
-    const barX = w/2 - 35;
-    const barW = 70;
-    const barTopY = boardTopY + pointHeight + 5;
-    const barBottomY = boardBottomY - pointHeight - 5;
-    const barHeight = barBottomY - barTopY;
-
-    // Função para desenhar triângulos com gradiente (visual clássico)
+    // ==================== GEOMETRIA CLÁSSICA (6 ESQUERDA + 6 DIREITA) ====================
+    const marginLeft = 70;
+    const marginRight = w - 70;
+    const totalWidth = marginRight - marginLeft;
+    const halfWidth = totalWidth / 2;          // largura de cada metade (esquerda ou direita)
+    const pointW = halfWidth / 6;               // largura de cada triângulo
+    const pointH = 135;
+    const topY = 65;
+    const bottomY = h - 65;
+    
+    // Barra central (entre as duas metades)
+    const barLeft = marginLeft + halfWidth - 28;
+    const barRight = barLeft + 56;
+    const barTop = topY + pointH + 8;
+    const barBottom = bottomY - pointH - 8;
+    
+    // Função para desenhar um triângulo com gradiente e alternância individual (claro/escuro)
     function desenharTriangulo(x, y, largura, altura, paraCima, claro) {
         const grad = ctx.createLinearGradient(
             x, y,
@@ -294,54 +298,96 @@
         ctx.lineWidth = 1.5;
         ctx.stroke();
     }
-
+    
+    // Função premium para desenhar peça com volume e brilho
+    function desenharPecaPremium(x, y, corBase) {
+        ctx.save();
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.shadowColor = "rgba(0,0,0,0.4)";
+        
+        // Gradiente radial para efeito 3D
+        const grad = ctx.createRadialGradient(x-4, y-4, 5, x, y, 13);
+        if (corBase === '#c73b2a') {  // vermelho
+            grad.addColorStop(0, '#e86a5a');
+            grad.addColorStop(0.7, '#b03220');
+            grad.addColorStop(1, '#8a2010');
+        } else {  // branco / marfim
+            grad.addColorStop(0, '#fff9f0');
+            grad.addColorStop(0.7, '#e8d8c0');
+            grad.addColorStop(1, '#c8b89a');
+        }
+        
+        ctx.beginPath();
+        ctx.arc(x, y, 12, 0, 2 * Math.PI);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = '#2b1a0e';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        
+        // Brilho (ponto de luz)
+        ctx.beginPath();
+        ctx.arc(x-3, y-3, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(255,255,255,0.65)';
+        ctx.fill();
+        
+        ctx.restore();
+    }
+    
     function desenharTabuleiro() {
         if (!estadoAtual) return;
         
-        // Fundo da mesa (já aplicado pelo CSS, mas reforçamos)
-        ctx.clearRect(0, 0, w, h);
-        ctx.fillStyle = '#c9a87b';
-        ctx.fillRect(0, 0, w, h);
+        ctx.clearRect(0, 0, w, h);  // limpa, mas o fundo do CSS aparece (radial-gradient)
         
-        // Divisão central clássica (faixa vertical escura)
-        ctx.fillStyle = '#6b4226';
-        ctx.fillRect(w/2 - 6, boardTopY, 12, boardBottomY - boardTopY);
-        
-        // Desenha os 24 triângulos (pontos)
-        for (let i = 0; i < 12; i++) {
-            const x = boardMarginX + i * pointWidth;
-            const corClaraSup = (Math.floor(i/2) % 2 === 0);
-            const corClaraInf = (Math.floor(i/2) % 2 === 1);
-            // Triângulo superior (virado para baixo)
-            desenharTriangulo(x, boardTopY, pointWidth, pointHeight, false, corClaraSup);
-            // Triângulo inferior (virado para cima)
-            desenharTriangulo(x, boardBottomY, pointWidth, pointHeight, true, corClaraInf);
-            
-            // Números das casas
-            ctx.fillStyle = '#2c1a0c';
-            ctx.font = "bold 14px 'Segoe UI'";
-            ctx.shadowBlur = 0;
-            ctx.fillText(12 - i, x + pointWidth/2 - 5, boardTopY - 8);
-            ctx.fillText(13 + i, x + pointWidth/2 - 5, boardBottomY + 22);
+        // Desenha os triângulos do LADO ESQUERDO (6 superiores + 6 inferiores)
+        for (let i = 0; i < 6; i++) {
+            const x = marginLeft + i * pointW;
+            const claro = (i % 2 === 0);  // alternância individual: claro, escuro, claro, escuro...
+            // Superior (virado para baixo)
+            desenharTriangulo(x, topY, pointW, pointH, false, claro);
+            // Inferior (virado para cima) - cor invertida para manter padrão visual
+            desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
         }
         
-        // Barra central (com textura de madeira)
+        // LADO DIREITO (6 superiores + 6 inferiores)
+        for (let i = 0; i < 6; i++) {
+            const x = marginLeft + halfWidth + i * pointW;
+            const claro = (i % 2 === 0);
+            desenharTriangulo(x, topY, pointW, pointH, false, claro);
+            desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
+        }
+        
+        // ========== BARRA CENTRAL (com textura) ==========
         ctx.fillStyle = '#8b6946';
-        ctx.fillRect(barX, barTopY, barW, barHeight);
+        ctx.fillRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
         ctx.fillStyle = '#c9a87b';
         for (let i = 0; i < 3; i++) {
-            ctx.fillRect(barX + 10 + i*15, barTopY + 10, 5, barHeight - 20);
+            ctx.fillRect(barLeft + 8 + i*14, barTop + 12, 5, (barBottom-barTop)-24);
         }
         ctx.strokeStyle = '#4a2c14';
         ctx.lineWidth = 3;
-        ctx.strokeRect(barX, barTopY, barW, barHeight);
+        ctx.strokeRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
         ctx.fillStyle = "#f5e6d3";
-        ctx.font = "bold 16px 'Segoe UI'";
-        ctx.fillText("BARRA", barX+18, barTopY + barHeight/2);
+        ctx.font = "bold 15px 'Segoe UI'";
+        ctx.fillText("BARRA", barLeft+14, barTop + (barBottom-barTop)/2 + 5);
         
-        // Áreas de saída (home)
-        ctx.fillStyle = '#4a7a5c';
+        // ========== NÚMEROS DAS CASAS ==========
+        ctx.fillStyle = '#2c1a0c';
+        ctx.font = "bold 14px 'Segoe UI'";
         ctx.shadowBlur = 0;
+        for (let i = 0; i < 6; i++) {
+            const xEsq = marginLeft + i * pointW + pointW/2;
+            ctx.fillText((6 - i).toString(), xEsq, topY - 8);
+            ctx.fillText((13 + i).toString(), xEsq, bottomY + 24);
+            const xDir = marginLeft + halfWidth + i * pointW + pointW/2;
+            ctx.fillText((7 + i).toString(), xDir, topY - 8);
+            ctx.fillText((19 + i).toString(), xDir, bottomY + 24);
+        }
+        
+        // ========== ÁREAS HOME (BEAR OFF) ==========
+        ctx.fillStyle = '#4a7a5c';
         ctx.fillRect(20, 20, 100, 50);
         ctx.fillRect(w-120, 20, 100, 50);
         ctx.fillStyle = "#f5e6d3";
@@ -353,107 +399,150 @@
         ctx.fillText(`${estadoAtual.home[0]}`, 80, 58);
         ctx.fillText(`${estadoAtual.home[1]}`, w-65, 58);
         
-        // Desenha peças nos triângulos superiores (índices 0..11 -> casas 1..12)
-        for (let i = 0; i < 12; i++) {
-            const idx = 11 - i;
-            const qtd = estadoAtual.board[idx];
-            if (qtd === 0) continue;
-            const x = boardMarginX + i * pointWidth + pointWidth/2;
-            const yBase = boardTopY + 18;
-            const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
-            const absQ = Math.abs(qtd);
-            const maxVisible = 7;
-            for (let j = 0; j < Math.min(absQ, maxVisible); j++) {
-                ctx.beginPath();
-                ctx.arc(x, yBase + j * 14, 11, 0, 2*Math.PI);
-                ctx.fillStyle = cor;
-                ctx.fill();
-                ctx.strokeStyle = '#2b1a0e';
-                ctx.lineWidth = 1.5;
-                ctx.stroke();
-            }
-            if (absQ > maxVisible) {
-                ctx.fillStyle = '#222';
-                ctx.font = 'bold 12px';
-                ctx.fillText(`+${absQ - maxVisible}`, x+12, yBase + (maxVisible-1)*14 + 10);
-            }
-        }
+        // ========== PEÇAS NOS TRIÂNGULOS ==========
+        // Mapeamento dos índices do servidor (0..23) para coordenadas
+        // Superior esquerdo: índices 5,4,3,2,1,0
+        // Superior direito: 11,10,9,8,7,6
+        // Inferior esquerdo: 12..17
+        // Inferior direito: 18..23
         
-        // Peças nos triângulos inferiores (índices 12..23)
-        for (let i = 0; i < 12; i++) {
-            const idx = 12 + i;
-            const qtd = estadoAtual.board[idx];
-            if (qtd === 0) continue;
-            const x = boardMarginX + i * pointWidth + pointWidth/2;
-            const yBase = boardBottomY - 28;
-            const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
-            const absQ = Math.abs(qtd);
-            const maxVisible = 7;
-            for (let j = 0; j < Math.min(absQ, maxVisible); j++) {
-                ctx.beginPath();
-                ctx.arc(x, yBase - j * 14, 11, 0, 2*Math.PI);
-                ctx.fillStyle = cor;
-                ctx.fill();
-                ctx.stroke();
+        for (let i = 0; i < 6; i++) {
+            // Superior esquerdo
+            const idxSupEsq = 5 - i;
+            const qtdSupEsq = estadoAtual.board[idxSupEsq];
+            if (qtdSupEsq !== 0) {
+                const x = marginLeft + i * pointW + pointW/2;
+                const yBase = topY + 18;
+                const cor = qtdSupEsq > 0 ? '#c73b2a' : '#f0e6d0';
+                const absQ = Math.abs(qtdSupEsq);
+                const maxVis = 6;
+                for (let j = 0; j < Math.min(absQ, maxVis); j++) {
+                    desenharPecaPremium(x, yBase + j * 14, cor);
+                }
+                if (absQ > maxVis) {
+                    ctx.fillStyle = '#222';
+                    ctx.font = 'bold 12px';
+                    ctx.fillText(`+${absQ-maxVis}`, x+12, yBase + (maxVis-1)*14 + 12);
+                }
             }
-            if (absQ > maxVisible) {
-                ctx.fillStyle = '#222';
-                ctx.font = 'bold 12px';
-                ctx.fillText(`+${absQ - maxVisible}`, x+12, yBase - (maxVisible-1)*14 - 10);
+            
+            // Superior direito
+            const idxSupDir = 11 - i;
+            const qtdSupDir = estadoAtual.board[idxSupDir];
+            if (qtdSupDir !== 0) {
+                const x = marginLeft + halfWidth + i * pointW + pointW/2;
+                const yBase = topY + 18;
+                const cor = qtdSupDir > 0 ? '#c73b2a' : '#f0e6d0';
+                const absQ = Math.abs(qtdSupDir);
+                const maxVis = 6;
+                for (let j = 0; j < Math.min(absQ, maxVis); j++) {
+                    desenharPecaPremium(x, yBase + j * 14, cor);
+                }
+                if (absQ > maxVis) {
+                    ctx.fillStyle = '#222';
+                    ctx.font = 'bold 12px';
+                    ctx.fillText(`+${absQ-maxVis}`, x+12, yBase + (maxVis-1)*14 + 12);
+                }
+            }
+            
+            // Inferior esquerdo
+            const idxInfEsq = 12 + i;
+            const qtdInfEsq = estadoAtual.board[idxInfEsq];
+            if (qtdInfEsq !== 0) {
+                const x = marginLeft + i * pointW + pointW/2;
+                const yBase = bottomY - 26;
+                const cor = qtdInfEsq > 0 ? '#c73b2a' : '#f0e6d0';
+                const absQ = Math.abs(qtdInfEsq);
+                const maxVis = 6;
+                for (let j = 0; j < Math.min(absQ, maxVis); j++) {
+                    desenharPecaPremium(x, yBase - j * 14, cor);
+                }
+                if (absQ > maxVis) {
+                    ctx.fillStyle = '#222';
+                    ctx.font = 'bold 12px';
+                    ctx.fillText(`+${absQ-maxVis}`, x+12, yBase - (maxVis-1)*14 - 12);
+                }
+            }
+            
+            // Inferior direito
+            const idxInfDir = 18 + i;
+            const qtdInfDir = estadoAtual.board[idxInfDir];
+            if (qtdInfDir !== 0) {
+                const x = marginLeft + halfWidth + i * pointW + pointW/2;
+                const yBase = bottomY - 26;
+                const cor = qtdInfDir > 0 ? '#c73b2a' : '#f0e6d0';
+                const absQ = Math.abs(qtdInfDir);
+                const maxVis = 6;
+                for (let j = 0; j < Math.min(absQ, maxVis); j++) {
+                    desenharPecaPremium(x, yBase - j * 14, cor);
+                }
+                if (absQ > maxVis) {
+                    ctx.fillStyle = '#222';
+                    ctx.font = 'bold 12px';
+                    ctx.fillText(`+${absQ-maxVis}`, x+12, yBase - (maxVis-1)*14 - 12);
+                }
             }
         }
         
         // Peças na barra
         if (estadoAtual.bar[0] > 0) {
             for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) {
-                ctx.beginPath();
-                ctx.arc(barX+35, barTopY + 25 + j*18, 11, 0, 2*Math.PI);
-                ctx.fillStyle = '#c73b2a';
-                ctx.fill();
-                ctx.stroke();
+                desenharPecaPremium(barLeft+28, barTop + 20 + j*18, '#c73b2a');
             }
             if (estadoAtual.bar[0] > 6) {
                 ctx.fillStyle = '#222';
-                ctx.fillText(`+${estadoAtual.bar[0]-6}`, barX+50, barTopY+130);
+                ctx.fillText(`+${estadoAtual.bar[0]-6}`, barLeft+44, barTop+130);
             }
         }
         if (estadoAtual.bar[1] > 0) {
             for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) {
-                ctx.beginPath();
-                ctx.arc(barX+35, barBottomY - 25 - j*18, 11, 0, 2*Math.PI);
-                ctx.fillStyle = '#f0e6d0';
-                ctx.fill();
-                ctx.stroke();
+                desenharPecaPremium(barLeft+28, barBottom - 20 - j*18, '#f0e6d0');
             }
             if (estadoAtual.bar[1] > 6) {
                 ctx.fillStyle = '#222';
-                ctx.fillText(`+${estadoAtual.bar[1]-6}`, barX+50, barBottomY-130);
+                ctx.fillText(`+${estadoAtual.bar[1]-6}`, barLeft+44, barBottom-130);
             }
         }
         
-        // Destaque da peça selecionada
+        // ========== DESTAQUES (GLOW) ==========
         if (pecaSelecionada !== null) {
             const from = pecaSelecionada.from;
             let cx, cy;
-            if (from === 24) { cx = barX+35; cy = barTopY+30; }
-            else if (from === 25) { cx = barX+35; cy = barBottomY-30; }
+            // Mapeamento igual ao clique
+            if (from === 24) { cx = barLeft+28; cy = barTop+30; }
+            else if (from === 25) { cx = barLeft+28; cy = barBottom-30; }
             else if (from < 12) {
-                const i = 11 - from;
-                cx = boardMarginX + i * pointWidth + pointWidth/2;
-                cy = boardTopY + 25;
+                if (from <= 5) { // esquerdo superior
+                    const i = 5 - from;
+                    cx = marginLeft + i * pointW + pointW/2;
+                    cy = topY + 25;
+                } else { // direito superior
+                    const i = 11 - from;
+                    cx = marginLeft + halfWidth + i * pointW + pointW/2;
+                    cy = topY + 25;
+                }
             } else {
-                const i = from - 12;
-                cx = boardMarginX + i * pointWidth + pointWidth/2;
-                cy = boardBottomY - 35;
+                if (from <= 17) { // inferior esquerdo
+                    const i = from - 12;
+                    cx = marginLeft + i * pointW + pointW/2;
+                    cy = bottomY - 35;
+                } else { // inferior direito
+                    const i = from - 18;
+                    cx = marginLeft + halfWidth + i * pointW + pointW/2;
+                    cy = bottomY - 35;
+                }
             }
+            ctx.save();
+            ctx.shadowBlur = 18;
+            ctx.shadowColor = 'gold';
             ctx.beginPath();
             ctx.arc(cx, cy, 18, 0, 2*Math.PI);
-            ctx.strokeStyle = 'gold';
+            ctx.strokeStyle = '#ffd700';
             ctx.lineWidth = 4;
             ctx.stroke();
+            ctx.restore();
         }
         
-        // Destaque dos destinos possíveis
         if (pecaSelecionada !== null && legalMoves) {
             const fromIdx = pecaSelecionada.from;
             const destinos = new Set();
@@ -465,47 +554,65 @@
             destinos.forEach(to => {
                 if (to === -1) return;
                 let cx, cy;
-                if (to === 24) { cx = barX+35; cy = barTopY+30; }
-                else if (to === 25) { cx = barX+35; cy = barBottomY-30; }
+                if (to === 24) { cx = barLeft+28; cy = barTop+30; }
+                else if (to === 25) { cx = barLeft+28; cy = barBottom-30; }
                 else if (to < 12) {
-                    const i = 11 - to;
-                    cx = boardMarginX + i * pointWidth + pointWidth/2;
-                    cy = boardTopY + 25;
+                    if (to <= 5) { const i = 5 - to; cx = marginLeft + i * pointW + pointW/2; cy = topY + 25; }
+                    else { const i = 11 - to; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 25; }
                 } else {
-                    const i = to - 12;
-                    cx = boardMarginX + i * pointWidth + pointWidth/2;
-                    cy = boardBottomY - 35;
+                    if (to <= 17) { const i = to - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 35; }
+                    else { const i = to - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 35; }
                 }
+                ctx.save();
+                ctx.shadowBlur = 14;
+                ctx.shadowColor = '#2ecc71';
                 ctx.beginPath();
                 ctx.arc(cx, cy, 20, 0, 2*Math.PI);
                 ctx.strokeStyle = '#2ecc71';
                 ctx.lineWidth = 4;
                 ctx.stroke();
+                ctx.restore();
             });
         }
     }
     
-    // ========== DETECÇÃO DE CLIQUE (mapeamento preciso) ==========
+    // ========== DETECÇÃO DE CLIQUE (geometria exata) ==========
     function getPointFromClick(mouseX, mouseY) {
         // Barra
-        if (mouseX >= barX && mouseX <= barX+barW) {
-            if (mouseY >= barTopY && mouseY <= barTopY+80) return 24;
-            if (mouseY >= barBottomY-80 && mouseY <= barBottomY) return 25;
+        if (mouseX >= barLeft && mouseX <= barRight) {
+            if (mouseY >= barTop && mouseY <= barTop+80) return 24;
+            if (mouseY >= barBottom-80 && mouseY <= barBottom) return 25;
         }
-        // Triângulos superiores
-        for (let i = 0; i < 12; i++) {
-            const x0 = boardMarginX + i * pointWidth;
-            const x1 = x0 + pointWidth;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= boardTopY && mouseY <= boardTopY + pointHeight) {
+        // Triângulos superiores esquerdos (índices 5..0)
+        for (let i = 0; i < 6; i++) {
+            const x0 = marginLeft + i * pointW;
+            const x1 = x0 + pointW;
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) {
+                return 5 - i;
+            }
+        }
+        // Superiores direitos (índices 6..11)
+        for (let i = 0; i < 6; i++) {
+            const x0 = marginLeft + halfWidth + i * pointW;
+            const x1 = x0 + pointW;
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) {
                 return 11 - i;
             }
         }
-        // Triângulos inferiores
-        for (let i = 0; i < 12; i++) {
-            const x0 = boardMarginX + i * pointWidth;
-            const x1 = x0 + pointWidth;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= boardBottomY - pointHeight && mouseY <= boardBottomY) {
+        // Inferiores esquerdos (12..17)
+        for (let i = 0; i < 6; i++) {
+            const x0 = marginLeft + i * pointW;
+            const x1 = x0 + pointW;
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) {
                 return 12 + i;
+            }
+        }
+        // Inferiores direitos (18..23)
+        for (let i = 0; i < 6; i++) {
+            const x0 = marginLeft + halfWidth + i * pointW;
+            const x1 = x0 + pointW;
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) {
+                return 18 + i;
             }
         }
         return -1;
@@ -547,7 +654,7 @@
         }
     });
     
-    // ========== CONTROLE DO JOGO (sem alterações) ==========
+    // ========== CONTROLE DO JOGO (mantido) ==========
     function atualizarInterface() {
         if (!estadoAtual) return;
         desenharTabuleiro();
@@ -618,7 +725,7 @@
     function rolarDados() { socket.emit('rolarDados'); }
     function desistir() { if (confirm('Desistir da partida?')) socket.emit('desistir'); }
     
-    // ========== EVENTOS SOCKET (MANTIDOS) ==========
+    // ========== EVENTOS SOCKET (inalterados) ==========
     function entrar() {
         const apelido = document.getElementById('input-apelido').value.trim();
         const sala = document.getElementById('input-sala').value.trim();
