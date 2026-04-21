@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Lógico 🎲 — Edição Premium</title>
+    <title>Gamão Lógico 🎲 — Com Logs de Depuração</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -34,7 +34,7 @@
             border: 1px solid #e6c7a2;
         }
         main {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 20px auto;
             padding: 0 20px;
             flex: 1;
@@ -43,7 +43,7 @@
             flex-wrap: wrap;
         }
         .coluna-esquerda { flex: 2; min-width: 320px; }
-        .coluna-direita { flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 20px; }
+        .coluna-direita { flex: 1.2; min-width: 280px; display: flex; flex-direction: column; gap: 20px; }
         .game-container, .painel-container {
             background: #1e4d2b;
             padding: 20px;
@@ -106,21 +106,23 @@
             cursor: pointer;
             touch-action: none;
         }
-        .historico-lista {
+        .historico-lista, .logs-area {
             max-height: 200px;
             overflow-y: auto;
             background: #163a1a;
             padding: 10px;
             border-radius: 16px;
-            font-size: 14px;
+            font-size: 13px;
+            font-family: monospace;
         }
         .chat-mensagens {
-            height: 200px;
+            height: 180px;
             overflow-y: auto;
             background: #163a1a;
             padding: 10px;
             border-radius: 16px;
             margin-bottom: 10px;
+            font-size: 13px;
         }
         .chat-input { display: flex; gap: 5px; }
         .chat-input input { flex: 1; }
@@ -157,6 +159,14 @@
             text-align: center;
         }
         .info-turno { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+        .log-entry {
+            border-bottom: 1px solid #3a6a3a;
+            padding: 4px 0;
+            font-size: 12px;
+        }
+        .log-error { color: #ffaa88; }
+        .log-success { color: #aaffaa; }
+        .log-info { color: #ccccff; }
         @media (max-width: 700px) {
             .painel-info { flex-direction: column; text-align: center; }
         }
@@ -164,7 +174,7 @@
 </head>
 <body>
 <header>
-    <h1>Gamão Lógico 🎲</h1>
+    <h1>Gamão Lógico 🎲 — Modo Depuração</h1>
     <p>Projeto Integrado — Laboratório de Computação</p>
     <a href="#" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
 </header>
@@ -213,7 +223,7 @@
                 <button onclick="cancelarMovimentos()" class="warning" id="btn-cancelar" style="display:none;">↩️ Cancelar</button>
                 <button onclick="desistir()" class="danger">🏳️ Desistir</button>
             </div>
-            <p style="text-align:center; margin-top:15px; font-size:16px; background:#2d6a4f; padding:8px; border-radius:30px;">
+            <p style="text-align:center; margin-top:15px; font-size:14px; background:#2d6a4f; padding:8px; border-radius:30px;">
                 👆 Clique na sua peça (origem) e depois no destino (contorno verde).
             </p>
         </div>
@@ -232,11 +242,34 @@
                 <button onclick="enviarMensagem()">Enviar</button>
             </div>
         </div>
+        <div id="painel-logs" class="painel-container">
+            <h3>📋 Logs de Depuração</h3>
+            <div id="logs-area" class="logs-area">
+                <div class="log-entry">Aguardando eventos...</div>
+            </div>
+        </div>
     </div>
 </main>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
+    // ==================== SISTEMA DE LOGS ====================
+    const logsDiv = document.getElementById('logs-area');
+    function addLog(message, type = 'info') {
+        const entry = document.createElement('div');
+        entry.className = `log-entry log-${type}`;
+        const time = new Date().toLocaleTimeString();
+        entry.innerHTML = `[${time}] ${message}`;
+        logsDiv.appendChild(entry);
+        entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        // também envia para console
+        if (type === 'error') console.error(message);
+        else if (type === 'success') console.log('%c' + message, 'color: #aaffaa');
+        else console.log(message);
+        // mantém apenas os últimos 200 logs
+        while (logsDiv.children.length > 200) logsDiv.removeChild(logsDiv.firstChild);
+    }
+
     // ==================== CONEXÃO SOCKET ====================
     const socket = io("https://motor-gamao.onrender.com");
     let estadoAtual = null;
@@ -256,24 +289,50 @@
     const marginLeft = 70;
     const marginRight = w - 70;
     const totalWidth = marginRight - marginLeft;
-    const halfWidth = totalWidth / 2;          // largura de cada metade (esquerda ou direita)
-    const pointW = halfWidth / 6;               // largura de cada triângulo
+    const halfWidth = totalWidth / 2;
+    const pointW = halfWidth / 6;
     const pointH = 135;
     const topY = 65;
     const bottomY = h - 65;
     
-    // Barra central (entre as duas metades)
     const barLeft = marginLeft + halfWidth - 28;
     const barRight = barLeft + 56;
     const barTop = topY + pointH + 8;
     const barBottom = bottomY - pointH - 8;
     
-    // Função para desenhar um triângulo com gradiente e alternância individual (claro/escuro)
+    // Função premium para desenhar peça
+    function desenharPecaPremium(x, y, corBase) {
+        ctx.save();
+        ctx.shadowBlur = 5;
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.shadowColor = "rgba(0,0,0,0.4)";
+        const grad = ctx.createRadialGradient(x-4, y-4, 5, x, y, 13);
+        if (corBase === '#c73b2a') {
+            grad.addColorStop(0, '#e86a5a');
+            grad.addColorStop(0.7, '#b03220');
+            grad.addColorStop(1, '#8a2010');
+        } else {
+            grad.addColorStop(0, '#fff9f0');
+            grad.addColorStop(0.7, '#e8d8c0');
+            grad.addColorStop(1, '#c8b89a');
+        }
+        ctx.beginPath();
+        ctx.arc(x, y, 12, 0, 2 * Math.PI);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = '#2b1a0e';
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x-3, y-3, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = 'rgba(255,255,255,0.65)';
+        ctx.fill();
+        ctx.restore();
+    }
+    
     function desenharTriangulo(x, y, largura, altura, paraCima, claro) {
-        const grad = ctx.createLinearGradient(
-            x, y,
-            x, paraCima ? y - altura : y + altura
-        );
+        const grad = ctx.createLinearGradient(x, y, x, paraCima ? y - altura : y + altura);
         if (claro) {
             grad.addColorStop(0, '#f3d6ad');
             grad.addColorStop(1, '#d2a679');
@@ -299,59 +358,18 @@
         ctx.stroke();
     }
     
-    // Função premium para desenhar peça com volume e brilho
-    function desenharPecaPremium(x, y, corBase) {
-        ctx.save();
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-        ctx.shadowColor = "rgba(0,0,0,0.4)";
-        
-        // Gradiente radial para efeito 3D
-        const grad = ctx.createRadialGradient(x-4, y-4, 5, x, y, 13);
-        if (corBase === '#c73b2a') {  // vermelho
-            grad.addColorStop(0, '#e86a5a');
-            grad.addColorStop(0.7, '#b03220');
-            grad.addColorStop(1, '#8a2010');
-        } else {  // branco / marfim
-            grad.addColorStop(0, '#fff9f0');
-            grad.addColorStop(0.7, '#e8d8c0');
-            grad.addColorStop(1, '#c8b89a');
-        }
-        
-        ctx.beginPath();
-        ctx.arc(x, y, 12, 0, 2 * Math.PI);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = '#2b1a0e';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-        
-        // Brilho (ponto de luz)
-        ctx.beginPath();
-        ctx.arc(x-3, y-3, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = 'rgba(255,255,255,0.65)';
-        ctx.fill();
-        
-        ctx.restore();
-    }
-    
     function desenharTabuleiro() {
         if (!estadoAtual) return;
+        ctx.clearRect(0, 0, w, h);
         
-        ctx.clearRect(0, 0, w, h);  // limpa, mas o fundo do CSS aparece (radial-gradient)
-        
-        // Desenha os triângulos do LADO ESQUERDO (6 superiores + 6 inferiores)
+        // Lado esquerdo
         for (let i = 0; i < 6; i++) {
             const x = marginLeft + i * pointW;
-            const claro = (i % 2 === 0);  // alternância individual: claro, escuro, claro, escuro...
-            // Superior (virado para baixo)
+            const claro = (i % 2 === 0);
             desenharTriangulo(x, topY, pointW, pointH, false, claro);
-            // Inferior (virado para cima) - cor invertida para manter padrão visual
             desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
         }
-        
-        // LADO DIREITO (6 superiores + 6 inferiores)
+        // Lado direito
         for (let i = 0; i < 6; i++) {
             const x = marginLeft + halfWidth + i * pointW;
             const claro = (i % 2 === 0);
@@ -359,13 +377,11 @@
             desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
         }
         
-        // ========== BARRA CENTRAL (com textura) ==========
+        // Barra central
         ctx.fillStyle = '#8b6946';
         ctx.fillRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
         ctx.fillStyle = '#c9a87b';
-        for (let i = 0; i < 3; i++) {
-            ctx.fillRect(barLeft + 8 + i*14, barTop + 12, 5, (barBottom-barTop)-24);
-        }
+        for (let i = 0; i < 3; i++) ctx.fillRect(barLeft + 8 + i*14, barTop + 12, 5, (barBottom-barTop)-24);
         ctx.strokeStyle = '#4a2c14';
         ctx.lineWidth = 3;
         ctx.strokeRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
@@ -373,10 +389,9 @@
         ctx.font = "bold 15px 'Segoe UI'";
         ctx.fillText("BARRA", barLeft+14, barTop + (barBottom-barTop)/2 + 5);
         
-        // ========== NÚMEROS DAS CASAS ==========
+        // Números
         ctx.fillStyle = '#2c1a0c';
         ctx.font = "bold 14px 'Segoe UI'";
-        ctx.shadowBlur = 0;
         for (let i = 0; i < 6; i++) {
             const xEsq = marginLeft + i * pointW + pointW/2;
             ctx.fillText((6 - i).toString(), xEsq, topY - 8);
@@ -386,7 +401,7 @@
             ctx.fillText((19 + i).toString(), xDir, bottomY + 24);
         }
         
-        // ========== ÁREAS HOME (BEAR OFF) ==========
+        // Home
         ctx.fillStyle = '#4a7a5c';
         ctx.fillRect(20, 20, 100, 50);
         ctx.fillRect(w-120, 20, 100, 50);
@@ -399,160 +414,84 @@
         ctx.fillText(`${estadoAtual.home[0]}`, 80, 58);
         ctx.fillText(`${estadoAtual.home[1]}`, w-65, 58);
         
-        // ========== PEÇAS NOS TRIÂNGULOS ==========
-        // Mapeamento dos índices do servidor (0..23) para coordenadas
-        // Superior esquerdo: índices 5,4,3,2,1,0
-        // Superior direito: 11,10,9,8,7,6
-        // Inferior esquerdo: 12..17
-        // Inferior direito: 18..23
-        
+        // Desenhar peças nos pontos (mesmo mapeamento do clique)
         for (let i = 0; i < 6; i++) {
-            // Superior esquerdo
             const idxSupEsq = 5 - i;
-            const qtdSupEsq = estadoAtual.board[idxSupEsq];
-            if (qtdSupEsq !== 0) {
+            const qtd = estadoAtual.board[idxSupEsq];
+            if (qtd !== 0) {
                 const x = marginLeft + i * pointW + pointW/2;
                 const yBase = topY + 18;
-                const cor = qtdSupEsq > 0 ? '#c73b2a' : '#f0e6d0';
-                const absQ = Math.abs(qtdSupEsq);
-                const maxVis = 6;
-                for (let j = 0; j < Math.min(absQ, maxVis); j++) {
-                    desenharPecaPremium(x, yBase + j * 14, cor);
-                }
-                if (absQ > maxVis) {
-                    ctx.fillStyle = '#222';
-                    ctx.font = 'bold 12px';
-                    ctx.fillText(`+${absQ-maxVis}`, x+12, yBase + (maxVis-1)*14 + 12);
-                }
+                const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
+                const absQ = Math.abs(qtd);
+                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPecaPremium(x, yBase + j * 14, cor);
+                if (absQ > 6) { ctx.fillStyle = '#222'; ctx.fillText(`+${absQ-6}`, x+12, yBase + 5*14 + 10); }
             }
-            
-            // Superior direito
             const idxSupDir = 11 - i;
-            const qtdSupDir = estadoAtual.board[idxSupDir];
-            if (qtdSupDir !== 0) {
+            const qtd2 = estadoAtual.board[idxSupDir];
+            if (qtd2 !== 0) {
                 const x = marginLeft + halfWidth + i * pointW + pointW/2;
                 const yBase = topY + 18;
-                const cor = qtdSupDir > 0 ? '#c73b2a' : '#f0e6d0';
-                const absQ = Math.abs(qtdSupDir);
-                const maxVis = 6;
-                for (let j = 0; j < Math.min(absQ, maxVis); j++) {
-                    desenharPecaPremium(x, yBase + j * 14, cor);
-                }
-                if (absQ > maxVis) {
-                    ctx.fillStyle = '#222';
-                    ctx.font = 'bold 12px';
-                    ctx.fillText(`+${absQ-maxVis}`, x+12, yBase + (maxVis-1)*14 + 12);
-                }
+                const cor = qtd2 > 0 ? '#c73b2a' : '#f0e6d0';
+                const absQ = Math.abs(qtd2);
+                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPecaPremium(x, yBase + j * 14, cor);
+                if (absQ > 6) ctx.fillText(`+${absQ-6}`, x+12, yBase + 5*14 + 10);
             }
-            
-            // Inferior esquerdo
             const idxInfEsq = 12 + i;
-            const qtdInfEsq = estadoAtual.board[idxInfEsq];
-            if (qtdInfEsq !== 0) {
+            const qtd3 = estadoAtual.board[idxInfEsq];
+            if (qtd3 !== 0) {
                 const x = marginLeft + i * pointW + pointW/2;
                 const yBase = bottomY - 26;
-                const cor = qtdInfEsq > 0 ? '#c73b2a' : '#f0e6d0';
-                const absQ = Math.abs(qtdInfEsq);
-                const maxVis = 6;
-                for (let j = 0; j < Math.min(absQ, maxVis); j++) {
-                    desenharPecaPremium(x, yBase - j * 14, cor);
-                }
-                if (absQ > maxVis) {
-                    ctx.fillStyle = '#222';
-                    ctx.font = 'bold 12px';
-                    ctx.fillText(`+${absQ-maxVis}`, x+12, yBase - (maxVis-1)*14 - 12);
-                }
+                const cor = qtd3 > 0 ? '#c73b2a' : '#f0e6d0';
+                const absQ = Math.abs(qtd3);
+                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPecaPremium(x, yBase - j * 14, cor);
+                if (absQ > 6) ctx.fillText(`+${absQ-6}`, x+12, yBase - 5*14 - 10);
             }
-            
-            // Inferior direito
             const idxInfDir = 18 + i;
-            const qtdInfDir = estadoAtual.board[idxInfDir];
-            if (qtdInfDir !== 0) {
+            const qtd4 = estadoAtual.board[idxInfDir];
+            if (qtd4 !== 0) {
                 const x = marginLeft + halfWidth + i * pointW + pointW/2;
                 const yBase = bottomY - 26;
-                const cor = qtdInfDir > 0 ? '#c73b2a' : '#f0e6d0';
-                const absQ = Math.abs(qtdInfDir);
-                const maxVis = 6;
-                for (let j = 0; j < Math.min(absQ, maxVis); j++) {
-                    desenharPecaPremium(x, yBase - j * 14, cor);
-                }
-                if (absQ > maxVis) {
-                    ctx.fillStyle = '#222';
-                    ctx.font = 'bold 12px';
-                    ctx.fillText(`+${absQ-maxVis}`, x+12, yBase - (maxVis-1)*14 - 12);
-                }
+                const cor = qtd4 > 0 ? '#c73b2a' : '#f0e6d0';
+                const absQ = Math.abs(qtd4);
+                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPecaPremium(x, yBase - j * 14, cor);
+                if (absQ > 6) ctx.fillText(`+${absQ-6}`, x+12, yBase - 5*14 - 10);
             }
         }
         
-        // Peças na barra
+        // Barra peças
         if (estadoAtual.bar[0] > 0) {
-            for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) {
-                desenharPecaPremium(barLeft+28, barTop + 20 + j*18, '#c73b2a');
-            }
-            if (estadoAtual.bar[0] > 6) {
-                ctx.fillStyle = '#222';
-                ctx.fillText(`+${estadoAtual.bar[0]-6}`, barLeft+44, barTop+130);
-            }
+            for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) desenharPecaPremium(barLeft+28, barTop + 20 + j*18, '#c73b2a');
+            if (estadoAtual.bar[0] > 6) ctx.fillText(`+${estadoAtual.bar[0]-6}`, barLeft+44, barTop+130);
         }
         if (estadoAtual.bar[1] > 0) {
-            for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) {
-                desenharPecaPremium(barLeft+28, barBottom - 20 - j*18, '#f0e6d0');
-            }
-            if (estadoAtual.bar[1] > 6) {
-                ctx.fillStyle = '#222';
-                ctx.fillText(`+${estadoAtual.bar[1]-6}`, barLeft+44, barBottom-130);
-            }
+            for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) desenharPecaPremium(barLeft+28, barBottom - 20 - j*18, '#f0e6d0');
+            if (estadoAtual.bar[1] > 6) ctx.fillText(`+${estadoAtual.bar[1]-6}`, barLeft+44, barBottom-130);
         }
         
-        // ========== DESTAQUES (GLOW) ==========
+        // Destaques
         if (pecaSelecionada !== null) {
-            const from = pecaSelecionada.from;
             let cx, cy;
-            // Mapeamento igual ao clique
+            const from = pecaSelecionada.from;
             if (from === 24) { cx = barLeft+28; cy = barTop+30; }
             else if (from === 25) { cx = barLeft+28; cy = barBottom-30; }
             else if (from < 12) {
-                if (from <= 5) { // esquerdo superior
-                    const i = 5 - from;
-                    cx = marginLeft + i * pointW + pointW/2;
-                    cy = topY + 25;
-                } else { // direito superior
-                    const i = 11 - from;
-                    cx = marginLeft + halfWidth + i * pointW + pointW/2;
-                    cy = topY + 25;
-                }
+                if (from <= 5) { const i = 5 - from; cx = marginLeft + i * pointW + pointW/2; cy = topY + 25; }
+                else { const i = 11 - from; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 25; }
             } else {
-                if (from <= 17) { // inferior esquerdo
-                    const i = from - 12;
-                    cx = marginLeft + i * pointW + pointW/2;
-                    cy = bottomY - 35;
-                } else { // inferior direito
-                    const i = from - 18;
-                    cx = marginLeft + halfWidth + i * pointW + pointW/2;
-                    cy = bottomY - 35;
-                }
+                if (from <= 17) { const i = from - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 35; }
+                else { const i = from - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 35; }
             }
             ctx.save();
-            ctx.shadowBlur = 18;
-            ctx.shadowColor = 'gold';
-            ctx.beginPath();
-            ctx.arc(cx, cy, 18, 0, 2*Math.PI);
-            ctx.strokeStyle = '#ffd700';
-            ctx.lineWidth = 4;
-            ctx.stroke();
+            ctx.shadowBlur = 18; ctx.shadowColor = 'gold';
+            ctx.beginPath(); ctx.arc(cx, cy, 18, 0, 2*Math.PI);
+            ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 4; ctx.stroke();
             ctx.restore();
         }
-        
-        if (pecaSelecionada !== null && legalMoves) {
+        if (pecaSelecionada && legalMoves) {
             const fromIdx = pecaSelecionada.from;
             const destinos = new Set();
-            legalMoves.forEach(seq => {
-                if (seq.moves && seq.moves[0] && seq.moves[0].from === fromIdx) {
-                    destinos.add(seq.moves[0].to);
-                }
-            });
+            legalMoves.forEach(seq => { if (seq.moves && seq.moves[0] && seq.moves[0].from === fromIdx) destinos.add(seq.moves[0].to); });
             destinos.forEach(to => {
-                if (to === -1) return;
                 let cx, cy;
                 if (to === 24) { cx = barLeft+28; cy = barTop+30; }
                 else if (to === 25) { cx = barLeft+28; cy = barBottom-30; }
@@ -564,62 +503,51 @@
                     else { const i = to - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 35; }
                 }
                 ctx.save();
-                ctx.shadowBlur = 14;
-                ctx.shadowColor = '#2ecc71';
-                ctx.beginPath();
-                ctx.arc(cx, cy, 20, 0, 2*Math.PI);
-                ctx.strokeStyle = '#2ecc71';
-                ctx.lineWidth = 4;
-                ctx.stroke();
+                ctx.shadowBlur = 14; ctx.shadowColor = '#2ecc71';
+                ctx.beginPath(); ctx.arc(cx, cy, 20, 0, 2*Math.PI);
+                ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 4; ctx.stroke();
                 ctx.restore();
             });
         }
     }
     
-    // ========== DETECÇÃO DE CLIQUE (geometria exata) ==========
+    // ========== DETECÇÃO DE CLIQUE COM LOGS ==========
     function getPointFromClick(mouseX, mouseY) {
-        // Barra
         if (mouseX >= barLeft && mouseX <= barRight) {
-            if (mouseY >= barTop && mouseY <= barTop+80) return 24;
-            if (mouseY >= barBottom-80 && mouseY <= barBottom) return 25;
+            if (mouseY >= barTop && mouseY <= barTop + 70) return 24;
+            if (mouseY >= barBottom - 70 && mouseY <= barBottom) return 25;
         }
-        // Triângulos superiores esquerdos (índices 5..0)
         for (let i = 0; i < 6; i++) {
             const x0 = marginLeft + i * pointW;
             const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) {
-                return 5 - i;
-            }
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) return 5 - i;
         }
-        // Superiores direitos (índices 6..11)
         for (let i = 0; i < 6; i++) {
             const x0 = marginLeft + halfWidth + i * pointW;
             const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) {
-                return 11 - i;
-            }
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) return 11 - i;
         }
-        // Inferiores esquerdos (12..17)
         for (let i = 0; i < 6; i++) {
             const x0 = marginLeft + i * pointW;
             const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) {
-                return 12 + i;
-            }
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) return 12 + i;
         }
-        // Inferiores direitos (18..23)
         for (let i = 0; i < 6; i++) {
             const x0 = marginLeft + halfWidth + i * pointW;
             const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) {
-                return 18 + i;
-            }
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) return 18 + i;
         }
         return -1;
     }
     
     canvas.addEventListener('click', (e) => {
-        if (!jogoIniciado || meuLado === 0 || estadoAtual.turn !== meuLado || estadoAtual.rollPhase || estadoAtual.gameOver) return;
+        addLog(`🖱️ Clique no canvas detectado`, 'info');
+        if (!jogoIniciado) { addLog(`❌ Jogo não iniciado`, 'error'); return; }
+        if (meuLado === 0) { addLog(`❌ Espectador não pode jogar`, 'error'); return; }
+        if (!estadoAtual) { addLog(`❌ Estado do jogo nulo`, 'error'); return; }
+        if (estadoAtual.turn !== meuLado) { addLog(`❌ Não é seu turno (turno=${estadoAtual.turn}, seu lado=${meuLado})`, 'error'); return; }
+        if (estadoAtual.rollPhase) { addLog(`❌ Fase de rolagem ativa. Role os dados primeiro.`, 'error'); return; }
+        if (estadoAtual.gameOver) { addLog(`❌ Jogo já acabou.`, 'error'); return; }
         
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
@@ -627,57 +555,62 @@
         const x = (e.clientX - rect.left) * scaleX;
         const y = (e.clientY - rect.top) * scaleY;
         const point = getPointFromClick(x, y);
-        if (point === -1) return;
+        addLog(`🔍 Coordenadas: (${x.toFixed(1)}, ${y.toFixed(1)}) → ponto ${point}`, 'info');
+        if (point === -1) { addLog(`⚠️ Clique fora do tabuleiro`, 'error'); return; }
+        
+        let count;
+        if (point === 24) count = estadoAtual.bar[0];
+        else if (point === 25) count = estadoAtual.bar[1];
+        else count = estadoAtual.board[point];
+        const isMine = (meuLado === 1 && count > 0) || (meuLado === -1 && count < 0);
+        addLog(`🎯 Ponto ${point} → quantidade ${count} | Sua peça? ${isMine}`, isMine ? 'success' : 'error');
         
         if (pecaSelecionada === null) {
-            let count;
-            if (point === 24) count = estadoAtual.bar[0];
-            else if (point === 25) count = estadoAtual.bar[1];
-            else count = estadoAtual.board[point];
-            if ((meuLado === 1 && count > 0) || (meuLado === -1 && count < 0)) {
+            if (isMine) {
                 pecaSelecionada = { from: point };
+                addLog(`✅ Peça selecionada em ${point}`, 'success');
                 desenharTabuleiro();
+            } else {
+                addLog(`❌ Você clicou em uma peça adversária ou vazia`, 'error');
             }
         } else {
             const from = pecaSelecionada.from;
             const to = point;
-            const seqValida = legalMoves.find(seq => seq.moves[0].from === from && seq.moves[0].to === to);
+            const seqValida = legalMoves.find(seq => seq.moves && seq.moves[0] && seq.moves[0].from === from && seq.moves[0].to === to);
             if (seqValida) {
+                addLog(`✅ Movimento válido: ${from} → ${to}`, 'success');
                 movimentosPendentes.push({ from, to });
                 pecaSelecionada = null;
                 desenharTabuleiro();
                 atualizarInterface();
             } else {
+                addLog(`❌ Movimento inválido ou destino não permitido (${from} → ${to})`, 'error');
+                if (legalMoves.length === 0) addLog(`ℹ️ Nenhum movimento legal disponível (legalMoves vazio)`, 'info');
+                else addLog(`ℹ️ Movimentos legais recebidos: ${JSON.stringify(legalMoves.map(s=>s.moves?.[0]))}`, 'info');
                 pecaSelecionada = null;
                 desenharTabuleiro();
             }
         }
     });
     
-    // ========== CONTROLE DO JOGO (mantido) ==========
     function atualizarInterface() {
         if (!estadoAtual) return;
         desenharTabuleiro();
-        atualizarDados(estadoAtual.dice, estadoAtual.diceUsed);
-        
+        const dado1 = document.getElementById('dado1');
+        const dado2 = document.getElementById('dado2');
+        dado1.innerText = estadoAtual.dice[0] || '?';
+        dado2.innerText = estadoAtual.dice[1] || '?';
+        dado1.classList.toggle('usado', estadoAtual.diceUsed[0]);
+        dado2.classList.toggle('usado', estadoAtual.diceUsed[1]);
         const turnoAtual = estadoAtual.turn;
         const meuTurno = (turnoAtual === meuLado);
-        const corTurno = turnoAtual === 1 ? 'Vermelho' : 'Branco';
-        document.getElementById('vez-atual').innerText = corTurno;
-        const dirMsg = turnoAtual === 1 ? '↓ horário' : '↑ anti-horário';
-        document.getElementById('direcao-movimento').innerText = dirMsg;
-        
+        document.getElementById('vez-atual').innerText = turnoAtual === 1 ? 'Vermelho' : 'Branco';
+        document.getElementById('direcao-movimento').innerText = turnoAtual === 1 ? '↓ horário' : '↑ anti-horário';
         const statusEl = document.getElementById('status-jogo');
-        if (estadoAtual.gameOver) {
-            const vencedor = estadoAtual.winner === 1 ? 'Vermelho' : 'Branco';
-            statusEl.innerText = `🏆 ${vencedor} venceu!`;
-        } else if (!meuTurno) {
-            statusEl.innerText = `⏳ Aguardando ${corTurno}...`;
-        } else if (estadoAtual.rollPhase) {
-            statusEl.innerText = '🎲 Sua vez! Role os dados.';
-        } else {
-            statusEl.innerText = '🖱️ Selecione peça e destino.';
-        }
+        if (estadoAtual.gameOver) statusEl.innerText = `🏆 ${estadoAtual.winner === 1 ? 'Vermelho' : 'Branco'} venceu!`;
+        else if (!meuTurno) statusEl.innerText = `⏳ Aguardando ${turnoAtual === 1 ? 'Vermelho' : 'Branco'}...`;
+        else if (estadoAtual.rollPhase) statusEl.innerText = '🎲 Sua vez! Role os dados.';
+        else statusEl.innerText = '🖱️ Selecione peça e destino.';
         
         const btnRolar = document.getElementById('btn-rolar');
         const btnConfirmar = document.getElementById('btn-confirmar');
@@ -697,15 +630,6 @@
         }
     }
     
-    function atualizarDados(dice, used) {
-        const dado1 = document.getElementById('dado1');
-        const dado2 = document.getElementById('dado2');
-        dado1.innerText = dice[0] || '?';
-        dado2.innerText = dice[1] || '?';
-        dado1.classList.toggle('usado', used[0]);
-        dado2.classList.toggle('usado', used[1]);
-    }
-    
     function confirmarMovimentos() {
         if (movimentosPendentes.length === 0) return;
         socket.emit('moverPecas', { moves: movimentosPendentes });
@@ -714,18 +638,15 @@
         legalMoves = [];
         atualizarInterface();
     }
-    
     function cancelarMovimentos() {
         movimentosPendentes = [];
         pecaSelecionada = null;
         atualizarInterface();
-        desenharTabuleiro();
     }
+    function rolarDados() { socket.emit('rolarDados'); addLog(`🎲 Solicitado rolagem de dados`, 'info'); }
+    function desistir() { if (confirm('Desistir?')) socket.emit('desistir'); }
     
-    function rolarDados() { socket.emit('rolarDados'); }
-    function desistir() { if (confirm('Desistir da partida?')) socket.emit('desistir'); }
-    
-    // ========== EVENTOS SOCKET (inalterados) ==========
+    // ========== EVENTOS SOCKET ==========
     function entrar() {
         const apelido = document.getElementById('input-apelido').value.trim();
         const sala = document.getElementById('input-sala').value.trim();
@@ -735,34 +656,34 @@
         document.getElementById('tela-login').style.display = 'none';
         document.getElementById('lobby').style.display = 'block';
         document.getElementById('painel-chat').style.display = 'block';
+        addLog(`📡 Conectando à sala ${sala} como ${apelido}`, 'info');
     }
-    
     function marcarPronto() {
         socket.emit('marcarPronto');
         document.getElementById('btn-pronto').disabled = true;
         document.getElementById('btn-pronto').innerText = 'Aguardando oponente...';
+        addLog(`✅ Jogador pronto`, 'success');
     }
-    
     function enviarMensagem() {
         const input = document.getElementById('input-mensagem');
         const msg = input.value.trim();
-        if (msg) { socket.emit('enviarMensagem', msg); input.value = ''; }
+        if (msg) { socket.emit('enviarMensagem', msg); input.value = ''; addLog(`💬 Mensagem enviada: ${msg}`, 'info'); }
     }
     
-    socket.on('connect', () => document.getElementById('status-conexao').innerText = "✅ Conectado");
-    socket.on('disconnect', () => document.getElementById('status-conexao').innerText = "❌ Desconectado");
-    socket.on('erro', (msg) => alert(msg));
-    
+    socket.on('connect', () => { addLog(`🔌 Conectado ao servidor`, 'success'); document.getElementById('status-conexao').innerText = "✅ Conectado"; });
+    socket.on('disconnect', () => { addLog(`⚠️ Desconectado do servidor`, 'error'); document.getElementById('status-conexao').innerText = "❌ Desconectado"; });
+    socket.on('erro', (msg) => { addLog(`🚨 Erro do servidor: ${msg}`, 'error'); alert(msg); });
     socket.on('definirPapel', (dados) => {
         if (dados.papel === 'jogador') {
             meuLado = dados.lado;
             document.getElementById('meu-lado').innerText = meuLado === 1 ? 'Vermelho' : 'Branco';
+            addLog(`🎭 Você é jogador do lado ${meuLado === 1 ? 'Vermelho' : 'Branco'}`, 'success');
         } else {
             meuLado = 0;
             document.getElementById('meu-lado').innerText = 'Espectador';
+            addLog(`👁️ Você é espectador`, 'info');
         }
     });
-    
     socket.on('estadoLobby', (dados) => {
         document.getElementById('info-sala').innerHTML = `<p>Sala: <strong>${salaAtual}</strong> | Jogadores: ${dados.jogadoresInfo.length}/2</p>`;
         let lista = '';
@@ -774,12 +695,12 @@
             document.getElementById('area-jogo').style.display = 'block';
             document.getElementById('painel-historico').style.display = 'block';
             jogoIniciado = true;
+            addLog(`🏁 Partida iniciada!`, 'success');
         } else {
             document.getElementById('lobby').style.display = 'block';
             document.getElementById('area-jogo').style.display = 'none';
         }
     });
-    
     socket.on('iniciarPartida', (dados) => {
         jogoIniciado = true;
         estadoAtual = dados.estado;
@@ -789,15 +710,15 @@
         atualizarInterface();
         document.getElementById('lobby').style.display = 'none';
         document.getElementById('area-jogo').style.display = 'block';
+        addLog(`🚀 Jogo iniciado. Estado recebido.`, 'success');
     });
-    
     socket.on('estadoAtual', (estado) => {
         estadoAtual = estado;
         legalMoves = [];
         desenharTabuleiro();
         atualizarInterface();
+        addLog(`🔄 Estado atualizado (turno=${estado.turn})`, 'info');
     });
-    
     socket.on('dadosRolados', ({ dice, turn, legalMoves: moves }) => {
         estadoAtual.dice = dice;
         estadoAtual.diceUsed = [false, false];
@@ -805,20 +726,19 @@
         legalMoves = moves;
         desenharTabuleiro();
         atualizarInterface();
+        addLog(`🎲 Dados rolados: ${dice[0]} e ${dice[1]} | Movimentos legais: ${moves?.length || 0}`, 'success');
+        if (!moves || moves.length === 0) addLog(`⚠️ Nenhum movimento legal disponível!`, 'error');
     });
-    
     socket.on('jogadaFeita', (dados) => {
         estadoAtual = dados.estado;
         legalMoves = dados.legalMoves || [];
-        if (dados.historico) {
-            document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
-        }
+        if (dados.historico) document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
         desenharTabuleiro();
         atualizarInterface();
         movimentosPendentes = [];
         pecaSelecionada = null;
+        addLog(`♟️ Jogada confirmada pelo servidor`, 'success');
     });
-    
     socket.on('fimDeJogo', (dados) => {
         alert(dados.mensagem);
         jogoIniciado = false;
@@ -826,15 +746,14 @@
         document.getElementById('lobby').style.display = 'block';
         document.getElementById('btn-pronto').disabled = false;
         document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+        addLog(`🏆 Fim de jogo: ${dados.mensagem}`, 'info');
     });
-    
     socket.on('novaMensagem', (msg) => {
         const div = document.getElementById('chat-mensagens');
         const hora = new Date(msg.timestamp).toLocaleTimeString();
         div.innerHTML += `<div><strong>${msg.remetente}</strong> <span class="badge">${hora}</span>: ${msg.texto}</div>`;
         div.scrollTop = div.scrollHeight;
     });
-    
     document.getElementById('input-mensagem').addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
 </script>
 </body>
