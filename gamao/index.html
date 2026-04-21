@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Premium — Tabuleiro Imediato</title>
+    <title>Gamão Premium — Estado Claro</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body {
@@ -91,6 +91,15 @@
             padding: 12px;
             text-align: center;
             border-left: 6px solid #e0a82b;
+        }
+        .status-message {
+            background: #2a3a2a;
+            margin-top: 10px;
+            padding: 6px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #ffdd99;
         }
         .home-indicators {
             display: flex;
@@ -190,6 +199,7 @@
                 <div class="status-card">
                     <div>⚫ SEU LADO: <strong id="meuLadoLabel">---</strong></div>
                     <div>🔄 TURNO: <strong id="turnoLabel">---</strong></div>
+                    <div class="status-message" id="statusMsg">Aguardando conexão...</div>
                     <div class="home-indicators">
                         <span class="home-box">🏠 VERMELHA: <span id="homeVermelha">0</span></span>
                         <span class="home-box">⚪ BRANCA: <span id="homeBranca">0</span></span>
@@ -247,7 +257,7 @@
     const barTop = topY + pointHeight + 12;
     const barBottom = bottomY - pointHeight - 12;
 
-    // ========== DESENHO DA BASE (TRIÂNGULOS, BARRA, NÚMEROS) ==========
+    // ========== DESENHO DA BASE ==========
     function desenharTriangulo(x, y, largura, altura, paraCima, corClara) {
         const grad = ctx.createLinearGradient(x, y, x, paraCima ? y - altura : y + altura);
         grad.addColorStop(0, corClara ? "#e7cba5" : "#8b5a2e");
@@ -332,7 +342,6 @@
         ctx.textAlign = "left";
     }
 
-    // Desenho das peças e destaques (quando estado existe)
     function desenharPeca(x, y, cor, camada = 0) {
         ctx.save();
         ctx.shadowBlur = Math.max(3, 5 - camada * 0.8);
@@ -576,6 +585,13 @@
             conf.style.display=movimentosPendentes.length?"inline-block":"none";
             canc.style.display=movimentosPendentes.length?"inline-block":"none";
         }
+        // Atualiza mensagem de status
+        const statusDiv = document.getElementById("statusMsg");
+        if(estado.gameOver) statusDiv.innerHTML = `🏆 Fim de jogo! ${estado.winner===1?"Vermelho":"Branco"} venceu.`;
+        else if(estado.turn === meuLado && !estado.rollPhase) statusDiv.innerHTML = "🎯 Sua vez! Selecione uma peça.";
+        else if(estado.turn === meuLado && estado.rollPhase) statusDiv.innerHTML = "🎲 Role os dados!";
+        else if(estado.turn !== meuLado) statusDiv.innerHTML = "⏳ Aguardando oponente...";
+        else statusDiv.innerHTML = "🏁 Partida em andamento.";
         desenharTudo();
     }
 
@@ -587,19 +603,25 @@
     }
 
     // ========== SOCKET ==========
-    socket.on("connect",()=>{ addLog("✅ Conectado","#88ffaa"); socket.emit("entrarSala",{apelido:meuNome,sala:salaAtual}); });
-    socket.on("disconnect",()=>addLog("❌ Desconectado","#ff8888"));
+    function updateConnectionStatus(connected) {
+        const statusDiv = document.getElementById("statusMsg");
+        if(connected) statusDiv.innerHTML = "✅ Conectado. Aguardando oponente...";
+        else statusDiv.innerHTML = "❌ Desconectado. Tentando reconectar...";
+    }
+
+    socket.on("connect",()=>{ addLog("✅ Conectado","#88ffaa"); updateConnectionStatus(true); socket.emit("entrarSala",{apelido:meuNome,sala:salaAtual}); });
+    socket.on("disconnect",()=>{ addLog("❌ Desconectado","#ff8888"); updateConnectionStatus(false); });
     socket.on("erro",(m)=>addLog(`⚠️ ${m}`,"#ffaa88"));
     socket.on("definirPapel",(d)=>{
         if(d.papel==="jogador") { meuLado=d.lado; document.getElementById("meuLadoLabel").innerHTML=meuLado===1?"VERMELHO":"BRANCO"; addLog(`🎭 Você é ${meuLado===1?"Vermelho":"Branco"}`,"#aaffaa"); }
         else { meuLado=0; document.getElementById("meuLadoLabel").innerHTML="ESPECTADOR"; }
     });
-    socket.on("estadoLobby",(d)=>{ if(d.rodando) { jogoAtivo=true; addLog("🏁 Partida iniciada!","#ffffaa"); } });
+    socket.on("estadoLobby",(d)=>{ if(d.rodando) { jogoAtivo=true; addLog("🏁 Partida iniciada!","#ffffaa"); document.getElementById("statusMsg").innerHTML = "🏁 Partida iniciada!"; } });
     socket.on("iniciarPartida",(d)=>{ jogoAtivo=true; estado=d.estado; if(d.lado!=="espectador") meuLado=d.lado; atualizarDadosDisponiveis(); atualizarInterface(); addLog("🚀 Jogo iniciado","#aaffaa"); });
     socket.on("estadoAtual",(n)=>{ estado=n; atualizarDadosDisponiveis(); atualizarInterface(); });
     socket.on("dadosRolados",({dice})=>{ estado.dice=dice; estado.diceUsed=[false,false]; estado.rollPhase=false; atualizarDadosDisponiveis(); addLog(`🎲 Dados: ${dice[0]} e ${dice[1]}`,"#aaffaa"); atualizarInterface(); });
     socket.on("jogadaFeita",(d)=>{ estado=d.estado; movimentosPendentes=[]; pecaSelecionada=null; atualizarDadosDisponiveis(); atualizarInterface(); addLog("♟️ Jogada confirmada","#aaffaa"); });
-    socket.on("fimDeJogo",(d)=>{ alert(d.mensagem); jogoAtivo=false; addLog(`🏆 ${d.mensagem}`,"#ffff88"); });
+    socket.on("fimDeJogo",(d)=>{ alert(d.mensagem); jogoAtivo=false; addLog(`🏆 ${d.mensagem}`,"#ffff88"); atualizarInterface(); });
     socket.on("novaMensagem",(m)=>{ let chat=document.getElementById("chatMessages"); let hora=new Date(m.timestamp).toLocaleTimeString(); chat.innerHTML+=`<div><strong>${m.remetente}</strong> <span style="font-size:0.7rem;">${hora}</span>: ${m.texto}</div>`; chat.scrollTop=chat.scrollHeight; });
 
     document.getElementById("rolarBtn").onclick=rolarDados;
@@ -610,8 +632,9 @@
     document.getElementById("chatInput").addEventListener("keypress",e=>{ if(e.key==="Enter") document.getElementById("enviarChat").click(); });
     document.querySelectorAll(".tab-btn").forEach(btn=>{ btn.addEventListener("click",()=>{ let tab=btn.dataset.tab; document.querySelectorAll(".tab-content").forEach(tc=>tc.classList.remove("active")); document.getElementById(`tab${tab.charAt(0).toUpperCase()+tab.slice(1)}`).classList.add("active"); document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); }); });
 
-    // DESENHA O TABULEIRO BASE IMEDIATAMENTE (antes mesmo de conectar)
+    // Inicializa o tabuleiro imediatamente
     desenharBaseTabuleiro();
+    updateConnectionStatus(false); // mostra "aguardando conexão"
 </script>
 </body>
 </html>
