@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Lógico 🎲 — Com Logs de Depuração</title>
+    <title>Gamão Lógico 🎲 — Correção de Movimentos</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -174,7 +174,7 @@
 </head>
 <body>
 <header>
-    <h1>Gamão Lógico 🎲 — Modo Depuração</h1>
+    <h1>Gamão Lógico 🎲 — Correção de Movimentos</h1>
     <p>Projeto Integrado — Laboratório de Computação</p>
     <a href="#" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
 </header>
@@ -262,11 +262,9 @@
         entry.innerHTML = `[${time}] ${message}`;
         logsDiv.appendChild(entry);
         entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        // também envia para console
         if (type === 'error') console.error(message);
         else if (type === 'success') console.log('%c' + message, 'color: #aaffaa');
         else console.log(message);
-        // mantém apenas os últimos 200 logs
         while (logsDiv.children.length > 200) logsDiv.removeChild(logsDiv.firstChild);
     }
 
@@ -278,14 +276,14 @@
     let salaAtual = '';
     let movimentosPendentes = [];
     let pecaSelecionada = null;
-    let legalMoves = [];
+    let legalMoves = [];  // ESSA É A VARIÁVEL CRÍTICA
 
     const canvas = document.getElementById('boardCanvas');
     const ctx = canvas.getContext('2d');
     const w = 1000, h = 600;
     canvas.width = w; canvas.height = h;
 
-    // ==================== GEOMETRIA CLÁSSICA (6 ESQUERDA + 6 DIREITA) ====================
+    // ==================== GEOMETRIA (mesma de antes) ====================
     const marginLeft = 70;
     const marginRight = w - 70;
     const totalWidth = marginRight - marginLeft;
@@ -294,13 +292,11 @@
     const pointH = 135;
     const topY = 65;
     const bottomY = h - 65;
-    
     const barLeft = marginLeft + halfWidth - 28;
     const barRight = barLeft + 56;
     const barTop = topY + pointH + 8;
     const barBottom = bottomY - pointH - 8;
     
-    // Função premium para desenhar peça
     function desenharPecaPremium(x, y, corBase) {
         ctx.save();
         ctx.shadowBlur = 5;
@@ -361,23 +357,20 @@
     function desenharTabuleiro() {
         if (!estadoAtual) return;
         ctx.clearRect(0, 0, w, h);
-        
-        // Lado esquerdo
+        // Triângulos
         for (let i = 0; i < 6; i++) {
             const x = marginLeft + i * pointW;
             const claro = (i % 2 === 0);
             desenharTriangulo(x, topY, pointW, pointH, false, claro);
             desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
         }
-        // Lado direito
         for (let i = 0; i < 6; i++) {
             const x = marginLeft + halfWidth + i * pointW;
             const claro = (i % 2 === 0);
             desenharTriangulo(x, topY, pointW, pointH, false, claro);
             desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
         }
-        
-        // Barra central
+        // Barra
         ctx.fillStyle = '#8b6946';
         ctx.fillRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
         ctx.fillStyle = '#c9a87b';
@@ -388,7 +381,6 @@
         ctx.fillStyle = "#f5e6d3";
         ctx.font = "bold 15px 'Segoe UI'";
         ctx.fillText("BARRA", barLeft+14, barTop + (barBottom-barTop)/2 + 5);
-        
         // Números
         ctx.fillStyle = '#2c1a0c';
         ctx.font = "bold 14px 'Segoe UI'";
@@ -400,7 +392,6 @@
             ctx.fillText((7 + i).toString(), xDir, topY - 8);
             ctx.fillText((19 + i).toString(), xDir, bottomY + 24);
         }
-        
         // Home
         ctx.fillStyle = '#4a7a5c';
         ctx.fillRect(20, 20, 100, 50);
@@ -414,7 +405,7 @@
         ctx.fillText(`${estadoAtual.home[0]}`, 80, 58);
         ctx.fillText(`${estadoAtual.home[1]}`, w-65, 58);
         
-        // Desenhar peças nos pontos (mesmo mapeamento do clique)
+        // Peças nos pontos
         for (let i = 0; i < 6; i++) {
             const idxSupEsq = 5 - i;
             const qtd = estadoAtual.board[idxSupEsq];
@@ -457,7 +448,6 @@
                 if (absQ > 6) ctx.fillText(`+${absQ-6}`, x+12, yBase - 5*14 - 10);
             }
         }
-        
         // Barra peças
         if (estadoAtual.bar[0] > 0) {
             for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) desenharPecaPremium(barLeft+28, barTop + 20 + j*18, '#c73b2a');
@@ -487,10 +477,18 @@
             ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 4; ctx.stroke();
             ctx.restore();
         }
-        if (pecaSelecionada && legalMoves) {
+        if (pecaSelecionada && legalMoves && legalMoves.length) {
             const fromIdx = pecaSelecionada.from;
             const destinos = new Set();
-            legalMoves.forEach(seq => { if (seq.moves && seq.moves[0] && seq.moves[0].from === fromIdx) destinos.add(seq.moves[0].to); });
+            legalMoves.forEach(seq => {
+                // Tenta extrair o destino de diferentes formatos
+                let to = null;
+                if (seq.moves && seq.moves[0] && seq.moves[0].to !== undefined) to = seq.moves[0].to;
+                else if (seq.to !== undefined) to = seq.to;
+                else if (seq.destination !== undefined) to = seq.destination;
+                if (to !== null && seq.moves && seq.moves[0] && seq.moves[0].from === fromIdx) destinos.add(to);
+                else if (to !== null && seq.from === fromIdx) destinos.add(to);
+            });
             destinos.forEach(to => {
                 let cx, cy;
                 if (to === 24) { cx = barLeft+28; cy = barTop+30; }
@@ -511,7 +509,6 @@
         }
     }
     
-    // ========== DETECÇÃO DE CLIQUE COM LOGS ==========
     function getPointFromClick(mouseX, mouseY) {
         if (mouseX >= barLeft && mouseX <= barRight) {
             if (mouseY >= barTop && mouseY <= barTop + 70) return 24;
@@ -576,8 +573,25 @@
         } else {
             const from = pecaSelecionada.from;
             const to = point;
-            const seqValida = legalMoves.find(seq => seq.moves && seq.moves[0] && seq.moves[0].from === from && seq.moves[0].to === to);
-            if (seqValida) {
+            // Verificação robusta do movimento legal
+            let isValid = false;
+            if (legalMoves && legalMoves.length) {
+                for (const seq of legalMoves) {
+                    let moveFrom = null, moveTo = null;
+                    if (seq.moves && seq.moves[0]) {
+                        moveFrom = seq.moves[0].from;
+                        moveTo = seq.moves[0].to;
+                    } else if (seq.from !== undefined && seq.to !== undefined) {
+                        moveFrom = seq.from;
+                        moveTo = seq.to;
+                    }
+                    if (moveFrom === from && moveTo === to) {
+                        isValid = true;
+                        break;
+                    }
+                }
+            }
+            if (isValid) {
                 addLog(`✅ Movimento válido: ${from} → ${to}`, 'success');
                 movimentosPendentes.push({ from, to });
                 pecaSelecionada = null;
@@ -585,8 +599,8 @@
                 atualizarInterface();
             } else {
                 addLog(`❌ Movimento inválido ou destino não permitido (${from} → ${to})`, 'error');
-                if (legalMoves.length === 0) addLog(`ℹ️ Nenhum movimento legal disponível (legalMoves vazio)`, 'info');
-                else addLog(`ℹ️ Movimentos legais recebidos: ${JSON.stringify(legalMoves.map(s=>s.moves?.[0]))}`, 'info');
+                if (!legalMoves || legalMoves.length === 0) addLog(`ℹ️ Nenhum movimento legal disponível (legalMoves vazio)`, 'info');
+                else addLog(`ℹ️ Movimentos legais recebidos: ${JSON.stringify(legalMoves.map(s => s.moves ? s.moves[0] : s))}`, 'info');
                 pecaSelecionada = null;
                 desenharTabuleiro();
             }
@@ -635,7 +649,7 @@
         socket.emit('moverPecas', { moves: movimentosPendentes });
         movimentosPendentes = [];
         pecaSelecionada = null;
-        legalMoves = [];
+        // NÃO limpar legalMoves aqui, o servidor enviará novo estado
         atualizarInterface();
     }
     function cancelarMovimentos() {
@@ -705,7 +719,7 @@
         jogoIniciado = true;
         estadoAtual = dados.estado;
         if (dados.lado !== 'espectador') meuLado = dados.lado;
-        legalMoves = [];
+        legalMoves = [];  // será preenchido após rolagem
         desenharTabuleiro();
         atualizarInterface();
         document.getElementById('lobby').style.display = 'none';
@@ -714,20 +728,27 @@
     });
     socket.on('estadoAtual', (estado) => {
         estadoAtual = estado;
-        legalMoves = [];
+        // NÃO limpar legalMoves aqui! Só atualizar se a fase mudar para rolagem novamente
+        if (estado.rollPhase) {
+            legalMoves = [];  // nova rolagem, limpa movimentos antigos
+        }
         desenharTabuleiro();
         atualizarInterface();
-        addLog(`🔄 Estado atualizado (turno=${estado.turn})`, 'info');
+        addLog(`🔄 Estado atualizado (turno=${estado.turn}, rollPhase=${estado.rollPhase})`, 'info');
     });
     socket.on('dadosRolados', ({ dice, turn, legalMoves: moves }) => {
         estadoAtual.dice = dice;
         estadoAtual.diceUsed = [false, false];
         estadoAtual.rollPhase = false;
-        legalMoves = moves;
+        legalMoves = moves;  // IMPORTANTE: guarda os movimentos legais
+        addLog(`🎲 Dados rolados: ${dice[0]} e ${dice[1]} | Movimentos legais recebidos: ${moves?.length || 0}`, 'success');
+        if (moves && moves.length) {
+            addLog(`📋 Primeiro movimento: ${JSON.stringify(moves[0])}`, 'info');
+        } else {
+            addLog(`⚠️ Nenhum movimento legal disponível!`, 'error');
+        }
         desenharTabuleiro();
         atualizarInterface();
-        addLog(`🎲 Dados rolados: ${dice[0]} e ${dice[1]} | Movimentos legais: ${moves?.length || 0}`, 'success');
-        if (!moves || moves.length === 0) addLog(`⚠️ Nenhum movimento legal disponível!`, 'error');
     });
     socket.on('jogadaFeita', (dados) => {
         estadoAtual = dados.estado;
