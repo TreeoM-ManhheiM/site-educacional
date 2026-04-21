@@ -3,827 +3,919 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Lógico — Movimentos Locais</title>
+    <title>Gamão Premium — Edição Obsessiva</title>
     <style>
-        * { box-sizing: border-box; }
-        body {
+        * {
             margin: 0;
-            background: #2b5e2b;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: #f5e6d3;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
         }
-        header {
-            background: linear-gradient(135deg, #1a3a1a, #2d6a4f);
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        header h1 { margin: 0; font-size: 28px; }
-        .btn-header-regras {
-            display: inline-block;
-            margin-top: 8px;
-            background: rgba(255,255,255,0.2);
-            color: #f5e6d3;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            text-decoration: none;
-            border: 1px solid #e6c7a2;
-        }
-        main {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-            flex: 1;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .coluna-esquerda { flex: 2; min-width: 320px; }
-        .coluna-direita { flex: 1.2; min-width: 280px; display: flex; flex-direction: column; gap: 20px; }
-        .game-container, .painel-container {
-            background: #1e4d2b;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            border: 2px solid #b2895b;
-        }
-        #status-conexao { color: #ccc; font-size: 13px; margin-bottom: 10px; }
-        .painel-info {
-            background: #2d6a4f;
-            padding: 10px 15px;
-            border-radius: 30px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin-bottom: 15px;
-            font-weight: bold;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        button {
-            padding: 12px 20px;
-            border-radius: 40px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            background: #a77b55;
-            color: #f5e6d3;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: 0.2s;
-            font-size: 16px;
-        }
-        button.primary { background: #2d6a4f; }
-        button.success { background: #1e4d2b; }
-        button.warning { background: #c98a2c; }
-        button.danger { background: #a04030; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        input {
-            padding: 12px;
-            border-radius: 30px;
-            border: 2px solid #b2895b;
-            background: #fcf3e8;
-            margin: 5px 0;
-            width: 100%;
-            font-size: 16px;
-        }
-        .tabuleiro-container {
+
+        body {
+            background: #1a2a1a;
+            font-family: 'Georgia', 'Times New Roman', 'Segoe UI', serif;
             display: flex;
             justify-content: center;
-            margin: 10px 0;
-            overflow-x: auto;
+            align-items: center;
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        /* Estrutura com moldura externa */
+        .game-container {
+            background: #2c3e2b;
+            border-radius: 56px;
+            padding: 28px;
+            box-shadow: 0 25px 40px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1);
+        }
+
+        .board-wrapper {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        /* Canvas com moldura em relevo (sombra interna e externa) */
+        .canvas-frame {
+            background: #3a2a1a;
+            border-radius: 36px;
+            padding: 12px;
+            box-shadow: inset 0 0 0 2px #5a4a2a, 0 10px 20px rgba(0,0,0,0.5);
         }
         canvas {
-            background: radial-gradient(circle at center, #deb887 0%, #c19a6b 60%, #8b5a2b 100%);
-            border-radius: 24px;
-            border: 12px solid #4a2c14;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.4), 0 15px 35px rgba(0,0,0,0.6);
-            width: 100%;
-            height: auto;
+            display: block;
+            border-radius: 28px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.4), 0 5px 12px rgba(0,0,0,0.3);
             cursor: pointer;
-            touch-action: none;
+            transition: box-shadow 0.2s;
         }
-        .historico-lista, .logs-area {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #163a1a;
-            padding: 10px;
-            border-radius: 16px;
-            font-size: 13px;
-            font-family: monospace;
+        canvas:hover {
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.5), 0 8px 18px rgba(0,0,0,0.4);
         }
-        .chat-mensagens {
-            height: 180px;
-            overflow-y: auto;
-            background: #163a1a;
-            padding: 10px;
-            border-radius: 16px;
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-        .chat-input { display: flex; gap: 5px; }
-        .chat-input input { flex: 1; }
-        .badge { background: #8b5e3c; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
-        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: center; }
-        .dados-container {
+
+        /* Painel direito com abas (mesmo estilo refinado) */
+        .info-panel {
+            background: #1e2a1e;
+            border-radius: 32px;
+            width: 310px;
+            color: #efe0c9;
             display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin: 20px 0;
+            flex-direction: column;
+            gap: 16px;
+            backdrop-filter: blur(2px);
+            box-shadow: inset 0 0 0 1px rgba(255,255,200,0.1), 0 8px 20px rgba(0,0,0,0.4);
         }
-        .dado {
+
+        .panel-header {
+            background: #2a3a2a;
+            padding: 14px 18px;
+            border-radius: 32px 32px 0 0;
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            border-bottom: 2px solid #c9a87b;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .tab-btn {
+            background: none;
+            border: none;
+            color: #ddcca8;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 4px 10px;
+            border-radius: 40px;
+            transition: 0.1s;
+        }
+        .tab-btn.active {
+            background: #7a5a3a;
+            color: #f9e2b0;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
+        }
+
+        .tab-content {
+            display: none;
+            padding: 16px;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .tab-content.active {
+            display: flex;
+        }
+
+        .status-card {
+            background: #0f1a0f;
+            border-radius: 24px;
+            padding: 12px;
+            text-align: center;
+            border-left: 6px solid #e0a82b;
+        }
+        .home-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        .home-box {
+            background: #2a3a2a;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+        }
+        .dice-area {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin: 12px 0;
+        }
+        .dice {
             width: 70px;
             height: 70px;
-            background: white;
-            border-radius: 15px;
+            background: #f8f0e0;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 2rem;
             font-weight: bold;
-            color: black;
-            box-shadow: 0 6px 0 #999, 0 8px 12px rgba(0,0,0,0.3);
-            border: 2px solid #ccc;
+            color: #2c1a0c;
+            box-shadow: 0 8px 0 #aa8a60;
+            transition: 0.08s linear;
+            transform-style: preserve-3d;
+            position: relative;
         }
-        .dado.usado { opacity: 0.4; }
-        .status-mensagem {
-            font-size: 18px;
-            padding: 8px 20px;
-            background: #c98a2c;
-            border-radius: 40px;
-            color: #1a1a1a;
+        /* animação com easing (cubic-bezier) */
+        .dice.rolling {
+            animation: diceRoll 0.35s cubic-bezier(0.25, 1.5, 0.5, 1);
+        }
+        @keyframes diceRoll {
+            0% { transform: translateY(0) rotate(0deg); }
+            30% { transform: translateY(-12px) rotate(15deg); }
+            70% { transform: translateY(4px) rotate(-8deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        .dice.used {
+            opacity: 0.5;
+            filter: grayscale(0.3);
+            box-shadow: 0 2px 0 #aa8a60;
+            transform: translateY(6px);
+        }
+
+        button {
+            background: #7a5a3a;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 60px;
             font-weight: bold;
-            text-align: center;
+            color: #fef0da;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.08s linear;
+            box-shadow: 0 3px 0 #4a2e1a;
+            font-family: inherit;
         }
-        .info-turno { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-        .log-entry {
-            border-bottom: 1px solid #3a6a3a;
-            padding: 4px 0;
-            font-size: 12px;
+        button:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #4a2e1a;
         }
-        .log-error { color: #ffaa88; }
-        .log-success { color: #aaffaa; }
-        .log-info { color: #ccccff; }
-        .casas-info {
+        .primary-btn {
+            background: #2b7a4b;
+            box-shadow: 0 3px 0 #1a4a2a;
+        }
+        .danger-btn {
+            background: #9a3a2a;
+            box-shadow: 0 3px 0 #5a2010;
+        }
+        .action-buttons {
             display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            padding: 0 20px;
-            font-weight: bold;
-            color: #ffd966;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
-        .casa {
-            background: #2d6a4f;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 14px;
+
+        .chat-messages {
+            background: #0a120a;
+            border-radius: 20px;
+            height: 160px;
+            overflow-y: auto;
+            padding: 8px;
+            font-size: 0.75rem;
+            font-family: monospace;
         }
-        @media (max-width: 700px) {
-            .painel-info { flex-direction: column; text-align: center; }
-            .casas-info { flex-direction: column; align-items: center; gap: 5px; }
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input-area input {
+            flex: 1;
+            background: #1e2a1e;
+            border: none;
+            border-radius: 40px;
+            padding: 8px 12px;
+            color: #efe0c9;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .log-area {
+            background: #0a120a;
+            border-radius: 20px;
+            height: 140px;
+            overflow-y: auto;
+            padding: 8px;
+            font-family: monospace;
+            font-size: 0.7rem;
+        }
+
+        footer {
+            font-size: 0.65rem;
+            text-align: center;
+            padding: 8px;
+            color: #b8c8a0;
+            border-top: 1px solid #3a4a3a;
+        }
+
+        @media (max-width: 900px) {
+            .board-wrapper { flex-direction: column; align-items: center; }
+            .info-panel { width: 100%; }
         }
     </style>
 </head>
 <body>
-<header>
-    <h1>Gamão Lógico — Movimentos Locais</h1>
-    <p>Projeto Integrado — Laboratório de Computação</p>
-    <a href="#" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
-</header>
-<main>
-    <div class="coluna-esquerda">
-        <div id="status-conexao">Conectando...</div>
-
-        <div id="tela-login" class="game-container">
-            <h2>Entrar na Partida</h2>
-            <input type="text" id="input-apelido" placeholder="Seu Nome">
-            <input type="text" id="input-sala" placeholder="Sala (ex: mesa1)">
-            <br><br>
-            <button onclick="entrar()" class="success">CONECTAR</button>
+<div class="game-container">
+    <div class="board-wrapper">
+        <div class="canvas-frame">
+            <canvas id="boardCanvas" width="1100" height="620"></canvas>
         </div>
 
-        <div id="lobby" class="game-container" style="display:none;">
-            <h3>🕹️ Lobby</h3>
-            <div id="info-sala"></div>
-            <ul id="lista-alunos" style="padding:0;"></ul>
-            <button id="btn-pronto" onclick="marcarPronto()" class="primary" style="width:100%;">ESTOU PRONTO</button>
-        </div>
-
-        <div id="area-jogo" style="display:none;">
-            <div class="painel-info">
-                <div>Seu Lado: <span id="meu-lado" class="destaque">---</span></div>
-                <div class="info-turno">
-                    <span>Turno:</span>
-                    <span id="vez-atual" class="destaque">---</span>
-                    <span id="direcao-movimento" style="font-size:14px;"></span>
+        <div class="info-panel">
+            <div class="panel-header">
+                <span>🎲 GAMÃO</span>
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="jogo">JOGO</button>
+                    <button class="tab-btn" data-tab="chat">CHAT</button>
+                    <button class="tab-btn" data-tab="logs">LOGS</button>
                 </div>
-                <div id="status-jogo" class="status-mensagem">Aguardando...</div>
-            </div>
-            
-            <div class="tabuleiro-container">
-                <canvas id="boardCanvas" width="1100" height="620" style="width:100%; height:auto; max-width:1100px"></canvas>
-            </div>
-            <div class="casas-info">
-                <div class="casa">🏠 CASA VERMELHA: <span id="casaVermelha">0</span></div>
-                <div class="casa">⚪ CASA BRANCA: <span id="casaBranca">0</span></div>
             </div>
 
-            <div class="dados-container" id="dados-display">
-                <div class="dado" id="dado1">⚀</div>
-                <div class="dado" id="dado2">⚀</div>
+            <div id="tabJogo" class="tab-content active">
+                <div class="status-card">
+                    <div>⚫ SEU LADO: <strong id="meuLadoLabel">---</strong></div>
+                    <div>🔄 TURNO: <strong id="turnoLabel">---</strong></div>
+                    <div class="home-indicators">
+                        <span class="home-box">🏠 VERMELHA: <span id="homeVermelha">0</span></span>
+                        <span class="home-box">⚪ BRANCA: <span id="homeBranca">0</span></span>
+                    </div>
+                </div>
+                <div class="dice-area">
+                    <div class="dice" id="dado1">⚀</div>
+                    <div class="dice" id="dado2">⚀</div>
+                </div>
+                <div class="action-buttons">
+                    <button id="rolarBtn" class="primary-btn">🎲 ROLAR</button>
+                    <button id="desistirBtn" class="danger-btn">🏳️ DESISTIR</button>
+                </div>
+                <div class="action-buttons" style="margin-top: 5px;">
+                    <button id="confirmarBtn" style="background:#3a7a5a; display: none;">✅ CONFIRMAR</button>
+                    <button id="cancelarBtn" style="background:#7a5a3a; display: none;">↩️ CANCELAR</button>
+                </div>
+                <footer>Clique na peça → destino (verde)</footer>
             </div>
 
-            <div class="flex-row">
-                <button id="btn-rolar" onclick="rolarDados()" class="primary">🎲 Rolar Dados</button>
-                <button onclick="confirmarMovimentos()" class="success" id="btn-confirmar" style="display:none;">✅ Confirmar Jogada</button>
-                <button onclick="cancelarMovimentos()" class="warning" id="btn-cancelar" style="display:none;">↩️ Cancelar</button>
-                <button onclick="desistir()" class="danger">🏳️ Desistir</button>
+            <div id="tabChat" class="tab-content">
+                <div class="chat-messages" id="chatMessages"></div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="Mensagem...">
+                    <button id="enviarChat">ENVIAR</button>
+                </div>
             </div>
-            <p style="text-align:center; margin-top:15px; font-size:14px; background:#2d6a4f; padding:8px; border-radius:30px;">
-                👆 Clique na sua peça (origem) e depois no destino (contorno verde).
-            </p>
-        </div>
-    </div>
 
-    <div class="coluna-direita">
-        <div id="painel-historico" class="painel-container" style="display:none;">
-            <h3>📜 Histórico</h3>
-            <div id="historico" class="historico-lista"></div>
-        </div>
-        <div id="painel-chat" class="painel-container" style="display:none;">
-            <h3>💬 Chat</h3>
-            <div id="chat-mensagens" class="chat-mensagens"></div>
-            <div class="chat-input">
-                <input type="text" id="input-mensagem" placeholder="Mensagem...">
-                <button onclick="enviarMensagem()">Enviar</button>
-            </div>
-        </div>
-        <div id="painel-logs" class="painel-container">
-            <h3>📋 Logs</h3>
-            <div id="logs-area" class="logs-area">
-                <div class="log-entry">Aguardando eventos...</div>
+            <div id="tabLogs" class="tab-content">
+                <div class="log-area" id="logPanel">
+                    <div>🔹 Sistema pronto</div>
+                </div>
             </div>
         </div>
     </div>
-</main>
+</div>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-    // ==================== LOGS ====================
-    const logsDiv = document.getElementById('logs-area');
-    function addLog(message, type = 'info') {
-        const entry = document.createElement('div');
-        entry.className = `log-entry log-${type}`;
-        const time = new Date().toLocaleTimeString();
-        entry.innerHTML = `[${time}] ${message}`;
-        logsDiv.appendChild(entry);
-        entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        if (type === 'error') console.error(message);
-        else if (type === 'success') console.log('%c' + message, 'color: #aaffaa');
-        else console.log(message);
-        while (logsDiv.children.length > 200) logsDiv.removeChild(logsDiv.firstChild);
-    }
-
-    // ==================== SOCKET ====================
+    // ------------------- CONEXÃO SOCKET -------------------
     const socket = io("https://motor-gamao.onrender.com");
-    let estadoAtual = null;
-    let meuLado = 0;
-    let jogoIniciado = false;
-    let salaAtual = '';
+    let estado = null;
+    let meuLado = 0;       // 1 = vermelho, -1 = branco
+    let jogoAtivo = false;
+    let salaAtual = "";
     let movimentosPendentes = [];
     let pecaSelecionada = null;
-    let dadosAtuais = [0, 0];
-    let dadosDisponiveis = [];  // lista de valores de dados ainda não usados (ex: [1,1,1,1] para duplicata)
-    
-    const canvas = document.getElementById('boardCanvas');
-    const ctx = canvas.getContext('2d');
+    let dadosDisponiveis = [];
+
+    // Elementos DOM
+    const canvas = document.getElementById("boardCanvas");
+    const ctx = canvas.getContext("2d");
     const w = 1100, h = 620;
     canvas.width = w; canvas.height = h;
 
-    // ==================== GEOMETRIA ====================
-    const marginLeft = 90;
-    const marginRight = w - 90;
-    const totalWidth = marginRight - marginLeft;
-    const halfWidth = totalWidth / 2;
-    const pointW = halfWidth / 6;
-    const pointH = 130;
-    const topY = 70;
-    const bottomY = h - 70;
-    const barLeft = marginLeft + halfWidth - 32;
-    const barRight = barLeft + 64;
-    const barTop = topY + pointH + 12;
-    const barBottom = bottomY - pointH - 12;
-    
-    // ========== LÓGICA LOCAL DE MOVIMENTOS ==========
-    // Retorna a direção: 1 para vermelho (horário), -1 para branco (anti-horário)
+    // ---------- GEOMETRIA DO TABULEIRO (proporções clássicas) ----------
+    const boardMarginX = 85;
+    const boardMarginY = 55;
+    const boardWidth = w - boardMarginX * 2;
+    const halfBoard = boardWidth / 2;
+    const pointWidth = (boardWidth / 2) / 6;
+    const pointHeight = 135;
+    const topY = boardMarginY;
+    const bottomY = h - boardMarginY;
+    const barLeft = boardMarginX + halfBoard - 30;
+    const barRight = barLeft + 60;
+    const barTop = topY + pointHeight + 12;
+    const barBottom = bottomY - pointHeight - 12;
+
+    // ---------- LÓGICA LOCAL DE MOVIMENTOS (regras oficiais) ----------
     function getDirection(lado) {
         return lado === 1 ? 1 : -1;
     }
-    
-    // Verifica se uma casa está bloqueada para o jogador (tem 2 ou mais peças adversárias)
     function isBlocked(point, lado) {
         if (point < 0 || point >= 24) return false;
-        const qtd = estadoAtual.board[point];
-        if (lado === 1) return qtd < -1;   // vermelho não pode pousar onde tem 2+ brancas
-        else return qtd > 1;                // branco não pode pousar onde tem 2+ vermelhas
+        const qtd = estado.board[point];
+        if (lado === 1) return qtd < -1;
+        else return qtd > 1;
     }
-    
-    // Gera todos os movimentos legais para uma peça em 'from' com um valor de dado 'steps'
-    function getMovesForPiece(from, steps, lado) {
-        const moves = [];
-        if (from === 24) { // barra do vermelho
-            // só pode sair da barra se a casa de entrada (para vermelho: 1? depende da orientação)
-            // Vamos usar a mesma lógica: vermelho anda horário (casas 0..23). A barra vermelha está no índice 24.
-            // A entrada para vermelho é a casa 0? Não, regra: vermelho começa na casa 0? Vamos simplificar:
-            // Se estiver na barra, o destino é a casa 'steps' (considerando direção)
-            const dest = steps - 1; // porque a primeira casa é 0?
-            if (!isBlocked(dest, lado)) moves.push(dest);
-            return moves;
+    function getDestinos(from, steps, lado) {
+        const destinos = [];
+        if (from === 24) {
+            const dest = steps - 1;
+            if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) destinos.push(dest);
+            return destinos;
         }
-        if (from === 25) { // barra do branco
+        if (from === 25) {
             const dest = 24 - steps;
-            if (!isBlocked(dest, lado)) moves.push(dest);
-            return moves;
+            if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) destinos.push(dest);
+            return destinos;
         }
-        // Movimento normal
         const dir = getDirection(lado);
         let dest = from + dir * steps;
         if (dest < 0 || dest >= 24) {
-            // Se ultrapassou o tabuleiro, está saindo (bear off)
-            // Verificar se pode sair: todas as peças estão nas últimas casas?
-            // Simplificando: permite sair se dest <0 ou >=24 e a peça está na região de saída
-            // Vamos aceitar qualquer saída (o servidor valida)
-            return [dest];
+            destinos.push(dest); // bear off
+        } else if (!isBlocked(dest, lado)) {
+            destinos.push(dest);
         }
-        if (!isBlocked(dest, lado)) moves.push(dest);
-        return moves;
+        return destinos;
     }
-    
-    // Calcula todos os movimentos legais para o lado atual, com os dados disponíveis
-    function calcularMovimentosLegais() {
-        if (!estadoAtual || estadoAtual.turn !== meuLado) return [];
+    function calcularMovimentosLocais() {
+        if (!estado || estado.turn !== meuLado) return [];
         const lado = meuLado;
-        const moves = [];
-        // Para cada valor de dado em dadosDisponiveis
-        for (let i = 0; i < dadosDisponiveis.length; i++) {
-            const steps = dadosDisponiveis[i];
-            // Lista de origens possíveis: barra ou pontos com peças próprias
-            let origins = [];
-            if (lado === 1 && estadoAtual.bar[0] > 0) origins.push(24);
-            if (lado === -1 && estadoAtual.bar[1] > 0) origins.push(25);
-            for (let p = 0; p < 24; p++) {
-                const qtd = estadoAtual.board[p];
-                if ((lado === 1 && qtd > 0) || (lado === -1 && qtd < 0)) origins.push(p);
-            }
-            for (let from of origins) {
-                const dests = getMovesForPiece(from, steps, lado);
-                for (let to of dests) {
-                    moves.push({ from, to, dieIndex: i });
+        let origens = [];
+        if (lado === 1 && estado.bar[0] > 0) origens.push(24);
+        if (lado === -1 && estado.bar[1] > 0) origens.push(25);
+        for (let i = 0; i < 24; i++) {
+            const qtd = estado.board[i];
+            if ((lado === 1 && qtd > 0) || (lado === -1 && qtd < 0)) origens.push(i);
+        }
+        const movimentos = [];
+        for (let idx = 0; idx < dadosDisponiveis.length; idx++) {
+            const steps = dadosDisponiveis[idx];
+            for (let from of origens) {
+                for (let to of getDestinos(from, steps, lado)) {
+                    movimentos.push({ from, to, dadoIdx: idx });
                 }
             }
         }
-        return moves;
+        return movimentos;
     }
-    
-    // Atualiza dadosDisponiveis baseado nos dados rolados e nos usados
     function atualizarDadosDisponiveis() {
-        if (!estadoAtual) return;
-        const dice = estadoAtual.dice;
-        const used = estadoAtual.diceUsed;
-        if (dice[0] === dice[1]) {
-            // Duplicata: 4 movimentos
-            const valor = dice[0];
-            dadosDisponiveis = [];
-            for (let i = 0; i < 4; i++) dadosDisponiveis.push(valor);
-            // Marcar usados: se used[0] true, remove um, etc. (simplificado)
-            if (used[0]) dadosDisponiveis = dadosDisponiveis.slice(1);
-            if (used[1]) dadosDisponiveis = dadosDisponiveis.slice(1);
+        if (!estado) return;
+        const d1 = estado.dice[0], d2 = estado.dice[1];
+        const used = estado.diceUsed;
+        if (d1 === d2) {
+            let arr = [d1, d1, d1, d1];
+            if (used[0]) arr.shift();
+            if (used[1]) arr.shift();
+            dadosDisponiveis = arr;
         } else {
             dadosDisponiveis = [];
-            if (!used[0]) dadosDisponiveis.push(dice[0]);
-            if (!used[1]) dadosDisponiveis.push(dice[1]);
+            if (!used[0]) dadosDisponiveis.push(d1);
+            if (!used[1]) dadosDisponiveis.push(d2);
         }
-        addLog(`🎲 Dados disponíveis: ${JSON.stringify(dadosDisponiveis)}`, 'info');
     }
-    
-    // ========== DESENHO (mesmo de antes, sem alterações) ==========
-    function desenharPecaPremium(x, y, corBase) {
-        ctx.save();
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-        ctx.shadowColor = "rgba(0,0,0,0.4)";
-        const grad = ctx.createRadialGradient(x-4, y-4, 5, x, y, 13);
-        if (corBase === '#c73b2a') {
-            grad.addColorStop(0, '#e86a5a');
-            grad.addColorStop(0.7, '#b03220');
-            grad.addColorStop(1, '#8a2010');
-        } else {
-            grad.addColorStop(0, '#fff9f0');
-            grad.addColorStop(0.7, '#e8d8c0');
-            grad.addColorStop(1, '#c8b89a');
+
+    // ---------- DESENHO PREMIUM COM PROFUNDIDADE ----------
+    // Função para desenhar dados com pontos (em vez de números) e leve perspectiva
+    function desenharDadoCustom(x, y, valor, lado, ctxTemp) {
+        // Não usamos aqui; os dados são desenhados no HTML/CSS, mas para efeito de rolagem
+        // mantemos a animação CSS. Para a aparência "pontos", substituímos o texto por pontos.
+        // Como a interface HTML já usa texto, vamos converter dinamicamente.
+        const dadoDiv = document.getElementById(lado === 1 ? "dado1" : "dado2");
+        if (dadoDiv) {
+            const pontosMap = {
+                1: "●", 2: "●●", 3: "●●●", 4: "●●●●", 5: "●●●●●", 6: "●●●●●●"
+            };
+            dadoDiv.innerText = pontosMap[valor] || "?";
+            dadoDiv.style.fontSize = "1.8rem";
+            dadoDiv.style.letterSpacing = "2px";
         }
-        ctx.beginPath();
-        ctx.arc(x, y, 12, 0, 2 * Math.PI);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = '#2b1a0e';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(x-3, y-3, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = 'rgba(255,255,255,0.65)';
-        ctx.fill();
-        ctx.restore();
     }
-    
-    function desenharTriangulo(x, y, largura, altura, paraCima, claro) {
+
+    function desenharTriangulo(x, y, largura, altura, paraCima, corClara) {
         const grad = ctx.createLinearGradient(x, y, x, paraCima ? y - altura : y + altura);
-        if (claro) {
-            grad.addColorStop(0, '#f3d6ad');
-            grad.addColorStop(1, '#d2a679');
+        if (corClara) {
+            grad.addColorStop(0, "#e7cba5");
+            grad.addColorStop(1, "#c8a06e");
         } else {
-            grad.addColorStop(0, '#9c5a2e');
-            grad.addColorStop(1, '#6b3e1e');
+            grad.addColorStop(0, "#8b5a2e");
+            grad.addColorStop(1, "#5a3820");
         }
         ctx.beginPath();
         if (paraCima) {
             ctx.moveTo(x, y);
-            ctx.lineTo(x + largura/2, y - altura);
+            ctx.lineTo(x + largura / 2, y - altura);
             ctx.lineTo(x + largura, y);
         } else {
             ctx.moveTo(x, y);
-            ctx.lineTo(x + largura/2, y + altura);
+            ctx.lineTo(x + largura / 2, y + altura);
             ctx.lineTo(x + largura, y);
         }
         ctx.closePath();
         ctx.fillStyle = grad;
         ctx.fill();
-        ctx.strokeStyle = '#3a1f0f';
+        ctx.strokeStyle = "#2a1a0a";
+        ctx.lineWidth = 1.2;
+        ctx.stroke();
+        // sombra interna sutil
+        ctx.save();
+        ctx.globalAlpha = 0.1;
+        ctx.fillStyle = "#fff8e0";
+        ctx.fill();
+        ctx.restore();
+    }
+
+    function desenharPeca(x, y, cor, camada = 0) {
+        ctx.save();
+        // sombra mais suave para camadas superiores
+        const sombraIntensidade = 5 - camada * 0.8;
+        ctx.shadowBlur = Math.max(3, sombraIntensidade);
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        const grad = ctx.createRadialGradient(x - 4, y - 4, 5, x, y, 14);
+        if (cor === "red") {
+            grad.addColorStop(0, "#e06050");
+            grad.addColorStop(1, "#962818");
+        } else {
+            grad.addColorStop(0, "#fff5e8");
+            grad.addColorStop(1, "#d4bc92");
+        }
+        ctx.beginPath();
+        ctx.arc(x, y, 13, 0, 2 * Math.PI);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = "#1a0e05";
         ctx.lineWidth = 1.5;
         ctx.stroke();
+        // brilho especular
+        ctx.beginPath();
+        ctx.arc(x - 3, y - 3, 3, 0, 2 * Math.PI);
+        ctx.fillStyle = "rgba(255,250,210,0.8)";
+        ctx.fill();
+        ctx.restore();
     }
-    
+
     function desenharTabuleiro() {
-        if (!estadoAtual) return;
+        if (!estado) return;
         ctx.clearRect(0, 0, w, h);
-        // Triângulos
+        // fundo principal (madeira escura)
+        ctx.fillStyle = "#a87b51";
+        ctx.fillRect(0, 0, w, h);
+        // textura de madeira (linhas suaves)
+        ctx.save();
+        ctx.globalAlpha = 0.2;
+        for (let i = 0; i < 200; i++) {
+            ctx.beginPath();
+            ctx.moveTo(0, i * 5);
+            ctx.lineTo(w, i * 5 + (i % 3));
+            ctx.strokeStyle = "#3a2510";
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        // triângulos
         for (let i = 0; i < 6; i++) {
-            const x = marginLeft + i * pointW;
+            const x = boardMarginX + i * pointWidth;
             const claro = (i % 2 === 0);
-            desenharTriangulo(x, topY, pointW, pointH, false, claro);
-            desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
+            desenharTriangulo(x, topY, pointWidth, pointHeight, false, claro);
+            desenharTriangulo(x, bottomY, pointWidth, pointHeight, true, !claro);
         }
         for (let i = 0; i < 6; i++) {
-            const x = marginLeft + halfWidth + i * pointW;
+            const x = boardMarginX + halfBoard + i * pointWidth;
             const claro = (i % 2 === 0);
-            desenharTriangulo(x, topY, pointW, pointH, false, claro);
-            desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
+            desenharTriangulo(x, topY, pointWidth, pointHeight, false, claro);
+            desenharTriangulo(x, bottomY, pointWidth, pointHeight, true, !claro);
         }
-        // Barra
-        ctx.fillStyle = '#8b6946';
-        ctx.fillRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
-        ctx.fillStyle = '#c9a87b';
-        for (let i = 0; i < 3; i++) ctx.fillRect(barLeft + 12 + i*16, barTop + 15, 6, (barBottom-barTop)-30);
-        ctx.strokeStyle = '#4a2c14';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
-        ctx.fillStyle = "#f5e6d3";
-        ctx.font = "bold 20px 'Segoe UI'";
-        ctx.fillText("║", barLeft+28, barTop + (barBottom-barTop)/2 + 8);
-        ctx.font = "bold 14px";
-        ctx.fillText("BARRA", barLeft+12, barTop + (barBottom-barTop)/2 + 25);
-        // Números
-        ctx.fillStyle = '#2c1a0c';
-        ctx.font = "bold 15px";
+
+        // Barra central (madeira trabalhada)
+        ctx.fillStyle = "#b87c48";
+        ctx.fillRect(barLeft, barTop, barRight - barLeft, barBottom - barTop);
+        ctx.fillStyle = "#e0bc88";
+        for (let i = 0; i < 3; i++) {
+            ctx.fillRect(barLeft + 12 + i * 14, barTop + 15, 6, (barBottom - barTop) - 30);
+        }
+        ctx.strokeStyle = "#4a2a10";
+        ctx.lineWidth = 2.5;
+        ctx.strokeRect(barLeft, barTop, barRight - barLeft, barBottom - barTop);
+        ctx.font = "bold 20px 'Georgia'";
+        ctx.fillStyle = "#fae0b0";
+        ctx.fillText("⚫", barLeft + 26, barTop + (barBottom - barTop) / 2 + 8);
+        ctx.font = "bold 12px 'Segoe UI'";
+        ctx.fillText("BARRA", barLeft + 12, barTop + (barBottom - barTop) / 2 + 30);
+
+        // Números das casas
+        ctx.font = "bold 14px 'Georgia'";
+        ctx.fillStyle = "#2c1a08";
         ctx.textAlign = "center";
         for (let i = 0; i < 6; i++) {
-            const x = marginLeft + i * pointW + pointW/2;
-            ctx.fillText((6 - i).toString(), x, topY - 12);
-        }
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + halfWidth + i * pointW + pointW/2;
-            ctx.fillText((7 + i).toString(), x, topY - 12);
-        }
-        for (let i = 0; i < 6; i++) {
-            const xEsq = marginLeft + i * pointW + pointW/2;
-            ctx.fillText((13 + i).toString(), xEsq, bottomY + 24);
-            const xDir = marginLeft + halfWidth + i * pointW + pointW/2;
-            ctx.fillText((19 + i).toString(), xDir, bottomY + 24);
+            const xEsq = boardMarginX + i * pointWidth + pointWidth / 2;
+            ctx.fillText((6 - i).toString(), xEsq, topY - 10);
+            ctx.fillText((13 + i).toString(), xEsq, bottomY + 26);
+            const xDir = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
+            ctx.fillText((7 + i).toString(), xDir, topY - 10);
+            ctx.fillText((19 + i).toString(), xDir, bottomY + 26);
         }
         ctx.textAlign = "left";
-        // Contadores
-        document.getElementById('casaVermelha').innerText = estadoAtual.home[0];
-        document.getElementById('casaBranca').innerText = estadoAtual.home[1];
-        
-        // Desenhar peças (idêntico ao anterior, omitido para brevidade - igual ao código funcionando)
-        // [Aqui viria o desenho das peças, mas para não repetir, mantemos o mesmo que já funciona]
-        // Vou simplificar: chamo uma função genérica que já existia.
-        desenharPecasNoTabuleiro();
-        
-        // Destaques
+
+        // Atualizar contadores UI
+        document.getElementById("homeVermelha").innerText = estado.home[0];
+        document.getElementById("homeBranca").innerText = estado.home[1];
+
+        // Desenhar peças com sombras entre camadas (step reduzido)
+        function desenharPilha(x, yBase, qtd, cor, direcao) {
+            const absQ = Math.abs(qtd);
+            const maxVis = 6;
+            const step = 12; // reduzido para melhor empilhamento
+            for (let j = 0; j < Math.min(absQ, maxVis); j++) {
+                const y = direcao === 'down' ? yBase + j * step : yBase - j * step;
+                desenharPeca(x, y, cor, j);
+            }
+            if (absQ > maxVis) {
+                ctx.fillStyle = "#111";
+                ctx.font = "bold 10px monospace";
+                ctx.fillText(`+${absQ - maxVis}`, x + 12, direcao === 'down' ? yBase + (maxVis-1)*step + 12 : yBase - (maxVis-1)*step - 8);
+            }
+        }
+
+        for (let i = 0; i < 6; i++) {
+            const idx1 = 5 - i;
+            const q1 = estado.board[idx1];
+            if (q1 !== 0) {
+                const x = boardMarginX + i * pointWidth + pointWidth / 2;
+                const yBase = topY + 22;
+                desenharPilha(x, yBase, q1, q1 > 0 ? "red" : "white", "down");
+            }
+            const idx2 = 11 - i;
+            const q2 = estado.board[idx2];
+            if (q2 !== 0) {
+                const x = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
+                const yBase = topY + 22;
+                desenharPilha(x, yBase, q2, q2 > 0 ? "red" : "white", "down");
+            }
+            const idx3 = 12 + i;
+            const q3 = estado.board[idx3];
+            if (q3 !== 0) {
+                const x = boardMarginX + i * pointWidth + pointWidth / 2;
+                const yBase = bottomY - 30;
+                desenharPilha(x, yBase, q3, q3 > 0 ? "red" : "white", "up");
+            }
+            const idx4 = 18 + i;
+            const q4 = estado.board[idx4];
+            if (q4 !== 0) {
+                const x = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
+                const yBase = bottomY - 30;
+                desenharPilha(x, yBase, q4, q4 > 0 ? "red" : "white", "up");
+            }
+        }
+
+        // peças na barra
+        if (estado.bar[0] > 0) {
+            for (let j = 0; j < Math.min(estado.bar[0], 6); j++) {
+                desenharPeca(barLeft + 30, barTop + 22 + j * 14, "red", j);
+            }
+            if (estado.bar[0] > 6) ctx.fillText(`+${estado.bar[0] - 6}`, barLeft + 48, barTop + 120);
+        }
+        if (estado.bar[1] > 0) {
+            for (let j = 0; j < Math.min(estado.bar[1], 6); j++) {
+                desenharPeca(barLeft + 30, barBottom - 22 - j * 14, "white", j);
+            }
+            if (estado.bar[1] > 6) ctx.fillText(`+${estado.bar[1] - 6}`, barLeft + 48, barBottom - 110);
+        }
+
+        // Destaque da peça selecionada
         if (pecaSelecionada !== null) {
             let cx, cy;
             const from = pecaSelecionada.from;
-            if (from === 24) { cx = barLeft+32; cy = barTop+30; }
-            else if (from === 25) { cx = barLeft+32; cy = barBottom-30; }
+            if (from === 24) { cx = barLeft + 30; cy = barTop + 30; }
+            else if (from === 25) { cx = barLeft + 30; cy = barBottom - 30; }
             else if (from < 12) {
-                if (from <= 5) { const i = 5 - from; cx = marginLeft + i * pointW + pointW/2; cy = topY + 28; }
-                else { const i = 11 - from; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 28; }
+                if (from <= 5) { const i = 5 - from; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = topY + 30; }
+                else { const i = 11 - from; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = topY + 30; }
             } else {
-                if (from <= 17) { const i = from - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 36; }
-                else { const i = from - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 36; }
+                if (from <= 17) { const i = from - 12; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
+                else { const i = from - 18; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
             }
             ctx.save();
-            ctx.shadowBlur = 18; ctx.shadowColor = 'gold';
-            ctx.beginPath(); ctx.arc(cx, cy, 18, 0, 2*Math.PI);
-            ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 4; ctx.stroke();
+            ctx.shadowBlur = 14;
+            ctx.shadowColor = "#ffcc66";
+            ctx.beginPath();
+            ctx.arc(cx, cy, 18, 0, 2 * Math.PI);
+            ctx.strokeStyle = "#ffcc66";
+            ctx.lineWidth = 4;
+            ctx.stroke();
             ctx.restore();
         }
-        // Destinos verdes com base nos movimentos legais locais
+
+        // Destinos verdes
         if (pecaSelecionada !== null) {
-            const from = pecaSelecionada.from;
-            const moves = calcularMovimentosLegais().filter(m => m.from === from);
-            const destinos = new Set(moves.map(m => m.to));
+            const movimentos = calcularMovimentosLocais();
+            const destinos = new Set(movimentos.filter(m => m.from === pecaSelecionada.from).map(m => m.to));
             destinos.forEach(to => {
                 let cx, cy;
-                if (to === 24) { cx = barLeft+32; cy = barTop+30; }
-                else if (to === 25) { cx = barLeft+32; cy = barBottom-30; }
+                if (to === 24) { cx = barLeft + 30; cy = barTop + 30; }
+                else if (to === 25) { cx = barLeft + 30; cy = barBottom - 30; }
                 else if (to < 12) {
-                    if (to <= 5) { const i = 5 - to; cx = marginLeft + i * pointW + pointW/2; cy = topY + 28; }
-                    else { const i = 11 - to; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 28; }
+                    if (to <= 5) { const i = 5 - to; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = topY + 30; }
+                    else { const i = 11 - to; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = topY + 30; }
                 } else {
-                    if (to <= 17) { const i = to - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 36; }
-                    else { const i = to - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 36; }
+                    if (to <= 17) { const i = to - 12; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
+                    else { const i = to - 18; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
                 }
                 ctx.save();
-                ctx.shadowBlur = 14; ctx.shadowColor = '#2ecc71';
-                ctx.beginPath(); ctx.arc(cx, cy, 20, 0, 2*Math.PI);
-                ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 4; ctx.stroke();
+                ctx.shadowBlur = 12;
+                ctx.shadowColor = "#2ecc71";
+                ctx.beginPath();
+                ctx.arc(cx, cy, 20, 0, 2 * Math.PI);
+                ctx.strokeStyle = "#2ecc71";
+                ctx.lineWidth = 4;
+                ctx.stroke();
                 ctx.restore();
             });
         }
     }
-    
-    function desenharPecasNoTabuleiro() {
-        // Implementação igual à anterior, omitida para não alongar.
-        // O código original já funciona, então reutilizamos a mesma lógica.
-        // Para garantir, vou chamar a função que estava no código anterior.
-        // Como não quero perder tempo, assumo que o desenho está correto.
-    }
-    
-    // ========== CLIQUE ==========
-    function getPointFromClick(mouseX, mouseY) {
-        if (mouseX >= barLeft && mouseX <= barRight) {
-            if (mouseY >= barTop && mouseY <= barTop + 80) return 24;
-            if (mouseY >= barBottom - 80 && mouseY <= barBottom) return 25;
+
+    // ---------- CLIQUE NO TABULEIRO ----------
+    function getPointFromClick(px, py) {
+        if (px >= barLeft && px <= barRight) {
+            if (py >= barTop && py <= barTop + 70) return 24;
+            if (py >= barBottom - 70 && py <= barBottom) return 25;
         }
         for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + i * pointW;
-            const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) return 5 - i;
+            const x0 = boardMarginX + i * pointWidth;
+            const x1 = x0 + pointWidth;
+            if (px >= x0 && px <= x1 && py >= topY && py <= topY + pointHeight) return 5 - i;
         }
         for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + halfWidth + i * pointW;
-            const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) return 11 - i;
+            const x0 = boardMarginX + halfBoard + i * pointWidth;
+            const x1 = x0 + pointWidth;
+            if (px >= x0 && px <= x1 && py >= topY && py <= topY + pointHeight) return 11 - i;
         }
         for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + i * pointW;
-            const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) return 12 + i;
+            const x0 = boardMarginX + i * pointWidth;
+            const x1 = x0 + pointWidth;
+            if (px >= x0 && px <= x1 && py >= bottomY - pointHeight && py <= bottomY) return 12 + i;
         }
         for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + halfWidth + i * pointW;
-            const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) return 18 + i;
+            const x0 = boardMarginX + halfBoard + i * pointWidth;
+            const x1 = x0 + pointWidth;
+            if (px >= x0 && px <= x1 && py >= bottomY - pointHeight && py <= bottomY) return 18 + i;
         }
         return -1;
     }
-    
-    canvas.addEventListener('click', (e) => {
-        if (!jogoIniciado || meuLado === 0 || !estadoAtual) return;
-        if (estadoAtual.turn !== meuLado) { addLog("Não é seu turno", "error"); return; }
-        if (estadoAtual.rollPhase) { addLog("Role os dados primeiro", "error"); return; }
-        
+
+    canvas.addEventListener("click", (e) => {
+        if (!jogoAtivo || meuLado === 0 || !estado) return;
+        if (estado.turn !== meuLado) { addLog("⏳ Aguarde seu turno", "#ffaa88"); return; }
+        if (estado.rollPhase) { addLog("🎲 Role os dados primeiro", "#ffaa88"); return; }
+
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
-        const point = getPointFromClick(x, y);
+        const mx = (e.clientX - rect.left) * scaleX;
+        const my = (e.clientY - rect.top) * scaleY;
+        const point = getPointFromClick(mx, my);
         if (point === -1) return;
-        
+
         let count;
-        if (point === 24) count = estadoAtual.bar[0];
-        else if (point === 25) count = estadoAtual.bar[1];
-        else count = estadoAtual.board[point];
+        if (point === 24) count = estado.bar[0];
+        else if (point === 25) count = estado.bar[1];
+        else count = estado.board[point];
         const isMine = (meuLado === 1 && count > 0) || (meuLado === -1 && count < 0);
-        
+
         if (pecaSelecionada === null) {
             if (isMine) {
                 pecaSelecionada = { from: point };
-                addLog(`Selecionado ${point}`, "success");
+                addLog(`🔍 Peça selecionada em ${point}`, "#aaffaa");
                 desenharTabuleiro();
             } else {
-                addLog("Peça adversária ou vazia", "error");
+                addLog("❌ Peça adversária ou vazia", "#ff8888");
             }
         } else {
             const from = pecaSelecionada.from;
             const to = point;
-            // Verifica se o movimento é legal usando a lista local
-            const movesLegais = calcularMovimentosLegais();
-            const movimentoValido = movesLegais.find(m => m.from === from && m.to === to);
-            if (movimentoValido) {
-                addLog(`Movimento ${from}→${to}`, "success");
+            const movimentos = calcularMovimentosLocais();
+            const valido = movimentos.find(m => m.from === from && m.to === to);
+            if (valido) {
+                addLog(`✅ Movimento ${from} → ${to}`, "#aaffaa");
                 movimentosPendentes.push({ from, to });
-                // Remove um dado usado (o primeiro que corresponde ao steps)
-                const steps = Math.abs(to - from); // simplificado, mas correto para movimento normal
-                // Encontra o índice do dado disponível que permite esse movimento
-                let indexToRemove = -1;
-                for (let i = 0; i < dadosDisponiveis.length; i++) {
-                    // Verifica se o steps é igual ao valor do dado (considerando direção)
-                    if (dadosDisponiveis[i] === steps) {
-                        indexToRemove = i;
-                        break;
-                    }
-                }
-                if (indexToRemove !== -1) dadosDisponiveis.splice(indexToRemove, 1);
+                const steps = Math.abs(to - from);
+                let idx = dadosDisponiveis.findIndex(v => v === steps);
+                if (idx !== -1) dadosDisponiveis.splice(idx, 1);
                 pecaSelecionada = null;
                 desenharTabuleiro();
                 atualizarInterface();
-                // Se não houver mais dados disponíveis, confirma automaticamente
                 if (dadosDisponiveis.length === 0 && movimentosPendentes.length > 0) {
-                    addLog("Todos os dados usados, confirmando jogada...", "success");
-                    confirmarMovimentos();
+                    addLog("⚡ Todos os dados usados, confirmando...", "#ffdd88");
+                    confirmarJogada();
                 }
             } else {
-                addLog(`Movimento inválido ${from}→${to}`, "error");
+                addLog(`❌ Movimento inválido (${from}→${to})`, "#ff8888");
                 pecaSelecionada = null;
                 desenharTabuleiro();
             }
         }
     });
-    
-    function atualizarInterface() {
-        if (!estadoAtual) return;
-        desenharTabuleiro();
-        const dado1 = document.getElementById('dado1');
-        const dado2 = document.getElementById('dado2');
-        dado1.innerText = estadoAtual.dice[0] || '?';
-        dado2.innerText = estadoAtual.dice[1] || '?';
-        dado1.classList.toggle('usado', estadoAtual.diceUsed[0]);
-        dado2.classList.toggle('usado', estadoAtual.diceUsed[1]);
-        document.getElementById('vez-atual').innerText = estadoAtual.turn === 1 ? 'Vermelho' : 'Branco';
-        document.getElementById('direcao-movimento').innerText = estadoAtual.turn === 1 ? '↓ horário' : '↑ anti-horário';
-        const statusEl = document.getElementById('status-jogo');
-        if (estadoAtual.gameOver) statusEl.innerText = `🏆 ${estadoAtual.winner === 1 ? 'Vermelho' : 'Branco'} venceu!`;
-        else if (estadoAtual.turn !== meuLado) statusEl.innerText = `⏳ Aguardando...`;
-        else if (estadoAtual.rollPhase) statusEl.innerText = '🎲 Role os dados';
-        else statusEl.innerText = '🖱️ Selecione peça e destino';
-        
-        const btnRolar = document.getElementById('btn-rolar');
-        const btnConfirmar = document.getElementById('btn-confirmar');
-        const btnCancelar = document.getElementById('btn-cancelar');
-        if (!jogoIniciado || estadoAtual.turn !== meuLado || estadoAtual.gameOver) {
-            btnRolar.style.display = 'none';
-            btnConfirmar.style.display = 'none';
-            btnCancelar.style.display = 'none';
-        } else if (estadoAtual.rollPhase) {
-            btnRolar.style.display = 'inline-block';
-            btnConfirmar.style.display = 'none';
-            btnCancelar.style.display = 'none';
-        } else {
-            btnRolar.style.display = 'none';
-            btnConfirmar.style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
-            btnCancelar.style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
-        }
-    }
-    
-    function confirmarMovimentos() {
+
+    function confirmarJogada() {
         if (movimentosPendentes.length === 0) return;
-        socket.emit('moverPecas', { moves: movimentosPendentes });
+        socket.emit("moverPecas", { moves: movimentosPendentes });
         movimentosPendentes = [];
         pecaSelecionada = null;
-        atualizarInterface();
     }
-    
     function cancelarMovimentos() {
         movimentosPendentes = [];
         pecaSelecionada = null;
+        atualizarDadosDisponiveis();
+        desenharTabuleiro();
         atualizarInterface();
+        addLog("🔄 Movimentos cancelados", "#ffdd88");
     }
-    
-    function rolarDados() { socket.emit('rolarDados'); addLog("Rolando dados...", "info"); }
-    function desistir() { if (confirm('Desistir?')) socket.emit('desistir'); }
-    
-    // ========== EVENTOS SOCKET ==========
+    function rolarDados() {
+        socket.emit("rolarDados");
+        addLog("🎲 Rolando dados...", "#ccccff");
+        const dado1 = document.getElementById("dado1");
+        const dado2 = document.getElementById("dado2");
+        dado1.classList.add("rolling");
+        dado2.classList.add("rolling");
+        // atualiza para pontos visuais durante a animação (opcional)
+        setTimeout(() => {
+            dado1.classList.remove("rolling");
+            dado2.classList.remove("rolling");
+        }, 400);
+    }
+    function desistir() {
+        if (confirm("Desistir da partida?")) socket.emit("desistir");
+    }
+
+    function atualizarInterface() {
+        if (!estado) return;
+        document.getElementById("turnoLabel").innerHTML = estado.turn === 1 ? "VERMELHO ↓" : "BRANCO ↑";
+        const d1 = document.getElementById("dado1");
+        const d2 = document.getElementById("dado2");
+        // converter valores para pontos
+        const pontosMap = {1:"●",2:"●●",3:"●●●",4:"●●●●",5:"●●●●●",6:"●●●●●●"};
+        d1.innerText = pontosMap[estado.dice[0]] || "?";
+        d2.innerText = pontosMap[estado.dice[1]] || "?";
+        d1.style.fontSize = "1.8rem";
+        d2.style.fontSize = "1.8rem";
+        d1.classList.toggle("used", estado.diceUsed[0]);
+        d2.classList.toggle("used", estado.diceUsed[1]);
+
+        const rolar = document.getElementById("rolarBtn");
+        const confirmar = document.getElementById("confirmarBtn");
+        const cancelar = document.getElementById("cancelarBtn");
+        const meuTurno = (estado.turn === meuLado);
+        if (!jogoAtivo || !meuTurno || estado.gameOver) {
+            rolar.style.display = "none";
+            confirmar.style.display = "none";
+            cancelar.style.display = "none";
+        } else if (estado.rollPhase) {
+            rolar.style.display = "inline-block";
+            confirmar.style.display = "none";
+            cancelar.style.display = "none";
+        } else {
+            rolar.style.display = "none";
+            confirmar.style.display = movimentosPendentes.length ? "inline-block" : "none";
+            cancelar.style.display = movimentosPendentes.length ? "inline-block" : "none";
+        }
+        desenharTabuleiro();
+    }
+
+    function addLog(msg, cor = "#dddddd") {
+        const logDiv = document.getElementById("logPanel");
+        const p = document.createElement("div");
+        p.style.color = cor;
+        p.innerHTML = `🔹 ${new Date().toLocaleTimeString()} ${msg}`;
+        logDiv.appendChild(p);
+        p.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        while (logDiv.children.length > 60) logDiv.removeChild(logDiv.firstChild);
+    }
+
+    // ---------- SOCKET EVENTOS ----------
     function entrar() {
-        const apelido = document.getElementById('input-apelido').value.trim();
-        const sala = document.getElementById('input-sala').value.trim();
-        if (!apelido || !sala) return alert('Preencha nome e sala!');
+        const nome = prompt("Seu nome:", "jogador") || "anon";
+        const sala = prompt("Sala:", "gamão") || "gamão";
         salaAtual = sala;
-        socket.emit('entrarSala', { apelido, sala });
-        document.getElementById('tela-login').style.display = 'none';
-        document.getElementById('lobby').style.display = 'block';
-        document.getElementById('painel-chat').style.display = 'block';
-        addLog(`Entrando sala ${sala} como ${apelido}`, 'info');
+        socket.emit("entrarSala", { apelido: nome, sala });
+        addLog(`📡 Entrando na sala ${sala} como ${nome}`, "#88ffaa");
     }
-    function marcarPronto() {
-        socket.emit('marcarPronto');
-        document.getElementById('btn-pronto').disabled = true;
-        document.getElementById('btn-pronto').innerText = 'Aguardando...';
-        addLog("Pronto", 'success');
-    }
-    function enviarMensagem() {
-        const input = document.getElementById('input-mensagem');
-        const msg = input.value.trim();
-        if (msg) { socket.emit('enviarMensagem', msg); input.value = ''; addLog(`Msg: ${msg}`, 'info'); }
-    }
-    
-    socket.on('connect', () => { addLog("Conectado", 'success'); document.getElementById('status-conexao').innerText = "✅ Conectado"; });
-    socket.on('disconnect', () => { addLog("Desconectado", 'error'); document.getElementById('status-conexao').innerText = "❌ Desconectado"; });
-    socket.on('erro', (msg) => { addLog(`Erro: ${msg}`, 'error'); alert(msg); });
-    socket.on('definirPapel', (dados) => {
-        if (dados.papel === 'jogador') {
+
+    socket.on("connect", () => addLog("✅ Conectado ao servidor", "#88ffaa"));
+    socket.on("disconnect", () => addLog("❌ Desconectado", "#ff8888"));
+    socket.on("erro", (msg) => addLog(`⚠️ ${msg}`, "#ffaa88"));
+    socket.on("definirPapel", (dados) => {
+        if (dados.papel === "jogador") {
             meuLado = dados.lado;
-            document.getElementById('meu-lado').innerText = meuLado === 1 ? 'Vermelho' : 'Branco';
-            addLog(`Lado: ${meuLado === 1 ? 'Vermelho' : 'Branco'}`, 'success');
+            document.getElementById("meuLadoLabel").innerHTML = meuLado === 1 ? "VERMELHO" : "BRANCO";
+            addLog(`🎭 Você é ${meuLado === 1 ? "Vermelho" : "Branco"}`, "#aaffaa");
         } else {
             meuLado = 0;
-            document.getElementById('meu-lado').innerText = 'Espectador';
+            document.getElementById("meuLadoLabel").innerHTML = "ESPECTADOR";
         }
     });
-    socket.on('estadoLobby', (dados) => {
-        document.getElementById('info-sala').innerHTML = `<p>Sala: ${salaAtual} | Jogadores: ${dados.jogadoresInfo.length}/2</p>`;
-        let lista = '';
-        dados.jogadoresInfo.forEach(j => lista += `<li>👤 ${j.nome} (${j.lado === 1 ? 'Vermelho' : 'Branco'}) ${j.pronto ? '✅' : '⏳'}</li>`);
-        dados.espectadores.forEach(e => lista += `<li>👁️ ${e}</li>`);
-        document.getElementById('lista-alunos').innerHTML = lista;
+    socket.on("estadoLobby", (dados) => {
         if (dados.rodando) {
-            document.getElementById('lobby').style.display = 'none';
-            document.getElementById('area-jogo').style.display = 'block';
-            document.getElementById('painel-historico').style.display = 'block';
-            jogoIniciado = true;
-            addLog("Partida iniciada!", 'success');
-        } else {
-            document.getElementById('lobby').style.display = 'block';
-            document.getElementById('area-jogo').style.display = 'none';
+            jogoAtivo = true;
+            addLog("🏁 Partida iniciada!", "#ffffaa");
         }
     });
-    socket.on('iniciarPartida', (dados) => {
-        jogoIniciado = true;
-        estadoAtual = dados.estado;
-        if (dados.lado !== 'espectador') meuLado = dados.lado;
+    socket.on("iniciarPartida", (dados) => {
+        jogoAtivo = true;
+        estado = dados.estado;
+        if (dados.lado !== "espectador") meuLado = dados.lado;
         atualizarDadosDisponiveis();
-        desenharTabuleiro();
         atualizarInterface();
-        document.getElementById('lobby').style.display = 'none';
-        document.getElementById('area-jogo').style.display = 'block';
+        addLog("🚀 Jogo iniciado", "#aaffaa");
     });
-    socket.on('estadoAtual', (estado) => {
-        estadoAtual = estado;
+    socket.on("estadoAtual", (novo) => {
+        estado = novo;
         atualizarDadosDisponiveis();
-        desenharTabuleiro();
         atualizarInterface();
     });
-    socket.on('dadosRolados', ({ dice, turn, legalMoves: moves }) => {
-        estadoAtual.dice = dice;
-        estadoAtual.diceUsed = [false, false];
-        estadoAtual.rollPhase = false;
+    socket.on("dadosRolados", ({ dice }) => {
+        estado.dice = dice;
+        estado.diceUsed = [false, false];
+        estado.rollPhase = false;
         atualizarDadosDisponiveis();
-        addLog(`Dados: ${dice[0]} e ${dice[1]} | Locais: ${dadosDisponiveis.length} movimentos`, 'success');
-        desenharTabuleiro();
+        addLog(`🎲 Dados: ${dice[0]} e ${dice[1]}`, "#aaffaa");
         atualizarInterface();
     });
-    socket.on('jogadaFeita', (dados) => {
-        estadoAtual = dados.estado;
-        if (dados.historico) document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
+    socket.on("jogadaFeita", (dados) => {
+        estado = dados.estado;
         movimentosPendentes = [];
         pecaSelecionada = null;
         atualizarDadosDisponiveis();
-        desenharTabuleiro();
         atualizarInterface();
-        addLog("Jogada confirmada", 'success');
+        addLog("♟️ Jogada confirmada", "#aaffaa");
     });
-    socket.on('fimDeJogo', (dados) => {
+    socket.on("fimDeJogo", (dados) => {
         alert(dados.mensagem);
-        jogoIniciado = false;
-        document.getElementById('area-jogo').style.display = 'none';
-        document.getElementById('lobby').style.display = 'block';
-        document.getElementById('btn-pronto').disabled = false;
-        document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+        jogoAtivo = false;
+        addLog(`🏆 ${dados.mensagem}`, "#ffff88");
     });
-    socket.on('novaMensagem', (msg) => {
-        const div = document.getElementById('chat-mensagens');
+    socket.on("novaMensagem", (msg) => {
+        const chatDiv = document.getElementById("chatMessages");
         const hora = new Date(msg.timestamp).toLocaleTimeString();
-        div.innerHTML += `<div><strong>${msg.remetente}</strong> <span class="badge">${hora}</span>: ${msg.texto}</div>`;
-        div.scrollTop = div.scrollHeight;
+        chatDiv.innerHTML += `<div><strong>${msg.remetente}</strong> <span style="font-size:0.7rem;">${hora}</span>: ${msg.texto}</div>`;
+        chatDiv.scrollTop = chatDiv.scrollHeight;
     });
-    document.getElementById('input-mensagem').addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
+
+    // UI buttons e abas
+    document.getElementById("rolarBtn").onclick = rolarDados;
+    document.getElementById("desistirBtn").onclick = desistir;
+    document.getElementById("confirmarBtn").onclick = confirmarJogada;
+    document.getElementById("cancelarBtn").onclick = cancelarMovimentos;
+    document.getElementById("enviarChat").onclick = () => {
+        const input = document.getElementById("chatInput");
+        const msg = input.value.trim();
+        if (msg) socket.emit("enviarMensagem", msg);
+        input.value = "";
+    };
+    document.getElementById("chatInput").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") document.getElementById("enviarChat").click();
+    });
+    document.querySelectorAll(".tab-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const tab = btn.dataset.tab;
+            document.querySelectorAll(".tab-content").forEach(tc => tc.classList.remove("active"));
+            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add("active");
+            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+        });
+    });
+
+    setTimeout(() => { if (!salaAtual) entrar(); }, 300);
 </script>
 </body>
 </html>
