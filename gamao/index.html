@@ -76,6 +76,7 @@
         button.success { background: #1e4d2b; }
         button.warning { background: #c98a2c; }
         button.danger { background: #a04030; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
         input {
             padding: 10px;
             border-radius: 30px;
@@ -92,6 +93,7 @@
             border: 5px solid #6b4226;
             max-width: 100%;
             height: auto;
+            cursor: pointer;
         }
         .historico-lista {
             max-height: 200px;
@@ -133,6 +135,13 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
         }
         .dado.usado { opacity: 0.4; }
+        .status-mensagem {
+            font-size: 16px;
+            padding: 5px 10px;
+            background: #c98a2c;
+            border-radius: 20px;
+            color: #1a1a1a;
+        }
     </style>
 </head>
 <body>
@@ -164,7 +173,7 @@
             <div class="painel-info">
                 <div>Seu Lado: <span id="meu-lado" class="destaque">---</span></div>
                 <div>Turno: <span id="vez-atual" class="destaque">---</span></div>
-                <div id="status-jogo">Aguardando...</div>
+                <div id="status-jogo" class="status-mensagem">Aguardando...</div>
             </div>
             
             <div class="tabuleiro-container">
@@ -182,7 +191,7 @@
                 <button onclick="cancelarMovimentos()" class="warning" id="btn-cancelar" style="display:none;">↩️ Cancelar</button>
                 <button onclick="desistir()" class="danger">🏳️ Desistir</button>
             </div>
-            <p style="font-size:14px; margin-top:10px;">Clique nas peças para selecionar origem e destino (múltiplos movimentos)</p>
+            <p style="font-size:14px; margin-top:10px;">Clique em uma peça sua (origem) e depois no destino (destacado em verde).</p>
         </div>
     </div>
 
@@ -210,10 +219,39 @@
     let jogoIniciado = false;
     let salaAtual = '';
     let movimentosPendentes = [];
-    let pecaSelecionada = null; // { from }
+    let pecaSelecionada = null;
+    let legalMoves = [];  // Array de sequências de movimentos legais { moves: [...], dieIndices: [...] }
 
     const canvas = document.getElementById('boardCanvas');
     const ctx = canvas.getContext('2d');
+
+    // ========== UTILITÁRIOS ==========
+    function obterCoordenadasCanvas(e) {
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        return { x, y };
+    }
+
+    function getPointFromClick(x, y) {
+        const w = canvas.width, h = canvas.height;
+        const triWidth = (w - 100) / 12;
+        for (let i = 0; i < 24; i++) {
+            const col = Math.floor(i / 2);
+            const isTop = i % 2 === 0;
+            const cx = 50 + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
+            const cy = isTop ? 50 + 60 : h - 100 - 60;
+            const dist = Math.sqrt((x-cx)**2 + (y-cy)**2);
+            if (dist < 40) return i;
+        }
+        if (x > w/2 - 30 && x < w/2 + 30) {
+            if (y > 150 && y < 250) return 24; // barra Vermelho
+            if (y > 250 && y < 350) return 25; // barra Branco
+        }
+        return -1;
+    }
 
     // ========== DESENHO DO TABULEIRO ==========
     function desenharTabuleiro() {
@@ -228,8 +266,8 @@
         ctx.fillStyle = '#d9b382';
         ctx.fillRect(0, 0, w, h);
 
-        // Triângulos (24 pontos)
         const triWidth = (w - 100) / 12;
+        // Triângulos
         for (let i = 0; i < 24; i++) {
             const col = Math.floor(i / 2);
             const isTop = i % 2 === 0;
@@ -248,7 +286,7 @@
             ctx.stroke();
         }
 
-        // Desenha peças
+        // Peças
         for (let i = 0; i < 24; i++) {
             const count = board[i];
             if (count === 0) continue;
@@ -291,83 +329,160 @@
             }
         }
 
-        // Home (contadores)
+        // Home
         ctx.font = 'bold 16px Arial';
         ctx.fillStyle = '#f5e6d3';
         ctx.fillText(`🏠 Vermelho: ${home[0]}`, 10, 30);
         ctx.fillText(`🏠 Branco: ${home[1]}`, w-120, 30);
+
+        // Destacar peça selecionada
+        if (pecaSelecionada !== null) {
+            const from = pecaSelecionada.from;
+            let cx, cy;
+            if (from === 24) { cx = w/2; cy = 180; }
+            else if (from === 25) { cx = w/2; cy = 220; }
+            else {
+                const col = Math.floor(from / 2);
+                const isTop = from % 2 === 0;
+                cx = 50 + col * triWidth + (from % 2 === 0 ? 0 : triWidth/2);
+                cy = isTop ? 70 : h - 80;
+            }
+            ctx.beginPath();
+            ctx.arc(cx, cy, 15, 0, 2*Math.PI);
+            ctx.strokeStyle = 'gold';
+            ctx.lineWidth = 4;
+            ctx.stroke();
+        }
+
+        // Destacar destinos possíveis
+        if (pecaSelecionada !== null && legalMoves) {
+            const from = pecaSelecionada.from;
+            const destinos = new Set();
+            legalMoves.forEach(seq => {
+                if (seq.moves && seq.moves[0] && seq.moves[0].from === from) {
+                    destinos.add(seq.moves[0].to);
+                }
+            });
+            destinos.forEach(to => {
+                if (to === -1) return; // bearing off (não destacamos)
+                let cx, cy;
+                if (to === 24) { cx = w/2; cy = 180; }
+                else if (to === 25) { cx = w/2; cy = 220; }
+                else {
+                    const col = Math.floor(to / 2);
+                    const isTop = to % 2 === 0;
+                    cx = 50 + col * triWidth + (to % 2 === 0 ? 0 : triWidth/2);
+                    cy = isTop ? 70 : h - 80;
+                }
+                ctx.beginPath();
+                ctx.arc(cx, cy, 18, 0, 2*Math.PI);
+                ctx.strokeStyle = '#2ecc71';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            });
+        }
     }
 
-    // ========== INTERAÇÃO ==========
-    function getPointFromClick(x, y) {
-        const w = canvas.width, h = canvas.height;
-        const triWidth = (w - 100) / 12;
-        for (let i = 0; i < 24; i++) {
-            const col = Math.floor(i / 2);
-            const isTop = i % 2 === 0;
-            const cx = 50 + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
-            const cy = isTop ? 50 + 60 : h - 100 - 60;
-            const dist = Math.sqrt((x-cx)**2 + (y-cy)**2);
-            if (dist < 40) return i;
+    // ========== ATUALIZAÇÃO DE INTERFACE ==========
+    function atualizarInterface() {
+        if (!estadoAtual) return;
+        desenharTabuleiro();
+        atualizarDados(estadoAtual.dice, estadoAtual.diceUsed);
+        
+        const turnoAtual = estadoAtual.turn;
+        const meuTurno = (turnoAtual === meuLado);
+        const corTurno = turnoAtual === 1 ? 'Vermelho' : 'Branco';
+        document.getElementById('vez-atual').innerText = corTurno;
+
+        const statusEl = document.getElementById('status-jogo');
+        if (estadoAtual.gameOver) {
+            const vencedor = estadoAtual.winner === 1 ? 'Vermelho' : 'Branco';
+            statusEl.innerText = `🏆 ${vencedor} venceu!`;
+        } else if (!meuTurno) {
+            statusEl.innerText = `⏳ Aguardando ${corTurno} jogar...`;
+        } else if (estadoAtual.rollPhase) {
+            statusEl.innerText = '🎲 Sua vez! Role os dados.';
+        } else {
+            statusEl.innerText = '🖱️ Sua vez! Selecione os movimentos.';
         }
-        if (x > w/2 - 30 && x < w/2 + 30) {
-            if (y > 150 && y < 250) return 24; // barra jogador 1
-            if (y > 250 && y < 350) return 25; // barra jogador 2
+
+        // Botões
+        const btnRolar = document.getElementById('btn-rolar');
+        const btnConfirmar = document.getElementById('btn-confirmar');
+        const btnCancelar = document.getElementById('btn-cancelar');
+        
+        if (!jogoIniciado || !meuTurno || estadoAtual.gameOver) {
+            btnRolar.style.display = 'none';
+            btnConfirmar.style.display = 'none';
+            btnCancelar.style.display = 'none';
+        } else if (estadoAtual.rollPhase) {
+            btnRolar.style.display = 'inline-block';
+            btnConfirmar.style.display = 'none';
+            btnCancelar.style.display = 'none';
+        } else {
+            btnRolar.style.display = 'none';
+            btnConfirmar.style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
+            btnCancelar.style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
         }
-        return -1;
     }
 
+    function atualizarDados(dice, used) {
+        document.getElementById('dado1').innerText = dice[0] || '?';
+        document.getElementById('dado2').innerText = dice[1] || '?';
+        document.getElementById('dado1').classList.toggle('usado', used[0]);
+        document.getElementById('dado2').classList.toggle('usado', used[1]);
+    }
+
+    // ========== AÇÕES DO USUÁRIO ==========
     canvas.addEventListener('click', (e) => {
-        if (!jogoIniciado || meuLado === 0 || estadoAtual.turn !== meuLado || estadoAtual.rollPhase) return;
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
+        if (!jogoIniciado || meuLado === 0 || estadoAtual.turn !== meuLado || estadoAtual.rollPhase || estadoAtual.gameOver) return;
+        const { x, y } = obterCoordenadasCanvas(e);
         const point = getPointFromClick(x, y);
         if (point === -1) return;
 
         if (pecaSelecionada === null) {
             // Selecionar origem
             const from = point;
-            const count = (from === 24) ? estadoAtual.bar[0] : (from === 25) ? estadoAtual.bar[1] : estadoAtual.board[from];
+            let count;
+            if (from === 24) count = estadoAtual.bar[0];
+            else if (from === 25) count = estadoAtual.bar[1];
+            else count = estadoAtual.board[from];
             if ((meuLado === 1 && count > 0) || (meuLado === -1 && count < 0)) {
                 pecaSelecionada = { from };
                 desenharTabuleiro();
-                ctx.beginPath();
-                ctx.arc(x, y, 15, 0, 2*Math.PI);
-                ctx.strokeStyle = 'gold';
-                ctx.lineWidth = 4;
-                ctx.stroke();
             }
         } else {
             // Selecionar destino
             const to = point;
-            movimentosPendentes.push({ from: pecaSelecionada.from, to });
-            pecaSelecionada = null;
-            atualizarBotoes();
-            desenharTabuleiro();
+            const from = pecaSelecionada.from;
+            // Verifica se o movimento é válido
+            const seqValida = legalMoves.find(seq => seq.moves[0].from === from && seq.moves[0].to === to);
+            if (seqValida) {
+                movimentosPendentes.push({ from, to });
+                pecaSelecionada = null;
+                // Remove o dado usado? Não, apenas armazena para confirmar depois.
+                desenharTabuleiro();
+                atualizarInterface();
+            } else {
+                pecaSelecionada = null;
+                desenharTabuleiro();
+            }
         }
     });
-
-    function atualizarBotoes() {
-        document.getElementById('btn-confirmar').style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
-        document.getElementById('btn-cancelar').style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
-        document.getElementById('btn-rolar').style.display = movimentosPendentes.length > 0 ? 'none' : 'inline-block';
-    }
 
     function confirmarMovimentos() {
         if (movimentosPendentes.length === 0) return;
         socket.emit('moverPecas', { moves: movimentosPendentes });
         movimentosPendentes = [];
         pecaSelecionada = null;
-        atualizarBotoes();
+        legalMoves = [];
+        atualizarInterface();
     }
 
     function cancelarMovimentos() {
         movimentosPendentes = [];
         pecaSelecionada = null;
-        atualizarBotoes();
+        atualizarInterface();
         desenharTabuleiro();
     }
 
@@ -375,11 +490,8 @@
         socket.emit('rolarDados');
     }
 
-    // ========== ANIMAÇÃO DE MOVIMENTO ==========
-    function animarMovimento(moves, duracao = 2000) {
-        // Implementação simplificada: apenas redesenharemos após um timeout
-        // Em uma versão completa, você poderia animar as coordenadas
-        setTimeout(() => desenharTabuleiro(), duracao);
+    function desistir() {
+        if (confirm('Desistir?')) socket.emit('desistir');
     }
 
     // ========== SOCKET EVENTS ==========
@@ -397,10 +509,6 @@
     function marcarPronto() {
         socket.emit('marcarPronto');
         document.getElementById('btn-pronto').disabled = true;
-    }
-
-    function desistir() {
-        if (confirm('Desistir?')) socket.emit('desistir');
     }
 
     function enviarMensagem() {
@@ -434,6 +542,9 @@
             document.getElementById('area-jogo').style.display = 'block';
             document.getElementById('painel-historico').style.display = 'block';
             jogoIniciado = true;
+        } else {
+            document.getElementById('lobby').style.display = 'block';
+            document.getElementById('area-jogo').style.display = 'none';
         }
     });
 
@@ -441,38 +552,39 @@
         jogoIniciado = true;
         estadoAtual = dados.estado;
         if (dados.lado !== 'espectador') meuLado = dados.lado;
+        legalMoves = [];
         desenharTabuleiro();
+        atualizarInterface();
         document.getElementById('lobby').style.display = 'none';
         document.getElementById('area-jogo').style.display = 'block';
     });
 
     socket.on('estadoAtual', (estado) => {
         estadoAtual = estado;
+        legalMoves = []; // O servidor não envia legalMoves aqui
         desenharTabuleiro();
-        atualizarDados(estado.dice, estado.diceUsed);
-        document.getElementById('vez-atual').innerText = estado.turn === meuLado ? 'Seu turno' : 'Aguardando';
+        atualizarInterface();
     });
 
-    socket.on('dadosRolados', ({ dice }) => {
-        atualizarDados(dice, [false, false]);
-        document.getElementById('btn-rolar').style.display = 'none';
+    socket.on('dadosRolados', ({ dice, turn, legalMoves: moves }) => {
+        estadoAtual.dice = dice;
+        estadoAtual.diceUsed = [false, false];
+        estadoAtual.rollPhase = false;
+        legalMoves = moves;
+        desenharTabuleiro();
+        atualizarInterface();
     });
-
-    function atualizarDados(dice, used) {
-        document.getElementById('dado1').innerText = dice[0] || '?';
-        document.getElementById('dado2').innerText = dice[1] || '?';
-        document.getElementById('dado1').classList.toggle('usado', used[0]);
-        document.getElementById('dado2').classList.toggle('usado', used[1]);
-    }
 
     socket.on('jogadaFeita', (dados) => {
         estadoAtual = dados.estado;
-        desenharTabuleiro();
+        legalMoves = dados.legalMoves || [];
         if (dados.historico) {
             document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
         }
-        animarMovimento(dados.moves);
-        document.getElementById('btn-rolar').style.display = estadoAtual.rollPhase ? 'inline-block' : 'none';
+        desenharTabuleiro();
+        atualizarInterface();
+        movimentosPendentes = [];
+        pecaSelecionada = null;
     });
 
     socket.on('fimDeJogo', (dados) => {
@@ -485,11 +597,14 @@
 
     socket.on('novaMensagem', (msg) => {
         const div = document.getElementById('chat-mensagens');
-        div.innerHTML += `<div><strong>${msg.remetente}</strong>: ${msg.texto}</div>`;
+        const hora = new Date(msg.timestamp).toLocaleTimeString();
+        div.innerHTML += `<div><strong>${msg.remetente}</strong> <span class="badge">${hora}</span>: ${msg.texto}</div>`;
         div.scrollTop = div.scrollHeight;
     });
 
     document.getElementById('input-mensagem').addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
+    document.getElementById('btn-confirmar').addEventListener('click', confirmarMovimentos);
+    document.getElementById('btn-cancelar').addEventListener('click', cancelarMovimentos);
 </script>
 </body>
 </html>
