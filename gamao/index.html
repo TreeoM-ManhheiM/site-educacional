@@ -42,7 +42,7 @@
             gap: 20px;
             flex-wrap: wrap;
         }
-        .coluna-esquerda { flex: 2; min-width: 300px; }
+        .coluna-esquerda { flex: 2; min-width: 320px; }
         .coluna-direita { flex: 1; min-width: 250px; display: flex; flex-direction: column; gap: 20px; }
         .game-container, .painel-container {
             background: #1e4d2b;
@@ -54,23 +54,25 @@
         #status-conexao { color: #ccc; font-size: 13px; margin-bottom: 10px; }
         .painel-info {
             background: #2d6a4f;
-            padding: 10px;
+            padding: 10px 15px;
             border-radius: 30px;
             display: flex;
             justify-content: space-around;
+            align-items: center;
             margin-bottom: 15px;
             font-weight: bold;
         }
         button {
-            padding: 10px 16px;
-            border-radius: 30px;
+            padding: 12px 20px;
+            border-radius: 40px;
             border: none;
             cursor: pointer;
             font-weight: bold;
             background: #a77b55;
             color: #f5e6d3;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
             transition: 0.2s;
+            font-size: 16px;
         }
         button.primary { background: #2d6a4f; }
         button.success { background: #1e4d2b; }
@@ -78,14 +80,19 @@
         button.danger { background: #a04030; }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
         input {
-            padding: 10px;
+            padding: 12px;
             border-radius: 30px;
             border: 2px solid #b2895b;
             background: #fcf3e8;
             margin: 5px 0;
             width: 100%;
+            font-size: 16px;
         }
-        .tabuleiro-container { display: flex; justify-content: center; margin: 10px 0; }
+        .tabuleiro-container {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
         canvas {
             background: #d9b382;
             border-radius: 20px;
@@ -94,6 +101,7 @@
             max-width: 100%;
             height: auto;
             cursor: pointer;
+            touch-action: none; /* evita scroll ao tocar no canvas */
         }
         .historico-lista {
             max-height: 200px;
@@ -114,33 +122,46 @@
         .chat-input { display: flex; gap: 5px; }
         .chat-input input { flex: 1; }
         .badge { background: #8b5e3c; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
-        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
         .dados-container {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             justify-content: center;
-            margin: 15px 0;
+            margin: 20px 0;
         }
         .dado {
-            width: 50px;
-            height: 50px;
+            width: 70px;
+            height: 70px;
             background: white;
-            border-radius: 10px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 36px;
             font-weight: bold;
             color: black;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            box-shadow: 0 6px 0 #999, 0 8px 12px rgba(0,0,0,0.3);
+            border: 2px solid #ccc;
         }
         .dado.usado { opacity: 0.4; }
         .status-mensagem {
-            font-size: 16px;
-            padding: 5px 10px;
+            font-size: 18px;
+            padding: 8px 20px;
             background: #c98a2c;
-            border-radius: 20px;
+            border-radius: 40px;
             color: #1a1a1a;
+            font-weight: bold;
+            text-align: center;
+        }
+        .seta-direcao {
+            display: inline-block;
+            margin: 0 5px;
+            font-size: 20px;
+        }
+        .info-turno {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
     </style>
 </head>
@@ -172,12 +193,16 @@
         <div id="area-jogo" style="display:none;">
             <div class="painel-info">
                 <div>Seu Lado: <span id="meu-lado" class="destaque">---</span></div>
-                <div>Turno: <span id="vez-atual" class="destaque">---</span></div>
+                <div class="info-turno">
+                    <span>Turno:</span>
+                    <span id="vez-atual" class="destaque">---</span>
+                    <span id="direcao-movimento" style="font-size:14px;"></span>
+                </div>
                 <div id="status-jogo" class="status-mensagem">Aguardando...</div>
             </div>
             
             <div class="tabuleiro-container">
-                <canvas id="boardCanvas" width="700" height="400"></canvas>
+                <canvas id="boardCanvas" width="800" height="500"></canvas>
             </div>
 
             <div class="dados-container" id="dados-display">
@@ -185,13 +210,15 @@
                 <div class="dado" id="dado2">⚀</div>
             </div>
 
-            <div class="flex-row">
+            <div class="flex-row" style="justify-content: center;">
                 <button id="btn-rolar" onclick="rolarDados()" class="primary">🎲 Rolar Dados</button>
-                <button onclick="confirmarMovimentos()" class="success" id="btn-confirmar" style="display:none;">✅ Confirmar</button>
+                <button onclick="confirmarMovimentos()" class="success" id="btn-confirmar" style="display:none;">✅ Confirmar Jogada</button>
                 <button onclick="cancelarMovimentos()" class="warning" id="btn-cancelar" style="display:none;">↩️ Cancelar</button>
                 <button onclick="desistir()" class="danger">🏳️ Desistir</button>
             </div>
-            <p style="font-size:14px; margin-top:10px;">Clique em uma peça sua (origem) e depois no destino (destacado em verde).</p>
+            <p style="text-align:center; margin-top:15px; font-size:16px; background:#2d6a4f; padding:8px; border-radius:30px;">
+                👆 Clique na sua peça (origem) e depois no destino verde.
+            </p>
         </div>
     </div>
 
@@ -220,73 +247,97 @@
     let salaAtual = '';
     let movimentosPendentes = [];
     let pecaSelecionada = null;
-    let legalMoves = [];  // Array de sequências de movimentos legais { moves: [...], dieIndices: [...] }
+    let legalMoves = [];  // Sequências de movimentos válidas do servidor
 
     const canvas = document.getElementById('boardCanvas');
     const ctx = canvas.getContext('2d');
 
-    // ========== UTILITÁRIOS ==========
-    function obterCoordenadasCanvas(e) {
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
-        return { x, y };
-    }
+    // Mapeamento de triângulos para coordenadas
+    const triWidth = (canvas.width - 120) / 12; // margem esquerda/direita 60px
+    const startX = 60;
+    const topY = 80;
+    const bottomY = canvas.height - 100;
+    const triHeight = 130;
 
-    function getPointFromClick(x, y) {
-        const w = canvas.width, h = canvas.height;
-        const triWidth = (w - 100) / 12;
+    // Função para obter o índice do triângulo a partir das coordenadas do clique
+    function getTriangleFromClick(x, y) {
+        // Verifica se clicou na barra central
+        if (x > canvas.width/2 - 40 && x < canvas.width/2 + 40) {
+            if (y > 170 && y < 230) return 24; // barra Vermelho
+            if (y > 270 && y < 330) return 25; // barra Branco
+        }
         for (let i = 0; i < 24; i++) {
             const col = Math.floor(i / 2);
             const isTop = i % 2 === 0;
-            const cx = 50 + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
-            const cy = isTop ? 50 + 60 : h - 100 - 60;
-            const dist = Math.sqrt((x-cx)**2 + (y-cy)**2);
-            if (dist < 40) return i;
-        }
-        if (x > w/2 - 30 && x < w/2 + 30) {
-            if (y > 150 && y < 250) return 24; // barra Vermelho
-            if (y > 250 && y < 350) return 25; // barra Branco
+            const cx = startX + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
+            const cy = isTop ? topY : bottomY;
+            // Verifica se o ponto está dentro do triângulo (aproximação por bounding box)
+            const left = cx - triWidth/2;
+            const right = cx + triWidth/2;
+            const topLimit = isTop ? cy : cy - triHeight;
+            const bottomLimit = isTop ? cy + triHeight : cy;
+            if (x >= left && x <= right && y >= topLimit && y <= bottomLimit) {
+                return i;
+            }
         }
         return -1;
     }
 
-    // ========== DESENHO DO TABULEIRO ==========
+    // ========== DESENHO DO TABULEIRO (TRADICIONAL) ==========
     function desenharTabuleiro() {
         if (!estadoAtual) return;
         const board = estadoAtual.board;
         const bar = estadoAtual.bar;
         const home = estadoAtual.home;
         const w = canvas.width, h = canvas.height;
+
         ctx.clearRect(0, 0, w, h);
 
-        // Fundo
-        ctx.fillStyle = '#d9b382';
+        // Fundo da mesa
+        ctx.fillStyle = '#c19a6b';
         ctx.fillRect(0, 0, w, h);
+        // Borda interna
+        ctx.strokeStyle = '#6b4226';
+        ctx.lineWidth = 8;
+        ctx.strokeRect(4, 4, w-8, h-8);
 
-        const triWidth = (w - 100) / 12;
-        // Triângulos
+        // Desenha os 24 triângulos
         for (let i = 0; i < 24; i++) {
             const col = Math.floor(i / 2);
             const isTop = i % 2 === 0;
-            const x = 50 + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
-            const y = isTop ? 50 : h - 100;
-            const height = 120;
+            const x = startX + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
+            const y = isTop ? topY : bottomY;
+
+            // Cor alternada
             ctx.fillStyle = (i % 2 === 0) ? '#8b5e3c' : '#5d3a1a';
             ctx.beginPath();
             ctx.moveTo(x, y);
-            ctx.lineTo(x + triWidth/2, isTop ? y + height : y - height);
-            ctx.lineTo(x - triWidth/2, isTop ? y + height : y - height);
+            ctx.lineTo(x + triWidth/2, isTop ? y + triHeight : y - triHeight);
+            ctx.lineTo(x - triWidth/2, isTop ? y + triHeight : y - triHeight);
             ctx.closePath();
             ctx.fill();
             ctx.strokeStyle = '#f5e6d3';
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 1.5;
             ctx.stroke();
+
+            // Número da casa (opcional)
+            ctx.font = 'bold 12px Arial';
+            ctx.fillStyle = '#f5e6d3';
+            ctx.textAlign = 'center';
+            ctx.fillText(i+1, x, isTop ? y + 20 : y - 20);
         }
 
-        // Peças
+        // Desenha a barra central
+        ctx.fillStyle = '#a77b55';
+        ctx.fillRect(w/2 - 30, 150, 60, 200);
+        ctx.strokeStyle = '#6b4226';
+        ctx.lineWidth = 4;
+        ctx.strokeRect(w/2 - 30, 150, 60, 200);
+        ctx.font = 'bold 14px Arial';
+        ctx.fillStyle = 'white';
+        ctx.fillText('BARRA', w/2, 180);
+
+        // Desenha as peças nos triângulos
         for (let i = 0; i < 24; i++) {
             const count = board[i];
             if (count === 0) continue;
@@ -294,26 +345,26 @@
             const absCount = Math.abs(count);
             const col = Math.floor(i / 2);
             const isTop = i % 2 === 0;
-            const x = 50 + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
-            const baseY = isTop ? 70 : h - 80;
-            const step = 15;
+            const cx = startX + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
+            const baseY = isTop ? topY + 20 : bottomY - 20;
+            const step = 16;
             for (let j = 0; j < absCount; j++) {
                 const offsetY = isTop ? j * step : -j * step;
                 ctx.beginPath();
-                ctx.arc(x, baseY + offsetY, 10, 0, 2 * Math.PI);
+                ctx.arc(cx, baseY + offsetY, 11, 0, 2 * Math.PI);
                 ctx.fillStyle = player === 1 ? '#a04030' : '#f5e6d3';
                 ctx.fill();
                 ctx.strokeStyle = '#2b1a0e';
-                ctx.lineWidth = 1.5;
+                ctx.lineWidth = 2;
                 ctx.stroke();
             }
         }
 
-        // Barra
+        // Peças na barra
         if (bar[0] > 0) {
             for (let i = 0; i < bar[0]; i++) {
                 ctx.beginPath();
-                ctx.arc(w/2, 180 + i*15, 10, 0, 2*Math.PI);
+                ctx.arc(w/2, 200 + i*16, 11, 0, 2*Math.PI);
                 ctx.fillStyle = '#a04030';
                 ctx.fill();
                 ctx.stroke();
@@ -322,39 +373,39 @@
         if (bar[1] > 0) {
             for (let i = 0; i < bar[1]; i++) {
                 ctx.beginPath();
-                ctx.arc(w/2, 220 - i*15, 10, 0, 2*Math.PI);
+                ctx.arc(w/2, 280 - i*16, 11, 0, 2*Math.PI);
                 ctx.fillStyle = '#f5e6d3';
                 ctx.fill();
                 ctx.stroke();
             }
         }
 
-        // Home
-        ctx.font = 'bold 16px Arial';
+        // Home (contadores)
+        ctx.font = 'bold 18px Arial';
         ctx.fillStyle = '#f5e6d3';
-        ctx.fillText(`🏠 Vermelho: ${home[0]}`, 10, 30);
-        ctx.fillText(`🏠 Branco: ${home[1]}`, w-120, 30);
+        ctx.fillText(`🏠 Vermelho: ${home[0]}`, 20, 40);
+        ctx.fillText(`🏠 Branco: ${home[1]}`, w-150, 40);
 
-        // Destacar peça selecionada
+        // Destaque da peça selecionada
         if (pecaSelecionada !== null) {
             const from = pecaSelecionada.from;
             let cx, cy;
-            if (from === 24) { cx = w/2; cy = 180; }
-            else if (from === 25) { cx = w/2; cy = 220; }
+            if (from === 24) { cx = w/2; cy = 200; }
+            else if (from === 25) { cx = w/2; cy = 280; }
             else {
                 const col = Math.floor(from / 2);
                 const isTop = from % 2 === 0;
-                cx = 50 + col * triWidth + (from % 2 === 0 ? 0 : triWidth/2);
-                cy = isTop ? 70 : h - 80;
+                cx = startX + col * triWidth + (from % 2 === 0 ? 0 : triWidth/2);
+                cy = isTop ? topY + 20 : bottomY - 20;
             }
             ctx.beginPath();
-            ctx.arc(cx, cy, 15, 0, 2*Math.PI);
+            ctx.arc(cx, cy, 16, 0, 2*Math.PI);
             ctx.strokeStyle = 'gold';
-            ctx.lineWidth = 4;
+            ctx.lineWidth = 5;
             ctx.stroke();
         }
 
-        // Destacar destinos possíveis
+        // Destaque dos destinos possíveis
         if (pecaSelecionada !== null && legalMoves) {
             const from = pecaSelecionada.from;
             const destinos = new Set();
@@ -364,53 +415,57 @@
                 }
             });
             destinos.forEach(to => {
-                if (to === -1) return; // bearing off (não destacamos)
+                if (to === -1) return;
                 let cx, cy;
-                if (to === 24) { cx = w/2; cy = 180; }
-                else if (to === 25) { cx = w/2; cy = 220; }
+                if (to === 24) { cx = w/2; cy = 200; }
+                else if (to === 25) { cx = w/2; cy = 280; }
                 else {
                     const col = Math.floor(to / 2);
                     const isTop = to % 2 === 0;
-                    cx = 50 + col * triWidth + (to % 2 === 0 ? 0 : triWidth/2);
-                    cy = isTop ? 70 : h - 80;
+                    cx = startX + col * triWidth + (to % 2 === 0 ? 0 : triWidth/2);
+                    cy = isTop ? topY + 20 : bottomY - 20;
                 }
                 ctx.beginPath();
                 ctx.arc(cx, cy, 18, 0, 2*Math.PI);
                 ctx.strokeStyle = '#2ecc71';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 4;
                 ctx.stroke();
             });
         }
     }
 
-    // ========== ATUALIZAÇÃO DE INTERFACE ==========
+    // ========== ATUALIZAÇÃO DA INTERFACE ==========
     function atualizarInterface() {
         if (!estadoAtual) return;
         desenharTabuleiro();
         atualizarDados(estadoAtual.dice, estadoAtual.diceUsed);
-        
+
         const turnoAtual = estadoAtual.turn;
         const meuTurno = (turnoAtual === meuLado);
         const corTurno = turnoAtual === 1 ? 'Vermelho' : 'Branco';
         document.getElementById('vez-atual').innerText = corTurno;
+
+        // Indicador de direção do movimento
+        const dirMsg = turnoAtual === 1 ? '↓ (horário)' : '↑ (anti-horário)';
+        document.getElementById('direcao-movimento').innerText = dirMsg;
 
         const statusEl = document.getElementById('status-jogo');
         if (estadoAtual.gameOver) {
             const vencedor = estadoAtual.winner === 1 ? 'Vermelho' : 'Branco';
             statusEl.innerText = `🏆 ${vencedor} venceu!`;
         } else if (!meuTurno) {
-            statusEl.innerText = `⏳ Aguardando ${corTurno} jogar...`;
+            statusEl.innerText = `⏳ Aguardando ${corTurno}...`;
         } else if (estadoAtual.rollPhase) {
             statusEl.innerText = '🎲 Sua vez! Role os dados.';
         } else {
-            statusEl.innerText = '🖱️ Sua vez! Selecione os movimentos.';
+            statusEl.innerText = '🖱️ Selecione a peça e o destino.';
         }
 
-        // Botões
+        // Controle dos botões
         const btnRolar = document.getElementById('btn-rolar');
         const btnConfirmar = document.getElementById('btn-confirmar');
         const btnCancelar = document.getElementById('btn-cancelar');
-        
+
         if (!jogoIniciado || !meuTurno || estadoAtual.gameOver) {
             btnRolar.style.display = 'none';
             btnConfirmar.style.display = 'none';
@@ -427,21 +482,28 @@
     }
 
     function atualizarDados(dice, used) {
-        document.getElementById('dado1').innerText = dice[0] || '?';
-        document.getElementById('dado2').innerText = dice[1] || '?';
-        document.getElementById('dado1').classList.toggle('usado', used[0]);
-        document.getElementById('dado2').classList.toggle('usado', used[1]);
+        const dado1 = document.getElementById('dado1');
+        const dado2 = document.getElementById('dado2');
+        dado1.innerText = dice[0] || '?';
+        dado2.innerText = dice[1] || '?';
+        dado1.classList.toggle('usado', used[0]);
+        dado2.classList.toggle('usado', used[1]);
     }
 
-    // ========== AÇÕES DO USUÁRIO ==========
+    // ========== EVENTOS DE CLIQUE NO CANVAS ==========
     canvas.addEventListener('click', (e) => {
         if (!jogoIniciado || meuLado === 0 || estadoAtual.turn !== meuLado || estadoAtual.rollPhase || estadoAtual.gameOver) return;
-        const { x, y } = obterCoordenadasCanvas(e);
-        const point = getPointFromClick(x, y);
+
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        const point = getTriangleFromClick(x, y);
         if (point === -1) return;
 
         if (pecaSelecionada === null) {
-            // Selecionar origem
+            // Selecionar peça de origem
             const from = point;
             let count;
             if (from === 24) count = estadoAtual.bar[0];
@@ -455,12 +517,10 @@
             // Selecionar destino
             const to = point;
             const from = pecaSelecionada.from;
-            // Verifica se o movimento é válido
             const seqValida = legalMoves.find(seq => seq.moves[0].from === from && seq.moves[0].to === to);
             if (seqValida) {
                 movimentosPendentes.push({ from, to });
                 pecaSelecionada = null;
-                // Remove o dado usado? Não, apenas armazena para confirmar depois.
                 desenharTabuleiro();
                 atualizarInterface();
             } else {
@@ -491,10 +551,10 @@
     }
 
     function desistir() {
-        if (confirm('Desistir?')) socket.emit('desistir');
+        if (confirm('Desistir da partida?')) socket.emit('desistir');
     }
 
-    // ========== SOCKET EVENTS ==========
+    // ========== COMUNICAÇÃO COM O SERVIDOR ==========
     function entrar() {
         const apelido = document.getElementById('input-apelido').value.trim();
         const sala = document.getElementById('input-sala').value.trim();
@@ -509,6 +569,7 @@
     function marcarPronto() {
         socket.emit('marcarPronto');
         document.getElementById('btn-pronto').disabled = true;
+        document.getElementById('btn-pronto').innerText = 'Aguardando oponente...';
     }
 
     function enviarMensagem() {
@@ -561,7 +622,7 @@
 
     socket.on('estadoAtual', (estado) => {
         estadoAtual = estado;
-        legalMoves = []; // O servidor não envia legalMoves aqui
+        legalMoves = [];
         desenharTabuleiro();
         atualizarInterface();
     });
@@ -603,8 +664,6 @@
     });
 
     document.getElementById('input-mensagem').addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
-    document.getElementById('btn-confirmar').addEventListener('click', confirmarMovimentos);
-    document.getElementById('btn-cancelar').addEventListener('click', cancelarMovimentos);
 </script>
 </body>
 </html>
