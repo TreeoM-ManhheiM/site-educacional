@@ -61,6 +61,8 @@
             align-items: center;
             margin-bottom: 15px;
             font-weight: bold;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         button {
             padding: 12px 20px;
@@ -92,16 +94,17 @@
             display: flex;
             justify-content: center;
             margin: 10px 0;
+            overflow-x: auto;
         }
         canvas {
             background: #d9b382;
             border-radius: 20px;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             border: 5px solid #6b4226;
-            max-width: 100%;
+            width: 100%;
             height: auto;
             cursor: pointer;
-            touch-action: none; /* evita scroll ao tocar no canvas */
+            touch-action: none;
         }
         .historico-lista {
             max-height: 200px;
@@ -122,7 +125,7 @@
         .chat-input { display: flex; gap: 5px; }
         .chat-input input { flex: 1; }
         .badge { background: #8b5e3c; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
-        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: center; }
         .dados-container {
             display: flex;
             gap: 20px;
@@ -153,15 +156,9 @@
             font-weight: bold;
             text-align: center;
         }
-        .seta-direcao {
-            display: inline-block;
-            margin: 0 5px;
-            font-size: 20px;
-        }
-        .info-turno {
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        .info-turno { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+        @media (max-width: 700px) {
+            .painel-info { flex-direction: column; text-align: center; }
         }
     </style>
 </head>
@@ -169,7 +166,7 @@
 <header>
     <h1>Gamão Lógico 🎲</h1>
     <p>Projeto Integrado — Laboratório de Computação</p>
-    <a href="regras.html" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
+    <a href="#" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
 </header>
 <main>
     <div class="coluna-esquerda">
@@ -202,7 +199,7 @@
             </div>
             
             <div class="tabuleiro-container">
-                <canvas id="boardCanvas" width="800" height="500"></canvas>
+                <canvas id="boardCanvas" width="1000" height="600" style="width:100%; height:auto; max-width:1000px"></canvas>
             </div>
 
             <div class="dados-container" id="dados-display">
@@ -210,14 +207,14 @@
                 <div class="dado" id="dado2">⚀</div>
             </div>
 
-            <div class="flex-row" style="justify-content: center;">
+            <div class="flex-row">
                 <button id="btn-rolar" onclick="rolarDados()" class="primary">🎲 Rolar Dados</button>
                 <button onclick="confirmarMovimentos()" class="success" id="btn-confirmar" style="display:none;">✅ Confirmar Jogada</button>
                 <button onclick="cancelarMovimentos()" class="warning" id="btn-cancelar" style="display:none;">↩️ Cancelar</button>
                 <button onclick="desistir()" class="danger">🏳️ Desistir</button>
             </div>
             <p style="text-align:center; margin-top:15px; font-size:16px; background:#2d6a4f; padding:8px; border-radius:30px;">
-                👆 Clique na sua peça (origem) e depois no destino verde.
+                👆 Clique na sua peça (origem) e depois no destino (contorno verde).
             </p>
         </div>
     </div>
@@ -240,6 +237,7 @@
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
+    // ==================== CONEXÃO SOCKET ====================
     const socket = io("https://motor-gamao.onrender.com");
     let estadoAtual = null;
     let meuLado = 0;
@@ -247,208 +245,319 @@
     let salaAtual = '';
     let movimentosPendentes = [];
     let pecaSelecionada = null;
-    let legalMoves = [];  // Sequências de movimentos válidas do servidor
+    let legalMoves = [];  // movimentos válidos recebidos do servidor
 
     const canvas = document.getElementById('boardCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Mapeamento de triângulos para coordenadas
-    const triWidth = (canvas.width - 120) / 12; // margem esquerda/direita 60px
-    const startX = 60;
-    const topY = 80;
-    const bottomY = canvas.height - 100;
-    const triHeight = 130;
+    // ==================== CONFIGURAÇÕES DO TABULEIRO CLÁSSICO ====================
+    const w = 1000, h = 600;
+    canvas.width = w; canvas.height = h;
+    
+    // Dimensões dos triângulos (pontos)
+    const boardMarginX = 80;     // margem esquerda/direita
+    const boardTopY = 70;        // topo da área de jogo (início dos triângulos superiores)
+    const boardBottomY = h - 70; // base dos triângulos inferiores
+    const pointWidth = (w - 2 * boardMarginX) / 12;  // largura de cada par de triângulos (cada casa ocupa metade)
+    const pointHeight = 150;      // altura dos triângulos
+    
+    // Coordenadas da barra central
+    const barX = w/2 - 30;
+    const barW = 60;
+    const barTopY = boardTopY + pointHeight + 10;
+    const barBottomY = boardBottomY - pointHeight - 10;
+    const barHeight = barBottomY - barTopY;
 
-    // Função para obter o índice do triângulo a partir das coordenadas do clique
-    function getTriangleFromClick(x, y) {
-        // Verifica se clicou na barra central
-        if (x > canvas.width/2 - 40 && x < canvas.width/2 + 40) {
-            if (y > 170 && y < 230) return 24; // barra Vermelho
-            if (y > 270 && y < 330) return 25; // barra Branco
+    // ========== FUNÇÕES DE DESENHO ==========
+    function desenharTriangulo(x, y, largura, altura, paraCima, corClara) {
+        ctx.beginPath();
+        if (paraCima) {
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + largura/2, y - altura);
+            ctx.lineTo(x + largura, y);
+        } else {
+            ctx.moveTo(x, y);
+            ctx.lineTo(x + largura/2, y + altura);
+            ctx.lineTo(x + largura, y);
         }
-        for (let i = 0; i < 24; i++) {
-            const col = Math.floor(i / 2);
-            const isTop = i % 2 === 0;
-            const cx = startX + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
-            const cy = isTop ? topY : bottomY;
-            // Verifica se o ponto está dentro do triângulo (aproximação por bounding box)
-            const left = cx - triWidth/2;
-            const right = cx + triWidth/2;
-            const topLimit = isTop ? cy : cy - triHeight;
-            const bottomLimit = isTop ? cy + triHeight : cy;
-            if (x >= left && x <= right && y >= topLimit && y <= bottomLimit) {
-                return i;
-            }
-        }
-        return -1;
+        ctx.closePath();
+        ctx.fillStyle = corClara ? '#e8c99e' : '#b57c48';
+        ctx.fill();
+        ctx.strokeStyle = '#4a2c14';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
     }
 
-    // ========== DESENHO DO TABULEIRO (TRADICIONAL) ==========
     function desenharTabuleiro() {
         if (!estadoAtual) return;
+        
+        // Fundo da mesa
+        ctx.fillStyle = '#c9a87b';
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = '#5a3a22';
+        ctx.lineWidth = 8;
+        ctx.strokeRect(5, 5, w-10, h-10);
+        
+        // Desenha os 24 triângulos (pontos)
+        // Índice 0 = canto superior direito (ponto 1 para o jogador vermelho)
+        // Ordem: linha de cima da direita para esquerda, linha de baixo da esquerda para direita
+        for (let i = 0; i < 12; i++) {
+            // Triângulos superiores (lado vermelho, virados para baixo)
+            const xSup = boardMarginX + i * pointWidth;
+            const corClaraSup = (Math.floor(i/2) % 2 === 0);
+            desenharTriangulo(xSup, boardTopY, pointWidth, pointHeight, false, corClaraSup);
+            
+            // Triângulos inferiores (lado branco, virados para cima)
+            const xInf = boardMarginX + i * pointWidth;
+            const corClaraInf = (Math.floor(i/2) % 2 === 1);
+            desenharTriangulo(xInf, boardBottomY, pointWidth, pointHeight, true, corClaraInf);
+        }
+        
+        // Números das casas (tradicional: 1 a 12 em cima, 13 a 24 embaixo)
+        ctx.font = "bold 14px 'Segoe UI'";
+        ctx.fillStyle = "#2c1a0c";
+        for (let i = 0; i < 12; i++) {
+            const x = boardMarginX + i * pointWidth + pointWidth/2;
+            // Casas superiores: numeradas de 12 a 1 (da esquerda p/ direita? Tradicional: 1 no canto direito superior)
+            // Vamos seguir a convenção: casa 1 no canto superior direito, casa 12 no superior esquerdo.
+            let numSup = 12 - i;
+            ctx.fillText(numSup.toString(), x, boardTopY - 10);
+            
+            // Casas inferiores: 13 no canto inferior esquerdo, 24 no canto inferior direito
+            let numInf = 13 + i;
+            ctx.fillText(numInf.toString(), x, boardBottomY + 25);
+        }
+        
+        // Barra central
+        ctx.fillStyle = '#8b6946';
+        ctx.fillRect(barX, barTopY, barW, barHeight);
+        ctx.strokeStyle = '#4a2c14';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(barX, barTopY, barW, barHeight);
+        ctx.fillStyle = "#f5e6d3";
+        ctx.font = "bold 16px 'Segoe UI'";
+        ctx.fillText("BARRA", barX+12, barTopY + barHeight/2);
+        
+        // Áreas de saída (home)
+        ctx.fillStyle = "#4a7a5c";
+        ctx.fillRect(20, 20, 100, 50);
+        ctx.fillRect(w-120, 20, 100, 50);
+        ctx.fillStyle = "#f5e6d3";
+        ctx.font = "bold 14px";
+        ctx.fillText("CASA VERMELHA", 25, 50);
+        ctx.fillText("CASA BRANCA", w-115, 50);
+        
+        // Desenha as peças
         const board = estadoAtual.board;
         const bar = estadoAtual.bar;
         const home = estadoAtual.home;
-        const w = canvas.width, h = canvas.height;
-
-        ctx.clearRect(0, 0, w, h);
-
-        // Fundo da mesa
-        ctx.fillStyle = '#c19a6b';
-        ctx.fillRect(0, 0, w, h);
-        // Borda interna
-        ctx.strokeStyle = '#6b4226';
-        ctx.lineWidth = 8;
-        ctx.strokeRect(4, 4, w-8, h-8);
-
-        // Desenha os 24 triângulos
-        for (let i = 0; i < 24; i++) {
-            const col = Math.floor(i / 2);
-            const isTop = i % 2 === 0;
-            const x = startX + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
-            const y = isTop ? topY : bottomY;
-
-            // Cor alternada
-            ctx.fillStyle = (i % 2 === 0) ? '#8b5e3c' : '#5d3a1a';
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + triWidth/2, isTop ? y + triHeight : y - triHeight);
-            ctx.lineTo(x - triWidth/2, isTop ? y + triHeight : y - triHeight);
-            ctx.closePath();
-            ctx.fill();
-            ctx.strokeStyle = '#f5e6d3';
-            ctx.lineWidth = 1.5;
-            ctx.stroke();
-
-            // Número da casa (opcional)
-            ctx.font = 'bold 12px Arial';
-            ctx.fillStyle = '#f5e6d3';
-            ctx.textAlign = 'center';
-            ctx.fillText(i+1, x, isTop ? y + 20 : y - 20);
-        }
-
-        // Desenha a barra central
-        ctx.fillStyle = '#a77b55';
-        ctx.fillRect(w/2 - 30, 150, 60, 200);
-        ctx.strokeStyle = '#6b4226';
-        ctx.lineWidth = 4;
-        ctx.strokeRect(w/2 - 30, 150, 60, 200);
-        ctx.font = 'bold 14px Arial';
-        ctx.fillStyle = 'white';
-        ctx.fillText('BARRA', w/2, 180);
-
-        // Desenha as peças nos triângulos
-        for (let i = 0; i < 24; i++) {
-            const count = board[i];
-            if (count === 0) continue;
-            const player = count > 0 ? 1 : -1;
-            const absCount = Math.abs(count);
-            const col = Math.floor(i / 2);
-            const isTop = i % 2 === 0;
-            const cx = startX + col * triWidth + (i % 2 === 0 ? 0 : triWidth/2);
-            const baseY = isTop ? topY + 20 : bottomY - 20;
-            const step = 16;
-            for (let j = 0; j < absCount; j++) {
-                const offsetY = isTop ? j * step : -j * step;
+        
+        // Peças nos triângulos superiores (índices 0..11 -> casas 1..12 do lado vermelho)
+        for (let i = 0; i < 12; i++) {
+            const idx = 11 - i; // mapeamento: i=0 (casa 1) -> board[11]; i=11 (casa 12) -> board[0]
+            const qtd = board[idx];
+            if (qtd === 0) continue;
+            const x = boardMarginX + i * pointWidth + pointWidth/2;
+            const yBase = boardTopY + 10;
+            const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
+            const absQtd = Math.abs(qtd);
+            for (let j = 0; j < Math.min(absQtd, 5); j++) {
                 ctx.beginPath();
-                ctx.arc(cx, baseY + offsetY, 11, 0, 2 * Math.PI);
-                ctx.fillStyle = player === 1 ? '#a04030' : '#f5e6d3';
+                ctx.arc(x, yBase + j * 16, 12, 0, 2*Math.PI);
+                ctx.fillStyle = cor;
                 ctx.fill();
                 ctx.strokeStyle = '#2b1a0e';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1.5;
                 ctx.stroke();
+                if (absQtd > 5 && j === 4) {
+                    ctx.fillStyle = '#333';
+                    ctx.font = "bold 12px";
+                    ctx.fillText("+"+(absQtd-5), x+8, yBase+70);
+                }
             }
         }
-
+        
+        // Peças nos triângulos inferiores (índices 12..23 -> casas 13..24 lado branco)
+        for (let i = 0; i < 12; i++) {
+            const idx = 12 + i;
+            const qtd = board[idx];
+            if (qtd === 0) continue;
+            const x = boardMarginX + i * pointWidth + pointWidth/2;
+            const yBase = boardBottomY - 30;
+            const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
+            const absQtd = Math.abs(qtd);
+            for (let j = 0; j < Math.min(absQtd, 5); j++) {
+                ctx.beginPath();
+                ctx.arc(x, yBase - j * 16, 12, 0, 2*Math.PI);
+                ctx.fillStyle = cor;
+                ctx.fill();
+                ctx.stroke();
+                if (absQtd > 5 && j === 4) {
+                    ctx.fillStyle = '#333';
+                    ctx.fillText("+"+(absQtd-5), x+8, yBase-70);
+                }
+            }
+        }
+        
         // Peças na barra
         if (bar[0] > 0) {
-            for (let i = 0; i < bar[0]; i++) {
+            for (let j = 0; j < Math.min(bar[0], 6); j++) {
                 ctx.beginPath();
-                ctx.arc(w/2, 200 + i*16, 11, 0, 2*Math.PI);
-                ctx.fillStyle = '#a04030';
+                ctx.arc(barX+30, barTopY + 20 + j*20, 12, 0, 2*Math.PI);
+                ctx.fillStyle = '#c73b2a';
                 ctx.fill();
                 ctx.stroke();
             }
+            if (bar[0] > 6) ctx.fillText("+"+(bar[0]-6), barX+45, barTopY+130);
         }
         if (bar[1] > 0) {
-            for (let i = 0; i < bar[1]; i++) {
+            for (let j = 0; j < Math.min(bar[1], 6); j++) {
                 ctx.beginPath();
-                ctx.arc(w/2, 280 - i*16, 11, 0, 2*Math.PI);
-                ctx.fillStyle = '#f5e6d3';
+                ctx.arc(barX+30, barBottomY - 20 - j*20, 12, 0, 2*Math.PI);
+                ctx.fillStyle = '#f0e6d0';
                 ctx.fill();
                 ctx.stroke();
             }
+            if (bar[1] > 6) ctx.fillText("+"+(bar[1]-6), barX+45, barBottomY-130);
         }
-
-        // Home (contadores)
-        ctx.font = 'bold 18px Arial';
-        ctx.fillStyle = '#f5e6d3';
-        ctx.fillText(`🏠 Vermelho: ${home[0]}`, 20, 40);
-        ctx.fillText(`🏠 Branco: ${home[1]}`, w-150, 40);
-
+        
+        // Contadores das casas
+        ctx.font = "bold 18px";
+        ctx.fillStyle = "#ffd966";
+        ctx.fillText(`${home[0]}`, 70, 55);
+        ctx.fillText(`${home[1]}`, w-70, 55);
+        
         // Destaque da peça selecionada
         if (pecaSelecionada !== null) {
             const from = pecaSelecionada.from;
             let cx, cy;
-            if (from === 24) { cx = w/2; cy = 200; }
-            else if (from === 25) { cx = w/2; cy = 280; }
-            else {
-                const col = Math.floor(from / 2);
-                const isTop = from % 2 === 0;
-                cx = startX + col * triWidth + (from % 2 === 0 ? 0 : triWidth/2);
-                cy = isTop ? topY + 20 : bottomY - 20;
+            if (from === 24) { cx = barX+30; cy = barTopY+30; }
+            else if (from === 25) { cx = barX+30; cy = barBottomY-30; }
+            else if (from < 12) {
+                const i = 11 - from;
+                cx = boardMarginX + i * pointWidth + pointWidth/2;
+                cy = boardTopY + 20;
+            } else {
+                const i = from - 12;
+                cx = boardMarginX + i * pointWidth + pointWidth/2;
+                cy = boardBottomY - 30;
             }
             ctx.beginPath();
-            ctx.arc(cx, cy, 16, 0, 2*Math.PI);
+            ctx.arc(cx, cy, 18, 0, 2*Math.PI);
             ctx.strokeStyle = 'gold';
-            ctx.lineWidth = 5;
+            ctx.lineWidth = 4;
             ctx.stroke();
         }
-
+        
         // Destaque dos destinos possíveis
         if (pecaSelecionada !== null && legalMoves) {
-            const from = pecaSelecionada.from;
+            const fromIdx = pecaSelecionada.from;
             const destinos = new Set();
             legalMoves.forEach(seq => {
-                if (seq.moves && seq.moves[0] && seq.moves[0].from === from) {
+                if (seq.moves && seq.moves[0] && seq.moves[0].from === fromIdx) {
                     destinos.add(seq.moves[0].to);
                 }
             });
             destinos.forEach(to => {
                 if (to === -1) return;
                 let cx, cy;
-                if (to === 24) { cx = w/2; cy = 200; }
-                else if (to === 25) { cx = w/2; cy = 280; }
-                else {
-                    const col = Math.floor(to / 2);
-                    const isTop = to % 2 === 0;
-                    cx = startX + col * triWidth + (to % 2 === 0 ? 0 : triWidth/2);
-                    cy = isTop ? topY + 20 : bottomY - 20;
+                if (to === 24) { cx = barX+30; cy = barTopY+30; }
+                else if (to === 25) { cx = barX+30; cy = barBottomY-30; }
+                else if (to < 12) {
+                    const i = 11 - to;
+                    cx = boardMarginX + i * pointWidth + pointWidth/2;
+                    cy = boardTopY + 20;
+                } else {
+                    const i = to - 12;
+                    cx = boardMarginX + i * pointWidth + pointWidth/2;
+                    cy = boardBottomY - 30;
                 }
                 ctx.beginPath();
-                ctx.arc(cx, cy, 18, 0, 2*Math.PI);
+                ctx.arc(cx, cy, 20, 0, 2*Math.PI);
                 ctx.strokeStyle = '#2ecc71';
                 ctx.lineWidth = 4;
                 ctx.stroke();
             });
         }
     }
-
-    // ========== ATUALIZAÇÃO DA INTERFACE ==========
+    
+    // ========== DETECÇÃO DE CLIQUE (mapeamento preciso) ==========
+    function getPointFromClick(mouseX, mouseY) {
+        // Verifica barra
+        if (mouseX >= barX && mouseX <= barX+barW) {
+            if (mouseY >= barTopY && mouseY <= barTopY+80) return 24; // barra vermelha
+            if (mouseY >= barBottomY-80 && mouseY <= barBottomY) return 25; // barra branca
+        }
+        // Triângulos superiores (casas 1 a 12, índices 0..11)
+        for (let i = 0; i < 12; i++) {
+            const x0 = boardMarginX + i * pointWidth;
+            const x1 = x0 + pointWidth;
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= boardTopY && mouseY <= boardTopY + pointHeight) {
+                // índice do ponto no board: 11 - i (casa tradicional 1 = board[11])
+                return 11 - i;
+            }
+        }
+        // Triângulos inferiores (casas 13 a 24, índices 12..23)
+        for (let i = 0; i < 12; i++) {
+            const x0 = boardMarginX + i * pointWidth;
+            const x1 = x0 + pointWidth;
+            if (mouseX >= x0 && mouseX <= x1 && mouseY >= boardBottomY - pointHeight && mouseY <= boardBottomY) {
+                return 12 + i;
+            }
+        }
+        return -1;
+    }
+    
+    canvas.addEventListener('click', (e) => {
+        if (!jogoIniciado || meuLado === 0 || estadoAtual.turn !== meuLado || estadoAtual.rollPhase || estadoAtual.gameOver) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const x = (e.clientX - rect.left) * scaleX;
+        const y = (e.clientY - rect.top) * scaleY;
+        const point = getPointFromClick(x, y);
+        if (point === -1) return;
+        
+        if (pecaSelecionada === null) {
+            // Selecionar peça própria
+            let count;
+            if (point === 24) count = estadoAtual.bar[0];
+            else if (point === 25) count = estadoAtual.bar[1];
+            else count = estadoAtual.board[point];
+            if ((meuLado === 1 && count > 0) || (meuLado === -1 && count < 0)) {
+                pecaSelecionada = { from: point };
+                desenharTabuleiro();
+            }
+        } else {
+            const from = pecaSelecionada.from;
+            const to = point;
+            const seqValida = legalMoves.find(seq => seq.moves[0].from === from && seq.moves[0].to === to);
+            if (seqValida) {
+                movimentosPendentes.push({ from, to });
+                pecaSelecionada = null;
+                desenharTabuleiro();
+                atualizarInterface();
+            } else {
+                pecaSelecionada = null;
+                desenharTabuleiro();
+            }
+        }
+    });
+    
+    // ========== CONTROLE DO JOGO ==========
     function atualizarInterface() {
         if (!estadoAtual) return;
         desenharTabuleiro();
         atualizarDados(estadoAtual.dice, estadoAtual.diceUsed);
-
+        
         const turnoAtual = estadoAtual.turn;
         const meuTurno = (turnoAtual === meuLado);
         const corTurno = turnoAtual === 1 ? 'Vermelho' : 'Branco';
         document.getElementById('vez-atual').innerText = corTurno;
-
-        // Indicador de direção do movimento
-        const dirMsg = turnoAtual === 1 ? '↓ (horário)' : '↑ (anti-horário)';
+        const dirMsg = turnoAtual === 1 ? '↓ horário' : '↑ anti-horário';
         document.getElementById('direcao-movimento').innerText = dirMsg;
-
+        
         const statusEl = document.getElementById('status-jogo');
         if (estadoAtual.gameOver) {
             const vencedor = estadoAtual.winner === 1 ? 'Vermelho' : 'Branco';
@@ -458,14 +567,12 @@
         } else if (estadoAtual.rollPhase) {
             statusEl.innerText = '🎲 Sua vez! Role os dados.';
         } else {
-            statusEl.innerText = '🖱️ Selecione a peça e o destino.';
+            statusEl.innerText = '🖱️ Selecione peça e destino.';
         }
-
-        // Controle dos botões
+        
         const btnRolar = document.getElementById('btn-rolar');
         const btnConfirmar = document.getElementById('btn-confirmar');
         const btnCancelar = document.getElementById('btn-cancelar');
-
         if (!jogoIniciado || !meuTurno || estadoAtual.gameOver) {
             btnRolar.style.display = 'none';
             btnConfirmar.style.display = 'none';
@@ -480,7 +587,7 @@
             btnCancelar.style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
         }
     }
-
+    
     function atualizarDados(dice, used) {
         const dado1 = document.getElementById('dado1');
         const dado2 = document.getElementById('dado2');
@@ -489,47 +596,7 @@
         dado1.classList.toggle('usado', used[0]);
         dado2.classList.toggle('usado', used[1]);
     }
-
-    // ========== EVENTOS DE CLIQUE NO CANVAS ==========
-    canvas.addEventListener('click', (e) => {
-        if (!jogoIniciado || meuLado === 0 || estadoAtual.turn !== meuLado || estadoAtual.rollPhase || estadoAtual.gameOver) return;
-
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
-        const point = getTriangleFromClick(x, y);
-        if (point === -1) return;
-
-        if (pecaSelecionada === null) {
-            // Selecionar peça de origem
-            const from = point;
-            let count;
-            if (from === 24) count = estadoAtual.bar[0];
-            else if (from === 25) count = estadoAtual.bar[1];
-            else count = estadoAtual.board[from];
-            if ((meuLado === 1 && count > 0) || (meuLado === -1 && count < 0)) {
-                pecaSelecionada = { from };
-                desenharTabuleiro();
-            }
-        } else {
-            // Selecionar destino
-            const to = point;
-            const from = pecaSelecionada.from;
-            const seqValida = legalMoves.find(seq => seq.moves[0].from === from && seq.moves[0].to === to);
-            if (seqValida) {
-                movimentosPendentes.push({ from, to });
-                pecaSelecionada = null;
-                desenharTabuleiro();
-                atualizarInterface();
-            } else {
-                pecaSelecionada = null;
-                desenharTabuleiro();
-            }
-        }
-    });
-
+    
     function confirmarMovimentos() {
         if (movimentosPendentes.length === 0) return;
         socket.emit('moverPecas', { moves: movimentosPendentes });
@@ -538,23 +605,18 @@
         legalMoves = [];
         atualizarInterface();
     }
-
+    
     function cancelarMovimentos() {
         movimentosPendentes = [];
         pecaSelecionada = null;
         atualizarInterface();
         desenharTabuleiro();
     }
-
-    function rolarDados() {
-        socket.emit('rolarDados');
-    }
-
-    function desistir() {
-        if (confirm('Desistir da partida?')) socket.emit('desistir');
-    }
-
-    // ========== COMUNICAÇÃO COM O SERVIDOR ==========
+    
+    function rolarDados() { socket.emit('rolarDados'); }
+    function desistir() { if (confirm('Desistir da partida?')) socket.emit('desistir'); }
+    
+    // ========== EVENTOS SOCKET ==========
     function entrar() {
         const apelido = document.getElementById('input-apelido').value.trim();
         const sala = document.getElementById('input-sala').value.trim();
@@ -565,23 +627,23 @@
         document.getElementById('lobby').style.display = 'block';
         document.getElementById('painel-chat').style.display = 'block';
     }
-
+    
     function marcarPronto() {
         socket.emit('marcarPronto');
         document.getElementById('btn-pronto').disabled = true;
         document.getElementById('btn-pronto').innerText = 'Aguardando oponente...';
     }
-
+    
     function enviarMensagem() {
         const input = document.getElementById('input-mensagem');
         const msg = input.value.trim();
         if (msg) { socket.emit('enviarMensagem', msg); input.value = ''; }
     }
-
+    
     socket.on('connect', () => document.getElementById('status-conexao').innerText = "✅ Conectado");
     socket.on('disconnect', () => document.getElementById('status-conexao').innerText = "❌ Desconectado");
     socket.on('erro', (msg) => alert(msg));
-
+    
     socket.on('definirPapel', (dados) => {
         if (dados.papel === 'jogador') {
             meuLado = dados.lado;
@@ -591,7 +653,7 @@
             document.getElementById('meu-lado').innerText = 'Espectador';
         }
     });
-
+    
     socket.on('estadoLobby', (dados) => {
         document.getElementById('info-sala').innerHTML = `<p>Sala: <strong>${salaAtual}</strong> | Jogadores: ${dados.jogadoresInfo.length}/2</p>`;
         let lista = '';
@@ -608,7 +670,7 @@
             document.getElementById('area-jogo').style.display = 'none';
         }
     });
-
+    
     socket.on('iniciarPartida', (dados) => {
         jogoIniciado = true;
         estadoAtual = dados.estado;
@@ -619,14 +681,14 @@
         document.getElementById('lobby').style.display = 'none';
         document.getElementById('area-jogo').style.display = 'block';
     });
-
+    
     socket.on('estadoAtual', (estado) => {
         estadoAtual = estado;
         legalMoves = [];
         desenharTabuleiro();
         atualizarInterface();
     });
-
+    
     socket.on('dadosRolados', ({ dice, turn, legalMoves: moves }) => {
         estadoAtual.dice = dice;
         estadoAtual.diceUsed = [false, false];
@@ -635,7 +697,7 @@
         desenharTabuleiro();
         atualizarInterface();
     });
-
+    
     socket.on('jogadaFeita', (dados) => {
         estadoAtual = dados.estado;
         legalMoves = dados.legalMoves || [];
@@ -647,22 +709,23 @@
         movimentosPendentes = [];
         pecaSelecionada = null;
     });
-
+    
     socket.on('fimDeJogo', (dados) => {
         alert(dados.mensagem);
         jogoIniciado = false;
         document.getElementById('area-jogo').style.display = 'none';
         document.getElementById('lobby').style.display = 'block';
         document.getElementById('btn-pronto').disabled = false;
+        document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
     });
-
+    
     socket.on('novaMensagem', (msg) => {
         const div = document.getElementById('chat-mensagens');
         const hora = new Date(msg.timestamp).toLocaleTimeString();
         div.innerHTML += `<div><strong>${msg.remetente}</strong> <span class="badge">${hora}</span>: ${msg.texto}</div>`;
         div.scrollTop = div.scrollHeight;
     });
-
+    
     document.getElementById('input-mensagem').addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
 </script>
 </body>
