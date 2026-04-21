@@ -3,33 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Premium — Sombra de Contato</title>
+    <title>Gamão Premium — Tabuleiro Imediato</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; }
         body {
             background: #1a2a1a;
-            font-family: 'Georgia', 'Times New Roman', 'Segoe UI', serif;
+            font-family: 'Georgia', 'Times New Roman', serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             padding: 30px;
         }
-
-        /* Estrutura com moldura externa e sombra de contato interna */
         .game-container {
             background: #2c3e2b;
             border-radius: 56px;
             padding: 28px;
             box-shadow: 0 25px 40px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1);
         }
-
         .board-wrapper {
             display: flex;
             gap: 28px;
@@ -37,17 +28,13 @@
             justify-content: center;
             align-items: flex-start;
         }
-
-        /* Moldura externa + sombra de contato (afundamento) */
         .canvas-frame {
             background: #3a2a1a;
             border-radius: 36px;
             padding: 12px;
-            /* Sombra externa da moldura */
             box-shadow: inset 0 0 0 2px #5a4a2a, 0 10px 20px rgba(0,0,0,0.5);
             position: relative;
         }
-        /* Sombra de contato: simulando o rebaixamento do campo */
         .canvas-frame::after {
             content: '';
             position: absolute;
@@ -64,15 +51,9 @@
             border-radius: 28px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
             cursor: pointer;
-            transition: box-shadow 0.2s;
             position: relative;
             z-index: 1;
         }
-        canvas:hover {
-            box-shadow: inset 0 0 18px rgba(0,0,0,0.5);
-        }
-
-        /* Painel direito com abas (mesmo estilo refinado) */
         .info-panel {
             background: #1e2a1e;
             border-radius: 32px;
@@ -84,47 +65,26 @@
             backdrop-filter: blur(2px);
             box-shadow: inset 0 0 0 1px rgba(255,255,200,0.1), 0 8px 20px rgba(0,0,0,0.4);
         }
-
         .panel-header {
             background: #2a3a2a;
             padding: 14px 18px;
             border-radius: 32px 32px 0 0;
             display: flex;
             justify-content: space-between;
-            font-weight: bold;
             border-bottom: 2px solid #c9a87b;
         }
-
-        .tab-buttons {
-            display: flex;
-            gap: 12px;
-        }
+        .tab-buttons { display: flex; gap: 12px; }
         .tab-btn {
             background: none;
             border: none;
             color: #ddcca8;
             cursor: pointer;
-            font-size: 0.85rem;
             padding: 4px 10px;
             border-radius: 40px;
-            transition: 0.1s;
         }
-        .tab-btn.active {
-            background: #7a5a3a;
-            color: #f9e2b0;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .tab-content {
-            display: none;
-            padding: 16px;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .tab-content.active {
-            display: flex;
-        }
-
+        .tab-btn.active { background: #7a5a3a; color: #f9e2b0; }
+        .tab-content { display: none; padding: 16px; flex-direction: column; gap: 16px; }
+        .tab-content.active { display: flex; }
         .status-card {
             background: #0f1a0f;
             border-radius: 24px;
@@ -136,7 +96,6 @@
             display: flex;
             justify-content: space-between;
             margin-top: 10px;
-            font-weight: bold;
         }
         .home-box {
             background: #2a3a2a;
@@ -144,12 +103,7 @@
             border-radius: 30px;
             font-size: 0.85rem;
         }
-        .dice-area {
-            display: flex;
-            justify-content: center;
-            gap: 24px;
-            margin: 12px 0;
-        }
+        .dice-area { display: flex; justify-content: center; gap: 24px; margin: 12px 0; }
         .dice {
             width: 70px;
             height: 70px;
@@ -159,30 +113,17 @@
             align-items: center;
             justify-content: center;
             font-size: 2rem;
-            font-weight: bold;
-            color: #2c1a0c;
             box-shadow: 0 8px 0 #aa8a60;
             transition: 0.08s linear;
-            transform-style: preserve-3d;
-            position: relative;
         }
-        /* animação com easing */
-        .dice.rolling {
-            animation: diceRoll 0.35s cubic-bezier(0.25, 1.5, 0.5, 1);
-        }
+        .dice.rolling { animation: diceRoll 0.35s cubic-bezier(0.25, 1.5, 0.5, 1); }
         @keyframes diceRoll {
             0% { transform: translateY(0) rotate(0deg); }
             30% { transform: translateY(-12px) rotate(15deg); }
             70% { transform: translateY(4px) rotate(-8deg); }
             100% { transform: translateY(0) rotate(0deg); }
         }
-        .dice.used {
-            opacity: 0.5;
-            filter: grayscale(0.3);
-            box-shadow: 0 2px 0 #aa8a60;
-            transform: translateY(6px);
-        }
-
+        .dice.used { opacity: 0.5; filter: grayscale(0.3); box-shadow: 0 2px 0 #aa8a60; transform: translateY(6px); }
         button {
             background: #7a5a3a;
             border: none;
@@ -190,31 +131,14 @@
             border-radius: 60px;
             font-weight: bold;
             color: #fef0da;
-            font-size: 0.9rem;
             cursor: pointer;
-            transition: 0.08s linear;
             box-shadow: 0 3px 0 #4a2e1a;
             font-family: inherit;
         }
-        button:active {
-            transform: translateY(2px);
-            box-shadow: 0 1px 0 #4a2e1a;
-        }
-        .primary-btn {
-            background: #2b7a4b;
-            box-shadow: 0 3px 0 #1a4a2a;
-        }
-        .danger-btn {
-            background: #9a3a2a;
-            box-shadow: 0 3px 0 #5a2010;
-        }
-        .action-buttons {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
+        button:active { transform: translateY(2px); box-shadow: 0 1px 0 #4a2e1a; }
+        .primary-btn { background: #2b7a4b; box-shadow: 0 3px 0 #1a4a2a; }
+        .danger-btn { background: #9a3a2a; box-shadow: 0 3px 0 #5a2010; }
+        .action-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
         .chat-messages {
             background: #0a120a;
             border-radius: 20px;
@@ -224,10 +148,7 @@
             font-size: 0.75rem;
             font-family: monospace;
         }
-        .chat-input-area {
-            display: flex;
-            gap: 8px;
-        }
+        .chat-input-area { display: flex; gap: 8px; }
         .chat-input-area input {
             flex: 1;
             background: #1e2a1e;
@@ -235,10 +156,8 @@
             border-radius: 40px;
             padding: 8px 12px;
             color: #efe0c9;
-            font-family: inherit;
             outline: none;
         }
-
         .log-area {
             background: #0a120a;
             border-radius: 20px;
@@ -248,19 +167,8 @@
             font-family: monospace;
             font-size: 0.7rem;
         }
-
-        footer {
-            font-size: 0.65rem;
-            text-align: center;
-            padding: 8px;
-            color: #b8c8a0;
-            border-top: 1px solid #3a4a3a;
-        }
-
-        @media (max-width: 900px) {
-            .board-wrapper { flex-direction: column; align-items: center; }
-            .info-panel { width: 100%; }
-        }
+        footer { font-size: 0.65rem; text-align: center; padding: 8px; color: #b8c8a0; border-top: 1px solid #3a4a3a; }
+        @media (max-width: 900px) { .board-wrapper { flex-direction: column; align-items: center; } .info-panel { width: 100%; } }
     </style>
 </head>
 <body>
@@ -269,7 +177,6 @@
         <div class="canvas-frame">
             <canvas id="boardCanvas" width="1100" height="620"></canvas>
         </div>
-
         <div class="info-panel">
             <div class="panel-header">
                 <span>🎲 GAMÃO</span>
@@ -279,7 +186,6 @@
                     <button class="tab-btn" data-tab="logs">LOGS</button>
                 </div>
             </div>
-
             <div id="tabJogo" class="tab-content active">
                 <div class="status-card">
                     <div>⚫ SEU LADO: <strong id="meuLadoLabel">---</strong></div>
@@ -303,7 +209,6 @@
                 </div>
                 <footer>Clique na peça → destino (verde)</footer>
             </div>
-
             <div id="tabChat" class="tab-content">
                 <div class="chat-messages" id="chatMessages"></div>
                 <div class="chat-input-area">
@@ -311,11 +216,8 @@
                     <button id="enviarChat">ENVIAR</button>
                 </div>
             </div>
-
             <div id="tabLogs" class="tab-content">
-                <div class="log-area" id="logPanel">
-                    <div>🔹 Sistema pronto</div>
-                </div>
+                <div class="log-area" id="logPanel"><div>🔹 Sistema pronto</div></div>
             </div>
         </div>
     </div>
@@ -323,122 +225,41 @@
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-    // ------------------- CONEXÃO SOCKET -------------------
     const socket = io("https://motor-gamao.onrender.com");
-    let estado = null;
-    let meuLado = 0;       // 1 = vermelho, -1 = branco
-    let jogoAtivo = false;
-    let salaAtual = "";
-    let movimentosPendentes = [];
-    let pecaSelecionada = null;
-    let dadosDisponiveis = [];
+    let estado = null, meuLado = 0, jogoAtivo = false, salaAtual = "gamão";
+    let movimentosPendentes = [], pecaSelecionada = null, dadosDisponiveis = [];
+    let meuNome = "Jogador";
 
-    // Elementos DOM
     const canvas = document.getElementById("boardCanvas");
     const ctx = canvas.getContext("2d");
     const w = 1100, h = 620;
     canvas.width = w; canvas.height = h;
 
-    // ---------- GEOMETRIA DO TABULEIRO (proporções clássicas) ----------
-    const boardMarginX = 85;
-    const boardMarginY = 55;
+    // Geometria
+    const boardMarginX = 85, boardMarginY = 55;
     const boardWidth = w - boardMarginX * 2;
     const halfBoard = boardWidth / 2;
     const pointWidth = (boardWidth / 2) / 6;
     const pointHeight = 135;
-    const topY = boardMarginY;
-    const bottomY = h - boardMarginY;
+    const topY = boardMarginY, bottomY = h - boardMarginY;
     const barLeft = boardMarginX + halfBoard - 30;
     const barRight = barLeft + 60;
     const barTop = topY + pointHeight + 12;
     const barBottom = bottomY - pointHeight - 12;
 
-    // ---------- LÓGICA LOCAL DE MOVIMENTOS (regras oficiais) ----------
-    function getDirection(lado) {
-        return lado === 1 ? 1 : -1;
-    }
-    function isBlocked(point, lado) {
-        if (point < 0 || point >= 24) return false;
-        const qtd = estado.board[point];
-        if (lado === 1) return qtd < -1;
-        else return qtd > 1;
-    }
-    function getDestinos(from, steps, lado) {
-        const destinos = [];
-        if (from === 24) {
-            const dest = steps - 1;
-            if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) destinos.push(dest);
-            return destinos;
-        }
-        if (from === 25) {
-            const dest = 24 - steps;
-            if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) destinos.push(dest);
-            return destinos;
-        }
-        const dir = getDirection(lado);
-        let dest = from + dir * steps;
-        if (dest < 0 || dest >= 24) {
-            destinos.push(dest); // bear off
-        } else if (!isBlocked(dest, lado)) {
-            destinos.push(dest);
-        }
-        return destinos;
-    }
-    function calcularMovimentosLocais() {
-        if (!estado || estado.turn !== meuLado) return [];
-        const lado = meuLado;
-        let origens = [];
-        if (lado === 1 && estado.bar[0] > 0) origens.push(24);
-        if (lado === -1 && estado.bar[1] > 0) origens.push(25);
-        for (let i = 0; i < 24; i++) {
-            const qtd = estado.board[i];
-            if ((lado === 1 && qtd > 0) || (lado === -1 && qtd < 0)) origens.push(i);
-        }
-        const movimentos = [];
-        for (let idx = 0; idx < dadosDisponiveis.length; idx++) {
-            const steps = dadosDisponiveis[idx];
-            for (let from of origens) {
-                for (let to of getDestinos(from, steps, lado)) {
-                    movimentos.push({ from, to, dadoIdx: idx });
-                }
-            }
-        }
-        return movimentos;
-    }
-    function atualizarDadosDisponiveis() {
-        if (!estado) return;
-        const d1 = estado.dice[0], d2 = estado.dice[1];
-        const used = estado.diceUsed;
-        if (d1 === d2) {
-            let arr = [d1, d1, d1, d1];
-            if (used[0]) arr.shift();
-            if (used[1]) arr.shift();
-            dadosDisponiveis = arr;
-        } else {
-            dadosDisponiveis = [];
-            if (!used[0]) dadosDisponiveis.push(d1);
-            if (!used[1]) dadosDisponiveis.push(d2);
-        }
-    }
-
-    // ---------- DESENHO PREMIUM COM PROFUNDIDADE ----------
+    // ========== DESENHO DA BASE (TRIÂNGULOS, BARRA, NÚMEROS) ==========
     function desenharTriangulo(x, y, largura, altura, paraCima, corClara) {
         const grad = ctx.createLinearGradient(x, y, x, paraCima ? y - altura : y + altura);
-        if (corClara) {
-            grad.addColorStop(0, "#e7cba5");
-            grad.addColorStop(1, "#c8a06e");
-        } else {
-            grad.addColorStop(0, "#8b5a2e");
-            grad.addColorStop(1, "#5a3820");
-        }
+        grad.addColorStop(0, corClara ? "#e7cba5" : "#8b5a2e");
+        grad.addColorStop(1, corClara ? "#c8a06e" : "#5a3820");
         ctx.beginPath();
         if (paraCima) {
             ctx.moveTo(x, y);
-            ctx.lineTo(x + largura / 2, y - altura);
+            ctx.lineTo(x + largura/2, y - altura);
             ctx.lineTo(x + largura, y);
         } else {
             ctx.moveTo(x, y);
-            ctx.lineTo(x + largura / 2, y + altura);
+            ctx.lineTo(x + largura/2, y + altura);
             ctx.lineTo(x + largura, y);
         }
         ctx.closePath();
@@ -454,42 +275,10 @@
         ctx.restore();
     }
 
-    function desenharPeca(x, y, cor, camada = 0) {
-        ctx.save();
-        const sombraIntensidade = 5 - camada * 0.8;
-        ctx.shadowBlur = Math.max(3, sombraIntensidade);
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-        ctx.shadowColor = "rgba(0,0,0,0.5)";
-        const grad = ctx.createRadialGradient(x - 4, y - 4, 5, x, y, 14);
-        if (cor === "red") {
-            grad.addColorStop(0, "#e06050");
-            grad.addColorStop(1, "#962818");
-        } else {
-            grad.addColorStop(0, "#fff5e8");
-            grad.addColorStop(1, "#d4bc92");
-        }
-        ctx.beginPath();
-        ctx.arc(x, y, 13, 0, 2 * Math.PI);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = "#1a0e05";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(x - 3, y - 3, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = "rgba(255,250,210,0.8)";
-        ctx.fill();
-        ctx.restore();
-    }
-
-    function desenharTabuleiro() {
-        if (!estado) return;
+    function desenharBaseTabuleiro() {
         ctx.clearRect(0, 0, w, h);
-        // fundo principal (madeira escura)
         ctx.fillStyle = "#a87b51";
         ctx.fillRect(0, 0, w, h);
-        // textura de madeira (linhas suaves)
         ctx.save();
         ctx.globalAlpha = 0.2;
         for (let i = 0; i < 200; i++) {
@@ -501,7 +290,6 @@
         }
         ctx.restore();
 
-        // triângulos
         for (let i = 0; i < 6; i++) {
             const x = boardMarginX + i * pointWidth;
             const claro = (i % 2 === 0);
@@ -515,7 +303,6 @@
             desenharTriangulo(x, bottomY, pointWidth, pointHeight, true, !claro);
         }
 
-        // Barra central
         ctx.fillStyle = "#b87c48";
         ctx.fillRect(barLeft, barTop, barRight - barLeft, barBottom - barTop);
         ctx.fillStyle = "#e0bc88";
@@ -527,390 +314,304 @@
         ctx.strokeRect(barLeft, barTop, barRight - barLeft, barBottom - barTop);
         ctx.font = "bold 20px 'Georgia'";
         ctx.fillStyle = "#fae0b0";
-        ctx.fillText("⚫", barLeft + 26, barTop + (barBottom - barTop) / 2 + 8);
+        ctx.fillText("⚫", barLeft + 26, barTop + (barBottom - barTop)/2 + 8);
         ctx.font = "bold 12px 'Segoe UI'";
-        ctx.fillText("BARRA", barLeft + 12, barTop + (barBottom - barTop) / 2 + 30);
+        ctx.fillText("BARRA", barLeft + 12, barTop + (barBottom - barTop)/2 + 30);
 
-        // Números das casas
         ctx.font = "bold 14px 'Georgia'";
         ctx.fillStyle = "#2c1a08";
         ctx.textAlign = "center";
         for (let i = 0; i < 6; i++) {
-            const xEsq = boardMarginX + i * pointWidth + pointWidth / 2;
+            const xEsq = boardMarginX + i * pointWidth + pointWidth/2;
             ctx.fillText((6 - i).toString(), xEsq, topY - 10);
             ctx.fillText((13 + i).toString(), xEsq, bottomY + 26);
-            const xDir = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
+            const xDir = boardMarginX + halfBoard + i * pointWidth + pointWidth/2;
             ctx.fillText((7 + i).toString(), xDir, topY - 10);
             ctx.fillText((19 + i).toString(), xDir, bottomY + 26);
         }
         ctx.textAlign = "left";
+    }
 
-        // Atualizar contadores UI
-        document.getElementById("homeVermelha").innerText = estado.home[0];
-        document.getElementById("homeBranca").innerText = estado.home[1];
+    // Desenho das peças e destaques (quando estado existe)
+    function desenharPeca(x, y, cor, camada = 0) {
+        ctx.save();
+        ctx.shadowBlur = Math.max(3, 5 - camada * 0.8);
+        ctx.shadowOffsetX = 2;
+        ctx.shadowOffsetY = 2;
+        ctx.shadowColor = "rgba(0,0,0,0.5)";
+        const grad = ctx.createRadialGradient(x-4, y-4, 5, x, y, 14);
+        if (cor === "red") grad.addColorStop(0, "#e06050"), grad.addColorStop(1, "#962818");
+        else grad.addColorStop(0, "#fff5e8"), grad.addColorStop(1, "#d4bc92");
+        ctx.beginPath();
+        ctx.arc(x, y, 13, 0, 2*Math.PI);
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.strokeStyle = "#1a0e05";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(x-3, y-3, 3, 0, 2*Math.PI);
+        ctx.fillStyle = "rgba(255,250,210,0.8)";
+        ctx.fill();
+        ctx.restore();
+    }
 
-        // Desenhar peças com sombras entre camadas (step reduzido)
-        function desenharPilha(x, yBase, qtd, cor, direcao) {
+    function desenharPecas() {
+        if (!estado) return;
+        function pilha(x, yBase, qtd, cor, dir) {
             const absQ = Math.abs(qtd);
-            const maxVis = 6;
             const step = 12;
-            for (let j = 0; j < Math.min(absQ, maxVis); j++) {
-                const y = direcao === 'down' ? yBase + j * step : yBase - j * step;
+            for (let j = 0; j < Math.min(absQ, 6); j++) {
+                const y = dir === 'down' ? yBase + j*step : yBase - j*step;
                 desenharPeca(x, y, cor, j);
             }
-            if (absQ > maxVis) {
+            if (absQ > 6) {
                 ctx.fillStyle = "#111";
                 ctx.font = "bold 10px monospace";
-                ctx.fillText(`+${absQ - maxVis}`, x + 12, direcao === 'down' ? yBase + (maxVis-1)*step + 12 : yBase - (maxVis-1)*step - 8);
+                ctx.fillText(`+${absQ-6}`, x+12, dir === 'down' ? yBase + 5*step + 12 : yBase - 5*step - 8);
             }
         }
-
         for (let i = 0; i < 6; i++) {
-            const idx1 = 5 - i;
-            const q1 = estado.board[idx1];
-            if (q1 !== 0) {
-                const x = boardMarginX + i * pointWidth + pointWidth / 2;
-                const yBase = topY + 22;
-                desenharPilha(x, yBase, q1, q1 > 0 ? "red" : "white", "down");
-            }
-            const idx2 = 11 - i;
-            const q2 = estado.board[idx2];
-            if (q2 !== 0) {
-                const x = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
-                const yBase = topY + 22;
-                desenharPilha(x, yBase, q2, q2 > 0 ? "red" : "white", "down");
-            }
-            const idx3 = 12 + i;
-            const q3 = estado.board[idx3];
-            if (q3 !== 0) {
-                const x = boardMarginX + i * pointWidth + pointWidth / 2;
-                const yBase = bottomY - 30;
-                desenharPilha(x, yBase, q3, q3 > 0 ? "red" : "white", "up");
-            }
-            const idx4 = 18 + i;
-            const q4 = estado.board[idx4];
-            if (q4 !== 0) {
-                const x = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
-                const yBase = bottomY - 30;
-                desenharPilha(x, yBase, q4, q4 > 0 ? "red" : "white", "up");
-            }
+            const idx1 = 5 - i, q1 = estado.board[idx1];
+            if (q1) pilha(boardMarginX + i*pointWidth + pointWidth/2, topY+22, q1, q1>0?"red":"white", "down");
+            const idx2 = 11 - i, q2 = estado.board[idx2];
+            if (q2) pilha(boardMarginX + halfBoard + i*pointWidth + pointWidth/2, topY+22, q2, q2>0?"red":"white", "down");
+            const idx3 = 12 + i, q3 = estado.board[idx3];
+            if (q3) pilha(boardMarginX + i*pointWidth + pointWidth/2, bottomY-30, q3, q3>0?"red":"white", "up");
+            const idx4 = 18 + i, q4 = estado.board[idx4];
+            if (q4) pilha(boardMarginX + halfBoard + i*pointWidth + pointWidth/2, bottomY-30, q4, q4>0?"red":"white", "up");
         }
+        if (estado.bar[0]) for (let j=0; j<Math.min(estado.bar[0],6); j++) desenharPeca(barLeft+30, barTop+22+j*14, "red", j);
+        if (estado.bar[1]) for (let j=0; j<Math.min(estado.bar[1],6); j++) desenharPeca(barLeft+30, barBottom-22-j*14, "white", j);
+    }
 
-        // peças na barra
-        if (estado.bar[0] > 0) {
-            for (let j = 0; j < Math.min(estado.bar[0], 6); j++) {
-                desenharPeca(barLeft + 30, barTop + 22 + j * 14, "red", j);
-            }
-            if (estado.bar[0] > 6) ctx.fillText(`+${estado.bar[0] - 6}`, barLeft + 48, barTop + 120);
+    function desenharDestaques() {
+        if (!pecaSelecionada || !estado) return;
+        let cx, cy, from = pecaSelecionada.from;
+        if (from === 24) { cx = barLeft+30; cy = barTop+30; }
+        else if (from === 25) { cx = barLeft+30; cy = barBottom-30; }
+        else if (from < 12) {
+            if (from <= 5) { let i = 5 - from; cx = boardMarginX + i*pointWidth + pointWidth/2; cy = topY+30; }
+            else { let i = 11 - from; cx = boardMarginX + halfBoard + i*pointWidth + pointWidth/2; cy = topY+30; }
+        } else {
+            if (from <= 17) { let i = from - 12; cx = boardMarginX + i*pointWidth + pointWidth/2; cy = bottomY-38; }
+            else { let i = from - 18; cx = boardMarginX + halfBoard + i*pointWidth + pointWidth/2; cy = bottomY-38; }
         }
-        if (estado.bar[1] > 0) {
-            for (let j = 0; j < Math.min(estado.bar[1], 6); j++) {
-                desenharPeca(barLeft + 30, barBottom - 22 - j * 14, "white", j);
-            }
-            if (estado.bar[1] > 6) ctx.fillText(`+${estado.bar[1] - 6}`, barLeft + 48, barBottom - 110);
-        }
+        ctx.save();
+        ctx.shadowBlur = 14; ctx.shadowColor = "#ffcc66";
+        ctx.beginPath(); ctx.arc(cx, cy, 18, 0, 2*Math.PI);
+        ctx.strokeStyle = "#ffcc66"; ctx.lineWidth = 4; ctx.stroke();
+        ctx.restore();
 
-        // Destaque da peça selecionada
-        if (pecaSelecionada !== null) {
+        const movs = calcularMovimentosLocais();
+        const destinos = new Set(movs.filter(m => m.from === from).map(m => m.to));
+        destinos.forEach(to => {
             let cx, cy;
-            const from = pecaSelecionada.from;
-            if (from === 24) { cx = barLeft + 30; cy = barTop + 30; }
-            else if (from === 25) { cx = barLeft + 30; cy = barBottom - 30; }
-            else if (from < 12) {
-                if (from <= 5) { const i = 5 - from; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = topY + 30; }
-                else { const i = 11 - from; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = topY + 30; }
+            if (to === 24) { cx = barLeft+30; cy = barTop+30; }
+            else if (to === 25) { cx = barLeft+30; cy = barBottom-30; }
+            else if (to < 12) {
+                if (to <= 5) { let i = 5 - to; cx = boardMarginX + i*pointWidth + pointWidth/2; cy = topY+30; }
+                else { let i = 11 - to; cx = boardMarginX + halfBoard + i*pointWidth + pointWidth/2; cy = topY+30; }
             } else {
-                if (from <= 17) { const i = from - 12; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
-                else { const i = from - 18; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
+                if (to <= 17) { let i = to - 12; cx = boardMarginX + i*pointWidth + pointWidth/2; cy = bottomY-38; }
+                else { let i = to - 18; cx = boardMarginX + halfBoard + i*pointWidth + pointWidth/2; cy = bottomY-38; }
             }
             ctx.save();
-            ctx.shadowBlur = 14;
-            ctx.shadowColor = "#ffcc66";
-            ctx.beginPath();
-            ctx.arc(cx, cy, 18, 0, 2 * Math.PI);
-            ctx.strokeStyle = "#ffcc66";
-            ctx.lineWidth = 4;
-            ctx.stroke();
+            ctx.shadowBlur = 12; ctx.shadowColor = "#2ecc71";
+            ctx.beginPath(); ctx.arc(cx, cy, 20, 0, 2*Math.PI);
+            ctx.strokeStyle = "#2ecc71"; ctx.lineWidth = 4; ctx.stroke();
             ctx.restore();
-        }
+        });
+    }
 
-        // Destinos verdes
-        if (pecaSelecionada !== null) {
-            const movimentos = calcularMovimentosLocais();
-            const destinos = new Set(movimentos.filter(m => m.from === pecaSelecionada.from).map(m => m.to));
-            destinos.forEach(to => {
-                let cx, cy;
-                if (to === 24) { cx = barLeft + 30; cy = barTop + 30; }
-                else if (to === 25) { cx = barLeft + 30; cy = barBottom - 30; }
-                else if (to < 12) {
-                    if (to <= 5) { const i = 5 - to; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = topY + 30; }
-                    else { const i = 11 - to; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = topY + 30; }
-                } else {
-                    if (to <= 17) { const i = to - 12; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
-                    else { const i = to - 18; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
+    function desenharTudo() {
+        desenharBaseTabuleiro();
+        if (estado) {
+            desenharPecas();
+            document.getElementById("homeVermelha").innerText = estado.home[0];
+            document.getElementById("homeBranca").innerText = estado.home[1];
+        }
+        desenharDestaques();
+    }
+
+    // ========== LÓGICA DE MOVIMENTOS ==========
+    function getDirection(lado) { return lado === 1 ? 1 : -1; }
+    function isBlocked(point, lado) {
+        if (point<0||point>=24) return false;
+        const q = estado.board[point];
+        return lado===1 ? q<-1 : q>1;
+    }
+    function getDestinos(from, steps, lado) {
+        let destinos = [];
+        if (from===24) { let d=steps-1; if(d>=0&&d<24&&!isBlocked(d,lado)) destinos.push(d); return destinos; }
+        if (from===25) { let d=24-steps; if(d>=0&&d<24&&!isBlocked(d,lado)) destinos.push(d); return destinos; }
+        let dir = getDirection(lado);
+        let dest = from + dir*steps;
+        if (dest<0||dest>=24) destinos.push(dest);
+        else if (!isBlocked(dest,lado)) destinos.push(dest);
+        return destinos;
+    }
+    function calcularMovimentosLocais() {
+        if (!estado || estado.turn!==meuLado) return [];
+        let origens = [];
+        if (meuLado===1 && estado.bar[0]>0) origens.push(24);
+        if (meuLado===-1 && estado.bar[1]>0) origens.push(25);
+        for(let i=0;i<24;i++) {
+            let q = estado.board[i];
+            if((meuLado===1 && q>0) || (meuLado===-1 && q<0)) origens.push(i);
+        }
+        let moves = [];
+        for(let idx=0; idx<dadosDisponiveis.length; idx++) {
+            let steps = dadosDisponiveis[idx];
+            for(let from of origens) {
+                for(let to of getDestinos(from, steps, meuLado)) {
+                    moves.push({from,to,dadoIdx:idx});
                 }
-                ctx.save();
-                ctx.shadowBlur = 12;
-                ctx.shadowColor = "#2ecc71";
-                ctx.beginPath();
-                ctx.arc(cx, cy, 20, 0, 2 * Math.PI);
-                ctx.strokeStyle = "#2ecc71";
-                ctx.lineWidth = 4;
-                ctx.stroke();
-                ctx.restore();
-            });
+            }
+        }
+        return moves;
+    }
+    function atualizarDadosDisponiveis() {
+        if(!estado) return;
+        let d1=estado.dice[0], d2=estado.dice[1], used=estado.diceUsed;
+        if(d1===d2) {
+            let arr=[d1,d1,d1,d1];
+            if(used[0]) arr.shift();
+            if(used[1]) arr.shift();
+            dadosDisponiveis=arr;
+        } else {
+            dadosDisponiveis=[];
+            if(!used[0]) dadosDisponiveis.push(d1);
+            if(!used[1]) dadosDisponiveis.push(d2);
         }
     }
 
-    // ---------- CLIQUE NO TABULEIRO ----------
-    function getPointFromClick(px, py) {
-        if (px >= barLeft && px <= barRight) {
-            if (py >= barTop && py <= barTop + 70) return 24;
-            if (py >= barBottom - 70 && py <= barBottom) return 25;
+    // ========== EVENTOS DE CLIQUE ==========
+    function getPointFromClick(px,py) {
+        if(px>=barLeft && px<=barRight) {
+            if(py>=barTop && py<=barTop+70) return 24;
+            if(py>=barBottom-70 && py<=barBottom) return 25;
         }
-        for (let i = 0; i < 6; i++) {
-            const x0 = boardMarginX + i * pointWidth;
-            const x1 = x0 + pointWidth;
-            if (px >= x0 && px <= x1 && py >= topY && py <= topY + pointHeight) return 5 - i;
+        for(let i=0;i<6;i++) {
+            let x0=boardMarginX+i*pointWidth, x1=x0+pointWidth;
+            if(px>=x0 && px<=x1 && py>=topY && py<=topY+pointHeight) return 5-i;
         }
-        for (let i = 0; i < 6; i++) {
-            const x0 = boardMarginX + halfBoard + i * pointWidth;
-            const x1 = x0 + pointWidth;
-            if (px >= x0 && px <= x1 && py >= topY && py <= topY + pointHeight) return 11 - i;
+        for(let i=0;i<6;i++) {
+            let x0=boardMarginX+halfBoard+i*pointWidth, x1=x0+pointWidth;
+            if(px>=x0 && px<=x1 && py>=topY && py<=topY+pointHeight) return 11-i;
         }
-        for (let i = 0; i < 6; i++) {
-            const x0 = boardMarginX + i * pointWidth;
-            const x1 = x0 + pointWidth;
-            if (px >= x0 && px <= x1 && py >= bottomY - pointHeight && py <= bottomY) return 12 + i;
+        for(let i=0;i<6;i++) {
+            let x0=boardMarginX+i*pointWidth, x1=x0+pointWidth;
+            if(px>=x0 && px<=x1 && py>=bottomY-pointHeight && py<=bottomY) return 12+i;
         }
-        for (let i = 0; i < 6; i++) {
-            const x0 = boardMarginX + halfBoard + i * pointWidth;
-            const x1 = x0 + pointWidth;
-            if (px >= x0 && px <= x1 && py >= bottomY - pointHeight && py <= bottomY) return 18 + i;
+        for(let i=0;i<6;i++) {
+            let x0=boardMarginX+halfBoard+i*pointWidth, x1=x0+pointWidth;
+            if(px>=x0 && px<=x1 && py>=bottomY-pointHeight && py<=bottomY) return 18+i;
         }
         return -1;
     }
 
     canvas.addEventListener("click", (e) => {
-        if (!jogoAtivo || meuLado === 0 || !estado) return;
-        if (estado.turn !== meuLado) { addLog("⏳ Aguarde seu turno", "#ffaa88"); return; }
-        if (estado.rollPhase) { addLog("🎲 Role os dados primeiro", "#ffaa88"); return; }
-
+        if(!jogoAtivo || meuLado===0 || !estado) return;
+        if(estado.turn !== meuLado) { addLog("⏳ Aguarde seu turno","#ffaa88"); return; }
+        if(estado.rollPhase) { addLog("🎲 Role os dados primeiro","#ffaa88"); return; }
         const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const mx = (e.clientX - rect.left) * scaleX;
-        const my = (e.clientY - rect.top) * scaleY;
-        const point = getPointFromClick(mx, my);
-        if (point === -1) return;
-
+        const scaleX = canvas.width/rect.width, scaleY = canvas.height/rect.height;
+        const mx = (e.clientX-rect.left)*scaleX, my = (e.clientY-rect.top)*scaleY;
+        const point = getPointFromClick(mx,my);
+        if(point===-1) return;
         let count;
-        if (point === 24) count = estado.bar[0];
-        else if (point === 25) count = estado.bar[1];
-        else count = estado.board[point];
-        const isMine = (meuLado === 1 && count > 0) || (meuLado === -1 && count < 0);
-
-        if (pecaSelecionada === null) {
-            if (isMine) {
-                pecaSelecionada = { from: point };
-                addLog(`🔍 Peça selecionada em ${point}`, "#aaffaa");
-                desenharTabuleiro();
-            } else {
-                addLog("❌ Peça adversária ou vazia", "#ff8888");
-            }
+        if(point===24) count=estado.bar[0];
+        else if(point===25) count=estado.bar[1];
+        else count=estado.board[point];
+        const isMine = (meuLado===1 && count>0) || (meuLado===-1 && count<0);
+        if(pecaSelecionada===null) {
+            if(isMine) { pecaSelecionada={from:point}; addLog(`🔍 Selecionado ${point}`,"#aaffaa"); desenharTudo(); }
+            else addLog("❌ Peça adversária","#ff8888");
         } else {
-            const from = pecaSelecionada.from;
-            const to = point;
-            const movimentos = calcularMovimentosLocais();
-            const valido = movimentos.find(m => m.from === from && m.to === to);
-            if (valido) {
-                addLog(`✅ Movimento ${from} → ${to}`, "#aaffaa");
-                movimentosPendentes.push({ from, to });
-                const steps = Math.abs(to - from);
-                let idx = dadosDisponiveis.findIndex(v => v === steps);
-                if (idx !== -1) dadosDisponiveis.splice(idx, 1);
-                pecaSelecionada = null;
-                desenharTabuleiro();
+            const from=pecaSelecionada.from, to=point;
+            const valido = calcularMovimentosLocais().find(m=>m.from===from && m.to===to);
+            if(valido) {
+                addLog(`✅ ${from}→${to}`,"#aaffaa");
+                movimentosPendentes.push({from,to});
+                let steps = Math.abs(to-from);
+                let idx = dadosDisponiveis.findIndex(v=>v===steps);
+                if(idx!==-1) dadosDisponiveis.splice(idx,1);
+                pecaSelecionada=null;
+                desenharTudo();
                 atualizarInterface();
-                if (dadosDisponiveis.length === 0 && movimentosPendentes.length > 0) {
-                    addLog("⚡ Todos os dados usados, confirmando...", "#ffdd88");
+                if(dadosDisponiveis.length===0 && movimentosPendentes.length>0) {
+                    addLog("⚡ Todos os dados usados, confirmando...","#ffdd88");
                     confirmarJogada();
                 }
             } else {
-                addLog(`❌ Movimento inválido (${from}→${to})`, "#ff8888");
-                pecaSelecionada = null;
-                desenharTabuleiro();
+                addLog(`❌ Inválido ${from}→${to}`,"#ff8888");
+                pecaSelecionada=null;
+                desenharTudo();
             }
         }
     });
 
-    function confirmarJogada() {
-        if (movimentosPendentes.length === 0) return;
-        socket.emit("moverPecas", { moves: movimentosPendentes });
-        movimentosPendentes = [];
-        pecaSelecionada = null;
-    }
-    function cancelarMovimentos() {
-        movimentosPendentes = [];
-        pecaSelecionada = null;
-        atualizarDadosDisponiveis();
-        desenharTabuleiro();
-        atualizarInterface();
-        addLog("🔄 Movimentos cancelados", "#ffdd88");
-    }
-    function rolarDados() {
-        socket.emit("rolarDados");
-        addLog("🎲 Rolando dados...", "#ccccff");
-        const dado1 = document.getElementById("dado1");
-        const dado2 = document.getElementById("dado2");
-        dado1.classList.add("rolling");
-        dado2.classList.add("rolling");
-        setTimeout(() => {
-            dado1.classList.remove("rolling");
-            dado2.classList.remove("rolling");
-        }, 400);
-    }
-    function desistir() {
-        if (confirm("Desistir da partida?")) socket.emit("desistir");
-    }
+    function confirmarJogada() { if(movimentosPendentes.length) socket.emit("moverPecas",{moves:movimentosPendentes}); movimentosPendentes=[]; pecaSelecionada=null; }
+    function cancelarMovimentos() { movimentosPendentes=[]; pecaSelecionada=null; atualizarDadosDisponiveis(); desenharTudo(); atualizarInterface(); addLog("🔄 Cancelado","#ffdd88"); }
+    function rolarDados() { socket.emit("rolarDados"); addLog("🎲 Rolando...","#ccccff"); document.getElementById("dado1").classList.add("rolling"); document.getElementById("dado2").classList.add("rolling"); setTimeout(()=>{ document.getElementById("dado1").classList.remove("rolling"); document.getElementById("dado2").classList.remove("rolling"); },400); }
+    function desistir() { if(confirm("Desistir?")) socket.emit("desistir"); }
 
     function atualizarInterface() {
-        if (!estado) return;
-        document.getElementById("turnoLabel").innerHTML = estado.turn === 1 ? "VERMELHO ↓" : "BRANCO ↑";
-        const d1 = document.getElementById("dado1");
-        const d2 = document.getElementById("dado2");
-        const pontosMap = {1:"●",2:"●●",3:"●●●",4:"●●●●",5:"●●●●●",6:"●●●●●●"};
-        d1.innerText = pontosMap[estado.dice[0]] || "?";
-        d2.innerText = pontosMap[estado.dice[1]] || "?";
-        d1.style.fontSize = "1.8rem";
-        d2.style.fontSize = "1.8rem";
-        d1.classList.toggle("used", estado.diceUsed[0]);
-        d2.classList.toggle("used", estado.diceUsed[1]);
-
-        const rolar = document.getElementById("rolarBtn");
-        const confirmar = document.getElementById("confirmarBtn");
-        const cancelar = document.getElementById("cancelarBtn");
-        const meuTurno = (estado.turn === meuLado);
-        if (!jogoAtivo || !meuTurno || estado.gameOver) {
-            rolar.style.display = "none";
-            confirmar.style.display = "none";
-            cancelar.style.display = "none";
-        } else if (estado.rollPhase) {
-            rolar.style.display = "inline-block";
-            confirmar.style.display = "none";
-            cancelar.style.display = "none";
+        if(!estado) return;
+        document.getElementById("turnoLabel").innerHTML = estado.turn===1?"VERMELHO ↓":"BRANCO ↑";
+        const pMap={1:"●",2:"●●",3:"●●●",4:"●●●●",5:"●●●●●",6:"●●●●●●"};
+        document.getElementById("dado1").innerText = pMap[estado.dice[0]]||"?";
+        document.getElementById("dado2").innerText = pMap[estado.dice[1]]||"?";
+        document.getElementById("dado1").classList.toggle("used",estado.diceUsed[0]);
+        document.getElementById("dado2").classList.toggle("used",estado.diceUsed[1]);
+        const rolar=document.getElementById("rolarBtn"), conf=document.getElementById("confirmarBtn"), canc=document.getElementById("cancelarBtn");
+        let meuTurno = (estado.turn===meuLado);
+        if(!jogoAtivo || !meuTurno || estado.gameOver) {
+            rolar.style.display="none"; conf.style.display="none"; canc.style.display="none";
+        } else if(estado.rollPhase) {
+            rolar.style.display="inline-block"; conf.style.display="none"; canc.style.display="none";
         } else {
-            rolar.style.display = "none";
-            confirmar.style.display = movimentosPendentes.length ? "inline-block" : "none";
-            cancelar.style.display = movimentosPendentes.length ? "inline-block" : "none";
+            rolar.style.display="none";
+            conf.style.display=movimentosPendentes.length?"inline-block":"none";
+            canc.style.display=movimentosPendentes.length?"inline-block":"none";
         }
-        desenharTabuleiro();
+        desenharTudo();
     }
 
-    function addLog(msg, cor = "#dddddd") {
-        const logDiv = document.getElementById("logPanel");
-        const p = document.createElement("div");
-        p.style.color = cor;
-        p.innerHTML = `🔹 ${new Date().toLocaleTimeString()} ${msg}`;
-        logDiv.appendChild(p);
-        p.scrollIntoView({ behavior: "smooth", block: "nearest" });
-        while (logDiv.children.length > 60) logDiv.removeChild(logDiv.firstChild);
+    function addLog(msg,cor="#ddd") {
+        const log=document.getElementById("logPanel");
+        let p=document.createElement("div"); p.style.color=cor; p.innerHTML=`🔹 ${new Date().toLocaleTimeString()} ${msg}`;
+        log.appendChild(p); p.scrollIntoView({behavior:"smooth",block:"nearest"});
+        while(log.children.length>60) log.removeChild(log.firstChild);
     }
 
-    // ---------- SOCKET EVENTOS ----------
-    function entrar() {
-        const nome = prompt("Seu nome:", "jogador") || "anon";
-        const sala = prompt("Sala:", "gamão") || "gamão";
-        salaAtual = sala;
-        socket.emit("entrarSala", { apelido: nome, sala });
-        addLog(`📡 Entrando na sala ${sala} como ${nome}`, "#88ffaa");
-    }
+    // ========== SOCKET ==========
+    socket.on("connect",()=>{ addLog("✅ Conectado","#88ffaa"); socket.emit("entrarSala",{apelido:meuNome,sala:salaAtual}); });
+    socket.on("disconnect",()=>addLog("❌ Desconectado","#ff8888"));
+    socket.on("erro",(m)=>addLog(`⚠️ ${m}`,"#ffaa88"));
+    socket.on("definirPapel",(d)=>{
+        if(d.papel==="jogador") { meuLado=d.lado; document.getElementById("meuLadoLabel").innerHTML=meuLado===1?"VERMELHO":"BRANCO"; addLog(`🎭 Você é ${meuLado===1?"Vermelho":"Branco"}`,"#aaffaa"); }
+        else { meuLado=0; document.getElementById("meuLadoLabel").innerHTML="ESPECTADOR"; }
+    });
+    socket.on("estadoLobby",(d)=>{ if(d.rodando) { jogoAtivo=true; addLog("🏁 Partida iniciada!","#ffffaa"); } });
+    socket.on("iniciarPartida",(d)=>{ jogoAtivo=true; estado=d.estado; if(d.lado!=="espectador") meuLado=d.lado; atualizarDadosDisponiveis(); atualizarInterface(); addLog("🚀 Jogo iniciado","#aaffaa"); });
+    socket.on("estadoAtual",(n)=>{ estado=n; atualizarDadosDisponiveis(); atualizarInterface(); });
+    socket.on("dadosRolados",({dice})=>{ estado.dice=dice; estado.diceUsed=[false,false]; estado.rollPhase=false; atualizarDadosDisponiveis(); addLog(`🎲 Dados: ${dice[0]} e ${dice[1]}`,"#aaffaa"); atualizarInterface(); });
+    socket.on("jogadaFeita",(d)=>{ estado=d.estado; movimentosPendentes=[]; pecaSelecionada=null; atualizarDadosDisponiveis(); atualizarInterface(); addLog("♟️ Jogada confirmada","#aaffaa"); });
+    socket.on("fimDeJogo",(d)=>{ alert(d.mensagem); jogoAtivo=false; addLog(`🏆 ${d.mensagem}`,"#ffff88"); });
+    socket.on("novaMensagem",(m)=>{ let chat=document.getElementById("chatMessages"); let hora=new Date(m.timestamp).toLocaleTimeString(); chat.innerHTML+=`<div><strong>${m.remetente}</strong> <span style="font-size:0.7rem;">${hora}</span>: ${m.texto}</div>`; chat.scrollTop=chat.scrollHeight; });
 
-    socket.on("connect", () => addLog("✅ Conectado ao servidor", "#88ffaa"));
-    socket.on("disconnect", () => addLog("❌ Desconectado", "#ff8888"));
-    socket.on("erro", (msg) => addLog(`⚠️ ${msg}`, "#ffaa88"));
-    socket.on("definirPapel", (dados) => {
-        if (dados.papel === "jogador") {
-            meuLado = dados.lado;
-            document.getElementById("meuLadoLabel").innerHTML = meuLado === 1 ? "VERMELHO" : "BRANCO";
-            addLog(`🎭 Você é ${meuLado === 1 ? "Vermelho" : "Branco"}`, "#aaffaa");
-        } else {
-            meuLado = 0;
-            document.getElementById("meuLadoLabel").innerHTML = "ESPECTADOR";
-        }
-    });
-    socket.on("estadoLobby", (dados) => {
-        if (dados.rodando) {
-            jogoAtivo = true;
-            addLog("🏁 Partida iniciada!", "#ffffaa");
-        }
-    });
-    socket.on("iniciarPartida", (dados) => {
-        jogoAtivo = true;
-        estado = dados.estado;
-        if (dados.lado !== "espectador") meuLado = dados.lado;
-        atualizarDadosDisponiveis();
-        atualizarInterface();
-        addLog("🚀 Jogo iniciado", "#aaffaa");
-    });
-    socket.on("estadoAtual", (novo) => {
-        estado = novo;
-        atualizarDadosDisponiveis();
-        atualizarInterface();
-    });
-    socket.on("dadosRolados", ({ dice }) => {
-        estado.dice = dice;
-        estado.diceUsed = [false, false];
-        estado.rollPhase = false;
-        atualizarDadosDisponiveis();
-        addLog(`🎲 Dados: ${dice[0]} e ${dice[1]}`, "#aaffaa");
-        atualizarInterface();
-    });
-    socket.on("jogadaFeita", (dados) => {
-        estado = dados.estado;
-        movimentosPendentes = [];
-        pecaSelecionada = null;
-        atualizarDadosDisponiveis();
-        atualizarInterface();
-        addLog("♟️ Jogada confirmada", "#aaffaa");
-    });
-    socket.on("fimDeJogo", (dados) => {
-        alert(dados.mensagem);
-        jogoAtivo = false;
-        addLog(`🏆 ${dados.mensagem}`, "#ffff88");
-    });
-    socket.on("novaMensagem", (msg) => {
-        const chatDiv = document.getElementById("chatMessages");
-        const hora = new Date(msg.timestamp).toLocaleTimeString();
-        chatDiv.innerHTML += `<div><strong>${msg.remetente}</strong> <span style="font-size:0.7rem;">${hora}</span>: ${msg.texto}</div>`;
-        chatDiv.scrollTop = chatDiv.scrollHeight;
-    });
+    document.getElementById("rolarBtn").onclick=rolarDados;
+    document.getElementById("desistirBtn").onclick=desistir;
+    document.getElementById("confirmarBtn").onclick=confirmarJogada;
+    document.getElementById("cancelarBtn").onclick=cancelarMovimentos;
+    document.getElementById("enviarChat").onclick=()=>{ let inp=document.getElementById("chatInput"); let msg=inp.value.trim(); if(msg){ socket.emit("enviarMensagem",msg); if(meuNome==="Jogador" && msg.length) meuNome=msg; inp.value=""; } };
+    document.getElementById("chatInput").addEventListener("keypress",e=>{ if(e.key==="Enter") document.getElementById("enviarChat").click(); });
+    document.querySelectorAll(".tab-btn").forEach(btn=>{ btn.addEventListener("click",()=>{ let tab=btn.dataset.tab; document.querySelectorAll(".tab-content").forEach(tc=>tc.classList.remove("active")); document.getElementById(`tab${tab.charAt(0).toUpperCase()+tab.slice(1)}`).classList.add("active"); document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active")); btn.classList.add("active"); }); });
 
-    // UI buttons e abas
-    document.getElementById("rolarBtn").onclick = rolarDados;
-    document.getElementById("desistirBtn").onclick = desistir;
-    document.getElementById("confirmarBtn").onclick = confirmarJogada;
-    document.getElementById("cancelarBtn").onclick = cancelarMovimentos;
-    document.getElementById("enviarChat").onclick = () => {
-        const input = document.getElementById("chatInput");
-        const msg = input.value.trim();
-        if (msg) socket.emit("enviarMensagem", msg);
-        input.value = "";
-    };
-    document.getElementById("chatInput").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") document.getElementById("enviarChat").click();
-    });
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const tab = btn.dataset.tab;
-            document.querySelectorAll(".tab-content").forEach(tc => tc.classList.remove("active"));
-            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add("active");
-            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-        });
-    });
-
-    setTimeout(() => { if (!salaAtual) entrar(); }, 300);
+    // DESENHA O TABULEIRO BASE IMEDIATAMENTE (antes mesmo de conectar)
+    desenharBaseTabuleiro();
 </script>
 </body>
 </html>
