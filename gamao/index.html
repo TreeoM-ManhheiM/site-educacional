@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Lógico 🎲 — Correção de Movimentos</title>
+    <title>Gamão Lógico — Visual Premium</title>
     <style>
         * { box-sizing: border-box; }
         body {
             margin: 0;
-            font-family: 'Segoe UI', Arial, sans-serif;
             background: #2b5e2b;
+            font-family: 'Segoe UI', Arial, sans-serif;
             color: #f5e6d3;
             display: flex;
             flex-direction: column;
@@ -28,9 +28,9 @@
             background: rgba(255,255,255,0.2);
             color: #f5e6d3;
             padding: 5px 15px;
-            text-decoration: none;
             border-radius: 20px;
             font-size: 13px;
+            text-decoration: none;
             border: 1px solid #e6c7a2;
         }
         main {
@@ -99,7 +99,7 @@
         canvas {
             background: radial-gradient(circle at center, #deb887 0%, #c19a6b 60%, #8b5a2b 100%);
             border-radius: 24px;
-            border: 10px solid #4a2c14;
+            border: 12px solid #4a2c14;
             box-shadow: inset 0 0 30px rgba(0,0,0,0.4), 0 15px 35px rgba(0,0,0,0.6);
             width: 100%;
             height: auto;
@@ -167,14 +167,30 @@
         .log-error { color: #ffaa88; }
         .log-success { color: #aaffaa; }
         .log-info { color: #ccccff; }
+        /* Info de casas na moldura (fora do canvas) */
+        .casas-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            padding: 0 20px;
+            font-weight: bold;
+            color: #ffd966;
+        }
+        .casa {
+            background: #2d6a4f;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 14px;
+        }
         @media (max-width: 700px) {
             .painel-info { flex-direction: column; text-align: center; }
+            .casas-info { flex-direction: column; align-items: center; gap: 5px; }
         }
     </style>
 </head>
 <body>
 <header>
-    <h1>Gamão Lógico 🎲 — Correção de Movimentos</h1>
+    <h1>Gamão Lógico 🎲 — Edição Premium</h1>
     <p>Projeto Integrado — Laboratório de Computação</p>
     <a href="#" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
 </header>
@@ -209,7 +225,12 @@
             </div>
             
             <div class="tabuleiro-container">
-                <canvas id="boardCanvas" width="1000" height="600" style="width:100%; height:auto; max-width:1000px"></canvas>
+                <canvas id="boardCanvas" width="1100" height="620" style="width:100%; height:auto; max-width:1100px"></canvas>
+            </div>
+            <!-- Áreas das casas agora fora do canvas (na moldura) -->
+            <div class="casas-info">
+                <div class="casa">🏠 CASA VERMELHA: <span id="casaVermelha">0</span></div>
+                <div class="casa">⚪ CASA BRANCA: <span id="casaBranca">0</span></div>
             </div>
 
             <div class="dados-container" id="dados-display">
@@ -276,26 +297,28 @@
     let salaAtual = '';
     let movimentosPendentes = [];
     let pecaSelecionada = null;
-    let legalMoves = [];  // ESSA É A VARIÁVEL CRÍTICA
+    let legalMoves = [];
 
     const canvas = document.getElementById('boardCanvas');
     const ctx = canvas.getContext('2d');
-    const w = 1000, h = 600;
+    const w = 1100, h = 620;
     canvas.width = w; canvas.height = h;
 
-    // ==================== GEOMETRIA (mesma de antes) ====================
-    const marginLeft = 70;
-    const marginRight = w - 70;
+    // ==================== GEOMETRIA COM MARGENS GENEROSAS ====================
+    const marginLeft = 90;          // mais espaço lateral
+    const marginRight = w - 90;
     const totalWidth = marginRight - marginLeft;
     const halfWidth = totalWidth / 2;
     const pointW = halfWidth / 6;
-    const pointH = 135;
-    const topY = 65;
-    const bottomY = h - 65;
-    const barLeft = marginLeft + halfWidth - 28;
-    const barRight = barLeft + 56;
-    const barTop = topY + pointH + 8;
-    const barBottom = bottomY - pointH - 8;
+    const pointH = 130;
+    const topY = 70;                // mais distante do topo
+    const bottomY = h - 70;
+    
+    // Barra central mais elegante
+    const barLeft = marginLeft + halfWidth - 32;
+    const barRight = barLeft + 64;
+    const barTop = topY + pointH + 12;
+    const barBottom = bottomY - pointH - 12;
     
     function desenharPecaPremium(x, y, corBase) {
         ctx.save();
@@ -357,7 +380,8 @@
     function desenharTabuleiro() {
         if (!estadoAtual) return;
         ctx.clearRect(0, 0, w, h);
-        // Triângulos
+        
+        // Desenha triângulos
         for (let i = 0; i < 6; i++) {
             const x = marginLeft + i * pointW;
             const claro = (i % 2 === 0);
@@ -370,106 +394,141 @@
             desenharTriangulo(x, topY, pointW, pointH, false, claro);
             desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
         }
-        // Barra
+        
+        // Barra central refinada
         ctx.fillStyle = '#8b6946';
         ctx.fillRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
         ctx.fillStyle = '#c9a87b';
-        for (let i = 0; i < 3; i++) ctx.fillRect(barLeft + 8 + i*14, barTop + 12, 5, (barBottom-barTop)-24);
+        for (let i = 0; i < 3; i++) {
+            ctx.fillRect(barLeft + 12 + i*16, barTop + 15, 6, (barBottom-barTop)-30);
+        }
         ctx.strokeStyle = '#4a2c14';
         ctx.lineWidth = 3;
         ctx.strokeRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
         ctx.fillStyle = "#f5e6d3";
-        ctx.font = "bold 15px 'Segoe UI'";
-        ctx.fillText("BARRA", barLeft+14, barTop + (barBottom-barTop)/2 + 5);
-        // Números
-        ctx.fillStyle = '#2c1a0c';
+        ctx.font = "bold 20px 'Segoe UI'";
+        ctx.fillText("║", barLeft+28, barTop + (barBottom-barTop)/2 + 8);
         ctx.font = "bold 14px 'Segoe UI'";
+        ctx.fillText("BARRA", barLeft+12, barTop + (barBottom-barTop)/2 + 25);
+        
+        // Numeração superior (1 a 12, completa)
+        ctx.fillStyle = '#2c1a0c';
+        ctx.font = "bold 15px 'Segoe UI'";
+        ctx.textAlign = "center";
+        // Lado esquerdo superior: números 6 a 1 (da esquerda para direita)
+        for (let i = 0; i < 6; i++) {
+            const x = marginLeft + i * pointW + pointW/2;
+            ctx.fillText((6 - i).toString(), x, topY - 12);
+        }
+        // Lado direito superior: números 7 a 12
+        for (let i = 0; i < 6; i++) {
+            const x = marginLeft + halfWidth + i * pointW + pointW/2;
+            ctx.fillText((7 + i).toString(), x, topY - 12);
+        }
+        // Numeração inferior (13 a 24)
         for (let i = 0; i < 6; i++) {
             const xEsq = marginLeft + i * pointW + pointW/2;
-            ctx.fillText((6 - i).toString(), xEsq, topY - 8);
             ctx.fillText((13 + i).toString(), xEsq, bottomY + 24);
             const xDir = marginLeft + halfWidth + i * pointW + pointW/2;
-            ctx.fillText((7 + i).toString(), xDir, topY - 8);
             ctx.fillText((19 + i).toString(), xDir, bottomY + 24);
         }
-        // Home
-        ctx.fillStyle = '#4a7a5c';
-        ctx.fillRect(20, 20, 100, 50);
-        ctx.fillRect(w-120, 20, 100, 50);
-        ctx.fillStyle = "#f5e6d3";
-        ctx.font = "bold 14px";
-        ctx.fillText("CASA VERMELHA", 25, 50);
-        ctx.fillText("CASA BRANCA", w-115, 50);
-        ctx.fillStyle = "#ffd966";
-        ctx.font = "bold 18px";
-        ctx.fillText(`${estadoAtual.home[0]}`, 80, 58);
-        ctx.fillText(`${estadoAtual.home[1]}`, w-65, 58);
+        ctx.textAlign = "left";
         
-        // Peças nos pontos
+        // Atualiza contadores das casas (fora do canvas)
+        document.getElementById('casaVermelha').innerText = estadoAtual.home[0];
+        document.getElementById('casaBranca').innerText = estadoAtual.home[1];
+        
+        // ========== PEÇAS ==========
+        // Função auxiliar para desenhar pilha
+        function desenharPilha(x, yBase, qtd, cor, direcao = 'baixo') {
+            const absQ = Math.abs(qtd);
+            const maxVis = 6;
+            const step = 14;
+            for (let j = 0; j < Math.min(absQ, maxVis); j++) {
+                const y = direcao === 'baixo' ? yBase + j * step : yBase - j * step;
+                desenharPecaPremium(x, y, cor);
+            }
+            if (absQ > maxVis) {
+                ctx.fillStyle = '#222';
+                ctx.font = 'bold 12px';
+                if (direcao === 'baixo') ctx.fillText(`+${absQ-maxVis}`, x+12, yBase + (maxVis-1)*step + 10);
+                else ctx.fillText(`+${absQ-maxVis}`, x+12, yBase - (maxVis-1)*step - 10);
+            }
+        }
+        
+        // Superior esquerdo (índices 5 a 0)
         for (let i = 0; i < 6; i++) {
-            const idxSupEsq = 5 - i;
-            const qtd = estadoAtual.board[idxSupEsq];
+            const idx = 5 - i;
+            const qtd = estadoAtual.board[idx];
             if (qtd !== 0) {
                 const x = marginLeft + i * pointW + pointW/2;
-                const yBase = topY + 18;
+                const yBase = topY + 22;
                 const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
-                const absQ = Math.abs(qtd);
-                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPecaPremium(x, yBase + j * 14, cor);
-                if (absQ > 6) { ctx.fillStyle = '#222'; ctx.fillText(`+${absQ-6}`, x+12, yBase + 5*14 + 10); }
+                desenharPilha(x, yBase, qtd, cor, 'baixo');
             }
-            const idxSupDir = 11 - i;
-            const qtd2 = estadoAtual.board[idxSupDir];
-            if (qtd2 !== 0) {
+        }
+        // Superior direito (índices 11 a 6)
+        for (let i = 0; i < 6; i++) {
+            const idx = 11 - i;
+            const qtd = estadoAtual.board[idx];
+            if (qtd !== 0) {
                 const x = marginLeft + halfWidth + i * pointW + pointW/2;
-                const yBase = topY + 18;
-                const cor = qtd2 > 0 ? '#c73b2a' : '#f0e6d0';
-                const absQ = Math.abs(qtd2);
-                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPecaPremium(x, yBase + j * 14, cor);
-                if (absQ > 6) ctx.fillText(`+${absQ-6}`, x+12, yBase + 5*14 + 10);
+                const yBase = topY + 22;
+                const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
+                desenharPilha(x, yBase, qtd, cor, 'baixo');
             }
-            const idxInfEsq = 12 + i;
-            const qtd3 = estadoAtual.board[idxInfEsq];
-            if (qtd3 !== 0) {
+        }
+        // Inferior esquerdo (12..17)
+        for (let i = 0; i < 6; i++) {
+            const idx = 12 + i;
+            const qtd = estadoAtual.board[idx];
+            if (qtd !== 0) {
                 const x = marginLeft + i * pointW + pointW/2;
-                const yBase = bottomY - 26;
-                const cor = qtd3 > 0 ? '#c73b2a' : '#f0e6d0';
-                const absQ = Math.abs(qtd3);
-                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPecaPremium(x, yBase - j * 14, cor);
-                if (absQ > 6) ctx.fillText(`+${absQ-6}`, x+12, yBase - 5*14 - 10);
+                const yBase = bottomY - 30;
+                const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
+                desenharPilha(x, yBase, qtd, cor, 'cima');
             }
-            const idxInfDir = 18 + i;
-            const qtd4 = estadoAtual.board[idxInfDir];
-            if (qtd4 !== 0) {
+        }
+        // Inferior direito (18..23)
+        for (let i = 0; i < 6; i++) {
+            const idx = 18 + i;
+            const qtd = estadoAtual.board[idx];
+            if (qtd !== 0) {
                 const x = marginLeft + halfWidth + i * pointW + pointW/2;
-                const yBase = bottomY - 26;
-                const cor = qtd4 > 0 ? '#c73b2a' : '#f0e6d0';
-                const absQ = Math.abs(qtd4);
-                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPecaPremium(x, yBase - j * 14, cor);
-                if (absQ > 6) ctx.fillText(`+${absQ-6}`, x+12, yBase - 5*14 - 10);
+                const yBase = bottomY - 30;
+                const cor = qtd > 0 ? '#c73b2a' : '#f0e6d0';
+                desenharPilha(x, yBase, qtd, cor, 'cima');
             }
-        }
-        // Barra peças
-        if (estadoAtual.bar[0] > 0) {
-            for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) desenharPecaPremium(barLeft+28, barTop + 20 + j*18, '#c73b2a');
-            if (estadoAtual.bar[0] > 6) ctx.fillText(`+${estadoAtual.bar[0]-6}`, barLeft+44, barTop+130);
-        }
-        if (estadoAtual.bar[1] > 0) {
-            for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) desenharPecaPremium(barLeft+28, barBottom - 20 - j*18, '#f0e6d0');
-            if (estadoAtual.bar[1] > 6) ctx.fillText(`+${estadoAtual.bar[1]-6}`, barLeft+44, barBottom-130);
         }
         
-        // Destaques
+        // Peças na barra
+        if (estadoAtual.bar[0] > 0) {
+            const xBar = barLeft + 32;
+            for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) {
+                desenharPecaPremium(xBar, barTop + 22 + j*18, '#c73b2a');
+            }
+            if (estadoAtual.bar[0] > 6) ctx.fillText(`+${estadoAtual.bar[0]-6}`, xBar+15, barTop+130);
+        }
+        if (estadoAtual.bar[1] > 0) {
+            const xBar = barLeft + 32;
+            for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) {
+                desenharPecaPremium(xBar, barBottom - 22 - j*18, '#f0e6d0');
+            }
+            if (estadoAtual.bar[1] > 6) ctx.fillText(`+${estadoAtual.bar[1]-6}`, xBar+15, barBottom-130);
+        }
+        
+        // ========== DESTAQUES ==========
         if (pecaSelecionada !== null) {
             let cx, cy;
             const from = pecaSelecionada.from;
-            if (from === 24) { cx = barLeft+28; cy = barTop+30; }
-            else if (from === 25) { cx = barLeft+28; cy = barBottom-30; }
+            if (from === 24) { cx = barLeft+32; cy = barTop+30; }
+            else if (from === 25) { cx = barLeft+32; cy = barBottom-30; }
             else if (from < 12) {
-                if (from <= 5) { const i = 5 - from; cx = marginLeft + i * pointW + pointW/2; cy = topY + 25; }
-                else { const i = 11 - from; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 25; }
+                if (from <= 5) { const i = 5 - from; cx = marginLeft + i * pointW + pointW/2; cy = topY + 28; }
+                else { const i = 11 - from; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 28; }
             } else {
-                if (from <= 17) { const i = from - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 35; }
-                else { const i = from - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 35; }
+                if (from <= 17) { const i = from - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 36; }
+                else { const i = from - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 36; }
             }
             ctx.save();
             ctx.shadowBlur = 18; ctx.shadowColor = 'gold';
@@ -481,24 +540,22 @@
             const fromIdx = pecaSelecionada.from;
             const destinos = new Set();
             legalMoves.forEach(seq => {
-                // Tenta extrair o destino de diferentes formatos
                 let to = null;
                 if (seq.moves && seq.moves[0] && seq.moves[0].to !== undefined) to = seq.moves[0].to;
                 else if (seq.to !== undefined) to = seq.to;
-                else if (seq.destination !== undefined) to = seq.destination;
                 if (to !== null && seq.moves && seq.moves[0] && seq.moves[0].from === fromIdx) destinos.add(to);
                 else if (to !== null && seq.from === fromIdx) destinos.add(to);
             });
             destinos.forEach(to => {
                 let cx, cy;
-                if (to === 24) { cx = barLeft+28; cy = barTop+30; }
-                else if (to === 25) { cx = barLeft+28; cy = barBottom-30; }
+                if (to === 24) { cx = barLeft+32; cy = barTop+30; }
+                else if (to === 25) { cx = barLeft+32; cy = barBottom-30; }
                 else if (to < 12) {
-                    if (to <= 5) { const i = 5 - to; cx = marginLeft + i * pointW + pointW/2; cy = topY + 25; }
-                    else { const i = 11 - to; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 25; }
+                    if (to <= 5) { const i = 5 - to; cx = marginLeft + i * pointW + pointW/2; cy = topY + 28; }
+                    else { const i = 11 - to; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 28; }
                 } else {
-                    if (to <= 17) { const i = to - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 35; }
-                    else { const i = to - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 35; }
+                    if (to <= 17) { const i = to - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 36; }
+                    else { const i = to - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 36; }
                 }
                 ctx.save();
                 ctx.shadowBlur = 14; ctx.shadowColor = '#2ecc71';
@@ -509,10 +566,11 @@
         }
     }
     
+    // ========== DETECÇÃO DE CLIQUE ==========
     function getPointFromClick(mouseX, mouseY) {
         if (mouseX >= barLeft && mouseX <= barRight) {
-            if (mouseY >= barTop && mouseY <= barTop + 70) return 24;
-            if (mouseY >= barBottom - 70 && mouseY <= barBottom) return 25;
+            if (mouseY >= barTop && mouseY <= barTop + 80) return 24;
+            if (mouseY >= barBottom - 80 && mouseY <= barBottom) return 25;
         }
         for (let i = 0; i < 6; i++) {
             const x0 = marginLeft + i * pointW;
@@ -538,13 +596,13 @@
     }
     
     canvas.addEventListener('click', (e) => {
-        addLog(`🖱️ Clique no canvas detectado`, 'info');
+        addLog(`🖱️ Clique no canvas`, 'info');
         if (!jogoIniciado) { addLog(`❌ Jogo não iniciado`, 'error'); return; }
-        if (meuLado === 0) { addLog(`❌ Espectador não pode jogar`, 'error'); return; }
-        if (!estadoAtual) { addLog(`❌ Estado do jogo nulo`, 'error'); return; }
-        if (estadoAtual.turn !== meuLado) { addLog(`❌ Não é seu turno (turno=${estadoAtual.turn}, seu lado=${meuLado})`, 'error'); return; }
-        if (estadoAtual.rollPhase) { addLog(`❌ Fase de rolagem ativa. Role os dados primeiro.`, 'error'); return; }
-        if (estadoAtual.gameOver) { addLog(`❌ Jogo já acabou.`, 'error'); return; }
+        if (meuLado === 0) { addLog(`❌ Espectador`, 'error'); return; }
+        if (!estadoAtual) return;
+        if (estadoAtual.turn !== meuLado) { addLog(`❌ Não é seu turno`, 'error'); return; }
+        if (estadoAtual.rollPhase) { addLog(`❌ Role os dados primeiro`, 'error'); return; }
+        if (estadoAtual.gameOver) { addLog(`❌ Jogo acabou`, 'error'); return; }
         
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
@@ -552,28 +610,27 @@
         const x = (e.clientX - rect.left) * scaleX;
         const y = (e.clientY - rect.top) * scaleY;
         const point = getPointFromClick(x, y);
-        addLog(`🔍 Coordenadas: (${x.toFixed(1)}, ${y.toFixed(1)}) → ponto ${point}`, 'info');
-        if (point === -1) { addLog(`⚠️ Clique fora do tabuleiro`, 'error'); return; }
+        addLog(`🔍 Coord: (${x.toFixed(1)}, ${y.toFixed(1)}) → ponto ${point}`, 'info');
+        if (point === -1) { addLog(`⚠️ Fora do tabuleiro`, 'error'); return; }
         
         let count;
         if (point === 24) count = estadoAtual.bar[0];
         else if (point === 25) count = estadoAtual.bar[1];
         else count = estadoAtual.board[point];
         const isMine = (meuLado === 1 && count > 0) || (meuLado === -1 && count < 0);
-        addLog(`🎯 Ponto ${point} → quantidade ${count} | Sua peça? ${isMine}`, isMine ? 'success' : 'error');
+        addLog(`🎯 Ponto ${point} → ${count} | Sua peça? ${isMine}`, isMine ? 'success' : 'error');
         
         if (pecaSelecionada === null) {
             if (isMine) {
                 pecaSelecionada = { from: point };
-                addLog(`✅ Peça selecionada em ${point}`, 'success');
+                addLog(`✅ Selecionado ${point}`, 'success');
                 desenharTabuleiro();
             } else {
-                addLog(`❌ Você clicou em uma peça adversária ou vazia`, 'error');
+                addLog(`❌ Peça adversária ou vazia`, 'error');
             }
         } else {
             const from = pecaSelecionada.from;
             const to = point;
-            // Verificação robusta do movimento legal
             let isValid = false;
             if (legalMoves && legalMoves.length) {
                 for (const seq of legalMoves) {
@@ -585,22 +642,19 @@
                         moveFrom = seq.from;
                         moveTo = seq.to;
                     }
-                    if (moveFrom === from && moveTo === to) {
-                        isValid = true;
-                        break;
-                    }
+                    if (moveFrom === from && moveTo === to) { isValid = true; break; }
                 }
             }
             if (isValid) {
-                addLog(`✅ Movimento válido: ${from} → ${to}`, 'success');
+                addLog(`✅ Movimento ${from}→${to}`, 'success');
                 movimentosPendentes.push({ from, to });
                 pecaSelecionada = null;
                 desenharTabuleiro();
                 atualizarInterface();
             } else {
-                addLog(`❌ Movimento inválido ou destino não permitido (${from} → ${to})`, 'error');
-                if (!legalMoves || legalMoves.length === 0) addLog(`ℹ️ Nenhum movimento legal disponível (legalMoves vazio)`, 'info');
-                else addLog(`ℹ️ Movimentos legais recebidos: ${JSON.stringify(legalMoves.map(s => s.moves ? s.moves[0] : s))}`, 'info');
+                addLog(`❌ Movimento inválido (${from}→${to})`, 'error');
+                if (!legalMoves || legalMoves.length === 0) addLog(`ℹ️ legalMoves vazio`, 'info');
+                else addLog(`ℹ️ Movimentos: ${JSON.stringify(legalMoves.map(s=>s.moves?.[0] || s))}`, 'info');
                 pecaSelecionada = null;
                 desenharTabuleiro();
             }
@@ -649,7 +703,6 @@
         socket.emit('moverPecas', { moves: movimentosPendentes });
         movimentosPendentes = [];
         pecaSelecionada = null;
-        // NÃO limpar legalMoves aqui, o servidor enviará novo estado
         atualizarInterface();
     }
     function cancelarMovimentos() {
@@ -657,7 +710,7 @@
         pecaSelecionada = null;
         atualizarInterface();
     }
-    function rolarDados() { socket.emit('rolarDados'); addLog(`🎲 Solicitado rolagem de dados`, 'info'); }
+    function rolarDados() { socket.emit('rolarDados'); addLog(`🎲 Rolando dados...`, 'info'); }
     function desistir() { if (confirm('Desistir?')) socket.emit('desistir'); }
     
     // ========== EVENTOS SOCKET ==========
@@ -670,39 +723,39 @@
         document.getElementById('tela-login').style.display = 'none';
         document.getElementById('lobby').style.display = 'block';
         document.getElementById('painel-chat').style.display = 'block';
-        addLog(`📡 Conectando à sala ${sala} como ${apelido}`, 'info');
+        addLog(`📡 Entrando na sala ${sala} como ${apelido}`, 'info');
     }
     function marcarPronto() {
         socket.emit('marcarPronto');
         document.getElementById('btn-pronto').disabled = true;
         document.getElementById('btn-pronto').innerText = 'Aguardando oponente...';
-        addLog(`✅ Jogador pronto`, 'success');
+        addLog(`✅ Pronto`, 'success');
     }
     function enviarMensagem() {
         const input = document.getElementById('input-mensagem');
         const msg = input.value.trim();
-        if (msg) { socket.emit('enviarMensagem', msg); input.value = ''; addLog(`💬 Mensagem enviada: ${msg}`, 'info'); }
+        if (msg) { socket.emit('enviarMensagem', msg); input.value = ''; addLog(`💬 Msg: ${msg}`, 'info'); }
     }
     
-    socket.on('connect', () => { addLog(`🔌 Conectado ao servidor`, 'success'); document.getElementById('status-conexao').innerText = "✅ Conectado"; });
-    socket.on('disconnect', () => { addLog(`⚠️ Desconectado do servidor`, 'error'); document.getElementById('status-conexao').innerText = "❌ Desconectado"; });
-    socket.on('erro', (msg) => { addLog(`🚨 Erro do servidor: ${msg}`, 'error'); alert(msg); });
+    socket.on('connect', () => { addLog(`🔌 Conectado`, 'success'); document.getElementById('status-conexao').innerText = "✅ Conectado"; });
+    socket.on('disconnect', () => { addLog(`⚠️ Desconectado`, 'error'); document.getElementById('status-conexao').innerText = "❌ Desconectado"; });
+    socket.on('erro', (msg) => { addLog(`🚨 Erro: ${msg}`, 'error'); alert(msg); });
     socket.on('definirPapel', (dados) => {
         if (dados.papel === 'jogador') {
             meuLado = dados.lado;
             document.getElementById('meu-lado').innerText = meuLado === 1 ? 'Vermelho' : 'Branco';
-            addLog(`🎭 Você é jogador do lado ${meuLado === 1 ? 'Vermelho' : 'Branco'}`, 'success');
+            addLog(`🎭 Lado: ${meuLado === 1 ? 'Vermelho' : 'Branco'}`, 'success');
         } else {
             meuLado = 0;
             document.getElementById('meu-lado').innerText = 'Espectador';
-            addLog(`👁️ Você é espectador`, 'info');
+            addLog(`👁️ Espectador`, 'info');
         }
     });
     socket.on('estadoLobby', (dados) => {
         document.getElementById('info-sala').innerHTML = `<p>Sala: <strong>${salaAtual}</strong> | Jogadores: ${dados.jogadoresInfo.length}/2</p>`;
         let lista = '';
         dados.jogadoresInfo.forEach(j => lista += `<li>👤 ${j.nome} (${j.lado === 1 ? 'Vermelho' : 'Branco'}) ${j.pronto ? '✅' : '⏳'}</li>`);
-        dados.espectadores.forEach(e => lista += `<li>👁️ ${e} (espectador)</li>`);
+        dados.espectadores.forEach(e => lista += `<li>👁️ ${e}</li>`);
         document.getElementById('lista-alunos').innerHTML = lista;
         if (dados.rodando) {
             document.getElementById('lobby').style.display = 'none';
@@ -719,34 +772,27 @@
         jogoIniciado = true;
         estadoAtual = dados.estado;
         if (dados.lado !== 'espectador') meuLado = dados.lado;
-        legalMoves = [];  // será preenchido após rolagem
+        legalMoves = [];
         desenharTabuleiro();
         atualizarInterface();
         document.getElementById('lobby').style.display = 'none';
         document.getElementById('area-jogo').style.display = 'block';
-        addLog(`🚀 Jogo iniciado. Estado recebido.`, 'success');
+        addLog(`🚀 Jogo iniciado`, 'success');
     });
     socket.on('estadoAtual', (estado) => {
         estadoAtual = estado;
-        // NÃO limpar legalMoves aqui! Só atualizar se a fase mudar para rolagem novamente
-        if (estado.rollPhase) {
-            legalMoves = [];  // nova rolagem, limpa movimentos antigos
-        }
+        if (estado.rollPhase) legalMoves = [];
         desenharTabuleiro();
         atualizarInterface();
-        addLog(`🔄 Estado atualizado (turno=${estado.turn}, rollPhase=${estado.rollPhase})`, 'info');
+        addLog(`🔄 Estado atualizado (turno=${estado.turn})`, 'info');
     });
     socket.on('dadosRolados', ({ dice, turn, legalMoves: moves }) => {
         estadoAtual.dice = dice;
         estadoAtual.diceUsed = [false, false];
         estadoAtual.rollPhase = false;
-        legalMoves = moves;  // IMPORTANTE: guarda os movimentos legais
-        addLog(`🎲 Dados rolados: ${dice[0]} e ${dice[1]} | Movimentos legais recebidos: ${moves?.length || 0}`, 'success');
-        if (moves && moves.length) {
-            addLog(`📋 Primeiro movimento: ${JSON.stringify(moves[0])}`, 'info');
-        } else {
-            addLog(`⚠️ Nenhum movimento legal disponível!`, 'error');
-        }
+        legalMoves = moves;
+        addLog(`🎲 Dados: ${dice[0]} e ${dice[1]} | Movimentos: ${moves?.length || 0}`, 'success');
+        if (moves && moves.length) addLog(`📋 Exemplo: ${JSON.stringify(moves[0])}`, 'info');
         desenharTabuleiro();
         atualizarInterface();
     });
@@ -758,7 +804,7 @@
         atualizarInterface();
         movimentosPendentes = [];
         pecaSelecionada = null;
-        addLog(`♟️ Jogada confirmada pelo servidor`, 'success');
+        addLog(`♟️ Jogada confirmada`, 'success');
     });
     socket.on('fimDeJogo', (dados) => {
         alert(dados.mensagem);
@@ -767,7 +813,7 @@
         document.getElementById('lobby').style.display = 'block';
         document.getElementById('btn-pronto').disabled = false;
         document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
-        addLog(`🏆 Fim de jogo: ${dados.mensagem}`, 'info');
+        addLog(`🏆 Fim: ${dados.mensagem}`, 'info');
     });
     socket.on('novaMensagem', (msg) => {
         const div = document.getElementById('chat-mensagens');
