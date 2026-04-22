@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Premium — Sombra de Contato</title>
+    <title>Gamão Premium — Edição Obsessiva</title>
     <style>
         * {
             margin: 0;
@@ -22,7 +22,7 @@
             padding: 30px;
         }
 
-        /* Estrutura com moldura externa e sombra de contato interna */
+        /* Estrutura com moldura externa */
         .game-container {
             background: #2c3e2b;
             border-radius: 56px;
@@ -38,38 +38,22 @@
             align-items: flex-start;
         }
 
-        /* Moldura externa + sombra de contato (afundamento) */
+        /* Canvas com moldura em relevo (sombra interna e externa) */
         .canvas-frame {
             background: #3a2a1a;
             border-radius: 36px;
             padding: 12px;
-            /* Sombra externa da moldura */
             box-shadow: inset 0 0 0 2px #5a4a2a, 0 10px 20px rgba(0,0,0,0.5);
-            position: relative;
-        }
-        /* Sombra de contato: simulando o rebaixamento do campo */
-        .canvas-frame::after {
-            content: '';
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            right: 12px;
-            bottom: 12px;
-            border-radius: 28px;
-            pointer-events: none;
-            box-shadow: inset 0 0 0 2px rgba(0,0,0,0.15), inset 0 2px 4px rgba(0,0,0,0.3), 0 1px 0 rgba(255,255,200,0.1);
         }
         canvas {
             display: block;
             border-radius: 28px;
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.4);
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.4), 0 5px 12px rgba(0,0,0,0.3);
             cursor: pointer;
             transition: box-shadow 0.2s;
-            position: relative;
-            z-index: 1;
         }
         canvas:hover {
-            box-shadow: inset 0 0 18px rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.5), 0 8px 18px rgba(0,0,0,0.4);
         }
 
         /* Painel direito com abas (mesmo estilo refinado) */
@@ -166,7 +150,7 @@
             transform-style: preserve-3d;
             position: relative;
         }
-        /* animação com easing */
+        /* animação com easing (cubic-bezier) */
         .dice.rolling {
             animation: diceRoll 0.35s cubic-bezier(0.25, 1.5, 0.5, 1);
         }
@@ -422,6 +406,22 @@
     }
 
     // ---------- DESENHO PREMIUM COM PROFUNDIDADE ----------
+    // Função para desenhar dados com pontos (em vez de números) e leve perspectiva
+    function desenharDadoCustom(x, y, valor, lado, ctxTemp) {
+        // Não usamos aqui; os dados são desenhados no HTML/CSS, mas para efeito de rolagem
+        // mantemos a animação CSS. Para a aparência "pontos", substituímos o texto por pontos.
+        // Como a interface HTML já usa texto, vamos converter dinamicamente.
+        const dadoDiv = document.getElementById(lado === 1 ? "dado1" : "dado2");
+        if (dadoDiv) {
+            const pontosMap = {
+                1: "●", 2: "●●", 3: "●●●", 4: "●●●●", 5: "●●●●●", 6: "●●●●●●"
+            };
+            dadoDiv.innerText = pontosMap[valor] || "?";
+            dadoDiv.style.fontSize = "1.8rem";
+            dadoDiv.style.letterSpacing = "2px";
+        }
+    }
+
     function desenharTriangulo(x, y, largura, altura, paraCima, corClara) {
         const grad = ctx.createLinearGradient(x, y, x, paraCima ? y - altura : y + altura);
         if (corClara) {
@@ -447,6 +447,7 @@
         ctx.strokeStyle = "#2a1a0a";
         ctx.lineWidth = 1.2;
         ctx.stroke();
+        // sombra interna sutil
         ctx.save();
         ctx.globalAlpha = 0.1;
         ctx.fillStyle = "#fff8e0";
@@ -456,6 +457,7 @@
 
     function desenharPeca(x, y, cor, camada = 0) {
         ctx.save();
+        // sombra mais suave para camadas superiores
         const sombraIntensidade = 5 - camada * 0.8;
         ctx.shadowBlur = Math.max(3, sombraIntensidade);
         ctx.shadowOffsetX = 2;
@@ -476,6 +478,7 @@
         ctx.strokeStyle = "#1a0e05";
         ctx.lineWidth = 1.5;
         ctx.stroke();
+        // brilho especular
         ctx.beginPath();
         ctx.arc(x - 3, y - 3, 3, 0, 2 * Math.PI);
         ctx.fillStyle = "rgba(255,250,210,0.8)";
@@ -515,7 +518,7 @@
             desenharTriangulo(x, bottomY, pointWidth, pointHeight, true, !claro);
         }
 
-        // Barra central
+        // Barra central (madeira trabalhada)
         ctx.fillStyle = "#b87c48";
         ctx.fillRect(barLeft, barTop, barRight - barLeft, barBottom - barTop);
         ctx.fillStyle = "#e0bc88";
@@ -553,7 +556,7 @@
         function desenharPilha(x, yBase, qtd, cor, direcao) {
             const absQ = Math.abs(qtd);
             const maxVis = 6;
-            const step = 12;
+            const step = 12; // reduzido para melhor empilhamento
             for (let j = 0; j < Math.min(absQ, maxVis); j++) {
                 const y = direcao === 'down' ? yBase + j * step : yBase - j * step;
                 desenharPeca(x, y, cor, j);
@@ -765,6 +768,7 @@
         const dado2 = document.getElementById("dado2");
         dado1.classList.add("rolling");
         dado2.classList.add("rolling");
+        // atualiza para pontos visuais durante a animação (opcional)
         setTimeout(() => {
             dado1.classList.remove("rolling");
             dado2.classList.remove("rolling");
@@ -779,6 +783,7 @@
         document.getElementById("turnoLabel").innerHTML = estado.turn === 1 ? "VERMELHO ↓" : "BRANCO ↑";
         const d1 = document.getElementById("dado1");
         const d2 = document.getElementById("dado2");
+        // converter valores para pontos
         const pontosMap = {1:"●",2:"●●",3:"●●●",4:"●●●●",5:"●●●●●",6:"●●●●●●"};
         d1.innerText = pontosMap[estado.dice[0]] || "?";
         d2.innerText = pontosMap[estado.dice[1]] || "?";
