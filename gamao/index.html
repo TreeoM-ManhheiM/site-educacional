@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Clássico — Edição Premium</title>
+    <title>Gamão Clássico — Edição Profissional</title>
     <style>
         * {
             margin: 0;
@@ -13,151 +13,94 @@
         }
 
         body {
-            background: #1a2a1a;
-            font-family: 'Georgia', 'Times New Roman', 'Segoe UI', serif;
+            background: #1a472a;
+            font-family: 'Segoe UI', 'Roboto', 'Georgia', serif;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 24px;
+            padding: 20px;
         }
 
-        /* Estrutura principal */
-        .game-container {
-            background: #2c3e2b;
+        /* Container principal do jogo */
+        .game-wrapper {
+            background: #2c5a2c;
             border-radius: 48px;
-            padding: 24px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.6), inset 0 1px 2px rgba(255,255,255,0.1);
+            padding: 20px 24px 24px 24px;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
-        .board-wrapper {
+        /* Área do tabuleiro + informações laterais */
+        .board-container {
             display: flex;
             gap: 24px;
             flex-wrap: wrap;
             justify-content: center;
-            align-items: flex-start;
         }
 
-        /* Canvas do tabuleiro */
+        /* Canvas do tabuleiro (tamanho fixo e proporcional) */
         canvas {
             display: block;
-            border-radius: 32px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            margin: 0 auto;
+            border-radius: 28px;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.5);
+            background: radial-gradient(circle at 30% 20%, #e0bc7c, #b87c4a);
             cursor: pointer;
-            transition: box-shadow 0.2s;
-        }
-        canvas:hover {
-            box-shadow: 0 18px 36px rgba(0,0,0,0.6);
         }
 
-        /* Painel direito com abas colapsáveis */
+        /* Painel direito com informações e chat */
         .info-panel {
-            background: #1e2a1e;
-            border-radius: 32px;
-            width: 300px;
-            color: #efe0c9;
+            background: #1e3a2a;
+            border-radius: 28px;
+            padding: 20px;
+            width: 280px;
+            color: #f0e2c5;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), 0 5px 10px rgba(0,0,0,0.3);
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            backdrop-filter: blur(2px);
-            box-shadow: inset 0 0 0 1px rgba(255,255,200,0.1), 0 8px 20px rgba(0,0,0,0.4);
+            gap: 20px;
         }
 
-        .panel-header {
-            background: #2a3a2a;
-            padding: 14px 18px;
-            border-radius: 32px 32px 0 0;
-            display: flex;
-            justify-content: space-between;
-            font-weight: bold;
-            border-bottom: 2px solid #c9a87b;
-        }
-
-        .tab-buttons {
-            display: flex;
-            gap: 12px;
-        }
-        .tab-btn {
-            background: none;
-            border: none;
-            color: #ddcca8;
-            cursor: pointer;
-            font-size: 0.85rem;
-            padding: 4px 10px;
-            border-radius: 40px;
-            transition: 0.1s;
-        }
-        .tab-btn.active {
-            background: #7a5a3a;
-            color: #f9e2b0;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.2);
-        }
-
-        .tab-content {
-            display: none;
-            padding: 16px;
-            flex-direction: column;
-            gap: 16px;
-        }
-        .tab-content.active {
-            display: flex;
-        }
-
-        /* Status e dados */
         .status-card {
-            background: #0f1a0f;
-            border-radius: 24px;
-            padding: 12px;
+            background: #0f2a1a;
+            border-radius: 20px;
+            padding: 12px 16px;
             text-align: center;
-            border-left: 6px solid #e0a82b;
+            border-left: 5px solid #e0a82b;
         }
-        .home-indicators {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-            font-weight: bold;
+
+        .status-card h3 {
+            font-size: 1rem;
+            letter-spacing: 1px;
+            color: #ffd966;
+            margin-bottom: 8px;
         }
-        .home-box {
-            background: #2a3a2a;
-            padding: 6px 12px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-        }
+
         .dice-area {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin: 12px 0;
+            margin: 15px 0;
         }
+
         .dice {
-            width: 64px;
-            height: 64px;
-            background: #f8f0e0;
+            width: 60px;
+            height: 60px;
+            background: white;
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.3rem;
+            font-size: 2.2rem;
             font-weight: bold;
             color: #2c1a0c;
-            box-shadow: 0 6px 0 #aa8a60;
-            transition: 0.08s linear;
-            transform-style: preserve-3d;
+            box-shadow: 0 5px 0 #aa8a60;
+            transition: 0.1s linear;
         }
-        .dice.rolling {
-            animation: shake 0.2s infinite;
-        }
-        @keyframes shake {
-            0% { transform: translate(0,0) rotate(0deg); }
-            25% { transform: translate(2px,-2px) rotate(5deg); }
-            75% { transform: translate(-2px,2px) rotate(-5deg); }
-            100% { transform: translate(0,0) rotate(0); }
-        }
+
         .dice.used {
-            opacity: 0.5;
-            filter: grayscale(0.3);
-            box-shadow: 0 2px 0 #aa8a60;
-            transform: translateY(4px);
+            opacity: 0.4;
+            filter: grayscale(0.2);
         }
 
         button {
@@ -166,140 +109,138 @@
             padding: 10px 18px;
             border-radius: 60px;
             font-weight: bold;
-            color: #fef0da;
-            font-size: 0.9rem;
+            color: #f0e2c5;
+            font-size: 1rem;
             cursor: pointer;
-            transition: 0.08s linear;
+            transition: 0.1s;
             box-shadow: 0 3px 0 #4a2e1a;
-            font-family: inherit;
         }
+
         button:active {
             transform: translateY(2px);
             box-shadow: 0 1px 0 #4a2e1a;
         }
+
         .primary-btn {
             background: #2b7a4b;
             box-shadow: 0 3px 0 #1a4a2a;
         }
+
         .danger-btn {
             background: #9a3a2a;
             box-shadow: 0 3px 0 #5a2010;
         }
-        .action-buttons {
+
+        .chat-box {
+            background: #0f2a1a;
+            border-radius: 20px;
+            padding: 12px;
+            height: 180px;
             display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 8px;
         }
 
-        .chat-messages {
-            background: #0a120a;
-            border-radius: 20px;
-            height: 160px;
+        .messages {
+            flex: 1;
             overflow-y: auto;
-            padding: 8px;
-            font-size: 0.75rem;
-            font-family: monospace;
+            font-size: 0.8rem;
+            padding-right: 5px;
         }
-        .chat-input-area {
+
+        .chat-input {
             display: flex;
             gap: 8px;
         }
-        .chat-input-area input {
+
+        .chat-input input {
             flex: 1;
-            background: #1e2a1e;
+            background: #2a3a2a;
             border: none;
             border-radius: 40px;
             padding: 8px 12px;
-            color: #efe0c9;
-            font-family: inherit;
+            color: #f0e2c5;
             outline: none;
         }
 
         .log-area {
-            background: #0a120a;
-            border-radius: 20px;
+            background: #0a1a0a;
+            border-radius: 16px;
+            padding: 8px;
             height: 140px;
             overflow-y: auto;
-            padding: 8px;
             font-family: monospace;
             font-size: 0.7rem;
         }
 
-        footer {
-            font-size: 0.65rem;
-            text-align: center;
-            padding: 8px;
-            color: #b8c8a0;
-            border-top: 1px solid #3a4a3a;
+        .home-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-weight: bold;
         }
 
-        /* Responsivo */
-        @media (max-width: 900px) {
-            .board-wrapper { flex-direction: column; align-items: center; }
-            .info-panel { width: 100%; }
+        .home-box {
+            background: #0f2a1a;
+            padding: 6px 12px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 16px;
+            color: #b8d0b0;
         }
     </style>
 </head>
 <body>
-<div class="game-container">
-    <div class="board-wrapper">
-        <canvas id="boardCanvas" width="1100" height="620"></canvas>
+<div class="game-wrapper">
+    <div class="board-container">
+        <canvas id="boardCanvas" width="1050" height="580"></canvas>
 
         <div class="info-panel">
-            <div class="panel-header">
-                <span>🎲 GAMÃO</span>
-                <div class="tab-buttons">
-                    <button class="tab-btn active" data-tab="jogo">JOGO</button>
-                    <button class="tab-btn" data-tab="chat">CHAT</button>
-                    <button class="tab-btn" data-tab="logs">LOGS</button>
+            <div class="status-card">
+                <h3>⚫ SEU LADO: <span id="meuLadoLabel">---</span></h3>
+                <div>🔁 TURNO: <span id="turnoLabel">---</span></div>
+                <div class="home-indicators">
+                    <span class="home-box">🏠 VERMELHA: <span id="homeVermelha">0</span></span>
+                    <span class="home-box">⚪ BRANCA: <span id="homeBranca">0</span></span>
                 </div>
             </div>
 
-            <div id="tabJogo" class="tab-content active">
-                <div class="status-card">
-                    <div>⚫ SEU LADO: <strong id="meuLadoLabel">---</strong></div>
-                    <div>🔄 TURNO: <strong id="turnoLabel">---</strong></div>
-                    <div class="home-indicators">
-                        <span class="home-box">🏠 VERMELHA: <span id="homeVermelha">0</span></span>
-                        <span class="home-box">⚪ BRANCA: <span id="homeBranca">0</span></span>
-                    </div>
-                </div>
-                <div class="dice-area">
-                    <div class="dice" id="dado1">⚀</div>
-                    <div class="dice" id="dado2">⚀</div>
-                </div>
-                <div class="action-buttons">
-                    <button id="rolarBtn" class="primary-btn">🎲 ROLAR</button>
-                    <button id="desistirBtn" class="danger-btn">🏳️ DESISTIR</button>
-                </div>
-                <div class="action-buttons" style="margin-top: 5px;">
-                    <button id="confirmarBtn" style="background:#3a7a5a; display: none;">✅ CONFIRMAR</button>
-                    <button id="cancelarBtn" style="background:#7a5a3a; display: none;">↩️ CANCELAR</button>
-                </div>
-                <footer>Clique na peça → destino (verde)</footer>
+            <div class="dice-area">
+                <div class="dice" id="dado1">⚀</div>
+                <div class="dice" id="dado2">⚀</div>
             </div>
 
-            <div id="tabChat" class="tab-content">
-                <div class="chat-messages" id="chatMessages"></div>
-                <div class="chat-input-area">
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button id="rolarBtn" class="primary-btn">🎲 ROLAR</button>
+                <button id="desistirBtn" class="danger-btn">🏳️ DESISTIR</button>
+            </div>
+            <button id="confirmarBtn" style="background:#3a7a5a; display: none;">✅ CONFIRMAR JOGADA</button>
+            <button id="cancelarBtn" style="background:#7a5a3a; display: none;">↩️ CANCELAR</button>
+
+            <div class="chat-box">
+                <div class="messages" id="chatMessages"></div>
+                <div class="chat-input">
                     <input type="text" id="chatInput" placeholder="Mensagem...">
                     <button id="enviarChat">ENVIAR</button>
                 </div>
             </div>
 
-            <div id="tabLogs" class="tab-content">
-                <div class="log-area" id="logPanel">
-                    <div>🔹 Sistema pronto</div>
-                </div>
+            <div class="log-area" id="logPanel">
+                <div>🔹 Sistema pronto</div>
             </div>
+            <footer>Clique na peça → destino (contorno verde)</footer>
         </div>
     </div>
 </div>
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-    // ------------------- CONEXÃO SOCKET -------------------
+    // ------------------- CONFIGURAÇÃO INICIAL -------------------
     const socket = io("https://motor-gamao.onrender.com");
     let estado = null;
     let meuLado = 0;       // 1 = vermelho, -1 = branco
@@ -307,62 +248,74 @@
     let salaAtual = "";
     let movimentosPendentes = [];
     let pecaSelecionada = null;
-    let dadosDisponiveis = [];
+    let dadosDisponiveis = [];   // valores dos dados ainda não usados (ex: [2,3] ou [1,1,1,1])
 
     // Elementos DOM
     const canvas = document.getElementById("boardCanvas");
     const ctx = canvas.getContext("2d");
-    const w = 1100, h = 620;
+    const w = 1050, h = 580;
     canvas.width = w; canvas.height = h;
 
-    // ---------- GEOMETRIA DO TABULEIRO (proporções clássicas) ----------
-    const boardMarginX = 85;
+    // ---------- GEOMETRIA PROFISSIONAL (medidas ajustadas) ----------
+    const boardMarginX = 80;
     const boardMarginY = 55;
     const boardWidth = w - boardMarginX * 2;
     const halfBoard = boardWidth / 2;
-    const pointWidth = (boardWidth / 2) / 6;
-    const pointHeight = 135;
+    const pointWidth = (boardWidth / 2) / 6;   // largura de cada triângulo
+    const pointHeight = 130;
     const topY = boardMarginY;
     const bottomY = h - boardMarginY;
-    const barLeft = boardMarginX + halfBoard - 30;
-    const barRight = barLeft + 60;
-    const barTop = topY + pointHeight + 12;
-    const barBottom = bottomY - pointHeight - 12;
 
-    // ---------- LÓGICA LOCAL DE MOVIMENTOS (regras oficiais) ----------
+    // Barra central elegante
+    const barLeft = boardMarginX + halfBoard - 28;
+    const barRight = barLeft + 56;
+    const barTop = topY + pointHeight + 10;
+    const barBottom = bottomY - pointHeight - 10;
+
+    // ---------- FUNÇÕES AUXILIARES DE MOVIMENTO (lógica local) ----------
     function getDirection(lado) {
-        return lado === 1 ? 1 : -1;
+        return lado === 1 ? 1 : -1;   // vermelho horário, branco anti-horário
     }
+
     function isBlocked(point, lado) {
         if (point < 0 || point >= 24) return false;
         const qtd = estado.board[point];
-        if (lado === 1) return qtd < -1;
-        else return qtd > 1;
+        if (lado === 1) return qtd < -1;   // 2+ peças brancas bloqueiam vermelho
+        else return qtd > 1;               // 2+ peças vermelhas bloqueiam branco
     }
+
+    // Retorna destinos possíveis para uma peça em 'from' com um dado 'steps'
     function getDestinos(from, steps, lado) {
         const destinos = [];
-        if (from === 24) {
+        // barra
+        if (from === 24) { // barra vermelha
             const dest = steps - 1;
             if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) destinos.push(dest);
             return destinos;
         }
-        if (from === 25) {
+        if (from === 25) { // barra branca
             const dest = 24 - steps;
             if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) destinos.push(dest);
             return destinos;
         }
+        // movimento normal
         const dir = getDirection(lado);
         let dest = from + dir * steps;
         if (dest < 0 || dest >= 24) {
-            destinos.push(dest); // bear off
+            // bear off (saída) – permite, o servidor valida
+            destinos.push(dest);
         } else if (!isBlocked(dest, lado)) {
             destinos.push(dest);
         }
         return destinos;
     }
+
+    // Gera todos os movimentos legais com base nos dados disponíveis
     function calcularMovimentosLocais() {
         if (!estado || estado.turn !== meuLado) return [];
         const lado = meuLado;
+        const movimentos = [];
+        // origens possíveis
         let origens = [];
         if (lado === 1 && estado.bar[0] > 0) origens.push(24);
         if (lado === -1 && estado.bar[1] > 0) origens.push(25);
@@ -370,43 +323,49 @@
             const qtd = estado.board[i];
             if ((lado === 1 && qtd > 0) || (lado === -1 && qtd < 0)) origens.push(i);
         }
-        const movimentos = [];
-        for (let idx = 0; idx < dadosDisponiveis.length; idx++) {
-            const steps = dadosDisponiveis[idx];
+        for (let idxDado = 0; idxDado < dadosDisponiveis.length; idxDado++) {
+            const steps = dadosDisponiveis[idxDado];
             for (let from of origens) {
-                for (let to of getDestinos(from, steps, lado)) {
-                    movimentos.push({ from, to, dadoIdx: idx });
+                const destinos = getDestinos(from, steps, lado);
+                for (let to of destinos) {
+                    movimentos.push({ from, to, dadoIndex: idxDado });
                 }
             }
         }
         return movimentos;
     }
+
+    // Atualiza dadosDisponiveis com base nos dados e dados usados
     function atualizarDadosDisponiveis() {
         if (!estado) return;
         const d1 = estado.dice[0], d2 = estado.dice[1];
         const used = estado.diceUsed;
         if (d1 === d2) {
-            let arr = [d1, d1, d1, d1];
-            if (used[0]) arr.shift();
-            if (used[1]) arr.shift();
-            dadosDisponiveis = arr;
+            // duplicata: 4 movimentos
+            const valor = d1;
+            let disponiveis = [];
+            for (let i = 0; i < 4; i++) disponiveis.push(valor);
+            if (used[0]) disponiveis.shift();
+            if (used[1]) disponiveis.shift();
+            // como used tem tamanho 2, mas na duplicata usamos 4, simplificamos: se usado[0] remove 1, se usado[1] remove outro
+            dadosDisponiveis = disponiveis;
         } else {
             dadosDisponiveis = [];
             if (!used[0]) dadosDisponiveis.push(d1);
             if (!used[1]) dadosDisponiveis.push(d2);
         }
+        addLog(`🎲 Dados disponíveis: ${JSON.stringify(dadosDisponiveis)}`, "#aaffaa");
     }
 
-    // ---------- DESENHO PREMIUM (textura, peças 3D, sombras) ----------
+    // ---------- DESENHO DO TABULEIRO (profissional) ----------
     function desenharTriangulo(x, y, largura, altura, paraCima, corClara) {
-        // Gradiente suave + textura de madeira simulada
         const grad = ctx.createLinearGradient(x, y, x, paraCima ? y - altura : y + altura);
         if (corClara) {
-            grad.addColorStop(0, "#e7cba5");
-            grad.addColorStop(1, "#c8a06e");
+            grad.addColorStop(0, "#f2d6a8");
+            grad.addColorStop(1, "#d6b07a");
         } else {
-            grad.addColorStop(0, "#8b5a2e");
-            grad.addColorStop(1, "#5a3820");
+            grad.addColorStop(0, "#9a5e2e");
+            grad.addColorStop(1, "#623a1a");
         }
         ctx.beginPath();
         if (paraCima) {
@@ -421,15 +380,9 @@
         ctx.closePath();
         ctx.fillStyle = grad;
         ctx.fill();
-        ctx.strokeStyle = "#2a1a0a";
+        ctx.strokeStyle = "#2c1a0a";
         ctx.lineWidth = 1.2;
         ctx.stroke();
-        // pequeno brilho interno
-        ctx.save();
-        ctx.globalAlpha = 0.15;
-        ctx.fillStyle = "#fff8e0";
-        ctx.fill();
-        ctx.restore();
     }
 
     function desenharPeca(x, y, cor) {
@@ -437,14 +390,14 @@
         ctx.shadowBlur = 6;
         ctx.shadowOffsetX = 2;
         ctx.shadowOffsetY = 2;
-        ctx.shadowColor = "rgba(0,0,0,0.5)";
-        const grad = ctx.createRadialGradient(x - 4, y - 4, 5, x, y, 14);
+        ctx.shadowColor = "rgba(0,0,0,0.4)";
+        const grad = ctx.createRadialGradient(x - 4, y - 4, 4, x, y, 14);
         if (cor === "red") {
-            grad.addColorStop(0, "#e06050");
-            grad.addColorStop(1, "#962818");
+            grad.addColorStop(0, "#d84a3a");
+            grad.addColorStop(1, "#8a2010");
         } else {
-            grad.addColorStop(0, "#fff5e8");
-            grad.addColorStop(1, "#d4bc92");
+            grad.addColorStop(0, "#fff8e8");
+            grad.addColorStop(1, "#d0b88a");
         }
         ctx.beginPath();
         ctx.arc(x, y, 13, 0, 2 * Math.PI);
@@ -453,33 +406,22 @@
         ctx.strokeStyle = "#1a0e05";
         ctx.lineWidth = 1.5;
         ctx.stroke();
-        // brilho especular
+        // brilho
         ctx.beginPath();
         ctx.arc(x - 3, y - 3, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = "rgba(255,250,210,0.8)";
+        ctx.fillStyle = "rgba(255,255,240,0.7)";
         ctx.fill();
         ctx.restore();
     }
 
-    function desenharTabuleiro() {
+    function desenharTabuleiroCompleto() {
         if (!estado) return;
         ctx.clearRect(0, 0, w, h);
-        // fundo principal (madeira escura)
-        ctx.fillStyle = "#a87b51";
+        // fundo da mesa (já tem gradiente no CSS, mas reforçamos)
+        ctx.fillStyle = "#c9a87b";
         ctx.fillRect(0, 0, w, h);
-        // textura de madeira (linhas suaves)
-        ctx.save();
-        ctx.globalAlpha = 0.2;
-        for (let i = 0; i < 200; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, i * 5);
-            ctx.lineTo(w, i * 5 + (i % 3));
-            ctx.strokeStyle = "#3a2510";
-            ctx.stroke();
-        }
-        ctx.restore();
 
-        // triângulos
+        // desenhar triângulos
         for (let i = 0; i < 6; i++) {
             const x = boardMarginX + i * pointWidth;
             const claro = (i % 2 === 0);
@@ -493,139 +435,137 @@
             desenharTriangulo(x, bottomY, pointWidth, pointHeight, true, !claro);
         }
 
-        // Barra central (madeira trabalhada)
-        ctx.fillStyle = "#b87c48";
+        // Barra central refinada
+        ctx.fillStyle = "#a07040";
         ctx.fillRect(barLeft, barTop, barRight - barLeft, barBottom - barTop);
-        ctx.fillStyle = "#e0bc88";
+        ctx.fillStyle = "#dbb87a";
         for (let i = 0; i < 3; i++) {
             ctx.fillRect(barLeft + 12 + i * 14, barTop + 15, 6, (barBottom - barTop) - 30);
         }
-        ctx.strokeStyle = "#4a2a10";
+        ctx.strokeStyle = "#3a2010";
         ctx.lineWidth = 2.5;
         ctx.strokeRect(barLeft, barTop, barRight - barLeft, barBottom - barTop);
-        ctx.font = "bold 20px 'Georgia'";
-        ctx.fillStyle = "#fae0b0";
-        ctx.fillText("⚫", barLeft + 26, barTop + (barBottom - barTop) / 2 + 8);
+        ctx.font = "bold 18px 'Georgia'";
+        ctx.fillStyle = "#f8e0b0";
+        ctx.shadowBlur = 0;
+        ctx.fillText("⚫", barLeft + 24, barTop + (barBottom - barTop) / 2 + 6);
         ctx.font = "bold 12px 'Segoe UI'";
-        ctx.fillText("BARRA", barLeft + 12, barTop + (barBottom - barTop) / 2 + 30);
+        ctx.fillText("BARRA", barLeft + 10, barTop + (barBottom - barTop) / 2 + 28);
 
-        // Números das casas (tipografia elegante)
+        // Números das casas (1 a 12 em cima, 13 a 24 embaixo)
         ctx.font = "bold 14px 'Georgia'";
-        ctx.fillStyle = "#2c1a08";
+        ctx.fillStyle = "#2a1808";
         ctx.textAlign = "center";
         for (let i = 0; i < 6; i++) {
             const xEsq = boardMarginX + i * pointWidth + pointWidth / 2;
-            ctx.fillText((6 - i).toString(), xEsq, topY - 10);
-            ctx.fillText((13 + i).toString(), xEsq, bottomY + 26);
+            ctx.fillText((6 - i).toString(), xEsq, topY - 8);
+            ctx.fillText((13 + i).toString(), xEsq, bottomY + 24);
             const xDir = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
-            ctx.fillText((7 + i).toString(), xDir, topY - 10);
-            ctx.fillText((19 + i).toString(), xDir, bottomY + 26);
+            ctx.fillText((7 + i).toString(), xDir, topY - 8);
+            ctx.fillText((19 + i).toString(), xDir, bottomY + 24);
         }
         ctx.textAlign = "left";
 
-        // Atualizar contadores UI
+        // Atualizar contadores das casas na UI
         document.getElementById("homeVermelha").innerText = estado.home[0];
         document.getElementById("homeBranca").innerText = estado.home[1];
 
-        // Desenhar peças (empilhamento inteligente)
-        function desenharPilha(x, yBase, qtd, cor, direcao) {
-            const absQ = Math.abs(qtd);
-            const maxVis = 6;
-            const step = 14;
-            for (let j = 0; j < Math.min(absQ, maxVis); j++) {
-                const y = direcao === 'down' ? yBase + j * step : yBase - j * step;
-                desenharPeca(x, y, cor);
-            }
-            if (absQ > maxVis) {
-                ctx.fillStyle = "#111";
-                ctx.font = "bold 10px monospace";
-                ctx.fillText(`+${absQ - maxVis}`, x + 12, direcao === 'down' ? yBase + (maxVis-1)*step + 12 : yBase - (maxVis-1)*step - 8);
-            }
-        }
-
+        // Desenhar peças
         for (let i = 0; i < 6; i++) {
+            // superiores
             const idx1 = 5 - i;
             const q1 = estado.board[idx1];
             if (q1 !== 0) {
                 const x = boardMarginX + i * pointWidth + pointWidth / 2;
-                const yBase = topY + 22;
-                desenharPilha(x, yBase, q1, q1 > 0 ? "red" : "white", "down");
+                const yBase = topY + 20;
+                const cor = q1 > 0 ? "red" : "white";
+                const absQ = Math.abs(q1);
+                for (let j = 0; j < Math.min(absQ, 6); j++) {
+                    desenharPeca(x, yBase + j * 14, cor);
+                }
+                if (absQ > 6) ctx.fillText(`+${absQ - 6}`, x + 10, yBase + 80);
             }
             const idx2 = 11 - i;
             const q2 = estado.board[idx2];
             if (q2 !== 0) {
                 const x = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
-                const yBase = topY + 22;
-                desenharPilha(x, yBase, q2, q2 > 0 ? "red" : "white", "down");
+                const yBase = topY + 20;
+                const cor = q2 > 0 ? "red" : "white";
+                const absQ = Math.abs(q2);
+                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPeca(x, yBase + j * 14, cor);
+                if (absQ > 6) ctx.fillText(`+${absQ - 6}`, x + 10, yBase + 80);
             }
+            // inferiores
             const idx3 = 12 + i;
             const q3 = estado.board[idx3];
             if (q3 !== 0) {
                 const x = boardMarginX + i * pointWidth + pointWidth / 2;
-                const yBase = bottomY - 30;
-                desenharPilha(x, yBase, q3, q3 > 0 ? "red" : "white", "up");
+                const yBase = bottomY - 28;
+                const cor = q3 > 0 ? "red" : "white";
+                const absQ = Math.abs(q3);
+                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPeca(x, yBase - j * 14, cor);
+                if (absQ > 6) ctx.fillText(`+${absQ - 6}`, x + 10, yBase - 80);
             }
             const idx4 = 18 + i;
             const q4 = estado.board[idx4];
             if (q4 !== 0) {
                 const x = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2;
-                const yBase = bottomY - 30;
-                desenharPilha(x, yBase, q4, q4 > 0 ? "red" : "white", "up");
+                const yBase = bottomY - 28;
+                const cor = q4 > 0 ? "red" : "white";
+                const absQ = Math.abs(q4);
+                for (let j = 0; j < Math.min(absQ, 6); j++) desenharPeca(x, yBase - j * 14, cor);
+                if (absQ > 6) ctx.fillText(`+${absQ - 6}`, x + 10, yBase - 80);
             }
         }
 
         // peças na barra
         if (estado.bar[0] > 0) {
-            for (let j = 0; j < Math.min(estado.bar[0], 6); j++) {
-                desenharPeca(barLeft + 30, barTop + 22 + j * 18, "red");
-            }
-            if (estado.bar[0] > 6) ctx.fillText(`+${estado.bar[0] - 6}`, barLeft + 48, barTop + 120);
+            for (let j = 0; j < Math.min(estado.bar[0], 5); j++) desenharPeca(barLeft + 28, barTop + 25 + j * 18, "red");
+            if (estado.bar[0] > 5) ctx.fillText(`+${estado.bar[0] - 5}`, barLeft + 45, barTop + 110);
         }
         if (estado.bar[1] > 0) {
-            for (let j = 0; j < Math.min(estado.bar[1], 6); j++) {
-                desenharPeca(barLeft + 30, barBottom - 22 - j * 18, "white");
-            }
-            if (estado.bar[1] > 6) ctx.fillText(`+${estado.bar[1] - 6}`, barLeft + 48, barBottom - 110);
+            for (let j = 0; j < Math.min(estado.bar[1], 5); j++) desenharPeca(barLeft + 28, barBottom - 25 - j * 18, "white");
+            if (estado.bar[1] > 5) ctx.fillText(`+${estado.bar[1] - 5}`, barLeft + 45, barBottom - 100);
         }
 
-        // Destaque da peça selecionada
+        // Destaque de peça selecionada
         if (pecaSelecionada !== null) {
             let cx, cy;
             const from = pecaSelecionada.from;
-            if (from === 24) { cx = barLeft + 30; cy = barTop + 30; }
-            else if (from === 25) { cx = barLeft + 30; cy = barBottom - 30; }
+            if (from === 24) { cx = barLeft + 28; cy = barTop + 30; }
+            else if (from === 25) { cx = barLeft + 28; cy = barBottom - 30; }
             else if (from < 12) {
-                if (from <= 5) { const i = 5 - from; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = topY + 30; }
-                else { const i = 11 - from; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = topY + 30; }
+                if (from <= 5) { const i = 5 - from; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = topY + 28; }
+                else { const i = 11 - from; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = topY + 28; }
             } else {
-                if (from <= 17) { const i = from - 12; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
-                else { const i = from - 18; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
+                if (from <= 17) { const i = from - 12; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = bottomY - 36; }
+                else { const i = from - 18; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = bottomY - 36; }
             }
             ctx.save();
             ctx.shadowBlur = 14;
-            ctx.shadowColor = "#ffcc66";
+            ctx.shadowColor = "#ffcc44";
             ctx.beginPath();
             ctx.arc(cx, cy, 18, 0, 2 * Math.PI);
-            ctx.strokeStyle = "#ffcc66";
+            ctx.strokeStyle = "#ffcc44";
             ctx.lineWidth = 4;
             ctx.stroke();
             ctx.restore();
         }
 
-        // Destinos verdes
+        // Destinos possíveis (verdes) com base nos movimentos locais
         if (pecaSelecionada !== null) {
             const movimentos = calcularMovimentosLocais();
             const destinos = new Set(movimentos.filter(m => m.from === pecaSelecionada.from).map(m => m.to));
             destinos.forEach(to => {
                 let cx, cy;
-                if (to === 24) { cx = barLeft + 30; cy = barTop + 30; }
-                else if (to === 25) { cx = barLeft + 30; cy = barBottom - 30; }
+                if (to === 24) { cx = barLeft + 28; cy = barTop + 30; }
+                else if (to === 25) { cx = barLeft + 28; cy = barBottom - 30; }
                 else if (to < 12) {
-                    if (to <= 5) { const i = 5 - to; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = topY + 30; }
-                    else { const i = 11 - to; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = topY + 30; }
+                    if (to <= 5) { const i = 5 - to; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = topY + 28; }
+                    else { const i = 11 - to; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = topY + 28; }
                 } else {
-                    if (to <= 17) { const i = to - 12; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
-                    else { const i = to - 18; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = bottomY - 38; }
+                    if (to <= 17) { const i = to - 12; cx = boardMarginX + i * pointWidth + pointWidth / 2; cy = bottomY - 36; }
+                    else { const i = to - 18; cx = boardMarginX + halfBoard + i * pointWidth + pointWidth / 2; cy = bottomY - 36; }
                 }
                 ctx.save();
                 ctx.shadowBlur = 12;
@@ -640,7 +580,7 @@
         }
     }
 
-    // ---------- CLIQUE NO TABULEIRO ----------
+    // ---------- CLIQUE NO TABULEIRO (com lógica local) ----------
     function getPointFromClick(px, py) {
         if (px >= barLeft && px <= barRight) {
             if (py >= barTop && py <= barTop + 70) return 24;
@@ -671,15 +611,15 @@
 
     canvas.addEventListener("click", (e) => {
         if (!jogoAtivo || meuLado === 0 || !estado) return;
-        if (estado.turn !== meuLado) { addLog("⏳ Aguarde seu turno", "#ffaa88"); return; }
+        if (estado.turn !== meuLado) { addLog("⏳ Não é seu turno", "#ffaa88"); return; }
         if (estado.rollPhase) { addLog("🎲 Role os dados primeiro", "#ffaa88"); return; }
 
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
-        const mx = (e.clientX - rect.left) * scaleX;
-        const my = (e.clientY - rect.top) * scaleY;
-        const point = getPointFromClick(mx, my);
+        const mouseX = (e.clientX - rect.left) * scaleX;
+        const mouseY = (e.clientY - rect.top) * scaleY;
+        const point = getPointFromClick(mouseX, mouseY);
         if (point === -1) return;
 
         let count;
@@ -692,7 +632,7 @@
             if (isMine) {
                 pecaSelecionada = { from: point };
                 addLog(`🔍 Peça selecionada em ${point}`, "#aaffaa");
-                desenharTabuleiro();
+                desenharTabuleiroCompleto();
             } else {
                 addLog("❌ Peça adversária ou vazia", "#ff8888");
             }
@@ -704,12 +644,15 @@
             if (valido) {
                 addLog(`✅ Movimento ${from} → ${to}`, "#aaffaa");
                 movimentosPendentes.push({ from, to });
-                // remove um dado disponível (steps)
+                // remove um dado disponível (o primeiro que corresponde ao steps)
                 const steps = Math.abs(to - from);
-                let idx = dadosDisponiveis.findIndex(v => v === steps);
-                if (idx !== -1) dadosDisponiveis.splice(idx, 1);
+                let idxRemover = -1;
+                for (let i = 0; i < dadosDisponiveis.length; i++) {
+                    if (dadosDisponiveis[i] === steps) { idxRemover = i; break; }
+                }
+                if (idxRemover !== -1) dadosDisponiveis.splice(idxRemover, 1);
                 pecaSelecionada = null;
-                desenharTabuleiro();
+                desenharTabuleiroCompleto();
                 atualizarInterface();
                 if (dadosDisponiveis.length === 0 && movimentosPendentes.length > 0) {
                     addLog("⚡ Todos os dados usados, confirmando...", "#ffdd88");
@@ -718,7 +661,7 @@
             } else {
                 addLog(`❌ Movimento inválido (${from}→${to})`, "#ff8888");
                 pecaSelecionada = null;
-                desenharTabuleiro();
+                desenharTabuleiroCompleto();
             }
         }
     });
@@ -729,24 +672,21 @@
         movimentosPendentes = [];
         pecaSelecionada = null;
     }
+
     function cancelarMovimentos() {
         movimentosPendentes = [];
         pecaSelecionada = null;
         atualizarDadosDisponiveis();
-        desenharTabuleiro();
+        desenharTabuleiroCompleto();
         atualizarInterface();
         addLog("🔄 Movimentos cancelados", "#ffdd88");
     }
+
     function rolarDados() {
         socket.emit("rolarDados");
-        addLog("🎲 Rolando dados...", "#ccccff");
-        document.getElementById("dado1").classList.add("rolling");
-        document.getElementById("dado2").classList.add("rolling");
-        setTimeout(() => {
-            document.getElementById("dado1").classList.remove("rolling");
-            document.getElementById("dado2").classList.remove("rolling");
-        }, 400);
+        addLog("🎲 Solicitando rolagem...", "#ccccff");
     }
+
     function desistir() {
         if (confirm("Desistir da partida?")) socket.emit("desistir");
     }
@@ -761,24 +701,24 @@
         d1.classList.toggle("used", estado.diceUsed[0]);
         d2.classList.toggle("used", estado.diceUsed[1]);
 
-        const rolar = document.getElementById("rolarBtn");
-        const confirmar = document.getElementById("confirmarBtn");
-        const cancelar = document.getElementById("cancelarBtn");
+        const rolarBtn = document.getElementById("rolarBtn");
+        const confirmarBtn = document.getElementById("confirmarBtn");
+        const cancelarBtn = document.getElementById("cancelarBtn");
         const meuTurno = (estado.turn === meuLado);
         if (!jogoAtivo || !meuTurno || estado.gameOver) {
-            rolar.style.display = "none";
-            confirmar.style.display = "none";
-            cancelar.style.display = "none";
+            rolarBtn.style.display = "none";
+            confirmarBtn.style.display = "none";
+            cancelarBtn.style.display = "none";
         } else if (estado.rollPhase) {
-            rolar.style.display = "inline-block";
-            confirmar.style.display = "none";
-            cancelar.style.display = "none";
+            rolarBtn.style.display = "inline-block";
+            confirmarBtn.style.display = "none";
+            cancelarBtn.style.display = "none";
         } else {
-            rolar.style.display = "none";
-            confirmar.style.display = movimentosPendentes.length ? "inline-block" : "none";
-            cancelar.style.display = movimentosPendentes.length ? "inline-block" : "none";
+            rolarBtn.style.display = "none";
+            confirmarBtn.style.display = movimentosPendentes.length ? "inline-block" : "none";
+            cancelarBtn.style.display = movimentosPendentes.length ? "inline-block" : "none";
         }
-        desenharTabuleiro();
+        desenharTabuleiroCompleto();
     }
 
     function addLog(msg, cor = "#dddddd") {
@@ -791,18 +731,21 @@
         while (logDiv.children.length > 60) logDiv.removeChild(logDiv.firstChild);
     }
 
-    // ---------- SOCKET EVENTOS ----------
+    // ------------------- SOCKET EVENTOS -------------------
     function entrar() {
-        const nome = prompt("Seu nome:", "jogador") || "anon";
-        const sala = prompt("Sala:", "gamão") || "gamão";
+        const nome = document.getElementById("chatInput").value.trim() || "jogador";
+        const sala = prompt("Nome da sala:", "mesa1");
+        if (!sala) return;
         salaAtual = sala;
         socket.emit("entrarSala", { apelido: nome, sala });
+        document.getElementById("tela-login")?.remove();
         addLog(`📡 Entrando na sala ${sala} como ${nome}`, "#88ffaa");
     }
 
     socket.on("connect", () => addLog("✅ Conectado ao servidor", "#88ffaa"));
     socket.on("disconnect", () => addLog("❌ Desconectado", "#ff8888"));
-    socket.on("erro", (msg) => addLog(`⚠️ ${msg}`, "#ffaa88"));
+    socket.on("erro", (msg) => addLog(`⚠️ Erro: ${msg}`, "#ffaa88"));
+
     socket.on("definirPapel", (dados) => {
         if (dados.papel === "jogador") {
             meuLado = dados.lado;
@@ -813,12 +756,14 @@
             document.getElementById("meuLadoLabel").innerHTML = "ESPECTADOR";
         }
     });
+
     socket.on("estadoLobby", (dados) => {
         if (dados.rodando) {
             jogoAtivo = true;
             addLog("🏁 Partida iniciada!", "#ffffaa");
         }
     });
+
     socket.on("iniciarPartida", (dados) => {
         jogoAtivo = true;
         estado = dados.estado;
@@ -827,19 +772,22 @@
         atualizarInterface();
         addLog("🚀 Jogo iniciado", "#aaffaa");
     });
-    socket.on("estadoAtual", (novo) => {
-        estado = novo;
+
+    socket.on("estadoAtual", (novoEstado) => {
+        estado = novoEstado;
         atualizarDadosDisponiveis();
         atualizarInterface();
     });
-    socket.on("dadosRolados", ({ dice }) => {
+
+    socket.on("dadosRolados", ({ dice, legalMoves }) => {
         estado.dice = dice;
         estado.diceUsed = [false, false];
         estado.rollPhase = false;
         atualizarDadosDisponiveis();
-        addLog(`🎲 Dados: ${dice[0]} e ${dice[1]}`, "#aaffaa");
+        addLog(`🎲 Dados: ${dice[0]} e ${dice[1]} | Você pode mover`, "#aaffaa");
         atualizarInterface();
     });
+
     socket.on("jogadaFeita", (dados) => {
         estado = dados.estado;
         movimentosPendentes = [];
@@ -847,12 +795,18 @@
         atualizarDadosDisponiveis();
         atualizarInterface();
         addLog("♟️ Jogada confirmada", "#aaffaa");
+        if (dados.historico) {
+            const histDiv = document.getElementById("historico");
+            if (histDiv) histDiv.innerHTML = dados.historico.map(l => `<div>${l}</div>`).join("");
+        }
     });
+
     socket.on("fimDeJogo", (dados) => {
         alert(dados.mensagem);
         jogoAtivo = false;
         addLog(`🏆 ${dados.mensagem}`, "#ffff88");
     });
+
     socket.on("novaMensagem", (msg) => {
         const chatDiv = document.getElementById("chatMessages");
         const hora = new Date(msg.timestamp).toLocaleTimeString();
@@ -860,7 +814,7 @@
         chatDiv.scrollTop = chatDiv.scrollHeight;
     });
 
-    // UI buttons e abas
+    // UI buttons
     document.getElementById("rolarBtn").onclick = rolarDados;
     document.getElementById("desistirBtn").onclick = desistir;
     document.getElementById("confirmarBtn").onclick = confirmarJogada;
@@ -874,19 +828,11 @@
     document.getElementById("chatInput").addEventListener("keypress", (e) => {
         if (e.key === "Enter") document.getElementById("enviarChat").click();
     });
-    // abas
-    document.querySelectorAll(".tab-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            const tab = btn.dataset.tab;
-            document.querySelectorAll(".tab-content").forEach(tc => tc.classList.remove("active"));
-            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add("active");
-            document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
-            btn.classList.add("active");
-        });
-    });
 
-    // auto entrar
-    setTimeout(() => { if (!salaAtual) entrar(); }, 300);
+    // Simular login automático para teste (remova depois se quiser)
+    setTimeout(() => {
+        if (!salaAtual) entrar();
+    }, 500);
 </script>
 </body>
 </html>
