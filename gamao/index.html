@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Lógico — Movimentos Locais</title>
+    <title>Gamão Lógico — Peças Corrigidas</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -189,7 +189,7 @@
 </head>
 <body>
 <header>
-    <h1>Gamão Lógico — Movimentos Locais</h1>
+    <h1>Gamão Lógico — Peças Corrigidas</h1>
     <p>Projeto Integrado — Laboratório de Computação</p>
     <a href="#" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
 </header>
@@ -295,8 +295,7 @@
     let salaAtual = '';
     let movimentosPendentes = [];
     let pecaSelecionada = null;
-    let dadosAtuais = [0, 0];
-    let dadosDisponiveis = [];  // lista de valores de dados ainda não usados (ex: [1,1,1,1] para duplicata)
+    let dadosDisponiveis = [];
     
     const canvas = document.getElementById('boardCanvas');
     const ctx = canvas.getContext('2d');
@@ -318,59 +317,45 @@
     const barBottom = bottomY - pointH - 12;
     
     // ========== LÓGICA LOCAL DE MOVIMENTOS ==========
-    // Retorna a direção: 1 para vermelho (horário), -1 para branco (anti-horário)
     function getDirection(lado) {
         return lado === 1 ? 1 : -1;
     }
     
-    // Verifica se uma casa está bloqueada para o jogador (tem 2 ou mais peças adversárias)
     function isBlocked(point, lado) {
         if (point < 0 || point >= 24) return false;
         const qtd = estadoAtual.board[point];
-        if (lado === 1) return qtd < -1;   // vermelho não pode pousar onde tem 2+ brancas
-        else return qtd > 1;                // branco não pode pousar onde tem 2+ vermelhas
+        if (lado === 1) return qtd < -1;
+        else return qtd > 1;
     }
     
-    // Gera todos os movimentos legais para uma peça em 'from' com um valor de dado 'steps'
     function getMovesForPiece(from, steps, lado) {
         const moves = [];
-        if (from === 24) { // barra do vermelho
-            // só pode sair da barra se a casa de entrada (para vermelho: 1? depende da orientação)
-            // Vamos usar a mesma lógica: vermelho anda horário (casas 0..23). A barra vermelha está no índice 24.
-            // A entrada para vermelho é a casa 0? Não, regra: vermelho começa na casa 0? Vamos simplificar:
-            // Se estiver na barra, o destino é a casa 'steps' (considerando direção)
-            const dest = steps - 1; // porque a primeira casa é 0?
-            if (!isBlocked(dest, lado)) moves.push(dest);
+        if (from === 24) {
+            const dest = steps - 1;
+            if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) moves.push(dest);
             return moves;
         }
-        if (from === 25) { // barra do branco
+        if (from === 25) {
             const dest = 24 - steps;
-            if (!isBlocked(dest, lado)) moves.push(dest);
+            if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) moves.push(dest);
             return moves;
         }
-        // Movimento normal
         const dir = getDirection(lado);
         let dest = from + dir * steps;
         if (dest < 0 || dest >= 24) {
-            // Se ultrapassou o tabuleiro, está saindo (bear off)
-            // Verificar se pode sair: todas as peças estão nas últimas casas?
-            // Simplificando: permite sair se dest <0 ou >=24 e a peça está na região de saída
-            // Vamos aceitar qualquer saída (o servidor valida)
-            return [dest];
+            moves.push(dest);
+        } else if (!isBlocked(dest, lado)) {
+            moves.push(dest);
         }
-        if (!isBlocked(dest, lado)) moves.push(dest);
         return moves;
     }
     
-    // Calcula todos os movimentos legais para o lado atual, com os dados disponíveis
     function calcularMovimentosLegais() {
         if (!estadoAtual || estadoAtual.turn !== meuLado) return [];
         const lado = meuLado;
         const moves = [];
-        // Para cada valor de dado em dadosDisponiveis
         for (let i = 0; i < dadosDisponiveis.length; i++) {
             const steps = dadosDisponiveis[i];
-            // Lista de origens possíveis: barra ou pontos com peças próprias
             let origins = [];
             if (lado === 1 && estadoAtual.bar[0] > 0) origins.push(24);
             if (lado === -1 && estadoAtual.bar[1] > 0) origins.push(25);
@@ -388,19 +373,15 @@
         return moves;
     }
     
-    // Atualiza dadosDisponiveis baseado nos dados rolados e nos usados
     function atualizarDadosDisponiveis() {
         if (!estadoAtual) return;
         const dice = estadoAtual.dice;
         const used = estadoAtual.diceUsed;
         if (dice[0] === dice[1]) {
-            // Duplicata: 4 movimentos
             const valor = dice[0];
-            dadosDisponiveis = [];
-            for (let i = 0; i < 4; i++) dadosDisponiveis.push(valor);
-            // Marcar usados: se used[0] true, remove um, etc. (simplificado)
-            if (used[0]) dadosDisponiveis = dadosDisponiveis.slice(1);
-            if (used[1]) dadosDisponiveis = dadosDisponiveis.slice(1);
+            dadosDisponiveis = [valor, valor, valor, valor];
+            if (used[0]) dadosDisponiveis.shift();
+            if (used[1]) dadosDisponiveis.shift();
         } else {
             dadosDisponiveis = [];
             if (!used[0]) dadosDisponiveis.push(dice[0]);
@@ -409,7 +390,7 @@
         addLog(`🎲 Dados disponíveis: ${JSON.stringify(dadosDisponiveis)}`, 'info');
     }
     
-    // ========== DESENHO (mesmo de antes, sem alterações) ==========
+    // ========== DESENHO ==========
     function desenharPecaPremium(x, y, corBase) {
         ctx.save();
         ctx.shadowBlur = 5;
@@ -467,6 +448,93 @@
         ctx.stroke();
     }
     
+    // ========== FUNÇÃO CORRIGIDA: DESENHO DAS PEÇAS ==========
+    function desenharPecasNoTabuleiro() {
+        if (!estadoAtual) return;
+        addLog("Desenhando peças...", 'info');
+        
+        // Função auxiliar para empilhar peças
+        function desenharPilha(x, yBase, qtd, cor, direcao) {
+            const absQ = Math.abs(qtd);
+            const maxVis = 6;
+            const step = 14;
+            for (let j = 0; j < Math.min(absQ, maxVis); j++) {
+                const y = direcao === 'down' ? yBase + j * step : yBase - j * step;
+                desenharPecaPremium(x, y, cor);
+            }
+            if (absQ > maxVis) {
+                ctx.fillStyle = '#222';
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText(`+${absQ - maxVis}`, x + 12, direcao === 'down' ? yBase + (maxVis-1)*step + 12 : yBase - (maxVis-1)*step - 8);
+            }
+        }
+        
+        // Percorre os 24 pontos do tabuleiro
+        for (let i = 0; i < 6; i++) {
+            // Lado superior esquerdo (índices 5,4,3,2,1,0)
+            const idxSupEsq = 5 - i;
+            const qSupEsq = estadoAtual.board[idxSupEsq];
+            if (qSupEsq !== 0) {
+                const x = marginLeft + i * pointW + pointW/2;
+                const yBase = topY + 20;
+                const cor = qSupEsq > 0 ? '#c73b2a' : '#f0e6d0';
+                desenharPilha(x, yBase, qSupEsq, cor, 'down');
+            }
+            
+            // Lado superior direito (índices 11,10,9,8,7,6)
+            const idxSupDir = 11 - i;
+            const qSupDir = estadoAtual.board[idxSupDir];
+            if (qSupDir !== 0) {
+                const x = marginLeft + halfWidth + i * pointW + pointW/2;
+                const yBase = topY + 20;
+                const cor = qSupDir > 0 ? '#c73b2a' : '#f0e6d0';
+                desenharPilha(x, yBase, qSupDir, cor, 'down');
+            }
+            
+            // Lado inferior esquerdo (índices 12..17)
+            const idxInfEsq = 12 + i;
+            const qInfEsq = estadoAtual.board[idxInfEsq];
+            if (qInfEsq !== 0) {
+                const x = marginLeft + i * pointW + pointW/2;
+                const yBase = bottomY - 28;
+                const cor = qInfEsq > 0 ? '#c73b2a' : '#f0e6d0';
+                desenharPilha(x, yBase, qInfEsq, cor, 'up');
+            }
+            
+            // Lado inferior direito (índices 18..23)
+            const idxInfDir = 18 + i;
+            const qInfDir = estadoAtual.board[idxInfDir];
+            if (qInfDir !== 0) {
+                const x = marginLeft + halfWidth + i * pointW + pointW/2;
+                const yBase = bottomY - 28;
+                const cor = qInfDir > 0 ? '#c73b2a' : '#f0e6d0';
+                desenharPilha(x, yBase, qInfDir, cor, 'up');
+            }
+        }
+        
+        // Peças na barra (vermelha e branca)
+        if (estadoAtual.bar[0] > 0) {
+            for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) {
+                desenharPecaPremium(barLeft + 32, barTop + 20 + j * 16, '#c73b2a');
+            }
+            if (estadoAtual.bar[0] > 6) {
+                ctx.fillStyle = '#222';
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText(`+${estadoAtual.bar[0]-6}`, barLeft + 48, barTop + 120);
+            }
+        }
+        if (estadoAtual.bar[1] > 0) {
+            for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) {
+                desenharPecaPremium(barLeft + 32, barBottom - 20 - j * 16, '#f0e6d0');
+            }
+            if (estadoAtual.bar[1] > 6) {
+                ctx.fillStyle = '#222';
+                ctx.font = 'bold 12px monospace';
+                ctx.fillText(`+${estadoAtual.bar[1]-6}`, barLeft + 48, barBottom - 110);
+            }
+        }
+    }
+    
     function desenharTabuleiro() {
         if (!estadoAtual) return;
         ctx.clearRect(0, 0, w, h);
@@ -519,9 +587,7 @@
         document.getElementById('casaVermelha').innerText = estadoAtual.home[0];
         document.getElementById('casaBranca').innerText = estadoAtual.home[1];
         
-        // Desenhar peças (idêntico ao anterior, omitido para brevidade - igual ao código funcionando)
-        // [Aqui viria o desenho das peças, mas para não repetir, mantemos o mesmo que já funciona]
-        // Vou simplificar: chamo uma função genérica que já existia.
+        // DESENHA AS PEÇAS (agora com código real)
         desenharPecasNoTabuleiro();
         
         // Destaques
@@ -543,7 +609,6 @@
             ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 4; ctx.stroke();
             ctx.restore();
         }
-        // Destinos verdes com base nos movimentos legais locais
         if (pecaSelecionada !== null) {
             const from = pecaSelecionada.from;
             const moves = calcularMovimentosLegais().filter(m => m.from === from);
@@ -566,13 +631,6 @@
                 ctx.restore();
             });
         }
-    }
-    
-    function desenharPecasNoTabuleiro() {
-        // Implementação igual à anterior, omitida para não alongar.
-        // O código original já funciona, então reutilizamos a mesma lógica.
-        // Para garantir, vou chamar a função que estava no código anterior.
-        // Como não quero perder tempo, assumo que o desenho está correto.
     }
     
     // ========== CLIQUE ==========
@@ -634,18 +692,14 @@
         } else {
             const from = pecaSelecionada.from;
             const to = point;
-            // Verifica se o movimento é legal usando a lista local
             const movesLegais = calcularMovimentosLegais();
             const movimentoValido = movesLegais.find(m => m.from === from && m.to === to);
             if (movimentoValido) {
                 addLog(`Movimento ${from}→${to}`, "success");
                 movimentosPendentes.push({ from, to });
-                // Remove um dado usado (o primeiro que corresponde ao steps)
-                const steps = Math.abs(to - from); // simplificado, mas correto para movimento normal
-                // Encontra o índice do dado disponível que permite esse movimento
+                const steps = Math.abs(to - from);
                 let indexToRemove = -1;
                 for (let i = 0; i < dadosDisponiveis.length; i++) {
-                    // Verifica se o steps é igual ao valor do dado (considerando direção)
                     if (dadosDisponiveis[i] === steps) {
                         indexToRemove = i;
                         break;
@@ -655,7 +709,6 @@
                 pecaSelecionada = null;
                 desenharTabuleiro();
                 atualizarInterface();
-                // Se não houver mais dados disponíveis, confirma automaticamente
                 if (dadosDisponiveis.length === 0 && movimentosPendentes.length > 0) {
                     addLog("Todos os dados usados, confirmando jogada...", "success");
                     confirmarMovimentos();
