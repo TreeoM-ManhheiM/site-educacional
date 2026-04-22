@@ -1,911 +1,468 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Clássico — Movimentos Direcionais Corrigidos</title>
-    <style>
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            background: #2b5e2b;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            color: #f5e6d3;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-        header {
-            background: linear-gradient(135deg, #1a3a1a, #2d6a4f);
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-        }
-        header h1 { margin: 0; font-size: 28px; }
-        .btn-header-regras {
-            display: inline-block;
-            margin-top: 8px;
-            background: rgba(255,255,255,0.2);
-            color: #f5e6d3;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-size: 13px;
-            text-decoration: none;
-            border: 1px solid #e6c7a2;
-        }
-        main {
-            max-width: 1400px;
-            margin: 20px auto;
-            padding: 0 20px;
-            flex: 1;
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .coluna-esquerda { flex: 2; min-width: 320px; }
-        .coluna-direita { flex: 1.2; min-width: 280px; display: flex; flex-direction: column; gap: 20px; }
-        .game-container, .painel-container {
-            background: #1e4d2b;
-            padding: 20px;
-            border-radius: 20px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            border: 2px solid #b2895b;
-        }
-        #status-conexao { color: #ccc; font-size: 13px; margin-bottom: 10px; }
-        .painel-info {
-            background: #2d6a4f;
-            padding: 10px 15px;
-            border-radius: 30px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            margin-bottom: 15px;
-            font-weight: bold;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        button {
-            padding: 12px 20px;
-            border-radius: 40px;
-            border: none;
-            cursor: pointer;
-            font-weight: bold;
-            background: #a77b55;
-            color: #f5e6d3;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: 0.2s;
-            font-size: 16px;
-        }
-        button.primary { background: #2d6a4f; }
-        button.success { background: #1e4d2b; }
-        button.warning { background: #c98a2c; }
-        button.danger { background: #a04030; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-        input {
-            padding: 12px;
-            border-radius: 30px;
-            border: 2px solid #b2895b;
-            background: #fcf3e8;
-            margin: 5px 0;
-            width: 100%;
-            font-size: 16px;
-        }
-        .tabuleiro-container {
-            display: flex;
-            justify-content: center;
-            margin: 10px 0;
-            overflow-x: auto;
-        }
-        canvas {
-            background: radial-gradient(circle at center, #deb887 0%, #c19a6b 60%, #8b5a2b 100%);
-            border-radius: 24px;
-            border: 12px solid #4a2c14;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.4), 0 15px 35px rgba(0,0,0,0.6);
-            width: 100%;
-            height: auto;
-            cursor: pointer;
-            touch-action: none;
-        }
-        .historico-lista, .logs-area {
-            max-height: 200px;
-            overflow-y: auto;
-            background: #163a1a;
-            padding: 10px;
-            border-radius: 16px;
-            font-size: 13px;
-            font-family: monospace;
-        }
-        .chat-mensagens {
-            height: 180px;
-            overflow-y: auto;
-            background: #163a1a;
-            padding: 10px;
-            border-radius: 16px;
-            margin-bottom: 10px;
-            font-size: 13px;
-        }
-        .chat-input { display: flex; gap: 5px; }
-        .chat-input input { flex: 1; }
-        .badge { background: #8b5e3c; padding: 2px 8px; border-radius: 12px; font-size: 12px; }
-        .flex-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: center; }
-        .dados-container {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            margin: 20px 0;
-        }
-        .dado {
-            width: 70px;
-            height: 70px;
-            background: white;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 36px;
-            font-weight: bold;
-            color: black;
-            box-shadow: 0 6px 0 #999, 0 8px 12px rgba(0,0,0,0.3);
-            border: 2px solid #ccc;
-        }
-        .dado.usado { opacity: 0.4; }
-        .status-mensagem {
-            font-size: 18px;
-            padding: 8px 20px;
-            background: #c98a2c;
-            border-radius: 40px;
-            color: #1a1a1a;
-            font-weight: bold;
-            text-align: center;
-        }
-        .info-turno { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
-        .log-entry {
-            border-bottom: 1px solid #3a6a3a;
-            padding: 4px 0;
-            font-size: 12px;
-        }
-        .log-error { color: #ffaa88; }
-        .log-success { color: #aaffaa; }
-        .log-info { color: #ccccff; }
-        .casas-info {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 8px;
-            padding: 0 20px;
-            font-weight: bold;
-            color: #ffd966;
-        }
-        .casa {
-            background: #2d6a4f;
-            padding: 4px 12px;
-            border-radius: 30px;
-            font-size: 14px;
-        }
-        @media (max-width: 700px) {
-            .painel-info { flex-direction: column; text-align: center; }
-            .casas-info { flex-direction: column; align-items: center; gap: 5px; }
-        }
-    </style>
-</head>
-<body>
-<header>
-    <h1>Gamão Clássico — Direcional Corrigido</h1>
-    <p>Projeto Integrado — Laboratório de Computação</p>
-    <a href="#" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
-</header>
-<main>
-    <div class="coluna-esquerda">
-        <div id="status-conexao">Conectando...</div>
+const express = require('express');
+const http = require('http');
+const { Server } = require('socket.io');
+const cors = require('cors');
 
-        <div id="tela-login" class="game-container">
-            <h2>Entrar na Partida</h2>
-            <input type="text" id="input-apelido" placeholder="Seu Nome">
-            <input type="text" id="input-sala" placeholder="Sala (ex: mesa1)">
-            <br><br>
-            <button onclick="entrar()" class="success">CONECTAR</button>
-        </div>
+const app = express();
+app.use(cors());
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
 
-        <div id="lobby" class="game-container" style="display:none;">
-            <h3>🕹️ Lobby</h3>
-            <div id="info-sala"></div>
-            <ul id="lista-alunos" style="padding:0;"></ul>
-            <button id="btn-pronto" onclick="marcarPronto()" class="primary" style="width:100%;">ESTOU PRONTO</button>
-        </div>
-
-        <div id="area-jogo" style="display:none;">
-            <div class="painel-info">
-                <div>Seu Lado: <span id="meu-lado" class="destaque">---</span></div>
-                <div class="info-turno">
-                    <span>Turno:</span>
-                    <span id="vez-atual" class="destaque">---</span>
-                    <span id="direcao-movimento" style="font-size:14px;"></span>
-                </div>
-                <div id="status-jogo" class="status-mensagem">Aguardando...</div>
-            </div>
-            
-            <div class="tabuleiro-container">
-                <canvas id="boardCanvas" width="1100" height="620" style="width:100%; height:auto; max-width:1100px"></canvas>
-            </div>
-            <div class="casas-info">
-                <div class="casa">🏠 CASA VERMELHA: <span id="casaVermelha">0</span></div>
-                <div class="casa">⚪ CASA BRANCA: <span id="casaBranca">0</span></div>
-            </div>
-
-            <div class="dados-container" id="dados-display">
-                <div class="dado" id="dado1">⚀</div>
-                <div class="dado" id="dado2">⚀</div>
-            </div>
-
-            <div class="flex-row">
-                <button id="btn-rolar" onclick="rolarDados()" class="primary">🎲 Rolar Dados</button>
-                <button onclick="confirmarMovimentos()" class="success" id="btn-confirmar" style="display:none;">✅ Confirmar Jogada</button>
-                <button onclick="cancelarMovimentos()" class="warning" id="btn-cancelar" style="display:none;">↩️ Cancelar</button>
-                <button onclick="desistir()" class="danger">🏳️ Desistir</button>
-            </div>
-            <p style="text-align:center; margin-top:15px; font-size:14px; background:#2d6a4f; padding:8px; border-radius:30px;">
-                👆 Clique na sua peça (origem) e depois no destino (contorno verde).
-            </p>
-        </div>
-    </div>
-
-    <div class="coluna-direita">
-        <div id="painel-historico" class="painel-container" style="display:none;">
-            <h3>📜 Histórico</h3>
-            <div id="historico" class="historico-lista"></div>
-        </div>
-        <div id="painel-chat" class="painel-container" style="display:none;">
-            <h3>💬 Chat</h3>
-            <div id="chat-mensagens" class="chat-mensagens"></div>
-            <div class="chat-input">
-                <input type="text" id="input-mensagem" placeholder="Mensagem...">
-                <button onclick="enviarMensagem()">Enviar</button>
-            </div>
-        </div>
-        <div id="painel-logs" class="painel-container">
-            <h3>📋 Logs</h3>
-            <div id="logs-area" class="logs-area">
-                <div class="log-entry">Aguardando eventos...</div>
-            </div>
-        </div>
-    </div>
-</main>
-
-<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-<script>
-    // ==================== LOGS ====================
-    const logsDiv = document.getElementById('logs-area');
-    function addLog(message, type = 'info') {
-        const entry = document.createElement('div');
-        entry.className = `log-entry log-${type}`;
-        const time = new Date().toLocaleTimeString();
-        entry.innerHTML = `[${time}] ${message}`;
-        logsDiv.appendChild(entry);
-        entry.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        if (type === 'error') console.error(message);
-        else if (type === 'success') console.log('%c' + message, 'color: #aaffaa');
-        else console.log(message);
-        while (logsDiv.children.length > 200) logsDiv.removeChild(logsDiv.firstChild);
+// ========== CLASSE GAMAO (REGRAS OFICIAIS) ==========
+class Gamao {
+    constructor() {
+        this.reset();
     }
 
-    // ==================== SOCKET ====================
-    const socket = io("https://motor-gamao.onrender.com");
-    let estadoAtual = null;
-    let meuLado = 0;
-    let jogoIniciado = false;
-    let salaAtual = '';
-    let movimentosPendentes = [];
-    let pecaSelecionada = null;
-    let dadosDisponiveis = [];
-    
-    const canvas = document.getElementById('boardCanvas');
-    const ctx = canvas.getContext('2d');
-    const w = 1100, h = 620;
-    canvas.width = w; canvas.height = h;
+    reset() {
+        this.board = Array(24).fill(0);
+        this.bar = [0, 0];
+        this.home = [0, 0];
 
-    // ========== GEOMETRIA COM SEPARAÇÃO CENTRAL CLÁSSICA ==========
-    const marginLeft = 80;
-    const marginRight = w - 80;
-    const areaLargura = marginRight - marginLeft;
-    const barraCentralLargura = 70;
-    const ladoLargura = (areaLargura - barraCentralLargura) / 2;
-    const pointW = ladoLargura / 6;
-    const pointH = 130;
-    const topY = 70;
-    const bottomY = h - 70;
-    const barLeft = marginLeft + ladoLargura;
-    const barRight = barLeft + barraCentralLargura;
-    const barTop = topY + 10;
-    const barBottom = bottomY - 10;
-    
-    // ========== LÓGICA LOCAL DE MOVIMENTOS ==========
-    function getDirection(lado) {
-        return lado === 1 ? 1 : -1;
+        // ========== DISTRIBUIÇÃO INICIAL OFICIAL ==========
+        // Jogador 1 (Vermelho / positivo)
+        this.board[0] = 2;   // ponto 1
+        this.board[11] = 5;  // ponto 12
+        this.board[16] = 3;  // ponto 17
+        this.board[18] = 5;  // ponto 19
+
+        // Jogador 2 (Branco / negativo) - espelhado
+        this.board[23] = -2; // ponto 24
+        this.board[12] = -5; // ponto 13
+        this.board[7] = -3;  // ponto 8
+        this.board[5] = -5;  // ponto 6
+
+        this.turn = 1;            // 1 = jogador 1 (Vermelho), -1 = jogador 2 (Branco)
+        this.dice = [0, 0];
+        this.diceUsed = [false, false];
+        this.rollPhase = true;
+        this.gameOver = false;
+        this.winner = null;
+        this.doublingCube = 1;
+        this.doublingOwner = null;
     }
-    
-    function isBlocked(point, lado) {
-        if (point < 0 || point >= 24) return false;
-        const qtd = estadoAtual.board[point];
-        if (lado === 1) return qtd < -1;
-        else return qtd > 1;
+
+    getState() {
+        return {
+            board: [...this.board],
+            bar: [...this.bar],
+            home: [...this.home],
+            turn: this.turn,
+            dice: [...this.dice],
+            diceUsed: [...this.diceUsed],
+            rollPhase: this.rollPhase,
+            gameOver: this.gameOver,
+            winner: this.winner,
+            doublingCube: this.doublingCube,
+            doublingOwner: this.doublingOwner
+        };
     }
-    
-    function getMovesForPiece(from, steps, lado) {
+
+    rollDice() {
+        if (!this.rollPhase || this.gameOver) return null;
+        const d1 = Math.floor(Math.random() * 6) + 1;
+        const d2 = Math.floor(Math.random() * 6) + 1;
+        this.dice = [d1, d2].sort((a,b) => a - b);
+        this.diceUsed = [false, false];
+        this.rollPhase = false;
+        return [...this.dice];
+    }
+
+    // Retorna array de movimentos legais para o jogador atual (formato usado pelo front-end)
+    getLegalMoves(player) {
+        if (this.rollPhase || this.gameOver || this.turn !== player) return [];
         const moves = [];
-        if (from === 24) {
-            const dest = steps - 1;
-            if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) moves.push(dest);
-            return moves;
-        }
-        if (from === 25) {
-            const dest = 24 - steps;
-            if (dest >= 0 && dest < 24 && !isBlocked(dest, lado)) moves.push(dest);
-            return moves;
-        }
-        const dir = getDirection(lado);
-        let dest = from + dir * steps;
-        if (dest < 0 || dest >= 24) {
-            moves.push(dest);
-        } else if (!isBlocked(dest, lado)) {
-            moves.push(dest);
-        }
-        return moves;
-    }
-    
-    function calcularMovimentosLegais() {
-        if (!estadoAtual || estadoAtual.turn !== meuLado) return [];
-        const lado = meuLado;
-        const moves = [];
-        for (let i = 0; i < dadosDisponiveis.length; i++) {
-            const steps = dadosDisponiveis[i];
-            let origins = [];
-            if (lado === 1 && estadoAtual.bar[0] > 0) origins.push(24);
-            if (lado === -1 && estadoAtual.bar[1] > 0) origins.push(25);
-            for (let p = 0; p < 24; p++) {
-                const qtd = estadoAtual.board[p];
-                if ((lado === 1 && qtd > 0) || (lado === -1 && qtd < 0)) origins.push(p);
+        const barIdx = player === 1 ? 0 : 1;
+        const hasBar = this.bar[barIdx] > 0;
+
+        if (hasBar) {
+            for (let dieIdx = 0; dieIdx < 2; dieIdx++) {
+                if (this.diceUsed[dieIdx]) continue;
+                const die = this.dice[dieIdx];
+                const to = player === 1 ? die - 1 : 24 - die;
+                if (this.isValidMove(24 + barIdx, to, player, dieIdx)) {
+                    moves.push({ from: 24 + barIdx, to });
+                }
             }
-            for (let from of origins) {
-                const dests = getMovesForPiece(from, steps, lado);
-                for (let to of dests) {
-                    moves.push({ from, to, dieIndex: i });
+            return moves;
+        }
+
+        const diceOptions = this.generateDiceOptions();
+        for (let opt of diceOptions) {
+            const dieValues = opt.values;
+            const dieIndices = opt.indices;
+            this.generateMoveSequences(player, dieValues, dieIndices, [], moves);
+        }
+
+        // Remove duplicatas e prioriza usar o máximo de dados possível
+        const uniqueMoves = [];
+        const seen = new Set();
+        for (let m of moves) {
+            const key = m.moves.map(mv => `${mv.from}-${mv.to}`).join('|');
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueMoves.push(m);
+            }
+        }
+        const maxDice = Math.max(...uniqueMoves.map(m => m.dieIndices.length), 0);
+        return uniqueMoves.filter(m => m.dieIndices.length === maxDice);
+    }
+
+    generateDiceOptions() {
+        if (this.dice[0] === this.dice[1]) {
+            return [{ values: [this.dice[0], this.dice[0], this.dice[0], this.dice[0]], indices: [0,1,0,1] }];
+        } else {
+            return [
+                { values: [this.dice[0], this.dice[1]], indices: [0,1] },
+                { values: [this.dice[1], this.dice[0]], indices: [1,0] }
+            ];
+        }
+    }
+
+    generateMoveSequences(player, remainingDice, remainingIndices, currentSeq, moves) {
+        if (remainingDice.length === 0) {
+            if (currentSeq.length > 0) {
+                moves.push({ moves: currentSeq, dieIndices: remainingIndices.slice(0, currentSeq.length) });
+            }
+            return;
+        }
+
+        const die = remainingDice[0];
+        const dieIdx = remainingIndices[0];
+        const singleMoves = this.getSingleMoves(player, die, dieIdx);
+        if (singleMoves.length === 0) {
+            if (currentSeq.length > 0) {
+                moves.push({ moves: currentSeq, dieIndices: remainingIndices.slice(0, currentSeq.length) });
+            }
+            return;
+        }
+
+        for (let move of singleMoves) {
+            const simState = this.simulateMove(move.from, move.to, player);
+            const simGame = new Gamao();
+            simGame.board = [...simState.board];
+            simGame.bar = [...simState.bar];
+            simGame.home = [...simState.home];
+            simGame.turn = player;
+            simGame.generateMoveSequences(player, remainingDice.slice(1), remainingIndices.slice(1), 
+                [...currentSeq, move], moves);
+        }
+    }
+
+    getSingleMoves(player, die, dieIdx) {
+        const moves = [];
+        const barIdx = player === 1 ? 0 : 1;
+        const hasBar = this.bar[barIdx] > 0;
+
+        if (hasBar) {
+            const to = player === 1 ? die - 1 : 24 - die;
+            if (this.isValidMove(24 + barIdx, to, player, dieIdx)) {
+                moves.push({ from: 24 + barIdx, to });
+            }
+            return moves;
+        }
+
+        const canBearOff = this.canBearOff(player);
+        for (let from = 0; from < 24; from++) {
+            const count = this.board[from];
+            if ((player === 1 && count <= 0) || (player === -1 && count >= 0)) continue;
+            const to = player === 1 ? from + die : from - die;
+            if (to >= 0 && to <= 23) {
+                if (this.isValidMove(from, to, player, dieIdx)) {
+                    moves.push({ from, to });
+                }
+            } else if (canBearOff) {
+                const required = player === 1 ? 24 - from : from + 1;
+                if (die === required) {
+                    if (this.isValidMove(from, -1, player, dieIdx)) moves.push({ from, to: -1 });
+                } else if (die > required) {
+                    let hasFurther = false;
+                    for (let i = 0; i < 24; i++) {
+                        const cnt = this.board[i];
+                        if ((player === 1 && cnt > 0) || (player === -1 && cnt < 0)) {
+                            const dist = player === 1 ? 24 - i : i + 1;
+                            if (dist > required) { hasFurther = true; break; }
+                        }
+                    }
+                    if (!hasFurther && this.isValidMove(from, -1, player, dieIdx)) moves.push({ from, to: -1 });
                 }
             }
         }
         return moves;
     }
-    
-    function atualizarDadosDisponiveis() {
-        if (!estadoAtual) return;
-        const dice = estadoAtual.dice;
-        const used = estadoAtual.diceUsed;
-        if (dice[0] === dice[1]) {
-            const valor = dice[0];
-            dadosDisponiveis = [valor, valor, valor, valor];
-            if (used[0]) dadosDisponiveis.shift();
-            if (used[1]) dadosDisponiveis.shift();
-        } else {
-            dadosDisponiveis = [];
-            if (!used[0]) dadosDisponiveis.push(dice[0]);
-            if (!used[1]) dadosDisponiveis.push(dice[1]);
-        }
-        addLog(`🎲 Dados disponíveis: ${JSON.stringify(dadosDisponiveis)}`, 'info');
-    }
-    
-    // ========== DESENHO ==========
-    function desenharPecaPremium(x, y, corBase) {
-        ctx.save();
-        ctx.shadowBlur = 5;
-        ctx.shadowOffsetX = 2;
-        ctx.shadowOffsetY = 2;
-        ctx.shadowColor = "rgba(0,0,0,0.4)";
-        const grad = ctx.createRadialGradient(x-4, y-4, 5, x, y, 13);
-        if (corBase === '#c73b2a') {
-            grad.addColorStop(0, '#e86a5a');
-            grad.addColorStop(0.7, '#b03220');
-            grad.addColorStop(1, '#8a2010');
-        } else {
-            grad.addColorStop(0, '#fff9f0');
-            grad.addColorStop(0.7, '#e8d8c0');
-            grad.addColorStop(1, '#c8b89a');
-        }
-        ctx.beginPath();
-        ctx.arc(x, y, 12, 0, 2 * Math.PI);
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = '#2b1a0e';
-        ctx.lineWidth = 1.2;
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(x-3, y-3, 3, 0, 2 * Math.PI);
-        ctx.fillStyle = 'rgba(255,255,255,0.65)';
-        ctx.fill();
-        ctx.restore();
-    }
-    
-    function desenharTriangulo(x, y, largura, altura, paraCima, claro) {
-        const grad = ctx.createLinearGradient(x, y, x, paraCima ? y - altura : y + altura);
-        if (claro) {
-            grad.addColorStop(0, '#f3d6ad');
-            grad.addColorStop(1, '#d2a679');
-        } else {
-            grad.addColorStop(0, '#9c5a2e');
-            grad.addColorStop(1, '#6b3e1e');
-        }
-        ctx.beginPath();
-        if (paraCima) {
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + largura/2, y - altura);
-            ctx.lineTo(x + largura, y);
-        } else {
-            ctx.moveTo(x, y);
-            ctx.lineTo(x + largura/2, y + altura);
-            ctx.lineTo(x + largura, y);
-        }
-        ctx.closePath();
-        ctx.fillStyle = grad;
-        ctx.fill();
-        ctx.strokeStyle = '#3a1f0f';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-    }
-    
-    function desenharPecasNoTabuleiro() {
-        if (!estadoAtual) return;
-        
-        function desenharPilha(x, yBase, qtd, cor, direcao) {
-            const absQ = Math.abs(qtd);
-            const maxVis = 6;
-            const step = 14;
-            for (let j = 0; j < Math.min(absQ, maxVis); j++) {
-                const y = direcao === 'down' ? yBase + j * step : yBase - j * step;
-                desenharPecaPremium(x, y, cor);
-            }
-            if (absQ > maxVis) {
-                ctx.fillStyle = '#222';
-                ctx.font = 'bold 12px monospace';
-                ctx.fillText(`+${absQ - maxVis}`, x + 12, direcao === 'down' ? yBase + (maxVis-1)*step + 12 : yBase - (maxVis-1)*step - 8);
-            }
-        }
-        
-        // Lado esquerdo (índices 5..0 e 12..17)
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + i * pointW + pointW/2;
-            const idxSupEsq = 5 - i;
-            const qSupEsq = estadoAtual.board[idxSupEsq];
-            if (qSupEsq !== 0) {
-                const yBase = topY + 20;
-                const cor = qSupEsq > 0 ? '#c73b2a' : '#f0e6d0';
-                desenharPilha(x, yBase, qSupEsq, cor, 'down');
-            }
-            const idxInfEsq = 12 + i;
-            const qInfEsq = estadoAtual.board[idxInfEsq];
-            if (qInfEsq !== 0) {
-                const yBase = bottomY - 28;
-                const cor = qInfEsq > 0 ? '#c73b2a' : '#f0e6d0';
-                desenharPilha(x, yBase, qInfEsq, cor, 'up');
-            }
-        }
-        
-        // Lado direito (índices 11..6 e 18..23)
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2;
-            const idxSupDir = 11 - i;
-            const qSupDir = estadoAtual.board[idxSupDir];
-            if (qSupDir !== 0) {
-                const yBase = topY + 20;
-                const cor = qSupDir > 0 ? '#c73b2a' : '#f0e6d0';
-                desenharPilha(x, yBase, qSupDir, cor, 'down');
-            }
-            const idxInfDir = 18 + i;
-            const qInfDir = estadoAtual.board[idxInfDir];
-            if (qInfDir !== 0) {
-                const yBase = bottomY - 28;
-                const cor = qInfDir > 0 ? '#c73b2a' : '#f0e6d0';
-                desenharPilha(x, yBase, qInfDir, cor, 'up');
-            }
-        }
-        
-        // Peças na barra
-        const barCenterX = barLeft + barraCentralLargura/2;
-        if (estadoAtual.bar[0] > 0) {
-            for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) {
-                desenharPecaPremium(barCenterX, barTop + 20 + j * 16, '#c73b2a');
-            }
-            if (estadoAtual.bar[0] > 6) {
-                ctx.fillStyle = '#222';
-                ctx.font = 'bold 12px monospace';
-                ctx.fillText(`+${estadoAtual.bar[0]-6}`, barCenterX + 15, barTop + 120);
-            }
-        }
-        if (estadoAtual.bar[1] > 0) {
-            for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) {
-                desenharPecaPremium(barCenterX, barBottom - 20 - j * 16, '#f0e6d0');
-            }
-            if (estadoAtual.bar[1] > 6) {
-                ctx.fillStyle = '#222';
-                ctx.font = 'bold 12px monospace';
-                ctx.fillText(`+${estadoAtual.bar[1]-6}`, barCenterX + 15, barBottom - 110);
-            }
-        }
-    }
-    
-    function desenharTabuleiro() {
-        if (!estadoAtual) return;
-        ctx.clearRect(0, 0, w, h);
-        ctx.fillStyle = '#c19a6b';
-        ctx.fillRect(0, 0, w, h);
-        ctx.save();
-        ctx.globalAlpha = 0.1;
-        for (let i = 0; i < 200; i++) {
-            ctx.beginPath();
-            ctx.moveTo(0, i * 5);
-            ctx.lineTo(w, i * 5 + (i % 3));
-            ctx.strokeStyle = '#4a2c14';
-            ctx.stroke();
-        }
-        ctx.restore();
-        
-        // Lado esquerdo
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + i * pointW;
-            const claro = (i % 2 === 0);
-            desenharTriangulo(x, topY, pointW, pointH, false, claro);
-            desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
-        }
-        // Lado direito
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + ladoLargura + barraCentralLargura + i * pointW;
-            const claro = (i % 2 === 0);
-            desenharTriangulo(x, topY, pointW, pointH, false, claro);
-            desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
-        }
-        
-        // Barra central
-        ctx.fillStyle = '#8b6946';
-        ctx.fillRect(barLeft, barTop, barraCentralLargura, barBottom - barTop);
-        ctx.fillStyle = '#c9a87b';
-        for (let i = 0; i < 3; i++) {
-            ctx.fillRect(barLeft + 12 + i * 18, barTop + 15, 6, (barBottom - barTop) - 30);
-        }
-        ctx.strokeStyle = '#4a2c14';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(barLeft, barTop, barraCentralLargura, barBottom - barTop);
-        ctx.fillStyle = "#f5e6d3";
-        ctx.font = "bold 22px 'Segoe UI'";
-        ctx.fillText("║", barLeft + barraCentralLargura/2 - 8, barTop + (barBottom - barTop)/2 + 8);
-        ctx.font = "bold 14px";
-        ctx.fillText("BARRA", barLeft + barraCentralLargura/2 - 20, barTop + (barBottom - barTop)/2 + 32);
-        
-        // Números
-        ctx.fillStyle = '#2c1a0c';
-        ctx.font = "bold 15px";
-        ctx.textAlign = "center";
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + i * pointW + pointW/2;
-            ctx.fillText((6 - i).toString(), x, topY - 12);
-        }
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2;
-            ctx.fillText((7 + i).toString(), x, topY - 12);
-        }
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + i * pointW + pointW/2;
-            ctx.fillText((13 + i).toString(), x, bottomY + 24);
-        }
-        for (let i = 0; i < 6; i++) {
-            const x = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2;
-            ctx.fillText((19 + i).toString(), x, bottomY + 24);
-        }
-        ctx.textAlign = "left";
-        
-        document.getElementById('casaVermelha').innerText = estadoAtual.home[0];
-        document.getElementById('casaBranca').innerText = estadoAtual.home[1];
-        
-        desenharPecasNoTabuleiro();
-        
-        // Destaques
-        if (pecaSelecionada !== null) {
-            let cx, cy;
-            const from = pecaSelecionada.from;
-            if (from === 24) { cx = barLeft + barraCentralLargura/2; cy = barTop + 30; }
-            else if (from === 25) { cx = barLeft + barraCentralLargura/2; cy = barBottom - 30; }
-            else if (from < 12) {
-                if (from <= 5) { const i = 5 - from; cx = marginLeft + i * pointW + pointW/2; cy = topY + 28; }
-                else { const i = 11 - from; cx = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2; cy = topY + 28; }
-            } else {
-                if (from <= 17) { const i = from - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 36; }
-                else { const i = from - 18; cx = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2; cy = bottomY - 36; }
-            }
-            ctx.save();
-            ctx.shadowBlur = 18; ctx.shadowColor = 'gold';
-            ctx.beginPath(); ctx.arc(cx, cy, 18, 0, 2*Math.PI);
-            ctx.strokeStyle = '#ffd700'; ctx.lineWidth = 4; ctx.stroke();
-            ctx.restore();
-        }
-        if (pecaSelecionada !== null) {
-            const from = pecaSelecionada.from;
-            const moves = calcularMovimentosLegais().filter(m => m.from === from);
-            const destinos = new Set(moves.map(m => m.to));
-            destinos.forEach(to => {
-                let cx, cy;
-                if (to === 24) { cx = barLeft + barraCentralLargura/2; cy = barTop + 30; }
-                else if (to === 25) { cx = barLeft + barraCentralLargura/2; cy = barBottom - 30; }
-                else if (to < 12) {
-                    if (to <= 5) { const i = 5 - to; cx = marginLeft + i * pointW + pointW/2; cy = topY + 28; }
-                    else { const i = 11 - to; cx = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2; cy = topY + 28; }
-                } else {
-                    if (to <= 17) { const i = to - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 36; }
-                    else { const i = to - 18; cx = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2; cy = bottomY - 36; }
-                }
-                ctx.save();
-                ctx.shadowBlur = 14; ctx.shadowColor = '#2ecc71';
-                ctx.beginPath(); ctx.arc(cx, cy, 20, 0, 2*Math.PI);
-                ctx.strokeStyle = '#2ecc71'; ctx.lineWidth = 4; ctx.stroke();
-                ctx.restore();
-            });
-        }
-    }
-    
-    // ========== FUNÇÃO DE STEPS DIRECIONAIS (CORREÇÃO) ==========
-    function getRealSteps(from, to, player) {
-        if (from === 24) return to + 1;               // barra vermelha
-        if (from === 25) return 24 - to;              // barra branca
-        if (to === -1) return player === 1 ? 24 - from : from + 1; // bear off
-        return player === 1 ? to - from : from - to;  // movimento normal
-    }
-    
-    // ========== CLIQUE ==========
-    function getPointFromClick(mouseX, mouseY) {
-        // Barra
-        if (mouseX >= barLeft && mouseX <= barRight) {
-            if (mouseY >= barTop && mouseY <= barTop + 70) return 24;
-            if (mouseY >= barBottom - 70 && mouseY <= barBottom) return 25;
-        }
-        // Triângulos superiores esquerda
-        for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + i * pointW;
-            const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) return 5 - i;
-        }
-        // Triângulos superiores direita
-        for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + ladoLargura + barraCentralLargura + i * pointW;
-            const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) return 11 - i;
-        }
-        // Triângulos inferiores esquerda
-        for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + i * pointW;
-            const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) return 12 + i;
-        }
-        // Triângulos inferiores direita
-        for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + ladoLargura + barraCentralLargura + i * pointW;
-            const x1 = x0 + pointW;
-            if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) return 18 + i;
-        }
-        return -1;
-    }
-    
-    canvas.addEventListener('click', (e) => {
-        if (!jogoIniciado || meuLado === 0 || !estadoAtual) return;
-        if (estadoAtual.turn !== meuLado) { addLog("Não é seu turno", "error"); return; }
-        if (estadoAtual.rollPhase) { addLog("Role os dados primeiro", "error"); return; }
-        
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const x = (e.clientX - rect.left) * scaleX;
-        const y = (e.clientY - rect.top) * scaleY;
-        const point = getPointFromClick(x, y);
-        if (point === -1) return;
-        
-        let count;
-        if (point === 24) count = estadoAtual.bar[0];
-        else if (point === 25) count = estadoAtual.bar[1];
-        else count = estadoAtual.board[point];
-        const isMine = (meuLado === 1 && count > 0) || (meuLado === -1 && count < 0);
-        
-        if (pecaSelecionada === null) {
-            if (isMine) {
-                pecaSelecionada = { from: point };
-                addLog(`Selecionado ${point}`, "success");
-                desenharTabuleiro();
-            } else {
-                addLog("Peça adversária ou vazia", "error");
-            }
-        } else {
-            const from = pecaSelecionada.from;
-            const to = point;
-            const movesLegais = calcularMovimentosLegais();
-            const movimentoValido = movesLegais.find(m => m.from === from && m.to === to);
-            if (movimentoValido) {
-                addLog(`Movimento ${from}→${to}`, "success");
-                movimentosPendentes.push({ from, to });
-                
-                // ========== USO DA FUNÇÃO CORRIGIDA ==========
-                const steps = getRealSteps(from, to, meuLado);
-                
-                let indexToRemove = -1;
-                for (let i = 0; i < dadosDisponiveis.length; i++) {
-                    if (dadosDisponiveis[i] === steps) {
-                        indexToRemove = i;
-                        break;
+
+    isValidMove(from, to, player, dieIdx) {
+        if (this.gameOver) return false;
+        if (this.diceUsed[dieIdx]) return false;
+        const barIdx = player === 1 ? 0 : 1;
+        const hasBar = this.bar[barIdx] > 0;
+        if (hasBar && from !== 24 + barIdx) return false;
+        if (!hasBar && (from === 24 || from === 25)) return false;
+
+        let pieceCount;
+        if (from === 24 || from === 25) pieceCount = this.bar[from - 24];
+        else pieceCount = this.board[from];
+        if ((player === 1 && pieceCount <= 0) || (player === -1 && pieceCount >= 0)) return false;
+
+        if (to === -1) {
+            if (!this.canBearOff(player)) return false;
+            const required = player === 1 ? 24 - from : from + 1;
+            const die = this.dice[dieIdx];
+            if (die < required) return false;
+            if (die > required) {
+                for (let i = 0; i < 24; i++) {
+                    const cnt = this.board[i];
+                    if ((player === 1 && cnt > 0) || (player === -1 && cnt < 0)) {
+                        const dist = player === 1 ? 24 - i : i + 1;
+                        if (dist > required) return false;
                     }
                 }
-                if (indexToRemove !== -1) dadosDisponiveis.splice(indexToRemove, 1);
-                pecaSelecionada = null;
-                desenharTabuleiro();
-                atualizarInterface();
-                if (dadosDisponiveis.length === 0 && movimentosPendentes.length > 0) {
-                    addLog("Todos os dados usados, confirmando jogada...", "success");
-                    confirmarMovimentos();
-                }
-            } else {
-                addLog(`Movimento inválido ${from}→${to}`, "error");
-                pecaSelecionada = null;
-                desenharTabuleiro();
+            }
+            return true;
+        }
+
+        const die = this.dice[dieIdx];
+        let distance;
+        if (from === 24 || from === 25) {
+            distance = player === 1 ? to + 1 : 24 - to;
+            if (distance !== die) return false;
+        } else {
+            distance = player === 1 ? to - from : from - to;
+            if (distance !== die) return false;
+        }
+
+        const destCount = this.board[to];
+        if ((player === 1 && destCount < -1) || (player === -1 && destCount > 1)) return false;
+        return true;
+    }
+
+    canBearOff(player) {
+        const homeStart = player === 1 ? 18 : 0;
+        const homeEnd = player === 1 ? 23 : 5;
+        for (let i = 0; i < 24; i++) {
+            const cnt = this.board[i];
+            if ((player === 1 && cnt > 0) || (player === -1 && cnt < 0)) {
+                if (i < homeStart || i > homeEnd) return false;
             }
         }
-    });
-    
-    function atualizarInterface() {
-        if (!estadoAtual) return;
-        desenharTabuleiro();
-        const dado1 = document.getElementById('dado1');
-        const dado2 = document.getElementById('dado2');
-        dado1.innerText = estadoAtual.dice[0] || '?';
-        dado2.innerText = estadoAtual.dice[1] || '?';
-        dado1.classList.toggle('usado', estadoAtual.diceUsed[0]);
-        dado2.classList.toggle('usado', estadoAtual.diceUsed[1]);
-        document.getElementById('vez-atual').innerText = estadoAtual.turn === 1 ? 'Vermelho' : 'Branco';
-        document.getElementById('direcao-movimento').innerText = estadoAtual.turn === 1 ? '↓ horário' : '↑ anti-horário';
-        const statusEl = document.getElementById('status-jogo');
-        if (estadoAtual.gameOver) statusEl.innerText = `🏆 ${estadoAtual.winner === 1 ? 'Vermelho' : 'Branco'} venceu!`;
-        else if (estadoAtual.turn !== meuLado) statusEl.innerText = `⏳ Aguardando...`;
-        else if (estadoAtual.rollPhase) statusEl.innerText = '🎲 Role os dados';
-        else statusEl.innerText = '🖱️ Selecione peça e destino';
-        
-        const btnRolar = document.getElementById('btn-rolar');
-        const btnConfirmar = document.getElementById('btn-confirmar');
-        const btnCancelar = document.getElementById('btn-cancelar');
-        if (!jogoIniciado || estadoAtual.turn !== meuLado || estadoAtual.gameOver) {
-            btnRolar.style.display = 'none';
-            btnConfirmar.style.display = 'none';
-            btnCancelar.style.display = 'none';
-        } else if (estadoAtual.rollPhase) {
-            btnRolar.style.display = 'inline-block';
-            btnConfirmar.style.display = 'none';
-            btnCancelar.style.display = 'none';
+        return this.bar[player === 1 ? 0 : 1] === 0;
+    }
+
+    simulateMove(from, to, player) {
+        const newBoard = [...this.board];
+        const newBar = [...this.bar];
+        const newHome = [...this.home];
+        if (from === 24 || from === 25) {
+            newBar[from - 24]--;
         } else {
-            btnRolar.style.display = 'none';
-            btnConfirmar.style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
-            btnCancelar.style.display = movimentosPendentes.length > 0 ? 'inline-block' : 'none';
+            player === 1 ? newBoard[from]-- : newBoard[from]++;
         }
-    }
-    
-    function confirmarMovimentos() {
-        if (movimentosPendentes.length === 0) return;
-        socket.emit('moverPecas', { moves: movimentosPendentes });
-        movimentosPendentes = [];
-        pecaSelecionada = null;
-        atualizarInterface();
-    }
-    
-    function cancelarMovimentos() {
-        movimentosPendentes = [];
-        pecaSelecionada = null;
-        atualizarInterface();
-    }
-    
-    function rolarDados() { socket.emit('rolarDados'); addLog("Rolando dados...", "info"); }
-    function desistir() { if (confirm('Desistir?')) socket.emit('desistir'); }
-    
-    // ========== EVENTOS SOCKET ==========
-    function entrar() {
-        const apelido = document.getElementById('input-apelido').value.trim();
-        const sala = document.getElementById('input-sala').value.trim();
-        if (!apelido || !sala) return alert('Preencha nome e sala!');
-        salaAtual = sala;
-        socket.emit('entrarSala', { apelido, sala });
-        document.getElementById('tela-login').style.display = 'none';
-        document.getElementById('lobby').style.display = 'block';
-        document.getElementById('painel-chat').style.display = 'block';
-        addLog(`Entrando sala ${sala} como ${apelido}`, 'info');
-    }
-    function marcarPronto() {
-        socket.emit('marcarPronto');
-        document.getElementById('btn-pronto').disabled = true;
-        document.getElementById('btn-pronto').innerText = 'Aguardando...';
-        addLog("Pronto", 'success');
-    }
-    function enviarMensagem() {
-        const input = document.getElementById('input-mensagem');
-        const msg = input.value.trim();
-        if (msg) { socket.emit('enviarMensagem', msg); input.value = ''; addLog(`Msg: ${msg}`, 'info'); }
-    }
-    
-    socket.on('connect', () => { addLog("Conectado", 'success'); document.getElementById('status-conexao').innerText = "✅ Conectado"; });
-    socket.on('disconnect', () => { addLog("Desconectado", 'error'); document.getElementById('status-conexao').innerText = "❌ Desconectado"; });
-    socket.on('erro', (msg) => { addLog(`Erro: ${msg}`, 'error'); alert(msg); });
-    socket.on('definirPapel', (dados) => {
-        if (dados.papel === 'jogador') {
-            meuLado = dados.lado;
-            document.getElementById('meu-lado').innerText = meuLado === 1 ? 'Vermelho' : 'Branco';
-            addLog(`Lado: ${meuLado === 1 ? 'Vermelho' : 'Branco'}`, 'success');
+        if (to === -1) {
+            newHome[player === 1 ? 0 : 1]++;
         } else {
-            meuLado = 0;
-            document.getElementById('meu-lado').innerText = 'Espectador';
+            const dest = newBoard[to];
+            if ((player === 1 && dest === -1) || (player === -1 && dest === 1)) {
+                newBar[player === 1 ? 1 : 0]++;
+                newBoard[to] = 0;
+            }
+            player === 1 ? newBoard[to]++ : newBoard[to]--;
         }
-    });
-    socket.on('estadoLobby', (dados) => {
-        document.getElementById('info-sala').innerHTML = `<p>Sala: ${salaAtual} | Jogadores: ${dados.jogadoresInfo.length}/2</p>`;
-        let lista = '';
-        dados.jogadoresInfo.forEach(j => lista += `<li>👤 ${j.nome} (${j.lado === 1 ? 'Vermelho' : 'Branco'}) ${j.pronto ? '✅' : '⏳'}</li>`);
-        dados.espectadores.forEach(e => lista += `<li>👁️ ${e}</li>`);
-        document.getElementById('lista-alunos').innerHTML = lista;
-        if (dados.rodando) {
-            document.getElementById('lobby').style.display = 'none';
-            document.getElementById('area-jogo').style.display = 'block';
-            document.getElementById('painel-historico').style.display = 'block';
-            jogoIniciado = true;
-            addLog("Partida iniciada!", 'success');
+        return { board: newBoard, bar: newBar, home: newHome };
+    }
+
+    makeMove(moves) {
+        if (!moves || moves.length === 0) return false;
+        const player = this.turn;
+        const usedIndices = [];
+
+        for (let move of moves) {
+            const dieValue = player === 1 ? (move.from === 24 ? move.to + 1 : move.to - move.from) :
+                            (move.from === 25 ? 24 - move.to : move.from - move.to);
+            const dieIdx = this.dice.findIndex((v, i) => v === dieValue && !this.diceUsed[i] && !usedIndices.includes(i));
+            if (dieIdx === -1) return false;
+            usedIndices.push(dieIdx);
+
+            if (move.from === 24 || move.from === 25) {
+                this.bar[move.from - 24]--;
+            } else {
+                player === 1 ? this.board[move.from]-- : this.board[move.from]++;
+            }
+            if (move.to === -1) {
+                this.home[player === 1 ? 0 : 1]++;
+            } else {
+                const dest = this.board[move.to];
+                if ((player === 1 && dest === -1) || (player === -1 && dest === 1)) {
+                    this.bar[player === 1 ? 1 : 0]++;
+                    this.board[move.to] = 0;
+                }
+                player === 1 ? this.board[move.to]++ : this.board[move.to]--;
+            }
+        }
+
+        usedIndices.forEach(idx => this.diceUsed[idx] = true);
+        if (this.diceUsed.every(v => v)) {
+            this.rollPhase = true;
+            this.turn *= -1;
+            this.dice = [0, 0];
+            this.diceUsed = [false, false];
+        }
+
+        if (this.home[0] === 15) {
+            this.gameOver = true;
+            this.winner = 1;
+        } else if (this.home[1] === 15) {
+            this.gameOver = true;
+            this.winner = -1;
+        }
+        return true;
+    }
+}
+
+// ========== GERENCIAMENTO DE SALAS ==========
+let salas = {};
+
+function resetarSalaParaLobby(sala) {
+    sala.rodando = false;
+    sala.jogo.reset();
+    sala.historico = [];
+    sala.jogadores.forEach(j => j.pronto = false);
+}
+
+io.on('connection', (socket) => {
+    console.log('🎲 Jogador conectado:', socket.id);
+
+    socket.on('entrarSala', ({ apelido, sala: nomeSala }) => {
+        socket.join(nomeSala);
+        socket.sala = nomeSala;
+        socket.apelido = apelido;
+
+        if (!salas[nomeSala]) {
+            salas[nomeSala] = {
+                jogadores: [],
+                espectadores: [],
+                rodando: false,
+                jogo: new Gamao(),
+                historico: []
+            };
+        }
+        const sala = salas[nomeSala];
+
+        if (sala.jogadores.find(j => j.id === socket.id)) {
+            socket.emit('erro', 'Você já está nesta sala!');
+            return;
+        }
+
+        if (sala.jogadores.length < 2) {
+            const lado = sala.jogadores.length === 0 ? 1 : -1;
+            sala.jogadores.push({ id: socket.id, nome: apelido, pronto: false, lado });
+            socket.emit('definirPapel', { papel: 'jogador', lado });
         } else {
-            document.getElementById('lobby').style.display = 'block';
-            document.getElementById('area-jogo').style.display = 'none';
+            sala.espectadores.push({ id: socket.id, nome: apelido });
+            socket.emit('definirPapel', { papel: 'espectador' });
+            socket.emit('estadoAtual', sala.jogo.getState());
+        }
+
+        io.to(nomeSala).emit('estadoLobby', {
+            rodando: sala.rodando,
+            jogadoresInfo: sala.jogadores.map(j => ({ nome: j.nome, pronto: j.pronto, lado: j.lado })),
+            espectadores: sala.espectadores.map(e => e.nome)
+        });
+    });
+
+    socket.on('marcarPronto', () => {
+        const sala = salas[socket.sala];
+        if (!sala) return;
+        const jogador = sala.jogadores.find(j => j.id === socket.id);
+        if (!jogador) return;
+        jogador.pronto = true;
+        io.to(socket.sala).emit('estadoLobby', {
+            rodando: sala.rodando,
+            jogadoresInfo: sala.jogadores.map(j => ({ nome: j.nome, pronto: j.pronto, lado: j.lado })),
+            espectadores: sala.espectadores.map(e => e.nome)
+        });
+
+        if (sala.jogadores.length === 2 && sala.jogadores.every(j => j.pronto) && !sala.rodando) {
+            sala.rodando = true;
+            sala.jogo.reset();
+            sala.jogadores.forEach(j => io.to(j.id).emit('iniciarPartida', { lado: j.lado, estado: sala.jogo.getState() }));
+            sala.espectadores.forEach(e => io.to(e.id).emit('iniciarPartida', { lado: 'espectador', estado: sala.jogo.getState() }));
+            io.to(socket.sala).emit('estadoLobby', { rodando: true, jogadoresInfo: sala.jogadores.map(j => ({ nome: j.nome, pronto: j.pronto, lado: j.lado })), espectadores: sala.espectadores.map(e => e.nome) });
         }
     });
-    socket.on('iniciarPartida', (dados) => {
-        jogoIniciado = true;
-        estadoAtual = dados.estado;
-        if (dados.lado !== 'espectador') meuLado = dados.lado;
-        atualizarDadosDisponiveis();
-        desenharTabuleiro();
-        atualizarInterface();
-        document.getElementById('lobby').style.display = 'none';
-        document.getElementById('area-jogo').style.display = 'block';
+
+    socket.on('rolarDados', () => {
+        const sala = salas[socket.sala];
+        if (!sala?.rodando) return;
+        const jogador = sala.jogadores.find(j => j.id === socket.id);
+        if (!jogador || sala.jogo.turn !== jogador.lado || !sala.jogo.rollPhase) return;
+        const dice = sala.jogo.rollDice();
+        if (dice) {
+            const legalMoves = sala.jogo.getLegalMoves(jogador.lado);
+            io.to(socket.sala).emit('dadosRolados', { dice, turn: sala.jogo.turn, legalMoves });
+            io.to(socket.sala).emit('estadoAtual', sala.jogo.getState());
+        }
     });
-    socket.on('estadoAtual', (estado) => {
-        estadoAtual = estado;
-        atualizarDadosDisponiveis();
-        desenharTabuleiro();
-        atualizarInterface();
+
+    socket.on('moverPecas', ({ moves }) => {
+        const sala = salas[socket.sala];
+        if (!sala?.rodando) return;
+        const jogador = sala.jogadores.find(j => j.id === socket.id);
+        if (!jogador || sala.jogo.turn !== jogador.lado || sala.jogo.rollPhase) return;
+
+        if (sala.jogo.makeMove(moves)) {
+            const estado = sala.jogo.getState();
+            sala.historico.push(`${jogador.nome} moveu ${moves.map(m => `${m.from}→${m.to}`).join(', ')}`);
+            const legalMoves = estado.rollPhase ? [] : sala.jogo.getLegalMoves(estado.turn);
+            io.to(socket.sala).emit('jogadaFeita', { estado, historico: sala.historico, moves, legalMoves });
+
+            if (estado.gameOver) {
+                resetarSalaParaLobby(sala);
+                const vencedor = estado.winner === 1 ? 'Vermelho' : 'Branco';
+                io.to(socket.sala).emit('fimDeJogo', { motivo: 'fim_normal', vencedor: estado.winner, mensagem: `${vencedor} venceu!` });
+                io.to(socket.sala).emit('estadoLobby', { rodando: sala.rodando, jogadoresInfo: sala.jogadores.map(j => ({ nome: j.nome, pronto: j.pronto, lado: j.lado })), espectadores: sala.espectadores.map(e => e.nome) });
+            }
+        } else {
+            socket.emit('erro', 'Movimento inválido.');
+        }
     });
-    socket.on('dadosRolados', ({ dice, turn, legalMoves: moves }) => {
-        estadoAtual.dice = dice;
-        estadoAtual.diceUsed = [false, false];
-        estadoAtual.rollPhase = false;
-        atualizarDadosDisponiveis();
-        addLog(`Dados: ${dice[0]} e ${dice[1]} | Locais: ${dadosDisponiveis.length} movimentos`, 'success');
-        desenharTabuleiro();
-        atualizarInterface();
+
+    socket.on('enviarMensagem', (msg) => {
+        const sala = socket.sala;
+        if (!sala) return;
+        io.to(sala).emit('novaMensagem', { remetente: socket.apelido, texto: msg, timestamp: Date.now() });
     });
-    socket.on('jogadaFeita', (dados) => {
-        estadoAtual = dados.estado;
-        if (dados.historico) document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
-        movimentosPendentes = [];
-        pecaSelecionada = null;
-        atualizarDadosDisponiveis();
-        desenharTabuleiro();
-        atualizarInterface();
-        addLog("Jogada confirmada", 'success');
+
+    socket.on('desistir', () => {
+        const sala = salas[socket.sala];
+        if (!sala?.rodando) return;
+        const jogador = sala.jogadores.find(j => j.id === socket.id);
+        if (!jogador) return;
+        const vencedor = jogador.lado === 1 ? -1 : 1;
+        resetarSalaParaLobby(sala);
+        io.to(socket.sala).emit('fimDeJogo', { motivo: 'desistencia', vencedor, mensagem: `${jogador.nome} desistiu.` });
+        io.to(socket.sala).emit('estadoLobby', { rodando: sala.rodando, jogadoresInfo: sala.jogadores.map(j => ({ nome: j.nome, pronto: j.pronto, lado: j.lado })), espectadores: sala.espectadores.map(e => e.nome) });
     });
-    socket.on('fimDeJogo', (dados) => {
-        alert(dados.mensagem);
-        jogoIniciado = false;
-        document.getElementById('area-jogo').style.display = 'none';
-        document.getElementById('lobby').style.display = 'block';
-        document.getElementById('btn-pronto').disabled = false;
-        document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+
+    socket.on('disconnect', () => {
+        const sala = salas[socket.sala];
+        if (!sala) return;
+        console.log(`[Sala ${socket.sala}] ${socket.apelido} desconectou.`);
+        const jogadorIdx = sala.jogadores.findIndex(j => j.id === socket.id);
+        if (jogadorIdx !== -1) {
+            sala.jogadores.splice(jogadorIdx, 1);
+            if (sala.rodando) {
+                const vencedor = sala.jogadores[0]?.lado;
+                resetarSalaParaLobby(sala);
+                if (vencedor) io.to(socket.sala).emit('fimDeJogo', { motivo: 'desconexao', vencedor, mensagem: 'Oponente desconectou.' });
+                io.to(socket.sala).emit('estadoLobby', { rodando: sala.rodando, jogadoresInfo: sala.jogadores.map(j => ({ nome: j.nome, pronto: j.pronto, lado: j.lado })), espectadores: sala.espectadores.map(e => e.nome) });
+            }
+        } else {
+            sala.espectadores = sala.espectadores.filter(e => e.id !== socket.id);
+        }
+        if (sala.jogadores.length === 0 && sala.espectadores.length === 0) delete salas[socket.sala];
+        else io.to(socket.sala).emit('estadoLobby', { rodando: sala.rodando, jogadoresInfo: sala.jogadores.map(j => ({ nome: j.nome, pronto: j.pronto, lado: j.lado })), espectadores: sala.espectadores.map(e => e.nome) });
     });
-    socket.on('novaMensagem', (msg) => {
-        const div = document.getElementById('chat-mensagens');
-        const hora = new Date(msg.timestamp).toLocaleTimeString();
-        div.innerHTML += `<div><strong>${msg.remetente}</strong> <span class="badge">${hora}</span>: ${msg.texto}</div>`;
-        div.scrollTop = div.scrollHeight;
-    });
-    document.getElementById('input-mensagem').addEventListener('keypress', (e) => { if (e.key === 'Enter') enviarMensagem(); });
-</script>
-</body>
-</html>
+});
+
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => console.log(`🎲 Motor Gamão rodando na porta ${PORT}`));
