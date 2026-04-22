@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Gamão Clássico — Distribuição Correta</title>
+    <title>Gamão Clássico — Movimentos Direcionais Corrigidos</title>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -189,7 +189,7 @@
 </head>
 <body>
 <header>
-    <h1>Gamão Clássico — Distribuição Correta</h1>
+    <h1>Gamão Clássico — Direcional Corrigido</h1>
     <p>Projeto Integrado — Laboratório de Computação</p>
     <a href="#" target="_blank" class="btn-header-regras">📖 VER REGRAS</a>
 </header>
@@ -302,19 +302,20 @@
     const w = 1100, h = 620;
     canvas.width = w; canvas.height = h;
 
-    // ==================== GEOMETRIA ====================
-    const marginLeft = 90;
-    const marginRight = w - 90;
-    const totalWidth = marginRight - marginLeft;
-    const halfWidth = totalWidth / 2;
-    const pointW = halfWidth / 6;
+    // ========== GEOMETRIA COM SEPARAÇÃO CENTRAL CLÁSSICA ==========
+    const marginLeft = 80;
+    const marginRight = w - 80;
+    const areaLargura = marginRight - marginLeft;
+    const barraCentralLargura = 70;
+    const ladoLargura = (areaLargura - barraCentralLargura) / 2;
+    const pointW = ladoLargura / 6;
     const pointH = 130;
     const topY = 70;
     const bottomY = h - 70;
-    const barLeft = marginLeft + halfWidth - 32;
-    const barRight = barLeft + 64;
-    const barTop = topY + pointH + 12;
-    const barBottom = bottomY - pointH - 12;
+    const barLeft = marginLeft + ladoLargura;
+    const barRight = barLeft + barraCentralLargura;
+    const barTop = topY + 10;
+    const barBottom = bottomY - 10;
     
     // ========== LÓGICA LOCAL DE MOVIMENTOS ==========
     function getDirection(lado) {
@@ -450,7 +451,6 @@
     
     function desenharPecasNoTabuleiro() {
         if (!estadoAtual) return;
-        addLog("Desenhando peças...", 'info');
         
         function desenharPilha(x, yBase, qtd, cor, direcao) {
             const absQ = Math.abs(qtd);
@@ -467,62 +467,64 @@
             }
         }
         
+        // Lado esquerdo (índices 5..0 e 12..17)
         for (let i = 0; i < 6; i++) {
+            const x = marginLeft + i * pointW + pointW/2;
             const idxSupEsq = 5 - i;
             const qSupEsq = estadoAtual.board[idxSupEsq];
             if (qSupEsq !== 0) {
-                const x = marginLeft + i * pointW + pointW/2;
                 const yBase = topY + 20;
                 const cor = qSupEsq > 0 ? '#c73b2a' : '#f0e6d0';
                 desenharPilha(x, yBase, qSupEsq, cor, 'down');
             }
-            
-            const idxSupDir = 11 - i;
-            const qSupDir = estadoAtual.board[idxSupDir];
-            if (qSupDir !== 0) {
-                const x = marginLeft + halfWidth + i * pointW + pointW/2;
-                const yBase = topY + 20;
-                const cor = qSupDir > 0 ? '#c73b2a' : '#f0e6d0';
-                desenharPilha(x, yBase, qSupDir, cor, 'down');
-            }
-            
             const idxInfEsq = 12 + i;
             const qInfEsq = estadoAtual.board[idxInfEsq];
             if (qInfEsq !== 0) {
-                const x = marginLeft + i * pointW + pointW/2;
                 const yBase = bottomY - 28;
                 const cor = qInfEsq > 0 ? '#c73b2a' : '#f0e6d0';
                 desenharPilha(x, yBase, qInfEsq, cor, 'up');
             }
-            
+        }
+        
+        // Lado direito (índices 11..6 e 18..23)
+        for (let i = 0; i < 6; i++) {
+            const x = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2;
+            const idxSupDir = 11 - i;
+            const qSupDir = estadoAtual.board[idxSupDir];
+            if (qSupDir !== 0) {
+                const yBase = topY + 20;
+                const cor = qSupDir > 0 ? '#c73b2a' : '#f0e6d0';
+                desenharPilha(x, yBase, qSupDir, cor, 'down');
+            }
             const idxInfDir = 18 + i;
             const qInfDir = estadoAtual.board[idxInfDir];
             if (qInfDir !== 0) {
-                const x = marginLeft + halfWidth + i * pointW + pointW/2;
                 const yBase = bottomY - 28;
                 const cor = qInfDir > 0 ? '#c73b2a' : '#f0e6d0';
                 desenharPilha(x, yBase, qInfDir, cor, 'up');
             }
         }
         
+        // Peças na barra
+        const barCenterX = barLeft + barraCentralLargura/2;
         if (estadoAtual.bar[0] > 0) {
             for (let j = 0; j < Math.min(estadoAtual.bar[0], 6); j++) {
-                desenharPecaPremium(barLeft + 32, barTop + 20 + j * 16, '#c73b2a');
+                desenharPecaPremium(barCenterX, barTop + 20 + j * 16, '#c73b2a');
             }
             if (estadoAtual.bar[0] > 6) {
                 ctx.fillStyle = '#222';
                 ctx.font = 'bold 12px monospace';
-                ctx.fillText(`+${estadoAtual.bar[0]-6}`, barLeft + 48, barTop + 120);
+                ctx.fillText(`+${estadoAtual.bar[0]-6}`, barCenterX + 15, barTop + 120);
             }
         }
         if (estadoAtual.bar[1] > 0) {
             for (let j = 0; j < Math.min(estadoAtual.bar[1], 6); j++) {
-                desenharPecaPremium(barLeft + 32, barBottom - 20 - j * 16, '#f0e6d0');
+                desenharPecaPremium(barCenterX, barBottom - 20 - j * 16, '#f0e6d0');
             }
             if (estadoAtual.bar[1] > 6) {
                 ctx.fillStyle = '#222';
                 ctx.font = 'bold 12px monospace';
-                ctx.fillText(`+${estadoAtual.bar[1]-6}`, barLeft + 48, barBottom - 110);
+                ctx.fillText(`+${estadoAtual.bar[1]-6}`, barCenterX + 15, barBottom - 110);
             }
         }
     }
@@ -530,30 +532,51 @@
     function desenharTabuleiro() {
         if (!estadoAtual) return;
         ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = '#c19a6b';
+        ctx.fillRect(0, 0, w, h);
+        ctx.save();
+        ctx.globalAlpha = 0.1;
+        for (let i = 0; i < 200; i++) {
+            ctx.beginPath();
+            ctx.moveTo(0, i * 5);
+            ctx.lineTo(w, i * 5 + (i % 3));
+            ctx.strokeStyle = '#4a2c14';
+            ctx.stroke();
+        }
+        ctx.restore();
+        
+        // Lado esquerdo
         for (let i = 0; i < 6; i++) {
             const x = marginLeft + i * pointW;
             const claro = (i % 2 === 0);
             desenharTriangulo(x, topY, pointW, pointH, false, claro);
             desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
         }
+        // Lado direito
         for (let i = 0; i < 6; i++) {
-            const x = marginLeft + halfWidth + i * pointW;
+            const x = marginLeft + ladoLargura + barraCentralLargura + i * pointW;
             const claro = (i % 2 === 0);
             desenharTriangulo(x, topY, pointW, pointH, false, claro);
             desenharTriangulo(x, bottomY, pointW, pointH, true, !claro);
         }
+        
+        // Barra central
         ctx.fillStyle = '#8b6946';
-        ctx.fillRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
+        ctx.fillRect(barLeft, barTop, barraCentralLargura, barBottom - barTop);
         ctx.fillStyle = '#c9a87b';
-        for (let i = 0; i < 3; i++) ctx.fillRect(barLeft + 12 + i*16, barTop + 15, 6, (barBottom-barTop)-30);
+        for (let i = 0; i < 3; i++) {
+            ctx.fillRect(barLeft + 12 + i * 18, barTop + 15, 6, (barBottom - barTop) - 30);
+        }
         ctx.strokeStyle = '#4a2c14';
         ctx.lineWidth = 3;
-        ctx.strokeRect(barLeft, barTop, barRight-barLeft, barBottom-barTop);
+        ctx.strokeRect(barLeft, barTop, barraCentralLargura, barBottom - barTop);
         ctx.fillStyle = "#f5e6d3";
-        ctx.font = "bold 20px 'Segoe UI'";
-        ctx.fillText("║", barLeft+28, barTop + (barBottom-barTop)/2 + 8);
+        ctx.font = "bold 22px 'Segoe UI'";
+        ctx.fillText("║", barLeft + barraCentralLargura/2 - 8, barTop + (barBottom - barTop)/2 + 8);
         ctx.font = "bold 14px";
-        ctx.fillText("BARRA", barLeft+12, barTop + (barBottom-barTop)/2 + 25);
+        ctx.fillText("BARRA", barLeft + barraCentralLargura/2 - 20, barTop + (barBottom - barTop)/2 + 32);
+        
+        // Números
         ctx.fillStyle = '#2c1a0c';
         ctx.font = "bold 15px";
         ctx.textAlign = "center";
@@ -562,31 +585,36 @@
             ctx.fillText((6 - i).toString(), x, topY - 12);
         }
         for (let i = 0; i < 6; i++) {
-            const x = marginLeft + halfWidth + i * pointW + pointW/2;
+            const x = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2;
             ctx.fillText((7 + i).toString(), x, topY - 12);
         }
         for (let i = 0; i < 6; i++) {
-            const xEsq = marginLeft + i * pointW + pointW/2;
-            ctx.fillText((13 + i).toString(), xEsq, bottomY + 24);
-            const xDir = marginLeft + halfWidth + i * pointW + pointW/2;
-            ctx.fillText((19 + i).toString(), xDir, bottomY + 24);
+            const x = marginLeft + i * pointW + pointW/2;
+            ctx.fillText((13 + i).toString(), x, bottomY + 24);
+        }
+        for (let i = 0; i < 6; i++) {
+            const x = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2;
+            ctx.fillText((19 + i).toString(), x, bottomY + 24);
         }
         ctx.textAlign = "left";
+        
         document.getElementById('casaVermelha').innerText = estadoAtual.home[0];
         document.getElementById('casaBranca').innerText = estadoAtual.home[1];
+        
         desenharPecasNoTabuleiro();
         
+        // Destaques
         if (pecaSelecionada !== null) {
             let cx, cy;
             const from = pecaSelecionada.from;
-            if (from === 24) { cx = barLeft+32; cy = barTop+30; }
-            else if (from === 25) { cx = barLeft+32; cy = barBottom-30; }
+            if (from === 24) { cx = barLeft + barraCentralLargura/2; cy = barTop + 30; }
+            else if (from === 25) { cx = barLeft + barraCentralLargura/2; cy = barBottom - 30; }
             else if (from < 12) {
                 if (from <= 5) { const i = 5 - from; cx = marginLeft + i * pointW + pointW/2; cy = topY + 28; }
-                else { const i = 11 - from; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 28; }
+                else { const i = 11 - from; cx = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2; cy = topY + 28; }
             } else {
                 if (from <= 17) { const i = from - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 36; }
-                else { const i = from - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 36; }
+                else { const i = from - 18; cx = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2; cy = bottomY - 36; }
             }
             ctx.save();
             ctx.shadowBlur = 18; ctx.shadowColor = 'gold';
@@ -600,14 +628,14 @@
             const destinos = new Set(moves.map(m => m.to));
             destinos.forEach(to => {
                 let cx, cy;
-                if (to === 24) { cx = barLeft+32; cy = barTop+30; }
-                else if (to === 25) { cx = barLeft+32; cy = barBottom-30; }
+                if (to === 24) { cx = barLeft + barraCentralLargura/2; cy = barTop + 30; }
+                else if (to === 25) { cx = barLeft + barraCentralLargura/2; cy = barBottom - 30; }
                 else if (to < 12) {
                     if (to <= 5) { const i = 5 - to; cx = marginLeft + i * pointW + pointW/2; cy = topY + 28; }
-                    else { const i = 11 - to; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = topY + 28; }
+                    else { const i = 11 - to; cx = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2; cy = topY + 28; }
                 } else {
                     if (to <= 17) { const i = to - 12; cx = marginLeft + i * pointW + pointW/2; cy = bottomY - 36; }
-                    else { const i = to - 18; cx = marginLeft + halfWidth + i * pointW + pointW/2; cy = bottomY - 36; }
+                    else { const i = to - 18; cx = marginLeft + ladoLargura + barraCentralLargura + i * pointW + pointW/2; cy = bottomY - 36; }
                 }
                 ctx.save();
                 ctx.shadowBlur = 14; ctx.shadowColor = '#2ecc71';
@@ -618,28 +646,42 @@
         }
     }
     
+    // ========== FUNÇÃO DE STEPS DIRECIONAIS (CORREÇÃO) ==========
+    function getRealSteps(from, to, player) {
+        if (from === 24) return to + 1;               // barra vermelha
+        if (from === 25) return 24 - to;              // barra branca
+        if (to === -1) return player === 1 ? 24 - from : from + 1; // bear off
+        return player === 1 ? to - from : from - to;  // movimento normal
+    }
+    
+    // ========== CLIQUE ==========
     function getPointFromClick(mouseX, mouseY) {
+        // Barra
         if (mouseX >= barLeft && mouseX <= barRight) {
-            if (mouseY >= barTop && mouseY <= barTop + 80) return 24;
-            if (mouseY >= barBottom - 80 && mouseY <= barBottom) return 25;
+            if (mouseY >= barTop && mouseY <= barTop + 70) return 24;
+            if (mouseY >= barBottom - 70 && mouseY <= barBottom) return 25;
         }
+        // Triângulos superiores esquerda
         for (let i = 0; i < 6; i++) {
             const x0 = marginLeft + i * pointW;
             const x1 = x0 + pointW;
             if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) return 5 - i;
         }
+        // Triângulos superiores direita
         for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + halfWidth + i * pointW;
+            const x0 = marginLeft + ladoLargura + barraCentralLargura + i * pointW;
             const x1 = x0 + pointW;
             if (mouseX >= x0 && mouseX <= x1 && mouseY >= topY && mouseY <= topY + pointH) return 11 - i;
         }
+        // Triângulos inferiores esquerda
         for (let i = 0; i < 6; i++) {
             const x0 = marginLeft + i * pointW;
             const x1 = x0 + pointW;
             if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) return 12 + i;
         }
+        // Triângulos inferiores direita
         for (let i = 0; i < 6; i++) {
-            const x0 = marginLeft + halfWidth + i * pointW;
+            const x0 = marginLeft + ladoLargura + barraCentralLargura + i * pointW;
             const x1 = x0 + pointW;
             if (mouseX >= x0 && mouseX <= x1 && mouseY >= bottomY - pointH && mouseY <= bottomY) return 18 + i;
         }
@@ -681,7 +723,10 @@
             if (movimentoValido) {
                 addLog(`Movimento ${from}→${to}`, "success");
                 movimentosPendentes.push({ from, to });
-                const steps = Math.abs(to - from);
+                
+                // ========== USO DA FUNÇÃO CORRIGIDA ==========
+                const steps = getRealSteps(from, to, meuLado);
+                
                 let indexToRemove = -1;
                 for (let i = 0; i < dadosDisponiveis.length; i++) {
                     if (dadosDisponiveis[i] === steps) {
@@ -757,6 +802,7 @@
     function rolarDados() { socket.emit('rolarDados'); addLog("Rolando dados...", "info"); }
     function desistir() { if (confirm('Desistir?')) socket.emit('desistir'); }
     
+    // ========== EVENTOS SOCKET ==========
     function entrar() {
         const apelido = document.getElementById('input-apelido').value.trim();
         const sala = document.getElementById('input-sala').value.trim();
