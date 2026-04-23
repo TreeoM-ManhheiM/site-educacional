@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Simulador de Métricas de Regressão | MAE, MSE, RMSE, R² + Explicações</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #e2e8f0;
+            font-family: 'Segoe UI', Roboto, 'Times New Roman', serif;
+            padding: 24px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .control-panel {
+            background: white;
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+            color: #1e4a6e;
+        }
+        textarea {
+            width: 100%;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            resize: vertical;
+        }
+        button {
+            background: #1e4a6e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            margin-right: 12px;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+        button:hover {
+            background: #0f3b5a;
+        }
+        .btn-primary {
+            background: #1e6f3f;
+        }
+        .btn-primary:hover {
+            background: #0f5a34;
+        }
+        .btn-random {
+            background: #9b2c2c;
+        }
+        .btn-random:hover {
+            background: #7f1a1a;
+        }
+        .result-area {
+            background: #fffef7;
+            background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 100% 28px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            padding: 32px 36px;
+            font-family: 'Times New Roman', 'Georgia', serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+        .metrics-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .metric-card {
+            flex: 1;
+            min-width: 180px;
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 16px;
+            text-align: center;
+            border-left: 4px solid #2c5f8a;
+        }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1e3a5f;
+        }
+        .metric-name {
+            font-size: 1rem;
+            color: #475569;
+            margin-top: 8px;
+        }
+        .step-box {
+            background: #fefce8;
+            padding: 16px;
+            border-radius: 16px;
+            margin: 16px 0;
+            font-family: monospace;
+        }
+        .interpretation {
+            background: #e6f7ec;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 10px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 0.95rem;
+            color: #1a4d2e;
+        }
+        .graph-container {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        canvas {
+            max-width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        hr {
+            margin: 24px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 20px;
+        }
+        @media (max-width: 700px) {
+            .metrics-grid { flex-direction: column; }
+            button { margin-bottom: 8px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="control-panel">
+        <h2 style="margin-bottom: 20px;">📊 Simulador de Métricas de Regressão</h2>
+        <div class="input-group">
+            <label>📌 Valores REAIS (y_true):</label>
+            <textarea id="yTrueInput" rows="3" placeholder="Ex: 3, -0.5, 2, 7, 4.2&#10;ou 3 -0.5 2 7 4.2"></textarea>
+        </div>
+        <div class="input-group">
+            <label>🤖 Valores PREVISTOS (y_pred):</label>
+            <textarea id="yPredInput" rows="3" placeholder="Ex: 2.5, 0.0, 2, 8, 4.1"></textarea>
+        </div>
+        <div>
+            <button id="calcularBtn" class="btn-primary">▶ Calcular Métricas</button>
+            <button id="exemploBtn">📘 Exemplo Fixo</button>
+            <button id="aleatorioBtn" class="btn-random">🎲 Exemplo Aleatório</button>
+            <button id="limparBtn">🗑 Limpar</button>
+        </div>
+    </div>
+
+    <div class="result-area" id="resultadoArea">
+        <p>📐 Insira os valores e clique em "Calcular Métricas".</p>
+    </div>
+
+    <div class="graph-container">
+        <canvas id="scatterCanvas" width="500" height="400" style="width:100%; max-width:600px; aspect-ratio:5/4;"></canvas>
+        <div style="margin-top: 12px; font-size:0.85rem;">⬤ Previsto (x) vs. Real (y) — linha tracejada: ideal (y = x)</div>
+    </div>
+    <div class="footer">✔ MAE, MSE, RMSE, R² — passo a passo e interpretações para entender a qualidade do modelo de regressão.</div>
+</div>
+
+<script>
+    // ========== ELEMENTOS ==========
+    const yTrueInput = document.getElementById('yTrueInput');
+    const yPredInput = document.getElementById('yPredInput');
+    const calcularBtn = document.getElementById('calcularBtn');
+    const exemploBtn = document.getElementById('exemploBtn');
+    const aleatorioBtn = document.getElementById('aleatorioBtn');
+    const limparBtn = document.getElementById('limparBtn');
+    const resultadoDiv = document.getElementById('resultadoArea');
+    const canvas = document.getElementById('scatterCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // ========== UTILITÁRIOS ==========
+    function parseList(text) {
+        const parts = text.split(/[\s,]+/);
+        const nums = [];
+        for (let p of parts) {
+            let num = parseFloat(p);
+            if (!isNaN(num)) nums.push(num);
+        }
+        return nums;
+    }
+
+    function formatNumber(num, decimals = 4) {
+        return num.toFixed(decimals);
+    }
+
+    // ========== GERAR DADOS ALEATÓRIOS (RELAÇÃO LINEAR COM RUÍDO) ==========
+    function gerarDadosAleatorios(n = 6) {
+        // Gera uma relação linear y = a*x + b + ruído, mas aqui geramos x e y verdadeiros e previstos simulando modelo imperfeito
+        let yTrue = [];
+        let yPred = [];
+        // Coeficientes reais (desconhecidos) - geramos valores verdadeiros aleatórios entre -8 e 12
+        for (let i = 0; i < n; i++) {
+            let real = (Math.random() * 20) - 5; // -5 a 15
+            yTrue.push(real);
+            // Predição: real + erro (ruído gaussiano com desvio padrão proporcional)
+            let erro = (Math.random() - 0.5) * 2.5; // erro entre -1.25 e 1.25
+            let pred = real + erro;
+            yPred.push(pred);
+        }
+        // Opcional: embaralhar um pouco para não ficar tão perfeito
+        return { yTrue, yPred };
+    }
+
+    // ========== CÁLCULO DETALHADO E INTERPRETAÇÃO ==========
+    function calcularMetricas(yTrue, yPred, container) {
+        if (yTrue.length !== yPred.length) {
+            container.innerHTML = `<div style="color: #991b1b;">❌ Erro: os vetores têm tamanhos diferentes (${yTrue.length} vs ${yPred.length}).</div>`;
+            return null;
+        }
+        if (yTrue.length === 0) {
+            container.innerHTML = `<div style="color: #991b1b;">❌ Insira pelo menos um par de valores.</div>`;
+            return null;
+        }
+
+        const n = yTrue.length;
+        // MAE
+        let sumAbs = 0;
+        let absErrors = [];
+        for (let i = 0; i < n; i++) {
+            let err = Math.abs(yTrue[i] - yPred[i]);
+            sumAbs += err;
+            absErrors.push(err);
+        }
+        const mae = sumAbs / n;
+
+        // MSE e RMSE
+        let sumSq = 0;
+        let sqErrors = [];
+        for (let i = 0; i < n; i++) {
+            let err = yTrue[i] - yPred[i];
+            let sq = err * err;
+            sumSq += sq;
+            sqErrors.push(sq);
+        }
+        const mse = sumSq / n;
+        const rmse = Math.sqrt(mse);
+
+        // R²
+        let meanTrue = 0;
+        for (let i = 0; i < n; i++) meanTrue += yTrue[i];
+        meanTrue /= n;
+        let ssRes = 0; // soma dos quadrados dos resíduos
+        let ssTot = 0; // soma dos quadrados total
+        for (let i = 0; i < n; i++) {
+            ssRes += (yTrue[i] - yPred[i]) ** 2;
+            ssTot += (yTrue[i] - meanTrue) ** 2;
+        }
+        const r2 = 1 - (ssRes / ssTot);
+
+        // ========== EXIBIÇÃO DETALHADA COM INTERPRETAÇÃO ==========
+        let html = `<div class="math-title" style="font-size:1.2rem; border-left-color:#1e6f3f;">📈 Resultados das Métricas de Regressão</div>`;
+        html += `<div class="metrics-grid">`;
+        html += `<div class="metric-card"><div class="metric-value">${formatNumber(mae)}</div><div class="metric-name">MAE (Erro Absoluto Médio)</div></div>`;
+        html += `<div class="metric-card"><div class="metric-value">${formatNumber(mse)}</div><div class="metric-name">MSE (Erro Quadrático Médio)</div></div>`;
+        html += `<div class="metric-card"><div class="metric-value">${formatNumber(rmse)}</div><div class="metric-name">RMSE (Raiz do Erro Quadrático Médio)</div></div>`;
+        html += `<div class="metric-card"><div class="metric-value">${formatNumber(r2)}</div><div class="metric-name">R² (Coeficiente de Determinação)</div></div>`;
+        html += `</div>`;
+
+        // MAE
+        html += `<div class="step-box"><strong>🔹 MAE (Mean Absolute Error)</strong><br>`;
+        html += `Fórmula: MAE = (1/n) · Σ |yᵢ − ŷᵢ|<br>`;
+        html += `Cálculo passo a passo:<br>`;
+        for (let i = 0; i < n; i++) {
+            html += `|${formatNumber(yTrue[i])} − ${formatNumber(yPred[i])}| = ${formatNumber(absErrors[i])}<br>`;
+        }
+        html += `Soma dos erros absolutos = ${formatNumber(sumAbs)}<br>`;
+        html += `MAE = ${formatNumber(sumAbs)} / ${n} = ${formatNumber(mae)}<br>`;
+        html += `<div class="interpretation"><strong>📖 Interpretação:</strong> O MAE indica o erro médio absoluto, ou seja, quanto o modelo erra em média (sem considerar sinal). Quanto menor, melhor. Um MAE de ${formatNumber(mae)} significa que, em média, a previsão difere do valor real por ${formatNumber(mae)} unidades. É robusto a outliers (valores extremos) porque não eleva ao quadrado.</div></div>`;
+
+        // MSE
+        html += `<div class="step-box"><strong>🔹 MSE (Mean Squared Error)</strong><br>`;
+        html += `Fórmula: MSE = (1/n) · Σ (yᵢ − ŷᵢ)²<br>`;
+        for (let i = 0; i < n; i++) {
+            let diff = yTrue[i] - yPred[i];
+            html += `(${formatNumber(yTrue[i])} − ${formatNumber(yPred[i])})² = ${formatNumber(diff)}² = ${formatNumber(sqErrors[i])}<br>`;
+        }
+        html += `Soma dos quadrados = ${formatNumber(sumSq)}<br>`;
+        html += `MSE = ${formatNumber(sumSq)} / ${n} = ${formatNumber(mse)}<br>`;
+        html += `<div class="interpretation"><strong>📖 Interpretação:</strong> O MSE penaliza erros grandes muito mais que o MAE (porque eleva ao quadrado). Isso é útil quando queremos evitar previsões muito erradas. No entanto, a unidade do MSE é o quadrado da unidade original, dificultando a interpretação direta. Um MSE baixo indica que o modelo tem poucos erros grandes.</div></div>`;
+
+        // RMSE
+        html += `<div class="step-box"><strong>🔹 RMSE (Root Mean Squared Error)</strong><br>`;
+        html += `RMSE = √(MSE) = √(${formatNumber(mse)}) = ${formatNumber(rmse)}<br>`;
+        html += `<div class="interpretation"><strong>📖 Interpretação:</strong> O RMSE é a raiz quadrada do MSE, portanto está na mesma unidade da variável alvo. É a medida mais popular porque combina a penalização de erros grandes (como o MSE) com uma escala interpretável. Um RMSE de ${formatNumber(rmse)} significa que, em média, o erro típico do modelo é de cerca de ${formatNumber(rmse)} unidades. Quanto menor, melhor.</div></div>`;
+
+        // R²
+        html += `<div class="step-box"><strong>🔹 R² (Coeficiente de Determinação)</strong><br>`;
+        html += `Fórmula: R² = 1 − (SS_res / SS_tot)<br>`;
+        html += `SS_res = Σ (yᵢ − ŷᵢ)² = ${formatNumber(ssRes)}<br>`;
+        html += `SS_tot = Σ (yᵢ − ȳ)², onde ȳ = média dos yᵢ = ${formatNumber(meanTrue)}<br>`;
+        html += `Cálculo de SS_tot:<br>`;
+        for (let i = 0; i < n; i++) {
+            let diff = yTrue[i] - meanTrue;
+            html += `(${formatNumber(yTrue[i])} − ${formatNumber(meanTrue)})² = ${formatNumber(diff)}² = ${formatNumber(diff * diff)}<br>`;
+        }
+        html += `SS_tot = ${formatNumber(ssTot)}<br>`;
+        html += `R² = 1 − (${formatNumber(ssRes)} / ${formatNumber(ssTot)}) = ${formatNumber(r2)}<br>`;
+        let r2Percent = (r2 * 100).toFixed(1);
+        let r2Interpret = "";
+        if (r2 >= 0.9) r2Interpret = "excelente (explica mais de 90% da variância)";
+        else if (r2 >= 0.7) r2Interpret = "bom (explica entre 70% e 90%)";
+        else if (r2 >= 0.5) r2Interpret = "moderado (explica entre 50% e 70%)";
+        else if (r2 >= 0.3) r2Interpret = "fraco (explica entre 30% e 50%)";
+        else r2Interpret = "muito baixo (o modelo explica menos de 30% da variância)";
+        html += `<div class="interpretation"><strong>📖 Interpretação:</strong> R² mede a proporção da variabilidade dos dados reais que é capturada pelo modelo. Varia de −∞ a 1 (valores negativos indicam um modelo pior que simplesmente usar a média).<br>
+        R² = ${formatNumber(r2)} significa que o modelo explica ${r2Percent}% da variação dos valores reais. Isso é considerado ${r2Interpret}.<br>
+        Quanto mais próximo de 1, melhor o ajuste. Se R² for negativo, o modelo é pior do que prever sempre a média.</div></div>`;
+
+        // Resumo final
+        html += `<div class="step-box" style="background:#e0f2fe;"><strong>📌 Resumo para o aluno:</strong><br>
+        - <strong>MAE = ${formatNumber(mae)}</strong> → erro médio absoluto (robusto a outliers).<br>
+        - <strong>MSE = ${formatNumber(mse)}</strong> → penaliza erros grandes (útil para comparar modelos).<br>
+        - <strong>RMSE = ${formatNumber(rmse)}</strong> → erro típico na mesma unidade dos dados.<br>
+        - <strong>R² = ${formatNumber(r2)}</strong> → qualidade do ajuste (${r2Percent}% da variância explicada).<br>
+        💡 Quanto menor MAE/MSE/RMSE e maior R², melhor o modelo. Lembre-se: sempre compare estas métricas com um baseline (ex: prever a média) para avaliar se o modelo realmente agrega valor.</div>`;
+
+        container.innerHTML = html;
+        return { mae, mse, rmse, r2, yTrue, yPred };
+    }
+
+    // ========== DESENHAR GRÁFICO ==========
+    function desenharGrafico(yTrue, yPred) {
+        if (!yTrue || yTrue.length === 0) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#64748b";
+            ctx.font = "14px monospace";
+            ctx.fillText("Sem dados para gráfico", canvas.width/2 - 80, canvas.height/2);
+            return;
+        }
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        
+        let allVals = [...yTrue, ...yPred];
+        let minVal = Math.min(...allVals, 0);
+        let maxVal = Math.max(...allVals, 1);
+        let range = maxVal - minVal;
+        if (range < 0.1) { minVal -= 0.5; maxVal += 0.5; range = maxVal - minVal; }
+        const padding = 40;
+        const xStart = padding;
+        const xEnd = w - padding;
+        const yStart = h - padding;
+        const yEnd = padding;
+        
+        function mapX(val) { return xStart + (val - minVal) / range * (xEnd - xStart); }
+        function mapY(val) { return yStart - (val - minVal) / range * (yStart - yEnd); }
+        
+        ctx.save();
+        ctx.strokeStyle = "#aaa";
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(xStart, yStart); ctx.lineTo(xEnd, yStart); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(xStart, yEnd); ctx.lineTo(xStart, yStart); ctx.stroke();
+        
+        ctx.fillStyle = "#1e293b";
+        ctx.font = "10px monospace";
+        for (let tick = Math.ceil(minVal); tick <= maxVal; tick += range/5) {
+            let x = mapX(tick);
+            let y = mapY(tick);
+            ctx.fillText(tick.toFixed(1), x-10, yStart+15);
+            ctx.fillText(tick.toFixed(1), xStart-25, y+3);
+        }
+        
+        // linha ideal y=x
+        ctx.beginPath();
+        let x0 = mapX(minVal);
+        let y0 = mapY(minVal);
+        let x1 = mapX(maxVal);
+        let y1 = mapY(maxVal);
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.strokeStyle = "#94a3b8";
+        ctx.setLineDash([5, 5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        
+        for (let i = 0; i < yTrue.length; i++) {
+            let cx = mapX(yPred[i]);
+            let cy = mapY(yTrue[i]);
+            ctx.beginPath();
+            ctx.arc(cx, cy, 5, 0, 2*Math.PI);
+            ctx.fillStyle = "#3b82f6";
+            ctx.fill();
+            ctx.fillStyle = "#1e293b";
+            ctx.font = "9px monospace";
+            ctx.fillText(`(${yPred[i].toFixed(1)}, ${yTrue[i].toFixed(1)})`, cx+6, cy-4);
+        }
+        
+        ctx.fillStyle = "#3b82f6";
+        ctx.fillRect(xStart+10, yEnd+10, 12, 12);
+        ctx.fillStyle = "#1e293b";
+        ctx.fillText("Previsto (x) vs Real (y)", xStart+28, yEnd+22);
+        ctx.fillStyle = "#94a3b8";
+        ctx.fillText("Linha ideal (y = x)", xStart+28, yEnd+38);
+        ctx.restore();
+    }
+
+    // ========== EVENTOS ==========
+    function carregarExemploFixo() {
+        yTrueInput.value = "3, -0.5, 2, 7, 4.2";
+        yPredInput.value = "2.5, 0.0, 2, 8, 4.1";
+        calcular();
+    }
+
+    function carregarExemploAleatorio() {
+        const { yTrue, yPred } = gerarDadosAleatorios(6);
+        yTrueInput.value = yTrue.join(", ");
+        yPredInput.value = yPred.join(", ");
+        calcular();
+    }
+
+    function limpar() {
+        yTrueInput.value = "";
+        yPredInput.value = "";
+        resultadoDiv.innerHTML = "<p>📐 Insira os valores e clique em 'Calcular Métricas'.</p>";
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#64748b";
+        ctx.fillText("Sem dados", canvas.width/2 - 40, canvas.height/2);
+    }
+
+    function calcular() {
+        let yTrueRaw = yTrueInput.value;
+        let yPredRaw = yPredInput.value;
+        let yTrue = parseList(yTrueRaw);
+        let yPred = parseList(yPredRaw);
+        if (yTrue.length === 0 || yPred.length === 0) {
+            resultadoDiv.innerHTML = `<div style="color: #991b1b;">❌ Preencha ambos os campos com números separados por vírgula ou espaço.</div>`;
+            return;
+        }
+        const result = calcularMetricas(yTrue, yPred, resultadoDiv);
+        if (result) {
+            desenharGrafico(result.yTrue, result.yPred);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+    }
+
+    calcularBtn.addEventListener('click', calcular);
+    exemploBtn.addEventListener('click', carregarExemploFixo);
+    aleatorioBtn.addEventListener('click', carregarExemploAleatorio);
+    limparBtn.addEventListener('click', limpar);
+    
+    // Exemplo inicial
+    carregarExemploFixo();
+</script>
+</body>
+</html>
