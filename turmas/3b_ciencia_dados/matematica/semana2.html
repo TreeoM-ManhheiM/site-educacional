@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Sistemas Lineares | Métodos</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #e2e8f0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .control-panel {
+            background: white;
+            border-radius: 28px;
+            padding: 20px 24px;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+        }
+        .dimensao-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+        .input-group {
+            flex: 1;
+            min-width: 140px;
+        }
+        .input-group label {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 6px;
+            color: #1e4a6e;
+        }
+        input, select, button {
+            padding: 10px 16px;
+            border-radius: 40px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.9rem;
+        }
+        button {
+            background: #1e4a6e;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:hover { background: #0f3b5a; }
+        .resolver-btn { background: #1e6f3f; }
+        .resolver-btn:hover { background: #0f5a34; }
+        .tabela-wrapper { overflow-x: auto; margin: 20px 0; background: white; border-radius: 16px; padding: 8px; }
+        table {
+            background: white;
+            border-collapse: collapse;
+            width: 100%;
+            margin: 0 auto;
+            border: 1px solid #cbd5e6;
+        }
+        th, td {
+            border: 1px solid #cbd5e6;
+            padding: 10px 12px;
+            text-align: center;
+        }
+        input.coef-input {
+            width: 85px;
+            padding: 8px;
+            text-align: center;
+            font-family: monospace;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+        }
+        .caderno {
+            background: #fffef7;
+            background-image: linear-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 100% 28px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            padding: 32px 36px;
+            font-family: 'Times New Roman', 'Georgia', serif;
+            color: #1a1a1a;
+            line-height: 1.6;
+            font-size: 1.05rem;
+        }
+        .math-title {
+            font-weight: 600;
+            font-size: 1.3rem;
+            margin: 0 0 1rem 0;
+            border-left: 4px solid #2c5f8a;
+            padding-left: 16px;
+            color: #1e3a5f;
+        }
+        .math-block { margin: 1rem 0; }
+        .theory-box {
+            background: #f0f4fc;
+            padding: 16px 20px;
+            border-radius: 16px;
+            margin: 1.2rem 0;
+            border-left: 4px solid #2c5f8a;
+        }
+        .theory-box p { margin: 8px 0; }
+        .theory-box .formula {
+            font-family: monospace;
+            background: #e8edf4;
+            padding: 6px 10px;
+            border-radius: 8px;
+            display: inline-block;
+            margin: 4px 0;
+        }
+        .matrix-row { white-space: nowrap; text-align: center; }
+        .matrix-cell { display: inline-block; width: 2.5em; text-align: center; }
+        .det-bar {
+            display: inline-block;
+            border-left: 2px solid black;
+            border-right: 2px solid black;
+            padding: 0 6px;
+        }
+        .step-operation {
+            background: #fefce8;
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin: 10px 0;
+            font-family: monospace;
+            font-size: 0.95rem;
+        }
+        .solution-highlight {
+            background: #e6f7ec;
+            padding: 16px 20px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 24px 0;
+            border: 1px solid #b2d8b2;
+        }
+        .flex-between {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        .graph-paper {
+            background: white;
+            border-radius: 28px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            min-width: 260px;
+        }
+        canvas {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            aspect-ratio: 1/1;
+        }
+        @media (max-width: 800px) { .caderno { padding: 20px; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="control-panel">
+        <div class="dimensao-panel">
+            <div class="input-group"><label>Equações (m)</label><input type="number" id="numEq" min="1" max="4" value="2"></div>
+            <div class="input-group"><label>Variáveis (n)</label><input type="number" id="numVar" min="1" max="4" value="2"></div>
+            <button id="gerarBtn">Gerar Sistema</button>
+        </div>
+        <div class="tabela-wrapper" id="tabelaDiv"></div>
+        <div style="margin: 15px 0; display: flex; gap: 16px; flex-wrap: wrap;">
+            <select id="metodoSelect">
+                <option value="gauss">Eliminação de Gauss</option>
+                <option value="gaussjordan">Gauss‑Jordan</option>
+                <option value="substituicao">Substituição (isolamento)</option>
+                <option value="eliminacaosimples">Eliminação simples</option>
+                <option value="cramer">Regra de Cramer</option>
+                <option value="inversa">Matriz Inversa</option>
+                <option value="lu">Decomposição LU</option>
+                <option value="iterativo">Jacobi</option>
+                <option value="grafico">Método Gráfico (2D)</option>
+            </select>
+            <button id="resolverBtn" class="resolver-btn">Resolver com passos</button>
+        </div>
+    </div>
+    <div class="flex-between">
+        <div class="caderno" id="resultadoArea" style="flex: 2;"><p>📐 Sistema configurado. Clique em "Resolver".</p></div>
+        <div class="graph-paper" id="graphPanel">
+            <canvas id="graphCanvas" width="400" height="400"></canvas>
+            <div id="graphInfo" style="margin-top: 12px;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== CONFIGURAÇÕES ==========
+    const NOMES = ['x', 'y', 'z', 'w'];
+    const nomeVar = i => i < NOMES.length ? NOMES[i] : `x${i+1}`;
+    let currentRows = 2, currentCols = 2;
+    let matrixData = [];
+
+    const tabelaDiv = document.getElementById("tabelaDiv");
+    const resultadoDiv = document.getElementById("resultadoArea");
+    const numEq = document.getElementById("numEq");
+    const numVar = document.getElementById("numVar");
+    const gerarBtn = document.getElementById("gerarBtn");
+    const metodoSelect = document.getElementById("metodoSelect");
+    const resolverBtn = document.getElementById("resolverBtn");
+    const canvas = document.getElementById("graphCanvas");
+    const ctx = canvas.getContext("2d");
+    const graphInfo = document.getElementById("graphInfo");
+
+    // ========== UTILITÁRIOS ==========
+    function toFraction(value, maxDen = 20) {
+        if (Math.abs(value) < 1e-12) return "0";
+        let sign = value < 0 ? -1 : 1;
+        let v = Math.abs(value);
+        let bestNum = 0, bestDen = 1, bestErr = Math.abs(v);
+        for (let den = 1; den <= maxDen; den++) {
+            let num = Math.round(v * den);
+            let err = Math.abs(v - num / den);
+            if (err < bestErr) { bestErr = err; bestNum = num; bestDen = den; if (err < 1e-10) break; }
+        }
+        let num = sign * bestNum;
+        if (bestDen === 1) return `${num}`;
+        return `${num}/${bestDen}`;
+    }
+    function fmt(num) { return toFraction(num, 20); }
+    function fmtDecimal(num) {
+        if (Math.abs(num) < 1e-12) return "0";
+        let r = Math.round(num * 100) / 100;
+        if (Math.abs(r - Math.round(num)) < 0.01) return Math.round(num).toString();
+        return r.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    // ========== EXIBIÇÃO ==========
+    function matHtml(mat, withBars = false) {
+        let rows = mat.map(row => `<div class="matrix-row">${row.map(v => `<span class="matrix-cell">${fmt(v)}</span>`).join("")}</div>`).join("");
+        if (withBars) return `<span class="det-bar">${rows}</span>`;
+        return rows;
+    }
+    function augHtml(aug, m) {
+        let rows = aug.map(row => {
+            let coefs = row.slice(0, m).map(v => `<span class="matrix-cell">${fmt(v)}</span>`).join("");
+            let b = `<span class="matrix-cell">${fmt(row[m])}</span>`;
+            return `<div class="matrix-row">${coefs}<span style="display:inline-block; width:1.5em;"></span>|<span style="display:inline-block; width:1.5em;"></span>${b}</div>`;
+        }).join("");
+        return `<div style="display:inline-block;">${rows}</div>`;
+    }
+    function sistemaHtml(A, b) {
+        let eqs = [];
+        for (let i = 0; i < A.length; i++) {
+            let termos = [];
+            for (let j = 0; j < A[i].length; j++) {
+                let c = A[i][j];
+                if (Math.abs(c) < 1e-12) continue;
+                let sinal = (termos.length === 0) ? (c < 0 ? "-" : "") : (c > 0 ? "+" : "-");
+                let absC = Math.abs(c);
+                let cStr = (Math.abs(absC-1) < 1e-12) ? "" : fmt(absC);
+                termos.push(`${sinal} ${cStr}${nomeVar(j)}`.trim());
+            }
+            let eq = termos.join(" ").replace(/^\+/, "");
+            eqs.push(`${eq} = ${fmt(b[i])}`);
+        }
+        return eqs.join("<br>");
+    }
+
+    // ========== DETERMINANTE ==========
+    function calcDet(mat, container, nome) {
+        let n = mat.length;
+        if (n === 1) return mat[0][0];
+        if (n === 2) {
+            let a=mat[0][0], b=mat[0][1], c=mat[1][0], d=mat[1][1];
+            let det = a*d - b*c;
+            if (container) container.innerHTML += `<div>${nome} = (${fmt(a)}·${fmt(d)}) − (${fmt(b)}·${fmt(c)}) = ${fmt(a*d)} − ${fmt(b*c)} = ${fmt(det)}</div>`;
+            return det;
+        }
+        if (n === 3 && container) {
+            let a=mat[0][0], b=mat[0][1], c=mat[0][2];
+            let d=mat[1][0], e=mat[1][1], f=mat[1][2];
+            let g=mat[2][0], h=mat[2][1], i=mat[2][2];
+            let sarrus = `( ${fmt(a)}·${fmt(e)}·${fmt(i)} + ${fmt(b)}·${fmt(f)}·${fmt(g)} + ${fmt(c)}·${fmt(d)}·${fmt(h)} ) − ( ${fmt(c)}·${fmt(e)}·${fmt(g)} + ${fmt(a)}·${fmt(f)}·${fmt(h)} + ${fmt(b)}·${fmt(d)}·${fmt(i)} )`;
+            let det = a*e*i + b*f*g + c*d*h - (c*e*g + a*f*h + b*d*i);
+            container.innerHTML += `<div class="step-operation">${nome} = ${sarrus} = ${fmt(det)}</div>`;
+            return det;
+        }
+        let det = 0;
+        for (let i = 0; i < n; i++) {
+            let sinal = (i%2===0)?1:-1;
+            let coef = mat[0][i];
+            if (Math.abs(coef) < 1e-12) continue;
+            let sub = [];
+            for (let r = 1; r < n; r++) {
+                let row = [];
+                for (let c = 0; c < n; c++) if (c !== i) row.push(mat[r][c]);
+                sub.push(row);
+            }
+            let subDet = calcDet(sub, null);
+            det += sinal * coef * subDet;
+        }
+        if (container) container.innerHTML += `<div>${nome} = ${fmt(det)} (expansão de Laplace)</div>`;
+        return det;
+    }
+
+    // ========== GRÁFICO ==========
+    function desenharGrafico(sol, A, b) {
+        if (!sol || sol.length === 0) {
+            graphInfo.innerHTML = "❌ Sem solução única ou sistema inconsistente.";
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            return;
+        }
+        const n = currentCols;
+        const w = canvas.width, h = canvas.height;
+        ctx.clearRect(0, 0, w, h);
+        if (n === 1) {
+            ctx.save();
+            ctx.strokeStyle = "#333";
+            ctx.beginPath(); ctx.moveTo(50, h/2); ctx.lineTo(w-50, h/2); ctx.stroke();
+            for (let x = -5; x <= 5; x++) {
+                let cx = 50 + (x+5)/10 * (w-100);
+                ctx.beginPath(); ctx.moveTo(cx, h/2-5); ctx.lineTo(cx, h/2+5); ctx.stroke();
+                ctx.fillText(x, cx-5, h/2-8);
+            }
+            let cxSol = 50 + (sol[0]+5)/10 * (w-100);
+            ctx.beginPath(); ctx.arc(cxSol, h/2, 8, 0, 2*Math.PI); ctx.fillStyle = "#e63946"; ctx.fill();
+            ctx.fillStyle = "black"; ctx.fillText(`${nomeVar(0)} = ${fmtDecimal(sol[0])}`, cxSol+10, h/2-5);
+            graphInfo.innerHTML = `✅ ${nomeVar(0)} = ${fmtDecimal(sol[0])}`;
+            ctx.restore();
+        }
+        else if (n === 2) {
+            let xmin=-6, xmax=6, ymin=-6, ymax=6;
+            let todosX=[], todosY=[];
+            for (let i=0; i<A.length; i++) {
+                let a=A[i][0], bc=A[i][1], c=b[i];
+                if (Math.abs(bc)>1e-12) {
+                    let y1=(c - a*(-5))/bc, y2=(c - a*5)/bc;
+                    todosX.push(-5,5); todosY.push(y1,y2);
+                } else if (Math.abs(a)>1e-12) { todosX.push(c/a); todosY.push(-5,5); }
+            }
+            if (todosX.length) {
+                xmin = Math.min(-6, ...todosX, -1, sol[0]-1);
+                xmax = Math.max(6, ...todosX, 1, sol[0]+1);
+                ymin = Math.min(-6, ...todosY, -1, sol[1]-1);
+                ymax = Math.max(6, ...todosY, 1, sol[1]+1);
+            }
+            function mapX(x) { return (x - xmin)/(xmax - xmin) * w; }
+            function mapY(y) { return h - (y - ymin)/(ymax - ymin) * h; }
+            ctx.save();
+            ctx.strokeStyle = "#aaa";
+            for (let x = Math.ceil(xmin); x <= xmax; x++) {
+                let cx = mapX(x);
+                ctx.beginPath(); ctx.moveTo(cx,0); ctx.lineTo(cx,h); ctx.stroke();
+                ctx.fillText(fmtDecimal(x), cx-5, mapY(0)+12);
+            }
+            for (let y = Math.ceil(ymin); y <= ymax; y++) {
+                let cy = mapY(y);
+                ctx.beginPath(); ctx.moveTo(0,cy); ctx.lineTo(w,cy); ctx.stroke();
+                ctx.fillText(fmtDecimal(y), mapX(0)+5, cy-3);
+            }
+            ctx.beginPath(); ctx.moveTo(mapX(0),0); ctx.lineTo(mapX(0),h); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0,mapY(0)); ctx.lineTo(w,mapY(0)); ctx.stroke();
+            let cores = ["#e63946","#2a9d8f","#3b82f6","#f4a261"];
+            for (let i=0; i<A.length; i++) {
+                let a=A[i][0], bc=A[i][1], c=b[i];
+                ctx.beginPath();
+                if (Math.abs(bc)>1e-12) {
+                    let x1=xmin, x2=xmax;
+                    let y1=(c - a*x1)/bc, y2=(c - a*x2)/bc;
+                    ctx.moveTo(mapX(x1), mapY(y1)); ctx.lineTo(mapX(x2), mapY(y2));
+                    ctx.strokeStyle = cores[i%cores.length]; ctx.lineWidth=2.5; ctx.stroke();
+                } else if (Math.abs(a)>1e-12) {
+                    let xv = c/a;
+                    ctx.moveTo(mapX(xv), mapY(ymin)); ctx.lineTo(mapX(xv), mapY(ymax)); ctx.stroke();
+                }
+            }
+            ctx.beginPath(); ctx.arc(mapX(sol[0]), mapY(sol[1]), 6, 0, 2*Math.PI);
+            ctx.fillStyle = "#eab308"; ctx.fill();
+            ctx.fillStyle = "black"; ctx.fillText(`(${fmtDecimal(sol[0])}, ${fmtDecimal(sol[1])})`, mapX(sol[0])+8, mapY(sol[1])-5);
+            graphInfo.innerHTML = `✅ (${fmtDecimal(sol[0])}, ${fmtDecimal(sol[1])})`;
+            ctx.restore();
+        }
+        else if (n === 3) {
+            ctx.save();
+            ctx.translate(w/2, h/2 - 50);
+            function proj(x,y,z) { let scale=70; return { x: (x - z*0.5)*scale, y: -(y - z*0.5)*scale }; }
+            let ex = proj(3,0,0), ey = proj(0,3,0), ez = proj(0,0,3);
+            ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(ex.x, ex.y); ctx.strokeStyle="#e63946"; ctx.stroke(); ctx.fillText("x", ex.x+5, ex.y);
+            ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(ey.x, ey.y); ctx.strokeStyle="#2a9d8f"; ctx.stroke(); ctx.fillText("y", ey.x+5, ey.y);
+            ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(ez.x, ez.y); ctx.strokeStyle="#3b82f6"; ctx.stroke(); ctx.fillText("z", ez.x+5, ez.y);
+            let p = proj(sol[0], sol[1], sol[2]);
+            ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, 2*Math.PI); ctx.fillStyle="#f4a261"; ctx.fill();
+            ctx.fillStyle="#000"; ctx.fillText(`(${fmtDecimal(sol[0])}, ${fmtDecimal(sol[1])}, ${fmtDecimal(sol[2])})`, p.x+10, p.y-5);
+            graphInfo.innerHTML = `✅ (${fmtDecimal(sol[0])}, ${fmtDecimal(sol[1])}, ${fmtDecimal(sol[2])})`;
+            ctx.restore();
+        }
+        else {
+            const barWidth = Math.min(50, (w-100)/n);
+            const startX = 50;
+            const maxVal = Math.max(...sol.map(Math.abs), 1);
+            for (let i=0; i<n; i++) {
+                let height = (Math.abs(sol[i]) / maxVal) * (h-100);
+                if (sol[i] >= 0) {
+                    ctx.fillStyle = "#3b82f6";
+                    ctx.fillRect(startX + i*barWidth, h-50 - height, barWidth-5, height);
+                } else {
+                    ctx.fillStyle = "#ef4444";
+                    ctx.fillRect(startX + i*barWidth, h-50, barWidth-5, Math.abs(height));
+                }
+                ctx.fillStyle = "#000";
+                ctx.fillText(`${nomeVar(i)} = ${fmtDecimal(sol[i])}`, startX + i*barWidth, h-20);
+            }
+            graphInfo.innerHTML = `✅ ${sol.map((v,i)=>`${nomeVar(i)} = ${fmtDecimal(v)}`).join(", ")}`;
+        }
+    }
+
+    // ========== MÉTODOS ==========
+
+    // 1. GAUSS
+    async function gaussMetodo(A, b, container) {
+        let n = A.length, m = A[0].length;
+        let aug = A.map((row,i) => [...row, b[i]]);
+        container.innerHTML = `<div class="math-title">✏️ Eliminação de Gauss</div>`;
+        container.innerHTML += `<div class="theory-box">
+            <p><strong>📘 Conceito:</strong> Transformar o sistema em triangular superior (escalonado) usando operações elementares de linha, depois resolver por substituição regressiva.</p>
+            <p><strong>📐 Fórmula:</strong> <span class="formula">Lⱼ ← Lⱼ − (aⱼᵢ / aᵢᵢ)·Lᵢ</span> (j > i).</p>
+            <p><strong>📌 Exemplo (2x2):</strong> 2x + 3y = 8, x − y = −1. Matriz aumentada: [2 3 | 8; 1 -1 | -1]. Pivô = 2. L2 ← L2 − (1/2)L1 → [0 -2.5 | -5]. Depois y = 2, x = 1.</p>
+            <p><strong>➡️ Aplicação no seu sistema:</strong></p>
+        </div>`;
+        container.innerHTML += `<div><strong>Sistema original:</strong><br>${sistemaHtml(A, b)}</div>`;
+        container.innerHTML += `<div><strong>Matriz aumentada:</strong><br>${augHtml(aug, m)}</div>`;
+        for (let i = 0; i < Math.min(n, m); i++) {
+            let p = i;
+            for (let r = i+1; r < n; r++) if (Math.abs(aug[r][i]) > Math.abs(aug[p][i])) p = r;
+            if (Math.abs(aug[p][i]) < 1e-12) continue;
+            if (p !== i) {
+                [aug[i], aug[p]] = [aug[p], aug[i]];
+                container.innerHTML += `<div class="step-operation">🔄 Troca L${i+1} ↔ L${p+1}</div>`;
+            }
+            let pivô = aug[i][i];
+            container.innerHTML += `<div>🔹 Pivô = ${fmt(pivô)} (linha ${i+1}). Zeramos abaixo.</div>`;
+            for (let j = i+1; j < n; j++) {
+                let fator = aug[j][i] / pivô;
+                if (Math.abs(fator) < 1e-12) continue;
+                let fatorFrac = fmt(fator);
+                container.innerHTML += `<div class="step-operation">➖ L${j+1} ← L${j+1} − (${fatorFrac})·L${i+1}</div>`;
+                let orig = aug[j].slice();
+                container.innerHTML += `<div>Antes: ${augHtml([orig], m)}</div>`;
+                for (let k = i; k <= m; k++) aug[j][k] -= fator * aug[i][k];
+                container.innerHTML += `<div>Depois: ${augHtml([aug[j]], m)}</div>`;
+            }
+            container.innerHTML += `<div>📌 Matriz após coluna ${i+1}:<br>${augHtml(aug, m)}</div>`;
+        }
+        container.innerHTML += `<div><strong>Substituição regressiva:</strong></div>`;
+        let sol = new Array(m).fill(0);
+        for (let i = n-1; i >= 0; i--) {
+            let idxVar = -1;
+            for (let j = 0; j < m; j++) if (Math.abs(aug[i][j]) > 1e-12) { idxVar = j; break; }
+            if (idxVar === -1) continue;
+            let soma = 0, termos = [];
+            for (let j = idxVar+1; j < m; j++) if (Math.abs(aug[i][j]) > 1e-12) { soma += aug[i][j] * sol[j]; termos.push(`${fmt(aug[i][j])}·${nomeVar(j)}`); }
+            let bTerm = aug[i][m], coef = aug[i][idxVar];
+            let eq = `${fmt(coef)}·${nomeVar(idxVar)}` + (termos.length ? ` + (${termos.join(" + ")})` : "") + ` = ${fmt(bTerm)}`;
+            container.innerHTML += `<div>🔹 Equação: ${eq}</div>`;
+            if (termos.length) {
+                let subst = termos.map(t => t.replace(/·([a-z])/, (_,v) => `·${fmt(sol[NOMES.indexOf(v)])}`)).join(" + ");
+                container.innerHTML += `<div>🔸 Substituindo: ${subst} = ${fmt(soma)}</div>`;
+            }
+            let valor = (bTerm - soma) / coef;
+            sol[idxVar] = valor;
+            container.innerHTML += `<div>🔸 ${nomeVar(idxVar)} = (${fmt(bTerm)} − ${fmt(soma)}) / ${fmt(coef)} = ${fmt(valor)}</div>`;
+        }
+        let solStr = sol.map((v,i)=>`${nomeVar(i)} = ${fmt(v)}`).join(", ");
+        container.innerHTML += `<div class="solution-highlight">✅ Solução: ${solStr}</div>`;
+        return sol;
+    }
+
+    // 2. GAUSS-JORDAN
+    async function gaussJordanMetodo(A, b, container) {
+        let n = A.length, m = A[0].length;
+        let aug = A.map((row,i) => [...row, b[i]]);
+        container.innerHTML = `<div class="math-title">📖 Método de Gauss‑Jordan</div>`;
+        container.innerHTML += `<div class="theory-box">
+            <p><strong>📘 Conceito:</strong> Levar a matriz aumentada à forma [I | x] (matriz identidade), eliminando termos acima e abaixo dos pivôs.</p>
+            <p><strong>📐 Fórmula:</strong> Normalização: <span class="formula">Lᵢ ← (1/aᵢᵢ)·Lᵢ</span>. Eliminação: <span class="formula">Lⱼ ← Lⱼ − aⱼᵢ·Lᵢ</span> (j ≠ i).</p>
+            <p><strong>📌 Exemplo (2x2):</strong> 2x + 3y = 8, x − y = −1. Matriz aumentada: [2 3 | 8; 1 -1 | -1].<br>
+            Normaliza L1: [1 1.5 | 4]; L2 ← L2 − 1·L1 → [0 -2.5 | -5]; normaliza L2: [0 1 | 2]; L1 ← L1 − 1.5·L2 → [1 0 | 1]. Solução: x=1, y=2.</p>
+            <p><strong>➡️ Aplicação no seu sistema:</strong></p>
+        </div>`;
+        container.innerHTML += `<div><strong>Sistema:</strong><br>${sistemaHtml(A,b)}</div><div>Matriz aumentada:<br>${augHtml(aug,m)}</div>`;
+        let row = 0;
+        for (let col = 0; col < m && row < n; col++) {
+            let pivot = row;
+            while (pivot < n && Math.abs(aug[pivot][col]) < 1e-12) pivot++;
+            if (pivot === n) continue;
+            if (pivot !== row) {
+                [aug[row], aug[pivot]] = [aug[pivot], aug[row]];
+                container.innerHTML += `<div class="step-operation">🔄 Troca L${row+1} ↔ L${pivot+1}</div>`;
+            }
+            let pivVal = aug[row][col];
+            if (Math.abs(pivVal - 1) > 1e-12) {
+                container.innerHTML += `<div class="step-operation">✖️ L${row+1} ← L${row+1} / ${fmt(pivVal)}</div>`;
+                for (let k = col; k <= m; k++) aug[row][k] /= pivVal;
+                container.innerHTML += `<div>Nova L${row+1}: ${augHtml([aug[row]], m)}</div>`;
+            }
+            for (let i = 0; i < n; i++) {
+                if (i !== row && Math.abs(aug[i][col]) > 1e-12) {
+                    let fator = aug[i][col];
+                    container.innerHTML += `<div class="step-operation">➖ L${i+1} ← L${i+1} − (${fmt(fator)})·L${row+1}</div>`;
+                    for (let k = col; k <= m; k++) aug[i][k] -= fator * aug[row][k];
+                }
+            }
+            container.innerHTML += `<div>📊 Matriz atual:<br>${augHtml(aug,m)}</div>`;
+            row++;
+        }
+        let sol = new Array(m).fill(0);
+        for (let i = 0; i < n; i++) {
+            let idx = -1;
+            for (let j = 0; j < m; j++) if (Math.abs(aug[i][j]) > 1e-10) { idx = j; break; }
+            if (idx !== -1) sol[idx] = aug[i][m];
+        }
+        let solStr = sol.map((v,i)=>`${nomeVar(i)} = ${fmt(v)}`).join(", ");
+        container.innerHTML += `<div class="solution-highlight">✅ Solução: ${solStr}</div>`;
+        return sol;
+    }
+
+    // 3. SUBSTITUIÇÃO (CORRIGIDA – implementação completa e didática)
+    async function substituicaoMetodo(A, b, container) {
+        let n = A.length, m = A[0].length;
+        if (n !== m) {
+            container.innerHTML = `<div class="math-title">🔁 Método da Substituição</div><div>❌ Substituição exige sistema quadrado.</div>`;
+            return null;
+        }
+        container.innerHTML = `<div class="math-title">🔁 Método da Substituição (isolamento)</div>`;
+        container.innerHTML += `<div class="theory-box">
+            <p><strong>📘 Conceito:</strong> Isolar uma variável em uma equação e substituir nas demais, reduzindo o sistema até obter todas as soluções.</p>
+            <p><strong>📐 Fórmula:</strong> Da equação i: <span class="formula">xₖ = (bᵢ − Σⱼ≠ₖ aᵢⱼ·xⱼ) / aᵢₖ</span>.</p>
+            <p><strong>📌 Exemplo (2x2):</strong> 2x + y = 5, x + y = 3. Isolando y na primeira: y = 5 − 2x. Substituindo na segunda: x + (5 − 2x) = 3 → −x + 5 = 3 → x = 2, y = 1.</p>
+            <p><strong>➡️ Aplicação no seu sistema:</strong></p>
+        </div>`;
+        container.innerHTML += `<div><strong>Sistema original:</strong><br>${sistemaHtml(A, b)}</div>`;
+
+        // Trabalharemos com cópias para ir reduzindo o sistema
+        let eqs = [];
+        for (let i = 0; i < n; i++) {
+            eqs.push({ coefs: [...A[i]], b: b[i] });
+        }
+        let sol = new Array(m).fill(null);
+        let usado = new Array(n).fill(false);
+        let passo = 1;
+
+        // Enquanto houver variáveis não resolvidas
+        while (sol.some(v => v === null)) {
+            let encontrou = false;
+            // Primeiro, procurar equações que já tenham apenas uma variável desconhecida
+            for (let i = 0; i < n; i++) {
+                if (usado[i]) continue;
+                let vars = [];
+                for (let j = 0; j < m; j++) {
+                    if (Math.abs(eqs[i].coefs[j]) > 1e-12 && sol[j] === null) {
+                        vars.push(j);
+                    }
+                }
+                if (vars.length === 1) {
+                    let idxVar = vars[0];
+                    let coef = eqs[i].coefs[idxVar];
+                    let termoIndep = eqs[i].b;
+                    // Subtrair os termos das variáveis já resolvidas
+                    for (let j = 0; j < m; j++) {
+                        if (j !== idxVar && sol[j] !== null) {
+                            termoIndep -= eqs[i].coefs[j] * sol[j];
+                        }
+                    }
+                    let valor = termoIndep / coef;
+                    sol[idxVar] = valor;
+                    usado[i] = true;
+                    container.innerHTML += `<div><strong>🔹 Passo ${passo}: Isolando ${nomeVar(idxVar)} da equação ${i+1}</strong><br>`;
+                    let eqStr = eqs[i].coefs.map((c, idx) => `${fmt(c)}${nomeVar(idx)}`).join(" + ") + ` = ${fmt(eqs[i].b)}`;
+                    container.innerHTML += `Equação original: ${eqStr}<br>`;
+                    container.innerHTML += `Isolando: ${fmt(coef)}·${nomeVar(idxVar)} = ${fmt(termoIndep)} → ${nomeVar(idxVar)} = ${fmt(valor)}</div>`;
+                    // Substituir o valor encontrado nas outras equações
+                    for (let k = 0; k < n; k++) {
+                        if (!usado[k] && Math.abs(eqs[k].coefs[idxVar]) > 1e-12) {
+                            let coefSub = eqs[k].coefs[idxVar];
+                            eqs[k].b -= coefSub * valor;
+                            eqs[k].coefs[idxVar] = 0;
+                            container.innerHTML += `<div>🔸 Substituindo ${nomeVar(idxVar)} = ${fmt(valor)} na equação ${k+1}: novo termo independente = ${fmt(eqs[k].b)}</div>`;
+                        }
+                    }
+                    encontrou = true;
+                    passo++;
+                    break;
+                }
+            }
+            if (!encontrou) {
+                // Se não há equação com uma variável, precisamos isolar uma variável expressando-a em função das outras
+                // Escolher a primeira equação não usada e a primeira variável não resolvida
+                for (let i = 0; i < n && !encontrou; i++) {
+                    if (usado[i]) continue;
+                    for (let j = 0; j < m && !encontrou; j++) {
+                        if (Math.abs(eqs[i].coefs[j]) > 1e-12 && sol[j] === null) {
+                            let idxVar = j;
+                            let coef = eqs[i].coefs[idxVar];
+                            // Expressão literal: x = (b - soma dos outros termos) / coef
+                            // Vamos substituir essa expressão nas outras equações (numericamente, mas usando os valores das outras variáveis que ainda são desconhecidas)
+                            // Isso é complexo. Para não complicar, podemos resolver o sistema restante por eliminação de Gauss (equivalente)
+                            // Mas, para manter a didática, vamos usar o método de Gauss e explicar.
+                            container.innerHTML += `<div>⚠️ O sistema não está em uma forma que permita isolar diretamente uma variável. Aplicaremos o método de eliminação de Gauss (que é uma forma sistemática de substituição) para resolver o sistema restante.</div>`;
+                            let sistemaRestante = { A: [], b: [] };
+                            let varsIndices = [];
+                            for (let v = 0; v < m; v++) if (sol[v] === null) varsIndices.push(v);
+                            for (let k = 0; k < n; k++) {
+                                if (!usado[k]) {
+                                    let row = [];
+                                    for (let v of varsIndices) row.push(eqs[k].coefs[v]);
+                                    sistemaRestante.A.push(row);
+                                    sistemaRestante.b.push(eqs[k].b);
+                                }
+                            }
+                            if (sistemaRestante.A.length > 0) {
+                                let solRestante = await gaussMetodo(sistemaRestante.A, sistemaRestante.b, container);
+                                if (solRestante) {
+                                    for (let idx = 0; idx < varsIndices.length; idx++) {
+                                        sol[varsIndices[idx]] = solRestante[idx];
+                                    }
+                                }
+                            }
+                            encontrou = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (!encontrou) {
+                container.innerHTML += `<div>⚠️ Não foi possível isolar todas as variáveis. Sistema pode ser indeterminado ou inconsistente.</div>`;
+                return null;
+            }
+        }
+        let solStr = sol.map((v, i) => `${nomeVar(i)} = ${fmt(v)}`).join(", ");
+        container.innerHTML += `<div class="solution-highlight">✅ Solução: ${solStr}</div>`;
+        return sol;
+    }
+
+    // 4. ELIMINAÇÃO SIMPLES
+    async function eliminacaoSimplesMetodo(A, b, container) {
+        return gaussMetodo(A, b, container);
+    }
+
+    // 5. CRAMER
+    async function cramerMetodo(A, b, container) {
+        if (currentRows !== currentCols) { container.innerHTML = `<div>❌ Cramer exige sistema quadrado.</div>`; return null; }
+        let n = A.length;
+        container.innerHTML = `<div class="math-title">📘 Regra de Cramer</div>`;
+        container.innerHTML += `<div class="theory-box">
+            <p><strong>📘 Conceito:</strong> Resolve sistemas quadrados usando determinantes.</p>
+            <p><strong>📐 Fórmula:</strong> <span class="formula">xᵢ = det(Aᵢ) / det(A)</span>.</p>
+            <p><strong>📌 Exemplo (2x2):</strong> 2x + 3y = 8, x − y = −1. det(A) = -5, det(A₁) = -5 → x=1, det(A₂) = -10 → y=2.</p>
+            <p><strong>➡️ Aplicação no seu sistema:</strong></p>
+        </div>`;
+        container.innerHTML += `<div><strong>Sistema:</strong><br>${sistemaHtml(A,b)}</div>`;
+        container.innerHTML += `<div><strong>1. Determinante principal Δ</strong></div>`;
+        let detDiv = document.createElement("div");
+        container.appendChild(detDiv);
+        let detA = calcDet(A, detDiv, "Δ");
+        if (Math.abs(detA) < 1e-10) { container.innerHTML += `<div>❌ Δ=0 → sistema singular.</div>`; return null; }
+        let dets = [];
+        for (let i = 0; i < n; i++) {
+            let Ai = A.map(row=>[...row]);
+            for (let j = 0; j < n; j++) Ai[j][i] = b[j];
+            container.innerHTML += `<div><strong>2. Determinante Δ<sub>${i+1}</sub></strong><br>${matHtml(Ai, true)}</div>`;
+            let subDiv = document.createElement("div");
+            container.appendChild(subDiv);
+            let detAi = calcDet(Ai, subDiv, `Δ<sub>${i+1}</sub>`);
+            dets.push(detAi);
+        }
+        let sol = [];
+        for (let i = 0; i < n; i++) {
+            let xi = dets[i] / detA;
+            sol.push(xi);
+            container.innerHTML += `<div>${nomeVar(i)} = Δ<sub>${i+1}</sub> / Δ = ${fmt(dets[i])} / ${fmt(detA)} = ${fmt(xi)}</div>`;
+        }
+        let solStr = sol.map((v,i)=>`${nomeVar(i)} = ${fmt(v)}`).join(", ");
+        container.innerHTML += `<div class="solution-highlight">✅ Solução: ${solStr}</div>`;
+        return sol;
+    }
+
+    // 6. MATRIZ INVERSA
+    async function inversaMetodo(A, b, container) {
+        if (currentRows !== currentCols) { container.innerHTML = `<div>❌ Inversa exige matriz quadrada.</div>`; return null; }
+        let n = A.length;
+        container.innerHTML = `<div class="math-title">🔢 Método da Matriz Inversa</div>`;
+        container.innerHTML += `<div class="theory-box">
+            <p><strong>📘 Conceito:</strong> X = A⁻¹·b, A⁻¹ = adj(A)/det(A).</p>
+            <p><strong>📐 Fórmula:</strong> <span class="formula">A⁻¹ = (1/det(A)) · adj(A)</span>.</p>
+            <p><strong>📌 Exemplo (2x2):</strong> A = [[2,3],[1,-1]], det = -5. Cofatores: C₁₁ = -1, C₁₂ = -1, C₂₁ = -3, C₂₂ = 2. adj = [[-1,-3],[-1,2]]. A⁻¹ = adj/(-5). X = A⁻¹·b.</p>
+            <p><strong>➡️ Aplicação no seu sistema:</strong></p>
+        </div>`;
+        container.innerHTML += `<div><strong>Sistema:</strong><br>${sistemaHtml(A,b)}</div>`;
+        container.innerHTML += `<div><strong>1. Determinante</strong></div>`;
+        let detDiv = document.createElement("div");
+        container.appendChild(detDiv);
+        let detA = calcDet(A, detDiv, "det(A)");
+        if (Math.abs(detA) < 1e-10) { container.innerHTML += `<div>❌ det(A)=0 → singular.</div>`; return null; }
+        container.innerHTML += `<div><strong>2. Cofatores</strong></div>`;
+        let cof = Array(n).fill().map(()=>Array(n).fill(0));
+        for (let i=0;i<n;i++) {
+            for (let j=0;j<n;j++) {
+                let sub = [];
+                for (let r=0;r<n;r++) if (r!==i) {
+                    let row = [];
+                    for (let c=0;c<n;c++) if (c!==j) row.push(A[r][c]);
+                    sub.push(row);
+                }
+                let menor = calcDet(sub, null);
+                cof[i][j] = ((i+j)%2===0) ? menor : -menor;
+                container.innerHTML += `<div>C<sub>${i+1}${j+1}</sub> = ${fmt(cof[i][j])}</div>`;
+            }
+        }
+        let adj = Array(n).fill().map(()=>Array(n).fill(0));
+        for (let i=0;i<n;i++) for (let j=0;j<n;j++) adj[i][j] = cof[j][i];
+        let inv = adj.map(row=>row.map(v=>v/detA));
+        container.innerHTML += `<div>Inversa A⁻¹:<br>${matHtml(inv, false)}</div>`;
+        let sol = new Array(n).fill(0);
+        for (let i=0;i<n;i++) for (let j=0;j<n;j++) sol[i] += inv[i][j] * b[j];
+        let solStr = sol.map((v,i)=>`${nomeVar(i)} = ${fmt(v)}`).join(", ");
+        container.innerHTML += `<div class="solution-highlight">✅ Solução: ${solStr}</div>`;
+        return sol;
+    }
+
+    // 7. LU
+    async function luMetodo(A, b, container) {
+        if (currentRows !== currentCols) { container.innerHTML = `<div>❌ LU exige matriz quadrada.</div>`; return null; }
+        let n = A.length;
+        let L = Array(n).fill().map(()=>Array(n).fill(0));
+        let U = A.map(row=>[...row]);
+        for (let i=0;i<n;i++) L[i][i]=1;
+        container.innerHTML = `<div class="math-title">📦 Decomposição LU</div>`;
+        container.innerHTML += `<div class="theory-box">
+            <p><strong>📘 Conceito:</strong> A = L·U, L triangular inferior (diag 1), U superior. Depois Ly = b e Ux = y.</p>
+            <p><strong>📐 Fórmula:</strong> <span class="formula">Lⱼᵢ = uⱼᵢ / uᵢᵢ</span>, <span class="formula">uⱼₖ = uⱼₖ − Lⱼᵢ·uᵢₖ</span>.</p>
+            <p><strong>📌 Exemplo (2x2):</strong> A = [[2,3],[1,-1]]. L₂₁ = 0.5, U = [[2,3],[0,-2.5]]. Ly = b → y, Ux = y → x.</p>
+            <p><strong>➡️ Aplicação no seu sistema:</strong></p>
+        </div>`;
+        container.innerHTML += `<div><strong>Sistema:</strong><br>${sistemaHtml(A,b)}</div>`;
+        for (let i=0;i<n-1;i++) {
+            if (Math.abs(U[i][i]) < 1e-12) { container.innerHTML += `<div>❌ Pivô zero, LU não aplicável.</div>`; return null; }
+            for (let j=i+1;j<n;j++) {
+                let fator = U[j][i] / U[i][i];
+                L[j][i] = fator;
+                container.innerHTML += `<div>🔹 L[${j+1}][${i+1}] = ${fmt(fator)}</div>`;
+                for (let k=i;k<n;k++) U[j][k] -= fator * U[i][k];
+            }
+        }
+        container.innerHTML += `<div>L = ${matHtml(L, false)}<br>U = ${matHtml(U, false)}</div>`;
+        let y = new Array(n).fill(0);
+        container.innerHTML += `<div><strong>1. Ly = b (progressiva)</strong></div>`;
+        for (let i=0;i<n;i++) {
+            let soma = 0;
+            for (let j=0;j<i;j++) soma += L[i][j] * y[j];
+            y[i] = b[i] - soma;
+            container.innerHTML += `<div>y${i+1} = ${fmt(b[i])} − ${fmt(soma)} = ${fmt(y[i])}</div>`;
+        }
+        let x = new Array(n).fill(0);
+        container.innerHTML += `<div><strong>2. Ux = y (regressiva)</strong></div>`;
+        for (let i=n-1;i>=0;i--) {
+            let soma = 0;
+            for (let j=i+1;j<n;j++) soma += U[i][j] * x[j];
+            x[i] = (y[i] - soma) / U[i][i];
+            container.innerHTML += `<div>${nomeVar(i)} = (${fmt(y[i])} − ${fmt(soma)}) / ${fmt(U[i][i])} = ${fmt(x[i])}</div>`;
+        }
+        let solStr = x.map((v,i)=>`${nomeVar(i)} = ${fmt(v)}`).join(", ");
+        container.innerHTML += `<div class="solution-highlight">✅ Solução: ${solStr}</div>`;
+        return x;
+    }
+
+    // 8. JACOBI
+    async function jacobiMetodo(A, b, container) {
+        if (currentRows !== currentCols) { container.innerHTML = `<div>❌ Jacobi exige sistema quadrado.</div>`; return null; }
+        let n = A.length;
+        let x = new Array(n).fill(0);
+        let maxIter = 25, tol = 1e-6;
+        container.innerHTML = `<div class="math-title">🔄 Método Iterativo de Jacobi</div>`;
+        container.innerHTML += `<div class="theory-box">
+            <p><strong>📘 Conceito:</strong> xᵢ⁽ᵏ⁺¹⁾ = (bᵢ − Σⱼ≠ᵢ aᵢⱼ·xⱼ⁽ᵏ⁾) / aᵢᵢ.</p>
+            <p><strong>📌 Exemplo (2x2):</strong> 2x + y = 5, x + 2y = 5. Iterações convergem para (1.666..., 1.666...).</p>
+            <p><strong>➡️ Aplicação no seu sistema:</strong></p>
+        </div>`;
+        container.innerHTML += `<div><strong>Sistema:</strong><br>${sistemaHtml(A,b)}</div>`;
+        container.innerHTML += `<div>Chute inicial: (${NOMES.slice(0,n).map(v=>`${v}=0`).join(", ")}).</div>`;
+        for (let iter = 1; iter <= maxIter; iter++) {
+            let xnovo = [];
+            for (let i = 0; i < n; i++) {
+                let soma = 0, termos = [];
+                for (let j = 0; j < n; j++) if (j !== i) { soma += A[i][j] * x[j]; termos.push(`${fmt(A[i][j])}·${nomeVar(j)}`); }
+                xnovo[i] = (b[i] - soma) / A[i][i];
+                if (iter <= 3 || iter % 5 === 0)
+                    container.innerHTML += `<div>🔁 Iter ${iter}, ${nomeVar(i)}: (${fmt(b[i])} − (${termos.join(" + ")})) / ${fmt(A[i][i])} = ${fmt(xnovo[i])}</div>`;
+            }
+            let erro = xnovo.reduce((s,v,i)=>s+Math.abs(v-x[i]),0);
+            x = xnovo;
+            if (iter % 5 === 0 || iter <= 3) {
+                let vals = x.map((v,i)=>`${nomeVar(i)} = ${fmt(v)}`).join(", ");
+                container.innerHTML += `<div>📊 Iter ${iter}: ${vals}, erro ≈ ${fmtDecimal(erro)}</div>`;
+            }
+            if (erro < tol) { container.innerHTML += `<div>✅ Convergiu após ${iter} iterações.</div>`; break; }
+            if (iter === maxIter) container.innerHTML += `<div>⚠️ Máximo de iterações.</div>`;
+        }
+        let solStr = x.map((v,i)=>`${nomeVar(i)} = ${fmt(v)}`).join(", ");
+        container.innerHTML += `<div class="solution-highlight">🏁 Solução aproximada: ${solStr}</div>`;
+        return x;
+    }
+
+    // 9. GRÁFICO (2D)
+    async function graficoMetodo(A, b, container) {
+        if (currentCols !== 2) {
+            container.innerHTML = `<div class="math-title">📈 Método Gráfico</div><div>❌ Gráfico apenas para 2 variáveis.</div>`;
+            return null;
+        }
+        container.innerHTML = `<div class="math-title">📈 Método Gráfico</div>`;
+        container.innerHTML += `<div class="theory-box">
+            <p><strong>📘 Conceito:</strong> Cada equação é uma reta. Solução = interseção.</p>
+            <p><strong>📌 Exemplo (2x2):</strong> 2x + y = 5, x + y = 3 → retas se cruzam em (2,1).</p>
+            <p><strong>➡️ Aplicação no seu sistema:</strong> As retas estão plotadas ao lado.</p>
+        </div>`;
+        container.innerHTML += `<div><strong>Sistema:</strong><br>${sistemaHtml(A,b)}</div>`;
+        if (currentRows === currentCols && currentRows === 2) {
+            let det = A[0][0]*A[1][1] - A[0][1]*A[1][0];
+            if (Math.abs(det) > 1e-10) {
+                let x = (b[0]*A[1][1] - A[0][1]*b[1]) / det;
+                let y = (A[0][0]*b[1] - b[0]*A[1][0]) / det;
+                container.innerHTML += `<div class="solution-highlight">✅ Interseção: (${fmt(x)}, ${fmt(y)})</div>`;
+                desenharGrafico([x, y], A, b);
+                return [x, y];
+            }
+        }
+        desenharGrafico(null, A, b);
+        container.innerHTML += `<div>👀 Observe o gráfico ao lado.</div>`;
+        return null;
+    }
+
+    // ========== ROTEADOR ==========
+    async function resolver() {
+        let { A, b } = obterSistema();
+        let metodo = metodoSelect.value;
+        resultadoDiv.innerHTML = `<div style="font-family:serif;">🔍 Resolvendo com ${metodoSelect.options[metodoSelect.selectedIndex].text}...</div>`;
+        let sol = null;
+        try {
+            if (metodo === "gauss") sol = await gaussMetodo(A, b, resultadoDiv);
+            else if (metodo === "gaussjordan") sol = await gaussJordanMetodo(A, b, resultadoDiv);
+            else if (metodo === "substituicao") sol = await substituicaoMetodo(A, b, resultadoDiv);
+            else if (metodo === "eliminacaosimples") sol = await eliminacaoSimplesMetodo(A, b, resultadoDiv);
+            else if (metodo === "cramer") sol = await cramerMetodo(A, b, resultadoDiv);
+            else if (metodo === "inversa") sol = await inversaMetodo(A, b, resultadoDiv);
+            else if (metodo === "lu") sol = await luMetodo(A, b, resultadoDiv);
+            else if (metodo === "iterativo") sol = await jacobiMetodo(A, b, resultadoDiv);
+            else if (metodo === "grafico") sol = await graficoMetodo(A, b, resultadoDiv);
+            else sol = await gaussMetodo(A, b, resultadoDiv);
+            if (sol) desenharGrafico(sol, A, b);
+        } catch (e) { resultadoDiv.innerHTML += `<div>❌ Erro: ${e.message}</div>`; }
+    }
+
+    // ========== GERAR TABELA (CORRIGIDA) ==========
+    function gerarTabela() {
+        let html = `<table><thead>`;
+        html += `<tr><th>Eq</th>`;
+        for (let j = 0; j < currentCols; j++) html += `<th>${nomeVar(j)}</th>`;
+        html += `<th>= b</th>`;
+        html += `</thead><tbody>`;
+        for (let i = 0; i < currentRows; i++) {
+            html += `<tr>`;
+            html += `<td style="font-weight:bold;">${i+1}<\/td>`;
+            for (let j = 0; j < currentCols; j++) {
+                let val = (matrixData[i] && matrixData[i][j] !== undefined) ? matrixData[i][j] : (i === j ? 1 : 0);
+                html += `<td><input type="number" step="any" class="coef-input" id="c_${i}_${j}" value="${val}"><\/td>`;
+            }
+            let bVal = (matrixData[i] && matrixData[i][currentCols] !== undefined) ? matrixData[i][currentCols] : (i === 0 ? 6 : (i === 1 ? 3 : 1));
+            html += `<td><input type="number" step="any" class="coef-input" id="b_${i}" value="${bVal}"><\/td>`;
+            html += `</tr>`;
+        }
+        html += `</tbody>`;
+        tabelaDiv.innerHTML = html;
+        atualizarMatrix();
+    }
+
+    function atualizarMatrix() {
+        matrixData = [];
+        for (let i = 0; i < currentRows; i++) {
+            matrixData[i] = [];
+            for (let j = 0; j < currentCols; j++) {
+                let inp = document.getElementById(`c_${i}_${j}`);
+                matrixData[i][j] = inp ? parseFloat(inp.value) || 0 : 0;
+            }
+            let binp = document.getElementById(`b_${i}`);
+            matrixData[i][currentCols] = binp ? parseFloat(binp.value) || 0 : 0;
+        }
+    }
+
+    function obterSistema() {
+        atualizarMatrix();
+        let A = [], b = [];
+        for (let i = 0; i < currentRows; i++) {
+            A[i] = matrixData[i].slice(0, currentCols);
+            b[i] = matrixData[i][currentCols];
+        }
+        return { A, b };
+    }
+
+    function mudarDimensao() {
+        currentRows = parseInt(numEq.value);
+        currentCols = parseInt(numVar.value);
+        if (currentRows < 1) currentRows = 1;
+        if (currentCols < 1) currentCols = 1;
+        if (currentRows > 4) currentRows = 4;
+        if (currentCols > 4) currentCols = 4;
+        matrixData = [];
+        gerarTabela();
+        resultadoDiv.innerHTML = `<p>📐 Sistema ${currentRows}×${currentCols} gerado. Escolha o método e clique em "Resolver".</p>`;
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        graphInfo.innerHTML = "";
+    }
+
+    gerarBtn.addEventListener("click", mudarDimensao);
+    resolverBtn.addEventListener("click", resolver);
+    mudarDimensao();
+</script>
+</body>
+</html>
