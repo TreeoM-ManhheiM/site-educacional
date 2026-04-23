@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Plano de Ensino - Lógica e Linguagem de Programação</title>
     <style>
-        /* ESTILOS BASEADOS NAS NORMAS ABNT (NBR 14724) */
         * {
             margin: 0;
             padding: 0;
@@ -15,23 +14,21 @@
         body {
             font-family: 'Times New Roman', Times, serif;
             font-size: 12pt;
-            line-height: 1.5;          /* espaçamento 1,5 linhas */
+            line-height: 1.5;
             color: #000000;
             background-color: #ffffff;
             margin: 0;
             padding: 0;
         }
 
-        /* Container principal com as margens ABNT: Superior 3cm, Inferior 2cm, Esquerda 3cm, Direita 2cm */
         .abnt-container {
             max-width: 100%;
             margin: 0 auto;
-            padding: 3cm 2cm 2cm 3cm;   /* topo 3cm, direita 2cm, inferior 2cm, esquerda 3cm */
+            padding: 3cm 2cm 2cm 3cm;
             background: white;
-            box-shadow: 0 0 8px rgba(0,0,0,0.05);
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
         }
 
-        /* Títulos principais conforme hierarquia */
         h1 {
             font-size: 18pt;
             font-weight: bold;
@@ -52,15 +49,6 @@
             padding-bottom: 0.3cm;
         }
 
-        h2 {
-            font-size: 14pt;
-            font-weight: bold;
-            margin: 1.2cm 0 0.6cm 0;
-            border-left: 4px solid #2c3e66;
-            padding-left: 0.5cm;
-            background: none;
-        }
-
         h3 {
             font-size: 13pt;
             font-weight: bold;
@@ -77,7 +65,6 @@
             padding-bottom: 2px;
         }
 
-        /* Estilo para itens de semana (caixas leves) */
         .semana {
             margin-bottom: 0.8cm;
             break-inside: avoid;
@@ -90,29 +77,37 @@
             padding-left: 0.2cm;
         }
 
-        .habilidades, .objetivo {
+        .tema-semana {
+            font-size: 11pt;
+            font-style: italic;
+            background-color: #f4f4f9;
+            padding: 0.2cm 0.4cm;
+            margin-top: 0.2cm;
+            margin-bottom: 0.3cm;
+            border-left: 4px solid #2c3e66;
+            margin-left: 0.7cm;
+        }
+
+        .tema-semana strong {
+            font-style: normal;
+            color: #1a2a4f;
+        }
+
+        .habilidades,
+        .socioemocionais,
+        .objetivo {
             margin-left: 0.5cm;
             margin-top: 0.15cm;
             margin-bottom: 0.1cm;
             text-align: justify;
         }
 
-        .habilidades strong, .objetivo strong {
+        .habilidades strong,
+        .socioemocionais strong,
+        .objetivo strong {
             font-weight: bold;
         }
 
-        /* Notas pequenas e detalhes complementares */
-        .nota-semana {
-            font-size: 11pt;
-            font-style: italic;
-            background-color: #f9f9f9;
-            padding: 0.2cm 0.4cm;
-            margin-top: 0.2cm;
-            border-left: 3px solid #7a8aa5;
-            margin-left: 0.5cm;
-        }
-
-        /* sumário estilo ABNT (simples) */
         .sumario {
             margin: 1cm 0 1.2cm 0;
             background: #fafafc;
@@ -142,7 +137,6 @@
             text-decoration: underline;
         }
 
-        /* rodapé com referências ABNT */
         footer {
             margin-top: 1.8cm;
             border-top: 1px solid #aaa;
@@ -152,7 +146,6 @@
             color: #444;
         }
 
-        /* Quebra de página na impressão - suave */
         @media print {
             body {
                 margin: 0;
@@ -175,7 +168,6 @@
             }
         }
 
-        /* Ajustes responsivos */
         @media (max-width: 600px) {
             .abnt-container {
                 padding: 1.5cm 1cm 1.5cm 1.5cm;
@@ -190,297 +182,722 @@
     </style>
 </head>
 <body>
-<div class="abnt-container">
-    <!-- CAPA / TÍTULO PRINCIPAL ABNT -->
-    <h1>LÓGICA E LINGUAGEM DE PROGRAMAÇÃO</h1>
-    <div class="subtitulo">2ª Série – Desenvolvimento de Sistemas</div>
+    <div class="abnt-container">
+        <h1>LÓGICA E LINGUAGEM DE PROGRAMAÇÃO</h1>
+        <div class="subtitulo">2ª Série – Desenvolvimento de Sistemas</div>
 
-    <!-- SUMÁRIO (opcional mas alinhado a documentos acadêmicos) -->
-    <div class="sumario">
-        <h3>SUMÁRIO</h3>
-        <ul class="sumario-lista">
-            <li><a href="#semana1">Semana 1 – Introdução à Programação</a></li>
-            <li><a href="#semana2">Semana 2 – Entrada, Processamento e Saída de Dados</a></li>
-            <li><a href="#semana3">Semana 3 – Estruturas de Decisão</a></li>
-            <li><a href="#semana4">Semana 4 – Operadores Relacionais e Lógicos</a></li>
-            <li><a href="#semana5">Semana 5 – Estruturas de Repetição: While</a></li>
-            <li><a href="#semana6">Semana 6 – Estruturas de Repetição: For</a></li>
-            <li><a href="#semana7">Semana 7 – Loops Aninhados</a></li>
-            <li><a href="#semana8">Semana 8 – Vetores (Arrays)</a></li>
-            <li><a href="#semana9">Semana 9 – Matrizes</a></li>
-            <li><a href="#semana10">Semana 10 – Funções e Procedimentos</a></li>
-            <li><a href="#semana11">Semana 11 – Revisão Integrada</a></li>
-            <li><a href="#semana12">Semana 12 – Strings</a></li>
-            <li><a href="#semana13">Semana 13 – Arquivos</a></li>
-            <li><a href="#semana14">Semana 14 – Introdução à Programação Orientada a Objetos</a></li>
-            <li><a href="#semana15">Semana 15 – Encapsulamento</a></li>
-            <li><a href="#semana16">Semana 16 – Herança</a></li>
-            <li><a href="#semana17">Semana 17 – Polimorfismo</a></li>
-            <li><a href="#semana18">Semana 18 – Interfaces e Abstração</a></li>
-            <li><a href="#semana19">Semana 19 – Estruturas de Dados Lineares</a></li>
-            <li><a href="#semana20">Semana 20 – Árvores e Heaps</a></li>
-            <li><a href="#semana21">Semana 21 – Clean Code</a></li>
-            <li><a href="#semana22">Semana 22 – Testes e Depuração</a></li>
-            <li><a href="#semana23">Semana 23 – Padrões de Projeto</a></li>
-            <li><a href="#semana24">Semana 24 – Projeto Final</a></li>
-            <li><a href="#semana25">Semana 25 – Apresentações</a></li>
-            <li><a href="#semana26">Semana 26 – Revisão Geral</a></li>
-        </ul>
+        <div class="sumario">
+            <h3>SUMÁRIO</h3>
+            <ul class="sumario-lista">
+                <li><a href="#semana1">Semana 1 – Introdução à Programação</a></li>
+                <li><a href="#semana2">Semana 2 – Entrada, Processamento e Saída de Dados</a></li>
+                <li><a href="#semana3">Semana 3 – Estruturas de Decisão</a></li>
+                <li><a href="#semana4">Semana 4 – Operadores Relacionais e Lógicos</a></li>
+                <li><a href="#semana5">Semana 5 – Estruturas de Repetição: While</a></li>
+                <li><a href="#semana6">Semana 6 – Estruturas de Repetição: For</a></li>
+                <li><a href="#semana7">Semana 7 – Loops Aninhados</a></li>
+                <li><a href="#semana8">Semana 8 – Vetores (Arrays)</a></li>
+                <li><a href="#semana9">Semana 9 – Matrizes</a></li>
+                <li><a href="#semana10">Semana 10 – Funções e Procedimentos</a></li>
+                <li><a href="#semana11">Semana 11 – Revisão Integrada</a></li>
+                <li><a href="#semana12">Semana 12 – Strings</a></li>
+                <li><a href="#semana13">Semana 13 – Arquivos</a></li>
+                <li><a href="#semana14">Semana 14 – Introdução à POO</a></li>
+                <li><a href="#semana15">Semana 15 – Encapsulamento</a></li>
+                <li><a href="#semana16">Semana 16 – Herança</a></li>
+                <li><a href="#semana17">Semana 17 – Polimorfismo</a></li>
+                <li><a href="#semana18">Semana 18 – Interfaces e Abstração</a></li>
+                <li><a href="#semana19">Semana 19 – Estruturas de Dados Lineares</a></li>
+                <li><a href="#semana20">Semana 20 – Árvores e Heaps</a></li>
+                <li><a href="#semana21">Semana 21 – Clean Code</a></li>
+                <li><a href="#semana22">Semana 22 – Testes e Depuração</a></li>
+                <li><a href="#semana23">Semana 23 – Padrões de Projeto</a></li>
+                <li><a href="#semana24">Semana 24 – Projeto Final</a></li>
+                <li><a href="#semana25">Semana 25 – Apresentações</a></li>
+                <li><a href="#semana26">Semana 26 – Revisão Geral</a></li>
+            </ul>
+        </div>
+
+        <!-- SEMANA 1 -->
+        <section id="semana1" class="semana">
+            <h3>SEMANA 1 – Introdução à Programação</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos da Lógica de Programação</div>
+            <div class="aula-item"><h4>Aula 1: O que é programar?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender fundamentos da lógica de programação e algoritmos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver curiosidade intelectual e abertura para novos conhecimentos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender o conceito de programação e sua importância no mundo digital.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Algoritmos no cotidiano</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar sequências lógicas em situações do cotidiano.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar o pensamento estruturado e a observação analítica.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer algoritmos presentes em atividades do dia a dia.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Fluxogramas e representação visual</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Traduzir algoritmos simples em fluxogramas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a criatividade e a comunicação visual.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Representar visualmente soluções algorítmicas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Variáveis e tipos de dados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Declarar e utilizar variáveis e tipos básicos de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a organização e a precisão no raciocínio.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Trabalhar informações simples em algoritmos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 2 -->
+        <section id="semana2" class="semana">
+            <h3>SEMANA 2 – Entrada, Processamento e Saída de Dados</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fluxo Básico de Informação</div>
+            <div class="aula-item"><h4>Aula 1: Entrada de dados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar comandos de entrada em pseudocódigo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver atenção aos detalhes e foco na coleta de informações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Coletar dados de forma estruturada.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Processamento de dados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar operações de cálculo e transformação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar o raciocínio lógico-matemático.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Processar dados de entrada para gerar resultados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Saída de dados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar comandos de saída.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a clareza na apresentação de informações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Apresentar resultados de maneira compreensível.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios integrados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar entrada, processamento e saída de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver persistência e capacidade de resolver problemas completos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir algoritmos completos e coerentes.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 3 -->
+        <section id="semana3" class="semana">
+            <h3>SEMANA 3 – Estruturas de Decisão</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Controle de Fluxo Condicional</div>
+            <div class="aula-item"><h4>Aula 1: Condição simples – SE</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar estruturas condicionais simples.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a tomada de decisão baseada em critérios objetivos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Controlar decisões lógicas em algoritmos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Condição composta – SE / SENÃO</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estruturas condicionais compostas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver flexibilidade cognitiva para lidar com alternativas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar caminhos alternativos de execução.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Condições aninhadas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar decisões encadeadas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar o pensamento hierárquico e a análise de múltiplos cenários.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Resolver problemas com múltiplas condições.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios práticos com decisões</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estruturas de decisão em algoritmos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a resiliência diante de desafios lógicos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Simular situações reais usando lógica condicional.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 4 -->
+        <section id="semana4" class="semana">
+            <h3>SEMANA 4 – Operadores Relacionais e Lógicos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Expressões Booleanas e Comparações</div>
+            <div class="aula-item"><h4>Aula 1: Operadores relacionais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar operadores de comparação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver senso crítico para comparações e avaliações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Tomar decisões com base em comparações.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Operadores lógicos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Combinar condições lógicas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar o raciocínio combinatório e a síntese.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir expressões condicionais compostas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Tabelas‑verdade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar expressões booleanas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a capacidade de análise sistemática.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Validar decisões logicamente.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Desafios com expressões condicionais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas com múltiplas condições.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a persistência e a criatividade na solução de problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar operadores lógicos em desafios práticos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 5 -->
+        <section id="semana5" class="semana">
+            <h3>SEMANA 5 – Estruturas de Repetição: While</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Laços Condicionais</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao while</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar loop controlado por condição.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender a importância da repetição controlada de tarefas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender repetição baseada em condição.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Contadores e sentinelas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Empregar contadores e variáveis sentinela.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver disciplina e atenção ao estado das variáveis.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Controlar repetições corretamente.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Depuração de laços</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e corrigir loops infinitos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a paciência e a capacidade de detecção de erros.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir funcionamento correto de repetições.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Desafio prático – média de notas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver algoritmo completo com repetição.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aplicar aprendizado a situações práticas do cotidiano escolar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular médias usando estruturas de repetição.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 6 -->
+        <section id="semana6" class="semana">
+            <h3>SEMANA 6 – Estruturas de Repetição: For</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Laços Contáveis</div>
+            <div class="aula-item"><h4>Aula 1: Sintaxe do for</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar laços for corretamente.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver precisão e controle na definição de repetições.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Automatizar repetições com contagem definida.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Iteração sobre coleções</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Percorrer listas e sequências.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular o pensamento sequencial e organizado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Trabalhar dados sequenciais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Função range</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Gerar sequências de repetição.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender a parametrização e a flexibilidade de intervalos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Controlar início, fim e passo.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Desafio – tabuada</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar loop for em problema prático.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Reforçar a autoconfiança ao ver o código gerar resultados visíveis.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Produzir saídas organizadas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 7 -->
+        <section id="semana7" class="semana">
+            <h3>SEMANA 7 – Loops Aninhados</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Repetição Multidimensional</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de repetição aninhada</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar loops duplos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver visão espacial e hierárquica de processos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Resolver problemas bidimensionais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Controle de variáveis</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Gerenciar múltiplos índices.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a capacidade de rastrear múltiplas informações simultaneamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Evitar conflitos de controle.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Complexidade básica</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar custo de repetição.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver consciência sobre eficiência e consumo de recursos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender impacto de loops aninhados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Laboratório prático</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar padrões visuais com loops aninhados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a criatividade e a experimentação prática.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar uso de loops aninhados.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 8 -->
+        <section id="semana8" class="semana">
+            <h3>SEMANA 8 – Vetores (Arrays)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Estruturas de Dados Homogêneas Unidimensionais</div>
+            <div class="aula-item"><h4>Aula 1: Declaração de vetores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar e acessar vetores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Organizar mentalmente conjuntos de informações relacionadas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Armazenar dados sequenciais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Busca linear</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar busca em vetores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver métodos sistemáticos de procura e verificação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Localizar dados em uma coleção.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Ordenação simples</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar Bubble Sort.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender a importância da organização para facilitar o acesso.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Organizar dados de forma ordenada.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Estatísticas em vetores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Calcular média, máximo e mínimo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Interpretar dados agregados e extrair informações relevantes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Analisar conjuntos de dados.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 9 -->
+        <section id="semana9" class="semana">
+            <h3>SEMANA 9 – Matrizes</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Estruturas de Dados Bidimensionais</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de matriz</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Declarar e inicializar matrizes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver raciocínio tabular e visão de linhas e colunas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Modelar dados bidimensionais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Percurso por linhas e colunas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Iterar matrizes com loops aninhados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a coordenação de múltiplos índices e dimensões.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Processar dados tabulares.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Operações agregadas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar acumuladores para somar linhas, colunas e total.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Sintetizar informações de múltiplas fontes em resultados consolidados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Obter informações resumidas de matrizes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Jogo da velha</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar lógica de jogo com matriz.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Unir diversão e aprendizado, estimulando o engajamento e a competição saudável.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar matrizes em jogos interativos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 10 -->
+        <section id="semana10" class="semana">
+            <h3>SEMANA 10 – Funções e Procedimentos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modularização e Reuso de Código</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de função</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar funções simples sem retorno.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar de forma modular e compartimentada.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Modularizar programas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Parâmetros e retorno</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Trabalhar passagem de dados e valores de retorno.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender a comunicação entre partes de um sistema.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reutilizar código de forma eficiente.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Boas práticas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Nomear funções de forma clara e objetiva.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a legibilidade e a empatia com outros programadores.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Melhorar a legibilidade do código.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Biblioteca de funções</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Refatorar código existente extraindo funções.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver o hábito de organizar e catalogar soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar a prática de modularização.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 11 -->
+        <section id="semana11" class="semana">
+            <h3>SEMANA 11 – Revisão Integrada</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Consolidação de Aprendizados</div>
+            <div class="aula-item"><h4>Aula 1: Revisão de vetores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Revisar declaração, percurso e operações básicas em vetores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Reforçar a autoconfiança ao revisitar conteúdos já dominados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o domínio de arrays unidimensionais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Revisão de matrizes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Praticar percurso e manipulação de dados em matrizes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Identificar pontos de melhoria e superar lacunas de aprendizado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Assegurar compreensão sólida de estruturas bidimensionais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Revisão de funções</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reforçar criação de funções com parâmetros e retorno.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar a organização e a reutilização como boas práticas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir fluência na modularização de algoritmos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Miniprojeto integrador</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar vetores, matrizes e funções em um único programa.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar colaboração, planejamento e entrega de um projeto funcional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar de forma integrada os conceitos das semanas 8 a 10.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 12 -->
+        <section id="semana12" class="semana">
+            <h3>SEMANA 12 – Strings</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Manipulação de Texto</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de string</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Declarar e inicializar variáveis do tipo string.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Reconhecer a importância do processamento de texto no cotidiano digital.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender strings como sequências de caracteres.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Métodos de string</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métodos como length, substring, upper/lower case e replace.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar ferramentas disponíveis para resolver problemas de forma criativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Manipular e transformar textos programaticamente.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Formatação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar técnicas de interpolação e formatação de saída textual.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a apresentação de resultados para o usuário final.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Produzir saídas textuais claras e bem formatadas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Análise de texto</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Contar caracteres, palavras e identificar padrões em strings.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver pensamento analítico aplicado a dados textuais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Extrair informações e métricas de textos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 13 -->
+        <section id="semana13" class="semana">
+            <h3>SEMANA 13 – Arquivos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Persistência de Dados</div>
+            <div class="aula-item"><h4>Aula 1: Leitura de arquivos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Abrir e ler conteúdo de arquivos texto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender a importância de fontes de dados externas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Carregar dados armazenados para processamento.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Escrita de arquivos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar e escrever dados em arquivos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar a persistência como forma de registro e continuidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Salvar resultados de processamento de forma permanente.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Relatórios</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Gerar arquivos de saída formatados a partir de dados processados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver a capacidade de sintetizar e comunicar informações por escrito.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Automatizar a criação de relatórios textuais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: CSV</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Ler e escrever arquivos no formato CSV.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Reconhecer padrões estruturados de intercâmbio de dados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Trabalhar com dados tabulares em arquivos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 14 -->
+        <section id="semana14" class="semana">
+            <h3>SEMANA 14 – Introdução à Programação Orientada a Objetos (POO)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Paradigma Orientado a Objetos</div>
+            <div class="aula-item"><h4>Aula 1: Paradigma Orientado a Objetos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Diferenciar programação estruturada e orientada a objetos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Abertura a novos paradigmas e formas de pensar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito e a motivação da POO.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Classes e objetos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar classes e instanciar objetos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Relacionar abstrações de código com entidades do mundo real.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender como objetos representam entidades do mundo real.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Atributos e métodos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir atributos e métodos em classes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Organizar mentalmente estado e comportamento de entidades.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Modelar comportamento e estado de objetos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios introdutórios de POO</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar classes simples como Carro, Aluno ou ContaBancaria.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ganhar confiança na transição para o paradigma orientado a objetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fixar os conceitos básicos da POO.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 15 -->
+        <section id="semana15" class="semana">
+            <h3>SEMANA 15 – Encapsulamento</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Proteção e Organização de Dados</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de encapsulamento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Organizar dados e comportamentos dentro de classes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar a delimitação de responsabilidades e a segurança da informação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a importância do encapsulamento.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Modificadores de acesso</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar public, private e protected.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver discernimento sobre o que expor e o que proteger.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Proteger dados internos da classe.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Métodos de acesso (getters e setters)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar métodos de acesso controlado.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Respeitar regras de acesso e validação de dados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir segurança e consistência dos dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios práticos de encapsulamento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar encapsulamento em exemplos reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Internalizar boas práticas como hábito profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar boas práticas em POO.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 16 -->
+        <section id="semana16" class="semana">
+            <h3>SEMANA 16 – Herança</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Reutilização e Hierarquia de Classes</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de herança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar classes derivadas de uma classe base.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Identificar relações de generalização e especialização.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reutilizar código de forma organizada.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Superclasse e subclasse</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Estender funcionalidades de classes existentes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Construir sobre o que já existe, evitando retrabalho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Estruturar hierarquias de classes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Sobrescrita de métodos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Redefinir comportamentos em subclasses.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Adaptar soluções genéricas para necessidades específicas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Adaptar funcionalidades específicas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios com herança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar hierarquias como Animal → Cachorro, Gato.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Praticar a modelagem de sistemas com visão de reuso.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar herança em cenários práticos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 17 -->
+        <section id="semana17" class="semana">
+            <h3>SEMANA 17 – Polimorfismo</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Flexibilidade Comportamental</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de polimorfismo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar referências genéricas para objetos de subclasses.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar a flexibilidade e a adaptabilidade de soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender múltiplas formas de comportamento.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Polimorfismo em métodos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Trabalhar com métodos sobrescritos via referência da superclasse.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Planejar sistemas extensíveis e de fácil manutenção.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Usar a flexibilidade da POO.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Polimorfismo em tempo de execução</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar chamadas dinâmicas de métodos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender o dinamismo como vantagem arquitetural.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Tornar sistemas mais adaptáveis.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios práticos de polimorfismo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas usando polimorfismo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Consolidar abstração e reutilização de código.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar abstração e reutilização.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 18 -->
+        <section id="semana18" class="semana">
+            <h3>SEMANA 18 – Interfaces e Abstração</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Contratos e Modelagem Abstrata</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de abstração</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar comportamentos essenciais e ignorar detalhes irrelevantes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar no que é realmente importante para o problema.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Simplificar a modelagem de sistemas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Interfaces</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar e implementar interfaces.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Definir contratos claros de comportamento entre partes do sistema.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir contratos de comportamento.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Classes abstratas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar classes parcialmente implementadas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Balancear reuso comum com personalização específica.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fornecer base para subclasses.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de abstração</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar interfaces e classes abstratas em mini projetos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Reduzir acoplamento e aumentar a coesão como filosofia de design.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir acoplamento no código.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 19 -->
+        <section id="semana19" class="semana">
+            <h3>SEMANA 19 – Estruturas de Dados Lineares</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Listas, Pilhas e Filas</div>
+            <div class="aula-item"><h4>Aula 1: Listas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Manipular listas dinâmicas (inserir, remover, percorrer).</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerenciar coleções de dados de tamanho variável.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Armazenar dados de forma flexível.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Pilhas (LIFO)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar operações push, pop e peek.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender ordem inversa de processamento e desfazer ações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender processamento em ordem inversa.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Filas (FIFO)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar operações enqueue e dequeue.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Modelar cenários de atendimento por ordem de chegada.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Controlar ordem de processamento.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Aplicações práticas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar listas, pilhas e filas em problemas reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Selecionar a estrutura de dados mais adequada para cada contexto.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Resolver problemas com a estrutura correta.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 20 -->
+        <section id="semana20" class="semana">
+            <h3>SEMANA 20 – Árvores e Heaps</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Estruturas Hierárquicas e de Prioridade</div>
+            <div class="aula-item"><h4>Aula 1: Árvores binárias</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar, inserir e percorrer árvores binárias.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Visualizar hierarquias e relações pai-filho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Representar dados hierárquicos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Árvores de busca binária</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Inserir e buscar dados em BST.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar a eficiência na busca e recuperação de informações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Otimizar operações de busca.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Heaps</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Trabalhar com estruturas de prioridade (min-heap, max-heap).</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Priorizar tarefas e recursos de forma lógica.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender ordenação por prioridade.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios com árvores e heaps</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estruturas não lineares em situações práticas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Consolidar raciocínio abstrato e recursivo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar estruturas avançadas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 21 -->
+        <section id="semana21" class="semana">
+            <h3>SEMANA 21 – Clean Code</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Qualidade e Legibilidade de Código</div>
+            <div class="aula-item"><h4>Aula 1: Código limpo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar problemas de legibilidade e más práticas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver senso estético e profissionalismo no código.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Escrever código claro e organizado.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Refatoração</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Melhorar código sem alterar funcionalidade externa.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a melhoria contínua e a insatisfação positiva com código confuso.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir complexidade desnecessária.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Boas práticas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar padrões de nomenclatura, comentários e formatação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Facilitar a manutenção por outras pessoas, exercitando empatia.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Facilitar manutenção do software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de refatoração</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Refatorar códigos legados aplicando os princípios de clean code.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Consolidar uma cultura de qualidade e orgulho pelo próprio trabalho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar a melhoria da qualidade do código.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 22 -->
+        <section id="semana22" class="semana">
+            <h3>SEMANA 22 – Testes e Depuração</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Garantia de Qualidade e Correção de Erros</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de testes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar testes simples para verificar funcionalidades.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver postura preventiva e responsável com o software.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir funcionamento correto do código.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Testes unitários básicos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Validar partes isoladas do sistema.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ganhar confiança para fazer alterações sem medo de quebrar funcionalidades.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Evitar erros e regressões futuras.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Depuração</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e corrigir erros usando ferramentas de debug.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar paciência e método na investigação de falhas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Localizar e entender causas de falhas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de testes e depuração</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar testes e correções em código com bugs inseridos propositalmente.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprender com os erros e valorizar o processo de debugging.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Melhorar a confiabilidade do código.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 23 -->
+        <section id="semana23" class="semana">
+            <h3>SEMANA 23 – Padrões de Projeto</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Soluções de Design Recorrentes</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de padrões</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer problemas recorrentes e soluções consolidadas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprender com a experiência coletiva da comunidade de software.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender soluções já consolidadas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Singleton</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar padrão Singleton.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Controlar acesso a recursos compartilhados de forma consciente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Controlar instância única.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Factory e Strategy</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar padrões de criação e comportamento.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Projetar para mudança, antecipando variações futuras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Tornar código flexível e extensível.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios com padrões</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar padrões em exemplos simples.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Fixar conceitos de design orientado a boas práticas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fixar conceitos de design patterns.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 24 -->
+        <section id="semana24" class="semana">
+            <h3>SEMANA 24 – Projeto Final</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Desenvolvimento de Sistema Completo</div>
+            <div class="aula-item"><h4>Aula 1: Planejamento do projeto</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir requisitos e arquitetura do sistema.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar visão de longo prazo e organização de tarefas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Organizar o desenvolvimento do sistema.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Implementação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Programar funcionalidades principais do sistema.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter foco e disciplina para avançar na construção.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir uma solução funcional.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Testes e ajustes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Validar e corrigir o projeto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver resiliência e atenção a feedback.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir qualidade do software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Finalização</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar todas as partes do projeto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Preparar o sistema para apresentação com orgulho do resultado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Finalizar o sistema para entrega.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 25 -->
+        <section id="semana25" class="semana">
+            <h3>SEMANA 25 – Apresentações</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Comunicação Técnica e Demonstração</div>
+            <div class="aula-item"><h4>Aula 1: Preparação da apresentação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Organizar a explicação do código e das funcionalidades.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver habilidades de comunicação e síntese.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Comunicar soluções técnicas com clareza.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Apresentação dos projetos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Demonstrar funcionamento do sistema ao vivo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar oratória e controle emocional diante de público.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Expor o projeto desenvolvido.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Avaliação e feedback</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar pontos fortes e oportunidades de melhoria.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Receber críticas de forma construtiva e aberta ao crescimento.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender com o feedback dos colegas e professor.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Ajustes finais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Refinar o projeto com base no feedback recebido.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar proatividade e compromisso com a excelência.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Melhorar a solução apresentada.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 26 -->
+        <section id="semana26" class="semana">
+            <h3>SEMANA 26 – Revisão Geral</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Síntese e Fechamento</div>
+            <div class="aula-item"><h4>Aula 1: Revisão de lógica</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Relembrar fundamentos algorítmicos e estruturas de controle.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Reconhecer o progresso desde o início da disciplina.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar a base lógica.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Revisão de POO</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Revisar conceitos de classes, herança, polimorfismo e abstração.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Fixar o paradigma orientado a objetos como ferramenta profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fixar o paradigma orientado a objetos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Revisão de estruturas e boas práticas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar estruturas de dados avançadas e princípios de clean code.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ter visão global do que significa desenvolver software com qualidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir uma visão integrada do conteúdo.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Síntese final e encerramento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Análise crítica do aprendizado ao longo do ano.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Celebrar conquistas e projetar próximos passos na carreira de desenvolvimento.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Encerrar o ciclo formativo com reflexão e motivação.</div>
+            </div>
+        </section>
+
+        <footer>
+            Documento elaborado conforme normas ABNT (NBR 14724) para apresentação de plano de ensino.<br>
+            Disciplina: Lógica e Linguagem de Programação – 2ª Série (Desenvolvimento de Sistemas)
+        </footer>
     </div>
-
-    <!-- ========================= SEMANA 1 ========================= -->
-    <section id="semana1" class="semana">
-        <h3>SEMANA 1 – Introdução à Programação</h3>
-        <div class="aula-item"><h4>Aula 1: O que é programar?</h4>
-            <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender fundamentos da lógica de programação e algoritmos.</div>
-            <div class="objetivo"><strong>Objetivo da aula:</strong> Entender o conceito de programação e sua importância no mundo digital.</div>
-        </div>
-        <div class="aula-item"><h4>Aula 2: Algoritmos no cotidiano</h4>
-            <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar sequências lógicas em situações do cotidiano.</div>
-            <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer algoritmos presentes em atividades do dia a dia.</div>
-        </div>
-        <div class="aula-item"><h4>Aula 3: Fluxogramas e representação visual</h4>
-            <div class="habilidades"><strong>Habilidades técnicas:</strong> Traduzir algoritmos simples em fluxogramas.</div>
-            <div class="objetivo"><strong>Objetivo da aula:</strong> Representar visualmente soluções algorítmicas.</div>
-        </div>
-        <div class="aula-item"><h4>Aula 4: Variáveis e tipos de dados</h4>
-            <div class="habilidades"><strong>Habilidades técnicas:</strong> Declarar e utilizar variáveis e tipos básicos de dados.</div>
-            <div class="objetivo"><strong>Objetivo da aula:</strong> Trabalhar informações simples em algoritmos.</div>
-        </div>
-    </section>
-
-    <!-- SEMANA 2 -->
-    <section id="semana2" class="semana">
-        <h3>SEMANA 2 – Entrada, Processamento e Saída de Dados</h3>
-        <div class="aula-item"><h4>Aula 1: Entrada de dados</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar comandos de entrada em pseudocódigo.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Coletar dados de forma estruturada.</div></div>
-        <div class="aula-item"><h4>Aula 2: Processamento de dados</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar operações de cálculo e transformação.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Processar dados de entrada para gerar resultados.</div></div>
-        <div class="aula-item"><h4>Aula 3: Saída de dados</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar comandos de saída.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Apresentar resultados de maneira compreensível.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios integrados</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar entrada, processamento e saída de dados.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Construir algoritmos completos e coerentes.</div></div>
-    </section>
-
-    <!-- SEMANA 3 -->
-    <section id="semana3" class="semana">
-        <h3>SEMANA 3 – Estruturas de Decisão</h3>
-        <div class="aula-item"><h4>Aula 1: Condição simples – SE</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar estruturas condicionais simples.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Controlar decisões lógicas em algoritmos.</div></div>
-        <div class="aula-item"><h4>Aula 2: Condição composta – SE / SENÃO</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estruturas condicionais compostas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Criar caminhos alternativos de execução.</div></div>
-        <div class="aula-item"><h4>Aula 3: Condições aninhadas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar decisões encadeadas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Resolver problemas com múltiplas condições.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios práticos com decisões</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estruturas de decisão em algoritmos.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Simular situações reais usando lógica condicional.</div></div>
-    </section>
-
-    <!-- SEMANA 4 -->
-    <section id="semana4" class="semana">
-        <h3>SEMANA 4 – Operadores Relacionais e Lógicos</h3>
-        <div class="aula-item"><h4>Aula 1: Operadores relacionais</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar operadores de comparação.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Tomar decisões com base em comparações.</div></div>
-        <div class="aula-item"><h4>Aula 2: Operadores lógicos</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Combinar condições lógicas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Construir expressões condicionais compostas.</div></div>
-        <div class="aula-item"><h4>Aula 3: Tabelas‑verdade</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar expressões booleanas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Validar decisões logicamente.</div></div>
-        <div class="aula-item"><h4>Aula 4: Desafios com expressões condicionais</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas com múltiplas condições.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar operadores lógicos em desafios práticos.</div></div>
-    </section>
-
-    <!-- SEMANA 5 -->
-    <section id="semana5" class="semana">
-        <h3>SEMANA 5 – Estruturas de Repetição: While</h3>
-        <div class="aula-item"><h4>Aula 1: Introdução ao while</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar loop controlado por condição.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Compreender repetição baseada em condição.</div></div>
-        <div class="aula-item"><h4>Aula 2: Contadores e sentinelas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Empregar contadores e variáveis sentinela.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Controlar repetições corretamente.</div></div>
-        <div class="aula-item"><h4>Aula 3: Depuração de laços</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e corrigir loops infinitos.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Garantir funcionamento correto de repetições.</div></div>
-        <div class="aula-item"><h4>Aula 4: Desafio prático – média de notas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver algoritmo completo com repetição.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Calcular médias usando estruturas de repetição.</div></div>
-    </section>
-
-    <!-- SEMANA 6 -->
-    <section id="semana6" class="semana">
-        <h3>SEMANA 6 – Estruturas de Repetição: For</h3>
-        <div class="aula-item"><h4>Aula 1: Sintaxe do for</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar laços for corretamente.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Automatizar repetições com contagem definida.</div></div>
-        <div class="aula-item"><h4>Aula 2: Iteração sobre coleções</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Percorrer listas e sequências.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Trabalhar dados sequenciais.</div></div>
-        <div class="aula-item"><h4>Aula 3: Função range</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Gerar sequências de repetição.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Controlar início, fim e passo.</div></div>
-        <div class="aula-item"><h4>Aula 4: Desafio – tabuada</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar loop for em problema prático.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Produzir saídas organizadas.</div></div>
-    </section>
-
-    <!-- SEMANA 7 -->
-    <section id="semana7" class="semana">
-        <h3>SEMANA 7 – Loops Aninhados</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de repetição aninhada</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar loops duplos.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Resolver problemas bidimensionais.</div></div>
-        <div class="aula-item"><h4>Aula 2: Controle de variáveis</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Gerenciar múltiplos índices.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Evitar conflitos de controle.</div></div>
-        <div class="aula-item"><h4>Aula 3: Complexidade básica</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar custo de repetição.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Entender impacto de loops aninhados.</div></div>
-        <div class="aula-item"><h4>Aula 4: Laboratório prático</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar padrões visuais.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar uso de loops aninhados.</div></div>
-    </section>
-
-    <!-- SEMANA 8 -->
-    <section id="semana8" class="semana">
-        <h3>SEMANA 8 – Vetores (Arrays)</h3>
-        <div class="aula-item"><h4>Aula 1: Declaração de vetores</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar e acessar vetores.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Armazenar dados sequenciais.</div></div>
-        <div class="aula-item"><h4>Aula 2: Busca linear</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar busca em vetores.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Localizar dados.</div></div>
-        <div class="aula-item"><h4>Aula 3: Ordenação simples</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar Bubble Sort.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Organizar dados.</div></div>
-        <div class="aula-item"><h4>Aula 4: Estatísticas em vetores</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Calcular média, máximo e mínimo.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Analisar conjuntos de dados.</div></div>
-    </section>
-
-    <!-- SEMANA 9 -->
-    <section id="semana9" class="semana">
-        <h3>SEMANA 9 – Matrizes</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de matriz</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Declarar matrizes.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Modelar dados bidimensionais.</div></div>
-        <div class="aula-item"><h4>Aula 2: Percurso por linhas e colunas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Iterar matrizes.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Processar dados tabulares.</div></div>
-        <div class="aula-item"><h4>Aula 3: Operações agregadas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar acumuladores.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Obter informações resumidas.</div></div>
-        <div class="aula-item"><h4>Aula 4: Jogo da velha</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar lógica com matriz.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar matrizes em jogos.</div></div>
-    </section>
-
-    <!-- SEMANA 10 -->
-    <section id="semana10" class="semana">
-        <h3>SEMANA 10 – Funções e Procedimentos</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de função</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar funções simples.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Modularizar programas.</div></div>
-        <div class="aula-item"><h4>Aula 2: Parâmetros e retorno</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Trabalhar passagem de dados.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Reutilizar código.</div></div>
-        <div class="aula-item"><h4>Aula 3: Boas práticas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Nomear funções corretamente.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Melhorar legibilidade.</div></div>
-        <div class="aula-item"><h4>Aula 4: Biblioteca de funções</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Refatorar código existente.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar modularização.</div></div>
-    </section>
-
-    <!-- SEMANA 11 (Conteúdo com informações parciais) -->
-    <section id="semana11" class="semana">
-        <h3>SEMANA 11 – Revisão Integrada</h3>
-        <div class="aula-item"><h4>Aula 1: Revisão de vetores</h4></div>
-        <div class="aula-item"><h4>Aula 2: Revisão de matrizes</h4></div>
-        <div class="aula-item"><h4>Aula 3: Revisão de funções</h4></div>
-        <div class="aula-item"><h4>Aula 4: Miniprojeto integrador</h4></div>
-        <div class="nota-semana"><strong>Habilidades consolidadas:</strong> Integração de estruturas | <strong>Objetivo da semana:</strong> consolidar lógica geral.</div>
-    </section>
-
-    <!-- SEMANA 12 – Strings (apenas títulos) -->
-    <section id="semana12" class="semana">
-        <h3>SEMANA 12 – Strings</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de string</h4></div>
-        <div class="aula-item"><h4>Aula 2: Métodos de string</h4></div>
-        <div class="aula-item"><h4>Aula 3: Formatação</h4></div>
-        <div class="aula-item"><h4>Aula 4: Análise de texto</h4></div>
-        <div class="nota-semana">Detalhamento de habilidades técnicas e objetivos complementares a serem abordados em laboratório prático.</div>
-    </section>
-
-    <!-- SEMANA 13 – Arquivos -->
-    <section id="semana13" class="semana">
-        <h3>SEMANA 13 – Arquivos</h3>
-        <div class="aula-item"><h4>Aula 1: Leitura de arquivos</h4></div>
-        <div class="aula-item"><h4>Aula 2: Escrita de arquivos</h4></div>
-        <div class="aula-item"><h4>Aula 3: Relatórios</h4></div>
-        <div class="aula-item"><h4>Aula 4: CSV</h4></div>
-        <div class="nota-semana">Conteúdo prático com manipulação de arquivos e geração de relatórios.</div>
-    </section>
-
-    <!-- SEMANA 14 -->
-    <section id="semana14" class="semana">
-        <h3>SEMANA 14 – Introdução à Programação Orientada a Objetos (POO)</h3>
-        <div class="aula-item"><h4>Aula 1: Paradigma Orientado a Objetos</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Diferenciar programação estruturada e orientada a objetos.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito e a motivação da POO.</div></div>
-        <div class="aula-item"><h4>Aula 2: Classes e objetos</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar classes e instanciar objetos.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Entender como objetos representam entidades do mundo real.</div></div>
-        <div class="aula-item"><h4>Aula 3: Atributos e métodos</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Definir atributos e métodos em classes.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Modelar comportamento e estado de objetos.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios introdutórios de POO</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar classes simples.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Fixar os conceitos básicos da POO.</div></div>
-    </section>
-
-    <!-- SEMANA 15 Encapsulamento -->
-    <section id="semana15" class="semana">
-        <h3>SEMANA 15 – Encapsulamento</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de encapsulamento</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Organizar dados e comportamentos dentro de classes.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a importância do encapsulamento.</div></div>
-        <div class="aula-item"><h4>Aula 2: Modificadores de acesso</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar public, private e protected.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Proteger dados internos da classe.</div></div>
-        <div class="aula-item"><h4>Aula 3: Métodos de acesso (getters e setters)</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar métodos de acesso controlado.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Garantir segurança e consistência dos dados.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios práticos de encapsulamento</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar encapsulamento em exemplos reais.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar boas práticas em POO.</div></div>
-    </section>
-
-    <!-- SEMANA 16 Herança -->
-    <section id="semana16" class="semana">
-        <h3>SEMANA 16 – Herança</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de herança</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar classes derivadas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Reutilizar código de forma organizada.</div></div>
-        <div class="aula-item"><h4>Aula 2: Superclasse e subclasse</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Estender funcionalidades de classes.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Estruturar hierarquias de classes.</div></div>
-        <div class="aula-item"><h4>Aula 3: Sobrescrita de métodos</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Redefinir comportamentos em subclasses.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Adaptar funcionalidades específicas.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios com herança</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar hierarquias simples.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar herança em cenários práticos.</div></div>
-    </section>
-
-    <!-- SEMANA 17 Polimorfismo -->
-    <section id="semana17" class="semana">
-        <h3>SEMANA 17 – Polimorfismo</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de polimorfismo</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar referências genéricas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Entender múltiplas formas de comportamento.</div></div>
-        <div class="aula-item"><h4>Aula 2: Polimorfismo em métodos</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Trabalhar com métodos sobrescritos.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Usar flexibilidade da POO.</div></div>
-        <div class="aula-item"><h4>Aula 3: Polimorfismo em tempo de execução</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar chamadas dinâmicas de métodos.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Tornar sistemas mais adaptáveis.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios práticos de polimorfismo</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas usando polimorfismo.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar abstração e reutilização.</div></div>
-    </section>
-
-    <!-- SEMANA 18 Interfaces e Abstração -->
-    <section id="semana18" class="semana">
-        <h3>SEMANA 18 – Interfaces e Abstração</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de abstração</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar comportamentos essenciais.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Simplificar a modelagem de sistemas.</div></div>
-        <div class="aula-item"><h4>Aula 2: Interfaces</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar e implementar interfaces.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Definir contratos de comportamento.</div></div>
-        <div class="aula-item"><h4>Aula 3: Classes abstratas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar classes parcialmente implementadas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Fornecer base para subclasses.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios de abstração</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar interfaces e abstração.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir acoplamento no código.</div></div>
-    </section>
-
-    <!-- SEMANA 19 Estruturas de Dados Lineares -->
-    <section id="semana19" class="semana">
-        <h3>SEMANA 19 – Estruturas de Dados Lineares</h3>
-        <div class="aula-item"><h4>Aula 1: Listas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Manipular listas dinâmicas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Armazenar dados de forma flexível.</div></div>
-        <div class="aula-item"><h4>Aula 2: Pilhas (LIFO)</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar pilhas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Compreender processamento em ordem inversa.</div></div>
-        <div class="aula-item"><h4>Aula 3: Filas (FIFO)</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar filas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Controlar ordem de chegada.</div></div>
-        <div class="aula-item"><h4>Aula 4: Aplicações práticas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar listas, pilhas e filas.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Resolver problemas reais.</div></div>
-    </section>
-
-    <!-- SEMANA 20 Árvores e Heaps -->
-    <section id="semana20" class="semana">
-        <h3>SEMANA 20 – Árvores e Heaps</h3>
-        <div class="aula-item"><h4>Aula 1: Árvores binárias</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar e percorrer árvores.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Representar dados hierárquicos.</div></div>
-        <div class="aula-item"><h4>Aula 2: Árvores de busca binária</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Inserir e buscar dados.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Otimizar operações de busca.</div></div>
-        <div class="aula-item"><h4>Aula 3: Heaps</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Trabalhar com estruturas de prioridade.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Compreender ordenação por prioridade.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios com árvores e heaps</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estruturas não lineares.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar estruturas avançadas.</div></div>
-    </section>
-
-    <!-- SEMANA 21 Clean Code -->
-    <section id="semana21" class="semana">
-        <h3>SEMANA 21 – Clean Code</h3>
-        <div class="aula-item"><h4>Aula 1: Código limpo</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar problemas de legibilidade.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Escrever código claro e organizado.</div></div>
-        <div class="aula-item"><h4>Aula 2: Refatoração</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Melhorar código sem alterar funcionalidade.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir complexidade.</div></div>
-        <div class="aula-item"><h4>Aula 3: Boas práticas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar padrões de legibilidade.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Facilitar manutenção do software.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios de refatoração</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Refatorar códigos existentes.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar cultura de qualidade.</div></div>
-    </section>
-
-    <!-- SEMANA 22 Testes e Depuração -->
-    <section id="semana22" class="semana">
-        <h3>SEMANA 22 – Testes e Depuração</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de testes</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Criar testes simples.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Garantir funcionamento correto.</div></div>
-        <div class="aula-item"><h4>Aula 2: Testes unitários básicos</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Validar partes do sistema.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Evitar erros futuros.</div></div>
-        <div class="aula-item"><h4>Aula 3: Depuração</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e corrigir erros.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Localizar causas de falhas.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios de testes e depuração</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar testes e correções.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Melhorar confiabilidade do código.</div></div>
-    </section>
-
-    <!-- SEMANA 23 Padrões de Projeto -->
-    <section id="semana23" class="semana">
-        <h3>SEMANA 23 – Padrões de Projeto</h3>
-        <div class="aula-item"><h4>Aula 1: Conceito de padrões</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer problemas recorrentes.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Entender soluções já consolidadas.</div></div>
-        <div class="aula-item"><h4>Aula 2: Singleton</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar padrão Singleton.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Controlar instância única.</div></div>
-        <div class="aula-item"><h4>Aula 3: Factory e Strategy</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar padrões de criação e comportamento.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Tornar código flexível.</div></div>
-        <div class="aula-item"><h4>Aula 4: Exercícios com padrões</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar padrões em exemplos simples.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Fixar conceitos de design.</div></div>
-    </section>
-
-    <!-- SEMANA 24 Projeto Final -->
-    <section id="semana24" class="semana">
-        <h3>SEMANA 24 – Projeto Final</h3>
-        <div class="aula-item"><h4>Aula 1: Planejamento do projeto</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Definir requisitos e estrutura.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Organizar desenvolvimento do sistema.</div></div>
-        <div class="aula-item"><h4>Aula 2: Implementação</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Programar funcionalidades principais.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Construir solução funcional.</div></div>
-        <div class="aula-item"><h4>Aula 3: Testes e ajustes</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Validar e corrigir o projeto.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Garantir qualidade do software.</div></div>
-        <div class="aula-item"><h4>Aula 4: Finalização</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar todas as partes do projeto.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Preparar sistema para apresentação.</div></div>
-    </section>
-
-    <!-- SEMANA 25 Apresentações -->
-    <section id="semana25" class="semana">
-        <h3>SEMANA 25 – Apresentações</h3>
-        <div class="aula-item"><h4>Aula 1: Preparação da apresentação</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Organizar explicação do código.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Comunicar soluções técnicas.</div></div>
-        <div class="aula-item"><h4>Aula 2: Apresentação dos projetos</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Demonstrar funcionamento do sistema.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Expor o projeto desenvolvido.</div></div>
-        <div class="aula-item"><h4>Aula 3: Avaliação e feedback</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar pontos fortes e melhorias.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Aprender com feedback.</div></div>
-        <div class="aula-item"><h4>Aula 4: Ajustes finais</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Refinar o projeto.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Melhorar a solução apresentada.</div></div>
-    </section>
-
-    <!-- SEMANA 26 Revisão Geral -->
-    <section id="semana26" class="semana">
-        <h3>SEMANA 26 – Revisão Geral</h3>
-        <div class="aula-item"><h4>Aula 1: Revisão de lógica</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Relembrar fundamentos algorítmicos.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar base lógica.</div></div>
-        <div class="aula-item"><h4>Aula 2: Revisão de POO</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Revisar conceitos de POO.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Fixar paradigma orientado a objetos.</div></div>
-        <div class="aula-item"><h4>Aula 3: Revisão de estruturas e boas práticas</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar estruturas e Clean Code.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Garantir visão global do conteúdo.</div></div>
-        <div class="aula-item"><h4>Aula 4: Síntese final</h4><div class="habilidades"><strong>Habilidades técnicas:</strong> Análise crítica do aprendizado.</div><div class="objetivo"><strong>Objetivo da aula:</strong> Encerrar o ciclo formativo.</div></div>
-    </section>
-
-    <footer>
-        Documento elaborado conforme normas ABNT (NBR 14724) para apresentação de plano de ensino.<br>
-        Disciplina: Lógica e Linguagem de Programação – 2ª Série (Desenvolvimento de Sistemas)
-    </footer>
-</div>
 </body>
 </html>
