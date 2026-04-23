@@ -1,672 +1,754 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Plano de Ensino - 28 Semanas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Plano de Ensino - Carreira e Competências para o Mercado de Trabalho</title>
+    <style>
+        /* ESTILOS BASEADOS NAS NORMAS ABNT (NBR 14724) */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<style>
-body { font-family: Arial; margin: 20px; }
-h2 { background:#2c3e50; color:white; padding:10px; }
-.box { border:1px solid #ccc; padding:10px; margin-bottom:10px; border-radius:5px; }
-strong { color:#2c3e50; }
-</style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000000;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
 
+        .abnt-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 3cm 2cm 2cm 3cm;
+            background: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 2cm 0 0.5cm 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: normal;
+            margin-top: -0.2cm;
+            margin-bottom: 1.5cm;
+            font-style: normal;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3cm;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 1.2cm 0 0.6cm 0;
+            border-left: 4px solid #2c3e66;
+            padding-left: 0.5cm;
+            background: none;
+        }
+
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 0.8cm 0 0.4cm 0;
+            color: #1a2a4f;
+        }
+
+        h4 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 0.6cm 0 0.2cm 0;
+            font-style: normal;
+            border-bottom: 1px dotted #ddd;
+            padding-bottom: 2px;
+        }
+
+        .semana {
+            margin-bottom: 0.8cm;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .aula-item {
+            margin-left: 0.7cm;
+            margin-bottom: 0.45cm;
+            padding-left: 0.2cm;
+        }
+
+        .habilidades,
+        .objetivo {
+            margin-left: 0.5cm;
+            margin-top: 0.15cm;
+            margin-bottom: 0.1cm;
+            text-align: justify;
+        }
+
+        .habilidades strong,
+        .objetivo strong {
+            font-weight: bold;
+        }
+
+        .nota-semana {
+            font-size: 11pt;
+            font-style: italic;
+            background-color: #f9f9f9;
+            padding: 0.2cm 0.4cm;
+            margin-top: 0.2cm;
+            border-left: 3px solid #7a8aa5;
+            margin-left: 0.5cm;
+        }
+
+        .sumario {
+            margin: 1cm 0 1.2cm 0;
+            background: #fafafc;
+            padding: 0.5cm 0.8cm;
+            border: 1px solid #ddd;
+        }
+
+        .sumario h3 {
+            margin-top: 0;
+            font-size: 13pt;
+            text-transform: uppercase;
+        }
+
+        .sumario-lista {
+            columns: 2;
+            column-gap: 1.2cm;
+            list-style: none;
+            padding-left: 0.2cm;
+        }
+
+        .sumario-lista li {
+            margin-bottom: 0.2cm;
+            font-size: 11pt;
+        }
+
+        .sumario-lista a {
+            text-decoration: none;
+            color: #1e466e;
+        }
+
+        .sumario-lista a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 1.8cm;
+            border-top: 1px solid #aaa;
+            padding-top: 0.5cm;
+            font-size: 10pt;
+            text-align: center;
+            color: #444;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .abnt-container {
+                padding: 3cm 2cm 2cm 3cm;
+                box-shadow: none;
+            }
+            .sumario {
+                background: white;
+                border: 1px solid #ccc;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+            }
+            .semana {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .abnt-container {
+                padding: 1.5cm 1cm 1.5cm 1.5cm;
+            }
+            .sumario-lista {
+                columns: 1;
+            }
+            h1 {
+                font-size: 16pt;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<h1>Plano de Ensino - Carreira e Competências para o Mercado de Trabalho</h1>
-
-<!-- FUNÇÃO PARA CRIAR AULAS PADRÃO -->
-<!-- Vou manter fiel ao seu conteúdo -->
-
-<!-- ================= SEMANA 1 ================= -->
-<h2>Semana 1 - Autoconhecimento e Orientação Profissional</h2>
-
-<div class="box">
-<strong>Aula 1: Autoconhecimento</strong><br>
-<b>Habilidades Técnicas:</b> Identificar ferramentas de autoconhecimento.<br>
-<b>Socioemocionais:</b> Reconhecer emoções e comportamentos.<br>
-<b>Objetivo:</b> Conhecer princípios do autoconhecimento.<br>
-<b>Objeto:</b> Fundamentos do autoconhecimento.
-</div>
-
-<div class="box">
-<strong>Aula 2: Tipologias e 16 personalidades</strong><br>
-<b>Habilidades Técnicas:</b> Aplicar estratégias de autoconhecimento.<br>
-<b>Socioemocionais:</b> Inteligência emocional.<br>
-<b>Objetivo:</b> Compreender emoções em situações adversas.<br>
-<b>Objeto:</b> Ferramentas de autoconhecimento.
-</div>
-
-<div class="box">
-<strong>Aula 3: Inteligência emocional</strong><br>
-<b>Habilidades Técnicas:</b> Aplicar ferramentas emocionais.<br>
-<b>Socioemocionais:</b> Autocontrole.<br>
-<b>Objetivo:</b> Entender pilares da inteligência emocional.<br>
-<b>Objeto:</b> Conceito e importância.
-</div>
-
-<!-- ================= SEMANA 2 ================= -->
-<h2>Semana 2 - Habilidades e Competências</h2>
-
-<div class="box">
-<strong>Aula 1: Habilidades e competências</strong><br>
-<b>Habilidades Técnicas:</b> Identificar competências do mercado.<br>
-<b>Socioemocionais:</b> Desenvolvimento pessoal.<br>
-<b>Objetivo:</b> Entender importância das competências.<br>
-<b>Objeto:</b> Conceitos fundamentais.
-</div>
-
-<div class="box">
-<strong>Aula 2: Profissional de sucesso</strong><br>
-<b>Habilidades Técnicas:</b> Reconhecer competências exigidas.<br>
-<b>Socioemocionais:</b> Crescimento profissional.<br>
-<b>Objetivo:</b> Entender exigências do mercado.<br>
-<b>Objeto:</b> Competências profissionais.
-</div>
-
-<div class="box">
-<strong>Aula 3: Árvore de competências</strong><br>
-<b>Habilidades Técnicas:</b> Mapear competências.<br>
-<b>Socioemocionais:</b> Autodesenvolvimento.<br>
-<b>Objetivo:</b> Identificar habilidades essenciais.<br>
-<b>Objeto:</b> Mapeamento de competências.
-</div>
-
-<!-- ================= SEMANA 3 ================= -->
-<h2>Semana 3 - Mundo do Trabalho</h2>
-
-<div class="box">
-<strong>Aula 1: Mundo VUCA e BANI</strong><br>
-<b>Habilidades Técnicas:</b> Compreender mudanças do mercado.<br>
-<b>Socioemocionais:</b> Adaptabilidade.<br>
-<b>Objetivo:</b> Identificar estratégias de adaptação.<br>
-<b>Objeto:</b> Cenário moderno.
-</div>
-
-<div class="box">
-<strong>Aula 2: Mundo do trabalho</strong><br>
-<b>Habilidades Técnicas:</b> Identificar exigências atuais.<br>
-<b>Socioemocionais:</b> Reflexão crítica.<br>
-<b>Objetivo:</b> Entender transformações.<br>
-<b>Objeto:</b> Novo mercado.
-</div>
-
-<div class="box">
-<strong>Aula 3: Tendências</strong><br>
-<b>Habilidades Técnicas:</b> Analisar tendências.<br>
-<b>Socioemocionais:</b> Adaptabilidade.<br>
-<b>Objetivo:</b> Preparação futura.<br>
-<b>Objeto:</b> Mercado brasileiro.
-</div>
-
-<!-- ================= SEMANA 4 ================= -->
-<h2>Semana 4 - Exploração de Carreira</h2>
-
-<div class="box">
-<strong>Aula 1: Habilidades e horizontes</strong><br>
-<b>Habilidades Técnicas:</b> Explorar trajetórias.<br>
-<b>Socioemocionais:</b> Proatividade.<br>
-<b>Objetivo:</b> Identificar habilidades.<br>
-<b>Objeto:</b> Interesses profissionais.
-</div>
-
-<div class="box">
-<strong>Aula 2: Programa BEEM</strong><br>
-<b>Habilidades Técnicas:</b> Conhecer oportunidades.<br>
-<b>Socioemocionais:</b> Tomada de decisão.<br>
-<b>Objetivo:</b> Entender estágio.<br>
-<b>Objeto:</b> Programas profissionais.
-</div>
-
-<div class="box">
-<strong>Aula 3: Caminhos de carreira</strong><br>
-<b>Habilidades Técnicas:</b> Planejar carreira.<br>
-<b>Socioemocionais:</b> Autonomia.<br>
-<b>Objetivo:</b> Desenvolver perspectivas.<br>
-<b>Objeto:</b> Caminhos profissionais.
-</div>
-
-<!-- ================= SEMANA 5 ================= -->
-<h2>Semana 5 - Currículo</h2>
-
-<div class="box">
-<strong>Aula 1: Identidade profissional</strong><br>
-<b>Habilidades Técnicas:</b> Criar currículo.<br>
-<b>Socioemocionais:</b> Responsabilidade.<br>
-<b>Objetivo:</b> Entender currículo.<br>
-<b>Objeto:</b> Estrutura curricular.
-</div>
-
-<div class="box">
-<strong>Aula 2: Currículo prático</strong><br>
-<b>Habilidades Técnicas:</b> Desenvolver currículo.<br>
-<b>Socioemocionais:</b> Organização.<br>
-<b>Objetivo:</b> Aplicação prática.<br>
-<b>Objeto:</b> Tipos de currículo.
-</div>
-
-<div class="box">
-<strong>Aula 3: Currículo online</strong><br>
-<b>Habilidades Técnicas:</b> Criar online.<br>
-<b>Socioemocionais:</b> Autonomia.<br>
-<b>Objetivo:</b> Buscar vagas.<br>
-<b>Objeto:</b> Ferramentas digitais.
-</div>
-<!-- ================= SEMANA 6 ================= -->
-<h2>Semana 6 - LinkedIn</h2>
-
-<div class="box">
-<strong>Aula 1: Introdução ao LinkedIn</strong><br>
-<b>Habilidades Técnicas:</b> Criar perfil profissional.<br>
-<b>Socioemocionais:</b> Autoconfiança.<br>
-<b>Objetivo:</b> Compreender uso do LinkedIn.<br>
-<b>Objeto:</b> Papel do LinkedIn.
-</div>
-
-<div class="box">
-<strong>Aula 2: Otimização de perfil</strong><br>
-<b>Habilidades Técnicas:</b> Configurar perfil.<br>
-<b>Socioemocionais:</b> Comunicação profissional.<br>
-<b>Objetivo:</b> Melhorar presença online.<br>
-<b>Objeto:</b> Estratégias de perfil.
-</div>
-
-<div class="box">
-<strong>Aula 3: Perfil atrativo</strong><br>
-<b>Habilidades Técnicas:</b> Aprimorar perfil.<br>
-<b>Socioemocionais:</b> Autenticidade.<br>
-<b>Objetivo:</b> Tornar perfil competitivo.<br>
-<b>Objeto:</b> Branding pessoal.
-</div>
-
-<!-- ================= SEMANA 7 ================= -->
-<h2>Semana 7 - Comunicação Profissional</h2>
-
-<div class="box">
-<strong>Aula 1: E-mail e carta</strong><br>
-<b>Habilidades Técnicas:</b> Produzir textos profissionais.<br>
-<b>Socioemocionais:</b> Clareza e objetividade.<br>
-<b>Objetivo:</b> Estruturar comunicação escrita.<br>
-<b>Objeto:</b> Comunicação formal.
-</div>
-
-<div class="box">
-<strong>Aula 2: Vídeo currículo</strong><br>
-<b>Habilidades Técnicas:</b> Criar apresentação em vídeo.<br>
-<b>Socioemocionais:</b> Expressão.<br>
-<b>Objetivo:</b> Desenvolver comunicação visual.<br>
-<b>Objeto:</b> Comunicação multimídia.
-</div>
-
-<div class="box">
-<strong>Aula 3: Pitch pessoal</strong><br>
-<b>Habilidades Técnicas:</b> Criar pitch.<br>
-<b>Socioemocionais:</b> Persuasão.<br>
-<b>Objetivo:</b> Apresentação rápida profissional.<br>
-<b>Objeto:</b> Storytelling.
-</div>
-
-<!-- ================= SEMANA 8 ================= -->
-<h2>Semana 8 - Busca de Emprego</h2>
-
-<div class="box">
-<strong>Aula 1: Onde encontrar vagas</strong><br>
-<b>Habilidades Técnicas:</b> Buscar vagas.<br>
-<b>Socioemocionais:</b> Proatividade.<br>
-<b>Objetivo:</b> Mapear oportunidades.<br>
-<b>Objeto:</b> Plataformas de emprego.
-</div>
-
-<div class="box">
-<strong>Aula 2: Networking</strong><br>
-<b>Habilidades Técnicas:</b> Criar rede de contatos.<br>
-<b>Socioemocionais:</b> Comunicação.<br>
-<b>Objetivo:</b> Construir networking.<br>
-<b>Objeto:</b> Estratégias de conexão.
-</div>
-
-<div class="box">
-<strong>Aula 3: Organização da busca</strong><br>
-<b>Habilidades Técnicas:</b> Gerenciar candidaturas.<br>
-<b>Socioemocionais:</b> Disciplina.<br>
-<b>Objetivo:</b> Controlar processo.<br>
-<b>Objeto:</b> Gestão de candidaturas.
-</div>
-
-<!-- ================= SEMANA 9 ================= -->
-<h2>Semana 9 - Processos Seletivos</h2>
-
-<div class="box">
-<strong>Aula 1: Testes</strong><br>
-<b>Habilidades Técnicas:</b> Resolver testes.<br>
-<b>Socioemocionais:</b> Controle emocional.<br>
-<b>Objetivo:</b> Entender triagem.<br>
-<b>Objeto:</b> Testes seletivos.
-</div>
-
-<div class="box">
-<strong>Aula 2: Dinâmica</strong><br>
-<b>Habilidades Técnicas:</b> Participar de dinâmica.<br>
-<b>Socioemocionais:</b> Trabalho em equipe.<br>
-<b>Objetivo:</b> Entender avaliação.<br>
-<b>Objeto:</b> Dinâmica de grupo.
-</div>
-
-<div class="box">
-<strong>Aula 3: Simulação</strong><br>
-<b>Habilidades Técnicas:</b> Simular dinâmica.<br>
-<b>Socioemocionais:</b> Colaboração.<br>
-<b>Objetivo:</b> Vivenciar processo.<br>
-<b>Objeto:</b> Prática de seleção.
-</div>
-
-<!-- ================= SEMANA 10 ================= -->
-<h2>Semana 10 - Entrevistas</h2>
-
-<div class="box">
-<strong>Aula 1: Tipos de entrevista</strong><br>
-<b>Habilidades Técnicas:</b> Estruturar respostas.<br>
-<b>Socioemocionais:</b> Postura profissional.<br>
-<b>Objetivo:</b> Entender entrevistas.<br>
-<b>Objeto:</b> Tipologias.
-</div>
-
-<div class="box">
-<strong>Aula 2: Comportamento</strong><br>
-<b>Habilidades Técnicas:</b> Comunicação não verbal.<br>
-<b>Socioemocionais:</b> Autocontrole.<br>
-<b>Objetivo:</b> Melhorar postura.<br>
-<b>Objeto:</b> Linguagem corporal.
-</div>
-
-<div class="box">
-<strong>Aula 3: Técnica STAR</strong><br>
-<b>Habilidades Técnicas:</b> Aplicar STAR.<br>
-<b>Socioemocionais:</b> Clareza.<br>
-<b>Objetivo:</b> Estruturar respostas.<br>
-<b>Objeto:</b> Storytelling.
-</div>
-
-<!-- ================= SEMANA 11 ================= -->
-<h2>Semana 11 - Entrevista Prática</h2>
-
-<div class="box">
-<strong>Aula 1: Preparação</strong><br>
-<b>Habilidades Técnicas:</b> Planejar entrevista.<br>
-<b>Socioemocionais:</b> Autoconfiança.<br>
-<b>Objetivo:</b> Preparação estratégica.<br>
-<b>Objeto:</b> Planejamento.
-</div>
-
-<div class="box">
-<strong>Aula 2: Simulação</strong><br>
-<b>Habilidades Técnicas:</b> Realizar entrevista.<br>
-<b>Socioemocionais:</b> Comunicação.<br>
-<b>Objetivo:</b> Prática real.<br>
-<b>Objeto:</b> Roleplay.
-</div>
-
-<div class="box">
-<strong>Aula 3: Feedback</strong><br>
-<b>Habilidades Técnicas:</b> Analisar desempenho.<br>
-<b>Socioemocionais:</b> Aceitar feedback.<br>
-<b>Objetivo:</b> Melhorar performance.<br>
-<b>Objeto:</b> Avaliação.
-</div>
-
-<!-- ================= SEMANA 12 ================= -->
-<h2>Semana 12 - Inteligência Emocional</h2>
-
-<div class="box">
-<strong>Aula 1: Ansiedade</strong><br>
-<b>Habilidades Técnicas:</b> Gerenciar emoções.<br>
-<b>Socioemocionais:</b> Resiliência.<br>
-<b>Objetivo:</b> Controlar ansiedade.<br>
-<b>Objeto:</b> Gestão emocional.
-</div>
-
-<div class="box">
-<strong>Aula 2: Empatia</strong><br>
-<b>Habilidades Técnicas:</b> Ler ambiente.<br>
-<b>Socioemocionais:</b> Empatia.<br>
-<b>Objetivo:</b> Entender pessoas.<br>
-<b>Objeto:</b> Inteligência social.
-</div>
-
-<div class="box">
-<strong>Aula 3: Resiliência</strong><br>
-<b>Habilidades Técnicas:</b> Superar desafios.<br>
-<b>Socioemocionais:</b> Persistência.<br>
-<b>Objetivo:</b> Manter empregabilidade.<br>
-<b>Objeto:</b> Antifragilidade.
-</div>
-
-<!-- ================= SEMANA 13 ================= -->
-<h2>Semana 13 - Imagem e Postura Profissional</h2>
-
-<div class="box">
-<strong>Aula 1: Persona Profissional</strong><br>
-<b>Habilidades Técnicas:</b> Adaptar apresentação pessoal.<br>
-<b>Socioemocionais:</b> Maturidade.<br>
-<b>Objetivo:</b> Entender comportamento profissional.<br>
-<b>Objeto:</b> Adaptação ao ambiente.
-</div>
-
-<div class="box">
-<strong>Aula 2: Dress Code</strong><br>
-<b>Habilidades Técnicas:</b> Adequar vestimenta.<br>
-<b>Socioemocionais:</b> Bom senso.<br>
-<b>Objetivo:</b> Entender comunicação visual.<br>
-<b>Objeto:</b> Imagem profissional.
-</div>
-
-<div class="box">
-<strong>Aula 3: Etiqueta</strong><br>
-<b>Habilidades Técnicas:</b> Aplicar etiqueta.<br>
-<b>Socioemocionais:</b> Respeito.<br>
-<b>Objetivo:</b> Comportamento adequado.<br>
-<b>Objeto:</b> Etiqueta corporativa.
-</div>
-
-<!-- ================= SEMANA 14 ================= -->
-<h2>Semana 14 - Comunicação Corporativa</h2>
-
-<div class="box">
-<strong>Aula 1: Linguagem formal</strong><br>
-<b>Habilidades Técnicas:</b> Comunicação escrita.<br>
-<b>Socioemocionais:</b> Clareza.<br>
-<b>Objetivo:</b> Adaptar linguagem.<br>
-<b>Objeto:</b> Comunicação corporativa.
-</div>
-
-<div class="box">
-<strong>Aula 2: E-mail profissional</strong><br>
-<b>Habilidades Técnicas:</b> Estruturar e-mail.<br>
-<b>Socioemocionais:</b> Organização.<br>
-<b>Objetivo:</b> Produzir comunicação formal.<br>
-<b>Objeto:</b> Escrita empresarial.
-</div>
-
-<div class="box">
-<strong>Aula 3: Comunicação digital</strong><br>
-<b>Habilidades Técnicas:</b> Usar chats corporativos.<br>
-<b>Socioemocionais:</b> Discernimento.<br>
-<b>Objetivo:</b> Comunicação adequada.<br>
-<b>Objeto:</b> Etiqueta digital.
-</div>
-
-<!-- ================= SEMANA 15 ================= -->
-<h2>Semana 15 - Trabalho em Equipe</h2>
-
-<div class="box">
-<strong>Aula 1: Hierarquia</strong><br>
-<b>Habilidades Técnicas:</b> Entender estrutura organizacional.<br>
-<b>Socioemocionais:</b> Respeito.<br>
-<b>Objetivo:</b> Reconhecer papéis.<br>
-<b>Objeto:</b> Hierarquia.
-</div>
-
-<div class="box">
-<strong>Aula 2: Diversidade</strong><br>
-<b>Habilidades Técnicas:</b> Trabalhar com diferentes perfis.<br>
-<b>Socioemocionais:</b> Inclusão.<br>
-<b>Objetivo:</b> Entender gerações.<br>
-<b>Objeto:</b> Diversidade.
-</div>
-
-<div class="box">
-<strong>Aula 3: Trabalho em equipe</strong><br>
-<b>Habilidades Técnicas:</b> Colaborar.<br>
-<b>Socioemocionais:</b> Cooperação.<br>
-<b>Objetivo:</b> Desenvolver sinergia.<br>
-<b>Objeto:</b> Equipes.
-</div>
-
-<!-- ================= SEMANA 16 ================= -->
-<h2>Semana 16 - Ética e Feedback</h2>
-
-<div class="box">
-<strong>Aula 1: Feedback</strong><br>
-<b>Habilidades Técnicas:</b> Receber feedback.<br>
-<b>Socioemocionais:</b> Flexibilidade.<br>
-<b>Objetivo:</b> Crescimento profissional.<br>
-<b>Objeto:</b> Feedback.
-</div>
-
-<div class="box">
-<strong>Aula 2: Ética</strong><br>
-<b>Habilidades Técnicas:</b> Identificar condutas.<br>
-<b>Socioemocionais:</b> Integridade.<br>
-<b>Objetivo:</b> Comportamento ético.<br>
-<b>Objeto:</b> Ética profissional.
-</div>
-
-<div class="box">
-<strong>Aula 3: Proatividade</strong><br>
-<b>Habilidades Técnicas:</b> Resolver problemas.<br>
-<b>Socioemocionais:</b> Iniciativa.<br>
-<b>Objetivo:</b> Atitude profissional.<br>
-<b>Objeto:</b> Proatividade.
-</div>
-
-<!-- ================= SEMANA 17 ================= -->
-<h2>Semana 17 - Produtividade</h2>
-
-<div class="box">
-<strong>Aula 1: Gestão do tempo</strong><br>
-<b>Habilidades Técnicas:</b> Priorizar tarefas.<br>
-<b>Socioemocionais:</b> Disciplina.<br>
-<b>Objetivo:</b> Organizar tempo.<br>
-<b>Objeto:</b> Matriz Eisenhower.
-</div>
-
-<div class="box">
-<strong>Aula 2: Organização</strong><br>
-<b>Habilidades Técnicas:</b> Organizar ambiente.<br>
-<b>Socioemocionais:</b> Autonomia.<br>
-<b>Objetivo:</b> Melhorar produtividade.<br>
-<b>Objeto:</b> Método 5S.
-</div>
-
-<div class="box">
-<strong>Aula 3: Ferramentas digitais</strong><br>
-<b>Habilidades Técnicas:</b> Usar apps.<br>
-<b>Socioemocionais:</b> Autonomia.<br>
-<b>Objetivo:</b> Gerenciar tarefas.<br>
-<b>Objeto:</b> Softwares.
-</div>
-
-<!-- ================= SEMANA 18 ================= -->
-<h2>Semana 18 - Empreendedorismo</h2>
-
-<div class="box">
-<strong>Aula 1: Intraempreendedorismo</strong><br>
-<b>Habilidades Técnicas:</b> Identificar melhorias.<br>
-<b>Socioemocionais:</b> Criatividade.<br>
-<b>Objetivo:</b> Agir como dono.<br>
-<b>Objeto:</b> Inovação.
-</div>
-
-<div class="box">
-<strong>Aula 2: Inovação</strong><br>
-<b>Habilidades Técnicas:</b> Melhorar processos.<br>
-<b>Socioemocionais:</b> Criatividade.<br>
-<b>Objetivo:</b> Aplicar inovação.<br>
-<b>Objeto:</b> Inovação contínua.
-</div>
-
-<div class="box">
-<strong>Aula 3: Perfis profissionais</strong><br>
-<b>Habilidades Técnicas:</b> Identificar perfis.<br>
-<b>Socioemocionais:</b> Colaboração.<br>
-<b>Objetivo:</b> Entender papéis.<br>
-<b>Objeto:</b> Perfis comportamentais.
-</div>
-
-<!-- ================= SEMANA 19 ================= -->
-<h2>Semana 19 - Modelo de Negócios</h2>
-
-<div class="box">
-<strong>Aula 1: Modelo de negócios</strong><br>
-<b>Habilidades Técnicas:</b> Entender valor.<br>
-<b>Socioemocionais:</b> Visão sistêmica.<br>
-<b>Objetivo:</b> Compreender empresa.<br>
-<b>Objeto:</b> Estrutura de negócios.
-</div>
-
-<div class="box">
-<strong>Aula 2: Canvas</strong><br>
-<b>Habilidades Técnicas:</b> Preencher canvas.<br>
-<b>Socioemocionais:</b> Organização.<br>
-<b>Objetivo:</b> Modelar negócio.<br>
-<b>Objeto:</b> Canvas.
-</div>
-
-<div class="box">
-<strong>Aula 3: Cliente</strong><br>
-<b>Habilidades Técnicas:</b> Analisar cliente.<br>
-<b>Socioemocionais:</b> Empatia.<br>
-<b>Objetivo:</b> Entender necessidades.<br>
-<b>Objeto:</b> Mapa de empatia.
-</div>
-
-<!-- ================= SEMANA 20 ================= -->
-<h2>Semana 20 - Qualidade</h2>
-
-<div class="box">
-<strong>Aula 1: KPIs</strong><br>
-<b>Habilidades Técnicas:</b> Interpretar indicadores.<br>
-<b>Socioemocionais:</b> Comprometimento.<br>
-<b>Objetivo:</b> Medir desempenho.<br>
-<b>Objeto:</b> Indicadores.
-</div>
-
-<div class="box">
-<strong>Aula 2: PDCA</strong><br>
-<b>Habilidades Técnicas:</b> Aplicar PDCA.<br>
-<b>Socioemocionais:</b> Melhoria contínua.<br>
-<b>Objetivo:</b> Gestão qualidade.<br>
-<b>Objeto:</b> PDCA.
-</div>
-
-<div class="box">
-<strong>Aula 3: Atendimento</strong><br>
-<b>Habilidades Técnicas:</b> Melhorar atendimento.<br>
-<b>Socioemocionais:</b> Empatia.<br>
-<b>Objetivo:</b> Fidelizar cliente.<br>
-<b>Objeto:</b> Qualidade total.
-</div>
-
-<!-- ================= SEMANA 21 ================= -->
-<h2>Semana 21 - Finanças Pessoais</h2>
-
-<div class="box">
-<strong>Aula 1: Dinheiro</strong><br>
-<b>Habilidades Técnicas:</b> Planejamento financeiro.<br>
-<b>Socioemocionais:</b> Consciência.<br>
-<b>Objetivo:</b> Entender renda.<br>
-<b>Objeto:</b> Vida financeira.
-</div>
-
-<div class="box">
-<strong>Aula 2: Consumo</strong><br>
-<b>Habilidades Técnicas:</b> Controlar gastos.<br>
-<b>Socioemocionais:</b> Autocontrole.<br>
-<b>Objetivo:</b> Diferenciar desejo/necessidade.<br>
-<b>Objeto:</b> Consumo.
-</div>
-
-<div class="box">
-<strong>Aula 3: Metas</strong><br>
-<b>Habilidades Técnicas:</b> Definir metas.<br>
-<b>Socioemocionais:</b> Planejamento.<br>
-<b>Objetivo:</b> Planejar futuro.<br>
-<b>Objeto:</b> Objetivos financeiros.
-</div>
-
-<!-- ================= SEMANA 22 ================= -->
-<h2>Semana 22 - Controle Financeiro</h2>
-
-<div class="box">
-<strong>Aula 1: Orçamento</strong><br>
-<b>Habilidades Técnicas:</b> Criar orçamento.<br>
-<b>Socioemocionais:</b> Disciplina.<br>
-<b>Objetivo:</b> Organizar finanças.<br>
-<b>Objeto:</b> Orçamento pessoal.
-</div>
-
-<div class="box">
-<strong>Aula 2: Planilha</strong><br>
-<b>Habilidades Técnicas:</b> Criar controle.<br>
-<b>Socioemocionais:</b> Organização.<br>
-<b>Objetivo:</b> Registrar gastos.<br>
-<b>Objeto:</b> Planilha financeira.
-</div>
-
-<div class="box">
-<strong>Aula 3: Dívidas</strong><br>
-<b>Habilidades Técnicas:</b> Evitar dívidas.<br>
-<b>Socioemocionais:</b> Responsabilidade.<br>
-<b>Objetivo:</b> Entender juros.<br>
-<b>Objeto:</b> Crédito.
-</div>
-
-<!-- ================= SEMANA 23 ================= -->
-<h2>Semana 23 - Planejamento de Carreira</h2>
-
-<div class="box">
-<strong>Aula 1: Lifelong Learning</strong><br>
-<b>Habilidades Técnicas:</b> Planejar carreira.<br>
-<b>Socioemocionais:</b> Protagonismo.<br>
-<b>Objetivo:</b> Aprendizado contínuo.<br>
-<b>Objeto:</b> Lifelong learning.
-</div>
-
-<div class="box">
-<strong>Aula 2: PDI</strong><br>
-<b>Habilidades Técnicas:</b> Criar plano.<br>
-<b>Socioemocionais:</b> Autonomia.<br>
-<b>Objetivo:</b> Estruturar metas.<br>
-<b>Objeto:</b> PDI.
-</div>
-
-<div class="box">
-<strong>Aula 3: Oficina</strong><br>
-<b>Habilidades Técnicas:</b> Desenvolver PDI.<br>
-<b>Socioemocionais:</b> Comprometimento.<br>
-<b>Objetivo:</b> Aplicação prática.<br>
-<b>Objeto:</b> Construção do PDI.
-</div>
-
-<!-- ================= SEMANA 24 ================= -->
-<h2>Semana 24 - Apresentação</h2>
-
-<div class="box">
-<strong>Aula 1: Preparação</strong><br>
-<b>Habilidades Técnicas:</b> Criar apresentação.<br>
-<b>Socioemocionais:</b> Confiança.<br>
-<b>Objetivo:</b> Preparar discurso.<br>
-<b>Objeto:</b> Apresentação.
-</div>
-
-<div class="box">
-<strong>Aula 2: Apresentação</strong><br>
-<b>Habilidades Técnicas:</b> Apresentar.<br>
-<b>Socioemocionais:</b> Comunicação.<br>
-<b>Objetivo:</b> Prática.<br>
-<b>Objeto:</b> Oratória.
-</div>
-
-<div class="box">
-<strong>Aula 3: Encerramento</strong><br>
-<b>Habilidades Técnicas:</b> Finalizar projeto.<br>
-<b>Socioemocionais:</b> Reflexão.<br>
-<b>Objetivo:</b> Fechamento.<br>
-<b>Objeto:</b> Avaliação final.
-</div>
-
-</div>
-</p>
+    <div class="abnt-container">
+        <h1>CARREIRA E COMPETÊNCIAS PARA O MERCADO DE TRABALHO</h1>
+        <div class="subtitulo">2ª Série – Desenvolvimento de Sistemas</div>
+
+        <div class="sumario">
+            <h3>SUMÁRIO</h3>
+            <ul class="sumario-lista">
+                <li><a href="#semana1">Semana 1 – Autoconhecimento</a></li>
+                <li><a href="#semana2">Semana 2 – Habilidades e Competências</a></li>
+                <li><a href="#semana3">Semana 3 – Mundo VUCA ao Mundo BANI</a></li>
+                <li><a href="#semana4">Semana 4 – Horizontes Profissionais</a></li>
+                <li><a href="#semana5">Semana 5 – Construção de Currículo</a></li>
+                <li><a href="#semana6">Semana 6 – LinkedIn e Marca Profissional</a></li>
+                <li><a href="#semana7">Semana 7 – Vídeo Currículo e Pitch</a></li>
+                <li><a href="#semana8">Semana 8 – Busca Ativa de Vagas</a></li>
+                <li><a href="#semana9">Semana 9 – Testes e Dinâmicas de Grupo</a></li>
+                <li><a href="#semana10">Semana 10 – Entrevista de Emprego</a></li>
+                <li><a href="#semana11">Semana 11 – Simulação e Feedback de Entrevista</a></li>
+                <li><a href="#semana12">Semana 12 – Gestão Emocional em Processos Seletivos</a></li>
+                <li><a href="#semana13">Semana 13 – Inteligência Social e Adaptação</a></li>
+                <li><a href="#semana14">Semana 14 – Comunicação Não-Verbal e Imagem</a></li>
+                <li><a href="#semana15">Semana 15 – Comunicação Escrita e Hierarquia</a></li>
+                <li><a href="#semana16">Semana 16 – Feedback, Ética e Proatividade</a></li>
+                <li><a href="#semana17">Semana 17 – Gestão do Tempo e Produtividade</a></li>
+                <li><a href="#semana18">Semana 18 – Intraempreendedorismo e Inovação</a></li>
+                <li><a href="#semana19">Semana 19 – Modelo de Negócios e Foco no Cliente</a></li>
+                <li><a href="#semana20">Semana 20 – Diversidade e Equipes de Alto Desempenho</a></li>
+                <li><a href="#semana21">Semana 21 – Projeto de Vida e Carreira</a></li>
+                <li><a href="#semana22">Semana 22 – Construção do PDI (Parte 1)</a></li>
+                <li><a href="#semana23">Semana 23 – Oficina de PDI (Mão na Massa)</a></li>
+                <li><a href="#semana24">Semana 24 – Apresentação do PDI e Encerramento</a></li>
+                <li><a href="#semana25">Semana 25 – Revisão Geral e Ajustes Finais</a></li>
+                <li><a href="#semana26">Semana 26 – Projeções Futuras e Fechamento</a></li>
+            </ul>
+        </div>
+
+        <!-- SEMANA 1 -->
+        <section id="semana1" class="semana">
+            <h3>SEMANA 1 – Autoconhecimento e Orientação Profissional</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Autoconhecimento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar ferramentas e estratégias de autoconhecimento aplicadas ao desenvolvimento pessoal.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer os princípios do autoconhecimento e a Linha do Tempo como ferramenta de autoavaliação.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Tipologias e teste 16 personalidades</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar ferramentas e estratégias básicas de autoconhecimento aplicadas ao desenvolvimento pessoal.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o processo de inteligência emocional diante de situações adversas.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Inteligência emocional</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar ferramentas e estratégias básicas de autoconhecimento aplicadas ao desenvolvimento pessoal.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito e os pilares da inteligência emocional no contexto profissional.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 2 -->
+        <section id="semana2" class="semana">
+            <h3>SEMANA 2 – Conhecendo o Mercado de Trabalho: Habilidades e Competências</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Habilidades e competências</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar as principais habilidades e competências valorizadas pelo mercado de trabalho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a importância das habilidades e competências no ambiente profissional.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Competência e habilidades de um profissional de sucesso</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar as principais habilidades e competências valorizadas pelo mercado de trabalho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender as competências exigidas pelo mercado de trabalho atual.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Árvore de Competências</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar as principais habilidades e competências valorizadas pelo mercado de trabalho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Mapear as competências essenciais para o desempenho bem-sucedido.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 3 -->
+        <section id="semana3" class="semana">
+            <h3>SEMANA 3 – Conhecendo o Mercado de Trabalho: Mundo VUCA ao BANI</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Do mundo VUCA ao mundo BANI</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender as transformações do mundo do trabalho e suas implicações para a carreira profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar estratégias de adaptação e inovação no mundo BANI e VUCA.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Mundo do trabalho</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender as transformações do mundo do trabalho e suas implicações para a carreira profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar as competências essenciais para o sucesso profissional no novo cenário.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Tendências do mercado de trabalho</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender as transformações do mundo do trabalho e suas implicações para a carreira profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar estratégias para se adaptar às tendências do mercado de trabalho.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 4 -->
+        <section id="semana4" class="semana">
+            <h3>SEMANA 4 – Conhecendo o Mercado de Trabalho: Explorando Horizontes Profissionais</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Explorando habilidades e horizontes profissionais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explorar diferentes trajetórias profissionais e oportunidades de estágio (como o BEEM) alinhadas aos interesses pessoais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar habilidades individuais importantes para o mercado de trabalho.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Oportunidade na Prática: Programa BEEM</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explorar diferentes trajetórias profissionais e oportunidades de estágio alinhadas aos interesses pessoais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer o Programa BEEM como oportunidade de estágio supervisionado e conhecer o processo de adesão.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Navegando pelos caminhos de carreira</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explorar diferentes trajetórias profissionais e oportunidades de estágio alinhadas aos interesses pessoais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Considerar diferentes abordagens para o desenvolvimento de suas carreiras.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 5 -->
+        <section id="semana5" class="semana">
+            <h3>SEMANA 5 – Planejamento e Preparação Profissional: Construção de Currículo</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Construindo identidades profissionais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar currículo conforme as expectativas do mercado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a importância do currículo e listar seus componentes indispensáveis.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Desenvolvendo seu currículo profissional</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar currículo conforme as expectativas do mercado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar os elementos essenciais de um currículo eficaz e aplicar na elaboração de um esboço.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: História profissional e construção de currículo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar currículo conforme as expectativas do mercado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar um currículo eficaz e realizar uma busca estratégica por vagas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 6 -->
+        <section id="semana6" class="semana">
+            <h3>SEMANA 6 – Planejamento e Preparação Profissional: LinkedIn e Marca Profissional</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Introdução à plataforma LinkedIn</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais elementos para a criação de um perfil profissional eficaz no LinkedIn.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender os conceitos fundamentais do LinkedIn e seus objetivos.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Potencializando sua presença no LinkedIn</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais elementos para a criação de um perfil profissional eficaz no LinkedIn.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Configurar de forma eficiente um perfil no LinkedIn destacando resumo e experiências.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Construindo um perfil atrativo no LinkedIn</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais elementos para a criação de um perfil profissional eficaz no LinkedIn.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprimorar perfis no LinkedIn por meio da configuração eficiente e uso de recursos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 7 -->
+        <section id="semana7" class="semana">
+            <h3>SEMANA 7 – Planejamento e Preparação Profissional: Vídeo Currículo e Pitch</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Carta de apresentação e e-mail profissional</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Produzir materiais de apresentação profissional escritos com base em orientações estruturadas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer a importância da carta de apresentação e do e-mail de candidatura.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Vídeo Currículo e Roteiro</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Produzir materiais de apresentação profissional em vídeo com base em modelos estruturados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar as características e finalidades da apresentação em vídeo no contexto de seleção.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: O Pitch Pessoal</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Produzir um pitch pessoal conciso e persuasivo para venda da própria imagem profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar técnicas de storytelling para criar um pitch de elevador eficaz.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 8 -->
+        <section id="semana8" class="semana">
+            <h3>SEMANA 8 – Busca de Oportunidades de Trabalho: Fontes de Vagas e Networking</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Onde estão as vagas?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estratégias de busca ativa de emprego, utilizando networking e ferramentas de organização para gerenciar candidaturas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Mapear as principais fontes de vagas (sites, LinkedIn, etc).</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Networking Estratégico</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estratégias de busca ativa de emprego, utilizando networking e ferramentas de organização.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a diferença entre networking e oportunismo e como abordar conexões.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Organização da Busca Ativa</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar estratégias de busca ativa de emprego, utilizando ferramentas de organização.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar um sistema pessoal de controle de candidaturas e follow-up.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 9 -->
+        <section id="semana9" class="semana">
+            <h3>SEMANA 9 – Busca de Oportunidades de Trabalho: Testes e Dinâmicas de Grupo</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Testes Lógicos e Comportamentais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Praticar as etapas de triagem em processos seletivos, incluindo a lógica de testes e o funcionamento de dinâmicas de grupo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a finalidade dos testes de perfil e raciocínio lógico na seleção.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Dinâmica de Grupo (Teoria)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Praticar as etapas de triagem em processos seletivos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender os objetivos e os critérios de avaliação das dinâmicas de grupo.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Simulação Prática de Dinâmica</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Praticar as etapas de triagem em processos seletivos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Vivenciar uma dinâmica de grupo simulada e receber feedback sobre desempenho.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 10 -->
+        <section id="semana10" class="semana">
+            <h3>SEMANA 10 – Busca de Oportunidades de Trabalho: Entrevista de Emprego</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Tipos de Entrevista e Perguntas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar técnicas de entrevista de emprego, estruturando respostas comportamentais (STAR) e adequando a linguagem não-verbal.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a estrutura das entrevistas e as perguntas mais frequentes dos recrutadores.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Comportamento na Entrevista</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar técnicas de entrevista de emprego.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer a importância da comunicação não-verbal e da postura adequada.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: A Técnica STAR</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar técnicas de entrevista de emprego, estruturando respostas comportamentais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar a metodologia STAR (Situação, tarefa, ação e resposta).</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 11 -->
+        <section id="semana11" class="semana">
+            <h3>SEMANA 11 – Busca de Oportunidades de Trabalho: Simulação e Feedback de Entrevista</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Preparação Pré-Entrevista</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar o ciclo prático de uma entrevista, desde a pesquisa prévia sobre a empresa até a simulação e análise de desempenho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Elaborar um roteiro de preparação personalizado com base na cultura da empresa alvo.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Entrevista Simulada (Roleplay)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar o ciclo prático de uma entrevista.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar a entrevista em ambiente seguro para identificar pontos de melhoria.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Análise e Feedback</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar o ciclo prático de uma entrevista, com análise de desempenho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar erros comuns e acertos através da análise das simulações realizadas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 12 -->
+        <section id="semana12" class="semana">
+            <h3>SEMANA 12 – Autoconhecimento e Orientação Profissional: Gestão Emocional</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Gestão da Ansiedade e Frustração</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar estratégias práticas de regulação emocional e leitura de ambiente corporativo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o impacto da ansiedade no desempenho e estratégias de enfrentamento.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Inteligência Emocional Aplicada</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer gatilhos emocionais e aplicar técnicas de autocontrole.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fortalecer a resiliência diante de pressões em processos seletivos.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Empatia e Relacionamento Interpessoal</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Exercitar a escuta ativa e a empatia no contato com recrutadores e colegas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Desenvolver competências sociais para o ambiente corporativo.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 13 -->
+        <section id="semana13" class="semana">
+            <h3>SEMANA 13 – Conhecendo o Mercado de Trabalho: Inteligência Social e Adaptação</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Inteligência Social no ambiente corporativo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar sinais não-verbais e o clima organizacional através da observação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Desenvolver a percepção social para interações profissionais eficazes.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Resiliência e Antifragilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Relacionar a resiliência com a manutenção da empregabilidade a longo prazo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar estratégias para transformar adversidades em oportunidades de crescimento.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Adaptação ao contexto profissional (Code-Switching)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o conceito de 'Code-Switching' (troca de código) entre escola e empresa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar a transição da linguagem coloquial para a linguagem corporativa.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 14 -->
+        <section id="semana14" class="semana">
+            <h3>SEMANA 14 – Conhecendo o Mercado de Trabalho: Comunicação Não-Verbal e Imagem</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Comunicação Não-Verbal</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar sinais não-verbais e sua influência na comunicação profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer como a postura corporal comunica autoridade, autenticidade e criatividade.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Imagem e Vestimenta Profissional</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer como a vestimenta pode comunicar autoridade, autenticidade e criatividade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir uma imagem alinhada ao ambiente corporativo e aos valores pessoais.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Etiqueta no cotidiano empresarial</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer comportamentos adequados no ambiente profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Internalizar normas de conduta que favoreçam a integração e o respeito no trabalho.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 15 -->
+        <section id="semana15" class="semana">
+            <h3>SEMANA 15 – Conhecendo o Mercado de Trabalho: Comunicação Escrita e Hierarquia</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Vocabulário e tom de voz corporativo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Praticar a transição da linguagem coloquial para a linguagem corporativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Adequar o discurso ao contexto profissional formal.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Comunicação Escrita Empresarial</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os elementos essenciais de um e-mail (Assunto, corpo, assinatura).</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Produzir e-mails profissionais claros e objetivos.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Etiqueta em Mensageiros Instantâneos e Estrutura Organizacional</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Estabelecer boas práticas para uso de WhatsApp e chats corporativos. Reconhecer o organograma da empresa e os limites de cada função.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Comunicar-se eficientemente em canais digitais respeitando a hierarquia organizacional.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 16 -->
+        <section id="semana16" class="semana">
+            <h3>SEMANA 16 – Conhecendo o Mercado de Trabalho: Feedback, Ética e Proatividade</h3>
+            <div class="aula-item">
+                <h4>Aula 1: A Cultura do Feedback</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os princípios de ética, compliance e técnicas de recebimento de feedback na rotina profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o feedback como ferramenta de crescimento profissional.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Ética Profissional e Compliance</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar comportamentos éticos e antiéticos no cotidiano corporativo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Agir com integridade e flexibilidade, demonstrando maturidade ao lidar com correções.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Proatividade vs. Reatividade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Incorporar a 'postura de dono' nas atividades cotidianas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar atitude proativa de reativa, com foco em solução de problemas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 17 -->
+        <section id="semana17" class="semana">
+            <h3>SEMANA 17 – Conhecendo o Mercado de Trabalho: Gestão do Tempo e Produtividade</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Gestão do Tempo e Prazos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métodos (Matriz de Eisenhower) para gestão do tempo e priorização.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a diferença entre urgência e importância.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Organização do Ambiente (Físico e Digital)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar conceitos de 5S básicos na organização pessoal.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Desenvolver disciplina e autonomia na gestão das próprias responsabilidades.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Ferramentas Digitais de Produtividade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conhecer aplicativos e softwares comuns de gestão de tarefas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Utilizar ferramentas de apoio à produtividade no dia a dia profissional.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 18 -->
+        <section id="semana18" class="semana">
+            <h3>SEMANA 18 – Iniciação Empreendedora: Intraempreendedorismo e Inovação</h3>
+            <div class="aula-item">
+                <h4>Aula 1: O Espírito Intraempreendedor</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar oportunidades de inovação incremental e melhoria de processos dentro de uma estrutura organizacional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o valor do colaborador que age como dono do negócio.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Inovação no Dia a Dia</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer a inovação como melhoria contínua e não apenas invenção.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Demonstrar criatividade e comprometimento com a solução de problemas.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Perfis Profissionais na Empresa</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os diferentes perfis comportamentais necessários para uma empresa funcionar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Valorizar a diversidade de papéis e competências na organização.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 19 -->
+        <section id="semana19" class="semana">
+            <h3>SEMANA 19 – Iniciação Empreendedora: Modelo de Negócios e Foco no Cliente</h3>
+            <div class="aula-item">
+                <h4>Aula 1: O que é um Modelo de Negócios?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender como uma empresa gera, entrega e captura valor.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar o conceito de Modelo de Negócios e a ferramenta Canvas de forma simplificada.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Mapeando a Empresa (Canvas Simplificado)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Preencher um Canvas simplificado focado em entender a estrutura organizacional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Desenvolver visão sistêmica sobre o funcionamento de uma organização.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: O Cliente (Interno e Externo)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar o Mapa da Empatia simplificado para entender as dores do cliente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fortalecer o foco no cliente como diferencial competitivo.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 20 -->
+        <section id="semana20" class="semana">
+            <h3>SEMANA 20 – Conhecendo o Mercado de Trabalho: Diversidade e Equipes de Alto Desempenho</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Diversidade e Inclusão na equipe</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar as características das diferentes gerações e perfis no ambiente de trabalho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Valorizar a diversidade como fator de inovação e produtividade.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Sinergia e Interdependência</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o conceito de sinergia e interdependência nas tarefas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Desenvolver atitude colaborativa para o alcance de metas comuns.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Dinâmica de Equipes de Alto Desempenho</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os fatores que tornam uma equipe eficaz e engajada.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Vivenciar os princípios de equipes de alto desempenho através de atividades práticas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 21 -->
+        <section id="semana21" class="semana">
+            <h3>SEMANA 21 – Planejamento e Preparação Profissional: Projeto de Vida e Carreira</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Visão de Futuro e Propósito</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Relacionar interesses pessoais com possibilidades de atuação profissional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir uma visão de carreira alinhada ao propósito de vida.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Metas e Objetivos Profissionais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Estabelecer metas de curto, médio e longo prazo utilizando a metodologia SMART.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Traduzir sonhos em objetivos mensuráveis e alcançáveis.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Lifelong Learning – Aprendizado Contínuo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar estratégias de aprendizado contínuo para a carreira em Desenvolvimento de Sistemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Incorporar a mentalidade de aprendizado permanente como ativo profissional.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 22 -->
+        <section id="semana22" class="semana">
+            <h3>SEMANA 22 – Planejamento e Preparação Profissional: Construção do PDI (Parte 1)</h3>
+            <div class="aula-item">
+                <h4>Aula 1: O que é um Plano de Desenvolvimento Individual (PDI)?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a estrutura e a finalidade de um PDI.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer o PDI como ferramenta de protagonismo na carreira.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Autoavaliação e Diagnóstico de Competências</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Realizar diagnóstico pessoal de pontos fortes e áreas de melhoria.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fundamentar o PDI com base em uma autoavaliação honesta e estruturada.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Definindo Rotas de Desenvolvimento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Selecionar cursos, certificações e experiências alinhadas aos objetivos profissionais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Esboçar os primeiros passos do PDI com ações concretas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 23 -->
+        <section id="semana23" class="semana">
+            <h3>SEMANA 23 – Planejamento e Preparação Profissional: Oficina de PDI (Mão na Massa)</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Estruturando o PDI</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Organizar o plano em formato executável com prazos e indicadores.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir a base do documento de Plano de Desenvolvimento Individual.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Revisão e Ajustes do PDI</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Revisar criticamente o plano e receber feedback de colegas e professor.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprimorar o PDI com contribuições colaborativas.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Oficina de PDI (Mão na Massa)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar um Plano de Desenvolvimento Individual (PDI) estruturado, alinhado ao conceito de Lifelong Learning.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir a primeira versão completa do Plano de Desenvolvimento Individual.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 24 -->
+        <section id="semana24" class="semana">
+            <h3>SEMANA 24 – Planejamento e Preparação Profissional: Apresentação do PDI e Encerramento</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Preparação e Refino da Apresentação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Sintetizar a trajetória e os planos futuros em uma apresentação oral estruturada e persuasiva.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Preparar o material de apoio e o discurso para a apresentação final.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Apresentações dos PDIs (Parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Exercitar a oratória e a escuta respeitosa das apresentações dos colegas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Apresentar o PDI com clareza e receber feedback construtivo.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Apresentações Finais e Fechamento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Concluir as apresentações e realizar o fechamento da disciplina com feedback final.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Encerrar o ciclo formativo celebrando conquistas e projetando próximos passos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 25 -->
+        <section id="semana25" class="semana">
+            <h3>SEMANA 25 – Revisão Geral e Ajustes Finais</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Revisão de Autoconhecimento e Inteligência Emocional</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Relembrar os fundamentos do autoconhecimento e da inteligência emocional.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o aprendizado sobre gestão de emoções no contexto profissional.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Revisão de Estratégias de Busca e Entrevista</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Repassar técnicas de currículo, LinkedIn, networking e entrevista.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir fluência nos processos de seleção e inserção profissional.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Revisão de Postura Profissional e PDI</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar ética, proatividade, comunicação e o Plano de Desenvolvimento Individual.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fechar o ciclo formativo com uma visão global das competências trabalhadas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 26 -->
+        <section id="semana26" class="semana">
+            <h3>SEMANA 26 – Projeções Futuras e Fechamento do Ano Letivo</h3>
+            <div class="aula-item">
+                <h4>Aula 1: Tendências e Oportunidades na Área de Tecnologia</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar o panorama atual e as perspectivas do mercado de Desenvolvimento de Sistemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Inspirar os alunos para os próximos passos da carreira técnica.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 2: Roda de Conversa: Expectativas e Projetos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compartilhar planos de curto prazo (estágio, BEEM, certificações) e ouvir experiências.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fortalecer a rede de apoio e o sentimento de comunidade entre os alunos.</div>
+            </div>
+            <div class="aula-item">
+                <h4>Aula 3: Encerramento e Celebração</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Refletir sobre a jornada de aprendizado e as competências desenvolvidas ao longo do ano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Encerrar a disciplina com feedback final e reconhecimento das conquistas individuais e coletivas.</div>
+            </div>
+        </section>
+
+        <footer>
+            Documento elaborado conforme normas ABNT (NBR 14724) para apresentação de plano de ensino.<br>
+            Disciplina: Carreira e Competências para o Mercado de Trabalho – 2ª Série (Desenvolvimento de Sistemas)
+        </footer>
+    </div>
 </body>
 </html>
