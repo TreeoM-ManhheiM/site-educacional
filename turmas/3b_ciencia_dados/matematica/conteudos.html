@@ -1,363 +1,817 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Matemática e Estatística</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Plano de Ensino - Matemática e Estatística para Ciência de Dados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000000;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .abnt-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 3cm 2cm 2cm 3cm;
+            background: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 2cm 0 0.5cm 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: normal;
+            margin-top: -0.2cm;
+            margin-bottom: 1.5cm;
+            font-style: normal;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3cm;
+        }
+
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 0.8cm 0 0.4cm 0;
+            color: #1a2a4f;
+        }
+
+        h4 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 0.6cm 0 0.2cm 0;
+            font-style: normal;
+            border-bottom: 1px dotted #ddd;
+            padding-bottom: 2px;
+        }
+
+        .semana {
+            margin-bottom: 0.8cm;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .aula-item {
+            margin-left: 0.7cm;
+            margin-bottom: 0.45cm;
+            padding-left: 0.2cm;
+        }
+
+        .tema-semana {
+            font-size: 11pt;
+            font-style: italic;
+            background-color: #f4f4f9;
+            padding: 0.2cm 0.4cm;
+            margin-top: 0.2cm;
+            margin-bottom: 0.3cm;
+            border-left: 4px solid #2c3e66;
+            margin-left: 0.7cm;
+        }
+
+        .tema-semana strong {
+            font-style: normal;
+            color: #1a2a4f;
+        }
+
+        .habilidades,
+        .socioemocionais,
+        .objetivo {
+            margin-left: 0.5cm;
+            margin-top: 0.15cm;
+            margin-bottom: 0.1cm;
+            text-align: justify;
+        }
+
+        .habilidades strong,
+        .socioemocionais strong,
+        .objetivo strong {
+            font-weight: bold;
+        }
+
+        .sumario {
+            margin: 1cm 0 1.2cm 0;
+            background: #fafafc;
+            padding: 0.5cm 0.8cm;
+            border: 1px solid #ddd;
+        }
+        .sumario h3 {
+            margin-top: 0;
+            font-size: 13pt;
+            text-transform: uppercase;
+        }
+        .sumario-lista {
+            columns: 2;
+            column-gap: 1.2cm;
+            list-style: none;
+            padding-left: 0.2cm;
+        }
+        .sumario-lista li {
+            margin-bottom: 0.2cm;
+            font-size: 10pt;
+        }
+        .sumario-lista a {
+            text-decoration: none;
+            color: #1e466e;
+        }
+        .sumario-lista a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 1.8cm;
+            border-top: 1px solid #aaa;
+            padding-top: 0.5cm;
+            font-size: 10pt;
+            text-align: center;
+            color: #444;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .abnt-container {
+                padding: 3cm 2cm 2cm 3cm;
+                box-shadow: none;
+            }
+            .sumario {
+                background: white;
+                border: 1px solid #ccc;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+            }
+            .semana {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .abnt-container {
+                padding: 1.5cm 1cm 1.5cm 1.5cm;
+            }
+            .sumario-lista {
+                columns: 1;
+            }
+            h1 {
+                font-size: 16pt;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<h1>Matemática e Estatística para Ciência de Dados</h1>
-<p><strong>Carga horária:</strong> 100h</p>
-
-<h2>Unidades Curriculares</h2>
-<ul>
-<li>I - Matemática Aplicada — 30h</li>
-<li>II - Estatística Aplicada — 60h</li>
-<li>III - Projeto de Preparação de Dados — 10h</li>
-</ul>
-
-<br>
-<a href="index.html">Voltar para 3B Ciência de Dados</a>
-
-
-<title>Matemática para Ciência de Dados</title>
-
-
-<h1>Matemática para Ciência de Dados</h1>
-
-<p>
-Este material apresenta os conteúdos semanais da disciplina.
-Cada semana possui aulas e um pequeno exercício para praticar.
-</p>
-
-<hr>
-
-<h2>Semana 1 — Álgebra Linear: Vetores e Matrizes</h2>
-
-<ul>
-<li>Aula 1: Introdução a vetores e matrizes</li>
-<li>Aula 2: Operações com vetores</li>
-<li>Aula 3: Exercícios de fixação</li>
-</ul>
-
-<p><b>Exercício da semana:</b><br>
-Represente um vetor de duas dimensões e some com outro vetor.
-</p>
-
-<hr>
-
-<h2>Semana 2 — Conceitos Básicos e Tipos de Dados</h2>
-
-<ul>
-<li>Aula 1: Introdução aos tipos de dado</li>
-<li>Aula 2: Tipos de dado e aplicações</li>
-<li>Aula 3: Exercícios de fixação</li>
-</ul>
-
-<p><b>Exercício da semana:</b><br>
-Identifique exemplos de dados numéricos, categóricos e textuais.
-</p>
-
-<hr>
-
-<h2>Semana 3 — Álgebra Linear (Matrizes)</h2>
-
-<ul>
-<li>Aula 1: Operações com matrizes (parte 1)</li>
-<li>Aula 2: Operações com matrizes (parte 2)</li>
-<li>Aula 3: Exercícios de fixação</li>
-</ul>
-
-<p><b>Exercício da semana:</b><br>
-Multiplique duas matrizes simples 2x2.
-</p>
-
-<hr>
-
-<h2>Semana 4 — Estatística: Tendência Central</h2>
-
-<ul>
-<li>Aula 1: Introdução às medidas de tendência central</li>
-<li>Aula 2: Cálculo das medidas</li>
-<li>Aula 3: Exercícios de fixação</li>
-</ul>
-
-<p><b>Exercício da semana:</b><br>
-Calcule média, mediana e moda de um conjunto de números.
-</p>
-
-<hr>
-
-<h2>Semana 5 — Equação da Reta</h2>
-
-<ul>
-<li>Aula 1: Modelos lineares</li>
-<li>Aula 2: Modelos lineares</li>
-<li>Aula 3: Exercícios de fixação</li>
-</ul>
-
-<p><b>Exercício da semana:</b><br>
-Represente uma função linear simples em gráfico.
-</p>
-
-<hr>
-
-<h2>Semana 6 — Histogramas e Dispersão</h2>
-
-<ul>
-<li>Aula 1: Introdução aos histogramas</li>
-<li>Aula 2: Construção de histogramas</li>
-<li>Aula 3: Exercícios de fixação</li>
-</ul>
-
-<p><b>Exercício da semana:</b><br>
-Crie um gráfico de dispersão usando dados fictícios.
-</p>
-
-<hr>
-
-<h2>Semana 7 — Projeto de Preparação de Dados</h2>
-
-<ul>
-<li>Aula 1: Coleta e classificação de dados</li>
-<li>Aula 2: Análise e visualização</li>
-<li>Aula 3: Projeto final de preparação</li>
-</ul>
-
-<p><b>Projeto:</b><br>
-Escolha um conjunto de dados e organize em tabela.
-</p>
-
-<hr>
-
-<h2>Semana 8 — Medidas de Variabilidade</h2>
-
-<ul>
-<li>Aula 1: Introdução à variabilidade</li>
-<li>Aula 2: Cálculo da variância</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<p><b>Exercício:</b><br>
-Calcule variância e desvio padrão.
-</p>
-
-<hr>
-
-<h2>Semana 9 — Sistemas Lineares</h2>
-
-<ul>
-<li>Aula 1: Introdução a sistemas lineares</li>
-<li>Aula 2: Exemplos e aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<p><b>Exercício:</b><br>
-Resolva um sistema de duas equações lineares.
-</p>
-
-<hr>
-
-<h2>Semana 10 — Análise Gráfica</h2>
-
-<ul>
-<li>Aula 1: Variabilidade e gráficos</li>
-<li>Aula 2: Construção de gráficos</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<p><b>Exercício:</b><br>
-Construa um gráfico com dados coletados.
-</p>
-
-<hr>
-
-<h2>Semana 11 — Funções Lineares</h2>
-
-<ul>
-<li>Aula 1: Modelos lineares (parte 1)</li>
-<li>Aula 2: Modelos lineares (parte 2)</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 12 — Funções Quadráticas</h2>
-
-<ul>
-<li>Aula 1: Modelos quadráticos</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 13 — Funções em Machine Learning</h2>
-
-<ul>
-<li>Aula 1: Função linear</li>
-<li>Aula 2: ReLU, Sigmoid e Tanh</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 14 — Desenvolvimento do Projeto</h2>
-
-<ul>
-<li>Aula 1: Análise descritiva</li>
-<li>Aula 2: Continuação da análise</li>
-<li>Aula 3: Preparação dos dados</li>
-</ul>
-
-<hr>
-
-<h2>Semana 15 — Probabilidade</h2>
-
-<ul>
-<li>Aula 1: Introdução à probabilidade</li>
-<li>Aula 2: Cálculo de probabilidade</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 16 — Distribuições de Probabilidade</h2>
-
-<ul>
-<li>Aula 1: Introdução às distribuições</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 17 — Distribuições Avançadas</h2>
-
-<ul>
-<li>Aula 1: Distribuições</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 18 — Dados Categóricos</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 19 — Métodos de Amostragem</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 20 — Distribuição Normal</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 21 — Projeto de Probabilidade</h2>
-
-<ul>
-<li>Aula 1: Aplicações</li>
-<li>Aula 2: Continuação</li>
-<li>Aula 3: Projeto</li>
-</ul>
-
-<hr>
-
-<h2>Semana 22 — Distribuição Normal (Avançado)</h2>
-
-<ul>
-<li>Aula 1: Aplicações</li>
-<li>Aula 2: Tabela normal</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 23 — Intervalos de Confiança</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 24 — Intervalos de Confiança Avançado</h2>
-
-<ul>
-<li>Aula 1: Intervalos</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 25 — Testes de Hipóteses</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Cálculo</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 26 — Testes de Hipóteses Avançado</h2>
-
-<ul>
-<li>Aula 1: Teste de hipótese</li>
-<li>Aula 2: Aplicações</li>
-<li>Aula 3: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 27 — Revisão Geral</h2>
-
-<ul>
-<li>Aula 1: Revisão</li>
-<li>Aula 2: Exercícios</li>
-<li>Aula 3: Preparação para avaliação</li>
-</ul>
-
-<hr>
-
-<h2>Semana 28 — Projeto Final</h2>
-
-<ul>
-<li>Aula 1: Consolidação do projeto</li>
-<li>Aula 2: Continuação</li>
-<li>Aula 3: Apresentação final</li>
-</ul>
-
-<hr>
-
-<h3>Laboratório de Computação</h3>
-
-<p>
-Material educacional aberto para estudo.<br>
-Os estudantes podem baixar, modificar e experimentar os códigos.
-</p>
-<a href="../../index.html">Voltar para página principal</a>
+    <div class="abnt-container">
+        <h1>MATEMÁTICA E ESTATÍSTICA PARA CIÊNCIA DE DADOS</h1>
+        <div class="subtitulo">2ª Série – Desenvolvimento de Sistemas</div>
+
+        <div class="sumario">
+            <h3>SUMÁRIO</h3>
+            <ul class="sumario-lista">
+                <li><a href="#semana1">Semana 1 – Álgebra Linear: Vetores e Matrizes (Parte 1)</a></li>
+                <li><a href="#semana2">Semana 2 – Introdução: Conceitos Básicos, Tipos de Dado</a></li>
+                <li><a href="#semana3">Semana 3 – Álgebra Linear: Vetores e Matrizes (Parte 2)</a></li>
+                <li><a href="#semana4">Semana 4 – Introdução à Estatística: Medidas de Tendência Central</a></li>
+                <li><a href="#semana5">Semana 5 – Equação da Reta e do Plano</a></li>
+                <li><a href="#semana6">Semana 6 – Histogramas e Gráficos de Dispersão</a></li>
+                <li><a href="#semana7">Semana 7 – Projeto de Preparação de Dados</a></li>
+                <li><a href="#semana8">Semana 8 – Medidas de Variabilidade</a></li>
+                <li><a href="#semana9">Semana 9 – Sistemas Lineares</a></li>
+                <li><a href="#semana10">Semana 10 – Medidas de Variabilidade e Gráficos</a></li>
+                <li><a href="#semana11">Semana 11 – Funções Lineares</a></li>
+                <li><a href="#semana12">Semana 12 – Funções de Segundo Grau</a></li>
+                <li><a href="#semana13">Semana 13 – Função Linear, ReLU, Sigmoid e Tangente Hiperbólica</a></li>
+                <li><a href="#semana14">Semana 14 – Execução e Desenvolvimento</a></li>
+                <li><a href="#semana15">Semana 15 – Probabilidade: Conceitos de Probabilidade</a></li>
+                <li><a href="#semana16">Semana 16 – Probabilidade: Distribuições de Probabilidade (Parte 1)</a></li>
+                <li><a href="#semana17">Semana 17 – Probabilidade: Distribuições de Probabilidade (Parte 2)</a></li>
+                <li><a href="#semana18">Semana 18 – Análise de Dados Categóricos</a></li>
+                <li><a href="#semana19">Semana 19 – Métodos de Amostragem</a></li>
+                <li><a href="#semana20">Semana 20 – Distribuição Normal (Parte 1)</a></li>
+                <li><a href="#semana21">Semana 21 – Projeto Preparação dos Dados</a></li>
+                <li><a href="#semana22">Semana 22 – Distribuição Normal (Parte 2)</a></li>
+                <li><a href="#semana23">Semana 23 – Inferência Estatística: Intervalos de Confiança (Parte 1)</a></li>
+                <li><a href="#semana24">Semana 24 – Inferência Estatística: Intervalos de Confiança (Parte 2)</a></li>
+                <li><a href="#semana25">Semana 25 – Inferência Estatística: Testes de Hipóteses (Parte 1)</a></li>
+                <li><a href="#semana26">Semana 26 – Inferência Estatística: Testes de Hipóteses (Parte 2)</a></li>
+                <li><a href="#semana27">Semana 27 – Revisão Geral e Preparação para Avaliações</a></li>
+                <li><a href="#semana28">Semana 28 – Apresentação</a></li>
+            </ul>
+        </div>
+
+        <!-- SEMANA 1 -->
+        <section id="semana1" class="semana">
+            <h3>SEMANA 1 – Álgebra Linear: Vetores e Matrizes, Espaços Vetoriais (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos de Vetores e Matrizes</div>
+            <div class="aula-item"><h4>Aula 1: Introdução a vetores e matrizes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar operações com vetores e matrizes em contextos de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar em tarefas complexas até a completa compreensão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender fundamentos e operações básicas com vetores e matrizes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Operações com vetores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar operações com vetores e matrizes em contextos de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar em tarefas complexas até a completa compreensão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Realizar operações com vetores, incluindo adição, subtração e produto.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar operações com vetores e matrizes em contextos de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar em tarefas complexas até a completa compreensão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar operações com vetores e matrizes por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 2 -->
+        <section id="semana2" class="semana">
+            <h3>SEMANA 2 – Introdução: Conceitos Básicos, Tipos de Dado</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos de Dados e Estatística</div>
+            <div class="aula-item"><h4>Aula 1: Introdução aos tipos de dado</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar dados quantitativos e qualitativos em situações práticas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em explorar diferentes tipos de dado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender conceitos básicos de estatística e identificar tipos de dado.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Tipos de dado e aplicações</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar dados quantitativos e qualitativos em situações práticas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em explorar diferentes tipos de dado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar conceitos de dados qualitativos e quantitativos em exemplos práticos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar dados quantitativos e qualitativos em situações práticas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em explorar diferentes tipos de dado.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre tipos de dado por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 3 -->
+        <section id="semana3" class="semana">
+            <h3>SEMANA 3 – Álgebra Linear: Vetores e Matrizes, Espaços Vetoriais (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Operações Avançadas com Matrizes</div>
+            <div class="aula-item"><h4>Aula 1: Operações com matrizes (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar álgebra linear em sistemas de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar em tarefas complexas até a completa compreensão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender operações com matrizes, incluindo determinantes e inversas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Operações com matrizes (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar álgebra linear em sistemas de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar em tarefas complexas até a completa compreensão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar operações com matrizes em sistemas lineares e transformações.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar álgebra linear em sistemas de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar em tarefas complexas até a completa compreensão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre operações com matrizes por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 4 -->
+        <section id="semana4" class="semana">
+            <h3>SEMANA 4 – Introdução à Estatística: Medidas de Tendência Central</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Medidas Descritivas Básicas</div>
+            <div class="aula-item"><h4>Aula 1: Introdução às medidas de tendência central</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar cálculos práticos das medidas de tendência central.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Honrar compromissos com precisão e pontualidade nos cálculos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender conceitos de média, mediana e moda.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Cálculo das medidas de tendência central</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar cálculos práticos das medidas de tendência central.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Honrar compromissos com precisão e pontualidade nos cálculos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Realizar cálculos de média, mediana e moda.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar cálculos práticos das medidas de tendência central.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Honrar compromissos com precisão e pontualidade nos cálculos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre medidas de tendência central por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 5 -->
+        <section id="semana5" class="semana">
+            <h3>SEMANA 5 – Equação da Reta e do Plano</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelos Lineares e Planos</div>
+            <div class="aula-item"><h4>Aula 1: Modelos lineares</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Modelar dados usando modelos lineares.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas maneiras de aplicar equações da reta e do plano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir e construir equações de reta para modelos lineares.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Modelos lineares (cont.)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Modelar dados usando modelos lineares.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas maneiras de aplicar equações da reta e do plano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a definir e construir equações do plano para modelos em 3D.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Modelar dados usando modelos lineares.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas maneiras de aplicar equações da reta e do plano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre modelos lineares por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 6 -->
+        <section id="semana6" class="semana">
+            <h3>SEMANA 6 – Histogramas e Gráficos de Dispersão</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Visualização de Dados</div>
+            <div class="aula-item"><h4>Aula 1: Introdução aos histogramas e gráficos de dispersão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar histogramas e gráficos de dispersão para analisar dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar na criação precisa de gráficos, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir e construir histogramas e gráficos de dispersão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Construção de histogramas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar histogramas e gráficos de dispersão para analisar dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar na criação precisa de gráficos, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Coletar dados e construir histogramas para identificar padrões.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar histogramas e gráficos de dispersão para analisar dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar na criação precisa de gráficos, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre histogramas e gráficos de dispersão por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 7 -->
+        <section id="semana7" class="semana">
+            <h3>SEMANA 7 – Projeto de Preparação de Dados</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Coleta e Organização de Dados</div>
+            <div class="aula-item"><h4>Aula 1: Coleta e classificação de dados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Coletar e organizar dados para projetos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em harmonia com colegas na preparação de dados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Coletar e classificar dados reais, aplicando vetores e matrizes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Análise e visualização de dados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Coletar e organizar dados para projetos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em harmonia com colegas na preparação de dados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Analisar dados coletados com histogramas e gráficos de dispersão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Projeto final de preparação de dados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Coletar e organizar dados para projetos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em harmonia com colegas na preparação de dados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Realizar e apresentar um projeto prático de preparação de dados.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 8 -->
+        <section id="semana8" class="semana">
+            <h3>SEMANA 8 – Medidas de Variabilidade</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Dispersão e Variância</div>
+            <div class="aula-item"><h4>Aula 1: Introdução a medidas de variabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar os conceitos de variabilidade em dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Preocupar-se com o impacto das medidas de variabilidade nas decisões.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender conceitos de variabilidade, amplitude, variância e desvio padrão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Cálculo de medidas de variabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar os conceitos de variabilidade em dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Preocupar-se com o impacto das medidas de variabilidade nas decisões.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Realizar cálculos de amplitude, variância e desvio padrão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar os conceitos de variabilidade em dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Preocupar-se com o impacto das medidas de variabilidade nas decisões.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre medidas de variabilidade por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 9 -->
+        <section id="semana9" class="semana">
+            <h3>SEMANA 9 – Sistemas Lineares</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Resolução de Sistemas</div>
+            <div class="aula-item"><h4>Aula 1: Introdução a sistemas lineares</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar métodos de resolução de sistemas lineares em dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estar aberto a diferentes abordagens e valorizar a diversidade de métodos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e os exemplos de sistemas lineares.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Exemplos e aplicações de sistemas lineares</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar métodos de resolução de sistemas lineares em dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estar aberto a diferentes abordagens e valorizar a diversidade de métodos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar métodos de resolução de sistemas lineares.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar métodos de resolução de sistemas lineares em dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estar aberto a diferentes abordagens e valorizar a diversidade de métodos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre métodos de resolução de sistemas lineares por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 10 -->
+        <section id="semana10" class="semana">
+            <h3>SEMANA 10 – Medidas de Variabilidade e Gráficos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Análise Gráfica da Dispersão</div>
+            <div class="aula-item"><h4>Aula 1: Medidas de variabilidade e análise gráfica</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar graficamente medidas de variabilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Confiar na própria capacidade e na dos colegas de criar gráficos precisos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a relação entre variabilidade e gráficos estatísticos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Construção de gráficos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar graficamente medidas de variabilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Confiar na própria capacidade e na dos colegas de criar gráficos precisos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar técnicas de visualização de dados em exemplos práticos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar graficamente medidas de variabilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Confiar na própria capacidade e na dos colegas de criar gráficos precisos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre criação e interpretação de gráficos estatísticos através de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 11 -->
+        <section id="semana11" class="semana">
+            <h3>SEMANA 11 – Funções Lineares</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelagem com Funções de 1º Grau</div>
+            <div class="aula-item"><h4>Aula 1: Modelos lineares (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Representar graficamente funções lineares.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ter expectativas positivas ao aprender funções lineares.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e a representação gráfica de funções lineares.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Modelos lineares (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Representar graficamente funções lineares.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ter expectativas positivas ao aprender funções lineares.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar funções lineares em exemplos práticos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Representar graficamente funções lineares.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ter expectativas positivas ao aprender funções lineares.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre funções lineares por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 12 -->
+        <section id="semana12" class="semana">
+            <h3>SEMANA 12 – Funções de Segundo Grau</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelos Quadráticos</div>
+            <div class="aula-item"><h4>Aula 1: Modelos quadráticos (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar funções quadráticas em ciência de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo de funções de segundo grau até compreendê-las totalmente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender definição e representação gráfica de funções quadráticas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Modelos quadráticos (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar funções quadráticas em ciência de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo de funções de segundo grau até compreendê-las totalmente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar funções quadráticas em exemplos práticos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar funções quadráticas em ciência de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo de funções de segundo grau até compreendê-las totalmente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre funções quadráticas por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 13 -->
+        <section id="semana13" class="semana">
+            <h3>SEMANA 13 – Função Linear, ReLU, Sigmoid e Tangente Hiperbólica</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Funções de Ativação em IA</div>
+            <div class="aula-item"><h4>Aula 1: Apresentação de funções (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender funções de ativação em redes neurais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em explorar diferentes funções de ativação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e o funcionamento de funções lineares e ReLU.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Apresentação de funções (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender funções de ativação em redes neurais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em explorar diferentes funções de ativação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e o funcionamento de funções Sigmoid e tangente hiperbólica.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender funções de ativação em redes neurais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em explorar diferentes funções de ativação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre funções em IA por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 14 -->
+        <section id="semana14" class="semana">
+            <h3>SEMANA 14 – Execução e Desenvolvimento</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Aplicação de Análise Descritiva</div>
+            <div class="aula-item"><h4>Aula 1: Aplicar análise descritiva ao projeto (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar análise descritiva ao projeto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estabelecer padrões elevados e trabalhar com excelência.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar análise de tendência central.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Aplicar análise descritiva ao projeto (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar análise descritiva ao projeto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estabelecer padrões elevados e trabalhar com excelência.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar análise de variabilidade.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Preparação de dados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar análise descritiva ao projeto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estabelecer padrões elevados e trabalhar com excelência.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Concluir projeto com análise de tendência central e variabilidade.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 15 -->
+        <section id="semana15" class="semana">
+            <h3>SEMANA 15 – Probabilidade: Conceitos de Probabilidade</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos de Probabilidade</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à probabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a definição e os cálculos de probabilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar no entendimento dos conceitos, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender definição de probabilidade, eventos e espaço amostral.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Cálculo de probabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a definição e os cálculos de probabilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar no entendimento dos conceitos, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender e aplicar regras de probabilidade e probabilidade condicional.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a definição e os cálculos de probabilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar no entendimento dos conceitos, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre cálculo de probabilidade por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 16 -->
+        <section id="semana16" class="semana">
+            <h3>SEMANA 16 – Probabilidade: Distribuições de Probabilidade (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Distribuições Discretas</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à distribuição de probabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender distribuições de probabilidade em situações reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo das distribuições e suas aplicações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e tipos de distribuição de probabilidade.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Distribuições de probabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender distribuições de probabilidade em situações reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo das distribuições e suas aplicações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação de distribuições binomial e Poisson.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender distribuições de probabilidade em situações reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo das distribuições e suas aplicações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre distribuições binomial e Poisson por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 17 -->
+        <section id="semana17" class="semana">
+            <h3>SEMANA 17 – Probabilidade: Distribuições de Probabilidade (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Distribuições Contínuas e Outras</div>
+            <div class="aula-item"><h4>Aula 1: Distribuições de probabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar distribuições de probabilidade em situações reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aplicar criatividade na interpretação de diferentes distribuições.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação da distribuição exponencial.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Distribuições de probabilidade (cont.)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar distribuições de probabilidade em situações reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aplicar criatividade na interpretação de diferentes distribuições.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação das distribuições uniforme e geométrica.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar distribuições de probabilidade em situações reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aplicar criatividade na interpretação de diferentes distribuições.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre distribuições de probabilidade por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 18 -->
+        <section id="semana18" class="semana">
+            <h3>SEMANA 18 – Análise de Dados Categóricos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Técnicas para Dados Categóricos</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à análise de dados categóricos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar análise de dados categóricos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe para analisar dados de maneira eficaz.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender definição e técnicas de análise de dados categóricos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Aplicações</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar análise de dados categóricos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe para analisar dados de maneira eficaz.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação de técnicas de análise de dados categóricos com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar análise de dados categóricos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe para analisar dados de maneira eficaz.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre análise de dados categóricos por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 19 -->
+        <section id="semana19" class="semana">
+            <h3>SEMANA 19 – Métodos de Amostragem</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Técnicas de Amostragem</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à amostragem</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar métodos de amostragem em dados reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em conjunto com colegas de forma precisa e eficiente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender definição e tipos de amostragem.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Aplicações</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar métodos de amostragem em dados reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em conjunto com colegas de forma precisa e eficiente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação de métodos de amostragem com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar métodos de amostragem em dados reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em conjunto com colegas de forma precisa e eficiente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre métodos de amostragem por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 20 -->
+        <section id="semana20" class="semana">
+            <h3>SEMANA 20 – Distribuição Normal (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução à Distribuição Normal</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à distribuição normal</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender características da distribuição normal.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Abordar o tema com atitude positiva, acreditando em sua utilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e as características da distribuição normal.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Aplicações</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender características da distribuição normal.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Abordar o tema com atitude positiva, acreditando em sua utilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação da distribuição normal com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender características da distribuição normal.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Abordar o tema com atitude positiva, acreditando em sua utilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre distribuição normal por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 21 -->
+        <section id="semana21" class="semana">
+            <h3>SEMANA 21 – Projeto Preparação dos Dados</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Aplicação de Probabilidade e Amostragem</div>
+            <div class="aula-item"><h4>Aula 1: Aplicar probabilidade, amostragem e distribuições (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar técnicas apropriadas para análise de problemas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Honrar compromissos e prazos com qualidade e precisão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e as características da distribuição normal.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Aplicar probabilidade, amostragem e distribuições (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar técnicas apropriadas para análise de problemas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Honrar compromissos e prazos com qualidade e precisão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a aplicação e a distribuição normal com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicar probabilidade, amostragem e distribuições (parte 3)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar técnicas apropriadas para análise de problemas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Honrar compromissos e prazos com qualidade e precisão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre distribuição normal por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 22 -->
+        <section id="semana22" class="semana">
+            <h3>SEMANA 22 – Distribuição Normal (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Aplicações Avançadas da Normal</div>
+            <div class="aula-item"><h4>Aula 1: Aplicações de distribuição normal</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar a distribuição normal em exemplos práticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Abordar o tema com atitude positiva, acreditando em sua utilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar a distribuição normal utilizando software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Usando a tabela de probabilidades normal</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar a distribuição normal em exemplos práticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Abordar o tema com atitude positiva, acreditando em sua utilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Usar a tabela de probabilidades normal para cálculos estatísticos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar a distribuição normal em exemplos práticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Abordar o tema com atitude positiva, acreditando em sua utilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre o uso da tabela de probabilidades normal por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 23 -->
+        <section id="semana23" class="semana">
+            <h3>SEMANA 23 – Inferência Estatística: Intervalos de Confiança (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução a Intervalos de Confiança</div>
+            <div class="aula-item"><h4>Aula 1: Introdução aos intervalos de confiança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer a definição de intervalos de confiança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar na compreensão e aplicação, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e o cálculo de intervalos de confiança.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Aplicações</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer a definição de intervalos de confiança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar na compreensão e aplicação, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação de intervalos de confiança com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer a definição de intervalos de confiança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar na compreensão e aplicação, evitando distrações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o conhecimento sobre intervalos de confiança por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 24 -->
+        <section id="semana24" class="semana">
+            <h3>SEMANA 24 – Inferência Estatística: Intervalos de Confiança (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Aplicações de Intervalos de Confiança</div>
+            <div class="aula-item"><h4>Aula 1: Intervalos de confiança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a aplicação de intervalos de confiança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo e aplicação, compreendendo implicações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação de intervalos de confiança com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Aplicações</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a aplicação de intervalos de confiança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo e aplicação, compreendendo implicações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a aplicação de intervalos de confiança com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a aplicação de intervalos de confiança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Perseverar no estudo e aplicação, compreendendo implicações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explorar tópicos de Matemática para Ciência de Dados e IA, encarando erros como aprendizado.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 25 -->
+        <section id="semana25" class="semana">
+            <h3>SEMANA 25 – Inferência Estatística: Testes de Hipóteses (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos de Testes de Hipóteses</div>
+            <div class="aula-item"><h4>Aula 1: Introdução aos teste de hipóteses</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a definição e os tipos de teste de hipóteses.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas maneiras de realizar e interpretar testes de hipóteses.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender definição e tipos de teste de hipóteses.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Cálculo de teste de hipóteses</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a definição e os tipos de teste de hipóteses.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas maneiras de realizar e interpretar testes de hipóteses.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular testes de hipóteses com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a definição e os tipos de teste de hipóteses.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas maneiras de realizar e interpretar testes de hipóteses.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre testes de hipóteses por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 26 -->
+        <section id="semana26" class="semana">
+            <h3>SEMANA 26 – Inferência Estatística: Testes de Hipóteses (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Aplicações de Testes de Hipóteses</div>
+            <div class="aula-item"><h4>Aula 1: Teste de hipótese</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar testes de hipóteses.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a calma e eficácia sob pressão de prazos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular testes de hipóteses com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Cálculo de teste de hipóteses</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar testes de hipóteses.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a calma e eficácia sob pressão de prazos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular testes de hipóteses com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar testes de hipóteses.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a calma e eficácia sob pressão de prazos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre testes de hipóteses por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 27 -->
+        <section id="semana27" class="semana">
+            <h3>SEMANA 27 – Revisão Geral e Preparação para Avaliações</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Síntese e Consolidação</div>
+            <div class="aula-item"><h4>Aula 1: Revisão e exercícios (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas complexos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em harmonia para revisar conteúdos e se preparar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a definição e os tipos de teste de hipóteses.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Revisão e exercícios (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas complexos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em harmonia para revisar conteúdos e se preparar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular testes de hipóteses com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Revisão e exercícios (parte 3)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas complexos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em harmonia para revisar conteúdos e se preparar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre testes de hipóteses por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 28 -->
+        <section id="semana28" class="semana">
+            <h3>SEMANA 28 – Apresentação</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Projeto Final e Comunicação</div>
+            <div class="aula-item"><h4>Aula 1: Consolidar o projeto final de preparação de dados (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Apresentar resultados do projeto final.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Expressar opiniões e sentimentos com confiança ao apresentar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular testes de hipóteses com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Consolidar o projeto final de preparação de dados (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Apresentar resultados do projeto final.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Expressar opiniões e sentimentos com confiança ao apresentar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular testes de hipóteses com software.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Consolidar o projeto final de preparação de dados (parte 3)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Apresentar resultados do projeto final.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Expressar opiniões e sentimentos com confiança ao apresentar.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento sobre testes de hipóteses por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <footer>
+            Documento elaborado conforme normas ABNT (NBR 14724) para apresentação de plano de ensino.<br>
+            Disciplina: Matemática e Estatística para Ciência de Dados – 3ª Série (Ciências de Dados).
+        </footer>
+    </div>
 </body>
 </html>
