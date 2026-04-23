@@ -1,278 +1,773 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="utf-8"/>
-<title>Redes de Computadores e Segurança</title>
-<style>
-.slides-embed { position: relative; width: 100%; max-width: 900px; padding-top: 56.25%; background: #000; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 10px rgba(0,0,0,.08); }
-.slides-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.download { margin: 10px 0 20px; }
-.download a.btn { display: inline-block; background: #2563eb; color: #fff; text-decoration: none; padding: 10px 14px; border-radius: 8px; }
-.download a.btn:hover { background: #1d4ed8; }
-</style></head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Redes de Computadores</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000000;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .abnt-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 3cm 2cm 2cm 3cm;
+            background: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 2cm 0 0.5cm 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: normal;
+            margin-top: -0.2cm;
+            margin-bottom: 1.5cm;
+            font-style: normal;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3cm;
+        }
+
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 0.8cm 0 0.4cm 0;
+            color: #1a2a4f;
+        }
+
+        h4 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 0.6cm 0 0.2cm 0;
+            font-style: normal;
+            border-bottom: 1px dotted #ddd;
+            padding-bottom: 2px;
+        }
+
+        .semana {
+            margin-bottom: 0.8cm;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .aula-item {
+            margin-left: 0.7cm;
+            margin-bottom: 0.45cm;
+            padding-left: 0.2cm;
+        }
+
+        .tema-semana {
+            font-size: 11pt;
+            font-style: italic;
+            background-color: #f4f4f9;
+            padding: 0.2cm 0.4cm;
+            margin-top: 0.2cm;
+            margin-bottom: 0.3cm;
+            border-left: 4px solid #2c3e66;
+            margin-left: 0.7cm;
+        }
+
+        .tema-semana strong {
+            font-style: normal;
+            color: #1a2a4f;
+        }
+
+        .habilidades,
+        .socioemocionais,
+        .objetivo {
+            margin-left: 0.5cm;
+            margin-top: 0.15cm;
+            margin-bottom: 0.1cm;
+            text-align: justify;
+        }
+
+        .habilidades strong,
+        .socioemocionais strong,
+        .objetivo strong {
+            font-weight: bold;
+        }
+
+        .sumario {
+            margin: 1cm 0 1.2cm 0;
+            background: #fafafc;
+            padding: 0.5cm 0.8cm;
+            border: 1px solid #ddd;
+        }
+        .sumario h3 {
+            margin-top: 0;
+            font-size: 13pt;
+            text-transform: uppercase;
+        }
+        .sumario-lista {
+            columns: 2;
+            column-gap: 1.2cm;
+            list-style: none;
+            padding-left: 0.2cm;
+        }
+        .sumario-lista li {
+            margin-bottom: 0.2cm;
+            font-size: 10pt;
+        }
+        .sumario-lista a {
+            text-decoration: none;
+            color: #1e466e;
+        }
+        .sumario-lista a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 1.8cm;
+            border-top: 1px solid #aaa;
+            padding-top: 0.5cm;
+            font-size: 10pt;
+            text-align: center;
+            color: #444;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .abnt-container {
+                padding: 3cm 2cm 2cm 3cm;
+                box-shadow: none;
+            }
+            .sumario {
+                background: white;
+                border: 1px solid #ccc;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+            }
+            .semana {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .abnt-container {
+                padding: 1.5cm 1cm 1.5cm 1.5cm;
+            }
+            .sumario-lista {
+                columns: 1;
+            }
+            h1 {
+                font-size: 16pt;
+            }
+        }
+    </style>
+</head>
 <body>
-<h1>Redes de Computadores e Segurança da Informação na Nuvem</h1>
-<p><strong>Carga horária:</strong> 100h</p>
-<h2>Unidades Curriculares</h2>
-<ul>
-<li>I - Topologia de Redes — 15h</li>
-<li>II - Meios de Transmissão — 15h</li>
-<li>III - Protocolos e Camadas — 10h / 5h prática</li>
-<li>IV - Conceitos, Princípios e Políticas de Segurança da Informação — 10h</li>
-<li>V - Características e Aplicações da ISO 27001 — 10h</li>
-<li>VI - Características e Aplicações da LGPD — 10h / 15h prática</li>
-<li>VII - Aplicações em Nuvem — 10h prática</li>
-</ul>
-<br/>
-<a href="index.html">Voltar para página da turma</a>
-<title>Plano de Curso - Redes de Computadores e Segurança</title>
-<h1>Plano de Curso – Redes de Computadores e Segurança</h1>
-<p>
-Sequência de aulas para compreensão das redes de computadores,
-meios de transmissão, protocolos, segurança e infraestrutura moderna.
-Cada semana apresenta um pequeno exercício para prática.
-</p>
-<hr/>
-<h2>Semana 1 – Introdução às Topologias de Rede</h2>
-<ul>
-<li>Aula 1: O que são topologias de rede?</li>
-<li>Aula 2: Classificação das topologias</li>
-<li>Aula 3: Representações visuais de topologias</li>
-</ul>
-<b>Exercício:</b>
-<p>Desenhe três tipos de topologias de rede: estrela, barramento e anel.</p>
-<div>
-</div>
-<hr />
-<h2>Semana 2 – Topologia em Barramento</h2>
-<ul>
-<li>Aula 1: Estrutura da topologia em barramento</li>
-<li>Aula 2: Vantagens e desvantagens do barramento</li>
-<li>Aula 3: Simulação de comunicação linear</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique uma vantagem e uma desvantagem da topologia em barramento.</p>
-<hr/>
-<h2>Semana 3 – Topologia em Anel</h2>
-<ul>
-<li>Aula 1: Conceito e estrutura do anel</li>
-<li>Aula 2: Funcionamento com token</li>
-<li>Aula 3: Representação gráfica e fluxo</li>
-</ul>
-<b>Exercício:</b>
-<p>Descreva como o token circula em uma rede em anel.</p>
-<hr/>
-<h2>Semana 4 – Meios de Transmissão</h2>
-<ul>
-<li>Aula 1: Conceito de meio de transmissão</li>
-<li>Aula 2: Comparação entre meios</li>
-<li>Aula 3: Velocidade e interferência</li>
-</ul>
-<b>Exercício:</b>
-<p>Cite dois fatores que podem interferir na qualidade de transmissão de dados.</p>
-<hr/>
-<h2>Semana 5 – Cabos de Cobre</h2>
-<ul>
-<li>Aula 1: Introdução aos cabos de cobre</li>
-<li>Aula 2: Par trançado – UTP e STP</li>
-<li>Aula 3: Cabeamento coaxial</li>
-</ul>
-<b>Exercício:</b>
-<p>Pesquise onde o cabo coaxial ainda é utilizado atualmente.</p>
-<hr/>
-<h2>Semana 6 – Protocolos e Camadas de Rede</h2>
-<ul>
-<li>Aula 1: O que são protocolos de comunicação?</li>
-<li>Aula 2: Visão geral das camadas de rede</li>
-<li>Aula 3: Protocolos por camada</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique com suas palavras o que é um protocolo de rede.</p>
-<hr/>
-<h2>Semana 7 – Camada Física</h2>
-<ul>
-<li>Aula 1: O que é a camada física?</li>
-<li>Aula 2: Codificação e modulação de sinais</li>
-<li>Aula 3: Equipamentos da camada física</li>
-</ul>
-<b>Exercício:</b>
-<p>Cite dois equipamentos que operam na camada física.</p>
-<hr/>
-<h2>Semana 8 – Redes Wireless</h2>
-<ul>
-<li>Aula 1: Ondas de rádio e micro-ondas</li>
-<li>Aula 2: Wi-Fi, Bluetooth e NFC</li>
-<li>Aula 3: Comunicação por satélite</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique a diferença entre Wi-Fi e Bluetooth.</p>
-<hr/>
-<h2>Semana 9 – Fibra Óptica</h2>
-<ul>
-<li>Aula 1: Estrutura da fibra óptica</li>
-<li>Aula 2: Atenuação e dispersão</li>
-<li>Aula 3: Medição de links ópticos</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique por que a fibra óptica possui alta velocidade de transmissão.</p>
-<hr/>
-<h2>Semana 10 – Camada de Enlace</h2>
-<ul>
-<li>Aula 1: Formato do quadro Ethernet</li>
-<li>Aula 2: CSMA/CD e CSMA/CA</li>
-<li>Aula 3: Análise de tramas com Wireshark</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique o que significa CSMA/CD.</p>
-<hr/>
-<h2>Semana 11 – Endereçamento IPv4</h2>
-<ul>
-<li>Aula 1: Estrutura do endereço IPv4</li>
-<li>Aula 2: Subnetting</li>
-<li>Aula 3: Planejamento de endereçamento</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique para que serve uma máscara de sub-rede.</p>
-<hr/>
-<h2>Semana 12 – Camada de Transporte</h2>
-<ul>
-<li>Aula 1: Funcionamento do TCP</li>
-<li>Aula 2: Comunicação UDP</li>
-<li>Aula 3: Análise de pacotes no Wireshark</li>
-</ul>
-<b>Exercício:</b>
-<p>Cite uma diferença entre TCP e UDP.</p>
-<hr/>
-<h2>Semana 13 – Fundamentos de Segurança</h2>
-<ul>
-<li>Aula 1: Princípios CIA</li>
-<li>Aula 2: Tipos de ameaças</li>
-<li>Aula 3: Cultura de segurança</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique o significado de Confidencialidade em segurança da informação.</p>
-<hr/>
-<h2>Semana 14 – Firewalls e IDS</h2>
-<ul>
-<li>Aula 1: Arquiteturas de firewall</li>
-<li>Aula 2: IDS e IPS</li>
-<li>Aula 3: Regras básicas de segurança</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique a diferença entre firewall e IDS.</p>
-<hr/>
-<h2>Semana 15 – Modelo OSI</h2>
-<ul>
-<li>Aula 1: Camada Física</li>
-<li>Aula 2: Camada de Enlace</li>
-<li>Aula 3: Oficina de cabeamento</li>
-</ul>
-<b>Exercício:</b>
-<p>Liste as duas primeiras camadas do modelo OSI.</p>
-<hr/>
-<h2>Semana 16 – Sub-redes IPv4</h2>
-<ul>
-<li>Aula 1: Estrutura do IPv4</li>
-<li>Aula 2: Cálculo de sub-redes</li>
-<li>Aula 3: Planejamento de rede</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique o objetivo da técnica CIDR.</p>
-<hr/>
-<h2>Semana 17 – Roteamento</h2>
-<ul>
-<li>Aula 1: Conceito de roteamento</li>
-<li>Aula 2: Roteamento estático e dinâmico</li>
-<li>Aula 3: Troubleshooting de rotas</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique para que serve um roteador em uma rede.</p>
-<hr/>
-<h2>Semana 18 – TCP e UDP</h2>
-<ul>
-<li>Aula 1: Three-Way Handshake</li>
-<li>Aula 2: Características do UDP</li>
-<li>Aula 3: Captura de pacotes</li>
-</ul>
-<b>Exercício:</b>
-<p>Descreva o processo de estabelecimento de conexão do TCP.</p>
-<hr/>
-<h2>Semana 19 – Segurança na Nuvem</h2>
-<ul>
-<li>Aula 1: Shared Responsibility</li>
-<li>Aula 2: IAM</li>
-<li>Aula 3: TLS</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique o conceito de autenticação multifator.</p>
-<hr/>
-<h2>Semana 20 – Backup e Recuperação</h2>
-<ul>
-<li>Aula 1: Tipos de backup</li>
-<li>Aula 2: Ferramentas de backup</li>
-<li>Aula 3: Simulação de recuperação</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique a diferença entre backup completo e incremental.</p>
-<hr/>
-<h2>Semana 21 – Virtualização de Rede</h2>
-<ul>
-<li>Aula 1: Virtual Switch</li>
-<li>Aula 2: SDN</li>
-<li>Aula 3: Laboratório de rede virtual</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique o que é virtualização de rede.</p>
-<hr/>
-<h2>Semana 22 – Sistemas de Defesa</h2>
-<ul>
-<li>Aula 1: Filtragem de pacotes</li>
-<li>Aula 2: IDS por assinatura</li>
-<li>Aula 3: Hardening de servidores</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique o conceito de hardening em segurança.</p>
-<hr/>
-<h2>Semana 23 – Balanceamento de Carga</h2>
-<ul>
-<li>Aula 1: Load Balancer</li>
-<li>Aula 2: Auto-scaling</li>
-<li>Aula 3: Testes de carga</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique por que o balanceamento de carga melhora a disponibilidade.</p>
-<hr/>
-<h2>Semana 24 – Certificados Digitais</h2>
-<ul>
-<li>Aula 1: Handshake TLS</li>
-<li>Aula 2: Infraestrutura PKI</li>
-<li>Aula 3: Configuração de TLS</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique o que é um certificado digital.</p>
-<hr/>
-<h2>Semana 25 – Monitoramento de Redes</h2>
-<ul>
-<li>Aula 1: SNMP</li>
-<li>Aula 2: NetFlow</li>
-<li>Aula 3: Centralização de logs</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique por que o monitoramento é importante em redes corporativas.</p>
-<hr/>
-<h2>Semana 26 – Edge Computing e CDN</h2>
-<ul>
-<li>Aula 1: Conceitos de Edge Computing</li>
-<li>Aula 2: Funcionamento de CDN</li>
-<li>Aula 3: Distribuição de conteúdo</li>
-</ul>
-<b>Exercício:</b>
-<p>Explique como uma CDN melhora o acesso a conteúdos na internet.</p>
-<hr/>
-<p>
-Material educacional aberto para estudo de redes de computadores.
-Os estudantes são incentivados a explorar, modificar e criar novos exemplos.
-</p>
+    <div class="abnt-container">
+        <h1>REDES DE COMPUTADORES E SEGURANÇA NA NUVEM</h1>
+        <div class="subtitulo">2ª Série – Desenvolvimento de Sistemas</div>
+
+        <div class="sumario">
+            <h3>SUMÁRIO</h3>
+            <ul class="sumario-lista">
+                <li><a href="#semana1">Semana 1 – Introdução às topologias de redes</a></li>
+                <li><a href="#semana2">Semana 2 – Topologia em barramento</a></li>
+                <li><a href="#semana3">Semana 3 – Topologia em anel</a></li>
+                <li><a href="#semana4">Semana 4 – Importância e utilizações dos meios de transmissão</a></li>
+                <li><a href="#semana5">Semana 5 – Meios de transmissão guiados: cabos de cobre</a></li>
+                <li><a href="#semana6">Semana 6 – Introdução aos protocolos e camadas de rede</a></li>
+                <li><a href="#semana7">Semana 7 – Camada física: transmissão de dados e meios de comunicação</a></li>
+                <li><a href="#semana8">Semana 8 – Meios de transmissão não guiados (wireless)</a></li>
+                <li><a href="#semana9">Semana 9 – Fibra óptica e fenômenos físicos de transmissão</a></li>
+                <li><a href="#semana10">Semana 10 – Camada de enlace de dados (Data‑Link)</a></li>
+                <li><a href="#semana11">Semana 11 – Endereçamento IPv4 e máscaras de sub‑rede</a></li>
+                <li><a href="#semana12">Semana 12 – Camada de transporte – TCP e UDP</a></li>
+                <li><a href="#semana13">Semana 13 – Fundamentos de segurança de redes – políticas e ameaças</a></li>
+                <li><a href="#semana14">Semana 14 – Soluções técnicas – Firewalls, IDS/IPS</a></li>
+                <li><a href="#semana15">Semana 15 – Modelo OSI – Camadas Física e Enlace</a></li>
+                <li><a href="#semana16">Semana 16 – Endereçamento IP v4 – sub-rede e CIDR</a></li>
+                <li><a href="#semana17">Semana 17 – Protocolos de roteamento – estático e dinâmico (RIP)</a></li>
+                <li><a href="#semana18">Semana 18 – Protocolos de transporte – TCP & UDP</a></li>
+                <li><a href="#semana19">Semana 19 – Segurança na nuvem – conceitos de IAM e criptografia em trânsito</a></li>
+                <li><a href="#semana20">Semana 20 – Backup, recuperação e continuidade de negócio</a></li>
+                <li><a href="#semana21">Semana 21 – Virtualização de rede e SDN</a></li>
+                <li><a href="#semana22">Semana 22 – Firewalls, IDS e IPS</a></li>
+                <li><a href="#semana23">Semana 23 – Load Balancer e Auto-scaling</a></li>
+                <li><a href="#semana24">Semana 24 – TLS, PKI e gestão de certificados</a></li>
+                <li><a href="#semana25">Semana 25 – Monitoramento de rede (SNMP, NetFlow e Logs)</a></li>
+                <li><a href="#semana26">Semana 26 – Edge Computing e Content Delivery Network (CDN)</a></li>
+            </ul>
+        </div>
+
+        <!-- SEMANA 1 -->
+        <section id="semana1" class="semana">
+            <h3>SEMANA 1 – Introdução às topologias de redes</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução às topologias de redes</div>
+            <div class="aula-item"><h4>Aula 1: O que são topologias de rede?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais tipos de topologias de redes e compreender suas funções, vantagens e limitações no contexto de comunicação de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com curiosidade como os dispositivos se organizam em rede, relacionando estruturas físicas a situações reais do cotidiano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito de topologia de rede e sua importância na comunicação entre dispositivos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Classificação das topologias</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais tipos de topologias de redes e compreender suas funções, vantagens e limitações no contexto de comunicação de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com curiosidade como os dispositivos se organizam em rede, relacionando estruturas físicas a situações reais do cotidiano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Classificar os principais tipos de topologias de rede.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Representações visuais de topologias</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais tipos de topologias de redes e compreender suas funções, vantagens e limitações no contexto de comunicação de dados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com curiosidade como os dispositivos se organizam em rede, relacionando estruturas físicas a situações reais do cotidiano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Representar visualmente os diferentes tipos de topologia de redes.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 2 -->
+        <section id="semana2" class="semana">
+            <h3>SEMANA 2 – Topologia em barramento</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Topologia em barramento</div>
+            <div class="aula-item"><h4>Aula 1: Estrutura da topologia em barramento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar o funcionamento da topologia em barramento, suas vantagens, limitações e aplicação em contextos reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com curiosidade como ocorre a comunicação em estruturas compartilhadas, mantendo a persistência na identificação do fluxo de dados de forma linear.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a estrutura linear da topologia em barramento e o compartilhamento de meio físico.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Vantagens e desvantagens do barramento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar o funcionamento da topologia em barramento, suas vantagens, limitações e aplicação em contextos reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com curiosidade como ocorre a comunicação em estruturas compartilhadas, mantendo a persistência na identificação do fluxo de dados de forma linear.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar pontos fortes e limitações da topologia em barramento.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Simulação de comunicação linear</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar o funcionamento da topologia em barramento, suas vantagens, limitações e aplicação em contextos reais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com curiosidade como ocorre a comunicação em estruturas compartilhadas, mantendo a persistência na identificação do fluxo de dados de forma linear.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Representar visualmente o envio e recepção de dados em barramento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 3 -->
+        <section id="semana3" class="semana">
+            <h3>SEMANA 3 – Topologia em anel</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Topologia em anel</div>
+            <div class="aula-item"><h4>Aula 1: Conceito e Estrutura do Anel</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o funcionamento da topologia em anel, seu modelo de comunicação unidirecional e os desafios de transmissão contínua.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com atenção e foco a lógica circular da comunicação em rede, acompanhando a sequência dos dados com disciplina e organização mental.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a estrutura física e lógica da topologia em anel.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Funcionamento com token</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o funcionamento da topologia em anel, seu modelo de comunicação unidirecional e os desafios de transmissão contínua.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com atenção e foco a lógica circular da comunicação em rede, acompanhando a sequência dos dados com disciplina e organização mental.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender o papel do token no controle de envio de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Representação gráfica e fluxo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o funcionamento da topologia em anel, seu modelo de comunicação unidirecional e os desafios de transmissão contínua.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com atenção e foco a lógica circular da comunicação em rede, acompanhando a sequência dos dados com disciplina e organização mental.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Representar graficamente o funcionamento da rede em anel.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 4 -->
+        <section id="semana4" class="semana">
+            <h3>SEMANA 4 – Importância e utilizações dos meios de transmissão</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Importância e utilizações dos meios de transmissão</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de meio de transmissão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer os diferentes meios de transmissão e suas aplicações no tráfego de dados em redes físicas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com autonomia como os sinais percorrem fisicamente os dispositivos da rede, analisando as características técnicas que influenciam a comunicação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito de meio de transmissão e sua importância.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Comparação geral entre meios</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer os diferentes meios de transmissão e suas aplicações no tráfego de dados em redes físicas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com autonomia como os sinais percorrem fisicamente os dispositivos da rede, analisando as características técnicas que influenciam a comunicação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Comparar os tipos de meio quanto à eficiência, custo e aplicabilidade.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Velocidade e interferência</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer os diferentes meios de transmissão e suas aplicações no tráfego de dados em redes físicas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com autonomia como os sinais percorrem fisicamente os dispositivos da rede, analisando as características técnicas que influenciam a comunicação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar a velocidade e confiabilidade de cada meio de transmissão.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 5 -->
+        <section id="semana5" class="semana">
+            <h3>SEMANA 5 – Meios de transmissão guiados: cabos de cobre</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Meios de transmissão guiados: cabos de cobre</div>
+            <div class="aula-item"><h4>Aula 1: Introdução aos cabos de cobre</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os tipos de cabos de cobre utilizados na transmissão de dados e suas características principais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir na investigação do papel dos cabos de cobre em redes físicas, mantendo atenção aos detalhes técnicos mesmo diante de informações complexas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a importância histórica e atual dos cabos de cobre em redes de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Par trançado – UTP e STP</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os tipos de cabos de cobre utilizados na transmissão de dados e suas características principais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir na investigação do papel dos cabos de cobre em redes físicas, mantendo atenção aos detalhes técnicos mesmo diante de informações complexas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar os tipos de par trançado e compreender suas vantagens.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Cabeamento coaxial</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os tipos de cabos de cobre utilizados na transmissão de dados e suas características principais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir na investigação do papel dos cabos de cobre em redes físicas, mantendo atenção aos detalhes técnicos mesmo diante de informações complexas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer a estrutura e o uso do cabo coaxial em redes e telecomunicações.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 6 -->
+        <section id="semana6" class="semana">
+            <h3>SEMANA 6 – Introdução aos protocolos e camadas de rede</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução aos protocolos e camadas de rede</div>
+            <div class="aula-item"><h4>Aula 1: O que são protocolos de comunicação?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a importância dos protocolos de comunicação e o modelo em camadas na organização das redes de computadores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com criatividade como regras padronizadas viabilizam a comunicação entre dispositivos, utilizando analogias para tornar os conceitos mais acessíveis e compreensíveis.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito de protocolo e sua função nas redes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Visão geral das camadas de rede</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a importância dos protocolos de comunicação e o modelo em camadas na organização das redes de computadores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com criatividade como regras padronizadas viabilizam a comunicação entre dispositivos, utilizando analogias para tornar os conceitos mais acessíveis e compreensíveis.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar as principais camadas do modelo OSI e TCP/IP.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Protocolos por camada</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a importância dos protocolos de comunicação e o modelo em camadas na organização das redes de computadores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com criatividade como regras padronizadas viabilizam a comunicação entre dispositivos, utilizando analogias para tornar os conceitos mais acessíveis e compreensíveis.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar protocolos específicos a cada camada funcional da rede.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 7 -->
+        <section id="semana7" class="semana">
+            <h3>SEMANA 7 – Camada física: transmissão de dados e meios de comunicação</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Camada física: transmissão de dados e meios de comunicação</div>
+            <div class="aula-item"><h4>Aula 1: O que é a camada física?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Entender a atuação da camada física na comunicação de dados e sua relação com os meios de transmissão utilizados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com interesse como os dados são convertidos em sinais físicos, mantendo o esforço na compreensão da função essencial da camada física.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o papel da camada física como base da comunicação em rede.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Codificação e modulação de sinais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Entender a atuação da camada física na comunicação de dados e sua relação com os meios de transmissão utilizados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com interesse como os dados são convertidos em sinais físicos, mantendo o esforço na compreensão da função essencial da camada física.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender como os dados digitais são representados em sinais para transmissão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Equipamentos da camada física</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Entender a atuação da camada física na comunicação de dados e sua relação com os meios de transmissão utilizados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Investigar com interesse como os dados são convertidos em sinais físicos, mantendo o esforço na compreensão da função essencial da camada física.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer os dispositivos que atuam na camada física das redes.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 8 -->
+        <section id="semana8" class="semana">
+            <h3>SEMANA 8 – Meios de transmissão não guiados (wireless)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Meios de transmissão não guiados (wireless)</div>
+            <div class="aula-item"><h4>Aula 1: Fundamentos de ondas de rádio e micro‑ondas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar características, frequências e limitações dos meios não guiados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade e pensamento crítico as tecnologias de comunicação sem fio, investigando suas aplicações e limitações no cotidiano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender propagação, bandas ISM e linha‑de‑visão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Wi‑Fi, Bluetooth e NFC – padrões de curto alcance</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar características, frequências e limitações dos meios não guiados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade e pensamento crítico as tecnologias de comunicação sem fio, investigando suas aplicações e limitações no cotidiano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Comparar taxas de dados, alcance e aplicações típicas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Comunicação óptica em espaço livre (laser/infravermelho) e satélite</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar características, frequências e limitações dos meios não guiados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade e pensamento crítico as tecnologias de comunicação sem fio, investigando suas aplicações e limitações no cotidiano.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Avaliar vantagens e desafios de links ópticos e satelitais.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 9 -->
+        <section id="semana9" class="semana">
+            <h3>SEMANA 9 – Fibra óptica e fenômenos físicos de transmissão</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fibra óptica e fenômenos físicos de transmissão</div>
+            <div class="aula-item"><h4>Aula 1: Estrutura da fibra óptica e modos (MM × SM)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever a estrutura, os modos de propagação e realizar análises iniciais de testes de qualidade em enlaces ópticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a atenção concentrada para observar detalhes técnicos de propagação óptica, reconhecendo fatores que impactam a qualidade dos sinais transmitidos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar fibras multimodo e monomodo e seus usos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Atenuação, dispersão e curvatura</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever a estrutura, os modos de propagação e realizar análises iniciais de testes de qualidade em enlaces ópticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a atenção concentrada para observar detalhes técnicos de propagação óptica, reconhecendo fatores que impactam a qualidade dos sinais transmitidos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar fatores físicos a perda de sinal.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Medição e certificação de links ópticos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever a estrutura, os modos de propagação e realizar análises iniciais de testes de qualidade em enlaces ópticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a atenção concentrada para observar detalhes técnicos de propagação óptica, reconhecendo fatores que impactam a qualidade dos sinais transmitidos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Usar OTDR e power‑meter para aferir qualidade.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 10 -->
+        <section id="semana10" class="semana">
+            <h3>SEMANA 10 – Camada de enlace de dados (Data‑Link)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Camada de enlace de dados (Data‑Link)</div>
+            <div class="aula-item"><h4>Aula 1: Formato do Quadro Ethernet</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Examinar a estrutura de quadros Ethernet, identificar endereços MAC e analisar métodos de acesso ao meio (CSMA/CD e CSMA/CA) com uso de ferramentas de captura.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Planejar com organização a análise de quadros e protocolos de enlace, estruturando observações para interpretar corretamente o tráfego de rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar campos preâmbulo, MAC dest/origem, tipo, FCS.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: CSMA/CD e CSMA/CA – acesso ao meio</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Examinar a estrutura de quadros Ethernet, identificar endereços MAC e analisar métodos de acesso ao meio (CSMA/CD e CSMA/CA) com uso de ferramentas de captura.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Planejar com organização a análise de quadros e protocolos de enlace, estrutuando observações para interpretar corretamente o tráfego de rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Capacidade de trabalhar quadros Ethernet, endereços MAC e controle de acesso ao meio.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Prática com Sniffer – analisando tramas no Wireshark</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Examinar a estrutura de quadros Ethernet, identificar endereços MAC e analisar métodos de acesso ao meio (CSMA/CD e CSMA/CA) com uso de ferramentas de captura.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Planejar com organização a análise de quadros e protocolos de enlace, estruturando observações para interpretar corretamente o tráfego de rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Capturar e filtrar quadros, interpretando cada campo.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 11 -->
+        <section id="semana11" class="semana">
+            <h3>SEMANA 11 – Endereçamento IPv4 e máscaras de sub‑rede</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Endereçamento IPv4 e máscaras de sub‑rede</div>
+            <div class="aula-item"><h4>Aula 1: Estrutura do Endereço IPv4 e Classes Históricas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Calcular sub-redes, identificar faixas de hosts, endereços de broadcast no planejamento de redes IP.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Decompor com pensamento analítico a estrutura de endereços IPv4, compreendendo relações entre classes, máscaras e planejamento de sub-redes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer partes rede/host e intervalo de cada classe.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: CIDR e Subnetting passo a Passo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Calcular sub-redes, identificar faixas de hosts, endereços de broadcast no planejamento de redes IP.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Decompor com pensamento analítico a estrutura de endereços IPv4, compreendendo relações entre classes, máscaras e planejamento de sub-redes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar sub‑redes usando barra‑prefixo.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: VLSM e planejamento de endereçamento em campus</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Calcular sub-redes, identificar faixas de hosts, endereços de broadcast no planejamento de redes IP.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Decompor com pensamento analítico a estrutura de endereços IPv4, compreendendo relações entre classes, máscaras e planejamento de sub-redes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar sub‑redes de tamanhos variados a departamentos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 12 -->
+        <section id="semana12" class="semana">
+            <h3>SEMANA 12 – Camada de transporte – TCP e UDP</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Camada de transporte – TCP e UDP</div>
+            <div class="aula-item"><h4>Aula 1: Cabeçalho TCP e estabelecimento de conexão (3‑way handshake)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Diferenciar e interpretar o funcionamento dos protocolos TCP e UDP, analisando portas de comunicação, sessões de controle e captura de tráfego em laboratório.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Coordenar testes em grupo de forma colaborativa, exercitando a comunicação clara e a escuta ativa para interpretar e validar resultados em rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Mapear campos sequência/ack, janelas e flags.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: UDP – comunicação leve e sem conexão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Diferenciar e interpretar o funcionamento dos protocolos TCP e UDP, analisando portas de comunicação, sessões de controle e captura de tráfego em laboratório.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Coordenar testes em grupo de forma colaborativa, exercitando a comunicação clara e a escuta ativa para interpretar e validar resultados em rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Avaliar cenários onde UDP é preferível.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Laboratório – wireshark no transporte</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Diferenciar e interpretar o funcionamento dos protocolos TCP e UDP, analisando portas de comunicação, sessões de controle e captura de tráfego em laboratório.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Coordenar testes em grupo de forma colaborativa, exercitando a comunicação clara e a escuta ativa para interpretar e validar resultados em rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Capturar handshake TCP, comparar tráfego UDP.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 13 -->
+        <section id="semana13" class="semana">
+            <h3>SEMANA 13 – Fundamentos de segurança de redes – políticas e ameaças</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos de segurança de redes – políticas e ameaças</div>
+            <div class="aula-item"><h4>Aula 1: Princípios CIA e políticas organizacionais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar riscos, vetores de ataque e princípios de segurança da informação, propondo práticas para mitigação de vulnerabilidades.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender com responsabilidade o impacto das falhas de segurança, adotando postura ética e preventiva na análise de riscos e ameaças.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar confidencialidade, integridade e disponibilidade às políticas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Reconhecimento de ameaças (DoS, MITM, Phishing)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar riscos, vetores de ataque e princípios de segurança da informação, propondo práticas para mitigação de vulnerabilidades.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender com responsabilidade o impacto das falhas de segurança, adotando postura ética e preventiva na análise de riscos e ameaças.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Descrever funcionamento e impacto de ataques comuns.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Cultivando cultura de segurança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar riscos, vetores de ataque e princípios de segurança da informação, propondo práticas para mitigação de vulnerabilidades.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender com responsabilidade o impacto das falhas de segurança, adotando postura ética e preventiva na análise de riscos e ameaças.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Debater boas práticas de usuários e administradores.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 14 -->
+        <section id="semana14" class="semana">
+            <h3>SEMANA 14 – Soluções técnicas – Firewalls, IDS/IPS</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Soluções técnicas – Firewalls, IDS/IPS</div>
+            <div class="aula-item"><h4>Aula 1: Arquiteturas de Firewall (packet‑filter, stateful, NGFW)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Saber configurar as regras básicas de firewall, interpretando alertas de IDS/IPS e agir de forma estratégica na mitigação de incidentes de rede.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Tomar decisões rápidas e responsáveis diante de eventos de segurança, demonstrando equilíbrio emocional e foco na contenção de riscos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar camadas de filtragem e zonas DMZ.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: IDS × IPS – detecção e prevenção de intrusos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Saber configurar as regras básicas de firewall, interpretando alertas de IDS/IPS e agir de forma estratégica na mitigação de incidentes de rede.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Tomar decisões rápidas e responsáveis diante de eventos de segurança, demonstrando equilíbrio emocional e foco na contenção de riscos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Capacidade de trabalhar regras básicas de firewall e interpretar alertas IDS.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Laboratório – regras básicas com iptables & análise Snort</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Saber configurar as regras básicas de firewall, interpretando alertas de IDS/IPS e agir de forma estratégica na mitigação de incidentes de rede.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Tomar decisões rápidas e responsáveis diante de eventos de segurança, demonstrando equilíbrio emocional e foco na contenção de riscos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar regras simples e gerar alerta controlado.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 15 -->
+        <section id="semana15" class="semana">
+            <h3>SEMANA 15 – Modelo OSI – Camadas Física e Enlace</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelo OSI – Camadas Física e Enlace</div>
+            <div class="aula-item"><h4>Aula 1: Estrutura da Camada Física</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever meios de transmissão, largura de banda e atenuação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Planejar com organização a análise das camadas Física e de Enlace, estruturando a compreensão dos sinais, protocolos e seus papéis na comunicação de rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer vantagens e limitações de cabos cobre, fibra e wireless.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Protocolos da Camada Enlace (Ethernet)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever meios de transmissão, largura de banda e atenuação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Planejar com organização a análise das camadas Física e de Enlace, estrutuando a compreensão dos sinais, protocolos e seus papéis na comunicação de rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar operação da Camada Enlace aos switches.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Oficina – certificação de cabo UTP</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever meios de transmissão, largura de banda e atenuação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Planejar com organização a análise das camadas Física e de Enlace, estrutuando a compreensão dos sinais, protocolos e seus papéis na comunicação de rede.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar normas T568A/B seguindo plano de testes definido.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 16 -->
+        <section id="semana16" class="semana">
+            <h3>SEMANA 16 – Endereçamento IP v4 – sub-rede e CIDR</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Endereçamento IP v4 – sub-rede e CIDR</div>
+            <div class="aula-item"><h4>Aula 1: Estrutura do endereço IPv4</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Determinar tamanho da sub‑rede, quantidade de hosts e máscara.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar em pares no planejamento de sub-redes, exercitando a divisão de tarefas e a validação conjunta de endereços e máscaras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar porção rede × host em endereços classe‑less.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Cálculo de Sub‑redes com CIDR</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Determinar tamanho da sub‑rede, quantidade de hosts e máscara.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar em pares no planejamento de sub-redes, exercitando a divisão de tarefas e a validação conjunta de endereços e máscaras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Dividir bloco /24 em sub‑redes menores para departamentos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Laboratório – planejamento de sub‑redes de uma empresa</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Determinar tamanho da sub‑rede, quantidade de hosts e máscara.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar em pares no planejamento de sub-redes, exercitando a divisão de tarefas e a validação conjunta de endereços e máscaras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Defender desenho perante a turma, usando argumentos técnicos claros.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 17 -->
+        <section id="semana17" class="semana">
+            <h3>SEMANA 17 – Protocolos de roteamento – estático e dinâmico (RIP)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Protocolos de roteamento – estático e dinâmico (RIP)</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de roteamento e tabela FIB</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar ping, traceroute e show ip route para diagnóstico.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter o autocontrole durante a configuração de rotas e o diagnóstico de falhas, organizando os comandos com precisão e foco técnico.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar forwarding × routing.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Roteamento estático x RIP v2</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar ping, traceroute e show ip route para diagnóstico.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter o autocontrole durante a configuração de rotas e o diagnóstico de falhas, organizando os comandos com precisão e foco técnico.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Comparar convergência e escalabilidade das duas abordagens.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Hands‑on – Troubleshooting de rotas inalcançáveis</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar ping, traceroute e show ip route para diagnóstico.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter o autocontrole durante a configuração de rotas e o diagnóstico de falhas, organizando os comandos com precisão e foco técnico.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Corrigir falhas de roteamento identificando causa raiz.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 18 -->
+        <section id="semana18" class="semana">
+            <h3>SEMANA 18 – Protocolos de transporte – TCP & UDP</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Protocolos de transporte – TCP & UDP</div>
+            <div class="aula-item"><h4>Aula 1: Funcionamento do TCP – Three‑Way Handshake</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever estabelecimento, controle de fluxo e congestionamento.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar tolerância ao estresse diante de falhas de comunicação, mantendo o equilíbrio emocional ao investigar perdas de pacotes e compreender a lógica dos números de sequência (ACK/SEQ).</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar camadas OSI 4 × 3 (transporte × rede).</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Características do UDP – Low Latency</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever estabelecimento, controle de fluxo e congestionamento.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar tolerância ao estresse diante de falhas de comunicação, mantendo o equilíbrio emocional ao investigar perdas de pacotes e compreender a lógica dos números de sequência (ACK/SEQ).</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Comparar cabeçalhos TCP × UDP.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Wireshark – captura e análise de sessões</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever estabelecimento, controle de fluxo e congestionamento.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar tolerância ao estresse diante de falhas de comunicação, mantendo o equilíbrio emocional ao investigar perdas de pacotes e compreender a lógica dos números de sequência (ACK/SEQ).</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Interpretar campos de segmento no tráfego real.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 19 -->
+        <section id="semana19" class="semana">
+            <h3>SEMANA 19 – Segurança na nuvem – conceitos de IAM e criptografia em trânsito</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Segurança na nuvem – conceitos de IAM e criptografia em trânsito</div>
+            <div class="aula-item"><h4>Aula 1: Modelo Shared Responsibility</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar papel do provedor versus cliente.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Comunicar com assertividade os riscos identificados durante a implementação de políticas IAM, expressando-se com clareza e responsabilidade técnica para promover a segurança da informação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir controles de acesso adequados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: IAM – papéis, políticas e MFA</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar papel do provedor versus cliente.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Comunicar com assertividade os riscos identificados durante a implementação de políticas IAM, expressando-se com clareza e responsabilidade técnica para promover a segurança da informação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Proteger chaves de API e rotação de credenciais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: TLS 1.3 na prática</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar papel do provedor versus cliente.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Comunicar com assertividade os riscos identificados durante a implementação de políticas IAM, expressando-se com clareza e responsabilidade técnica para promover a segurança da informação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Validar handshake seguro com OpenSSL.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 20 -->
+        <section id="semana20" class="semana">
+            <h3>SEMANA 20 – Backup, recuperação e continuidade de negócio</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Backup, recuperação e continuidade de negócio</div>
+            <div class="aula-item"><h4>Aula 1: Políticas de backup (Full, Incremental, Snapshot)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir janela, retenção e armazenamento off‑site.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerenciar o estresse diante de simulações de falhas e executar com tranquilidade o plano de backup e restauração de sistemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Selecionar estratégia segundo RPO/RTO.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Ferramentas de backup em nuvem</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir janela, retenção e armazenamento off‑site.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerenciar o estresse diante de simulações de falhas e executar com tranquilidade o plano de backup e restauração de sistemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Demonstrar restauração pontual de arquivo.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Simulação de desastre – Restore de VM</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir janela, retenção e armazenamento off‑site.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerenciar o estresse diante de simulações de falhas e executar com tranquilidade o plano de backup e restauração de sistemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Medir tempo de retorno ao serviço e documentar lições aprendidas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 21 -->
+        <section id="semana21" class="semana">
+            <h3>SEMANA 21 – Virtualização de rede e SDN</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Virtualização de rede e SDN</div>
+            <div class="aula-item"><h4>Aula 1: Virtual switch, vRouter e plano de controle vs. data plane</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever fundamentos de virtualização de rede e arquiteturas SDN, criando topologias virtuais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade as possibilidades de segmentação e roteamento em ambientes virtualizados e SDN, buscando compreender suas aplicações em redes modernas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar componentes de uma rede virtual.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: SDN em nuvem pública</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever fundamentos de virtualização de rede e arquiteturas SDN, criando topologias virtuais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade as possibilidades de segmentação e roteamento em ambientes virtualizados e SDN, buscando compreender suas aplicações em redes modernas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Correlacionar SDN a serviços AWS/GCP/Azure.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Laboratório Mininet</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever fundamentos de virtualização de rede e arquiteturas SDN, criando topologias virtuais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade as possibilidades de segmentação e roteamento em ambientes virtualizados e SDN, buscando compreender suas aplicações em redes modernas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar topologia custom e testar ping.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 22 -->
+        <section id="semana22" class="semana">
+            <h3>SEMANA 22 – Firewalls, IDS e IPS</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Firewalls, IDS e IPS</div>
+            <div class="aula-item"><h4>Aula 1: Modelos de filtragem de pacotes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar firewall stateful, integrar IDS/IPS e analisar alertas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aplicar imaginação criativa na elaboração de regras de firewall e estratégias de detecção de intrusão, propondo soluções inovadoras para fortalecer a segurança de redes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar filtragem packet-filter, stateful e proxy, criando primeira regra básica de bloqueio.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: IDS por Assinatura vs. comportamento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar firewall stateful, integrar IDS/IPS e analisar alertas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aplicar imaginação criativa na elaboração de regras de firewall e estratégias de detecção de intrusão, propondo soluções inovadoras para fortalecer a segurança de redes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explicar funcionamento de IDS (Snort / Suricata) e diferenciar detecção por assinatura de detecção anômala.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Oficina – Hardening de servidor Web</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar firewall stateful, integrar IDS/IPS e analisar alertas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aplicar imaginação criativa na elaboração de regras de firewall e estratégias de detecção de intrusão, propondo soluções inovadoras para fortalecer a segurança de redes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar política iptables + Suricata para proteger servidor Apache e validar por teste de port-scan.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 23 -->
+        <section id="semana23" class="semana">
+            <h3>SEMANA 23 – Load Balancer e Auto-scaling</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Load Balancer e Auto-scaling</div>
+            <div class="aula-item"><h4>Aula 1: Conceitos L4 vs L7 e Health-Check</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Dimensionar balanceadores L4/L7 e configurar políticas de auto-scale em nuvem para garantir disponibilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar pensamento crítico ao avaliar configurações padrão de balanceamento de carga e escalabilidade, analisando alternativas que melhor atendam aos requisitos do sistema.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explicar diferenças entre balanceamento em camada de transporte e de aplicação; configurar health-check.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Políticas de Auto-Scale</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Dimensionar balanceadores L4/L7 e configurar políticas de auto-scale em nuvem para garantir disponibilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar pensamento crítico ao avaliar configurações padrão de balanceamento de carga e escalabilidade, analisando alternativas que melhor atendam aos requisitos do sistema.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir métricas de CPU, latência e fila para disparar auto-scale horizontal.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Teste de carga e análise de métrica</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Dimensionar balanceadores L4/L7 e configurar políticas de auto-scale em nuvem para garantir disponibilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar pensamento crítico ao avaliar configurações padrão de balanceamento de carga e escalabilidade, analisando alternativas que melhor atendam aos requisitos do sistema.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Executar k6 para simular 500 req/s e coletar TTFB e throughput.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 24 -->
+        <section id="semana24" class="semana">
+            <h3>SEMANA 24 – TLS, PKI e gestão de certificados</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> TLS, PKI e gestão de certificados</div>
+            <div class="aula-item"><h4>Aula 1: Handshake TLS passo a passo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar TLS com mútua autenticação, gerar certificados e realizar rotação segura.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar na implementação de soluções, assumindo diferentes papéis no processo de emissão, validação e auditoria de certificados digitais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Descrever cada mensagem do handshake e negociar cipher suite apropriada.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Infraestrutura PKI com OpenSSL</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar TLS com mútua autenticação, gerar certificados e realizar rotação segura.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar na implementação de soluções, assumindo diferentes papéis no processo de emissão, validação e auditoria de certificados digitais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar CA raiz, CA intermediária e assinar CSR de servidor.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Laboratório – configurando TLS Mútuo em Nginx</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar TLS com mútua autenticação, gerar certificados e realizar rotação segura.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar na implementação de soluções, assumindo diferentes papéis no processo de emissão, validação e auditoria de certificados digitais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Habilitar ssl_client_certificate e exigir verify_client para acesso.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 25 -->
+        <section id="semana25" class="semana">
+            <h3>SEMANA 25 – Monitoramento de rede (SNMP, NetFlow e Logs)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Monitoramento de rede (SNMP, NetFlow e Logs)</div>
+            <div class="aula-item"><h4>Aula 1: Fundamentos SNMP e MIBs</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar SNMP, coletar NetFlow e consolidar logs em pilha ELK para diagnóstico proativo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade na configuração de ferramentas de monitoramento e na interpretação de dados, ajustando visualizações e estratégias conforme surgem novas informações e demandas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Habilitar agente SNMPv2c e interpretar OIDs principais de roteador.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Coleta de fluxo com NetFlow/sFlow</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar SNMP, coletar NetFlow e consolidar logs em pilha ELK para diagnóstico proativo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade na configuração de ferramentas de monitoramento e na interpretação de dados, ajustando visualizações e estratégias conforme surgem novas informações e demandas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Exportar fluxos de roteador para nfdump e identificar "top talkers".</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Laboratório – centralizando logs na pilha ELK</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar SNMP, coletar NetFlow e consolidar logs em pilha ELK para diagnóstico proativo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade na configuração de ferramentas de monitoramento e na interpretação de dados, ajustando visualizações e estratégias conforme surgem novas informações e demandas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Enviar logs de firewall para Logstash e criar dashboard Kibana.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 26 -->
+        <section id="semana26" class="semana">
+            <h3>SEMANA 26 – Edge Computing e Content Delivery Network (CDN)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Edge Computing e Content Delivery Network (CDN)</div>
+            <div class="aula-item"><h4>Aula 1: Conceitos de Edge e Fog Computing</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever arquitetura edge/fog, configurar CDN e calcular impacto em TTFB.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência e autonomia na configuração de soluções distribuídas em arquiteturas resilientes, ajustando parâmetros até alcançar desempenho, estabilidade e robustez na entrega de serviços.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Mapear camadas de processamento locais, regionais e centrais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: CDN – interna vs. provedores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever arquitetura edge/fog, configurar CDN e calcular impacto em TTFB.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência e autonomia na configuração de soluções distribuídas em arquiteturas resilientes, ajustando parâmetros até alcançar desempenho, estabilidade e robustez na entrega de serviços.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Comparar AWS CloudFront, Cloudflare e Akamai em termos de preço e cobertura PoP.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Hands-on CloudFront</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever arquitetura edge/fog, configurar CDN e calcular impacto em TTFB.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência e autonomia na configuração de soluções distribuídas em arquiteturas resilientes, ajustando parâmetros até alcançar desempenho, estabilidade e robustez na entrega de serviços.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Publicar site estático, medir TTFB e ajustar políticas de cache.</div>
+            </div>
+        </section>
+
+        <footer>
+            Documento elaborado conforme normas ABNT (NBR 14724) para apresentação de plano de ensino.<br>
+            Disciplina: Redes de Computadores e Segurança – 2ª Série (Desenvolvimento de Sistemas)
+        </footer>
+    </div>
 </body>
 </html>
