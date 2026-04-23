@@ -1,354 +1,957 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<title>Aprendizagem de Máquina</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Aprendizado de Máquina</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000000;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .abnt-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 3cm 2cm 2cm 3cm;
+            background: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 2cm 0 0.5cm 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: normal;
+            margin-top: -0.2cm;
+            margin-bottom: 1.5cm;
+            font-style: normal;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3cm;
+        }
+
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 0.8cm 0 0.4cm 0;
+            color: #1a2a4f;
+        }
+
+        h4 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 0.6cm 0 0.2cm 0;
+            font-style: normal;
+            border-bottom: 1px dotted #ddd;
+            padding-bottom: 2px;
+        }
+
+        .semana {
+            margin-bottom: 0.8cm;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .aula-item {
+            margin-left: 0.7cm;
+            margin-bottom: 0.45cm;
+            padding-left: 0.2cm;
+        }
+
+        .tema-semana {
+            font-size: 11pt;
+            font-style: italic;
+            background-color: #f4f4f9;
+            padding: 0.2cm 0.4cm;
+            margin-top: 0.2cm;
+            margin-bottom: 0.3cm;
+            border-left: 4px solid #2c3e66;
+            margin-left: 0.7cm;
+        }
+
+        .tema-semana strong {
+            font-style: normal;
+            color: #1a2a4f;
+        }
+
+        .habilidades,
+        .socioemocionais,
+        .objetivo {
+            margin-left: 0.5cm;
+            margin-top: 0.15cm;
+            margin-bottom: 0.1cm;
+            text-align: justify;
+        }
+
+        .habilidades strong,
+        .socioemocionais strong,
+        .objetivo strong {
+            font-weight: bold;
+        }
+
+        .sumario {
+            margin: 1cm 0 1.2cm 0;
+            background: #fafafc;
+            padding: 0.5cm 0.8cm;
+            border: 1px solid #ddd;
+        }
+        .sumario h3 {
+            margin-top: 0;
+            font-size: 13pt;
+            text-transform: uppercase;
+        }
+        .sumario-lista {
+            columns: 2;
+            column-gap: 1.2cm;
+            list-style: none;
+            padding-left: 0.2cm;
+        }
+        .sumario-lista li {
+            margin-bottom: 0.2cm;
+            font-size: 10pt;
+        }
+        .sumario-lista a {
+            text-decoration: none;
+            color: #1e466e;
+        }
+        .sumario-lista a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 1.8cm;
+            border-top: 1px solid #aaa;
+            padding-top: 0.5cm;
+            font-size: 10pt;
+            text-align: center;
+            color: #444;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .abnt-container {
+                padding: 3cm 2cm 2cm 3cm;
+                box-shadow: none;
+            }
+            .sumario {
+                background: white;
+                border: 1px solid #ccc;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+            }
+            .semana {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .abnt-container {
+                padding: 1.5cm 1cm 1.5cm 1.5cm;
+            }
+            .sumario-lista {
+                columns: 1;
+            }
+            h1 {
+                font-size: 16pt;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<h1>Aprendizagem de Máquina</h1>
-<p><strong>Carga horária:</strong> 133h20min</p>
-
-<h2>Unidades Curriculares</h2>
-<ul>
-<li>I - Fundamentos de Aprendizado de Máquina — 26h20min</li>
-<li>II - Modelos, Algoritmos e Estimadores — 80h</li>
-<li>III - Preparação de Dados e Otimização — 13h20min</li>
-<li>IV - Projeto de Aprendizagem de Máquina — 13h20min</li>
-</ul>
-
-<br>
-<a href="index.html">Voltar para 3B Ciência de Dados</a>
-
-<title>Aprendizado de Máquina</title>
-
-<h1>Aprendizado de Máquina</h1>
-
-<p>
-Material introdutório sobre Machine Learning.
-Cada semana apresenta aulas e um exercício para fixação.
-</p>
-
-<hr>
-
-<h2>Semana 1 — Introdução ao Aprendizado de Máquina</h2>
-
-<ul>
-<li>Aula 1: Conceitos básicos de aprendizado de máquina</li>
-<li>Aula 2: Tipos de aprendizado em aprendizado de máquina</li>
-<li>Aula 3: Aplicações práticas de aprendizado de máquina</li>
-<li>Aula 4: Exercícios de fixação</li>
-</ul>
-
-<p><b>Exercício:</b> Cite três aplicações reais de Machine Learning.</p>
-
-<hr>
-
-<h2>Semana 2 — Modelos Supervisionados</h2>
-
-<ul>
-<li>Aula 1: Introdução à regressão</li>
-<li>Aula 2: Introdução à classificação</li>
-<li>Aula 3: Aplicações práticas</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<p><b>Exercício:</b> Explique a diferença entre regressão e classificação.</p>
-
-<hr>
-
-<h2>Semana 3 — Modelos Não Supervisionados</h2>
-
-<ul>
-<li>Aula 1: Introdução à clusterização</li>
-<li>Aula 2: Redução de dimensionalidade</li>
-<li>Aula 3: Aplicações práticas</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 4 — Avaliação de Modelos</h2>
-
-<ul>
-<li>Aula 1: Métricas de desempenho</li>
-<li>Aula 2: Validação cruzada</li>
-<li>Aula 3: Comparação de modelos</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 5 — Regressão Linear</h2>
-
-<ul>
-<li>Aula 1: Conceito de regressão linear</li>
-<li>Aula 2: Implementação</li>
-<li>Aula 3: Aplicações práticas</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 6 — Regressão Linear Avançada</h2>
-
-<ul>
-<li>Aula 1: Avaliação do modelo</li>
-<li>Aula 2: Melhoria dos modelos</li>
-<li>Aula 3: Aplicações práticas</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 7 — Projeto de Machine Learning</h2>
-
-<ul>
-<li>Aula 1: Definição do projeto</li>
-<li>Aula 2: Desenvolvimento</li>
-<li>Aula 3: Avaliação</li>
-<li>Aula 4: Apresentação</li>
-</ul>
-
-<hr>
-
-<h2>Semana 8 — Regressão Logística</h2>
-
-<ul>
-<li>Aula 1: Introdução à regressão logística</li>
-<li>Aula 2: Estimadores</li>
-<li>Aula 3: Aplicações práticas</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 9 — Regressão Logística Avançada</h2>
-
-<ul>
-<li>Aula 1: Multiclasse</li>
-<li>Aula 2: Função sigmoide</li>
-<li>Aula 3: Avaliação do modelo</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 10 — Árvores de Decisão</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Critérios de divisão</li>
-<li>Aula 3: Podas</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 11 — Árvores de Decisão Avançadas</h2>
-
-<ul>
-<li>Aula 1: Overfitting e underfitting</li>
-<li>Aula 2: Visualização de árvores</li>
-<li>Aula 3: Aplicações</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 12 — Random Forest</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Hiperparâmetros</li>
-<li>Aula 3: Aplicações</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 13 — Modelos Ensemble</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Random Forest</li>
-<li>Aula 3: Gradient Boosting</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 14 — Projeto de Machine Learning</h2>
-
-<ul>
-<li>Aula 1: Implementação</li>
-<li>Aula 2: Avaliação</li>
-<li>Aula 3: Otimização</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 15 — K-Nearest Neighbors (KNN)</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Hiperparâmetros</li>
-<li>Aula 3: Aplicações</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 16 — Support Vector Machine (SVM)</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Kernel Trick</li>
-<li>Aula 3: Aplicações</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 17 — SVM Avançado</h2>
-
-<ul>
-<li>Aula 1: Hiperparâmetros</li>
-<li>Aula 2: Regularização</li>
-<li>Aula 3: Avaliação</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 18 — Naive Bayes</h2>
-
-<ul>
-<li>Aula 1: Teorema de Bayes</li>
-<li>Aula 2: Fundamentos</li>
-<li>Aula 3: Implementação</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 19 — Otimização</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Hiperparâmetros</li>
-<li>Aula 3: Algoritmos</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 20 — Feature Engineering</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Criação de features</li>
-<li>Aula 3: Seleção de features</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 21 — Projeto de Machine Learning</h2>
-
-<ul>
-<li>Aula 1: Análise exploratória</li>
-<li>Aula 2: Implementação</li>
-<li>Aula 3: Avaliação</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 22 — K-Means</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Hiperparâmetros</li>
-<li>Aula 3: Aplicações</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 23 — DBSCAN</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Hiperparâmetros</li>
-<li>Aula 3: Aplicações</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 24 — Hierarchical Clustering</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Hiperparâmetros</li>
-<li>Aula 3: Aplicações</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 25 — PCA</h2>
-
-<ul>
-<li>Aula 1: Introdução ao PCA</li>
-<li>Aula 2: Redução de dimensionalidade</li>
-<li>Aula 3: Aplicações</li>
-<li>Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 26 — Pipelines</h2>
-
-<ul>
-<li>Aula 1: Introdução</li>
-<li>Aula 2: Construção de pipelines</li>
-<li>Aula 3: Aplicações</li>
-<li	Aula 4: Exercícios</li>
-</ul>
-
-<hr>
-
-<h2>Semana 27 — Revisão</h2>
-
-<ul>
-<li>Aula 1: Revisão regressão linear</li>
-<li>Aula 2: Revisão regressão logística</li>
-<li>Aula 3: Revisão árvores de decisão</li>
-<li>Aula 4: Revisão ensemble</li>
-</ul>
-
-<hr>
-
-<h2>Semana 28 — Projeto Final</h2>
-
-<ul>
-<li>Aula 1: Finalização do projeto</li>
-<li>Aula 2: Avaliação final</li>
-<li>Aula 3: Apresentação dos resultados</li>
-<li>Aula 4: Reflexão e feedback</li>
-</ul>
-
-<hr>
-
-<h3>Laboratório de Computação</h3>
-
-<p>
-Material educacional aberto para estudo.<br>
-Os alunos podem baixar, modificar e experimentar os códigos.
-</p>
-
+    <div class="abnt-container">
+        <h1>APRENDIZADO DE MÁQUINA</h1>
+        <div class="subtitulo">Aprendizado de Máquina – 3ª Série (Ciência de Dados)</div>
+
+        <div class="sumario">
+            <h3>SUMÁRIO</h3>
+            <ul class="sumario-lista">
+                <li><a href="#semana1">Semana 1 – Introdução ao Aprendizado de Máquina</a></li>
+                <li><a href="#semana2">Semana 2 – Modelos Supervisionados</a></li>
+                <li><a href="#semana3">Semana 3 – Modelos Não Supervisionados</a></li>
+                <li><a href="#semana4">Semana 4 – Avaliação de Modelos</a></li>
+                <li><a href="#semana5">Semana 5 – Regressão Linear (Parte 1)</a></li>
+                <li><a href="#semana6">Semana 6 – Regressão Linear (Parte 2)</a></li>
+                <li><a href="#semana7">Semana 7 – Projeto de Aprendizado de Máquina (Parte 1)</a></li>
+                <li><a href="#semana8">Semana 8 – Regressão Logística (Parte 1)</a></li>
+                <li><a href="#semana9">Semana 9 – Regressão Logística (Parte 2)</a></li>
+                <li><a href="#semana10">Semana 10 – Árvores de Decisão (Parte 1)</a></li>
+                <li><a href="#semana11">Semana 11 – Árvores de Decisão (Parte 2)</a></li>
+                <li><a href="#semana12">Semana 12 – Random Forest</a></li>
+                <li><a href="#semana13">Semana 13 – Modelos de Ensemble</a></li>
+                <li><a href="#semana14">Semana 14 – Projeto de Aprendizado de Máquina (Parte 2)</a></li>
+                <li><a href="#semana15">Semana 15 – K-Nearest Neighbors (KNN)</a></li>
+                <li><a href="#semana16">Semana 16 – Support Vector Machine (SVM) (Parte 1)</a></li>
+                <li><a href="#semana17">Semana 17 – Support Vector Machine (SVM) (Parte 2)</a></li>
+                <li><a href="#semana18">Semana 18 – Naive Bayes</a></li>
+                <li><a href="#semana19">Semana 19 – Otimização</a></li>
+                <li><a href="#semana20">Semana 20 – Feature Engineering</a></li>
+                <li><a href="#semana21">Semana 21 – Projeto de Aprendizado de Máquina (Parte 3)</a></li>
+                <li><a href="#semana22">Semana 22 – K-Means</a></li>
+                <li><a href="#semana23">Semana 23 – DBSCAN</a></li>
+                <li><a href="#semana24">Semana 24 – Hierarchical Clustering</a></li>
+                <li><a href="#semana25">Semana 25 – Análise de Componentes Principais (PCA)</a></li>
+                <li><a href="#semana26">Semana 26 – Pipeline</a></li>
+                <li><a href="#semana27">Semana 27 – Revisão</a></li>
+                <li><a href="#semana28">Semana 28 – Projeto de Aprendizado de Máquina (Parte 4)</a></li>
+            </ul>
+        </div>
+
+        <!-- SEMANA 1 -->
+        <section id="semana1" class="semana">
+            <h3>SEMANA 1 – Introdução ao Aprendizado de Máquina</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução ao Aprendizado de Máquina</div>
+            <div class="aula-item"><h4>Aula 1: Conceitos básicos de aprendizado de máquina</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos básicos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade e interesse em novas ideias.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o que é aprendizado de máquina e sua importância.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Tipos de aprendizado em aprendizado de máquina</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos básicos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade e interesse em novas ideias.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer diferentes tipos de aprendizado de máquina e suas aplicações práticas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de aprendizado de máquina</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos básicos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade e interesse em novas ideias.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar e compreender aplicações práticas de aprendizado de máquina em diferentes áreas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos básicos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade e interesse em novas ideias.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento de aprendizado de máquinas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 2 -->
+        <section id="semana2" class="semana">
+            <h3>SEMANA 2 – Modelos Supervisionados</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelos Supervisionados</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à regressão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar diferentes algoritmos de aprendizagem supervisionada.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade e interesse em resolver problemas práticos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito e a aplicação da regressão e conhecer algoritmos de regressão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Introdução à classificação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar diferentes algoritmos de aprendizagem supervisionada.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade e interesse em resolver problemas práticos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito e a aplicação da classificação e conhecer algoritmos de classificação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de modelos supervisionados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar diferentes algoritmos de aprendizagem supervisionada.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade e interesse em resolver problemas práticos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar e compreender as aplicações práticas de modelos supervisionados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos básicos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade e interesse em resolver problemas práticos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento de aprendizado de máquinas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 3 -->
+        <section id="semana3" class="semana">
+            <h3>SEMANA 3 – Modelos Não Supervisionados</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelos Não Supervisionados</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à clusterização</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar diferentes algoritmos de clusterização.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e curiosidade em explorar dados não rotulados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito e a aplicação da clusterização e conhecer algoritmos de clusterização.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Introdução à redução de dimensionalidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar diferentes algoritmos de clusterização.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e curiosidade em explorar dados não rotulados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer técnicas de redução de dimensionalidade.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de modelos não supervisionados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar diferentes algoritmos de clusterização.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e curiosidade em explorar dados não rotulados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender aplicações práticas de modelos não supervisionados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar diferentes algoritmos de clusterização.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e curiosidade em explorar dados não rotulados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento de algoritmos de clusterização.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 4 -->
+        <section id="semana4" class="semana">
+            <h3>SEMANA 4 – Avaliação de Modelos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Avaliação de Modelos</div>
+            <div class="aula-item"><h4>Aula 1: Métricas de desempenho</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métricas de desempenho para avaliação de modelos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser crítico na análise de resultados e demonstrar responsabilidade na avaliação dos modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar diferentes métricas de desempenho.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Validação cruzada</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métricas de desempenho para avaliação de modelos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser crítico na análise de resultados e demonstrar responsabilidade na avaliação dos modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento da validação cruzada.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Comparação de modelos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métricas de desempenho para avaliação de modelos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser crítico na análise de resultados e demonstrar responsabilidade na avaliação dos modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a importância da comparação de modelos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métricas de desempenho para avaliação de modelos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser crítico na análise de resultados e demonstrar responsabilidade na avaliação dos modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento sobre avaliação de modelos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 5 -->
+        <section id="semana5" class="semana">
+            <h3>SEMANA 5 – Regressão Linear (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Regressão Linear (Parte 1)</div>
+            <div class="aula-item"><h4>Aula 1: Conceito de regressão linear</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de regressão linear em Python.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em resolver problemas práticos usando regressão linear.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito e a fórmula da regressão linear e conhecer seus componentes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Implementação da regressão linear</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de regressão linear em Python.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em resolver problemas práticos usando regressão linear.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar regressão linear em Python e conhecer bibliotecas e funções úteis.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de regressão linear</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de regressão linear em Python.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em resolver problemas práticos usando regressão linear.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar e compreender aplicações práticas de regressão linear.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de regressão linear em Python.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em resolver problemas práticos usando regressão linear.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento de algoritmos de regressão linear em Python.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 6 -->
+        <section id="semana6" class="semana">
+            <h3>SEMANA 6 – Regressão Linear (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Regressão Linear (Parte 2)</div>
+            <div class="aula-item"><h4>Aula 1: Avaliação do modelo de regressão linear</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Avaliar modelos de regressão linear utilizando métricas adequadas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em avaliar e melhorar modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender métricas de avaliação do modelo de regressão linear.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Melhoria dos modelos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Avaliar modelos de regressão linear utilizando métricas adequadas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em avaliar e melhorar modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender como melhorar o modelo de regressão linear com técnicas de ajuste e regularização.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de melhoria de modelos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Avaliar modelos de regressão linear utilizando métricas adequadas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em avaliar e melhorar modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar e compreender aplicações práticas de melhoria de modelos de regressão linear.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Avaliar modelos de regressão linear utilizando métricas adequadas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em avaliar e melhorar modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 7 -->
+        <section id="semana7" class="semana">
+            <h3>SEMANA 7 – Projeto de Aprendizado de Máquina (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Projeto de Aprendizado de Máquina (Parte 1)</div>
+            <div class="aula-item"><h4>Aula 1: Definição do projeto de aprendizado de máquina</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar e definir projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e curiosidade pela definição de projetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar passos para definir um projeto de aprendizado de máquina e seus objetivos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Desenvolvimento do projeto de aprendizado de máquina</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar e definir projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e curiosidade pela definição de projetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar, testar e avaliar um projeto de aprendizado de máquina.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Avaliação do projeto de aprendizado de máquina</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar e definir projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e curiosidade pela definição de projetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Avaliar o projeto de aprendizado de máquina.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Apresentação do projeto de aprendizado de máquina</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar e definir projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e curiosidade pela definição de projetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Apresentar o projeto de aprendizado de máquina desenvolvido.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 8 -->
+        <section id="semana8" class="semana">
+            <h3>SEMANA 8 – Regressão Logística (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Regressão Logística (Parte 1)</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à regressão logística</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de regressão logística.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento da regressão logística.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Estimadores de regressão logística</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de regressão logística.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a utilizar estimadores de regressão logística.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de regressão logística</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de regressão logística.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar modelos de regressão logística em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de regressão logística.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 9 -->
+        <section id="semana9" class="semana">
+            <h3>SEMANA 9 – Regressão Logística (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Regressão Logística (Parte 2)</div>
+            <div class="aula-item"><h4>Aula 1: Multiclasse em regressão logística</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de regressão logística multiclasse.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar um modelo de regressão logística multiclasse.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Função sigmoide em regressão logística</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de regressão logística multiclasse.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar a função sigmoide em modelos de regressão logística.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Avaliação do modelo de regressão logística</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de regressão logística multiclasse.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender e conhecer as métricas de avaliação do modelo de regressão logística.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de regressão logística multiclasse.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fixar o conhecimento por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 10 -->
+        <section id="semana10" class="semana">
+            <h3>SEMANA 10 – Árvores de Decisão (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Árvores de Decisão (Parte 1)</div>
+            <div class="aula-item"><h4>Aula 1: Introdução às árvores de decisão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de árvores de decisão.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes e persistir na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento das árvores de decisão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Critérios de divisão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de árvores de decisão.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes e persistir na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a utilizar diferentes critérios de divisão da árvore.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Podas em árvores de decisão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de árvores de decisão.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes e persistir na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender funcionamento das podas em árvores de decisão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de árvores de decisão.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes e persistir na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fixar o conhecimento por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 11 -->
+        <section id="semana11" class="semana">
+            <h3>SEMANA 11 – Árvores de Decisão (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Árvores de Decisão (Parte 2)</div>
+            <div class="aula-item"><h4>Aula 1: Overfitting e underfitting em árvores de decisão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar sinais de overfitting e underfitting em árvores de decisão.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser crítico na análise de resultados e demonstrar responsabilidade na avaliação dos modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar sinais de overfitting e underfitting em modelos de árvores de decisão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Visualização de árvores de decisão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar sinais de overfitting e underfitting em árvores de decisão.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser crítico na análise de resultados e demonstrar responsabilidade na avaliação dos modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Visualizar e interpretar árvores de decisão utilizando diferentes ferramentas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de árvores de decisão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar sinais de overfitting e underfitting em árvores de decisão.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser crítico na análise de resultados e demonstrar responsabilidade na avaliação dos modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar modelos de árvores de decisão em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar sinais de overfitting e underfitting em árvores de decisão.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser crítico na análise de resultados e demonstrar responsabilidade na avaliação dos modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Fixar o conhecimento por meio de exercícios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 12 -->
+        <section id="semana12" class="semana">
+            <h3>SEMANA 12 – Random Forest</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Random Forest</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao Random Forest</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de Random Forest.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender funcionamento do Random Forest.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Hiperparâmetros do Random Forest</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de Random Forest.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a utilizar diferentes hiperparâmetros do Random Forest.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de Random Forest</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de Random Forest.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar modelos de Random Forest em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de Random Forest.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 13 -->
+        <section id="semana13" class="semana">
+            <h3>SEMANA 13 – Modelos de Ensemble</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelos de Ensemble</div>
+            <div class="aula-item"><h4>Aula 1: Introdução a modelos de Ensemble</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de Ensemble.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender funcionamento de modelos de Ensemble.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Random Forest</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de Ensemble.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a utilizar Random Forest em problemas de classificação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Gradient Boosting</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de Ensemble.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender funcionamento de Gradient Boosting.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de Ensemble.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 14 -->
+        <section id="semana14" class="semana">
+            <h3>SEMANA 14 – Projeto de Aprendizado de Máquina (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Projeto de Aprendizado de Máquina (Parte 2)</div>
+            <div class="aula-item"><h4>Aula 1: Implementação do modelo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de aprendizado de máquina utilizando pipelines.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe para resolver problemas e demonstrar resiliência ao enfrentar desafios.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar o modelo selecionado utilizando os dados coletados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Avaliação do modelo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de aprendizado de máquina utilizando pipelines.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe para resolver problemas e demonstrar resiliência ao enfrentar desafios.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Avaliar performance do modelo implementado com diferentes métricas de avaliação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Otimização do modelo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de aprendizado de máquina utilizando pipelines.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe para resolver problemas e demonstrar resiliência ao enfrentar desafios.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar oportunidades de melhoria no modelo implementado.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar modelos de aprendizado de máquina utilizando pipelines.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe para resolver problemas e demonstrar resiliência ao enfrentar desafios.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 15 -->
+        <section id="semana15" class="semana">
+            <h3>SEMANA 15 – K-Nearest Neighbors (KNN)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> K-Nearest Neighbors (KNN)</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao KNN</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de KNN.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes e persistir na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender funcionamento do KNN.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Hiperparâmetros do KNN</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de KNN.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes e persistir na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a utilizar diferentes hiperparâmetros do KNN.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de KNN</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de KNN.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes e persistir na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar modelos de KNN em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de KNN.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar atenção aos detalhes e persistir na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 16 -->
+        <section id="semana16" class="semana">
+            <h3>SEMANA 16 – Support Vector Machine (SVM) (Parte 1)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Support Vector Machine (SVM) (Parte 1)</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao SVM</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de SVM.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento do SVM.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Kernel trick</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de SVM.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a utilizar o Kernel Trick em modelos de SVM.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de SVM</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de SVM.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar modelos de SVM em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de SVM.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 17 -->
+        <section id="semana17" class="semana">
+            <h3>SEMANA 17 – Support Vector Machine (SVM) (Parte 2)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Support Vector Machine (SVM) (Parte 2)</div>
+            <div class="aula-item"><h4>Aula 1: Hiperparâmetros do SVM</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Ajustar hiperparâmetros do SVM.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a utilizar diferentes hiperparâmetros do SVM.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Regularização no SVM</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Ajustar hiperparâmetros do SVM.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento da regularização no SVM.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Avaliação do modelos de SVM</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Ajustar hiperparâmetros do SVM.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender como avaliar modelos de SVM e conhecer métricas de avaliação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Ajustar hiperparâmetros do SVM.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 18 -->
+        <section id="semana18" class="semana">
+            <h3>SEMANA 18 – Naive Bayes</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Naive Bayes</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao teorema de Bayes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar o teorema de Bayes em problemas práticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento do Teorema de Bayes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Fundamentos do Naive Bayes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar o teorema de Bayes em problemas práticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento do algoritmo de Naive Bayes em problemas de classificação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Implementação prática</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar o teorema de Bayes em problemas práticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar o algoritmo de Naive Bayes em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar o teorema de Bayes em problemas práticos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 19 -->
+        <section id="semana19" class="semana">
+            <h3>SEMANA 19 – Otimização</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Otimização</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à otimização</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar técnicas de otimização em modelos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade em explorar e aplicar técnicas de otimização.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender funcionamento da otimização.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Otimização de hiperparâmetros</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar técnicas de otimização em modelos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade em explorar e aplicar técnicas de otimização.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a otimizar hiperparâmetros.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Algoritmos de otimização</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar técnicas de otimização em modelos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade em explorar e aplicar técnicas de otimização.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento de algoritmos de otimização.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar técnicas de otimização em modelos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade em explorar e aplicar técnicas de otimização.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 20 -->
+        <section id="semana20" class="semana">
+            <h3>SEMANA 20 – Feature Engineering</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Feature Engineering</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao feature engineering</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar técnicas de feature engineering em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade em explorar e aplicar técnicas de feature engineering.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender conceito de feature engineering.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Criação de novas features</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar técnicas de feature engineering em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade em explorar e aplicar técnicas de feature engineering.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar novas features a partir de dados brutos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Seleção de features</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar técnicas de feature engineering em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade em explorar e aplicar técnicas de feature engineering.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender funcionamento da seleção de features.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar técnicas de feature engineering em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar curiosidade em explorar e aplicar técnicas de feature engineering.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 21 -->
+        <section id="semana21" class="semana">
+            <h3>SEMANA 21 – Projeto de Aprendizado de Máquina (Parte 3)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Projeto de Aprendizado de Máquina (Parte 3)</div>
+            <div class="aula-item"><h4>Aula 1: Análise exploratória e seleção de modelos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar análise exploratória de dados em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na implementação de modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar passos para definição de um projeto de aprendizado de máquina.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Implementação do modelo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar análise exploratória de dados em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na implementação de modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar um projeto de aprendizado de máquina.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Avaliação e otimização do modelo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar análise exploratória de dados em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na implementação de modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Revisar o projeto de aprendizado de máquina.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar análise exploratória de dados em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na implementação de modelos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 22 -->
+        <section id="semana22" class="semana">
+            <h3>SEMANA 22 – K-Means</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> K-Means</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao K-Means</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de K-Means.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento do K-Means.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Hiperparâmetros do K-Means</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de K-Means.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Utilizar diferentes hiperparâmetros do K-Means.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas do K-Means</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de K-Means.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar modelos de K-Means em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de K-Means.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 23 -->
+        <section id="semana23" class="semana">
+            <h3>SEMANA 23 – DBSCAN</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> DBSCAN</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao DBSCAN</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de DBSCAN.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento do DBSCAN.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Hiperparâmetros do DBSCAN</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de DBSCAN.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Utilizar diferentes hiperparâmetros do DBSCAN.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas do DBSCAN</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de DBSCAN.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar modelos de DBSCAN em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de DBSCAN.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 24 -->
+        <section id="semana24" class="semana">
+            <h3>SEMANA 24 – Hierarchical Clustering</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Hierarchical Clustering</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao Hierarchical Clustering</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de Hierarchical Clustering.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento do Hierarchical Clustering.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Hiperparâmetros do Hierarchical Clustering</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de Hierarchical Clustering.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Utilizar e ajustar hiperparâmetros do Hierarchical Clustering.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de Hierarchical Clustering</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de Hierarchical Clustering.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar modelos de Hierarchical Clustering em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de Hierarchical Clustering.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 25 -->
+        <section id="semana25" class="semana">
+            <h3>SEMANA 25 – Análise de Componentes Principais (PCA)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Análise de Componentes Principais (PCA)</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao PCA</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de PCA.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento do PCA.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Redução de dimensionalidade com PCA</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de PCA.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a utilizar PCA para reduzir a dimensionalidade de conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de PCA</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de PCA.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar PCA em conjuntos de dados.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar algoritmos de PCA.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na resolução de problemas complexos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 26 -->
+        <section id="semana26" class="semana">
+            <h3>SEMANA 26 – Pipeline</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Pipeline</div>
+            <div class="aula-item"><h4>Aula 1: Introdução a pipelines</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar pipelines em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver a capacidade de cooperar em equipe para compreender e discutir o funcionamento de pipelines.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o funcionamento de pipelines.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Construção de pipelines</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar pipelines em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver a capacidade de cooperar em equipe para compreender e discutir o funcionamento de pipelines.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir pipelines para pré-processamento, modelagem e avaliação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicações práticas de pipelines</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar pipelines em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver a capacidade de cooperar em equipe para compreender e discutir o funcionamento de pipelines.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar pipelines em projetos de aprendizado de máquina reais.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Exercícios de fixação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implementar pipelines em projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver a capacidade de cooperar em equipe para compreender e discutir o funcionamento de pipelines.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar exercícios para fixar o conhecimento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 27 -->
+        <section id="semana27" class="semana">
+            <h3>SEMANA 27 – Revisão</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Revisão</div>
+            <div class="aula-item"><h4>Aula 1: Revisão de regressão linear</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas com algoritmos de Machine Learning.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na revisão de conceitos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conceitos de regressão linear.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Revisão de regressão logística</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas com algoritmos de Machine Learning.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na revisão de conceitos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conceitos de regressão logística.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Revisão de árvores de decisão</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas com algoritmos de Machine Learning.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na revisão de conceitos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conceitos de árvores de decisão.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Revisão de modelos de ensemble</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Resolver problemas com algoritmos de Machine Learning.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na revisão de conceitos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar conhecimento por meio da prática.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 28 -->
+        <section id="semana28" class="semana">
+            <h3>SEMANA 28 – Projeto de Aprendizado de Máquina (Parte 4)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Projeto de Aprendizado de Máquina (Parte 4)</div>
+            <div class="aula-item"><h4>Aula 1: Finalização do projeto</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Finalizar projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na finalização, na avaliação e na apresentação de projetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender passos para a definição de um projeto de aprendizado de máquina.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Avaliação final do modelo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Finalizar projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na finalização, na avaliação e na apresentação de projetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Implementar um projeto de aprendizado de máquina.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Apresentação dos resultados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Finalizar projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na finalização, na avaliação e na apresentação de projetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Revisar o projeto de aprendizado de máquina.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 4: Reflexão e feedback</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Finalizar projetos de aprendizado de máquina.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na finalização, na avaliação e na apresentação de projetos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Apresentar o projeto de aprendizado de máquina desenvolvido.</div>
+            </div>
+        </section>
+
+        <footer>
+            Documento elaborado conforme normas ABNT (NBR 14724) para apresentação de plano de ensino.<br>
+            Disciplina: Aprendizado de Máquina – 3ª Série (Ciência de Dados)
+        </footer>
+    </div>
 </body>
 </html>
