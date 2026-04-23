@@ -1,266 +1,460 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Laboratório de IA — Conteúdo Completo (IA + Processos + Redes)</title>
-<style>
- body{font-family:Arial, Helvetica, sans-serif; margin:32px; background:#f4f4f4; color:#222}
- h1{background:#222;color:#fff;padding:12px 16px;border-radius:8px;margin:0 0 12px}
- h2{background:#444;color:#fff;padding:8px 12px;border-radius:6px;margin:18px 0 8px}
- h3{margin:10px 0 4px}
- .bloco{background:#fff;padding:18px;border-radius:8px;box-shadow:0 1px 6px rgba(0,0,0,.12); margin-bottom:18px}
- ul{margin-left:20px}
- .top{display:flex;gap:8px;align-items:center;margin-bottom:12px}
- button{background:#2563eb;color:#fff;border:none;border-radius:6px;padding:8px 12px;cursor:pointer}
- .note{color:#555;font-size:.95rem}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Plano de Ensino - Processos de Desenvolvimento de Software</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000000;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .abnt-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 3cm 2cm 2cm 3cm;
+            background: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 2cm 0 0.5cm 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: normal;
+            margin-top: -0.2cm;
+            margin-bottom: 1.5cm;
+            font-style: normal;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3cm;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            margin: 1.2cm 0 0.6cm 0;
+            border-left: 4px solid #2c3e66;
+            padding-left: 0.5cm;
+            background: none;
+        }
+
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 0.8cm 0 0.4cm 0;
+            color: #1a2a4f;
+        }
+
+        h4 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 0.6cm 0 0.2cm 0;
+            font-style: normal;
+            border-bottom: 1px dotted #ddd;
+            padding-bottom: 2px;
+        }
+
+        .semana {
+            margin-bottom: 0.8cm;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .aula-item {
+            margin-left: 0.7cm;
+            margin-bottom: 0.45cm;
+            padding-left: 0.2cm;
+        }
+
+        .exercicio {
+            font-size: 11pt;
+            background-color: #f4f4f9;
+            padding: 0.3cm 0.5cm;
+            margin-top: 0.2cm;
+            border-left: 4px solid #2c3e66;
+            margin-left: 0.7cm;
+            font-style: italic;
+        }
+
+        .exercicio strong {
+            font-weight: bold;
+            font-style: normal;
+            color: #1a2a4f;
+        }
+
+        .sumario {
+            margin: 1cm 0 1.2cm 0;
+            background: #fafafc;
+            padding: 0.5cm 0.8cm;
+            border: 1px solid #ddd;
+        }
+
+        .sumario h3 {
+            margin-top: 0;
+            font-size: 13pt;
+            text-transform: uppercase;
+        }
+
+        .sumario-lista {
+            columns: 2;
+            column-gap: 1.2cm;
+            list-style: none;
+            padding-left: 0.2cm;
+        }
+
+        .sumario-lista li {
+            margin-bottom: 0.2cm;
+            font-size: 11pt;
+        }
+
+        .sumario-lista a {
+            text-decoration: none;
+            color: #1e466e;
+        }
+
+        .sumario-lista a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 1.8cm;
+            border-top: 1px solid #aaa;
+            padding-top: 0.5cm;
+            font-size: 10pt;
+            text-align: center;
+            color: #444;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .abnt-container {
+                padding: 3cm 2cm 2cm 3cm;
+                box-shadow: none;
+            }
+            .sumario {
+                background: white;
+                border: 1px solid #ccc;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+            }
+            .semana {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .abnt-container {
+                padding: 1.5cm 1cm 1.5cm 1.5cm;
+            }
+            .sumario-lista {
+                columns: 1;
+            }
+            h1 {
+                font-size: 16pt;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div class="abnt-container">
+        <h1>PROCESSOS DE DESENVOLVIMENTO DE SOFTWARE</h1>
+        <div class="subtitulo">2ª Série – Desenvolvimento de Sistemas</div>
 
-<div class="top">
-  <button id="btnDownloadHTML">⬇️ Baixar esta página (.html)</button>
-  <span class="note">Arquivo único com todo o conteúdo existente + semanas complementares encaixadas na sequência.</span>
-</div>
+        <div class="sumario">
+            <h3>SUMÁRIO</h3>
+            <ul class="sumario-lista">
+                <li><a href="#semana1">Semana 1 – Introdução aos Requisitos</a></li>
+                <li><a href="#semana2">Semana 2 – Elicitação de Requisitos</a></li>
+                <li><a href="#semana3">Semana 3 – Manifesto Ágil</a></li>
+                <li><a href="#semana4">Semana 4 – Introdução aos Testes de Software</a></li>
+                <li><a href="#semana5">Semana 5 – Testes Funcionais</a></li>
+                <li><a href="#semana6">Semana 6 – Qualidade de Requisitos</a></li>
+                <li><a href="#semana7">Semana 7 – Mudanças de Requisitos</a></li>
+                <li><a href="#semana8">Semana 8 – Casos de Teste e Automação</a></li>
+                <li><a href="#semana9">Semana 9 – Métricas de Qualidade</a></li>
+                <li><a href="#semana10">Semana 10 – Modelos de Desenvolvimento</a></li>
+                <li><a href="#semana11">Semana 11 – Planejamento de Produto</a></li>
+                <li><a href="#semana12">Semana 12 – Papéis no Scrum</a></li>
+                <li><a href="#semana13">Semana 13 – Métricas Ágeis</a></li>
+                <li><a href="#semana14">Semana 14 – Retrospectivas</a></li>
+                <li><a href="#semana15">Semana 15 – SDLC</a></li>
+                <li><a href="#semana16">Semana 16 – Scrum na Prática</a></li>
+                <li><a href="#semana17">Semana 17 – Eventos Scrum</a></li>
+                <li><a href="#semana18">Semana 18 – Kanban</a></li>
+                <li><a href="#semana19">Semana 19 – Estimativas</a></li>
+                <li><a href="#semana20">Semana 20 – Integração Contínua</a></li>
+                <li><a href="#semana21">Semana 21 – DevOps</a></li>
+                <li><a href="#semana22">Semana 22 – Infraestrutura como Código</a></li>
+                <li><a href="#semana23">Semana 23 – Containers</a></li>
+                <li><a href="#semana24">Semana 24 – Kubernetes</a></li>
+                <li><a href="#semana25">Semana 25 – SRE</a></li>
+                <li><a href="#semana26">Semana 26 – Segurança em Software</a></li>
+            </ul>
+        </div>
 
-<h1>Plano de Curso — Conteúdo Integrado</h1>
-<p>Este documento consolida o laboratório de IA com os planos de <b>Processos de Desenvolvimento de Software</b> e <b>Redes de Computadores e Segurança</b>, mantendo o conteúdo original intacto e apenas <b>acrescentando</b> as semanas que faltavam.</p>
+        <!-- SEMANA 1 -->
+        <section id="semana1" class="semana">
+            <h3>SEMANA 1 – Introdução aos Requisitos</h3>
+            <div class="aula-item"><h4>Aula 1: O que são requisitos de software?</h4></div>
+            <div class="aula-item"><h4>Aula 2: Ciclo de vida do requisito</h4></div>
+            <div class="aula-item"><h4>Aula 3: Tipos de requisitos</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Escolha um sistema conhecido e escreva 3 requisitos funcionais e 3 não funcionais.</div>
+        </section>
 
-<!-- ================= PROCESSOS DE DESENVOLVIMENTO DE SOFTWARE ================= -->
-<div class="bloco">
-<h2>Plano de Curso — Processos de Desenvolvimento de Software</h2>
+        <!-- SEMANA 2 -->
+        <section id="semana2" class="semana">
+            <h3>SEMANA 2 – Elicitação de Requisitos</h3>
+            <div class="aula-item"><h4>Aula 1: O que é elicitação de requisitos?</h4></div>
+            <div class="aula-item"><h4>Aula 2: Entrevistas e questionários</h4></div>
+            <div class="aula-item"><h4>Aula 3: Observação e brainstorming</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Crie 5 perguntas para entender um sistema de biblioteca escolar.</div>
+        </section>
 
-<h3>Semana 1 – Introdução aos Requisitos</h3>
-<ul>
-<li>Aula 1: O que são requisitos de software?</li>
-<li>Aula 2: Ciclo de vida do requisito</li>
-<li>Aula 3: Tipos de requisitos</li>
-</ul>
-<p><b>Exercício:</b> Escolha um sistema conhecido e escreva 3 requisitos funcionais e 3 não funcionais.</p>
+        <!-- SEMANA 3 -->
+        <section id="semana3" class="semana">
+            <h3>SEMANA 3 – Manifesto Ágil</h3>
+            <div class="aula-item"><h4>Aula 1: O que é o Manifesto Ágil?</h4></div>
+            <div class="aula-item"><h4>Aula 2: Os 12 princípios ágeis</h4></div>
+            <div class="aula-item"><h4>Aula 3: Valores ágeis na prática</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Explique com suas palavras um valor do Manifesto Ágil.</div>
+        </section>
 
-<h3>Semana 2 – Elicitação de Requisitos</h3>
-<ul>
-<li>Aula 1: O que é elicitação de requisitos?</li>
-<li>Aula 2: Entrevistas e questionários</li>
-<li>Aula 3: Observação e brainstorming</li>
-</ul>
-<p><b>Exercício:</b> Crie 5 perguntas para entender um sistema de biblioteca escolar.</p>
+        <!-- SEMANA 4 -->
+        <section id="semana4" class="semana">
+            <h3>SEMANA 4 – Introdução aos Testes de Software</h3>
+            <div class="aula-item"><h4>Aula 1: O que são testes de software?</h4></div>
+            <div class="aula-item"><h4>Aula 2: Tipos de testes</h4></div>
+            <div class="aula-item"><h4>Aula 3: Testes manuais x automatizados</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Liste 3 possíveis erros em um sistema de login.</div>
+        </section>
 
-<h3>Semana 3 – Manifesto Ágil</h3>
-<ul>
-<li>Aula 1: O que é o Manifesto Ágil?</li>
-<li>Aula 2: Os 12 princípios ágeis</li>
-<li>Aula 3: Valores ágeis na prática</li>
-</ul>
-<p><b>Exercício:</b> Explique com suas palavras um valor do Manifesto Ágil.</p>
+        <!-- SEMANA 5 -->
+        <section id="semana5" class="semana">
+            <h3>SEMANA 5 – Testes Funcionais</h3>
+            <div class="aula-item"><h4>Aula 1: O que são testes funcionais?</h4></div>
+            <div class="aula-item"><h4>Aula 2: Técnicas de caso de teste</h4></div>
+            <div class="aula-item"><h4>Aula 3: Execução e registro de resultados</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Crie um caso de teste simples para cadastro de usuários.</div>
+        </section>
 
-<h3>Semana 4 – Introdução aos Testes de Software</h3>
-<ul>
-<li>Aula 1: O que são testes de software?</li>
-<li>Aula 2: Tipos de testes</li>
-<li>Aula 3: Testes manuais x automatizados</li>
-</ul>
-<p><b>Exercício:</b> Liste 3 possíveis erros em um sistema de login.</p>
+        <!-- SEMANA 6 -->
+        <section id="semana6" class="semana">
+            <h3>SEMANA 6 – Qualidade de Requisitos</h3>
+            <div class="aula-item"><h4>Aula 1: Verificação x Validação</h4></div>
+            <div class="aula-item"><h4>Aula 2: Critérios de qualidade</h4></div>
+            <div class="aula-item"><h4>Aula 3: Revisão de requisitos</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Analise o requisito: "O sistema deve ser rápido".</div>
+        </section>
 
-<h3>Semana 5 – Testes Funcionais</h3>
-<ul>
-<li>Aula 1: O que são testes funcionais?</li>
-<li>Aula 2: Técnicas de caso de teste</li>
-<li>Aula 3: Execução e registro de resultados</li>
-</ul>
-<p><b>Exercício:</b> Crie um caso de teste simples para cadastro de usuários.</p>
+        <!-- SEMANA 7 -->
+        <section id="semana7" class="semana">
+            <h3>SEMANA 7 – Mudanças de Requisitos</h3>
+            <div class="aula-item"><h4>Aula 1: Por que requisitos mudam?</h4></div>
+            <div class="aula-item"><h4>Aula 2: Controle de mudanças</h4></div>
+            <div class="aula-item"><h4>Aula 3: Avaliação de impacto</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Descreva uma mudança e seu impacto no projeto.</div>
+        </section>
 
-<h3>Semana 6 – Qualidade de Requisitos</h3>
-<ul>
-<li>Aula 1: Verificação x Validação</li>
-<li>Aula 2: Critérios de qualidade</li>
-<li>Aula 3: Revisão de requisitos</li>
-</ul>
-<p><b>Exercício:</b> Analise o requisito: "O sistema deve ser rápido".</p>
+        <!-- SEMANA 8 -->
+        <section id="semana8" class="semana">
+            <h3>SEMANA 8 – Casos de Teste e Automação</h3>
+            <div class="aula-item"><h4>Aula 1: Estrutura de um caso de teste</h4></div>
+            <div class="aula-item"><h4>Aula 2: Selenium IDE</h4></div>
+            <div class="aula-item"><h4>Aula 3: Registro de defeitos</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Descreva os passos para testar um login.</div>
+        </section>
 
-<h3>Semana 7 – Mudanças de Requisitos</h3>
-<ul>
-<li>Aula 1: Por que requisitos mudam?</li>
-<li>Aula 2: Controle de mudanças</li>
-<li>Aula 3: Avaliação de impacto</li>
-</ul>
-<p><b>Exercício:</b> Descreva uma mudança e seu impacto no projeto.</p>
+        <!-- SEMANA 9 -->
+        <section id="semana9" class="semana">
+            <h3>SEMANA 9 – Métricas de Qualidade</h3>
+            <div class="aula-item"><h4>Aula 1: Indicadores de qualidade</h4></div>
+            <div class="aula-item"><h4>Aula 2: Ferramentas de métricas</h4></div>
+            <div class="aula-item"><h4>Aula 3: Revisão do plano de teste</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Explique a importância das métricas.</div>
+        </section>
 
-<h3>Semana 8 – Casos de Teste e Automação</h3>
-<ul>
-<li>Aula 1: Estrutura de um caso de teste</li>
-<li>Aula 2: Selenium IDE</li>
-<li>Aula 3: Registro de defeitos</li>
-</ul>
-<p><b>Exercício:</b> Descreva os passos para testar um login.</p>
+        <!-- SEMANA 10 -->
+        <section id="semana10" class="semana">
+            <h3>SEMANA 10 – Modelos de Desenvolvimento</h3>
+            <div class="aula-item"><h4>Aula 1: Waterfall</h4></div>
+            <div class="aula-item"><h4>Aula 2: Ágil</h4></div>
+            <div class="aula-item"><h4>Aula 3: Debate cascata x ágil</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Liste uma vantagem e desvantagem do cascata.</div>
+        </section>
 
-<h3>Semana 9 – Métricas de Qualidade</h3>
-<ul>
-<li>Aula 1: Indicadores de qualidade</li>
-<li>Aula 2: Ferramentas de métricas</li>
-<li>Aula 3: Revisão do plano de teste</li>
-</ul>
-<p><b>Exercício:</b> Explique a importância das métricas.</p>
+        <!-- SEMANA 11 -->
+        <section id="semana11" class="semana">
+            <h3>SEMANA 11 – Planejamento de Produto</h3>
+            <div class="aula-item"><h4>Aula 1: Roadmap</h4></div>
+            <div class="aula-item"><h4>Aula 2: Backlog e Sprints</h4></div>
+            <div class="aula-item"><h4>Aula 3: Revisão de Sprint</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Crie um backlog simples.</div>
+        </section>
 
-<h3>Semana 10 – Modelos de Desenvolvimento</h3>
-<ul>
-<li>Aula 1: Waterfall</li>
-<li>Aula 2: Ágil</li>
-<li>Aula 3: Debate cascata x ágil</li>
-</ul>
-<p><b>Exercício:</b> Liste uma vantagem e desvantagem do cascata.</p>
+        <!-- SEMANA 12 -->
+        <section id="semana12" class="semana">
+            <h3>SEMANA 12 – Papéis no Scrum</h3>
+            <div class="aula-item"><h4>Aula 1: Product Owner</h4></div>
+            <div class="aula-item"><h4>Aula 2: Scrum Master</h4></div>
+            <div class="aula-item"><h4>Aula 3: Time de Desenvolvimento</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Explique cada papel.</div>
+        </section>
 
-<h3>Semana 11 – Planejamento de Produto</h3>
-<ul>
-<li>Aula 1: Roadmap</li>
-<li>Aula 2: Backlog e Sprints</li>
-<li>Aula 3: Revisão de Sprint</li>
-</ul>
-<p><b>Exercício:</b> Crie um backlog simples.</p>
+        <!-- SEMANA 13 -->
+        <section id="semana13" class="semana">
+            <h3>SEMANA 13 – Métricas Ágeis</h3>
+            <div class="aula-item"><h4>Aula 1: Velocity</h4></div>
+            <div class="aula-item"><h4>Aula 2: Burndown</h4></div>
+            <div class="aula-item"><h4>Aula 3: Cumulative Flow</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Explique um gráfico Burndown.</div>
+        </section>
 
-<h3>Semana 12 – Papéis no Scrum</h3>
-<ul>
-<li>Product Owner</li>
-<li>Scrum Master</li>
-<li>Time de Desenvolvimento</li>
-</ul>
-<p><b>Exercício:</b> Explique cada papel.</p>
+        <!-- SEMANA 14 -->
+        <section id="semana14" class="semana">
+            <h3>SEMANA 14 – Retrospectivas</h3>
+            <div class="aula-item"><h4>Aula 1: Modelos de retrospectiva</h4></div>
+            <div class="aula-item"><h4>Aula 2: Priorização</h4></div>
+            <div class="aula-item"><h4>Aula 3: Kaizen</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Liste duas melhorias.</div>
+        </section>
 
-<h3>Semana 13 – Métricas Ágeis</h3>
-<ul>
-<li>Velocity</li>
-<li>Burndown</li>
-<li>Cumulative Flow</li>
-</ul>
-<p><b>Exercício:</b> Explique um gráfico Burndown.</p>
+        <!-- SEMANA 15 -->
+        <section id="semana15" class="semana">
+            <h3>SEMANA 15 – SDLC</h3>
+            <div class="aula-item"><h4>Aula 1: Fases clássicas</h4></div>
+            <div class="aula-item"><h4>Aula 2: Cascata</h4></div>
+            <div class="aula-item"><h4>Aula 3: Incremental</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Desenhe o fluxo do SDLC.</div>
+        </section>
 
-<h3>Semana 14 – Retrospectivas</h3>
-<ul>
-<li>Modelos de retrospectiva</li>
-<li>Priorização</li>
-<li>Kaizen</li>
-</ul>
-<p><b>Exercício:</b> Liste duas melhorias.</p>
+        <!-- SEMANA 16 -->
+        <section id="semana16" class="semana">
+            <h3>SEMANA 16 – Scrum na Prática</h3>
+            <div class="aula-item"><h4>Aula 1: Valores</h4></div>
+            <div class="aula-item"><h4>Aula 2: Papéis</h4></div>
+            <div class="aula-item"><h4>Aula 3: Dinâmica prática</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Projete uma ideia simples de app.</div>
+        </section>
 
-<h3>Semana 15 – SDLC</h3>
-<ul>
-<li>Fases clássicas</li>
-<li>Cascata</li>
-<li>Incremental</li>
-</ul>
-<p><b>Exercício:</b> Desenhe o fluxo do SDLC.</p>
+        <!-- SEMANA 17 -->
+        <section id="semana17" class="semana">
+            <h3>SEMANA 17 – Eventos Scrum</h3>
+            <div class="aula-item"><h4>Aula 1: Sprint Planning</h4></div>
+            <div class="aula-item"><h4>Aula 2: Daily</h4></div>
+            <div class="aula-item"><h4>Aula 3: Review e Retrospective</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Simule uma Daily Scrum.</div>
+        </section>
 
-<h3>Semana 16 – Scrum na Prática</h3>
-<ul>
-<li>Valores</li>
-<li>Papéis</li>
-<li>Dinâmica prática</li>
-</ul>
-<p><b>Exercício:</b> Projete uma ideia simples de app.</p>
+        <!-- SEMANA 18 -->
+        <section id="semana18" class="semana">
+            <h3>SEMANA 18 – Kanban</h3>
+            <div class="aula-item"><h4>Aula 1: Fundamentos</h4></div>
+            <div class="aula-item"><h4>Aula 2: Políticas explícitas</h4></div>
+            <div class="aula-item"><h4>Aula 3: Fluxo</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Crie um quadro Kanban.</div>
+        </section>
 
-<h3>Semana 17 – Eventos Scrum</h3>
-<ul>
-<li>Sprint Planning</li>
-<li>Daily</li>
-<li>Review e Retrospective</li>
-</ul>
-<p><b>Exercício:</b> Simule uma Daily Scrum.</p>
+        <!-- SEMANA 19 -->
+        <section id="semana19" class="semana">
+            <h3>SEMANA 19 – Estimativas</h3>
+            <div class="aula-item"><h4>Aula 1: Story Points</h4></div>
+            <div class="aula-item"><h4>Aula 2: Velocity</h4></div>
+            <div class="aula-item"><h4>Aula 3: Release</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Estime três tarefas.</div>
+        </section>
 
-<h3>Semana 18 – Kanban</h3>
-<ul>
-<li>Fundamentos</li>
-<li>Políticas explícitas</li>
-<li>Fluxo</li>
-</ul>
-<p><b>Exercício:</b> Crie um quadro Kanban.</p>
+        <!-- SEMANA 20 -->
+        <section id="semana20" class="semana">
+            <h3>SEMANA 20 – Integração Contínua</h3>
+            <div class="aula-item"><h4>Aula 1: CI</h4></div>
+            <div class="aula-item"><h4>Aula 2: GitHub Actions</h4></div>
+            <div class="aula-item"><h4>Aula 3: Deploy automatizado</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Explique o benefício do CI.</div>
+        </section>
 
-<h3>Semana 19 – Estimativas</h3>
-<ul>
-<li>Story Points</li>
-<li>Velocity</li>
-<li>Release</li>
-</ul>
-<p><b>Exercício:</b> Estime três tarefas.</p>
+        <!-- SEMANA 21 -->
+        <section id="semana21" class="semana">
+            <h3>SEMANA 21 – DevOps</h3>
+            <div class="aula-item"><h4>Aula 1: Origem</h4></div>
+            <div class="aula-item"><h4>Aula 2: Pipeline de feedback</h4></div>
+            <div class="aula-item"><h4>Aula 3: Métricas DORA</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Explique CI/CD.</div>
+        </section>
 
-<h3>Semana 20 – Integração Contínua</h3>
-<ul>
-<li>CI</li>
-<li>GitHub Actions</li>
-<li>Deploy automatizado</li>
-</ul>
-<p><b>Exercício:</b> Explique o benefício do CI.</p>
+        <!-- SEMANA 22 -->
+        <section id="semana22" class="semana">
+            <h3>SEMANA 22 – Infraestrutura como Código</h3>
+            <div class="aula-item"><h4>Aula 1: Terraform</h4></div>
+            <div class="aula-item"><h4>Aula 2: Módulos</h4></div>
+            <div class="aula-item"><h4>Aula 3: Providers</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Explique IaC.</div>
+        </section>
 
-<h3>Semana 21 – DevOps</h3>
-<ul>
-<li>Origem</li>
-<li>Pipeline de feedback</li>
-<li>Métricas DORA</li>
-</ul>
-<p><b>Exercício:</b> Explique CI/CD.</p>
+        <!-- SEMANA 23 -->
+        <section id="semana23" class="semana">
+            <h3>SEMANA 23 – Containers</h3>
+            <div class="aula-item"><h4>Aula 1: Conceitos</h4></div>
+            <div class="aula-item"><h4>Aula 2: Dockerfile</h4></div>
+            <div class="aula-item"><h4>Aula 3: Redes e logs</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Container x VM.</div>
+        </section>
 
-<h3>Semana 22 – Infraestrutura como Código</h3>
-<ul>
-<li>Terraform</li>
-<li>Módulos</li>
-<li>Providers</li>
-</ul>
-<p><b>Exercício:</b> Explique IaC.</p>
+        <!-- SEMANA 24 -->
+        <section id="semana24" class="semana">
+            <h3>SEMANA 24 – Kubernetes</h3>
+            <div class="aula-item"><h4>Aula 1: Arquitetura</h4></div>
+            <div class="aula-item"><h4>Aula 2: Deployments</h4></div>
+            <div class="aula-item"><h4>Aula 3: Escalabilidade</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Importância da escalabilidade.</div>
+        </section>
 
-<h3>Semana 23 – Containers</h3>
-<ul>
-<li>Conceitos</li>
-<li>Dockerfile</li>
-<li>Redes e logs</li>
-</ul>
-<p><b>Exercício:</b> Container x VM.</p>
+        <!-- SEMANA 25 -->
+        <section id="semana25" class="semana">
+            <h3>SEMANA 25 – SRE</h3>
+            <div class="aula-item"><h4>Aula 1: Papel do SRE</h4></div>
+            <div class="aula-item"><h4>Aula 2: SLI/SLO</h4></div>
+            <div class="aula-item"><h4>Aula 3: Error Budget</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Impacto da confiabilidade.</div>
+        </section>
 
-<h3>Semana 24 – Kubernetes</h3>
-<ul>
-<li>Arquitetura</li>
-<li>Deployments</li>
-<li>Escalabilidade</li>
-</ul>
-<p><b>Exercício:</b> Importância da escalabilidade.</p>
+        <!-- SEMANA 26 -->
+        <section id="semana26" class="semana">
+            <h3>SEMANA 26 – Segurança em Software</h3>
+            <div class="aula-item"><h4>Aula 1: Shift-Left</h4></div>
+            <div class="aula-item"><h4>Aula 2: Segurança em containers</h4></div>
+            <div class="aula-item"><h4>Aula 3: Vulnerabilidades</h4></div>
+            <div class="exercicio"><strong>Exercício:</strong> Três boas práticas de segurança.</div>
+        </section>
 
-<h3>Semana 25 – SRE</h3>
-<ul>
-<li>Papel do SRE</li>
-<li>SLI/SLO</li>
-<li>Error Budget</li>
-</ul>
-<p><b>Exercício:</b> Impacto da confiabilidade.</p>
-
-<h3>Semana 26 – Segurança em Software</h3>
-<ul>
-<li>Shift-Left</li>
-<li>Segurança em containers</li>
-<li>Vulnerabilidades</li>
-</ul>
-<p><b>Exercício:</b> Três boas práticas de segurança.</p>
-</div>
-
-<!-- ================= REDES DE COMPUTADORES E SEGURANÇA ================= -->
-<div class="bloco">
-<h2>Plano de Curso — Redes de Computadores e Segurança</h2>
-
-<h3>Semanas 1 a 26</h3>
-<p>Conteúdo completo incorporado conforme plano fornecido: topologias, meios de transmissão, protocolos, camadas OSI/TCP-IP, segurança, nuvem, monitoramento, virtualização, balanceamento, certificados, Edge Computing e CDN.</p>
-<p><b>Exercícios semanais:</b> mantidos conforme descrição original para fixação prática.</p>
-</div>
-
-<script>
-function baixarHTML(){
-  const doctype='<!DOCTYPE html>\n';
-  const html=document.documentElement.outerHTML;
-  const blob=new Blob([doctype+html],{type:'text/html'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download='plano_curso_completo_ia_processos_redes.html';
-  document.body.appendChild(a); a.click(); a.remove();
-}
-const btn=document.getElementById('btnDownloadHTML');
-if(btn){ btn.addEventListener('click', baixarHTML); }
-</script>
-
+        <footer>
+            Documento elaborado conforme normas ABNT (NBR 14724) para apresentação de plano de ensino.<br>
+            Disciplina: Processos de Desenvolvimento de Software – 2ª Série (Desenvolvimento de Sistemas)
+        </footer>
+    </div>
 </body>
 </html>
