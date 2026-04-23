@@ -26,6 +26,7 @@
             margin: 0 auto;
             padding: 3cm 2cm 2cm 3cm;
             background: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
         }
 
         h1 {
@@ -43,6 +44,7 @@
             font-weight: normal;
             margin-top: -0.2cm;
             margin-bottom: 1.5cm;
+            font-style: normal;
             border-bottom: 1px solid #ccc;
             padding-bottom: 0.3cm;
         }
@@ -58,6 +60,7 @@
             font-size: 12pt;
             font-weight: bold;
             margin: 0.6cm 0 0.2cm 0;
+            font-style: normal;
             border-bottom: 1px dotted #ddd;
             padding-bottom: 2px;
         }
@@ -65,20 +68,13 @@
         .semana {
             margin-bottom: 0.8cm;
             break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .aula-item {
             margin-left: 0.7cm;
             margin-bottom: 0.45cm;
-        }
-
-        .habilidades,
-        .socioemocionais,
-        .objetivo {
-            margin-left: 0.5cm;
-            margin-top: 0.15cm;
-            margin-bottom: 0.1cm;
-            text-align: justify;
+            padding-left: 0.2cm;
         }
 
         .tema-semana {
@@ -97,34 +93,48 @@
             color: #1a2a4f;
         }
 
+        .habilidades,
+        .socioemocionais,
+        .objetivo {
+            margin-left: 0.5cm;
+            margin-top: 0.15cm;
+            margin-bottom: 0.1cm;
+            text-align: justify;
+        }
+
+        .habilidades strong,
+        .socioemocionais strong,
+        .objetivo strong {
+            font-weight: bold;
+        }
+
         .sumario {
             margin: 1cm 0 1.2cm 0;
             background: #fafafc;
             padding: 0.5cm 0.8cm;
             border: 1px solid #ddd;
         }
-
         .sumario h3 {
             margin-top: 0;
             font-size: 13pt;
             text-transform: uppercase;
         }
-
         .sumario-lista {
             columns: 2;
             column-gap: 1.2cm;
             list-style: none;
             padding-left: 0.2cm;
         }
-
         .sumario-lista li {
             margin-bottom: 0.2cm;
-            font-size: 11pt;
+            font-size: 10pt;
         }
-
         .sumario-lista a {
             text-decoration: none;
             color: #1e466e;
+        }
+        .sumario-lista a:hover {
+            text-decoration: underline;
         }
 
         footer {
@@ -137,7 +147,12 @@
         }
 
         @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
             .abnt-container {
+                padding: 3cm 2cm 2cm 3cm;
                 box-shadow: none;
             }
             .sumario {
@@ -145,11 +160,23 @@
                 border: 1px solid #ccc;
             }
             a {
-                color: black;
                 text-decoration: none;
+                color: black;
             }
             .semana {
                 break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .abnt-container {
+                padding: 1.5cm 1cm 1.5cm 1.5cm;
+            }
+            .sumario-lista {
+                columns: 1;
+            }
+            h1 {
+                font-size: 16pt;
             }
         }
     </style>
@@ -162,578 +189,578 @@
         <div class="sumario">
             <h3>SUMÁRIO</h3>
             <ul class="sumario-lista">
-                <li><a href="#semana1">Semana 1 – Introdução aos Requisitos</a></li>
-                <li><a href="#semana2">Semana 2 – Elicitação de Requisitos</a></li>
-                <li><a href="#semana3">Semana 3 – Manifesto Ágil</a></li>
-                <li><a href="#semana4">Semana 4 – Introdução aos Testes de Software</a></li>
-                <li><a href="#semana5">Semana 5 – Testes Funcionais</a></li>
-                <li><a href="#semana6">Semana 6 – Qualidade de Requisitos</a></li>
-                <li><a href="#semana7">Semana 7 – Mudanças de Requisitos</a></li>
-                <li><a href="#semana8">Semana 8 – Casos de Teste e Automação</a></li>
-                <li><a href="#semana9">Semana 9 – Métricas de Qualidade</a></li>
-                <li><a href="#semana10">Semana 10 – Modelos de Desenvolvimento</a></li>
-                <li><a href="#semana11">Semana 11 – Planejamento de Produto</a></li>
-                <li><a href="#semana12">Semana 12 – Papéis no Scrum</a></li>
-                <li><a href="#semana13">Semana 13 – Métricas Ágeis</a></li>
-                <li><a href="#semana14">Semana 14 – Retrospectivas</a></li>
-                <li><a href="#semana15">Semana 15 – SDLC</a></li>
-                <li><a href="#semana16">Semana 16 – Scrum na Prática</a></li>
-                <li><a href="#semana17">Semana 17 – Eventos Scrum</a></li>
-                <li><a href="#semana18">Semana 18 – Kanban</a></li>
-                <li><a href="#semana19">Semana 19 – Estimativas</a></li>
-                <li><a href="#semana20">Semana 20 – Integração Contínua</a></li>
-                <li><a href="#semana21">Semana 21 – DevOps</a></li>
-                <li><a href="#semana22">Semana 22 – Infraestrutura como Código</a></li>
-                <li><a href="#semana23">Semana 23 – Containers</a></li>
-                <li><a href="#semana24">Semana 24 – Kubernetes</a></li>
-                <li><a href="#semana25">Semana 25 – SRE</a></li>
-                <li><a href="#semana26">Semana 26 – Segurança em Software</a></li>
+                <li><a href="#semana1">Semana 1 – Introdução ao levantamento de requisitos</a></li>
+                <li><a href="#semana2">Semana 2 – Técnicas de elicitação de requisitos</a></li>
+                <li><a href="#semana3">Semana 3 – Introdução ao Manifesto Ágil e seus princípios</a></li>
+                <li><a href="#semana4">Semana 4 – Introdução aos testes de software e tipos de testes</a></li>
+                <li><a href="#semana5">Semana 5 – Testes funcionais: conceitos e metodologias</a></li>
+                <li><a href="#semana6">Semana 6 – Validação e verificação de requisitos</a></li>
+                <li><a href="#semana7">Semana 7 – Gerenciamento de mudanças em requisitos</a></li>
+                <li><a href="#semana8">Semana 8 – Casos de teste funcional & automação básica</a></li>
+                <li><a href="#semana9">Semana 9 – Métricas de teste & cobertura funcional</a></li>
+                <li><a href="#semana10">Semana 10 – Cultura ágil e mudança de mentalidade</a></li>
+                <li><a href="#semana11">Semana 11 – Planejamento de release & iterações</a></li>
+                <li><a href="#semana12">Semana 12 – Papéis no Scrum (PO, SM, Dev Team)</a></li>
+                <li><a href="#semana13">Semana 13 – Métricas ágeis (Velocity, Burndown, Cumulative Flow)</a></li>
+                <li><a href="#semana14">Semana 14 – Retrospectiva & melhoria contínua</a></li>
+                <li><a href="#semana15">Semana 15 – Visão geral dos modelos de processo de software</a></li>
+                <li><a href="#semana16">Semana 16 – Manifesto Ágil e papéis do Scrum</a></li>
+                <li><a href="#semana17">Semana 17 – Eventos e artefatos do Scrum</a></li>
+                <li><a href="#semana18">Semana 18 – Kanban – fluxo contínuo e limites WIP</a></li>
+                <li><a href="#semana19">Semana 19 – Estimativas ágeis – Story Points, Velocity e Release Plan</a></li>
+                <li><a href="#semana20">Semana 20 – Integração Contínua (CI) e Entrega Contínua (CD)</a></li>
+                <li><a href="#semana21">Semana 21 – Cultura DevOps e feedback contínuo</a></li>
+                <li><a href="#semana22">Semana 22 – Infraestrutura como Código (IaC) com Terraform</a></li>
+                <li><a href="#semana23">Semana 23 – Docker Fundamentals</a></li>
+                <li><a href="#semana24">Semana 24 – Kubernetes Essentials</a></li>
+                <li><a href="#semana25">Semana 25 – SRE, SLI/SLO e Error Budget</a></li>
+                <li><a href="#semana26">Semana 26 – DevSecOps – segurança integrada ao pipeline</a></li>
             </ul>
         </div>
 
         <!-- SEMANA 1 -->
         <section id="semana1" class="semana">
-            <h3>SEMANA 1 – Introdução aos Requisitos</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Engenharia de Requisitos</div>
+            <h3>SEMANA 1 – Introdução ao levantamento de requisitos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução ao levantamento de requisitos</div>
             <div class="aula-item"><h4>Aula 1: O que são requisitos de software?</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o conceito de requisitos e sua importância no desenvolvimento de software.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver curiosidade intelectual e abertura para novos conceitos.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir requisito de software e diferenciar suas categorias básicas.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar o papel dos requisitos de software no ciclo de desenvolvimento e reconhecer os tipos de requisitos funcionais e não funcionais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter o foco e o esforço diante de conceitos abstratos, demonstrando interesse genuíno por entender como os sistemas são planejados antes de sua implementação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito de requisitos de software e sua importância no sucesso de um sistema.</div>
             </div>
             <div class="aula-item"><h4>Aula 2: Ciclo de vida do requisito</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar as fases do ciclo de vida de um requisito.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar o pensamento sistemático e a visão de processo.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender como os requisitos evoluem ao longo do projeto.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar o papel dos requisitos de software no ciclo de desenvolvimento e reconhecer os tipos de requisitos funcionais e não funcionais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter o foco e o esforço diante de conceitos abstratos, demonstrando interesse genuíno por entender como os sistemas são planejados antes de sua implementação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar as etapas do ciclo de vida de um requisito no processo de desenvolvimento.</div>
             </div>
             <div class="aula-item"><h4>Aula 3: Tipos de requisitos</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Classificar requisitos em funcionais e não funcionais.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a capacidade de análise e categorização.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Distinguir e exemplificar requisitos funcionais e não funcionais.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar o papel dos requisitos de software no ciclo de desenvolvimento e reconhecer os tipos de requisitos funcionais e não funcionais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter o foco e o esforço diante de conceitos abstratos, demonstrando interesse genuíno por entender como os sistemas são planejados antes de sua implementação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar requisitos funcionais e não funcionais em exemplos de sistemas reais.</div>
             </div>
         </section>
 
         <!-- SEMANA 2 -->
         <section id="semana2" class="semana">
-            <h3>SEMANA 2 – Elicitação de Requisitos</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Técnicas de Elicitação</div>
+            <h3>SEMANA 2 – Técnicas de elicitação de requisitos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Técnicas de elicitação de requisitos</div>
             <div class="aula-item"><h4>Aula 1: O que é elicitação de requisitos?</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o processo de levantamento de necessidades junto às partes interessadas.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver empatia e escuta ativa.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender a importância da elicitação para o sucesso do projeto.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar técnicas estruturadas de levantamento de requisitos para identificar necessidades de usuários, utilizando entrevistas, questionários, brainstorming, observação e prototipação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse na descoberta das necessidades dos usuários, insistindo na compreensão das particularidades do problema até reunir informações relevantes.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o conceito de elicitação e seu papel no desenvolvimento de software.</div>
             </div>
             <div class="aula-item"><h4>Aula 2: Entrevistas e questionários</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar perguntas eficazes para coleta de requisitos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a comunicação verbal e escrita.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar técnicas de entrevista e questionário na elicitação.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar técnicas estruturadas de levantamento de requisitos para identificar necessidades de usuários.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse na descoberta das necessidades dos usuários.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aprender a aplicar entrevistas e questionários como técnicas formais de levantamento.</div>
             </div>
             <div class="aula-item"><h4>Aula 3: Observação e brainstorming</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar observação direta e sessões de brainstorming.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a criatividade e a colaboração em grupo.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Empregar métodos complementares de elicitação.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar técnicas estruturadas de levantamento de requisitos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse na descoberta das necessidades dos usuários.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Utilizar métodos alternativos para levantar requisitos de forma colaborativa e empírica.</div>
             </div>
         </section>
 
         <!-- SEMANA 3 -->
         <section id="semana3" class="semana">
-            <h3>SEMANA 3 – Manifesto Ágil</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos do Pensamento Ágil</div>
+            <h3>SEMANA 3 – Introdução ao Manifesto Ágil e seus princípios</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução ao Manifesto Ágil e seus princípios</div>
             <div class="aula-item"><h4>Aula 1: O que é o Manifesto Ágil?</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender a origem e os valores do Manifesto Ágil.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a abertura a mudanças e novos paradigmas.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Contextualizar o movimento ágil e sua relevância.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Interpretar os quatro valores do Manifesto Ágil e os doze princípios que norteiam as metodologias ágeis.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar abertura a novas formas de pensar o trabalho em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a origem e os valores fundamentais do Manifesto Ágil.</div>
             </div>
             <div class="aula-item"><h4>Aula 2: Os 12 princípios ágeis</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Interpretar cada um dos 12 princípios do Manifesto Ágil.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver pensamento crítico e capacidade de adaptação.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar os princípios ágeis com práticas do dia a dia.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Interpretar os quatro valores do Manifesto Ágil e os doze princípios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar abertura a novas formas de pensar o trabalho em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Interpretar os princípios do Manifesto Ágil e seu impacto na entrega de valor.</div>
             </div>
             <div class="aula-item"><h4>Aula 3: Valores ágeis na prática</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar como os valores ágeis impactam a dinâmica de uma equipe.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Praticar a colaboração e a comunicação efetiva.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Vivenciar os valores ágeis através de exemplos práticos.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Interpretar os quatro valores do Manifesto Ágil.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar abertura a novas formas de pensar o trabalho em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar os valores ágeis a práticas reais de trabalho em equipe.</div>
             </div>
         </section>
 
         <!-- SEMANA 4 -->
         <section id="semana4" class="semana">
-            <h3>SEMANA 4 – Introdução aos Testes de Software</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos de Testes</div>
+            <h3>SEMANA 4 – Introdução aos testes de software e tipos de testes</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução aos testes de software e tipos de testes</div>
             <div class="aula-item"><h4>Aula 1: O que são testes de software?</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o propósito dos testes na garantia da qualidade.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver atenção aos detalhes e postura investigativa.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir teste de software e sua importância no ciclo de vida.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais tipos de testes e sua aplicação no ciclo de vida do software.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar vontade de garantir a funcionalidade das soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o papel dos testes na garantia de qualidade de um sistema.</div>
             </div>
             <div class="aula-item"><h4>Aula 2: Tipos de testes</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Classificar os principais tipos de teste.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular o raciocínio lógico e organizacional.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar os níveis e propósitos de cada tipo de teste.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais tipos de testes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar vontade de garantir a funcionalidade das soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar os principais tipos de testes e suas finalidades.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Testes manuais x automatizados</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar vantagens e desvantagens de cada abordagem.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a tomada de decisão baseada em contexto.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Decidir quando automatizar ou testar manualmente.</div>
+            <div class="aula-item"><h4>Aula 3: Testes manuais × automatizados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar os principais tipos de testes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar vontade de garantir a funcionalidade das soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a diferença entre testes manuais e automatizados.</div>
             </div>
         </section>
 
         <!-- SEMANA 5 -->
         <section id="semana5" class="semana">
-            <h3>SEMANA 5 – Testes Funcionais</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Testes Baseados em Requisitos</div>
+            <h3>SEMANA 5 – Testes funcionais: conceitos e metodologias</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Testes funcionais: conceitos e metodologias</div>
             <div class="aula-item"><h4>Aula 1: O que são testes funcionais?</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o objetivo dos testes funcionais baseados em requisitos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver foco e disciplina na verificação.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Verificar se o software atende às especificações funcionais.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar e executar testes funcionais com base em especificações de requisitos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e perseverança ao validar o comportamento do sistema.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar as características dos testes funcionais.</div>
             </div>
             <div class="aula-item"><h4>Aula 2: Técnicas de caso de teste</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar técnicas como partição de equivalência e valor limite.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a criatividade na elaboração de cenários.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Projetar casos de teste eficazes.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar e executar testes funcionais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e perseverança.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar critérios de criação de casos de teste funcionais.</div>
             </div>
             <div class="aula-item"><h4>Aula 3: Execução e registro de resultados</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Executar casos de teste e documentar evidências e defeitos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a responsabilidade e a transparência.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Praticar a execução disciplinada de testes e o registro formal.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar e executar testes funcionais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse e perseverança.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Executar casos de teste e registrar os resultados de forma clara e objetiva.</div>
             </div>
         </section>
 
         <!-- SEMANA 6 -->
         <section id="semana6" class="semana">
-            <h3>SEMANA 6 – Qualidade de Requisitos</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Verificação e Validação</div>
-            <div class="aula-item"><h4>Aula 1: Verificação x Validação</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Distinguir atividades de verificação e validação.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver pensamento crítico e analítico.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir que os requisitos sejam corretos e atendam às necessidades.</div>
+            <h3>SEMANA 6 – Validação e verificação de requisitos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Validação e verificação de requisitos</div>
+            <div class="aula-item"><h4>Aula 1: Diferença entre verificação e validação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar critérios de verificação e validação para avaliar a qualidade dos requisitos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em entender o que caracteriza um requisito de qualidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar os conceitos de verificação (conformidade) e validação (necessidade).</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Critérios de qualidade</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar critérios como clareza, rastreabilidade e testabilidade.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a capacidade de avaliação e julgamento.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Avaliar a qualidade de um requisito escrito.</div>
+            <div class="aula-item"><h4>Aula 2: Critérios de qualidade de um requisito</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar critérios de verificação e validação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse em entender o que caracteriza um requisito de qualidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Avaliar se um requisito está claro, completo, testável e rastreável.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Revisão de requisitos</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Realizar revisões por pares para identificar defeitos nos requisitos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a colaboração e a comunicação respeitosa.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Melhorar a qualidade dos requisitos antes do desenvolvimento.</div>
+            <div class="aula-item"><h4>Aula 3: Técnicas de revisão de requisitos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar critérios de verificação e validação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar técnicas de revisão entre pares e feedback estruturado.</div>
             </div>
         </section>
 
         <!-- SEMANA 7 -->
         <section id="semana7" class="semana">
-            <h3>SEMANA 7 – Mudanças de Requisitos</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Gestão de Mudanças</div>
-            <div class="aula-item"><h4>Aula 1: Por que requisitos mudam?</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar causas comuns de mudanças.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver flexibilidade e abertura ao novo.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a natureza evolutiva dos requisitos.</div>
+            <h3>SEMANA 7 – Gerenciamento de mudanças em requisitos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Gerenciamento de mudanças em requisitos</div>
+            <div class="aula-item"><h4>Aula 1: Por que os requisitos mudam?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar boas práticas de controle de mudanças em requisitos com versionamento e impacto controlado.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com equilíbrio os motivos que levam à mudança de decisões.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender os principais motivos para mudanças em requisitos.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Controle de mudanças</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Estabelecer um processo formal de gestão de mudanças.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a responsabilidade e a organização.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Manter a estabilidade do escopo diante de alterações.</div>
+            <div class="aula-item"><h4>Aula 2: Processo de controle de mudanças</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar boas práticas de controle de mudanças.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com equilíbrio os motivos que levam à mudança.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer as etapas de gestão de mudanças de requisitos.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Avaliação de impacto</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar o impacto de uma mudança no cronograma, custo e qualidade.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a tomada de decisão ponderada.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Tomar decisões informadas sobre aprovação de mudanças.</div>
+            <div class="aula-item"><h4>Aula 3: Avaliação de impacto da mudança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar boas práticas de controle de mudanças.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com equilíbrio.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Analisar os impactos de mudanças nos requisitos sobre o projeto.</div>
             </div>
         </section>
 
         <!-- SEMANA 8 -->
         <section id="semana8" class="semana">
-            <h3>SEMANA 8 – Casos de Teste e Automação</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Automação de Testes</div>
+            <h3>SEMANA 8 – Casos de teste funcional & automação básica</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Casos de teste funcional & automação básica</div>
             <div class="aula-item"><h4>Aula 1: Estrutura de um caso de teste</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever os elementos essenciais de um caso de teste.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver precisão e clareza na comunicação escrita.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Padronizar a documentação de testes.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar casos de teste funcionais claros e automatizar cenários simples.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a calma e a persistência diante de falhas nos testes automatizados.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar componentes obrigatórios de um caso de teste.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Selenium IDE</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar o Selenium IDE para gravar e executar testes.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Incentivar a experimentação e o aprender fazendo.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Introduzir a automação de testes de interface.</div>
+            <div class="aula-item"><h4>Aula 2: Introdução à automação com Selenium IDE</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar casos de teste funcionais e automatizar cenários simples.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a calma e a persistência.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Gravar e reproduzir um script de navegação simples.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Registro de defeitos</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reportar defeitos de forma clara e objetiva.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a empatia com o desenvolvedor e a objetividade.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Comunicar problemas encontrados durante o teste.</div>
+            <div class="aula-item"><h4>Aula 3: Análise de resultados e registro de defeitos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar casos de teste funcionais.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Manter a calma e a persistência.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Documentar falhas no bug tracker com clareza.</div>
             </div>
         </section>
 
         <!-- SEMANA 9 -->
         <section id="semana9" class="semana">
-            <h3>SEMANA 9 – Métricas de Qualidade</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Medição e Análise</div>
-            <div class="aula-item"><h4>Aula 1: Indicadores de qualidade</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar métricas como densidade de defeitos e cobertura de testes.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver mentalidade analítica e orientada a dados.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Quantificar a qualidade do software.</div>
+            <h3>SEMANA 9 – Métricas de teste & cobertura funcional</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Métricas de teste & cobertura funcional</div>
+            <div class="aula-item"><h4>Aula 1: Indicadores de qualidade em testes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Medir a cobertura de requisitos, analisar a execução de casos e bugs detectados.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar autoconfiança e pensamento crítico na análise de métricas de teste.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular taxa de detecção de defeitos e densidade de bugs.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Ferramentas de métricas</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conhecer ferramentas como SonarQube para coleta de métricas.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a curiosidade tecnológica.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Automatizar a medição da qualidade.</div>
+            <div class="aula-item"><h4>Aula 2: Ferramentas de métricas – relatórios automatizados</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Medir a cobertura de requisitos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar autoconfiança e pensamento crítico.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Gerar gráfico de cobertura a partir do CI.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Revisão do plano de teste</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar criticamente um plano de teste com base em métricas.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a capacidade de autoavaliação e melhoria contínua.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Melhorar a efetividade dos testes.</div>
+            <div class="aula-item"><h4>Aula 3: Revisão de plano de teste com base em métricas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Medir a cobertura de requisitos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar autoconfiança e pensamento crítico.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Ajustar escopo de testes para pontos críticos descobertos.</div>
             </div>
         </section>
 
         <!-- SEMANA 10 -->
         <section id="semana10" class="semana">
-            <h3>SEMANA 10 – Modelos de Desenvolvimento</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Modelos Preditivos e Adaptativos</div>
-            <div class="aula-item"><h4>Aula 1: Waterfall</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever as fases sequenciais do modelo cascata.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender a importância do planejamento estruturado.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o modelo preditivo tradicional.</div>
+            <h3>SEMANA 10 – Cultura ágil e mudança de mentalidade</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Cultura ágil e mudança de mentalidade</div>
+            <div class="aula-item"><h4>Aula 1: Ciclo waterfall clássico vs. iterações curtas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Comparar criticamente modelos waterfall e ágil.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar empatia ao compreender diferentes perspectivas metodológicas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Mapear fases sequenciais e fases sobrepostas.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Ágil</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Contrastar desenvolvimento iterativo e incremental com o modelo cascata.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar a adaptabilidade e a resposta a mudanças.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer as vantagens da adaptabilidade ágil.</div>
+            <div class="aula-item"><h4>Aula 2: Valores humanos no ágil</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Comparar criticamente modelos waterfall e ágil.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar empatia.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar cada valor do manifesto a comportamentos diários.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Debate cascata x ágil</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Argumentar sobre a adequação de cada modelo a diferentes contextos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Praticar a argumentação respeitosa e o pensamento crítico.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Selecionar o modelo mais adequado para um projeto.</div>
+            <div class="aula-item"><h4>Aula 3: Dinâmica – debate mediado ágil × cascata</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Comparar criticamente modelos.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar empatia.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Vivenciar argumentos a favor e contra de ambos os lados.</div>
             </div>
         </section>
 
         <!-- SEMANA 11 -->
         <section id="semana11" class="semana">
-            <h3>SEMANA 11 – Planejamento de Produto</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Roadmap e Backlog</div>
-            <div class="aula-item"><h4>Aula 1: Roadmap</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Construir um roadmap de produto com marcos e objetivos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver visão estratégica e de longo prazo.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Visualizar a evolução do produto ao longo do tempo.</div>
+            <h3>SEMANA 11 – Planejamento de release & iterações</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Planejamento de release & iterações</div>
+            <div class="aula-item"><h4>Aula 1: Roadmap de Produto e Release Burn-up</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar releases de produto e fatiar backlogs em entregas iterativas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar o espírito de equipe durante o planejamento.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir características de alto nível e datas-alvo.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Backlog e Sprints</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar e priorizar itens de backlog do produto e da sprint.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a priorização e a tomada de decisão.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Organizar o trabalho em ciclos curtos de entrega.</div>
+            <div class="aula-item"><h4>Aula 2: Fatiamento do backlog em sprints</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar releases e fatiar backlogs.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar o espírito de equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Estimar stories e montar sprint backlog viável.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Revisão de Sprint</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conduzir uma reunião de revisão para inspeção do incremento.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Praticar a transparência e a abertura ao feedback.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Obter feedback das partes interessadas.</div>
+            <div class="aula-item"><h4>Aula 3: Revisão de Sprint e demonstração de valor</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar releases.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar o espírito de equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Exibir incremento e obter feedback imediato.</div>
             </div>
         </section>
 
         <!-- SEMANA 12 -->
         <section id="semana12" class="semana">
-            <h3>SEMANA 12 – Papéis no Scrum</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Responsabilidades e Colaboração</div>
-            <div class="aula-item"><h4>Aula 1: Product Owner</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir responsabilidades na maximização do valor do produto.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver empatia com o cliente e foco em valor.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender o papel de ponte entre negócio e desenvolvimento.</div>
+            <h3>SEMANA 12 – Papéis no Scrum (PO, SM, Dev Team)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Papéis no Scrum (PO, SM, Dev Team)</div>
+            <div class="aula-item"><h4>Aula 1: Product Owner – Voz do Negócio</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever e integrar as responsabilidades dos papéis no Scrum.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a comunicação assertiva ao expressar ideias e alinhar expectativas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender backlog grooming e priorização de valor.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Scrum Master</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Atuar como facilitador e removedor de impedimentos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a liderança servidora e a mediação de conflitos.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir a adoção correta do Scrum.</div>
+            <div class="aula-item"><h4>Aula 2: Scrum Master – facilitador de processos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever e integrar responsabilidades.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a comunicação assertiva.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Listar impedimentos comuns e técnicas de remoção.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Time de Desenvolvimento</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer as características de um time auto-organizado.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Promover autonomia, colaboração e responsabilidade coletiva.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender a responsabilidade coletiva pela entrega.</div>
+            <div class="aula-item"><h4>Aula 3: Equipe de desenvolvimento – autogerenciamento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever e integrar responsabilidades.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a comunicação assertiva.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir compromissos e compartilhar capacidade.</div>
             </div>
         </section>
 
         <!-- SEMANA 13 -->
         <section id="semana13" class="semana">
-            <h3>SEMANA 13 – Métricas Ágeis</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Medindo o Progresso Ágil</div>
-            <div class="aula-item"><h4>Aula 1: Velocity</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Calcular a velocidade do time com base nos story points entregues.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver realismo e transparência nas estimativas.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Estimar a capacidade futura do time.</div>
+            <h3>SEMANA 13 – Métricas ágeis (Velocity, Burndown, Cumulative Flow)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Métricas ágeis (Velocity, Burndown, Cumulative Flow)</div>
+            <div class="aula-item"><h4>Aula 1: Calculando e usando Velocity</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Coletar e interpretar indicadores de fluxo de trabalho.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Regular emoções sob pressão ao lidar com indicadores ágeis.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar padrões de entrega e capacidade real.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Burndown</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Interpretar gráficos de burndown para acompanhar o progresso.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular o acompanhamento visual e a proatividade.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Monitorar se o trabalho restante está dentro do planejado.</div>
+            <div class="aula-item"><h4>Aula 2: Burndown Chart – visibilidade diária</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Coletar e interpretar indicadores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Regular emoções sob pressão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Atualizar e interpretar queima de horas/pontos.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Cumulative Flow</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar o diagrama de fluxo cumulativo para identificar gargalos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Aprimorar a visão sistêmica do processo.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Visualizar a estabilidade do fluxo de trabalho.</div>
+            <div class="aula-item"><h4>Aula 3: Cumulative Flow Diagram (CFD)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Coletar e interpretar indicadores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Regular emoções sob pressão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Detectar gargalos na esteira de desenvolvimento.</div>
             </div>
         </section>
 
         <!-- SEMANA 14 -->
         <section id="semana14" class="semana">
-            <h3>SEMANA 14 – Retrospectivas</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Melhoria Contínua</div>
-            <div class="aula-item"><h4>Aula 1: Modelos de retrospectiva</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conhecer formatos como "Start, Stop, Continue" e "4Ls".</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Criar um ambiente seguro para feedback honesto.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Conduzir retrospectivas eficazes.</div>
+            <h3>SEMANA 14 – Retrospectiva & melhoria contínua</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Retrospectiva & melhoria contínua</div>
+            <div class="aula-item"><h4>Aula 1: Formatos de retrospectiva</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conduzir retrospectivas ágeis, priorizar ações de melhoria.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade ao refletir sobre práticas de equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Escolher dinâmica adequada ao contexto.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Priorização</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Selecionar e priorizar ações de melhoria com o time.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Focar no que gera maior impacto coletivo.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Focar no que gera maior impacto.</div>
+            <div class="aula-item"><h4>Aula 2: Priorização de ações de melhoria</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conduzir retrospectivas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir plano de ação SMART para próxima sprint.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Kaizen</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar a filosofia de melhoria contínua no processo de desenvolvimento.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a mentalidade de crescimento e aprendizado constante.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Incorporar pequenas melhorias incrementais constantemente.</div>
+            <div class="aula-item"><h4>Aula 3: Kaizen no dia a dia</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conduzir retrospectivas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Incorporar pequenas melhorias contínuas ao fluxo.</div>
             </div>
         </section>
 
         <!-- SEMANA 15 -->
         <section id="semana15" class="semana">
-            <h3>SEMANA 15 – SDLC</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Ciclo de Vida do Software</div>
-            <div class="aula-item"><h4>Aula 1: Fases clássicas</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Enumerar as fases do Ciclo de Vida de Desenvolvimento de Software.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver visão holística do processo de construção.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Estruturar o desenvolvimento de forma organizada.</div>
+            <h3>SEMANA 15 – Visão geral dos modelos de processo de software</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Visão geral dos modelos de processo de software</div>
+            <div class="aula-item"><h4>Aula 1: Fases clássicas do SDLC</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever requisito, análise, projeto, implementação, teste e manutenção.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar curiosidade para comparar diferentes modelos de processo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer sequência lógica e artefatos produzidos em cada fase.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Cascata</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Detalhar o fluxo sequencial do modelo Waterfall no SDLC.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar a disciplina e o planejamento antecipado.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Consolidar o entendimento do modelo tradicional.</div>
+            <div class="aula-item"><h4>Aula 2: Modelo Cascata na prática</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever fases do SDLC.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar curiosidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Avaliar vantagens e limitações de projetos rígidos.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Incremental</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever o modelo incremental e suas iterações.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Compreender a evolução gradual e a entrega de valor.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Comparar abordagens de evolução do software.</div>
+            <div class="aula-item"><h4>Aula 3: Modelos Incremental e Evolutivo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever fases do SDLC.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar curiosidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar cenários de aplicação quando requisitos são mutáveis.</div>
             </div>
         </section>
 
         <!-- SEMANA 16 -->
         <section id="semana16" class="semana">
-            <h3>SEMANA 16 – Scrum na Prática</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Vivenciando o Scrum</div>
-            <div class="aula-item"><h4>Aula 1: Valores</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Internalizar os valores Scrum: compromisso, coragem, foco, abertura e respeito.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Fortalecer a ética de trabalho em equipe.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Fortalecer a cultura do time ágil.</div>
+            <h3>SEMANA 16 – Manifesto Ágil e papéis do Scrum</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Manifesto Ágil e papéis do Scrum</div>
+            <div class="aula-item"><h4>Aula 1: Valores e princípios do Manifesto Ágil</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Interpretar 4 valores e 12 princípios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar em atividades de simulação de times Scrum.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar cada princípio a exemplos reais.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Papéis</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Revisar as responsabilidades de Product Owner, Scrum Master e Time.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Esclarecer expectativas e interdependências.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Esclarecer a dinâmica de colaboração.</div>
+            <div class="aula-item"><h4>Aula 2: Papéis Scrum – PO, SM, Dev Team</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Interpretar valores e princípios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar em atividades de simulação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Mapear decisões típicas de cada papel.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Dinâmica prática</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Simular uma sprint com todos os eventos Scrum em sala de aula.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Vivenciar a colaboração, pressão por prazo e celebração.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Vivenciar o ciclo ágil completo.</div>
+            <div class="aula-item"><h4>Aula 3: Dinâmica "Construindo um Produto em Papel"</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Interpretar valores e princípios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar em atividades de simulação.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Experimentar colaboração em sprint zero.</div>
             </div>
         </section>
 
         <!-- SEMANA 17 -->
         <section id="semana17" class="semana">
-            <h3>SEMANA 17 – Eventos Scrum</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Timeboxing e Inspeção</div>
-            <div class="aula-item"><h4>Aula 1: Sprint Planning</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar o trabalho da sprint definindo meta e itens do backlog.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar o planejamento colaborativo e a negociação.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Iniciar a sprint com clareza de objetivo.</div>
+            <h3>SEMANA 17 – Eventos e artefatos do Scrum</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Eventos e artefatos do Scrum</div>
+            <div class="aula-item"><h4>Aula 1: Sprint Planning e Sprint Goal</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Priorizar backlog, estimar e definir meta.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar autocontrole para cumprir time-boxes dos eventos ágeis.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Planejar sprint de duas semanas de forma realista.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Daily</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conduzir a reunião diária de sincronização do time.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver comunicação concisa e foco.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Manter o alinhamento e identificar impedimentos rapidamente.</div>
+            <div class="aula-item"><h4>Aula 2: Daily Scrum e gestão de impedimentos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Priorizar backlog, estimar e definir meta.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar autocontrole.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Registrar e comunicar bloqueios corretamente.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Review e Retrospective</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Diferenciar a revisão da retrospectiva.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Praticar a abertura ao feedback e a reflexão crítica.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Inspecionar e adaptar produto e processo.</div>
+            <div class="aula-item"><h4>Aula 3: Review & Retrospective</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Priorizar backlog.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar autocontrole.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar feedback contínuo para aprimorar processo.</div>
             </div>
         </section>
 
         <!-- SEMANA 18 -->
         <section id="semana18" class="semana">
-            <h3>SEMANA 18 – Kanban</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Fluxo Contínuo</div>
-            <div class="aula-item"><h4>Aula 1: Fundamentos</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender os princípios do Kanban: limitar WIP, tornar políticas explícitas.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver a disciplina de limitar trabalho em progresso.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Visualizar e gerenciar o fluxo de trabalho.</div>
+            <h3>SEMANA 18 – Kanban – fluxo contínuo e limites WIP</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Kanban – fluxo contínuo e limites WIP</div>
+            <div class="aula-item"><h4>Aula 1: Fundamentos do Kanban</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explicar visualização de fluxo, WIP Limit, lead time.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir na identificação de gargalos e na adaptação aos limites de trabalho.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Configurar quadro básico com três colunas.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Políticas explícitas</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir regras claras para movimentação de itens no quadro.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Promover transparência e acordo coletivo.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir ambiguidades no processo.</div>
+            <div class="aula-item"><h4>Aula 2: Políticas explícitas e classes de serviço</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explicar visualização de fluxo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir na identificação de gargalos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Valorizar transparência de trabalho.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Fluxo</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Analisar métricas de fluxo como lead time e cycle time.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a análise de dados para melhoria contínua.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Otimizar a eficiência da entrega contínua.</div>
+            <div class="aula-item"><h4>Aula 3: Dinâmica "Simulação de estoque"</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explicar visualização de fluxo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir na identificação de gargalos.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Demonstrar impacto de gargalos visualmente.</div>
             </div>
         </section>
 
         <!-- SEMANA 19 -->
         <section id="semana19" class="semana">
-            <h3>SEMANA 19 – Estimativas</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Tamanho e Esforço</div>
-            <div class="aula-item"><h4>Aula 1: Story Points</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Estimar tamanho relativo de histórias usando story points.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver consenso e colaboração em estimativas.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Atribuir esforço de forma comparativa.</div>
+            <h3>SEMANA 19 – Estimativas ágeis – Story Points, Velocity e Release Plan</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Estimativas ágeis – Story Points, Velocity e Release Plan</div>
+            <div class="aula-item"><h4>Aula 1: Story Points & T-Shirt Sizing</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Converter complexidade em unidades relativas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade técnicas ágeis de estimativa e planejamento.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Evitar horas como métrica principal.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Velocity</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Calcular e utilizar a velocidade da equipe para previsões.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar uma relação saudável com métricas e prazos.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Projetar entregas futuras com base no histórico.</div>
+            <div class="aula-item"><h4>Aula 2: Velocity – cálculo e tendência</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Converter complexidade em unidades relativas.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Prever datas prováveis de conclusão.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Release</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Planejar releases com base na velocidade e backlog priorizado.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Equilibrar expectativas e capacidade real de entrega.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir escopo e datas de entregas maiores.</div>
+            <div class="aula-item"><h4>Aula 3: Release Planning Workshop</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Converter complexidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar com curiosidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Balancear valor, risco e dependências.</div>
             </div>
         </section>
 
         <!-- SEMANA 20 -->
         <section id="semana20" class="semana">
-            <h3>SEMANA 20 – Integração Contínua</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Automação de Build e Teste</div>
-            <div class="aula-item"><h4>Aula 1: CI</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o conceito de Integração Contínua.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar a automação e a redução de retrabalho.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir problemas de integração.</div>
+            <h3>SEMANA 20 – Integração Contínua (CI) e Entrega Contínua (CD)</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Integração Contínua (CI) e Entrega Contínua (CD)</div>
+            <div class="aula-item"><h4>Aula 1: Conceito e benefícios da CI</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever build automático a cada commit.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Organizar as tarefas pessoais em pipelines de integração e entrega contínua.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar gargalos eliminados pela automação.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: GitHub Actions</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar pipelines básicos de CI com GitHub Actions.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Incentivar a experimentação prática e a autonomia.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Automatizar build e testes a cada commit.</div>
+            <div class="aula-item"><h4>Aula 2: Ferramentas de pipeline (GitHub Actions)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever build automático.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Organizar as tarefas pessoais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Executar build na nuvem.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Deploy automatizado</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Entender a etapa de deploy dentro do pipeline CI/CD.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver confiança no processo automatizado.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Agilizar a entrega de software.</div>
+            <div class="aula-item"><h4>Aula 3: CD – Deploy automático em ambiente teste</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever build automático.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Organizar as tarefas pessoais.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir tempo de ida para QA.</div>
             </div>
         </section>
 
         <!-- SEMANA 21 -->
         <section id="semana21" class="semana">
-            <h3>SEMANA 21 – DevOps</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Cultura e Colaboração</div>
-            <div class="aula-item"><h4>Aula 1: Origem</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Contextualizar o movimento DevOps como integração entre Dev e Ops.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a quebra de silos e a colaboração interdisciplinar.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a cultura de colaboração.</div>
+            <h3>SEMANA 21 – Cultura DevOps e feedback contínuo</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Cultura DevOps e feedback contínuo</div>
+            <div class="aula-item"><h4>Aula 1: Origem do DevOps e CALMS</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explicar valores DevOps, identificar gargalos de fluxo e configurar pipeline de feedback rápido.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar estratégias para reduzir tempos de ciclo e aprimorar pipelines.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Mapear evolução do "Wall of Confusion" até as práticas CALMS.</div>
             </div>
             <div class="aula-item"><h4>Aula 2: Pipeline de feedback</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar as etapas do pipeline DevOps e a importância do feedback rápido.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Valorizar ciclos curtos de aprendizado.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir o tempo entre ideia e produção.</div>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explicar valores DevOps.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar estratégias.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Demonstrar integração contínua + testes automatizados e notificação de falhas em < 5 min.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Métricas DORA</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conhecer as quatro métricas-chave de desempenho DevOps.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Orientar-se por resultados mensuráveis e melhoria contínua.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Medir o desempenho de equipes DevOps.</div>
+            <div class="aula-item"><h4>Aula 3: Métricas DevOps (DORA)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Explicar valores DevOps.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar estratégias.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular Lead Time, Deployment Frequency, MTTR e Change Fail Rate.</div>
             </div>
         </section>
 
         <!-- SEMANA 22 -->
         <section id="semana22" class="semana">
-            <h3>SEMANA 22 – Infraestrutura como Código</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Provisionamento Automatizado</div>
-            <div class="aula-item"><h4>Aula 1: Terraform</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Escrever configurações básicas de infraestrutura usando Terraform.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver rigor e consistência na definição de ambientes.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Provisionar recursos de forma declarativa.</div>
+            <h3>SEMANA 22 – Infraestrutura como Código (IaC) com Terraform</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Infraestrutura como Código (IaC) com Terraform</div>
+            <div class="aula-item"><h4>Aula 1: Sintaxe HCL e Providers</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Escrever manifestos Terraform reutilizáveis para VPC, subnet e instância.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar abordagens modulares que promovam reutilização, eficiência e governança.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar primeiro recurso (aws_vpc) e compreender ciclo init / plan / apply.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Módulos</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reutilizar código de infraestrutura através de módulos.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Estimular a reutilização e a padronização.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Padronizar e escalar o provisionamento.</div>
+            <div class="aula-item"><h4>Aula 2: Módulos e workspaces</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Escrever manifestos Terraform.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar abordagens modulares.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Refatorar infra em módulo reutilizável e usar workspaces para dev/prod.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Providers</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar providers para diferentes provedores de nuvem.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ampliar a visão de ambientes multiplataforma.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Gerenciar múltiplas plataformas com IaC.</div>
+            <div class="aula-item"><h4>Aula 3: Laboratório – Stack 2-tier completa</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Escrever manifestos Terraform.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Explorar abordagens modulares.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Provisionar VPC + ALB + Auto-Scaling + RDS em uma única execução.</div>
             </div>
         </section>
 
         <!-- SEMANA 23 -->
         <section id="semana23" class="semana">
-            <h3>SEMANA 23 – Containers</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Empacotamento e Isolamento</div>
-            <div class="aula-item"><h4>Aula 1: Conceitos</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender o que são containers e como diferem de máquinas virtuais.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver curiosidade por novas tecnologias.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender isolamento e portabilidade.</div>
+            <h3>SEMANA 23 – Docker Fundamentals</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Docker Fundamentals</div>
+            <div class="aula-item"><h4>Aula 1: Conceitos de Namespaces e cgroups</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Containerizar aplicação, otimizar imagem e gerenciar volumes, redes e logs.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar pensamento crítico ao avaliar configurações padrão.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explicar isolamento de processos e alocação de recursos.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Dockerfile</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar imagens de container usando Dockerfile.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Praticar a documentação como código.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Empacotar aplicações de forma consistente.</div>
+            <div class="aula-item"><h4>Aula 2: Dockerfile Multi-stage e Distroless</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Containerizar aplicação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar pensamento crítico.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Construir imagem slim para app Node/Go.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Redes e logs</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Gerenciar rede entre containers e coletar logs.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver visão de troubleshooting e monitoramento.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Operar containers em ambientes reais.</div>
+            <div class="aula-item"><h4>Aula 3: Compose, Redes e Logs</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Containerizar aplicação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar pensamento crítico.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Orquestrar multi-contêiner e configurar rede bridge.</div>
             </div>
         </section>
 
         <!-- SEMANA 24 -->
         <section id="semana24" class="semana">
-            <h3>SEMANA 24 – Kubernetes</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Orquestração de Containers</div>
-            <div class="aula-item"><h4>Aula 1: Arquitetura</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Descrever os componentes principais do Kubernetes.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver pensamento sistêmico e abstração.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a orquestração de containers.</div>
+            <h3>SEMANA 24 – Kubernetes Essentials</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Kubernetes Essentials</div>
+            <div class="aula-item"><h4>Aula 1: Arquitetura Master/Worker e API Objects</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implantar pods, services e ingress, escalando deployment em cluster local.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar de forma ativa na sincronização dos papéis de desenvolvimento e operações.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Navegar na kube-API e criar primeiro Pod.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Deployments</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Criar e gerenciar deployments para atualizações sem downtime.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar a confiança em estratégias de entrega contínua.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Controlar o ciclo de vida das aplicações.</div>
+            <div class="aula-item"><h4>Aula 2: Deployment, Service e ConfigMap</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implantar pods, services e ingress.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar de forma ativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Expor app stateless e parametrizar config.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Escalabilidade</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Configurar auto scaling horizontal e vertical.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Planejar para crescimento e resiliência.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Garantir performance sob carga variável.</div>
+            <div class="aula-item"><h4>Aula 3: Oficina – Escalabilidade e Rollout</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Implantar pods, services e ingress.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Colaborar de forma ativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Escalar réplicas (HPA) e analisar métricas.</div>
             </div>
         </section>
 
         <!-- SEMANA 25 -->
         <section id="semana25" class="semana">
-            <h3>SEMANA 25 – SRE</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Confiabilidade e Operações</div>
-            <div class="aula-item"><h4>Aula 1: Papel do SRE</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir as responsabilidades de um Site Reliability Engineer.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Equilibrar desenvolvimento de software com operações.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar princípios de engenharia de software a operações.</div>
+            <h3>SEMANA 25 – SRE, SLI/SLO e Error Budget</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> SRE, SLI/SLO e Error Budget</div>
+            <div class="aula-item"><h4>Aula 1: Papel do SRE e redução de Toil</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir indicadores de confiabilidade, calcular SLO e gerenciar error budget.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade ao revisar métricas e políticas de confiabilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Diferenciar SRE de DevOps e identificar atividades de toil.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: SLI/SLO</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Diferenciar Service Level Indicator (SLI) e Service Level Objective (SLO).</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Definir metas realistas e centradas no cliente.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Definir metas mensuráveis de confiabilidade.</div>
+            <div class="aula-item"><h4>Aula 2: SLI/SLO na prática</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir indicadores de confiabilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar SLI de disponibilidade e latência, calcular SLO 99.9%.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Error Budget</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar orçamento de erro para balancear inovação e estabilidade.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Tomar decisões baseadas em risco calculado.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Tomar decisões baseadas em risco aceitável.</div>
+            <div class="aula-item"><h4>Aula 3: Error Budget Policy</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Definir indicadores de confiabilidade.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar adaptabilidade.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Calcular budget mensal, definir gatilhos de congelar releases.</div>
             </div>
         </section>
 
         <!-- SEMANA 26 -->
         <section id="semana26" class="semana">
-            <h3>SEMANA 26 – Segurança em Software</h3>
-            <div class="tema-semana"><strong>Tema da semana:</strong> Desenvolvimento Seguro</div>
-            <div class="aula-item"><h4>Aula 1: Shift-Left</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Integrar segurança desde as fases iniciais do desenvolvimento.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Desenvolver mentalidade preventiva e responsável.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Prevenir vulnerabilidades em vez de corrigi-las depois.</div>
+            <h3>SEMANA 26 – DevSecOps – segurança integrada ao pipeline</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> DevSecOps – segurança integrada ao pipeline</div>
+            <div class="aula-item"><h4>Aula 1: Shift-Left Security e SAST</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Inserir SAST, scan de dependências e DAST no CI/CD, corrigindo vulnerabilidades.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência na identificação, correção e validação de vulnerabilidades.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Configurar scanner SonarQube/Bandit no fluxo de PR.</div>
             </div>
-            <div class="aula-item"><h4>Aula 2: Segurança em containers</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar boas práticas de segurança na construção e execução de containers.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Cultivar atenção contínua a riscos e ameaças.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Reduzir a superfície de ataque em ambientes conteinerizados.</div>
+            <div class="aula-item"><h4>Aula 2: Segurança contêiner – imagem e runtime</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Inserir SAST, scan de dependências e DAST.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Escanear imagem Docker (Trivy) e aplicar hardening.</div>
             </div>
-            <div class="aula-item"><h4>Aula 3: Vulnerabilidades</h4>
-                <div class="habilidades"><strong>Habilidades técnicas:</strong> Conhecer vulnerabilidades comuns (OWASP Top 10) e como mitigá-las.</div>
-                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Exercitar a ética profissional e a responsabilidade com o usuário.</div>
-                <div class="objetivo"><strong>Objetivo da aula:</strong> Desenvolver software mais seguro.</div>
+            <div class="aula-item"><h4>Aula 3: DAST + IaC Scanning</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Inserir SAST, scan de dependências e DAST.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar persistência.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Rodar OWASP ZAP para app e Checkov para Terraform.</div>
             </div>
         </section>
 
