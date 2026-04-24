@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Aprendizado</title>
+<title>Laboratório Interativo • Aprendizado de Máquina (28 Semanas)</title>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js">
 </script>
 <script src="https://cdn.jsdelivr.net/npm/numeric@1.2.6/numeric-1.2.6.min.js">
@@ -61,6 +61,7 @@ button {
   box-shadow: 0 6px 20px #00000040;
 }
 button:hover { transform: translateY(-1px); }
+button:disabled { opacity: 0.6; transform: none; cursor: not-allowed; }
 button.secondary { background: #0c1330; border: 1px solid var(--border); box-shadow: none; }
 .row { display: grid; grid-template-columns: repeat(12, 1fr); gap: 8px; }
 .col-3 { grid-column: span 3; } .col-4 { grid-column: span 4; }
@@ -89,14 +90,14 @@ canvas { background: #0b122f; border-radius: 12px; border: 1px solid var(--borde
 <header>
 <div class="wrap">
   <h1>Laboratório Interativo de Aprendizado de Máquina (FATEC)</h1>
-  <div class="sub">Supervisionado, Não Supervisionado, Avaliação e Projetos</div>
+  <div class="sub">Cobertura: 28 semanas — Supervisionado, Não Supervisionado, Avaliação e Projetos</div>
   <nav class="nav">
-    <a href="#dataGen"> Dados</a>
-    <a href="#supervised"> Supervisionado</a>
-    <a href="#unsupervised"> Não Supervisionado</a>
-    <a href="#evaluation"> Avaliação Avançada</a>
-    <a href="#pipeline"> Pipeline & Features</a>
-    <a href="#optimization"> Otimização</a>
+    <a href="#dataGen">📊 Dados</a>
+    <a href="#supervised">📈 Supervisionado</a>
+    <a href="#unsupervised">🔍 Não Supervisionado</a>
+    <a href="#evaluation">📊 Avaliação Avançada</a>
+    <a href="#pipeline">⚙️ Pipeline & Features</a>
+    <a href="#optimization">🎯 Otimização</a>
   </nav>
 </div>
 </header>
@@ -401,10 +402,10 @@ const state = {
   trainIdx: [], testIdx: [],
   charts: {},
   lastModel: null, lastModelType: '',
-  comparisonRows: []
+  comparisonRows: [],
+  aeTraining: false
 };
 
-// PRNG
 function rand(seed) {
   const m = 2**31 - 1, a = 48271;
   seed = (seed * a) % m;
@@ -422,7 +423,6 @@ function minMaxTransform(X,{min,max}){ return X.map(row=>row.map((v,i)=> (v-min[
 function trainTestSplit(n, testRatio=0.2, seed=42){ const idx=Array.from({length:n},(_,i)=>i); const r=rand(seed); shuffleInPlace(idx,r); const testSize=Math.max(1,Math.floor(n*testRatio)); const testIdx=idx.slice(0,testSize); const trainIdx=idx.slice(testSize); return {trainIdx,testIdx}; }
 function sliceByIdx(A,idx){ return idx.map(i=>A[i]); }
 
-// Métricas
 function rmse(yTrue,yPred){ const n=yTrue.length; let s=0; for(let i=0;i<n;i++){ const d=yTrue[i]-yPred[i]; s+=d*d; } return Math.sqrt(s/n); }
 function mae(yTrue,yPred){ const n=yTrue.length; let s=0; for(let i=0;i<n;i++) s+=Math.abs(yTrue[i]-yPred[i]); return s/n; }
 function r2(yTrue,yPred){ const m=mean(yTrue); let ssRes=0, ssTot=0; for(let i=0;i<yTrue.length;i++){ const d=yTrue[i]-yPred[i]; ssRes+=d*d; ssTot+=(yTrue[i]-m)**2; } return 1-(ssRes/(ssTot+1e-12)); }
@@ -432,12 +432,10 @@ function confMatrix(yTrue,yPred){ const labels=[...new Set(yTrue.concat(yPred))]
 function isClassification(y){ return typeof y[0]!=='number' || (new Set(y)).size<=10 && y.every(v=>v===0||v===1); }
 function dist(a,b,metric='euclidean'){ if(metric==='euclidean'){ let s=0; for(let i=0;i<a.length;i++){ const d=a[i]-b[i]; s+=d*d; } return Math.sqrt(s); } else { let s=0; for(let i=0;i<a.length;i++) s+=Math.abs(a[i]-b[i]); return s; } }
 
-// UI helpers
 function kpiBox(label, value, unit=''){ return `<div><div class="muted">${label}</div><div style="font-size:1.2rem;font-weight:700;">${value}${unit}</div></div>`; }
 function tableHTML(headers, rows){ const th='<tr>'+headers.map(h=>`<th>${h}</th>`).join('')+'</tr>'; const tr=rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join(''); return `<table>${th}${tr}</table>`; }
 function renderCM(cm){ const {M,labels}=cm; const headers=[''].concat(labels.map(l=>'Pred '+l)); const rows=labels.map((l,i)=>['Verdade '+l, ...M[i]]); return tableHTML(headers,rows); }
 
-// PCA
 function projectPCA2D(X){
   const scaler=zscoreFit(X); const Xs=zscoreTransform(X,scaler);
   const XT=transpose(Xs); const n=Xs.length;
@@ -453,9 +451,6 @@ function projectPCA2D(X){
   return {P, explained:[exp1,exp2]};
 }
 
-/* ===========================================================
-   GERAÇÃO DE DADOS (multiclasse suportada)
-=========================================================== */
 function generateData({task='classification', nSamples=500, nFeatures=6, noise=0.15, nClasses=2, seed=42}){
   const rnd=rand(seed); const featureNames=Array.from({length:nFeatures},(_,i)=>`x${i+1}`);
   const X=[], y=[];
@@ -473,9 +468,6 @@ function generateData({task='classification', nSamples=500, nFeatures=6, noise=0
   return {X, y, featureNames, task};
 }
 
-/* ===========================================================
-   INTERFACE COMUM
-=========================================================== */
 function updateDatasetInfo(){
   const info=document.getElementById('datasetInfo'); if(!state.X.length){ info.textContent='Nenhum dataset carregado.'; return; }
   info.innerHTML=`<div class="badge">${state.task==='classification'?'Classificação':'Regressão'}</div><div style="margin-top:8px;">Amostras: <b>${state.X.length}</b> • Variáveis: <b>${state.featureNames.length}</b></div>`;
@@ -548,7 +540,6 @@ document.getElementById('btnApplyFeatures').addEventListener('click',()=>{
 /* ===========================================================
    MODELOS SUPERVISIONADOS
 =========================================================== */
-/* Regressão Linear */
 document.getElementById('btnLinReg').addEventListener('click',async()=>{
   if(state.task!=='regression'){ alert('Dataset de REGRESSÃO necessário.'); return; }
   const box=document.getElementById('linreg_metrics'); box.innerHTML=kpiBox('Status','Treinando...');
@@ -563,11 +554,10 @@ document.getElementById('btnLinReg').addEventListener('click',async()=>{
     const R2=r2(state.y_test,yhat).toFixed(4), RM=rmse(state.y_test,yhat).toFixed(4), MA=mae(state.y_test,yhat).toFixed(4);
     box.innerHTML=kpiBox('RMSE',RM)+kpiBox('MAE',MA)+kpiBox('R²',R2);
     state.lastModel={predict:x=>model.predict(tf.tensor2d([x])).dataSync()[0],type:'regression'}; state.lastModelType='Regressão Linear';
-    xtr.dispose(); ytr.dispose();
+    xtr.dispose(); ytr.dispose(); model.dispose();
   } catch(e){ console.error(e); box.innerHTML='<span class="badge err">Erro no treino</span>'; }
 });
 
-/* Regressão Logística (multiclasse) */
 document.getElementById('btnLogReg').addEventListener('click',async()=>{
   if(state.task!=='classification'){ alert('Dataset de CLASSIFICAÇÃO necessário.'); return; }
   const box=document.getElementById('logreg_metrics'); box.innerHTML=kpiBox('Status','Treinando...');
@@ -597,11 +587,10 @@ document.getElementById('btnLogReg').addEventListener('click',async()=>{
       state.lastModel={predict:x=>{ const p=model.predict(tf.tensor2d([x])).arraySync()[0]; return p.indexOf(Math.max(...p)); },type:'classification'}; state.lastModelType='Reg. Logística (multiclasse)';
       ytr.dispose();
     }
-    xtr.dispose();
+    xtr.dispose(); model.dispose();
   } catch(e){ console.error(e); box.innerHTML='<span class="badge err">Erro no treino</span>'; }
 });
 
-/* SVM Linear */
 document.getElementById('btnSVM').addEventListener('click', async ()=>{
   if (!state.X_train.length) { alert('Gere ou carregue um dataset.'); return; }
   const mode = document.getElementById('svm_mode').value;
@@ -760,7 +749,7 @@ document.getElementById('btnANN').addEventListener('click',async()=>{
     if(isClass&&nClasses===2){ const ytr=tf.tensor2d(state.y_train.map(v=>[v])); await model.fit(xtr,ytr,{epochs,batchSize:bs,verbose:0}); const proba=Array.from(model.predict(tf.tensor2d(Xs_test)).dataSync()); const yhat=proba.map(p=>p>=0.5?1:0); const acc=accuracy(state.y_test,yhat); const prf=precisionRecallF1(state.y_test,yhat,1); const CM=confMatrix(state.y_test,yhat); box.innerHTML=kpiBox('Acurácia',(acc*100).toFixed(2),'%')+kpiBox('Precisão',(prf.precision*100).toFixed(2),'%')+kpiBox('Revocação',(prf.recall*100).toFixed(2),'%')+kpiBox('F1',(prf.f1*100).toFixed(2),'%'); document.getElementById('ann_cm').innerHTML=renderCM(CM); state.lastModelType='ANN'; }
     else if(isClass){ const ytr=tf.oneHot(tf.tensor1d(state.y_train,'int32'),nClasses); await model.fit(xtr,ytr,{epochs,batchSize:bs,verbose:0}); const proba=model.predict(tf.tensor2d(Xs_test)).arraySync(); const yhat=proba.map(p=>p.indexOf(Math.max(...p))); const acc=accuracy(state.y_test,yhat); box.innerHTML=kpiBox('Acurácia',(acc*100).toFixed(2),'%'); document.getElementById('ann_cm').innerHTML=''; state.lastModelType='ANN (multiclasse)'; }
     else{ const ytr=tf.tensor2d(state.y_train.map(v=>[v])); await model.fit(xtr,ytr,{epochs,batchSize:bs,verbose:0}); const yhat=Array.from(model.predict(tf.tensor2d(Xs_test)).dataSync()); const RM=rmse(state.y_test,yhat).toFixed(4),MA=mae(state.y_test,yhat).toFixed(4),R2=r2(state.y_test,yhat).toFixed(4); box.innerHTML=kpiBox('RMSE',RM)+kpiBox('MAE',MA)+kpiBox('R²',R2); state.lastModelType='ANN'; }
-    xtr.dispose();
+    xtr.dispose(); model.dispose();
   } catch(e){ console.error(e); box.innerHTML='<span class="badge err">Erro no treino</span>'; }
 });
 
@@ -865,7 +854,6 @@ document.getElementById('btnAdaBoost').addEventListener('click', () => {
 /* ===========================================================
    NÃO SUPERVISIONADOS
 =========================================================== */
-/* K-Means */
 function kmeans(X, k, maxIters=100, nInit=5) {
   const n = X.length, d = X[0].length;
   let bestCentroids = null, bestLabels = null, bestInertia = Infinity;
@@ -903,7 +891,6 @@ document.getElementById('btnKMeans').addEventListener('click', () => {
   state.charts['km_plot'] = new Chart(ctx, {type:'scatter', data:{datasets}, options:{scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}}}});
 });
 
-/* Hierarchical Clustering */
 function hacSingleLink(X, metric, k) {
   const n = X.length; let clusters = Array.from({length: n}, (_, i) => [i]);
   const distFun = (a, b) => { let best = Infinity; for (const i of a) for (const j of b) best = Math.min(best, dist(X[i], X[j], metric)); return best; };
@@ -926,7 +913,6 @@ document.getElementById('btnHAC').addEventListener('click', () => {
   state.charts['hac_plot'] = new Chart(ctx, {type:'scatter', data:{datasets}, options:{scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}}}});
 });
 
-/* DBSCAN */
 function dbscan(X, eps, minPts, metric) {
   const n = X.length; const labels = new Array(n).fill(-99); let C = 0;
   const regionQuery = (i) => { const neigh = []; for (let j = 0; j < n; j++) if (dist(X[i], X[j], metric) <= eps) neigh.push(j); return neigh; };
@@ -947,7 +933,6 @@ document.getElementById('btnDBSCAN').addEventListener('click', () => {
   state.charts['db_plot'] = new Chart(ctx, {type:'scatter', data:{datasets}, options:{scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}}}});
 });
 
-/* PCA customizado */
 document.getElementById('btnPCA').addEventListener('click', () => {
   if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
   const k = parseInt(document.getElementById('pca_n').value);
@@ -968,45 +953,65 @@ document.getElementById('btnPCA').addEventListener('click', () => {
   }
 });
 
-/* Autoencoder */
-async function trainAE(X, {latent=2, epochs=60, lr=0.01, batchSize=32, noise=0.0}) {
-  const scaler = zscoreFit(X); const Xs = zscoreTransform(X, scaler); const nx = X[0].length;
-  const input = tf.input({shape:[nx]}); const noisy = noise > 0 ? tf.layers.gaussianNoise({stddev: noise}).apply(input) : input;
-  const e1 = tf.layers.dense({units: Math.max(8, Math.floor(nx*0.75)), activation:'relu'}).apply(noisy);
-  const e2 = tf.layers.dense({units: Math.max(4, Math.floor(nx*0.5)), activation:'relu'}).apply(e1);
-  const z = tf.layers.dense({units: latent, activation:'linear'}).apply(e2);
-  const d1 = tf.layers.dense({units: Math.max(4, Math.floor(nx*0.5)), activation:'relu'}).apply(z);
-  const d2 = tf.layers.dense({units: Math.max(8, Math.floor(nx*0.75)), activation:'relu'}).apply(d1);
-  const out = tf.layers.dense({units: nx, activation:'linear'}).apply(d2);
-  const ae = tf.model({inputs: input, outputs: out}); ae.compile({optimizer: tf.train.adam(lr), loss:'meanSquaredError'});
-  const xtr = tf.tensor2d(Xs); await ae.fit(xtr, xtr, {epochs, batchSize, verbose:0});
-  const recon = ae.predict(xtr); const Xhat = recon.arraySync(); const recErr = rmse(Xs.flat(), Xhat.flat());
-  let Z = null; if (latent >= 2) { const enc = tf.model({inputs: input, outputs: z}); Z = enc.predict(tf.tensor2d(Xs)).arraySync(); enc.dispose(); }
-  ae.dispose(); xtr.dispose(); recon.dispose(); return {recErr, Z, scaler};
-}
+/* Autoencoder protegido contra cliques múltiplos e dispose */
 document.getElementById('btnAE').addEventListener('click', async () => {
-  if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
-  const latent = parseInt(document.getElementById('ae_latent').value); const epochs = parseInt(document.getElementById('ae_epochs').value);
-  const lr = parseFloat(document.getElementById('ae_lr').value); const bs = parseInt(document.getElementById('ae_bs').value);
-  const noise = parseFloat(document.getElementById('ae_noise').value);
-  document.getElementById('ae_info').innerHTML = 'Treinando...'; await tf.nextFrame();
-  const r = await trainAE(state.X, {latent, epochs, lr, batchSize: bs, noise});
-  document.getElementById('ae_info').innerHTML = `Erro de reconstrução (RMSE): <span class="badge ok">${r.recErr.toFixed(4)}</span>`;
-  if (r.Z) {
-    const ctx = document.getElementById('ae_plot').getContext('2d'); if (state.charts['ae_plot']) { state.charts['ae_plot'].destroy(); delete state.charts['ae_plot']; }
-    const datasets = [{ label: 'Latente (z1 x z2)', data: r.Z.map(p => ({x: p[0], y: p[1]})), pointRadius: 3, backgroundColor: '#f59e0b' }];
-    state.charts['ae_plot'] = new Chart(ctx, {type:'scatter', data:{datasets}, options:{scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}}}});
+  if (state.aeTraining) {
+    alert('Aguarde o treino atual terminar.');
+    return;
   }
+  if (!state.X.length) { alert('Gere/Carregue um dataset.'); return; }
+  const btn = document.getElementById('btnAE');
+  btn.disabled = true;
+  state.aeTraining = true;
+  const latent = parseInt(document.getElementById('ae_latent').value);
+  const epochs = parseInt(document.getElementById('ae_epochs').value);
+  const lr = parseFloat(document.getElementById('ae_lr').value);
+  const bs = parseInt(document.getElementById('ae_bs').value);
+  const noise = parseFloat(document.getElementById('ae_noise').value);
+  document.getElementById('ae_info').innerHTML = 'Treinando...';
+  await tf.nextFrame();
+  try {
+    if (state.aeModel) { state.aeModel.dispose(); state.aeModel = null; }
+    const scaler = zscoreFit(state.X); const Xs = zscoreTransform(state.X, scaler);
+    const nx = state.X[0].length;
+    const input = tf.input({shape:[nx]});
+    const noisy = noise > 0 ? tf.layers.gaussianNoise({stddev: noise}).apply(input) : input;
+    const e1 = tf.layers.dense({units: Math.max(8, Math.floor(nx*0.75)), activation:'relu'}).apply(noisy);
+    const e2 = tf.layers.dense({units: Math.max(4, Math.floor(nx*0.5)), activation:'relu'}).apply(e1);
+    const z = tf.layers.dense({units: latent, activation:'linear'}).apply(e2);
+    const d1 = tf.layers.dense({units: Math.max(4, Math.floor(nx*0.5)), activation:'relu'}).apply(z);
+    const d2 = tf.layers.dense({units: Math.max(8, Math.floor(nx*0.75)), activation:'relu'}).apply(d1);
+    const out = tf.layers.dense({units: nx, activation:'linear'}).apply(d2);
+    const ae = tf.model({inputs: input, outputs: out});
+    ae.compile({optimizer: tf.train.adam(lr), loss:'meanSquaredError'});
+    const xtr = tf.tensor2d(Xs);
+    await ae.fit(xtr, xtr, {epochs, batchSize: Math.min(bs, Xs.length), verbose:0});
+    const recon = ae.predict(xtr);
+    const Xhat = recon.arraySync();
+    const recErr = rmse(Xs.flat(), Xhat.flat());
+    document.getElementById('ae_info').innerHTML = `Erro de reconstrução (RMSE): <span class="badge ok">${recErr.toFixed(4)}</span>`;
+    if (latent >= 2) {
+      const enc = tf.model({inputs: input, outputs: z});
+      const Zlat = enc.predict(xtr).arraySync();
+      enc.dispose();
+      const ctx = document.getElementById('ae_plot').getContext('2d');
+      if (state.charts['ae_plot']) { state.charts['ae_plot'].destroy(); delete state.charts['ae_plot']; }
+      const datasets = [{ label: 'Latente (z1 x z2)', data: Zlat.map(p => ({x: p[0], y: p[1]})), pointRadius: 3, backgroundColor: '#f59e0b' }];
+      state.charts['ae_plot'] = new Chart(ctx, {type:'scatter', data:{datasets}, options:{scales:{x:{ticks:{color:'#a5b4fc'}}, y:{ticks:{color:'#a5b4fc'}}}}});
+    }
+    ae.dispose(); xtr.dispose(); recon.dispose();
+  } catch (e) {
+    console.error(e);
+    document.getElementById('ae_info').innerHTML = '<span class="badge err">Erro no treino do Autoencoder</span>';
+  }
+  btn.disabled = false;
+  state.aeTraining = false;
 });
 
-/* AVALIAÇÃO AVANÇADA (Validação Cruzada e Comparador) */
+/* AVALIAÇÃO AVANÇADA */
 document.getElementById('btnCV').addEventListener('click',async()=>{
   const k=parseInt(document.getElementById('cv_k').value); const modelName=document.getElementById('cv_model').value;
   if(!state.X.length){ alert('Carregue um dataset.'); return; }
-  const X_all=state.X, y_all=state.y; const n=X_all.length;
-  const idx=Array.from({length:n},(_,i)=>i); const r=rand(42); shuffleInPlace(idx,r);
-  const foldSize=Math.floor(n/k); const results=[];
-  // O restante da CV seria implementado similarmente, omitido por brevidade mas funcional.
   document.getElementById('cv_results').innerHTML = kpiBox('Em breve','...');
 });
 document.getElementById('btnAddCompare').addEventListener('click',()=>{
@@ -1036,7 +1041,6 @@ document.getElementById('btnPipeline').addEventListener('click',async()=>{
   const prep=document.getElementById('pipe_prep').value; const m=document.getElementById('pipe_model').value;
   if(!state.X_train.length){ alert('Sem dados.'); return; }
   const box=document.getElementById('pipe_metrics'); box.innerHTML=kpiBox('Status','Treinando...');
-  // Implementação simplificada, sem perda de funcionalidade.
   box.innerHTML = kpiBox('Pipeline','Executado!');
 });
 
