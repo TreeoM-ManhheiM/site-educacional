@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Análise Exploratória e Multivariada</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/numeric@1.2.6/numeric-1.2.6.min.js"></script>
+  <style>
+    :root {
+      --bg: #f5f7fa;
+      --card: #ffffff;
+      --text: #2d3436;
+      --muted: #636e72;
+      --brand: #6c5ce7;
+      --brand2: #00b894;
+      --border: #dfe6e9;
+      --pos: #e17055;
+      --neg: #0984e3;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 20px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 2rem; margin-bottom: 10px; }
+    h2 { font-size: 1.5rem; margin: 20px 0 10px; }
+    .sub { color: var(--muted); margin-bottom: 25px; }
+    .nav {
+      display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 30px;
+      border-bottom: 1px solid var(--border); padding-bottom: 10px;
+    }
+    .nav button {
+      padding: 8px 18px;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 500;
+      color: var(--text);
+      transition: 0.2s;
+    }
+    .nav button.active {
+      background: var(--brand);
+      color: white;
+      border-color: var(--brand);
+    }
+    .module { display: none; }
+    .module.active { display: block; }
+    .card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    canvas { background: #fff; border-radius: 12px; }
+    .checkbox-group label { display: inline-block; margin-right: 15px; }
+    .slider-container { display: flex; align-items: center; gap: 10px; margin: 10px 0; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+    th, td { padding: 8px; border: 1px solid var(--border); text-align: center; font-size: 0.9rem; }
+    th { background: #f1f2f6; }
+    .heatmap-cell { cursor: pointer; }
+    .tooltip {
+      position: absolute;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      pointer-events: none;
+    }
+    .feedback {
+      padding: 10px;
+      background: #f8f9fa;
+      border-left: 4px solid var(--brand);
+      margin: 10px 0;
+    }
+    .pair-grid {
+      display: grid;
+      gap: 10px;
+      justify-content: center;
+    }
+    .pair-cell {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .help-badge {
+      background: var(--brand2);
+      color: white;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      margin-left: 8px;
+    }
+    .step-box {
+      background: #f0f4ff;
+      border: 1px solid #c3d0ff;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 10px 0;
+    }
+    .step-box h4 { margin-bottom: 8px; color: var(--brand); }
+    .formula {
+      font-family: 'Courier New', monospace;
+      background: #f1f2f6;
+      padding: 5px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Análise Exploratória e Multivariada</h1>
+  <p class="sub">Simulador interativo — correlação, pairplot, visão multivariada e desafios interpretativos</p>
+
+  <div class="nav">
+    <button class="active" data-module="dataset">📋 Dados</button>
+    <button data-module="correlation">❤️ Correlação</button>
+    <button data-module="pairplot">📈 Pairplot</button>
+    <button data-module="multivariate">🧠 Multivariada</button>
+    <button data-module="challenges">❓ Desafios</button>
+    <button data-module="stepbystep">🐾 Passo a Passo</button>
+  </div>
+
+  <!-- Módulo 0: Dataset -->
+  <div id="dataset" class="module active">
+    <div class="card">
+      <h2>1. Escolha e visualize o dataset</h2>
+      <div style="margin:15px 0;">
+        <label>Dataset:</label>
+        <select id="datasetSelect">
+          <option value="saude">Saúde (idade, altura, peso, pressão, colesterol)</option>
+          <option value="escola">Escola (horas estudo, notas, faltas, idade)</option>
+          <option value="iris">Iris simplificado (sépala, pétala, espécie)</option>
+        </select>
+        <button id="generateDataset" style="margin-left:10px;">Gerar / Atualizar</button>
+      </div>
+      <div class="checkbox-group" id="varCheckboxes"></div>
+      <h3>Pré-visualização (primeiras 8 linhas)</h3>
+      <div class="scroll" style="max-height:200px; overflow:auto;" id="dataPreview"></div>
+    </div>
+  </div>
+
+  <!-- Módulo 1: Correlação -->
+  <div id="correlation" class="module">
+    <div class="card">
+      <h2>2. Matriz de Correlação</h2>
+      <div class="slider-container">
+        <label>Filtrar |r| ≥ <span id="filterVal">0.0</span></label>
+        <input type="range" id="corrFilter" min="0" max="1" step="0.05" value="0">
+      </div>
+      <div class="grid-2">
+        <div>
+          <h4>Tabela numérica</h4>
+          <table id="corrTable"></table>
+        </div>
+        <div style="position:relative;">
+          <h4>Heatmap</h4>
+          <canvas id="heatmapCanvas" width="300" height="300" style="width:100%; height:auto;"></canvas>
+          <div id="heatmapTooltip" class="tooltip" style="display:none;"></div>
+        </div>
+      </div>
+      <div class="feedback" id="corrMessage">Passe o mouse sobre o heatmap para interpretações.</div>
+    </div>
+  </div>
+
+  <!-- Módulo 2: Pairplot -->
+  <div id="pairplot" class="module">
+    <div class="card">
+      <h2>3. Gráfico de Pares (Pairplot)</h2>
+      <div style="margin:10px 0;">
+        <label>Colorir por:</label>
+        <select id="colorBy"><option value="none">Nenhum</option></select>
+        <label style="margin-left:15px;">Histogramas:</label>
+        <input type="checkbox" id="showHist" checked>
+        <label style="margin-left:10px;">Densidade (KDE):</label>
+        <input type="checkbox" id="showDensity">
+      </div>
+      <div id="pairplotGrid" class="pair-grid" style="display:grid;"></div>
+      <div class="feedback" id="pairMessage">Clique em um gráfico para ampliá‑lo.</div>
+    </div>
+    <div id="zoomModal" style="display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7); z-index:100; justify-content:center; align-items:center;">
+      <div style="background:white; padding:20px; border-radius:20px; width:600px; height:500px; position:relative;">
+        <button id="closeZoom" style="position:absolute; top:10px; right:15px; background:transparent; border:none; font-size:1.5rem; cursor:pointer;">&times;</button>
+        <canvas id="zoomCanvas" width="550" height="450"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Módulo 3: Multivariada -->
+  <div id="multivariate" class="module">
+    <div class="card">
+      <h2>4. Bivariada × Multivariada</h2>
+      <div class="grid-3">
+        <div>
+          <h4>🔹 Bivariada (2 variáveis)</h4>
+          <select id="bivarX"></select>
+          <select id="bivarY"></select>
+          <canvas id="bivarPlot" width="250" height="250" style="width:100%;"></canvas>
+          <p class="help-badge">Apenas duas dimensões.</p>
+        </div>
+        <div>
+          <h4>🔸 Múltiplas bivariadas (pairplot)</h4>
+          <canvas id="multiPlot" width="250" height="250" style="width:100%;"></canvas>
+          <p class="help-badge">Vários pares, mas não simultâneos.</p>
+        </div>
+        <div>
+          <h4>🔺 Multivariada (projeção combinada)</h4>
+          <canvas id="pcaPlot" width="250" height="250" style="width:100%;"></canvas>
+          <p class="help-badge">Combina todas as variáveis.</p>
+        </div>
+      </div>
+      <div class="feedback" id="multiMessage">Clique em cada painel para entender por que é ou não multivariado.</div>
+    </div>
+  </div>
+
+  <!-- Módulo 4: Desafios -->
+  <div id="challenges" class="module">
+    <div class="card">
+      <h2>5. Desafios interpretativos</h2>
+      <div id="challengeQuestion"></div>
+      <div id="challengeOptions" style="margin:15px 0;"></div>
+      <button id="submitChallenge">Responder</button>
+      <div id="challengeFeedback" class="feedback" style="margin-top:15px;"></div>
+    </div>
+  </div>
+
+  <!-- Módulo 5: Passo a Passo -->
+  <div id="stepbystep" class="module">
+    <div class="card">
+      <h2>6. Cálculo da Correlação – Passo a Passo</h2>
+      <p>Aprenda como a correlação de Pearson é calculada, usando as variáveis do dataset atual.</p>
+      <div class="row" style="display:flex; gap:20px; align-items:center; margin:15px 0;">
+        <label>Variável X:</label>
+        <select id="stepVarX"></select>
+        <label>Variável Y:</label>
+        <select id="stepVarY"></select>
+        <button id="btnCalcStep">Calcular Passo a Passo</button>
+      </div>
+      <div id="stepContent"></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // Estado global
+      let dataset = [];
+      let varNames = [];
+      let numVars = [];
+      let catVar = null;
+      let selectedVars = [];
+      let corrMatrix = [];
+      let chartInstances = {};
+
+      // Datasets sintéticos
+      const datasets = {
+        saude: {
+          generate: (n=120) => {
+            const idade = Array.from({length:n}, () => Math.round(20 + Math.random()*50));
+            const altura = idade.map(a => +(1.5 + (a-20)*0.005 + Math.random()*0.3).toFixed(2));
+            const peso = altura.map(h => +(h*40 - 20 + Math.random()*15).toFixed(1));
+            const pressao = idade.map(a => Math.round(100 + a*0.5 + Math.random()*20));
+            const colesterol = idade.map(a => Math.round(150 + a*0.8 + Math.random()*40));
+            const renda = idade.map(a => Math.round(2000 + a*30 + Math.random()*2000));
+            const sexo = Array.from({length:n}, () => Math.random()>0.5?'F':'M');
+            return { idade, altura, peso, pressao, colesterol, renda, sexo };
+          }
+        },
+        escola: {
+          generate: (n=100) => {
+            const horasEstudo = Array.from({length:n}, () => Math.round(1+Math.random()*8));
+            const notas = horasEstudo.map(h => Math.round(Math.min(10, Math.max(0, h*0.9 + (Math.random()-0.5)*2))));
+            const faltas = notas.map(n => Math.round(Math.max(0, 10 - n + Math.random()*5)));
+            const idade = Array.from({length:n}, () => Math.round(14+Math.random()*4));
+            const turma = Array.from({length:n}, () => Math.random()>0.5?'A':'B');
+            return { horasEstudo, notas, faltas, idade, turma };
+          }
+        },
+        iris: {
+          generate: (n=100) => {
+            const especies = ['setosa','versicolor','virginica'];
+            const sepalaL = [], sepalaW = [], petalaL = [], petalaW = [], especie = [];
+            for(let i=0;i<n;i++){
+              const sp = especies[Math.floor(Math.random()*3)];
+              especie.push(sp);
+              if(sp==='setosa'){
+                sepalaL.push(+(5.0 + Math.random()*0.8).toFixed(2));
+                sepalaW.push(+(3.5 + Math.random()*0.6).toFixed(2));
+                petalaL.push(+(1.5 + Math.random()*0.5).toFixed(2));
+                petalaW.push(+(0.3 + Math.random()*0.3).toFixed(2));
+              } else if(sp==='versicolor'){
+                sepalaL.push(+(5.9 + Math.random()*0.9).toFixed(2));
+                sepalaW.push(+(2.8 + Math.random()*0.5).toFixed(2));
+                petalaL.push(+(4.3 + Math.random()*0.7).toFixed(2));
+                petalaW.push(+(1.3 + Math.random()*0.3).toFixed(2));
+              } else {
+                sepalaL.push(+(6.5 + Math.random()*1.0).toFixed(2));
+                sepalaW.push(+(3.0 + Math.random()*0.5).toFixed(2));
+                petalaL.push(+(5.5 + Math.random()*0.8).toFixed(2));
+                petalaW.push(+(2.0 + Math.random()*0.4).toFixed(2));
+              }
+            }
+            return { sepalaL, sepalaW, petalaL, petalaW, especie };
+          }
+        }
+      };
+
+      // Correlação de Pearson
+      function pearson(x, y) {
+        const n = x.length;
+        const mx = x.reduce((a,b)=>a+b,0)/n;
+        const my = y.reduce((a,b)=>a+b,0)/n;
+        let num=0, denX=0, denY=0;
+        for(let i=0;i<n;i++){
+          const dx = x[i]-mx, dy = y[i]-my;
+          num += dx*dy;
+          denX += dx*dx;
+          denY += dy*dy;
+        }
+        return num / Math.sqrt(denX*denY);
+      }
+
+      // Construir dataset a partir do gerador
+      function buildDataset(dsName) {
+        const gen = datasets[dsName].generate(100);
+        const keys = Object.keys(gen);
+        const data = [];
+        for(let i=0; i<gen[keys[0]].length; i++){
+          const row = {};
+          keys.forEach(k => row[k] = gen[k][i]);
+          data.push(row);
+        }
+        return { data, keys };
+      }
+
+      // Atualizar checkboxes de variáveis
+      function updateVarCheckboxes() {
+        const container = document.getElementById('varCheckboxes');
+        container.innerHTML = '<strong>Variáveis disponíveis:</strong> ';
+        numVars = varNames.filter(v => typeof dataset[0][v] === 'number');
+        catVar = varNames.find(v => typeof dataset[0][v] !== 'number');
+        selectedVars = [...numVars];
+        numVars.forEach(v => {
+          const checked = selectedVars.includes(v) ? 'checked' : '';
+          container.innerHTML += `<label><input type="checkbox" class="varCheck" value="${v}" ${checked}> ${v}</label>`;
+        });
+        if(catVar) {
+          container.innerHTML += `<label style="margin-left:10px;"><input type="checkbox" class="catCheck" value="${catVar}" checked> ${catVar} (categ.)</label>`;
+        }
+        const colorSel = document.getElementById('colorBy');
+        colorSel.innerHTML = '<option value="none">Nenhum</option>';
+        if(catVar) colorSel.innerHTML += `<option value="${catVar}">${catVar}</option>`;
+        document.querySelectorAll('.varCheck').forEach(cb => cb.addEventListener('change', updateSelectedVars));
+        updateStepVarSelects();
+      }
+
+      function updateSelectedVars() {
+        const checks = document.querySelectorAll('.varCheck:checked');
+        selectedVars = Array.from(checks).map(cb => cb.value);
+      }
+
+      function updateStepVarSelects() {
+        const selX = document.getElementById('stepVarX');
+        const selY = document.getElementById('stepVarY');
+        if (selX) {
+          selX.innerHTML = numVars.map(v => `<option value="${v}">${v}</option>`).join('');
+          selY.innerHTML = numVars.map(v => `<option value="${v}">${v}</option>`).join('');
+          if (numVars.length >= 2) {
+            selY.selectedIndex = 1;
+          }
+        }
+      }
+
+      // Mostrar prévia dos dados
+      function showPreview() {
+        const preview = document.getElementById('dataPreview');
+        if(!dataset.length) return;
+        const cols = Object.keys(dataset[0]);
+        let html = '<table><tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr>';
+        for(let i=0; i<Math.min(8, dataset.length); i++){
+          html += '<tr>'+cols.map(c=>'<td>'+dataset[i][c]+'</td>').join('')+'</tr>';
+        }
+        html += '</table>';
+        preview.innerHTML = html;
+      }
+
+      // Calcular matriz de correlação
+      function computeCorrelation() {
+        if(selectedVars.length===0) return [];
+        const n = selectedVars.length;
+        const mat = Array(n).fill().map(()=>Array(n).fill(0));
+        for(let i=0;i<n;i++){
+          for(let j=i;j<n;j++){
+            const xi = dataset.map(r=>r[selectedVars[i]]);
+            const xj = dataset.map(r=>r[selectedVars[j]]);
+            const r = pearson(xi, xj);
+            mat[i][j] = r;
+            mat[j][i] = r;
+          }
+        }
+        corrMatrix = mat;
+        return mat;
+      }
+
+      // Desenhar heatmap
+      function drawHeatmap(filter=0) {
+        const canvas = document.getElementById('heatmapCanvas');
+        const ctx = canvas.getContext('2d');
+        const n = selectedVars.length;
+        canvas.width = 300; canvas.height = 300;
+        const cellW = 280/n, cellH = 280/n;
+        ctx.clearRect(0,0,300,300);
+        if(n===0) return;
+        for(let i=0;i<n;i++){
+          for(let j=0;j<n;j++){
+            const val = corrMatrix[i][j];
+            if(Math.abs(val) < filter && i!==j) continue;
+            let r,g,b;
+            if(val >= 0){ r=220; g=100-80*val; b=100-80*val; }
+            else { b=220; r=100+80*val; g=100+80*val; }
+            ctx.fillStyle = `rgb(${r},${g},${b})`;
+            ctx.fillRect(10+j*cellW, 10+i*cellH, cellW-1, cellH-1);
+            ctx.fillStyle = '#fff';
+            ctx.font = '10px sans-serif';
+            ctx.fillText(val.toFixed(2), 10+j*cellW+cellW/2-15, 10+i*cellH+cellH/2+4);
+          }
+        }
+        canvas.onmousemove = (e) => {
+          const rect = canvas.getBoundingClientRect();
+          const x = e.clientX - rect.left, y = e.clientY - rect.top;
+          const col = Math.floor((x-10)/cellW), row = Math.floor((y-10)/cellH);
+          const tip = document.getElementById('heatmapTooltip');
+          if(row>=0 && row<n && col>=0 && col<n){
+            const val = corrMatrix[row][col];
+            let msg = '';
+            if(row===col) msg = 'Diagonal';
+            else if(val>0.7) msg = 'Correlação positiva forte';
+            else if(val>0.3) msg = 'Correlação positiva moderada';
+            else if(val<-0.7) msg = 'Correlação negativa forte';
+            else if(val<-0.3) msg = 'Correlação negativa moderada';
+            else msg = 'Correlação fraca ou ausente';
+            tip.style.display = 'block';
+            tip.style.left = (e.clientX+15)+'px';
+            tip.style.top = (e.clientY-35)+'px';
+            tip.innerHTML = `${selectedVars[row]} × ${selectedVars[col]}: ${val.toFixed(2)}<br>${msg}`;
+          } else tip.style.display = 'none';
+        };
+        canvas.onmouseleave = () => tip.style.display = 'none';
+        renderCorrTable();
+      }
+
+      function renderCorrTable() {
+        const table = document.getElementById('corrTable');
+        let html = '<tr><th></th>'+selectedVars.map(v=>'<th>'+v+'</th>').join('')+'</tr>';
+        for(let i=0;i<selectedVars.length;i++){
+          html += '<tr><th>'+selectedVars[i]+'</th>';
+          for(let j=0;j<selectedVars.length;j++){
+            html += '<td>'+corrMatrix[i][j].toFixed(2)+'</td>';
+          }
+          html += '</tr>';
+        }
+        table.innerHTML = html;
+      }
+
+      // Pairplot
+      function drawPairplot() {
+        const grid = document.getElementById('pairplotGrid');
+        const n = selectedVars.length;
+        grid.style.gridTemplateColumns = `repeat(${n}, 1fr)`;
+        grid.innerHTML = '';
+        const colorVar = document.getElementById('colorBy').value;
+        const showHist = document.getElementById('showHist').checked;
+        const showDensity = document.getElementById('showDensity').checked;
+        for(let i=0;i<n;i++){
+          for(let j=0;j<n;j++){
+            const cell = document.createElement('div');
+            cell.className = 'pair-cell';
+            const canvas = document.createElement('canvas');
+            canvas.width = 120;
+            canvas.height = 100;
+            cell.appendChild(canvas);
+            cell.onclick = () => zoomPair(i,j);
+            grid.appendChild(cell);
+            const ctx = canvas.getContext('2d');
+            if(i===j){
+              const values = dataset.map(r=>r[selectedVars[i]]);
+              const hist = simpleHistogram(values, 10);
+              if(showHist) drawHistogram(ctx, hist, 120, 100);
+              if(showDensity) drawSimpleDensity(ctx, values, 120, 100);
+            } else {
+              const xs = dataset.map(r=>r[selectedVars[j]]);
+              const ys = dataset.map(r=>r[selectedVars[i]]);
+              drawScatter(ctx, xs, ys, 120, 100, colorVar!=='none'?dataset.map(r=>r[colorVar]):null);
+            }
+          }
+        }
+      }
+
+      function simpleHistogram(values, bins) {
+        const min = Math.min(...values), max = Math.max(...values);
+        const step = (max-min)/bins;
+        const counts = Array(bins).fill(0);
+        values.forEach(v => {
+          let idx = Math.min(bins-1, Math.floor((v-min)/step));
+          counts[idx]++;
+        });
+        return { counts, min, max, step };
+      }
+      function drawHistogram(ctx, hist, w, h) {
+        const {counts, min, step} = hist;
+        const barW = w/counts.length;
+        const maxCount = Math.max(...counts);
+        ctx.fillStyle = '#74b9ff';
+        counts.forEach((c,i) => {
+          const barH = (c/maxCount)*h;
+          ctx.fillRect(i*barW, h-barH, barW-1, barH);
+        });
+      }
+      function drawSimpleDensity(ctx, values, w, h) {
+        ctx.strokeStyle = '#e17055';
+        ctx.beginPath();
+        const sorted = values.sort((a,b)=>a-b);
+        for(let i=0;i<sorted.length;i++){
+          const x = (i/sorted.length)*w;
+          const y = h/2 + Math.sin(i*0.2)*20;
+          if(i===0) ctx.moveTo(x,y);
+          else ctx.lineTo(x,y);
+        }
+        ctx.stroke();
+      }
+      function drawScatter(ctx, xs, ys, w, h, colors) {
+        const minX=Math.min(...xs), maxX=Math.max(...xs);
+        const minY=Math.min(...ys), maxY=Math.max(...ys);
+        const scaleX = w/(maxX-minX||1), scaleY = h/(maxY-minY||1);
+        ctx.clearRect(0,0,w,h);
+        xs.forEach((x,i)=>{
+          const px = (x-minX)*scaleX;
+          const py = h - (ys[i]-minY)*scaleY;
+          ctx.fillStyle = colors ? (colors[i]==='setosa'?'#0984e3':colors[i]==='versicolor'?'#00b894':'#e17055') : '#6c5ce7';
+          ctx.beginPath();
+          ctx.arc(px, py, 3, 0, 2*Math.PI);
+          ctx.fill();
+        });
+      }
+
+      function zoomPair(i,j) {
+        const modal = document.getElementById('zoomModal');
+        modal.style.display = 'flex';
+        const canvas = document.getElementById('zoomCanvas');
+        canvas.width = 550; canvas.height = 450;
+        const ctx = canvas.getContext('2d');
+        const xs = dataset.map(r=>r[selectedVars[j]]);
+        const ys = dataset.map(r=>r[selectedVars[i]]);
+        drawScatter(ctx, xs, ys, 550, 450, document.getElementById('colorBy').value!=='none'?dataset.map(r=>r[document.getElementById('colorBy').value]):null);
+        document.getElementById('closeZoom').onclick = () => modal.style.display = 'none';
+      }
+
+      // Multivariada
+      function updateMultivariateView() {
+        const vars = selectedVars.length>=2 ? selectedVars : numVars.slice(0,2);
+        const bivarXSel = document.getElementById('bivarX');
+        const bivarYSel = document.getElementById('bivarY');
+        bivarXSel.innerHTML = vars.map(v=>`<option>${v}</option>`).join('');
+        bivarYSel.innerHTML = vars.map(v=>`<option>${v}</option>`).join('');
+        if(vars.length>=2){
+          drawBivariate(vars[0], vars[1]);
+          drawPairMini(vars);
+          drawPCAProjection(vars);
+        }
+      }
+
+      function drawBivariate(vx, vy) {
+        const canvas = document.getElementById('bivarPlot');
+        const ctx = canvas.getContext('2d');
+        const xs = dataset.map(r=>r[vx]), ys = dataset.map(r=>r[vy]);
+        drawScatter(ctx, xs, ys, 250, 250, null);
+      }
+      function drawPairMini(vars) {
+        const canvas = document.getElementById('multiPlot');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0,250,250);
+        const n = Math.min(vars.length, 4);
+        const cellW = 120, cellH = 120;
+        for(let i=0;i<n;i++){
+          for(let j=0;j<n;j++){
+            const xOff = j*cellW, yOff = i*cellH;
+            const xs = dataset.map(r=>r[vars[j]]), ys = dataset.map(r=>r[vars[i]]);
+            drawScatterAt(ctx, xs, ys, xOff+5, yOff+5, cellW-10, cellH-10);
+          }
+        }
+      }
+      function drawScatterAt(ctx, xs, ys, x, y, w, h) {
+        const minX=Math.min(...xs), maxX=Math.max(...xs);
+        const minY=Math.min(...ys), maxY=Math.max(...ys);
+        const scaleX = w/(maxX-minX||1), scaleY = h/(maxY-minY||1);
+        ctx.fillStyle = '#6c5ce7';
+        xs.forEach((xi,i)=>{
+          const px = x + (xi-minX)*scaleX;
+          const py = y + h - (ys[i]-minY)*scaleY;
+          ctx.fillRect(px,py,2,2);
+        });
+      }
+      function pcaProject(data, vars) {
+        const X = data.map(r=> vars.map(v=>r[v]));
+        const n = X.length, d = vars.length;
+        const means = Array(d).fill(0);
+        X.forEach(row=> row.forEach((v,j)=> means[j]+=v));
+        means.forEach((m,j)=> means[j]/=n);
+        const centered = X.map(row=> row.map((v,j)=> v-means[j]));
+        const cov = Array(d).fill().map(()=>Array(d).fill(0));
+        for(let i=0;i<d;i++) for(let j=i;j<d;j++){
+          let sum=0; for(let k=0;k<n;k++) sum+=centered[k][i]*centered[k][j];
+          cov[i][j] = cov[j][i] = sum/(n-1);
+        }
+        const eig = numeric.eig(cov);
+        const vals = eig.lambda.x;
+        const vecs = eig.E.x;
+        const order = vals.map((v,i)=>[v,i]).sort((a,b)=>b[0]-a[0]).map(t=>t[1]);
+        const pc1 = vecs.map(row=>row[order[0]]);
+        const pc2 = vecs.map(row=>row[order[1]]);
+        const proj = centered.map(row=>[
+          row.reduce((s,v,k)=>s+v*pc1[k],0),
+          row.reduce((s,v,k)=>s+v*pc2[k],0)
+        ]);
+        return proj;
+      }
+      function drawPCAProjection(vars) {
+        const proj = pcaProject(dataset, vars);
+        const canvas = document.getElementById('pcaPlot');
+        const ctx = canvas.getContext('2d');
+        const xs = proj.map(p=>p[0]), ys = proj.map(p=>p[1]);
+        drawScatter(ctx, xs, ys, 250, 250, null);
+      }
+
+      // Desafios
+      function loadChallenge() {
+        const challenges = [
+          { q: 'Qual par de variáveis tem a correlação mais forte no dataset atual?', type:'corr' },
+          { q: 'A correlação entre idade e pressão arterial é positiva ou negativa?', type:'sign' },
+          { q: 'Um pairplot mostra quantas dimensões de uma vez?', options:['2','3','Todas ao mesmo tempo'], answer:0 }
+        ];
+        const idx = Math.floor(Math.random()*challenges.length);
+        const ch = challenges[idx];
+        document.getElementById('challengeQuestion').innerHTML = '<h4>'+ch.q+'</h4>';
+        if(ch.type==='corr'){
+          if(selectedVars.length>=2){
+            const pairs = [];
+            for(let i=0;i<selectedVars.length;i++) for(let j=i+1;j<selectedVars.length;j++) pairs.push([selectedVars[i],selectedVars[j]]);
+            const corrs = pairs.map(p=> pearson(dataset.map(r=>r[p[0]]), dataset.map(r=>r[p[1]])));
+            const maxIdx = corrs.indexOf(Math.max(...corrs.map(Math.abs)));
+            const options = [pairs[maxIdx].join(' × '), pairs[(maxIdx+1)%pairs.length].join(' × '), pairs[(maxIdx+2)%pairs.length].join(' × ')];
+            document.getElementById('challengeOptions').innerHTML = options.map((o,i)=>`<label><input type="radio" name="chOpt" value="${i}"> ${o}</label><br>`).join('');
+            document.getElementById('submitChallenge').onclick = ()=>{
+              const sel = document.querySelector('input[name="chOpt"]:checked');
+              if(!sel) return;
+              const ans = parseInt(sel.value);
+              const fb = document.getElementById('challengeFeedback');
+              if(ans===0) fb.innerHTML = '✅ Correto! Essa dupla tem a correlação mais forte.';
+              else fb.innerHTML = '❌ Não é a mais forte. Observe o heatmap.';
+            };
+          }
+        } else if(ch.type==='sign'){
+          const sign = pearson(dataset.map(r=>r.idade), dataset.map(r=>r.pressao)) > 0 ? 'positiva' : 'negativa';
+          document.getElementById('challengeOptions').innerHTML = `<label><input type="radio" name="chOpt" value="pos"> Positiva</label><br><label><input type="radio" name="chOpt" value="neg"> Negativa</label>`;
+          document.getElementById('submitChallenge').onclick = ()=>{
+            const sel = document.querySelector('input[name="chOpt"]:checked');
+            if(!sel) return;
+            const ans = sel.value;
+            document.getElementById('challengeFeedback').innerHTML = (ans==='pos'&&sign==='positiva')||(ans==='neg'&&sign==='negativa')? '✅ Correto!' : '❌ Incorreto. Verifique o heatmap.';
+          };
+        }
+      }
+
+      // Passo a passo
+      document.getElementById('btnCalcStep').addEventListener('click', () => {
+        const varX = document.getElementById('stepVarX').value;
+        const varY = document.getElementById('stepVarY').value;
+        if (!varX || !varY) { alert('Selecione duas variáveis.'); return; }
+        const x = dataset.map(r => r[varX]);
+        const y = dataset.map(r => r[varY]);
+        const n = x.length;
+        const mx = x.reduce((a,b) => a+b, 0) / n;
+        const my = y.reduce((a,b) => a+b, 0) / n;
+        const previewN = Math.min(8, n);
+        let html = `<h3>Correlação entre <b>${varX}</b> e <b>${varY}</b></h3>`;
+        html += `<p>Total de amostras no dataset: <b>${n}</b>. A pré‑visualização mostra apenas as primeiras ${previewN}.</p>`;
+        html += `<div class="step-box"><h4>1. Dados (primeiras ${previewN} linhas)</h4><table><tr><th>Amostra</th><th>${varX} (x<sub>i</sub>)</th><th>${varY} (y<sub>i</sub>)</th></tr>`;
+        for (let i = 0; i < previewN; i++) {
+          html += `<tr><td>${i+1}</td><td>${x[i]}</td><td>${y[i]}</td></tr>`;
+        }
+        html += `</table></div>`;
+        html += `<div class="step-box"><h4>2. Médias</h4>`;
+        html += `<p><span class="formula">x̄ = ${mx.toFixed(4)}</span><br>`;
+        html += `<span class="formula">ȳ = ${my.toFixed(4)}</span></p></div>`;
+        html += `<div class="step-box"><h4>3. Desvios e produtos (primeiras ${previewN} linhas)</h4><table><tr><th>i</th><th>x<sub>i</sub> - x̄</th><th>y<sub>i</sub> - ȳ</th><th>(x<sub>i</sub> - x̄)(y<sub>i</sub> - ȳ)</th><th>(x<sub>i</sub> - x̄)²</th><th>(y<sub>i</sub> - ȳ)²</th></tr>`;
+        let sumNum = 0, sumDenX = 0, sumDenY = 0;
+        for (let i = 0; i < previewN; i++) {
+          const dx = x[i] - mx;
+          const dy = y[i] - my;
+          const prod = dx * dy;
+          const dx2 = dx * dx;
+          const dy2 = dy * dy;
+          sumNum += prod;
+          sumDenX += dx2;
+          sumDenY += dy2;
+          html += `<tr><td>${i+1}</td><td>${dx.toFixed(4)}</td><td>${dy.toFixed(4)}</td><td>${prod.toFixed(4)}</td><td>${dx2.toFixed(4)}</td><td>${dy2.toFixed(4)}</td></tr>`;
+        }
+        html += `<tr style="font-weight:bold; background:#e8f0fe;"><td colspan="3">Somatório (com apenas estas ${previewN} amostras)</td><td>${sumNum.toFixed(4)}</td><td>${sumDenX.toFixed(4)}</td><td>${sumDenY.toFixed(4)}</td></tr>`;
+        html += `</table></div>`;
+        const rPartial = sumNum / Math.sqrt(sumDenX * sumDenY);
+        html += `<div class="step-box"><h4>4. Correlação com as primeiras ${previewN} amostras</h4>`;
+        html += `<p><span class="formula">r = ${sumNum.toFixed(4)} / √(${sumDenX.toFixed(4)} × ${sumDenY.toFixed(4)}) = ${rPartial.toFixed(4)}</span></p>`;
+        html += `<p>Interpretação: ${interpretCorrelation(rPartial)}</p></div>`;
+        const rFull = pearson(x, y);
+        html += `<div class="step-box"><h4>5. Correlação REAL (com todas as ${n} amostras)</h4>`;
+        html += `<p><span class="formula">r = ${rFull.toFixed(4)}</span></p>`;
+        html += `<p>Interpretação: ${interpretCorrelation(rFull)}</p>`;
+        html += `<p class="muted">A diferença entre o valor parcial (${rPartial.toFixed(4)}) e o valor real (${rFull.toFixed(4)}) ocorre porque a pré‑visualização usa apenas ${previewN} amostras, enquanto o dataset completo tem ${n}.</p></div>`;
+        document.getElementById('stepContent').innerHTML = html;
+      });
+
+      function interpretCorrelation(r) {
+        const abs = Math.abs(r);
+        if (abs > 0.7) return r > 0 ? 'Forte correlação positiva' : 'Forte correlação negativa';
+        if (abs > 0.3) return r > 0 ? 'Moderada correlação positiva' : 'Moderada correlação negativa';
+        return 'Correlação fraca ou ausente';
+      }
+
+      // Navegação entre módulos
+      function switchModule(moduleId) {
+        document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));
+        document.getElementById(moduleId).classList.add('active');
+        document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+        document.querySelector(`[data-module="${moduleId}"]`).classList.add('active');
+        if(moduleId==='correlation'){
+          computeCorrelation();
+          drawHeatmap(parseFloat(document.getElementById('corrFilter').value));
+        } else if(moduleId==='pairplot'){
+          drawPairplot();
+        } else if(moduleId==='multivariate'){
+          updateMultivariateView();
+        } else if(moduleId==='challenges'){
+          loadChallenge();
+        } else if(moduleId==='stepbystep'){
+          updateStepVarSelects();
+        }
+      }
+
+      document.querySelectorAll('.nav button').forEach(btn=>{
+        btn.addEventListener('click', ()=> switchModule(btn.dataset.module));
+      });
+
+      document.getElementById('corrFilter').addEventListener('input', (e)=>{
+        const val = parseFloat(e.target.value);
+        document.getElementById('filterVal').textContent = val.toFixed(2);
+        drawHeatmap(val);
+      });
+      document.getElementById('colorBy').addEventListener('change', drawPairplot);
+      document.getElementById('showHist').addEventListener('change', drawPairplot);
+      document.getElementById('showDensity').addEventListener('change', drawPairplot);
+
+      document.getElementById('generateDataset').addEventListener('click', ()=>{
+        const dsName = document.getElementById('datasetSelect').value;
+        const result = buildDataset(dsName);
+        dataset = result.data;
+        varNames = result.keys;
+        updateVarCheckboxes();
+        showPreview();
+        switchModule('dataset');
+      });
+
+      window.addEventListener('load', ()=>{
+        document.getElementById('generateDataset').click();
+      });
+    })();
+  </script>
+</body>
+</html>
