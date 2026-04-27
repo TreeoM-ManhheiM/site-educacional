@@ -6,9 +6,7 @@
     <title>Loop Infinito - Missão While</title>
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        * { box-sizing: border-box; }
         body {
             font-family: 'Segoe UI', 'Courier New', monospace;
             background: linear-gradient(145deg, #1a472a 0%, #0e2a1a 100%);
@@ -28,153 +26,55 @@
             padding: 20px;
             border: 4px solid #ffd966;
         }
-        h1 {
-            text-align: center;
-            font-size: 2.2rem;
-            margin: 0 0 10px 0;
-            color: #2c3e2f;
-            text-shadow: 3px 3px 0 #ffd966;
-            letter-spacing: 2px;
-            font-weight: 900;
-        }
-        .sub {
-            text-align: center;
-            font-style: italic;
-            color: #2d6a4f;
-            margin-bottom: 25px;
-            font-weight: bold;
-        }
-        .board-area {
-            background: #e9f5e6;
-            border-radius: 28px;
-            padding: 20px;
-            margin-bottom: 25px;
-            border: 3px solid #b7b78a;
-            box-shadow: inset 0 0 0 2px #ffffdd, 0 5px 15px rgba(0,0,0,0.2);
-        }
-        .track {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-            margin: 20px 0;
-        }
+        h1 { text-align: center; font-size: 2.2rem; margin: 0 0 10px; color: #2c3e2f; text-shadow: 3px 3px 0 #ffd966; }
+        .sub { text-align: center; font-style: italic; color: #2d6a4f; margin-bottom: 25px; font-weight: bold; }
+        .board-area { background: #e9f5e6; border-radius: 28px; padding: 20px; margin-bottom: 25px; border: 3px solid #b7b78a; }
+        .track { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 20px 0; }
         .tile {
-            width: 70px;
-            height: 70px;
-            background: #fff2cf;
-            border-radius: 18px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.3rem;
-            box-shadow: 0 4px 0 #a5936e;
-            border: 1px solid #eedd99;
-            position: relative;
-            transition: 0.1s linear;
+            width: 70px; height: 70px; background: #fff2cf; border-radius: 18px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.3rem; box-shadow: 0 4px 0 #a5936e;
+            border: 1px solid #eedd99; position: relative;
         }
         .tile.phase1 { background: #b9fbc0; border-bottom: 6px solid #2b7a2a; }
         .tile.phase2 { background: #90e0ef; border-bottom: 6px solid #0077b6; }
         .tile.phase3 { background: #ffb3b3; border-bottom: 6px solid #b00020; }
         .tile.phase4 { background: #ffd966; border-bottom: 6px solid #c97e00; }
-        .tile.special {
-            background: radial-gradient(circle at 30% 20%, #fff0b5, #ffe0a3);
-            box-shadow: 0 0 0 2px gold;
-        }
+        .tile.special { background: radial-gradient(circle at 30% 20%, #fff0b5, #ffe0a3); box-shadow: 0 0 0 2px gold; }
         .pawn {
-            display: inline-block;
-            width: 24px;
-            height: 24px;
-            background: #2c3e2f;
-            border-radius: 50%;
-            margin: 2px;
-            text-align: center;
-            line-height: 24px;
-            font-size: 12px;
-            font-weight: bold;
-            color: white;
-            box-shadow: 0 2px 3px black;
+            display: inline-block; width: 24px; height: 24px; background: #2c3e2f;
+            border-radius: 50%; margin: 2px; text-align: center; line-height: 24px;
+            font-size: 12px; font-weight: bold; color: white; box-shadow: 0 2px 3px black;
         }
-        .players-on-tile {
-            margin-top: 5px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 3px;
-        }
-        .controls {
-            background: #282c35;
-            padding: 20px;
-            border-radius: 30px;
-            color: white;
-        }
-        .panel {
-            background: #1f2a2e;
-            border-radius: 24px;
-            padding: 15px;
-        }
+        .players-on-tile { margin-top: 5px; display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+        .controls { background: #282c35; padding: 20px; border-radius: 30px; color: white; }
+        .panel { background: #1f2a2e; border-radius: 24px; padding: 15px; }
         button {
-            background: #ffb347;
-            border: none;
-            font-weight: bold;
-            padding: 12px 20px;
-            border-radius: 40px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: transform 0.1s;
-            margin: 5px;
-            font-family: monospace;
+            background: #ffb347; border: none; font-weight: bold; padding: 12px 20px;
+            border-radius: 40px; font-size: 1.2rem; cursor: pointer; margin: 5px; font-family: monospace;
         }
-        button:active {
-            transform: scale(0.96);
-        }
+        button:active { transform: scale(0.96); }
         .dice {
-            background: white;
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 10px auto;
-            color: #b51c1c;
+            background: white; width: 80px; height: 80px; border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; font-weight: bold; margin: 10px auto; color: #b51c1c;
         }
-        .card-area {
-            background: #f9eec1;
-            padding: 18px;
-            border-radius: 28px;
-            margin-top: 20px;
-            border-left: 18px solid #dd8822;
-            font-family: monospace;
-            font-size: 1rem;
-        }
-        .turn-indicator {
-            background: #000000aa;
-            backdrop-filter: blur(4px);
-            border-radius: 40px;
-            padding: 8px 18px;
-            display: inline-block;
-        }
+        .card-area { background: #f9eec1; padding: 18px; border-radius: 28px; margin-top: 20px; border-left: 18px solid #dd8822; font-family: monospace; }
+        .turn-indicator { background: #000000aa; backdrop-filter: blur(4px); border-radius: 40px; padding: 8px 18px; display: inline-block; }
         @media (max-width: 800px) {
             .tile { width: 50px; height: 50px; font-size: 0.9rem; }
             .pawn { width: 18px; height: 18px; font-size: 9px; line-height: 18px; }
         }
-        </style>
+    </style>
 </head>
 <body>
 <div class="game-container">
     <h1>⟳ LOOP INFINITO — MISSÃO WHILE 🐍</h1>
     <div class="sub">⚡ programe. avance. vença o loop infinito.</div>
-    
     <div class="board-area">
         <div id="boardTrack" class="track"></div>
         <div class="turn-indicator" id="turnStatus" style="margin:10px auto; text-align:center; background:#1f3b2c; color:white; width:fit-content;">🎲 Aguardando inicio...</div>
     </div>
-    
     <div class="controls">
         <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: space-between;">
             <div>
@@ -190,13 +90,10 @@
                 <h3>🎲 Ação</h3>
                 <div class="dice" id="diceResult">⚀</div>
                 <button id="rollBtn" disabled>ROLAR DADO</button>
-                <button id="endTurnBtn" disabled>⏭️ PULAR TURNO (regras)</button>
+                <button id="endTurnBtn" disabled>⏭️ PULAR TURNO</button>
             </div>
         </div>
-        
-        <div class="card-area" id="cardMessage">
-            💡 <strong>Desafio aparecerá aqui</strong> — responda corretamente para não voltar casas.
-        </div>
+        <div class="card-area" id="cardMessage">💡 <strong>Desafio aparecerá aqui</strong> — responda corretamente para não voltar casas.</div>
         <div>
             <input type="text" id="answerInput" placeholder="Sua resposta..." style="width: 70%; padding: 12px; border-radius: 60px;">
             <button id="submitAnswerBtn" disabled>✅ RESPONDER</button>
@@ -206,7 +103,13 @@
 </div>
 
 <script>
-    const socket = io();
+    // === CONECTA AO SERVIDOR SOCKET.IO NO RENDER ===
+    const SOCKET_URL = 'https://motor-while.onrender.com';  // <--- ALTERE PARA SEU SERVIDOR
+    const socket = io(SOCKET_URL, {
+        transports: ['websocket', 'polling'],
+        withCredentials: true
+    });
+
     let currentPlayerId = null;
     let gameActive = false;
     let playersList = [];
@@ -215,8 +118,7 @@
     let currentDiceValue = 0;
     let localPlayerName = "";
     let turnStarted = false;
-    
-    // elementos HTML
+
     const boardTrack = document.getElementById("boardTrack");
     const turnStatusDiv = document.getElementById("turnStatus");
     const rollBtn = document.getElementById("rollBtn");
@@ -230,24 +132,19 @@
     const logDiv = document.getElementById("infoLog");
     const playerNamesInput = document.getElementById("playerNames");
     const endTurnBtn = document.getElementById("endTurnBtn");
-    
+
     function addLog(msg) {
         const p = document.createElement("div");
         p.textContent = msg;
         logDiv.appendChild(p);
         logDiv.scrollTop = logDiv.scrollHeight;
     }
-    
+
     function renderBoard(positions) {
         boardTrack.innerHTML = "";
         for (let i = 0; i <= 28; i++) {
-            let phase = 1;
-            if (i <= 8) phase = 1;
-            else if (i <= 16) phase = 2;
-            else if (i <= 24) phase = 3;
-            else phase = 4;
-            let specialClass = "";
-            if ([5,12,19,25,27].includes(i)) specialClass = "special";
+            let phase = i <= 8 ? 1 : (i <= 16 ? 2 : (i <= 24 ? 3 : 4));
+            let specialClass = [5,12,19,25,27].includes(i) ? "special" : "";
             const tileDiv = document.createElement("div");
             tileDiv.className = `tile phase${phase} ${specialClass}`;
             tileDiv.innerHTML = `<div style="font-size:0.7rem;">${i}</div><div class="players-on-tile" id="tile-${i}"></div>`;
@@ -255,7 +152,7 @@
         }
         if (positions) updatePawns(positions);
     }
-    
+
     function updatePawns(positions) {
         for (let i = 0; i <= 28; i++) {
             const container = document.getElementById(`tile-${i}`);
@@ -274,7 +171,7 @@
             }
         }
     }
-    
+
     function updateUIAfterTurn(data) {
         turnStatusDiv.innerHTML = `🎲 Vez de: ${data.currentPlayer} (${playersList.indexOf(data.currentPlayer)+1}/${playersList.length})`;
         currentPlayerId = data.currentPlayer;
@@ -291,17 +188,15 @@
             addLog(`🎲 Sua vez, ${localPlayerName}! role o dado.`);
         }
         updatePawns(data.positions);
-        if (data.playersSkipped && data.playersSkipped[playersList.indexOf(currentPlayerId)] === true && currentPlayerId === localPlayerName) {
-            addLog("⚠️ VOCÊ ESTÁ EM LOOP INFINITO! Essa rodada está perdida.");
-            rollBtn.disabled = true;
-            submitBtn.disabled = true;
-            setTimeout(() => { socket.emit("end-turn-manual", localPlayerName); }, 1500);
-        }
     }
-    
+
+    socket.on("connect", () => {
+        addLog("✅ Conectado ao servidor do jogo!");
+    });
+
     socket.on("game-initialized", (data) => {
         playersList = data.players;
-        localPlayerName = playersList[0];
+        localPlayerName = playersList[0]; // primeiro da lista como dono (ajuste conforme necessário)
         gameActive = true;
         renderBoard(data.positions);
         updateUIAfterTurn({currentPlayer: playersList[data.currentPlayerIndex], positions: data.positions, playersSkipped: []});
@@ -309,24 +204,23 @@
         startBtn.disabled = true;
         playerNamesInput.disabled = true;
     });
-    
+
     socket.on("turn-update", (data) => {
         if (!gameActive) return;
         updateUIAfterTurn(data);
     });
-    
+
     socket.on("dice-rolled", (data) => {
         if (data.playerId === localPlayerName) {
-            const val = data.diceRoll;
-            currentDiceValue = val;
-            diceResultDiv.innerHTML = ["⚀","⚁","⚂","⚃","⚄","⚅"][val-1];
-            addLog(`🎲 Você rolou ${val}! responda o desafio para avançar.`);
+            currentDiceValue = data.diceRoll;
+            diceResultDiv.innerHTML = ["⚀","⚁","⚂","⚃","⚄","⚅"][currentDiceValue-1];
+            addLog(`🎲 Você rolou ${currentDiceValue}! responda o desafio para avançar.`);
             rollBtn.disabled = true;
             submitBtn.disabled = false;
             turnStarted = true;
         }
     });
-    
+
     socket.on("card-drawn", (data) => {
         if (data.playerId === localPlayerName) {
             currentCard = data.card;
@@ -336,10 +230,9 @@
             addLog(`🗺️ Desafio sorteado: ${data.card.text.substring(0,60)}...`);
         }
     });
-    
+
     socket.on("player-moved", (data) => {
-        if (data.newPosition !== undefined) updatePawns(playersList.map((p, idx) => gameActive ? (window.tempPositions ? window.tempPositions[idx] : 0) : 0));
-        if (data.card) addLog(`📦 ${data.playerId} recebeu desafio.`);
+        if (data.newPosition !== undefined && playersList) updatePawns(gameStatePositionsTmp || playersList.map(()=>0));
         if (data.gameEnded) {
             addLog(`🏆 FIM DE JOGO! VENCEDOR: ${data.winner} 🏆`);
             gameActive = false;
@@ -347,11 +240,11 @@
             submitBtn.disabled = true;
         }
     });
-    
+
     socket.on("special-tile", (data) => {
         if (data.playerId === localPlayerName) addLog(`✨ ${data.message}`);
     });
-    
+
     socket.on("game-ended", (data) => {
         addLog(`🏁 JOGO ENCERRADO! VITÓRIA DE ${data.winner}`);
         gameActive = false;
@@ -359,22 +252,22 @@
         submitBtn.disabled = true;
         startBtn.disabled = false;
     });
-    
+
     socket.on("game-error", (err) => {
         addLog(`❌ ERRO: ${err}`);
     });
-    
+
     startBtn.onclick = () => {
         let names = playerNamesInput.value.split(',').map(s=>s.trim()).filter(s=>s);
         if(names.length < 2) { alert("Coloque pelo menos 2 jogadores separados por vírgula"); return; }
         socket.emit("start-game", names);
     };
-    
+
     rollBtn.onclick = () => {
         if (!gameActive || currentPlayerId !== localPlayerName) return;
         socket.emit("roll-dice", localPlayerName);
     };
-    
+
     submitBtn.onclick = () => {
         if (!turnStarted) return addLog("Primeiro role o dado!");
         const userAnswer = answerInput.value.trim();
@@ -387,14 +280,14 @@
         submitBtn.disabled = true;
         turnStarted = false;
     };
-    
+
     endTurnBtn.onclick = () => {
         if (currentPlayerId === localPlayerName) {
             socket.emit("end-turn-manual", localPlayerName);
             addLog("⏩ Turno pulado manualmente.");
         }
     };
-    
+
     renderBoard([]);
     addLog("🎓 Loop Infinito — Missão While. Conecte-se e aprenda!");
 </script>
