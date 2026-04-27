@@ -24,7 +24,7 @@
       border: 10px solid #3e2723;
       box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
       display: flex;
-      flex-wrap: wrap; /* peças pulam para a linha de baixo */
+      flex-wrap: wrap;
       justify-content: center;
       align-items: center;
       gap: 8px;
@@ -117,10 +117,10 @@
       filter: blur(10px);
       transition: filter 0.15s ease;
       opacity: 0.85;
-      pointer-events: none; /* evita clique acidental quando estiver escondido */
+      pointer-events: none;
     }
 
-    /* Dica visual pequena (opcional, discreta) */
+    /* Dica visual pequena */
     #dica-privacidade {
       font-size: 13px;
       opacity: 0.85;
@@ -162,7 +162,6 @@
 
     <div id="mesa"></div>
 
-    <!-- Botão de privacidade (visual apenas) -->
     <div id="dica-privacidade">Dica: esconda suas peças quando não for sua vez 👀</div>
 
     <div id="mao"></div>
@@ -184,10 +183,16 @@
     </div>
   </div>
 
-  <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+  <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
   <script>
-    // Mantém sua conexão original com o motor no Render
-    const socket = io("https://motor-domino.onrender.com");
+    // Conexão relativa – funciona perfeitamente quando o servidor serve o HTML
+    const socket = io();
+
+    // Captura erros de conexão e mostra alerta amigável
+    socket.on("connect_error", (err) => {
+      console.error("Erro de conexão:", err.message);
+      alert("Falha ao conectar ao servidor. Verifique se ele está online.");
+    });
 
     let meuNome = "", mesaAtu = [], maoAtu = [], jogadaPendente = null;
 
@@ -232,7 +237,6 @@
     };
 
     window.jogar = (idx) => {
-      // se estiver borrado, não joga (evita “entregar” ao colega)
       if (maoBorrada) return;
 
       const p = maoAtu[idx];
@@ -272,8 +276,6 @@
     socket.on('jogoIniciado', () => {
       document.getElementById('lobby').style.display = 'none';
       document.getElementById('jogo').style.display = 'block';
-
-      // começa com as peças escondidas (borradas)
       maoBorrada = true;
       aplicarPrivacidade();
     });
@@ -297,7 +299,6 @@
           <div class="valor">${p[1]}</div>
         </div>`).join('');
 
-      // mantém borrado/visível conforme o estado atual
       aplicarPrivacidade();
     });
 
@@ -305,10 +306,6 @@
       const t = document.getElementById('turno');
       t.innerText = d.nome === meuNome ? "⭐ SUA VEZ DE JOGAR! ⭐" : "Vez de: " + d.nome;
       t.style.color = d.nome === meuNome ? "#fbbf24" : "white";
-
-      // opcional: quando não for sua vez, já esconde automaticamente
-      // (se quiser, descomente as 2 linhas abaixo)
-      // if (d.nome !== meuNome) { maoBorrada = true; aplicarPrivacidade(); }
     });
 
     socket.on('mensagemGeral', m => alert(m));
@@ -317,4 +314,3 @@
   </script>
 </body>
 </html>
-
