@@ -2,13 +2,13 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Loop Infinito - Missão While</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop Infinito - Missão While (Lobby)</title>
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body {
-            font-family: 'Segoe UI', 'Courier New', monospace;
+            font-family: 'Courier New', monospace;
             background: linear-gradient(145deg, #1a472a 0%, #0e2a1a 100%);
             margin: 0;
             padding: 20px;
@@ -17,24 +17,69 @@
             justify-content: center;
             align-items: center;
         }
-        .game-container {
-            max-width: 1400px;
+        .container {
+            max-width: 900px;
             width: 100%;
             background: #fef7e0;
             border-radius: 48px;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.4), inset 0 1px 4px rgba(255,255,200,0.8);
-            padding: 20px;
+            padding: 25px;
             border: 4px solid #ffd966;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.4);
         }
-        h1 { text-align: center; font-size: 2.2rem; margin: 0 0 10px; color: #2c3e2f; text-shadow: 3px 3px 0 #ffd966; }
-        .sub { text-align: center; font-style: italic; color: #2d6a4f; margin-bottom: 25px; font-weight: bold; }
-        .board-area { background: #e9f5e6; border-radius: 28px; padding: 20px; margin-bottom: 25px; border: 3px solid #b7b78a; }
+        h1 { text-align: center; color: #2c3e2f; text-shadow: 3px 3px 0 #ffd966; margin-top: 0; }
+        .lobby, .game { display: none; }
+        .active { display: block; }
+        input, button {
+            font-family: monospace;
+            font-size: 1.2rem;
+            padding: 12px;
+            margin: 8px;
+            border-radius: 30px;
+            border: none;
+        }
+        input { background: white; border: 2px solid #b7b78a; width: 200px; text-align: center; }
+        button {
+            background: #ffb347;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        button:active { transform: scale(0.96); }
+        button:disabled { opacity: 0.5; transform: none; cursor: not-allowed; }
+        .player-list {
+            background: #e9f5e6;
+            border-radius: 28px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            margin: 5px;
+            background: #fff2cf;
+            border-radius: 40px;
+            font-weight: bold;
+        }
+        .ready-badge {
+            background: #2b7a2a;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+        .not-ready {
+            background: #b00020;
+            color: white;
+            padding: 2px 12px;
+            border-radius: 20px;
+        }
+        .board-area { background: #e9f5e6; border-radius: 28px; padding: 20px; margin-bottom: 25px; }
         .track { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin: 20px 0; }
         .tile {
             width: 70px; height: 70px; background: #fff2cf; border-radius: 18px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             font-weight: bold; font-size: 1.3rem; box-shadow: 0 4px 0 #a5936e;
-            border: 1px solid #eedd99; position: relative;
+            position: relative;
         }
         .tile.phase1 { background: #b9fbc0; border-bottom: 6px solid #2b7a2a; }
         .tile.phase2 { background: #90e0ef; border-bottom: 6px solid #0077b6; }
@@ -44,22 +89,12 @@
         .pawn {
             display: inline-block; width: 24px; height: 24px; background: #2c3e2f;
             border-radius: 50%; margin: 2px; text-align: center; line-height: 24px;
-            font-size: 12px; font-weight: bold; color: white; box-shadow: 0 2px 3px black;
+            font-size: 12px; font-weight: bold; color: white;
         }
         .players-on-tile { margin-top: 5px; display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
-        .controls { background: #282c35; padding: 20px; border-radius: 30px; color: white; }
-        .panel { background: #1f2a2e; border-radius: 24px; padding: 15px; }
-        button {
-            background: #ffb347; border: none; font-weight: bold; padding: 12px 20px;
-            border-radius: 40px; font-size: 1.2rem; cursor: pointer; margin: 5px; font-family: monospace;
-        }
-        button:active { transform: scale(0.96); }
-        .dice {
-            background: white; width: 80px; height: 80px; border-radius: 20px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3rem; font-weight: bold; margin: 10px auto; color: #b51c1c;
-        }
-        .card-area { background: #f9eec1; padding: 18px; border-radius: 28px; margin-top: 20px; border-left: 18px solid #dd8822; font-family: monospace; }
+        .controls { background: #282c35; padding: 20px; border-radius: 30px; color: white; margin-top: 20px; }
+        .dice { background: white; width: 80px; height: 80px; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 3rem; margin: 10px auto; color: #b51c1c; }
+        .card-area { background: #f9eec1; padding: 18px; border-radius: 28px; margin-top: 20px; font-family: monospace; }
         .turn-indicator { background: #000000aa; backdrop-filter: blur(4px); border-radius: 40px; padding: 8px 18px; display: inline-block; }
         @media (max-width: 800px) {
             .tile { width: 50px; height: 50px; font-size: 0.9rem; }
@@ -68,87 +103,94 @@
     </style>
 </head>
 <body>
-<div class="game-container">
-    <h1>⟳ LOOP INFINITO — MISSÃO WHILE 🐍</h1>
-    <div class="sub">⚡ programe. avance. vença o loop infinito.</div>
-    <div class="board-area">
-        <div id="boardTrack" class="track"></div>
-        <div class="turn-indicator" id="turnStatus" style="margin:10px auto; text-align:center; background:#1f3b2c; color:white; width:fit-content;">🎲 Aguardando inicio...</div>
+<div class="container" id="app">
+    <h1>⟳ LOOP INFINITO — MISSÃO WHILE</h1>
+
+    <!-- TELA DE LOBBY -->
+    <div id="lobbyScreen" class="lobby active">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <input type="text" id="playerNameInput" placeholder="Seu nome (ex: 01, Vermelho)" maxlength="20">
+            <input type="text" id="roomNameInput" placeholder="Nome da sala (ex: turmaA)">
+            <button id="joinRoomBtn">🎮 ENTRAR NA SALA</button>
+        </div>
+        <div id="lobbyInfo" class="player-list" style="display: none;">
+            <h3>👥 Jogadores na sala <span id="roomNameDisplay"></span></h3>
+            <div id="playersList"></div>
+            <button id="readyBtn" style="width: 100%; margin-top: 15px;">✅ ESTOU PRONTO</button>
+            <p id="waitingMsg" style="text-align: center; color: #b00020; font-weight: bold;"></p>
+        </div>
     </div>
-    <div class="controls">
-        <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: space-between;">
-            <div>
-                <h3>👥 Jogadores</h3>
-                <div id="playersSetup">
-                    <input type="text" id="playerNames" placeholder="Ana, Bruno, Carla" size="30">
-                    <button id="startBtn">🚀 INICIAR JOGO</button>
+
+    <!-- TELA DO JOGO (será preenchida dinamicamente) -->
+    <div id="gameScreen" class="game" style="display: none;">
+        <div class="board-area">
+            <div id="boardTrack" class="track"></div>
+            <div class="turn-indicator" id="turnStatus" style="margin:10px auto; text-align:center; background:#1f3b2c; color:white; width:fit-content;">🎲 Aguardando...</div>
+        </div>
+        <div class="controls">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: space-between;">
+                <div><h3>🎲 Ação</h3>
+                    <div class="dice" id="diceResult">⚀</div>
+                    <button id="rollBtn" disabled>ROLAR DADO</button>
                 </div>
-                <div id="playerList" style="margin-top: 10px; font-weight: bold;"></div>
-                <div id="specialCardsDisplay" style="font-size:0.8rem; background:#00000055; border-radius: 16px; padding: 5px;"></div>
             </div>
-            <div style="text-align: center;">
-                <h3>🎲 Ação</h3>
-                <div class="dice" id="diceResult">⚀</div>
-                <button id="rollBtn" disabled>ROLAR DADO</button>
-                <button id="endTurnBtn" disabled>⏭️ PULAR TURNO</button>
-            </div>
+            <div class="card-area" id="cardMessage">💡 <strong>Desafio aparecerá aqui</strong></div>
+            <div><input type="text" id="answerInput" placeholder="Sua resposta..." style="width: 70%; padding: 12px; border-radius: 60px;"><button id="submitAnswerBtn" disabled>✅ RESPONDER</button></div>
+            <div id="infoLog" style="margin-top: 12px; font-size: 0.8rem; max-height: 100px; overflow-y: auto;"></div>
         </div>
-        <div class="card-area" id="cardMessage">💡 <strong>Desafio aparecerá aqui</strong> — responda corretamente para não voltar casas.</div>
-        <div>
-            <input type="text" id="answerInput" placeholder="Sua resposta..." style="width: 70%; padding: 12px; border-radius: 60px;">
-            <button id="submitAnswerBtn" disabled>✅ RESPONDER</button>
-        </div>
-        <div id="infoLog" style="margin-top: 12px; font-size: 0.8rem; max-height: 100px; overflow-y: auto;"></div>
     </div>
 </div>
 
 <script>
-    // === CONECTA AO SERVIDOR SOCKET.IO NO RENDER ===
-    const SOCKET_URL = 'https://motor-while.onrender.com';  // <--- ALTERE PARA SEU SERVIDOR
-    const socket = io(SOCKET_URL, {
-        transports: ['websocket', 'polling'],
-        withCredentials: true
-    });
+    const SOCKET_URL = 'https://motor-while.onrender.com'; // ou seu servidor
+    const socket = io(SOCKET_URL, { transports: ['websocket', 'polling'] });
 
-    let currentPlayerId = null;
+    let currentRoom = null;
+    let myPlayerName = null;
     let gameActive = false;
     let playersList = [];
     let currentCard = null;
-    let currentPhase = null;
     let currentDiceValue = 0;
-    let localPlayerName = "";
     let turnStarted = false;
+    let currentPlayerId = null;
+    let playersPositions = [];
 
-    const boardTrack = document.getElementById("boardTrack");
-    const turnStatusDiv = document.getElementById("turnStatus");
-    const rollBtn = document.getElementById("rollBtn");
-    const submitBtn = document.getElementById("submitAnswerBtn");
-    const startBtn = document.getElementById("startBtn");
-    const answerInput = document.getElementById("answerInput");
-    const diceResultDiv = document.getElementById("diceResult");
-    const cardMsgDiv = document.getElementById("cardMessage");
-    const playerListDiv = document.getElementById("playerList");
-    const specialCardsSpan = document.getElementById("specialCardsDisplay");
-    const logDiv = document.getElementById("infoLog");
-    const playerNamesInput = document.getElementById("playerNames");
-    const endTurnBtn = document.getElementById("endTurnBtn");
+    // Elementos
+    const lobbyScreen = document.getElementById('lobbyScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const joinRoomBtn = document.getElementById('joinRoomBtn');
+    const playerNameInput = document.getElementById('playerNameInput');
+    const roomNameInput = document.getElementById('roomNameInput');
+    const lobbyInfo = document.getElementById('lobbyInfo');
+    const roomNameDisplay = document.getElementById('roomNameDisplay');
+    const playersListDiv = document.getElementById('playersList');
+    const readyBtn = document.getElementById('readyBtn');
+    const waitingMsg = document.getElementById('waitingMsg');
+    const rollBtn = document.getElementById('rollBtn');
+    const submitBtn = document.getElementById('submitAnswerBtn');
+    const answerInput = document.getElementById('answerInput');
+    const diceResultDiv = document.getElementById('diceResult');
+    const cardMsgDiv = document.getElementById('cardMessage');
+    const turnStatusDiv = document.getElementById('turnStatus');
+    const boardTrack = document.getElementById('boardTrack');
+    const infoLog = document.getElementById('infoLog');
 
     function addLog(msg) {
-        const p = document.createElement("div");
+        const p = document.createElement('div');
         p.textContent = msg;
-        logDiv.appendChild(p);
-        logDiv.scrollTop = logDiv.scrollHeight;
+        infoLog.appendChild(p);
+        infoLog.scrollTop = infoLog.scrollHeight;
     }
 
     function renderBoard(positions) {
-        boardTrack.innerHTML = "";
+        boardTrack.innerHTML = '';
         for (let i = 0; i <= 28; i++) {
             let phase = i <= 8 ? 1 : (i <= 16 ? 2 : (i <= 24 ? 3 : 4));
-            let specialClass = [5,12,19,25,27].includes(i) ? "special" : "";
-            const tileDiv = document.createElement("div");
-            tileDiv.className = `tile phase${phase} ${specialClass}`;
-            tileDiv.innerHTML = `<div style="font-size:0.7rem;">${i}</div><div class="players-on-tile" id="tile-${i}"></div>`;
-            boardTrack.appendChild(tileDiv);
+            let specialClass = [5,12,19,25,27].includes(i) ? 'special' : '';
+            const tile = document.createElement('div');
+            tile.className = `tile phase${phase} ${specialClass}`;
+            tile.innerHTML = `<div style="font-size:0.7rem;">${i}</div><div class="players-on-tile" id="tile-${i}"></div>`;
+            boardTrack.appendChild(tile);
         }
         if (positions) updatePawns(positions);
     }
@@ -156,140 +198,166 @@
     function updatePawns(positions) {
         for (let i = 0; i <= 28; i++) {
             const container = document.getElementById(`tile-${i}`);
-            if (container) container.innerHTML = "";
+            if (container) container.innerHTML = '';
         }
         for (let idx = 0; idx < positions.length; idx++) {
             const pos = positions[idx];
-            const playerNameShort = playersList[idx]?.substring(0,2).toUpperCase() || "J";
+            const playerShort = playersList[idx]?.substring(0,2).toUpperCase();
             const tileContainer = document.getElementById(`tile-${pos}`);
             if (tileContainer) {
-                const pawnSpan = document.createElement("span");
-                pawnSpan.className = "pawn";
-                pawnSpan.textContent = playerNameShort;
-                pawnSpan.style.backgroundColor = `hsl(${idx * 90}, 70%, 45%)`;
-                tileContainer.appendChild(pawnSpan);
+                const pawn = document.createElement('span');
+                pawn.className = 'pawn';
+                pawn.textContent = playerShort;
+                pawn.style.backgroundColor = `hsl(${idx * 90}, 70%, 45%)`;
+                tileContainer.appendChild(pawn);
             }
         }
     }
 
-    function updateUIAfterTurn(data) {
-        turnStatusDiv.innerHTML = `🎲 Vez de: ${data.currentPlayer} (${playersList.indexOf(data.currentPlayer)+1}/${playersList.length})`;
+    function updateUIforGame(data) {
+        turnStatusDiv.innerHTML = `🎲 Vez de: ${data.currentPlayer}`;
         currentPlayerId = data.currentPlayer;
-        if (currentPlayerId !== localPlayerName) {
+        if (currentPlayerId !== myPlayerName) {
             rollBtn.disabled = true;
             submitBtn.disabled = true;
-            endTurnBtn.disabled = true;
-            addLog(`⏳ Aguardando jogador ${data.currentPlayer}...`);
+            addLog(`⏳ Aguardando ${data.currentPlayer}...`);
         } else {
             rollBtn.disabled = false;
             submitBtn.disabled = true;
-            endTurnBtn.disabled = false;
             turnStarted = false;
-            addLog(`🎲 Sua vez, ${localPlayerName}! role o dado.`);
+            addLog(`🎲 Sua vez, ${myPlayerName}! role o dado.`);
         }
         updatePawns(data.positions);
     }
 
-    socket.on("connect", () => {
-        addLog("✅ Conectado ao servidor do jogo!");
+    // Socket events
+    socket.on('connect', () => addLog('✅ Conectado ao servidor'));
+
+    socket.on('room-joined', (data) => {
+        currentRoom = data.room;
+        myPlayerName = data.playerName;
+        lobbyInfo.style.display = 'block';
+        roomNameDisplay.textContent = currentRoom;
+        updatePlayersList(data.players, data.readyStatus);
+        waitingMsg.textContent = data.players.length < 2 ? 'Aguardando mais jogadores... (mínimo 2)' : 'Clique em "ESTOU PRONTO" quando todos estiverem na sala.';
+        readyBtn.disabled = false;
     });
 
-    socket.on("game-initialized", (data) => {
-        playersList = data.players;
-        localPlayerName = playersList[0]; // primeiro da lista como dono (ajuste conforme necessário)
+    socket.on('room-update', (data) => {
+        updatePlayersList(data.players, data.readyStatus);
+        if (Object.values(data.readyStatus).every(v => v === true) && Object.keys(data.players).length >= 2) {
+            waitingMsg.textContent = '✅ Todos prontos! O jogo vai começar...';
+            readyBtn.disabled = true;
+        }
+    });
+
+    socket.on('game-start', (data) => {
+        // Mudar para tela de jogo
+        lobbyScreen.classList.remove('active');
+        gameScreen.style.display = 'block';
         gameActive = true;
-        renderBoard(data.positions);
-        updateUIAfterTurn({currentPlayer: playersList[data.currentPlayerIndex], positions: data.positions, playersSkipped: []});
-        addLog(`🎮 Jogo iniciado! primeiro jogador: ${playersList[data.currentPlayerIndex]}`);
-        startBtn.disabled = true;
-        playerNamesInput.disabled = true;
+        playersList = data.players;
+        playersPositions = data.positions;
+        renderBoard(playersPositions);
+        updateUIforGame({ currentPlayer: data.currentPlayer, positions: playersPositions });
+        addLog(`🎮 Jogo iniciado na sala ${currentRoom}!`);
     });
 
-    socket.on("turn-update", (data) => {
-        if (!gameActive) return;
-        updateUIAfterTurn(data);
-    });
-
-    socket.on("dice-rolled", (data) => {
-        if (data.playerId === localPlayerName) {
+    socket.on('dice-rolled', (data) => {
+        if (data.playerId === myPlayerName) {
             currentDiceValue = data.diceRoll;
-            diceResultDiv.innerHTML = ["⚀","⚁","⚂","⚃","⚄","⚅"][currentDiceValue-1];
-            addLog(`🎲 Você rolou ${currentDiceValue}! responda o desafio para avançar.`);
+            diceResultDiv.innerHTML = ['⚀','⚁','⚂','⚃','⚄','⚅'][currentDiceValue-1];
+            addLog(`🎲 Você rolou ${currentDiceValue}! Responda o desafio.`);
             rollBtn.disabled = true;
             submitBtn.disabled = false;
             turnStarted = true;
         }
     });
 
-    socket.on("card-drawn", (data) => {
-        if (data.playerId === localPlayerName) {
+    socket.on('card-drawn', (data) => {
+        if (data.playerId === myPlayerName) {
             currentCard = data.card;
-            currentPhase = data.phase;
-            let phaseName = ["Verde (introdução)","Azul (contadores)","Vermelho (debug)","Dourado (desafio final)"][data.phase-1];
-            cardMsgDiv.innerHTML = `📜 <strong> DESAFIO FASE ${data.phase} — ${phaseName}</strong><br><pre style="white-space:pre-wrap;">${data.card.text}</pre><i>🔍 Responda com atenção!</i>`;
-            addLog(`🗺️ Desafio sorteado: ${data.card.text.substring(0,60)}...`);
+            const phaseName = ['Verde','Azul','Vermelho','Dourado'][data.phase-1];
+            cardMsgDiv.innerHTML = `📜 <strong>Desafio Fase ${data.phase} (${phaseName})</strong><br><pre style="white-space:pre-wrap;">${data.card.text}</pre>`;
         }
     });
 
-    socket.on("player-moved", (data) => {
-        if (data.newPosition !== undefined && playersList) updatePawns(gameStatePositionsTmp || playersList.map(()=>0));
+    socket.on('player-moved', (data) => {
+        if (data.newPosition !== undefined && playersList) updatePawns(data.positions || playersPositions);
         if (data.gameEnded) {
-            addLog(`🏆 FIM DE JOGO! VENCEDOR: ${data.winner} 🏆`);
+            addLog(`🏆 FIM DE JOGO! VENCEDOR: ${data.winner}`);
             gameActive = false;
             rollBtn.disabled = true;
             submitBtn.disabled = true;
         }
     });
 
-    socket.on("special-tile", (data) => {
-        if (data.playerId === localPlayerName) addLog(`✨ ${data.message}`);
-    });
-
-    socket.on("game-ended", (data) => {
-        addLog(`🏁 JOGO ENCERRADO! VITÓRIA DE ${data.winner}`);
+    socket.on('game-ended', (data) => {
+        addLog(`🏁 JOGO ENCERRADO! VENCEDOR: ${data.winner}`);
         gameActive = false;
         rollBtn.disabled = true;
         submitBtn.disabled = true;
-        startBtn.disabled = false;
     });
 
-    socket.on("game-error", (err) => {
-        addLog(`❌ ERRO: ${err}`);
+    socket.on('turn-update', (data) => {
+        if (gameActive) updateUIforGame(data);
     });
 
-    startBtn.onclick = () => {
-        let names = playerNamesInput.value.split(',').map(s=>s.trim()).filter(s=>s);
-        if(names.length < 2) { alert("Coloque pelo menos 2 jogadores separados por vírgula"); return; }
-        socket.emit("start-game", names);
+    socket.on('error-msg', (msg) => {
+        addLog(`❌ ${msg}`);
+        if (msg.includes('nomes diferentes')) readyBtn.disabled = false;
+    });
+
+    function updatePlayersList(players, readyStatus) {
+        playersListDiv.innerHTML = '';
+        for (let name of Object.keys(players)) {
+            const div = document.createElement('div');
+            div.className = 'player-item';
+            div.innerHTML = `<span>${name}</span><span class="${readyStatus[name] ? 'ready-badge' : 'not-ready'}">${readyStatus[name] ? '✅ PRONTO' : '⏳ AGUARDANDO'}</span>`;
+            playersListDiv.appendChild(div);
+        }
+    }
+
+    joinRoomBtn.onclick = () => {
+        const playerName = playerNameInput.value.trim();
+        const roomName = roomNameInput.value.trim();
+        if (!playerName || !roomName) {
+            alert('Digite seu nome e o nome da sala');
+            return;
+        }
+        socket.emit('join-room', { playerName, roomName });
+        joinRoomBtn.disabled = true;
+    };
+
+    readyBtn.onclick = () => {
+        socket.emit('player-ready', { room: currentRoom, playerName: myPlayerName });
+        readyBtn.disabled = true;
+        waitingMsg.textContent = 'Aguardando os outros jogadores...';
     };
 
     rollBtn.onclick = () => {
-        if (!gameActive || currentPlayerId !== localPlayerName) return;
-        socket.emit("roll-dice", localPlayerName);
-    };
-
-    submitBtn.onclick = () => {
-        if (!turnStarted) return addLog("Primeiro role o dado!");
-        const userAnswer = answerInput.value.trim();
-        if (!userAnswer && currentCard?.type !== "logic") { addLog("Digite uma resposta."); return; }
-        let expected = currentCard?.answer || "";
-        const isCorrect = (userAnswer.toLowerCase() === expected.toLowerCase());
-        socket.emit("move-player", { playerId: localPlayerName, diceRoll: currentDiceValue, answer: userAnswer, challengeAnswer: expected });
-        answerInput.value = "";
-        cardMsgDiv.innerHTML = "💡 Próximo desafio surgirá no próximo movimento.";
-        submitBtn.disabled = true;
-        turnStarted = false;
-    };
-
-    endTurnBtn.onclick = () => {
-        if (currentPlayerId === localPlayerName) {
-            socket.emit("end-turn-manual", localPlayerName);
-            addLog("⏩ Turno pulado manualmente.");
+        if (gameActive && currentPlayerId === myPlayerName) {
+            socket.emit('roll-dice', { room: currentRoom, playerId: myPlayerName });
         }
     };
 
-    renderBoard([]);
-    addLog("🎓 Loop Infinito — Missão While. Conecte-se e aprenda!");
+    submitBtn.onclick = () => {
+        if (!turnStarted) return addLog('Role o dado primeiro!');
+        const answer = answerInput.value.trim();
+        if (!answer) return addLog('Digite uma resposta.');
+        const expected = currentCard?.answer || '';
+        socket.emit('move-player', {
+            room: currentRoom,
+            playerId: myPlayerName,
+            diceRoll: currentDiceValue,
+            answer,
+            challengeAnswer: expected
+        });
+        answerInput.value = '';
+        submitBtn.disabled = true;
+        turnStarted = false;
+        cardMsgDiv.innerHTML = '💡 Próximo desafio após o movimento.';
+    };
 </script>
 </body>
 </html>
