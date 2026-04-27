@@ -107,6 +107,7 @@
     }
     .btn-escolha { margin: 10px; padding: 20px 40px; font-size: 20px; }
 
+    /* PRIVACIDADE: BORRÃO NA MÃO */
     #mao.mao-borrada .peca {
       filter: blur(10px);
       transition: filter 0.15s ease;
@@ -121,11 +122,11 @@
       margin-bottom: 10px;
     }
 
-    /* Indicador de conexão */
+    /* Status de conexão */
     #status-conexao {
       font-size: 1.2em;
       margin: 15px 0;
-      padding: 10px;
+      padding: 10px 25px;
       border-radius: 8px;
       background: rgba(255,255,255,0.1);
       display: inline-block;
@@ -193,34 +194,46 @@
 
   <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
   <script>
-    const socket = io();
+    // Conexão otimizada para cold start do Render
+    const socket = io({
+      transports: ["polling", "websocket"],  // polling primeiro para acordar o servidor
+      reconnection: true,
+      reconnectionAttempts: 20,
+      reconnectionDelay: 1000,
+      reconnectionDelayMax: 5000,
+      timeout: 30000
+    });
 
-    // Atualização suave do status de conexão
+    // Elementos do status
     const statusEl = document.getElementById('status-conexao');
     const inputs = document.querySelectorAll('#controles-login input');
     const btnEntrar = document.querySelector('#controles-login button');
 
     socket.on('connect', () => {
       statusEl.innerHTML = '✅ Conectado ao servidor';
-      statusEl.style.background = 'rgba(16, 185, 129, 0.2)'; // verde suave
-      // Habilita os campos
+      statusEl.style.background = 'rgba(16, 185, 129, 0.2)';
       inputs.forEach(i => i.disabled = false);
       btnEntrar.disabled = false;
     });
 
     socket.on('disconnect', () => {
-      statusEl.innerHTML = '❌ Conexão perdida. Tentando reconectar...';
+      statusEl.innerHTML = '❌ Conexão perdida. Reconectando...';
       statusEl.style.background = 'rgba(239, 68, 68, 0.2)';
       inputs.forEach(i => i.disabled = true);
       btnEntrar.disabled = true;
     });
 
-    socket.on('connect_error', () => {
-      statusEl.innerHTML = '🔄 Conectando ao servidor... (aguardando)';
+    socket.on('reconnect_attempt', (attempt) => {
+      statusEl.innerHTML = `🔄 Aguardando servidor acordar... (tentativa ${attempt})`;
       statusEl.style.background = 'rgba(251, 191, 36, 0.2)';
-      // Os campos continuam desabilitados até conectar
     });
 
+    socket.on('connect_error', () => {
+      statusEl.innerHTML = '🔄 Aguardando servidor (Render cold start)...';
+      statusEl.style.background = 'rgba(251, 191, 36, 0.2)';
+    });
+
+    // ===== LÓGICA DO JOGO =====
     let meuNome = "", mesaAtu = [], maoAtu = [], jogadaPendente = null;
     let maoBorrada = true;
 
