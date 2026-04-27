@@ -107,7 +107,6 @@
     }
     .btn-escolha { margin: 10px; padding: 20px 40px; font-size: 20px; }
 
-    /* PRIVACIDADE: BORRÃO NA MÃO */
     #mao.mao-borrada .peca {
       filter: blur(10px);
       transition: filter 0.15s ease;
@@ -122,7 +121,6 @@
       margin-bottom: 10px;
     }
 
-    /* Status de conexão */
     #status-conexao {
       font-size: 1.2em;
       margin: 15px 0;
@@ -146,7 +144,6 @@
   <div id="lobby">
     <h1 style="color: #60a5fa;">Dominó Lógico 🧠</h1>
 
-    <!-- Indicador de conexão -->
     <div id="status-conexao">🔄 Conectando ao servidor...</div>
 
     <div id="controles-login">
@@ -194,17 +191,17 @@
 
   <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
   <script>
-    // Conexão otimizada para cold start do Render
+    // Conexão com polling para evitar problemas de upgrade durante cold start
     const socket = io({
-      transports: ["polling", "websocket"],  // polling primeiro para acordar o servidor
+      transports: ["polling"],   // apenas polling (HTTP) – mais estável
+      upgrade: false,            // não tenta mudar para WebSocket
       reconnection: true,
-      reconnectionAttempts: 20,
+      reconnectionAttempts: Infinity,
       reconnectionDelay: 1000,
       reconnectionDelayMax: 5000,
-      timeout: 30000
+      timeout: 60000
     });
 
-    // Elementos do status
     const statusEl = document.getElementById('status-conexao');
     const inputs = document.querySelectorAll('#controles-login input');
     const btnEntrar = document.querySelector('#controles-login button');
