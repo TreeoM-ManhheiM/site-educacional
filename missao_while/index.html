@@ -1,293 +1,386 @@
-const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loop Infinito - Missão While</title>
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: 'Courier New', monospace;
+            background: linear-gradient(145deg, #1a472a 0%, #0e2a1a 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background: #fef7e0;
+            border-radius: 48px;
+            padding: 25px;
+            border: 4px solid #ffd966;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.4);
+        }
+        h1 { text-align: center; color: #2c3e2f; text-shadow: 3px 3px 0 #ffd966; margin-top: 0; margin-bottom: 10px; }
+        .sub { text-align: center; font-style: italic; color: #2d6a4f; margin-bottom: 25px; }
+        .lobby, .game { display: none; }
+        .active { display: block; }
+        input, button {
+            font-family: monospace;
+            font-size: 1.1rem;
+            padding: 10px 16px;
+            margin: 8px;
+            border-radius: 30px;
+            border: none;
+        }
+        input { background: white; border: 2px solid #b7b78a; width: 220px; text-align: center; }
+        button {
+            background: #ffb347;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        button:active { transform: scale(0.96); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .player-list {
+            background: #e9f5e6;
+            border-radius: 28px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .player-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 12px;
+            margin: 5px 0;
+            background: #fff2cf;
+            border-radius: 40px;
+            font-weight: bold;
+        }
+        .ready-badge { background: #2b7a2a; color: white; padding: 2px 12px; border-radius: 20px; }
+        .not-ready { background: #b00020; color: white; padding: 2px 12px; border-radius: 20px; }
+        .board-area { background: #e9f5e6; border-radius: 28px; padding: 20px; margin-bottom: 25px; }
+        .track { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin: 20px 0; }
+        .tile {
+            width: 65px; height: 65px; background: #fff2cf; border-radius: 18px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 0 #a5936e;
+            border: 1px solid #eedd99;
+        }
+        .tile.phase1 { background: #b9fbc0; border-bottom: 6px solid #2b7a2a; }
+        .tile.phase2 { background: #90e0ef; border-bottom: 6px solid #0077b6; }
+        .tile.phase3 { background: #ffb3b3; border-bottom: 6px solid #b00020; }
+        .tile.phase4 { background: #ffd966; border-bottom: 6px solid #c97e00; }
+        .tile.special { background: radial-gradient(circle at 30% 20%, #fff0b5, #ffe0a3); box-shadow: 0 0 0 2px gold; }
+        .pawn {
+            display: inline-block; width: 22px; height: 22px; background: #2c3e2f;
+            border-radius: 50%; margin: 2px; text-align: center; line-height: 22px;
+            font-size: 11px; font-weight: bold; color: white;
+        }
+        .players-on-tile { margin-top: 5px; display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
+        .controls { background: #282c35; padding: 20px; border-radius: 30px; color: white; margin-top: 20px; }
+        .dice { background: white; width: 70px; height: 70px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; margin: 10px auto; color: #b51c1c; }
+        .card-area { background: #f9eec1; padding: 18px; border-radius: 28px; margin-top: 20px; font-family: monospace; color: #1f2a2e; }
+        .turn-indicator { background: #000000aa; backdrop-filter: blur(4px); border-radius: 40px; padding: 6px 16px; display: inline-block; font-size: 0.9rem; }
+        #infoLog { max-height: 120px; overflow-y: auto; font-size: 0.8rem; margin-top: 15px; background: #1f2a2e; padding: 10px; border-radius: 20px; }
+        @media (max-width: 800px) {
+            .tile { width: 45px; height: 45px; font-size: 0.8rem; }
+            .pawn { width: 16px; height: 16px; font-size: 8px; line-height: 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <h1>⟳ LOOP INFINITO — MISSÃO WHILE</h1>
+    <div class="sub">🐍 Programe. Avance. Vença o loop infinito.</div>
 
-const app = express();
-const server = http.createServer(app);
-const io = new Server(server, {
-    cors: { origin: "*", methods: ["GET", "POST"] }
-});
+    <!-- TELA DE LOBBY -->
+    <div id="lobbyScreen" class="lobby active">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <input type="text" id="playerNameInput" placeholder="Seu nome (ex: Vermelho)" maxlength="20">
+            <input type="text" id="roomNameInput" placeholder="Nome da sala (ex: turmaA)">
+            <button id="joinRoomBtn">🎮 ENTRAR NA SALA</button>
+        </div>
+        <div id="lobbyInfo" style="display: none;">
+            <div class="player-list">
+                <h3>👥 Equipes na sala <span id="roomNameDisplay"></span></h3>
+                <div id="playersList"></div>
+                <button id="readyBtn" style="width: 100%; margin-top: 15px;">✅ ESTOU PRONTO</button>
+                <p id="waitingMsg" style="text-align: center; color: #b00020; font-weight: bold; margin-top: 10px;"></p>
+            </div>
+        </div>
+    </div>
 
-// Estrutura de salas
-const rooms = new Map(); // roomId -> { players: { name: socketId }, readyStatus: { name: bool }, gameState: null ou objeto }
+    <!-- TELA DO JOGO -->
+    <div id="gameScreen" class="game">
+        <div class="board-area">
+            <div id="boardTrack" class="track"></div>
+            <div class="turn-indicator" id="turnStatus" style="margin-top:10px;">🎲 Aguardando...</div>
+        </div>
+        <div class="controls">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: space-between;">
+                <div style="flex:1; text-align:center;">
+                    <h3>🎲 Ação</h3>
+                    <div class="dice" id="diceResult">⚀</div>
+                    <button id="rollBtn" disabled>ROLAR DADO</button>
+                </div>
+            </div>
+            <div class="card-area" id="cardMessage">💡 <strong>Desafio aparecerá aqui</strong></div>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <input type="text" id="answerInput" placeholder="Sua resposta..." style="flex:3;">
+                <button id="submitAnswerBtn" disabled style="flex:1;">✅ RESPONDER</button>
+            </div>
+            <div id="infoLog"></div>
+        </div>
+    </div>
+</div>
 
-// ==================== BARALHOS (mesmo do original) ====================
-const CARDS_BY_PHASE = {
-    1: [
-        { text: "O que esse código imprime?\n\ni = 0\nwhile i < 3:\n    print(i)\n    i += 1", answer: "0 1 2", type: "normal" },
-        { text: "Quantas vezes o loop roda?\n\nx = 5\nwhile x > 0:\n    x -= 2", answer: "3", type: "normal" },
-        { text: "Este loop para? (V/F)\n\ni = 1\nwhile i != 0:\n    i = i - 1", answer: "V", type: "normal" },
-        { text: "Complete para repetir 10 vezes:\n\ni = 0\nwhile __________:\n    i += 1", answer: "i < 10", type: "normal" },
-        { text: "Qual a saída?\n\ni = 2\nwhile i <= 6:\n    print(i)\n    i += 2", answer: "2 4 6", type: "normal" },
-        { text: "O que acontece?\n\ni = 0\nwhile i < 0:\n    print(i)", answer: "Nada (não executa)", type: "normal" },
-        { text: "Qual a condição de parada?\n\ni = 10\nwhile i >= 0:\n    i -= 1", answer: "i se torna -1", type: "normal" },
-        { text: "Reescreva em palavras:\n\ni = 0\nwhile i < 4:\n    i += 1", answer: "Incrementa i até 4, roda 4 vezes", type: "normal" }
-    ],
-    2: [
-        { text: "Complete a condição (sentinela):\n\nnum = int(input())\nwhile ________:\n    print(num)\n    num = int(input())", answer: "num != 0", type: "normal" },
-        { text: "Complete o acumulador para somar até 0:\n\nsoma = 0\nn = int(input())\nwhile n != 0:\n    soma = __________\n    n = int(input())\nprint(soma)", answer: "soma + n", type: "normal" },
-        { text: "Conte quantos números positivos (entrada: números até 0).", answer: "cont += 1 se n > 0", type: "logic" },
-        { text: "Leia notas até -1 e calcule a média. (Pseudocódigo)", answer: "soma=0,cont=0; enquanto nota != -1: soma+=nota; cont+=1; ler nota; média = soma/cont", type: "logic" },
-        { text: "Leia números até 0 e mostre o maior.", answer: "inicialize maior com o primeiro número (se não for 0) e compare.", type: "logic" },
-        { text: "Quantas vezes roda? i=1; while i<20: i=i*2", answer: "5 vezes", type: "normal" },
-        { text: "Conte os pares (entrada: números até 0).", answer: "if n % 2 == 0: cont += 1", type: "normal" },
-        { text: "Complete para somar 1..n:\n\ni=1; s=0\nwhile i <= n:\n    s += i\n    i += 1\nprint(s)", answer: "Soma de 1 até n", type: "normal" }
-    ],
-    3: [
-        { text: "Corrija o loop infinito:\n\ni = 0\nwhile i < 5:\n    print(i)", answer: "Faltou i += 1", type: "debug" },
-        { text: "Por que trava?\n\nn = 10\nwhile n > 0:\n    n = n + 1", answer: "n cresce, deveria ser n -= 1", type: "debug" },
-        { text: "Condição errada:\n\ni = 0\nwhile i > 3:\n    print(i)\n    i += 1", answer: "Nunca executa, corrigir para i < 3", type: "debug" },
-        { text: "Sentinela bugada:\n\nnum = int(input())\nwhile num == 0:\n    print(num)\n    num = int(input())", answer: "Condição invertida, deveria ser num != 0", type: "debug" },
-        { text: "Ordem do input:\n\nwhile n != 0:\n    n = int(input())\n    print(n)", answer: "n não inicializado; ler antes do while", type: "debug" },
-        { text: "Atualização errada:\n\ni = 1\nwhile i < 10:\n    print(i)\n    i = i", answer: "i nunca muda; corrigir para i += 1", type: "debug" },
-        { text: "Off-by-one: i=0; while i<=3: print(i); i+=1. Queríamos 3 valores.", answer: "Imprime 4 valores. Usar i<3", type: "debug" },
-        { text: "Acumulador esquecido:\n\ns=0; i=1\nwhile i <= 5:\n    i += 1\nprint(s)", answer: "s nunca muda; faltou s += i", type: "debug" }
-    ],
-    4: [
-        { text: "Crie o pseudocódigo para ler notas até -1 e calcular a média.", answer: "soma=cont=0; enquanto nota != -1: soma+=nota; cont+=1; ler nota; media=soma/cont", type: "challenge" },
-        { text: "Validação de entrada: leia idade até ser válida (0-120).", answer: "while idade < 0 or idade > 120: ler novamente", type: "challenge" },
-        { text: "Faça um menu que repete até opção 0 (sair).", answer: "while opcao != 0: mostrar menu; ler opcao; executar", type: "challenge" },
-        { text: "Calcule o fatorial de n (n!).", answer: "fat=1; i=1; while i<=n: fat*=i; i+=1", type: "challenge" },
-        { text: "Some os números pares até n.", answer: "i=2; soma=0; while i<=n: soma+=i; i+=2", type: "challenge" },
-        { text: "Conte os dígitos de um número positivo.", answer: "cont=0; while n>0: n//=10; cont+=1", type: "challenge" },
-        { text: "Adivinhação: repita até acertar, dando dicas.", answer: "while chute != secreto: informar maior/menor; ler chute", type: "challenge" },
-        { text: "Explique 2 formas de evitar loop infinito em while.", answer: "atualizar variável de controle; condição de parada correta", type: "challenge" }
-    ]
-};
+<script>
+    const SOCKET_URL = 'https://motor-while.onrender.com'; // ou seu servidor
+    const socket = io(SOCKET_URL, { transports: ['websocket', 'polling'] });
 
-function shuffleArray(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [arr[i], arr[j]] = [arr[j], arr[i]];
+    let currentRoom = null;
+    let myPlayerName = null;
+    let gameActive = false;
+    let playersList = [];
+    let currentCard = null;
+    let currentDiceValue = 0;
+    let turnStarted = false;
+    let currentTurnPlayer = null;
+    let playersPositions = [];
+
+    // Elementos
+    const lobbyScreen = document.getElementById('lobbyScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const joinRoomBtn = document.getElementById('joinRoomBtn');
+    const playerNameInput = document.getElementById('playerNameInput');
+    const roomNameInput = document.getElementById('roomNameInput');
+    const lobbyInfo = document.getElementById('lobbyInfo');
+    const roomNameDisplay = document.getElementById('roomNameDisplay');
+    const playersListDiv = document.getElementById('playersList');
+    const readyBtn = document.getElementById('readyBtn');
+    const waitingMsg = document.getElementById('waitingMsg');
+    const rollBtn = document.getElementById('rollBtn');
+    const submitBtn = document.getElementById('submitAnswerBtn');
+    const answerInput = document.getElementById('answerInput');
+    const diceResultDiv = document.getElementById('diceResult');
+    const cardMsgDiv = document.getElementById('cardMessage');
+    const turnStatusDiv = document.getElementById('turnStatus');
+    const boardTrack = document.getElementById('boardTrack');
+    const infoLog = document.getElementById('infoLog');
+
+    function addLog(msg) {
+        const p = document.createElement('div');
+        p.textContent = msg;
+        infoLog.appendChild(p);
+        infoLog.scrollTop = infoLog.scrollHeight;
     }
-    return arr;
-}
 
-function initializeGameState(roomId, playersNames) {
-    const state = {
-        players: playersNames,
-        currentPlayerIndex: 0,
-        boardSize: 28,
-        playersPositions: new Array(playersNames.length).fill(0),
-        playersSkipped: new Array(playersNames.length).fill(false),
-        playersSpecialCards: playersNames.map(() => ({ debug: 0, antiLoop: 0 })),
-        deck: { 1: [], 2: [], 3: [], 4: [] },
-        specialDeck: [],
-        gameActive: true,
-        winner: null
-    };
-    for (let i = 1; i <= 4; i++) {
-        state.deck[i] = shuffleArray([...CARDS_BY_PHASE[i]]);
-    }
-    return state;
-}
-
-function getCardForPhase(state, phase) {
-    let deck = state.deck[phase];
-    if (deck.length === 0) {
-        deck = shuffleArray([...CARDS_BY_PHASE[phase]]);
-        state.deck[phase] = deck;
-    }
-    return deck.pop();
-}
-
-function movePlayer(state, playerId, diceRoll, isCorrect) {
-    const idx = state.players.indexOf(playerId);
-    if (idx === -1) return { success: false, message: "Jogador não encontrado" };
-    if (state.playersSkipped[idx]) {
-        state.playersSkipped[idx] = false;
-        return { success: false, wasSkipped: true, message: "Perdeu a rodada (Loop Infinito)" };
+    function renderBoard(positions) {
+        boardTrack.innerHTML = '';
+        for (let i = 0; i <= 28; i++) {
+            let phase = i <= 8 ? 1 : (i <= 16 ? 2 : (i <= 24 ? 3 : 4));
+            let specialClass = [5,12,19,25,27].includes(i) ? 'special' : '';
+            const tile = document.createElement('div');
+            tile.className = `tile phase${phase} ${specialClass}`;
+            tile.innerHTML = `<div style="font-size:0.7rem;">${i}</div><div class="players-on-tile" id="tile-${i}"></div>`;
+            boardTrack.appendChild(tile);
+        }
+        if (positions) updatePawns(positions);
     }
 
-    let newPos = state.playersPositions[idx];
-    if (!isCorrect && newPos !== 0) {
-        newPos = Math.max(0, newPos - 1);
-        state.playersPositions[idx] = newPos;
-        return { success: false, newPosition: newPos, message: "Resposta errada! Voltou uma casa." };
-    }
-
-    newPos += diceRoll;
-    if (newPos > state.boardSize) newPos = state.boardSize;
-
-    // Casas especiais
-    const specialTiles = {
-        5: { name: 'LoopInfinito', effect: 'skip' },
-        12: { name: 'Debug', effect: 'debug' },
-        19: { name: 'Avanco', effect: 'advance' },
-        25: { name: 'AntiLoop', effect: 'antiLoop' },
-        27: { name: 'LoopInfinito', effect: 'skip' }
-    };
-
-    if (specialTiles[newPos]) {
-        const tile = specialTiles[newPos];
-        if (tile.effect === 'skip') state.playersSkipped[idx] = true;
-        else if (tile.effect === 'debug') state.playersSpecialCards[idx].debug++;
-        else if (tile.effect === 'antiLoop') state.playersSpecialCards[idx].antiLoop++;
-        else if (tile.effect === 'advance') {
-            newPos = Math.min(state.boardSize, newPos + 3);
-            if (newPos === state.boardSize) {
-                state.gameActive = false;
-                state.winner = playerId;
-                return { success: true, newPosition: newPos, gameEnded: true, winner: playerId, specialTile: tile.name };
+    function updatePawns(positions) {
+        for (let i = 0; i <= 28; i++) {
+            const container = document.getElementById(`tile-${i}`);
+            if (container) container.innerHTML = '';
+        }
+        for (let idx = 0; idx < positions.length; idx++) {
+            const pos = positions[idx];
+            const playerShort = playersList[idx]?.substring(0,2).toUpperCase() || '??';
+            const tileContainer = document.getElementById(`tile-${pos}`);
+            if (tileContainer) {
+                const pawn = document.createElement('span');
+                pawn.className = 'pawn';
+                pawn.textContent = playerShort;
+                pawn.style.backgroundColor = `hsl(${idx * 90}, 70%, 45%)`;
+                tileContainer.appendChild(pawn);
             }
         }
-        state.playersPositions[idx] = newPos;
-        let phase = newPos <= 8 ? 1 : newPos <= 16 ? 2 : newPos <= 24 ? 3 : 4;
-        const card = getCardForPhase(state, phase);
-        return { success: true, newPosition: newPos, card, phase, specialTile: tile.name };
     }
 
-    state.playersPositions[idx] = newPos;
-    let gameEnded = false, winner = null;
-    if (newPos === state.boardSize) {
-        state.gameActive = false;
-        state.winner = playerId;
-        gameEnded = true;
-        winner = playerId;
+    function updateGameUI(data) {
+        turnStatusDiv.innerHTML = `🎲 Vez de: ${data.currentPlayer}`;
+        currentTurnPlayer = data.currentPlayer;
+        if (currentTurnPlayer !== myPlayerName) {
+            rollBtn.disabled = true;
+            submitBtn.disabled = true;
+            addLog(`⏳ Aguardando ${data.currentPlayer}...`);
+        } else {
+            rollBtn.disabled = false;
+            submitBtn.disabled = true;
+            turnStarted = false;
+            addLog(`🎲 Sua vez, ${myPlayerName}! role o dado.`);
+        }
+        updatePawns(data.positions);
     }
-    let phase = newPos <= 8 ? 1 : newPos <= 16 ? 2 : newPos <= 24 ? 3 : 4;
-    const card = getCardForPhase(state, phase);
-    return { success: true, newPosition: newPos, card, phase, gameEnded, winner };
-}
 
-function nextTurn(state) {
-    if (!state.gameActive) return null;
-    state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.players.length;
-    return {
-        currentPlayer: state.players[state.currentPlayerIndex],
-        positions: state.playersPositions
-    };
-}
+    // Socket events
+    socket.on('connect', () => addLog('✅ Conectado ao servidor'));
 
-// ==================== SOCKET.IO ====================
-io.on('connection', (socket) => {
-    console.log(`Cliente ${socket.id} conectado`);
-
-    socket.on('join-room', ({ playerName, roomName }) => {
-        const roomId = roomName.trim();
-        if (!rooms.has(roomId)) {
-            rooms.set(roomId, { players: {}, readyStatus: {}, gameState: null });
-        }
-        const room = rooms.get(roomId);
-        if (room.gameState && room.gameState.gameActive) {
-            socket.emit('error-msg', 'Jogo já começou nesta sala. Não é possível entrar.');
-            return;
-        }
-        if (room.players[playerName]) {
-            socket.emit('error-msg', 'Nome já usado nesta sala. Escolha outro.');
-            return;
-        }
-        room.players[playerName] = socket.id;
-        room.readyStatus[playerName] = false;
-        socket.join(roomId);
-        socket.emit('room-joined', { room: roomId, playerName, players: room.players, readyStatus: room.readyStatus });
-        io.to(roomId).emit('room-update', { players: room.players, readyStatus: room.readyStatus });
+    socket.on('room-joined', (data) => {
+        currentRoom = data.room;
+        myPlayerName = data.playerName;
+        lobbyInfo.style.display = 'block';
+        roomNameDisplay.textContent = currentRoom;
+        updatePlayersList(data.players, data.readyStatus);
+        waitingMsg.innerHTML = Object.keys(data.players).length < 2 ? 'Aguardando mais jogadores... (mínimo 2)' : 'Clique em "ESTOU PRONTO" quando todos estiverem na sala.';
+        readyBtn.disabled = false;
     });
 
-    socket.on('player-ready', ({ room, playerName }) => {
-        const roomObj = rooms.get(room);
-        if (!roomObj) return;
-        if (roomObj.gameState && roomObj.gameState.gameActive) return;
-        if (roomObj.readyStatus[playerName] !== undefined) {
-            roomObj.readyStatus[playerName] = true;
-            io.to(room).emit('room-update', { players: roomObj.players, readyStatus: roomObj.readyStatus });
-            const allReady = Object.values(roomObj.readyStatus).every(v => v === true);
-            const playerCount = Object.keys(roomObj.players).length;
-            if (allReady && playerCount >= 2) {
-                const playersNames = Object.keys(roomObj.players);
-                const gameState = initializeGameState(room, playersNames);
-                roomObj.gameState = gameState;
-                io.to(room).emit('game-start', {
-                    players: playersNames,
-                    positions: gameState.playersPositions,
-                    currentPlayer: gameState.players[gameState.currentPlayerIndex]
-                });
+    socket.on('room-update', (data) => {
+        updatePlayersList(data.players, data.readyStatus);
+        const allReady = Object.values(data.readyStatus).every(v => v === true);
+        const count = Object.keys(data.players).length;
+        if (allReady && count >= 2) {
+            waitingMsg.innerHTML = '✅ Todos prontos! O jogo vai começar...';
+            readyBtn.disabled = true;
+        } else {
+            waitingMsg.innerHTML = count < 2 ? 'Aguardando mais jogadores... (mínimo 2)' : 'Aguardando todos clicarem em "ESTOU PRONTO"';
+        }
+    });
+
+    socket.on('game-start', (data) => {
+        lobbyScreen.classList.remove('active');
+        gameScreen.style.display = 'block';
+        gameActive = true;
+        playersList = data.players;
+        playersPositions = data.positions;
+        renderBoard(playersPositions);
+        updateGameUI({ currentPlayer: data.currentPlayer, positions: playersPositions });
+        addLog(`🎮 Jogo iniciado na sala ${currentRoom}!`);
+    });
+
+    // Fluxo corrigido: após rolar o dado, o servidor já envia o desafio
+    socket.on('dice-rolled', (data) => {
+        if (data.playerId === myPlayerName) {
+            currentDiceValue = data.diceRoll;
+            diceResultDiv.innerHTML = ['⚀','⚁','⚂','⚃','⚄','⚅'][currentDiceValue-1];
+            addLog(`🎲 Você rolou ${currentDiceValue}! Aguardando desafio...`);
+            rollBtn.disabled = true;
+            // O desafio virá em 'challenge-sent' em seguida
+        }
+    });
+
+    socket.on('challenge-sent', (data) => {
+        if (data.playerId === myPlayerName) {
+            currentCard = data.card;
+            const phaseNames = ['Verde (Introdução)', 'Azul (Contadores)', 'Vermelho (Debug)', 'Dourado (Final)'];
+            cardMsgDiv.innerHTML = `📜 <strong>DESAFIO - FASE ${data.phase} (${phaseNames[data.phase-1]})</strong><br><pre style="white-space:pre-wrap;">${data.card.text}</pre>`;
+            submitBtn.disabled = false;
+            turnStarted = true;
+            addLog(`🔍 Desafio recebido! Responda abaixo.`);
+        }
+    });
+
+    socket.on('move-result', (data) => {
+        if (data.playerId === myPlayerName) {
+            if (data.success) {
+                addLog(`✅ ${data.message || 'Resposta correta! Você avançou.'}`);
+            } else {
+                addLog(`❌ ${data.message || 'Resposta errada! Você voltou uma casa.'}`);
+            }
+        }
+        // Atualizar posições no tabuleiro
+        if (data.positions) {
+            playersPositions = data.positions;
+            updatePawns(playersPositions);
+        }
+        if (data.gameEnded) {
+            addLog(`🏆 FIM DE JOGO! VENCEDOR: ${data.winner}`);
+            gameActive = false;
+            rollBtn.disabled = true;
+            submitBtn.disabled = true;
+        }
+    });
+
+    socket.on('turn-update', (data) => {
+        if (gameActive) {
+            playersPositions = data.positions;
+            updateGameUI({ currentPlayer: data.currentPlayer, positions: data.positions });
+            // Limpar desafio anterior para o próximo turno
+            if (data.currentPlayer !== myPlayerName) {
+                cardMsgDiv.innerHTML = '💡 Aguarde o próximo jogador...';
+                answerInput.value = '';
+                turnStarted = false;
             }
         }
     });
 
-    socket.on('roll-dice', ({ room, playerId }) => {
-        const roomObj = rooms.get(room);
-        if (!roomObj || !roomObj.gameState || !roomObj.gameState.gameActive) return;
-        const state = roomObj.gameState;
-        const currentPlayer = state.players[state.currentPlayerIndex];
-        if (currentPlayer !== playerId) {
-            socket.emit('error-msg', 'Não é sua vez');
-            return;
-        }
-        const diceRoll = Math.floor(Math.random() * 6) + 1;
-        // Envia o valor do dado
-        io.to(room).emit('dice-rolled', { playerId, diceRoll });
-        // **CORREÇÃO**: já sorteia a carta baseado na posição atual do jogador
-        const idx = state.players.indexOf(playerId);
-        const currentPos = state.playersPositions[idx];
-        let phase = currentPos <= 8 ? 1 : currentPos <= 16 ? 2 : currentPos <= 24 ? 3 : 4;
-        const card = getCardForPhase(state, phase);
-        // Envia o desafio imediatamente para o jogador que rolou o dado
-        io.to(room).emit('challenge-sent', { playerId, card, phase, diceRoll });
+    socket.on('error-msg', (msg) => {
+        addLog(`❌ ${msg}`);
+        if (msg.includes('Nome já usado')) readyBtn.disabled = false;
+        if (msg.includes('Não é sua vez')) rollBtn.disabled = false;
     });
 
-    socket.on('submit-answer', ({ room, playerId, diceRoll, answer, expected, card }) => {
-        const roomObj = rooms.get(room);
-        if (!roomObj || !roomObj.gameState) return;
-        const state = roomObj.gameState;
-        const currentPlayer = state.players[state.currentPlayerIndex];
-        if (currentPlayer !== playerId) return;
+    function updatePlayersList(players, readyStatus) {
+        playersListDiv.innerHTML = '';
+        for (let name of Object.keys(players)) {
+            const div = document.createElement('div');
+            div.className = 'player-item';
+            div.innerHTML = `<span>${name}</span><span class="${readyStatus[name] ? 'ready-badge' : 'not-ready'}">${readyStatus[name] ? '✅ PRONTO' : '⏳ AGUARDANDO'}</span>`;
+            playersListDiv.appendChild(div);
+        }
+    }
 
-        const isCorrect = (answer.toLowerCase().trim() === expected.toLowerCase().trim());
-        const moveResult = movePlayer(state, playerId, diceRoll, isCorrect);
-
-        if (moveResult.wasSkipped) {
-            io.to(room).emit('move-result', { playerId, success: false, message: moveResult.message, positions: state.playersPositions });
-            const turnUpdate = nextTurn(state);
-            if (turnUpdate) io.to(room).emit('turn-update', turnUpdate);
+    joinRoomBtn.onclick = () => {
+        const playerName = playerNameInput.value.trim();
+        const roomName = roomNameInput.value.trim();
+        if (!playerName || !roomName) {
+            alert('Digite seu nome e o nome da sala');
             return;
         }
+        socket.emit('join-room', { playerName, roomName });
+        joinRoomBtn.disabled = true;
+        playerNameInput.disabled = true;
+        roomNameInput.disabled = true;
+    };
 
-        io.to(room).emit('move-result', {
-            playerId,
-            success: moveResult.success,
-            message: moveResult.success ? (moveResult.specialTile ? `Caiu em ${moveResult.specialTile}!` : 'Avançou!') : moveResult.message,
-            newPosition: moveResult.newPosition,
-            positions: state.playersPositions,
-            gameEnded: moveResult.gameEnded,
-            winner: moveResult.winner
+    readyBtn.onclick = () => {
+        socket.emit('player-ready', { room: currentRoom, playerName: myPlayerName });
+        readyBtn.disabled = true;
+        waitingMsg.innerHTML = 'Aguardando os outros jogadores...';
+    };
+
+    rollBtn.onclick = () => {
+        if (gameActive && currentTurnPlayer === myPlayerName) {
+            socket.emit('roll-dice', { room: currentRoom, playerId: myPlayerName });
+        }
+    };
+
+    submitBtn.onclick = () => {
+        if (!turnStarted) return addLog('Role o dado primeiro!');
+        const answer = answerInput.value.trim();
+        if (!answer) return addLog('Digite uma resposta.');
+        if (!currentCard) return addLog('Nenhum desafio ativo. Role o dado novamente.');
+        const expected = currentCard.answer;
+        socket.emit('submit-answer', {
+            room: currentRoom,
+            playerId: myPlayerName,
+            diceRoll: currentDiceValue,
+            answer: answer,
+            expected: expected,
+            card: currentCard
         });
-
-        if (moveResult.gameEnded) {
-            io.to(room).emit('game-ended', { winner: moveResult.winner });
-            return;
-        }
-
-        const turnUpdate = nextTurn(state);
-        if (turnUpdate) io.to(room).emit('turn-update', turnUpdate);
-    });
-
-    socket.on('disconnect', () => {
-        console.log(`Cliente ${socket.id} desconectado`);
-        for (let [roomId, room] of rooms.entries()) {
-            let found = false;
-            for (let [name, id] of Object.entries(room.players)) {
-                if (id === socket.id) {
-                    delete room.players[name];
-                    delete room.readyStatus[name];
-                    found = true;
-                    break;
-                }
-            }
-            if (found) {
-                if (Object.keys(room.players).length === 0) {
-                    rooms.delete(roomId);
-                } else {
-                    io.to(roomId).emit('room-update', { players: room.players, readyStatus: room.readyStatus });
-                }
-                break;
-            }
-        }
-    });
-});
-
-const PORT = process.env.PORT || 10000;
-server.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Servidor rodando na porta ${PORT} com lobby e salas`);
-});
+        answerInput.value = '';
+        submitBtn.disabled = true;
+        turnStarted = false;
+        cardMsgDiv.innerHTML = '💡 Processando resposta...';
+    };
+</script>
+</body>
+</html>
