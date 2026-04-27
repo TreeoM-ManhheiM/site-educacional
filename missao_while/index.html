@@ -8,7 +8,7 @@
     <style>
         * { box-sizing: border-box; }
         body {
-            font-family: 'Courier New', monospace;
+            font-family: 'Segoe UI', 'Courier New', monospace;
             background: linear-gradient(145deg, #1a472a 0%, #0e2a1a 100%);
             margin: 0;
             padding: 20px;
@@ -18,7 +18,7 @@
             align-items: center;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             width: 100%;
             background: #fef7e0;
             border-radius: 48px;
@@ -26,13 +26,13 @@
             border: 4px solid #ffd966;
             box-shadow: 0 20px 35px rgba(0,0,0,0.4);
         }
-        h1 { text-align: center; color: #2c3e2f; text-shadow: 3px 3px 0 #ffd966; margin-top: 0; margin-bottom: 10px; }
+        h1 { text-align: center; color: #2c3e2f; text-shadow: 3px 3px 0 #ffd966; margin-top: 0; }
         .sub { text-align: center; font-style: italic; color: #2d6a4f; margin-bottom: 25px; }
         .lobby, .game { display: none; }
         .active { display: block; }
         input, button {
             font-family: monospace;
-            font-size: 1.1rem;
+            font-size: 1rem;
             padding: 10px 16px;
             margin: 8px;
             border-radius: 30px;
@@ -69,7 +69,7 @@
         .tile {
             width: 65px; height: 65px; background: #fff2cf; border-radius: 18px;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            font-weight: bold; font-size: 1.1rem; box-shadow: 0 4px 0 #a5936e;
+            font-weight: bold; font-size: 1rem; box-shadow: 0 4px 0 #a5936e;
             border: 1px solid #eedd99;
         }
         .tile.phase1 { background: #b9fbc0; border-bottom: 6px solid #2b7a2a; }
@@ -87,7 +87,37 @@
         .dice { background: white; width: 70px; height: 70px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; margin: 10px auto; color: #b51c1c; }
         .card-area { background: #f9eec1; padding: 18px; border-radius: 28px; margin-top: 20px; font-family: monospace; color: #1f2a2e; }
         .turn-indicator { background: #000000aa; backdrop-filter: blur(4px); border-radius: 40px; padding: 6px 16px; display: inline-block; font-size: 0.9rem; }
-        #infoLog { max-height: 120px; overflow-y: auto; font-size: 0.8rem; margin-top: 15px; background: #1f2a2e; padding: 10px; border-radius: 20px; }
+        #infoLog { max-height: 120px; overflow-y: auto; font-size: 0.8rem; margin-top: 15px; background: #1f2a2e; padding: 10px; border-radius: 20px; color: #ccc; }
+        .terminal {
+            background: #0a0e17;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            border: 1px solid #334155;
+            overflow: hidden;
+        }
+        .terminal-header {
+            background: #1e293b;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid #334155;
+        }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; background: #22c55e; }
+        .terminal-dot.red { background: #ef4444; }
+        .terminal-dot.yellow { background: #eab308; }
+        .terminal-title { font-size: 0.8rem; color: #94a3b8; margin-left: 0.5rem; }
+        .terminal-content {
+            padding: 1rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            color: #86efac;
+            background: #020617;
+            min-height: 120px;
+            max-height: 200px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
         @media (max-width: 800px) {
             .tile { width: 45px; height: 45px; font-size: 0.8rem; }
             .pawn { width: 16px; height: 16px; font-size: 8px; line-height: 16px; }
@@ -136,25 +166,35 @@
                 <button id="submitAnswerBtn" disabled style="flex:1;">✅ RESPONDER</button>
             </div>
             <div id="infoLog"></div>
+            <div class="terminal" id="terminal" style="display: none;">
+                <div class="terminal-header">
+                    <div class="terminal-dot red"></div>
+                    <div class="terminal-dot yellow"></div>
+                    <div class="terminal-dot"></div>
+                    <span class="terminal-title">🐍 Simulador Python (saída)</span>
+                    <button id="fecharTerminalBtn" style="margin-left: auto; background: #334155; padding: 0.2rem 0.5rem; font-size: 0.7rem;">✕ Fechar</button>
+                </div>
+                <div id="terminalOutput" class="terminal-content">Aguardando execução...</div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const SOCKET_URL = 'https://motor-while.onrender.com'; // ou seu servidor
+    const SOCKET_URL = 'https://motor-while.onrender.com'; // ALTERE PARA SEU SERVIDOR
     const socket = io(SOCKET_URL, { transports: ['websocket', 'polling'] });
 
     let currentRoom = null;
     let myPlayerName = null;
     let gameActive = false;
     let playersList = [];
+    let playersPositions = [];
     let currentCard = null;
     let currentDiceValue = 0;
     let turnStarted = false;
     let currentTurnPlayer = null;
-    let playersPositions = [];
 
-    // Elementos
+    // DOM elements
     const lobbyScreen = document.getElementById('lobbyScreen');
     const gameScreen = document.getElementById('gameScreen');
     const joinRoomBtn = document.getElementById('joinRoomBtn');
@@ -173,6 +213,9 @@
     const turnStatusDiv = document.getElementById('turnStatus');
     const boardTrack = document.getElementById('boardTrack');
     const infoLog = document.getElementById('infoLog');
+    const terminalDiv = document.getElementById('terminal');
+    const terminalOutput = document.getElementById('terminalOutput');
+    const fecharTerminalBtn = document.getElementById('fecharTerminalBtn');
 
     function addLog(msg) {
         const p = document.createElement('div');
@@ -219,6 +262,7 @@
         if (currentTurnPlayer !== myPlayerName) {
             rollBtn.disabled = true;
             submitBtn.disabled = true;
+            turnStarted = false;
             addLog(`⏳ Aguardando ${data.currentPlayer}...`);
         } else {
             rollBtn.disabled = false;
@@ -226,7 +270,10 @@
             turnStarted = false;
             addLog(`🎲 Sua vez, ${myPlayerName}! role o dado.`);
         }
-        updatePawns(data.positions);
+        if (data.positions) {
+            playersPositions = data.positions;
+            updatePawns(playersPositions);
+        }
     }
 
     // Socket events
@@ -265,14 +312,14 @@
         addLog(`🎮 Jogo iniciado na sala ${currentRoom}!`);
     });
 
-    // Fluxo corrigido: após rolar o dado, o servidor já envia o desafio
+    // Fluxo corrigido: dado + desafio imediato
     socket.on('dice-rolled', (data) => {
         if (data.playerId === myPlayerName) {
             currentDiceValue = data.diceRoll;
             diceResultDiv.innerHTML = ['⚀','⚁','⚂','⚃','⚄','⚅'][currentDiceValue-1];
             addLog(`🎲 Você rolou ${currentDiceValue}! Aguardando desafio...`);
             rollBtn.disabled = true;
-            // O desafio virá em 'challenge-sent' em seguida
+            // desafio será enviado em 'challenge-sent'
         }
     });
 
@@ -295,7 +342,6 @@
                 addLog(`❌ ${data.message || 'Resposta errada! Você voltou uma casa.'}`);
             }
         }
-        // Atualizar posições no tabuleiro
         if (data.positions) {
             playersPositions = data.positions;
             updatePawns(playersPositions);
@@ -312,11 +358,11 @@
         if (gameActive) {
             playersPositions = data.positions;
             updateGameUI({ currentPlayer: data.currentPlayer, positions: data.positions });
-            // Limpar desafio anterior para o próximo turno
             if (data.currentPlayer !== myPlayerName) {
                 cardMsgDiv.innerHTML = '💡 Aguarde o próximo jogador...';
                 answerInput.value = '';
                 turnStarted = false;
+                submitBtn.disabled = true;
             }
         }
     });
@@ -381,6 +427,15 @@
         turnStarted = false;
         cardMsgDiv.innerHTML = '💡 Processando resposta...';
     };
+
+    fecharTerminalBtn.onclick = () => {
+        terminalDiv.style.display = 'none';
+    };
+
+    // Terminal fake para execução de código (opcional, pode ser integrado com um eval seguro)
+    // Por enquanto é apenas um placeholder visual
+
+    renderBoard([]);
 </script>
 </body>
 </html>
