@@ -6,7 +6,6 @@
   <title>Dominó Lógico - Versão Organizada</title>
 
   <style>
-    /* BASE E CORES */
     body {
       margin: 0;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -16,7 +15,6 @@
       overflow-x: hidden;
     }
 
-    /* TAPETE VERDE ORGANIZADO */
     #mesa {
       background: #14532d;
       min-height: 400px;
@@ -34,7 +32,6 @@
       transition: all 0.3s ease;
     }
 
-    /* PEÇAS ESTILIZADAS */
     .peca {
       background: #fdf6e3;
       color: #1a1a1a;
@@ -60,7 +57,6 @@
     .p-horiz .linha { width: 2px; height: 80%; }
     .p-vert .linha  { width: 80%; height: 2px; }
 
-    /* INTERFACE E BOTÕES */
     #mao {
       display: flex;
       justify-content: center;
@@ -92,7 +88,6 @@
       cursor: not-allowed;
     }
 
-    /* MODAL DE ESCOLHA (SEM TRAVAR) */
     #modal-escolha {
       display: none;
       position: fixed;
@@ -112,7 +107,6 @@
     }
     .btn-escolha { margin: 10px; padding: 20px 40px; font-size: 20px; }
 
-    /* ===== PRIVACIDADE: BORRÃO NA MÃO ===== */
     #mao.mao-borrada .peca {
       filter: blur(10px);
       transition: filter 0.15s ease;
@@ -120,12 +114,21 @@
       pointer-events: none;
     }
 
-    /* Dica visual pequena */
     #dica-privacidade {
       font-size: 13px;
       opacity: 0.85;
       margin-top: -5px;
       margin-bottom: 10px;
+    }
+
+    /* Indicador de conexão */
+    #status-conexao {
+      font-size: 1.2em;
+      margin: 15px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      display: inline-block;
     }
   </style>
 </head>
@@ -142,10 +145,15 @@
   <div id="lobby">
     <h1 style="color: #60a5fa;">Dominó Lógico 🧠</h1>
 
+    <!-- Indicador de conexão -->
+    <div id="status-conexao">🔄 Conectando ao servidor...</div>
+
     <div id="controles-login">
-      <input type="text" id="nick" placeholder="Seu Nome" style="padding: 12px; border-radius: 8px; border: none; margin: 5px;" />
-      <input type="text" id="sala" placeholder="Nome da Sala" style="padding: 12px; border-radius: 8px; border: none; margin: 5px;" />
-      <button onclick="window.entrar()">ENTRAR NO JOGO</button>
+      <input type="text" id="nick" placeholder="Seu Nome" disabled
+             style="padding: 12px; border-radius: 8px; border: none; margin: 5px;" />
+      <input type="text" id="sala" placeholder="Nome da Sala" disabled
+             style="padding: 12px; border-radius: 8px; border: none; margin: 5px;" />
+      <button onclick="window.entrar()" disabled>ENTRAR NO JOGO</button>
     </div>
 
     <div id="espera" style="display:none">
@@ -185,18 +193,35 @@
 
   <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
   <script>
-    // Conexão relativa – funciona perfeitamente quando o servidor serve o HTML
     const socket = io();
 
-    // Captura erros de conexão e mostra alerta amigável
-    socket.on("connect_error", (err) => {
-      console.error("Erro de conexão:", err.message);
-      alert("Falha ao conectar ao servidor. Verifique se ele está online.");
+    // Atualização suave do status de conexão
+    const statusEl = document.getElementById('status-conexao');
+    const inputs = document.querySelectorAll('#controles-login input');
+    const btnEntrar = document.querySelector('#controles-login button');
+
+    socket.on('connect', () => {
+      statusEl.innerHTML = '✅ Conectado ao servidor';
+      statusEl.style.background = 'rgba(16, 185, 129, 0.2)'; // verde suave
+      // Habilita os campos
+      inputs.forEach(i => i.disabled = false);
+      btnEntrar.disabled = false;
+    });
+
+    socket.on('disconnect', () => {
+      statusEl.innerHTML = '❌ Conexão perdida. Tentando reconectar...';
+      statusEl.style.background = 'rgba(239, 68, 68, 0.2)';
+      inputs.forEach(i => i.disabled = true);
+      btnEntrar.disabled = true;
+    });
+
+    socket.on('connect_error', () => {
+      statusEl.innerHTML = '🔄 Conectando ao servidor... (aguardando)';
+      statusEl.style.background = 'rgba(251, 191, 36, 0.2)';
+      // Os campos continuam desabilitados até conectar
     });
 
     let meuNome = "", mesaAtu = [], maoAtu = [], jogadaPendente = null;
-
-    // ===== PRIVACIDADE: mão borrada por padrão =====
     let maoBorrada = true;
 
     function aplicarPrivacidade() {
