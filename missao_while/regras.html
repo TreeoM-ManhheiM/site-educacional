@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Regras - Missão While</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e3b2c;
+            color: #f0ffe0;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #2c4a38;
+            border-radius: 50px;
+            padding: 25px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+        h1 { color: #ffd966; text-align: center; }
+        hr { border-color: #ffb347;}
+        .fase { background: #00000044; border-left: 18px solid gold; padding: 8px 15px; margin: 15px 0; border-radius: 20px; }
+        button { background: #f39c12; padding: 12px 24px; border-radius: 60px; font-weight: bold; border: none; cursor: pointer; margin-top: 20px;}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🚦 MISSÃO WHILE — REGRAS OFICIAIS</h1>
+    <p><strong>🎯 Objetivo:</strong> Ser o primeiro a chegar ao final do tabuleiro (casa 28) e resolver um desafio final, sem cair em loops infinitos.</p>
+    <p><strong>👥 Jogadores:</strong> 2 a 5 por grupo.</p>
+    <hr>
+    <h2>⚙️ TURNO DE JOGO</h2>
+    <ol>
+        <li>Role o dado 🎲 e avance o número sorteado.</li>
+        <li>Pegue uma carta da <strong>COR DA CASA</strong> onde parou: 🟢 Verde (fase1), 🔵 Azul(fase2), 🔴 Vermelho(fase3 debug), 🟡 Dourado(desafio final).</li>
+        <li>Responda corretamente o desafio (pseudocódigo, saída de código ou correção).</li>
+        <li>✔️ Acertou: permanece na casa. ❌ Errou: volta 1 casa (nas vermelhas pode voltar 2 casas a critério do mestre).</li>
+        <li>Carta especial pode te salvar!</li>
+    </ol>
+    <h2>🃏 CARTAS ESPECIAIS</h2>
+    <ul>
+        <li><strong>⚠️ Loop Infinito</strong> – Perde a próxima rodada. 🔧 Debug pode anular.</li>
+        <li><strong>🔧 Debug</strong> – Avança +2 casas OU anula penalidade.</li>
+        <li><strong>⏩ Avanço</strong> – Avança +3 casas sem comprar carta.</li>
+        <li><strong>🛡️ Anti-loop</strong> – Ignora um Loop infinito.</li>
+    </ul>
+    <h2>🏁 VITÓRIA</h2>
+    <p>Chegar exatamente na casa 28 e responder corretamente um desafio FASE 4. Se errar, volte 1 casa.</p>
+    <h2>💡 DICAS PARA PROGRAMAR WHILE</h2>
+    <div class="fase">✅ Atualize a variável de controle dentro do loop.<br>✅ Evite condição permanentemente verdadeira.<br>✅ Use sentinelas para entrada de dados indefinida.</div>
+    <a href="/"><button>🔙 VOLTAR PARA O JOGO</button></a>
+</div>
+</body>
+</html>
