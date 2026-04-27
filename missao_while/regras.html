@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head><meta charset="UTF-8"><title>Regras - Loop Infinito</title>
-<style>body{font-family:monospace; background:#1e3b2c; color:#f0ffe0; padding:2rem;}</style>
+<head>
+    <meta charset="UTF-8">
+    <title>Regras - Loop Infinito</title>
+    <style>
+        body { font-family: monospace; background: #1e3b2c; color: #f0ffe0; padding: 2rem; }
+        .container { max-width: 900px; margin: auto; background: #2c4a38; border-radius: 50px; padding: 25px; }
+        h1 { color: #ffd966; }
+        button { background: #f39c12; padding: 12px 24px; border-radius: 60px; border: none; cursor: pointer; margin-top: 20px; }
+    </style>
 </head>
 <body>
-<div style="max-width:900px; margin:auto; background:#2c4a38; border-radius:50px; padding:25px;">
-<h1>📖 Regras do Jogo</h1>
-<p><strong>Objetivo:</strong> Ser o primeiro a completar as 30 missões de programação.</p>
-<p><strong>Como jogar:</strong> Cada jogador, na sua vez, rola o dado e cai em uma casa correspondente a uma missão. Deve montar o código arrastando os blocos na ordem correta e clicar em "Verificar". Se acertar, avança uma casa; se errar, volta uma.</p>
-<p><strong>Lobby:</strong> Todos entram na mesma sala (mesmo nome). Clicam "Estou pronto" e o jogo começa quando todos estiverem prontos (mínimo 2 jogadores).</p>
-<p><strong>Dicas:</strong> Use o terminal para testar o código antes de verificar.</p>
-<a href="/"><button>🔙 Voltar</button></a>
+<div class="container">
+    <h1>📖 Regras do Jogo - Loop Infinito</h1>
+    <p><strong>Objetivo:</strong> Ser o primeiro a completar as 30 missões de programação (chegar à casa 30).</p>
+    <p><strong>Como jogar:</strong> Cada jogador, na sua vez, recebe uma missão (história + desafio de código). Deve montar o código arrastando os blocos na ordem correta e clicar em "Verificar". Se acertar, avança uma casa; se errar, volta uma.</p>
+    <p><strong>Lobby:</strong> Todos os jogadores entram na mesma sala (mesmo nome de sala). Após entrarem, cada um clica em "Estou pronto". O jogo começa automaticamente quando todos estiverem prontos (mínimo 2 jogadores).</p>
+    <p><strong>Dicas:</strong> Use o botão "Rodar código" para testar sua lógica antes de verificar.</p>
+    <a href="index.html"><button>🔙 Voltar ao jogo</button></a>
 </div>
 </body>
 </html>
