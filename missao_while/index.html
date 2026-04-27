@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loop Infinito - 30 Missões com Blocos</title>
+    <title>Loop Infinito - 30 Missões</title>
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
     <style>
         * { box-sizing: border-box; }
@@ -85,7 +85,7 @@
         .remover-linha { color: #ef4444; cursor: pointer; margin-left: 0.8rem; }
         .terminal { background: #0a0e17; border-radius: 1rem; margin-top: 1rem; border: 1px solid #334155; overflow: hidden; }
         .terminal-header { background: #1e293b; padding: 0.5rem; display: flex; gap: 0.5rem; }
-        .terminal-content { padding: 0.8rem; font-family: monospace; font-size: 0.8rem; color: #86efac; background: #020617; max-height: 150px; overflow-y: auto; }
+        .terminal-content { padding: 0.8rem; font-family: monospace; font-size: 0.8rem; color: #86efac; background: #020617; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
         .feedback { margin-top: 1rem; padding: 0.8rem; border-radius: 1rem; }
         .feedback.sucesso { background: #14532d; color: #bbf7d0; }
         .feedback.erro { background: #450a0a; color: #fecaca; }
@@ -99,16 +99,16 @@
     <!-- LOBBY -->
     <div id="lobbyScreen" class="lobby active">
         <div style="text-align:center">
-            <input type="text" id="playerNameInput" placeholder="Seu nome">
-            <input type="text" id="roomNameInput" placeholder="Nome da sala">
-            <button id="joinRoomBtn">🎮 ENTRAR</button>
+            <input type="text" id="playerNameInput" placeholder="Seu nome (ex: Vermelho)">
+            <input type="text" id="roomNameInput" placeholder="Nome da sala (ex: turmaA)">
+            <button id="joinRoomBtn">🎮 ENTRAR NA SALA</button>
         </div>
         <div id="lobbyInfo" style="display:none;">
             <div class="player-list">
-                <h3>Sala <span id="roomNameDisplay"></span></h3>
+                <h3>👥 Jogadores na sala <span id="roomNameDisplay"></span></h3>
                 <div id="playersList"></div>
                 <button id="readyBtn" style="width:100%">✅ ESTOU PRONTO</button>
-                <p id="waitingMsg"></p>
+                <p id="waitingMsg" style="margin-top:10px; text-align:center;"></p>
             </div>
         </div>
     </div>
@@ -122,19 +122,19 @@
             <div class="missao-painel">
                 <div id="storyBox" class="story-box"></div>
                 <div id="dicaBox" class="dica"></div>
-                <div><strong>🧩 Blocos disponíveis:</strong></div>
+                <div><strong>🧩 Blocos disponíveis (clique para adicionar ao seu código):</strong></div>
                 <div id="paleta" class="paleta"></div>
-                <div><strong>📝 Seu código (clique nos blocos para montar):</strong></div>
+                <div><strong>📝 Seu código (clique no ❌ para remover linha):</strong></div>
                 <div id="codigoMontado" class="codigo-area"></div>
                 <div>
                     <button id="verificarBtn" class="primary">✅ VERIFICAR E AVANÇAR</button>
                     <button id="rodarBtn" class="success">▶️ RODAR CÓDIGO</button>
-                    <button id="limparBtn" class="warning">🗑 LIMPAR</button>
+                    <button id="limparBtn" class="warning">🗑 LIMPAR CODIGO</button>
                 </div>
                 <div id="feedback" class="feedback"></div>
                 <div class="terminal" id="terminal" style="display:none;">
                     <div class="terminal-header">
-                        <span>🐍 Terminal Python</span>
+                        <span>🐍 Terminal Python (simulação)</span>
                         <button id="fecharTerminal" style="margin-left:auto; padding:0.2rem 0.5rem;">✕</button>
                     </div>
                     <div id="terminalOutput" class="terminal-content"></div>
@@ -145,17 +145,16 @@
 </div>
 
 <script>
-    const SOCKET_URL = 'https://motor-while.onrender.com'; // substitua pelo seu
+    // === CONFIGURAÇÃO DO SERVIDOR ===
+    const SOCKET_URL = 'https://motor-while.onrender.com';
     const socket = io(SOCKET_URL);
 
-    // Variáveis globais
     let currentRoom = null, myName = null;
     let gameActive = false, playersList = [], playersPositions = [], currentTurn = null;
     let currentMissao = null, currentPosicao = null;
     let blocosSelecionados = [];
-    let pendingInputResolver = null;
 
-    // DOM elements
+    // DOM
     const lobbyScreen = document.getElementById('lobbyScreen');
     const gameScreen = document.getElementById('gameScreen');
     const joinBtn = document.getElementById('joinRoomBtn');
@@ -181,7 +180,7 @@
     const terminalOutput = document.getElementById('terminalOutput');
     const fecharTerminal = document.getElementById('fecharTerminal');
 
-    function addLog(msg, isError=false) { /* apenas visual */ console.log(msg); }
+    function addLog(msg, isError=false) { console.log(msg); }
     function renderBoard(positions) {
         boardTrack.innerHTML = '';
         for (let i = 0; i <= 30; i++) {
@@ -200,7 +199,7 @@
         }
         for (let idx=0; idx<positions.length; idx++) {
             const pos = positions[idx];
-            const short = playersList[idx]?.substring(0,2).toUpperCase();
+            const short = playersList[idx]?.substring(0,2).toUpperCase() || '??';
             const tile = document.getElementById(`tile-${pos}`);
             if (tile) {
                 const pawn = document.createElement('span');
@@ -221,7 +220,7 @@
         dicaBox.innerHTML = `💡 Dica: ${missao.dica}`;
         // Gerar blocos: código esperado + distrações
         let blocos = [...missao.codigoEsperado];
-        const distracoes = ["for i in range(10):","if x > 0:","else:","    pass","break","continue","    i += 1","    i -= 1","print('teste')"];
+        const distracoes = ["for i in range(10):","if x > 0:","else:","    pass","break","continue","    i += 1","    i -= 1","print('teste')","while True:"];
         for (let d of distracoes) if (!blocos.includes(d) && blocos.length < 16) blocos.push(d);
         for (let i=blocos.length-1; i>0; i--) { const j=Math.floor(Math.random()*(i+1)); [blocos[i],blocos[j]]=[blocos[j],blocos[i]]; }
         paletaDiv.innerHTML = '';
@@ -263,28 +262,14 @@
         });
     }
     function limparCodigo() { blocosSelecionados = []; exibirCodigoMontado(); feedbackDiv.innerHTML = ''; }
-    async function rodarCodigoPython() {
+    async function rodarCodigoSimulado() {
         if (blocosSelecionados.length === 0) { feedbackDiv.innerHTML = '❌ Nenhum código para executar.'; return; }
         terminalDiv.style.display = 'block';
-        terminalOutput.innerHTML = '<div>🐍 Executando...</div>';
-        // Simulação de execução (igual ao exemplo das missões)
-        let linhas = blocosSelecionados;
-        let vars = {};
-        let output = [];
-        function printToTerminal(...args) { output.push(args.join(' ')); terminalOutput.innerHTML += `<div>> ${args.join(' ')}</div>`; }
-        async function inputAsync(promptText) {
-            return new Promise(resolve => {
-                pendingInputResolver = resolve;
-                // criar modal simples
-                const val = prompt(promptText);
-                resolve(val);
-            });
-        }
-        // simplificação: eval seguro? usaremos avaliação dos blocos com interpretador básico (igual ao exemplo)
-        // Para não estender demais, faremos uma função similar ao exemplo original mas reduzida.
-        // Vou copiar a lógica de execução do exemplo das 20 missões (já testada).
-        // Devido ao tamanho, aqui vai uma versão compacta:
-        terminalOutput.innerHTML += '<div>⚠️ Simulação: o código será executado mentalmente. Use "Verificar" para validação oficial.</div>';
+        terminalOutput.innerHTML = '<div>🐍 Simulando execução...</div>';
+        // Simulação leve: só mostra os blocos como "código"
+        terminalOutput.innerHTML += '<div>Código montado:</div>';
+        for (let linha of blocosSelecionados) terminalOutput.innerHTML += `<div>${linha}</div>`;
+        terminalOutput.innerHTML += '<div>✅ Simulação concluída (use "Verificar" para validação).</div>';
     }
     verificarBtn.onclick = () => {
         if (!gameActive || currentTurn !== myName) { feedbackDiv.innerHTML = '❌ Não é sua vez!'; return; }
@@ -297,22 +282,22 @@
             socket.emit('submit-codigo', { room: currentRoom, playerId: myName, posicao: currentPosicao, blocosMontados: blocosSelecionados });
             feedbackDiv.innerHTML = '✅ Código correto! Aguardando resultado...';
         } else {
-            feedbackDiv.innerHTML = '❌ Código incorreto. Volte uma casa.';
+            feedbackDiv.innerHTML = '❌ Código incorreto. Voltará uma casa.';
             socket.emit('submit-codigo', { room: currentRoom, playerId: myName, posicao: currentPosicao, blocosMontados: blocosSelecionados });
         }
     };
-    rodarBtn.onclick = () => { rodarCodigoPython(); };
-    limparBtn.onclick = () => { limparCodigo(); };
-    fecharTerminal.onclick = () => { terminalDiv.style.display = 'none'; };
+    rodarBtn.onclick = () => rodarCodigoSimulado();
+    limparBtn.onclick = () => limparCodigo();
+    fecharTerminal.onclick = () => terminalDiv.style.display = 'none';
 
-    // Socket events
-    socket.on('connect', () => console.log('Conectado'));
+    // Socket
+    socket.on('connect', () => console.log('Conectado ao servidor'));
     socket.on('room-joined', data => {
         currentRoom = data.room; myName = data.playerName;
         lobbyInfo.style.display = 'block';
         roomNameDisplay.textContent = currentRoom;
         updatePlayersList(data.players, data.readyStatus);
-        waitingMsg.innerText = Object.keys(data.players).length<2 ? 'Aguardando mais jogadores (mínimo 2)' : 'Clique em "ESTOU PRONTO"';
+        waitingMsg.innerText = Object.keys(data.players).length < 2 ? 'Aguardando mais jogadores (mínimo 2)' : 'Clique em "ESTOU PRONTO"';
         readyBtn.disabled = false;
     });
     socket.on('room-update', data => {
@@ -326,32 +311,47 @@
         gameActive = true;
         playersList = data.players;
         playersPositions = data.positions;
-        renderBoard(playersPositions);
         currentTurn = data.currentPlayer;
         turnStatus.innerText = `🎲 Vez de: ${currentTurn}`;
-        if (currentTurn === myName) carregarMissao(playersPositions[playersList.indexOf(myName)]);
+        renderBoard(playersPositions);
+        if (currentTurn === myName) {
+            const minhaPos = playersPositions[playersList.indexOf(myName)];
+            carregarMissao(minhaPos);
+        } else {
+            missaoArea.style.display = 'none';
+        }
     });
     socket.on('missao-data', data => {
-        if (data.posicao === playersPositions[playersList.indexOf(myName)]) exibirMissaoUI(data.missao, data.posicao);
+        const minhaPos = playersPositions[playersList.indexOf(myName)];
+        if (data.posicao === minhaPos && currentTurn === myName) {
+            exibirMissaoUI(data.missao, data.posicao);
+        }
     });
     socket.on('move-result', data => {
-        if (data.playerId === myName) feedbackDiv.innerHTML = data.success ? '✅ Avançou!' : '❌ Errou, voltou!';
+        if (data.playerId === myName) {
+            feedbackDiv.innerHTML = data.success ? '✅ Avançou para a próxima casa!' : '❌ Errou! Voltou uma casa.';
+        }
         playersPositions = data.positions;
         renderBoard(playersPositions);
     });
     socket.on('turn-update', data => {
         currentTurn = data.currentPlayer;
-        turnStatus.innerText = `🎲 Vez de: ${currentTurn}`;
         playersPositions = data.positions;
+        turnStatus.innerText = `🎲 Vez de: ${currentTurn}`;
         renderBoard(playersPositions);
-        if (currentTurn === myName && gameActive) carregarMissao(playersPositions[playersList.indexOf(myName)]);
-        else missaoArea.style.display = 'none';
+        if (currentTurn === myName && gameActive) {
+            const minhaPos = playersPositions[playersList.indexOf(myName)];
+            carregarMissao(minhaPos);
+        } else {
+            missaoArea.style.display = 'none';
+        }
     });
     socket.on('game-ended', data => {
         gameActive = false;
         turnStatus.innerText = `🏆 VENCEDOR: ${data.winner}`;
         feedbackDiv.innerHTML = `🏁 Jogo terminado! ${data.winner} venceu.`;
     });
+    socket.on('error-msg', msg => { feedbackDiv.innerHTML = `❌ ${msg}`; console.error(msg); });
     function updatePlayersList(players, readyStatus) {
         playersListDiv.innerHTML = '';
         for (let name of Object.keys(players)) {
@@ -370,7 +370,7 @@
     readyBtn.onclick = () => {
         socket.emit('player-ready', { room: currentRoom, playerName: myName });
         readyBtn.disabled = true;
-        waitingMsg.innerText = 'Aguardando os outros...';
+        waitingMsg.innerText = 'Aguardando os outros jogadores...';
     };
     renderBoard([]);
 </script>
