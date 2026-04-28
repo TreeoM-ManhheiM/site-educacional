@@ -97,14 +97,13 @@
             margin: 5px 0;
             width: 100%;
         }
-        /* Tabuleiro */
         #meu-tabuleiro {
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
             touch-action: none;
         }
-        /* Estilo para destaque de movimentos possíveis */
+        /* DESTAQUES */
         .highlight-move {
             position: relative;
         }
@@ -116,14 +115,13 @@
             transform: translate(-50%, -50%);
             width: 35%;
             height: 35%;
-            background: rgba(255, 255, 0, 0.6);
+            background: rgba(255, 255, 0, 0.7);
             border-radius: 50%;
             pointer-events: none;
             z-index: 10;
         }
-        /* Para casas com peça capturável, pode-se usar um fundo diferente */
         .highlight-capture {
-            background-color: rgba(255, 0, 0, 0.4) !important;
+            background-color: rgba(255, 0, 0, 0.5) !important;
         }
         .relogio-container {
             display: flex;
@@ -245,9 +243,9 @@
     let salaAtual = '';
     let meuSocketId = '';
     
-    // Variáveis para controle de destaque
-    let currentHighlightedSquare = null;   // Casa selecionada
-    let currentHighlightedMoves = [];       // Lista de destinos destacados
+    // Destaques
+    let casaSelecionada = null;
+    let movimentosDestacados = []; // array de objetos { from, to, san }
 
     function formatarTempo(segundos) {
         if (segundos === undefined || segundos === null) return '--:--';
@@ -283,7 +281,6 @@
 
     function oferecerEmpate() {
         if (!jogoIniciado || meuPapel !== 'jogador') return;
-        console.log('Oferecendo empate...');
         socket.emit('oferecerEmpate');
     }
 
@@ -306,98 +303,113 @@
         limparDestaques();
     }
 
-    // ---------- FUNÇÕES DE DESTAQUE DE MOVIMENTOS ----------
+    // ========== FUNÇÕES DE DESTAQUE ==========
     function limparDestaques() {
         // Remove todas as classes de destaque das casas
         $('.square-55d63').removeClass('highlight-move highlight-capture');
-        currentHighlightedSquare = null;
-        currentHighlightedMoves = [];
+        casaSelecionada = null;
+        movimentosDestacados = [];
     }
 
     function destacarMovimentos(square) {
-        // Verifica se pode destacar (jogo rodando, é jogador, é sua vez, e peça é da sua cor)
-        if (!jogoIniciado || meuPapel !== 'jogador') return false;
-        if (motorXadrez.turn() !== minhaCor) return false;
-        
-        // Verifica se existe peça na casa e se é da cor do jogador
+        console.log('Tentando destacar movimentos para:', square);
+        // Verificações
+        if (!jogoIniciado) {
+            console.log('Jogo não iniciado');
+            return false;
+        }
+        if (meuPapel !== 'jogador') {
+            console.log('Não é jogador');
+            return false;
+        }
+        if (motorXadrez.turn() !== minhaCor) {
+            console.log('Não é sua vez');
+            return false;
+        }
+
         const piece = motorXadrez.get(square);
-        if (!piece || piece.color !== minhaCor) return false;
-        
-        // Obtém movimentos válidos para a peça
+        if (!piece) {
+            console.log('Casa vazia:', square);
+            return false;
+        }
+        if (piece.color !== minhaCor) {
+            console.log('Peça não é sua cor:', piece.color, minhaCor);
+            return false;
+        }
+
+        // Obtém movimentos válidos a partir desta casa (verbose)
         const moves = motorXadrez.moves({ square: square, verbose: true });
-        if (moves.length === 0) return false;
-        
+        if (moves.length === 0) {
+            console.log('Nenhum movimento válido para esta peça');
+            return false;
+        }
+
+        console.log(`Movimentos encontrados para ${square}:`, moves.map(m => m.to));
+
         // Limpa destaques anteriores
         limparDestaques();
-        
-        // Armazena a casa selecionada
-        currentHighlightedSquare = square;
-        currentHighlightedMoves = moves;
-        
-        // Adiciona destaque para cada destino
+
+        // Armazena
+        casaSelecionada = square;
+        movimentosDestacados = moves;
+
+        // Aplica destaque em cada destino
         moves.forEach(move => {
             const targetSquare = move.to;
-            const targetElement = $(`.square-55d63[data-square="${targetSquare}"]`);
-            
-            // Verifica se é captura (se há peça adversária no destino)
-            const targetPiece = motorXadrez.get(targetSquare);
-            if (targetPiece && targetPiece.color !== minhaCor) {
-                targetElement.addClass('highlight-capture');
+            const $target = $(`.square-55d63[data-square="${targetSquare}"]`);
+            if ($target.length) {
+                // Verifica se é captura
+                const targetPiece = motorXadrez.get(targetSquare);
+                if (targetPiece && targetPiece.color !== minhaCor) {
+                    $target.addClass('highlight-capture');
+                } else {
+                    $target.addClass('highlight-move');
+                }
+                console.log(`Destaque aplicado em ${targetSquare}`);
             } else {
-                targetElement.addClass('highlight-move');
+                console.warn(`Elemento não encontrado para casa: ${targetSquare}`);
             }
         });
-        
+
         return true;
     }
 
-    function configurarEventoCliqueTabuleiro() {
-        // Usa delegação de eventos pois as casas podem ser recriadas
-        $('#meu-tabuleiro').off('click', '.square-55d63').on('click', '.square-55d63', function(e) {
+    // Evento de clique nas casas usando delegação no documento
+    function configurarCliqueTabuleiro() {
+        $(document).off('click', '.square-55d63').on('click', '.square-55d63', function(e) {
             e.stopPropagation();
-            if (!jogoIniciado || meuPapel !== 'jogador') return;
-            
             const square = $(this).attr('data-square');
-            if (!square) return;
-            
-            // Se já existe um destaque ativo e o clique foi em um destino válido
-            if (currentHighlightedSquare && currentHighlightedMoves.length > 0) {
-                // Verifica se a casa clicada é um dos destinos destacados
-                const isMoveTarget = currentHighlightedMoves.some(move => move.to === square);
-                if (isMoveTarget) {
-                    // Tenta fazer o movimento (já será tratado pelo sistema de drag & drop)
-                    // Chamamos diretamente o evento de movimento para não precisar arrastar
-                    const from = currentHighlightedSquare;
-                    const to = square;
-                    
-                    // Tenta executar o movimento localmente para validar
-                    let movimento = motorXadrez.move({ from: from, to: to, promotion: 'q' });
-                    if (movimento) {
-                        // Desfaz o movimento local (pois será enviado ao servidor)
-                        motorXadrez.undo();
-                        // Envia pelo socket
-                        socket.emit('fazerJogada', { from: from, to: to, promotion: 'q' });
-                        limparDestaques();
-                    } else {
-                        // Movimento inválido (não deveria acontecer)
-                        limparDestaques();
-                    }
+            console.log(`Clique na casa: ${square}`);
+
+            if (!jogoIniciado || meuPapel !== 'jogador') {
+                console.log('Jogo não iniciado ou não é jogador');
+                return;
+            }
+
+            // Caso exista uma seleção ativa e a casa clicada seja um destino possível
+            if (casaSelecionada && movimentosDestacados.length > 0) {
+                const moveEncontrado = movimentosDestacados.find(m => m.to === square);
+                if (moveEncontrado) {
+                    console.log(`Movendo de ${casaSelecionada} para ${square}`);
+                    // Executa o movimento
+                    socket.emit('fazerJogada', { from: casaSelecionada, to: square, promotion: 'q' });
+                    limparDestaques();
                     return;
                 }
             }
-            
-            // Se não for um destino válido, tenta destacar movimentos da peça clicada
+
+            // Caso contrário, tenta destacar movimentos da peça clicada
             const piece = motorXadrez.get(square);
             if (piece && piece.color === minhaCor && motorXadrez.turn() === minhaCor) {
                 destacarMovimentos(square);
             } else {
-                // Clicou em outra casa (vazia ou adversária) sem destaque ativo -> limpa
+                // Clicou em casa vazia ou adversária sem seleção -> limpa
                 limparDestaques();
             }
         });
     }
-    
-    // ---------- FIM DESTAQUE ----------
+
+    // ========== FIM DESTAQUE ==========
 
     socket.on('connect', () => {
         meuSocketId = socket.id;
@@ -446,9 +458,13 @@
             jogoDiv.style.display = 'block';
             document.getElementById('painel-historico').style.display = 'block';
             jogoIniciado = true;
-            if (tabuleiroVisual) tabuleiroVisual.resize();
-            // Reconfigurar eventos após mostrar o tabuleiro
-            setTimeout(() => configurarEventoCliqueTabuleiro(), 100);
+            if (tabuleiroVisual) {
+                tabuleiroVisual.resize();
+                // Força a atualização da posição
+                tabuleiroVisual.position(motorXadrez.fen());
+            }
+            // Garante que o clique será configurado
+            setTimeout(() => configurarCliqueTabuleiro(), 200);
         } else {
             lobbyDiv.style.display = 'block';
             jogoDiv.style.display = 'none';
@@ -468,7 +484,7 @@
             document.getElementById('minha-cor').innerText = '👀 Espectador';
         }
         motorXadrez.load(dados.fen || 'start');
-        tabuleiroVisual.position(motorXadrez.fen(), false);
+        tabuleiroVisual.position(motorXadrez.fen());
         if (minhaCor !== 'espectador') {
             tabuleiroVisual.orientation(minhaCor === 'w' ? 'white' : 'black');
         } else {
@@ -476,8 +492,7 @@
         }
         atualizarStatus();
         limparDestaques();
-        // Reconfigurar eventos de clique
-        setTimeout(() => configurarEventoCliqueTabuleiro(), 100);
+        configurarCliqueTabuleiro();
         console.log('Partida iniciada. Minha cor:', minhaCor);
     });
 
@@ -492,7 +507,7 @@
             document.getElementById('relogio-pretas').innerText = `⚫ ${formatarTempo(dados.tempos.b)}`;
         }
         atualizarStatus();
-        limparDestaques(); // Limpa destaques ao receber estado atual
+        limparDestaques();
     });
 
     socket.on('jogadaFeita', (dados) => {
@@ -502,7 +517,7 @@
             document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
         }
         atualizarStatus();
-        limparDestaques(); // Limpa destaques após jogada do oponente
+        limparDestaques(); // importante: limpa após jogada do oponente
     });
 
     socket.on('atualizarTempo', (tempos) => {
@@ -528,11 +543,7 @@
     });
 
     socket.on('propostaEmpate', (dados) => {
-        console.log('Evento propostaEmpate recebido:', dados);
-        if (dados.para !== meuSocketId) {
-            console.log('Proposta não é para mim, ignorando.');
-            return;
-        }
+        if (dados.para !== meuSocketId) return;
         if (confirm(`${dados.de} ofereceu empate. Aceitar?`)) {
             socket.emit('responderEmpate', { aceito: true, de: dados.de });
         } else {
@@ -544,7 +555,7 @@
         alert(`${dados.por} recusou a oferta de empate.`);
     });
 
-    // Configuração do Tabuleiro
+    // Configuração do tabuleiro (drag & drop)
     function aoComecarArrastar(source, piece, position, orientation) {
         if (!jogoIniciado || meuPapel !== 'jogador') return false;
         if (motorXadrez.game_over()) return false;
@@ -569,14 +580,14 @@
         limparDestaques();
     }
 
-    function aposMovimento(oldPos, newPos) {
+    function aposMovimento() {
         tabuleiroVisual.position(motorXadrez.fen());
     }
 
     function atualizarStatus() {
         let statusHTML = '';
         let vez = motorXadrez.turn() === 'w' ? '⚪ Brancas' : '⚫ Pretas';
-        document.getElementById('vez-atual').innerText = vez;
+        document.getElementById('vez-atual').innerHTML = vez;
 
         if (motorXadrez.in_checkmate()) {
             statusHTML = '🏆 Xeque-Mate!';
