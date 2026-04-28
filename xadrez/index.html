@@ -97,12 +97,33 @@
             margin: 5px 0;
             width: 100%;
         }
-        /* 🔧 CORREÇÃO MOBILE: impede rolagem ao arrastar peças */
+        /* Tabuleiro */
         #meu-tabuleiro {
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
             touch-action: none;
+        }
+        /* Estilo para destaque de movimentos possíveis */
+        .highlight-move {
+            position: relative;
+        }
+        .highlight-move::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 35%;
+            height: 35%;
+            background: rgba(255, 255, 0, 0.6);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        /* Para casas com peça capturável, pode-se usar um fundo diferente */
+        .highlight-capture {
+            background-color: rgba(255, 0, 0, 0.4) !important;
         }
         .relogio-container {
             display: flex;
@@ -223,6 +244,10 @@
     let jogoIniciado = false;
     let salaAtual = '';
     let meuSocketId = '';
+    
+    // Variáveis para controle de destaque
+    let currentHighlightedSquare = null;   // Casa selecionada
+    let currentHighlightedMoves = [];       // Lista de destinos destacados
 
     function formatarTempo(segundos) {
         if (segundos === undefined || segundos === null) return '--:--';
@@ -278,7 +303,101 @@
         document.getElementById('painel-historico').style.display = 'none';
         document.getElementById('btn-pronto').disabled = false;
         document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+        limparDestaques();
     }
+
+    // ---------- FUNÇÕES DE DESTAQUE DE MOVIMENTOS ----------
+    function limparDestaques() {
+        // Remove todas as classes de destaque das casas
+        $('.square-55d63').removeClass('highlight-move highlight-capture');
+        currentHighlightedSquare = null;
+        currentHighlightedMoves = [];
+    }
+
+    function destacarMovimentos(square) {
+        // Verifica se pode destacar (jogo rodando, é jogador, é sua vez, e peça é da sua cor)
+        if (!jogoIniciado || meuPapel !== 'jogador') return false;
+        if (motorXadrez.turn() !== minhaCor) return false;
+        
+        // Verifica se existe peça na casa e se é da cor do jogador
+        const piece = motorXadrez.get(square);
+        if (!piece || piece.color !== minhaCor) return false;
+        
+        // Obtém movimentos válidos para a peça
+        const moves = motorXadrez.moves({ square: square, verbose: true });
+        if (moves.length === 0) return false;
+        
+        // Limpa destaques anteriores
+        limparDestaques();
+        
+        // Armazena a casa selecionada
+        currentHighlightedSquare = square;
+        currentHighlightedMoves = moves;
+        
+        // Adiciona destaque para cada destino
+        moves.forEach(move => {
+            const targetSquare = move.to;
+            const targetElement = $(`.square-55d63[data-square="${targetSquare}"]`);
+            
+            // Verifica se é captura (se há peça adversária no destino)
+            const targetPiece = motorXadrez.get(targetSquare);
+            if (targetPiece && targetPiece.color !== minhaCor) {
+                targetElement.addClass('highlight-capture');
+            } else {
+                targetElement.addClass('highlight-move');
+            }
+        });
+        
+        return true;
+    }
+
+    function configurarEventoCliqueTabuleiro() {
+        // Usa delegação de eventos pois as casas podem ser recriadas
+        $('#meu-tabuleiro').off('click', '.square-55d63').on('click', '.square-55d63', function(e) {
+            e.stopPropagation();
+            if (!jogoIniciado || meuPapel !== 'jogador') return;
+            
+            const square = $(this).attr('data-square');
+            if (!square) return;
+            
+            // Se já existe um destaque ativo e o clique foi em um destino válido
+            if (currentHighlightedSquare && currentHighlightedMoves.length > 0) {
+                // Verifica se a casa clicada é um dos destinos destacados
+                const isMoveTarget = currentHighlightedMoves.some(move => move.to === square);
+                if (isMoveTarget) {
+                    // Tenta fazer o movimento (já será tratado pelo sistema de drag & drop)
+                    // Chamamos diretamente o evento de movimento para não precisar arrastar
+                    const from = currentHighlightedSquare;
+                    const to = square;
+                    
+                    // Tenta executar o movimento localmente para validar
+                    let movimento = motorXadrez.move({ from: from, to: to, promotion: 'q' });
+                    if (movimento) {
+                        // Desfaz o movimento local (pois será enviado ao servidor)
+                        motorXadrez.undo();
+                        // Envia pelo socket
+                        socket.emit('fazerJogada', { from: from, to: to, promotion: 'q' });
+                        limparDestaques();
+                    } else {
+                        // Movimento inválido (não deveria acontecer)
+                        limparDestaques();
+                    }
+                    return;
+                }
+            }
+            
+            // Se não for um destino válido, tenta destacar movimentos da peça clicada
+            const piece = motorXadrez.get(square);
+            if (piece && piece.color === minhaCor && motorXadrez.turn() === minhaCor) {
+                destacarMovimentos(square);
+            } else {
+                // Clicou em outra casa (vazia ou adversária) sem destaque ativo -> limpa
+                limparDestaques();
+            }
+        });
+    }
+    
+    // ---------- FIM DESTAQUE ----------
 
     socket.on('connect', () => {
         meuSocketId = socket.id;
@@ -328,12 +447,15 @@
             document.getElementById('painel-historico').style.display = 'block';
             jogoIniciado = true;
             if (tabuleiroVisual) tabuleiroVisual.resize();
+            // Reconfigurar eventos após mostrar o tabuleiro
+            setTimeout(() => configurarEventoCliqueTabuleiro(), 100);
         } else {
             lobbyDiv.style.display = 'block';
             jogoDiv.style.display = 'none';
             document.getElementById('painel-historico').style.display = 'none';
             document.getElementById('btn-pronto').disabled = false;
             document.getElementById('btn-pronto').innerText = 'ESTOU PRONTO';
+            limparDestaques();
         }
     });
 
@@ -353,6 +475,9 @@
             tabuleiroVisual.orientation('white');
         }
         atualizarStatus();
+        limparDestaques();
+        // Reconfigurar eventos de clique
+        setTimeout(() => configurarEventoCliqueTabuleiro(), 100);
         console.log('Partida iniciada. Minha cor:', minhaCor);
     });
 
@@ -367,6 +492,7 @@
             document.getElementById('relogio-pretas').innerText = `⚫ ${formatarTempo(dados.tempos.b)}`;
         }
         atualizarStatus();
+        limparDestaques(); // Limpa destaques ao receber estado atual
     });
 
     socket.on('jogadaFeita', (dados) => {
@@ -376,6 +502,7 @@
             document.getElementById('historico').innerHTML = dados.historico.map(l => `<div>${l}</div>`).join('');
         }
         atualizarStatus();
+        limparDestaques(); // Limpa destaques após jogada do oponente
     });
 
     socket.on('atualizarTempo', (tempos) => {
@@ -387,6 +514,7 @@
         alert(dados.mensagem);
         jogoIniciado = false;
         document.getElementById('status-jogo').innerHTML = dados.mensagem;
+        limparDestaques();
         setTimeout(() => {
             voltarParaLobby();
         }, 1000);
@@ -438,6 +566,7 @@
         if (movimento === null) return 'snapback';
         socket.emit('fazerJogada', { from: source, to: target, promotion: 'q' });
         atualizarStatus();
+        limparDestaques();
     }
 
     function aposMovimento(oldPos, newPos) {
