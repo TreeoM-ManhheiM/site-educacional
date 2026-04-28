@@ -76,6 +76,21 @@
             font-size: 3.5rem; font-weight: bold; margin: 10px; color: #1e293b;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #cbd5e1;
         }
+        .timer-area {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .timer {
+            background: #1e293b;
+            color: #22c55e;
+            padding: 8px 16px;
+            border-radius: 40px;
+            display: inline-block;
+            letter-spacing: 2px;
+        }
         .missao-painel { background: #f8fafc; border-radius: 1.5rem; padding: 1rem; margin-top: 1rem; border: 1px solid #e2e8f0; }
         .story-box { background: #ffffff; border-left: 5px solid #3b82f6; padding: 1rem; border-radius: 1rem; margin-bottom: 1rem; }
         .paleta { background: #f1f5f9; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem; max-height: 200px; overflow-y: auto; }
@@ -126,6 +141,9 @@
             <div class="dice" id="diceResult">⚀</div>
             <button id="rollDiceBtn" disabled>🎲 ROLAR DADO</button>
         </div>
+        <div class="timer-area">
+            <div class="timer" id="timerDisplay">03:00</div>
+        </div>
         <div id="missaoArea" style="display:none;">
             <div class="missao-painel">
                 <div id="storyBox" class="story-box"></div>
@@ -151,6 +169,9 @@
     let gameActive = false, playersList = [], playersPositions = [], currentTurn = null;
     let currentMissao = null, currentPosicao = null;
     let blocosSelecionados = [];
+    let timerInterval = null;
+    let timeLeft = 180;
+    let timeoutTriggered = false;
 
     // DOM
     const lobbyScreen = document.getElementById('lobbyScreen');
@@ -167,6 +188,7 @@
     const boardTrack = document.getElementById('boardTrack');
     const diceResult = document.getElementById('diceResult');
     const rollDiceBtn = document.getElementById('rollDiceBtn');
+    const timerDisplay = document.getElementById('timerDisplay');
     const missaoArea = document.getElementById('missaoArea');
     const storyBox = document.getElementById('storyBox');
     const paletaDiv = document.getElementById('paleta');
@@ -174,6 +196,46 @@
     const verificarBtn = document.getElementById('verificarBtn');
     const limparBtn = document.getElementById('limparBtn');
     const feedbackDiv = document.getElementById('feedback');
+
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    }
+
+    function stopTimer() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+            timerInterval = null;
+        }
+    }
+
+    function startTimer() {
+        stopTimer();
+        timeLeft = 180;
+        timeoutTriggered = false;
+        timerDisplay.textContent = formatTime(timeLeft);
+        timerInterval = setInterval(() => {
+            if (!gameActive || currentTurn !== myName || !currentMissao) return;
+            if (timeLeft <= 0) {
+                if (!timeoutTriggered) {
+                    timeoutTriggered = true;
+                    stopTimer();
+                    socket.emit('timeout', { room: currentRoom, playerId: myName, posicao: currentPosicao });
+                    verificarBtn.disabled = true;
+                    document.querySelectorAll('.bloco').forEach(bloco => {
+                        bloco.style.pointerEvents = 'none';
+                        bloco.style.opacity = '0.5';
+                    });
+                    missaoArea.style.display = 'none';
+                    feedbackDiv.innerHTML = '⏰ Tempo esgotado! Você voltou uma casa e a vez passou.';
+                }
+            } else {
+                timeLeft--;
+                timerDisplay.textContent = formatTime(timeLeft);
+            }
+        }, 1000);
+    }
 
     function renderBoard(positions) {
         boardTrack.innerHTML = '';
@@ -208,7 +270,6 @@
         currentMissao = missao;
         currentPosicao = pos;
         storyBox.innerHTML = `<div style="font-weight:bold;">📖 ${missao.titulo}</div><div>${missao.historia}</div>`;
-        // Gerar blocos (código esperado + distrações)
         let blocos = [...missao.codigoEsperado];
         const distracoes = ["for i in range(10):","if x > 0:","else:","    pass","break","continue","    i += 1","    i -= 1","print('teste')","while True:"];
         for (let d of distracoes) if (!blocos.includes(d) && blocos.length < 16) blocos.push(d);
@@ -229,12 +290,12 @@
         exibirCodigoMontado();
         feedbackDiv.innerHTML = '';
         missaoArea.style.display = 'block';
-        // Habilita o botão verificar e os blocos
         verificarBtn.disabled = false;
         document.querySelectorAll('.bloco').forEach(bloco => {
             bloco.style.pointerEvents = 'auto';
             bloco.style.opacity = '1';
         });
+        startTimer();
     }
     function exibirCodigoMontado() {
         codigoMontadoDiv.innerHTML = '';
@@ -257,33 +318,22 @@
         });
     }
     function limparCodigo() { blocosSelecionados = []; exibirCodigoMontado(); feedbackDiv.innerHTML = ''; }
+    
     verificarBtn.onclick = () => {
         if (!gameActive || currentTurn !== myName) { feedbackDiv.innerHTML = '❌ Não é sua vez!'; return; }
         if (!currentMissao) return;
-        const esperado = currentMissao.codigoEsperado;
-        if (blocosSelecionados.length !== esperado.length) { 
-            feedbackDiv.innerHTML = `❌ Número de linhas incorreto. Esperado ${esperado.length}, você usou ${blocosSelecionados.length}.`;
-            return;
-        }
-        let correto = true;
-        for (let i=0; i<esperado.length; i++) {
-            if (blocosSelecionados[i] !== esperado[i]) { correto = false; break; }
-        }
-        // Desabilita botão e blocos para evitar múltiplos envios
+        // Sem validação de número de linhas – envia diretamente
         verificarBtn.disabled = true;
         document.querySelectorAll('.bloco').forEach(bloco => {
             bloco.style.pointerEvents = 'none';
             bloco.style.opacity = '0.5';
         });
-        if (correto) {
-            socket.emit('submit-codigo', { room: currentRoom, playerId: myName, posicao: currentPosicao, blocosMontados: blocosSelecionados });
-            feedbackDiv.innerHTML = '✅ Código correto! Aguardando resultado...';
-        } else {
-            socket.emit('submit-codigo', { room: currentRoom, playerId: myName, posicao: currentPosicao, blocosMontados: blocosSelecionados });
-            feedbackDiv.innerHTML = '❌ Código incorreto. Voltará uma casa e passará a vez.';
-        }
+        stopTimer();
+        socket.emit('submit-codigo', { room: currentRoom, playerId: myName, posicao: currentPosicao, blocosMontados: blocosSelecionados });
+        feedbackDiv.innerHTML = '⏳ Verificando...';
         missaoArea.style.display = 'none';
     };
+    
     limparBtn.onclick = limparCodigo;
     rollDiceBtn.onclick = () => {
         if (!gameActive || currentTurn !== myName) { feedbackDiv.innerHTML = '❌ Não é sua vez!'; return; }
@@ -350,15 +400,17 @@
         playersPositions = data.positions;
         turnStatus.innerText = `🎲 Vez de: ${currentTurn}`;
         renderBoard(playersPositions);
+        stopTimer();
         if (currentTurn === myName && gameActive) {
             rollDiceBtn.disabled = false;
-            verificarBtn.disabled = false; // reabilita para o próximo turno
+            verificarBtn.disabled = false;
             document.querySelectorAll('.bloco').forEach(bloco => {
                 bloco.style.pointerEvents = 'auto';
                 bloco.style.opacity = '1';
             });
             missaoArea.style.display = 'none';
             feedbackDiv.innerHTML = 'Sua vez! Role o dado.';
+            timerDisplay.textContent = '03:00';
         } else {
             rollDiceBtn.disabled = true;
             verificarBtn.disabled = true;
@@ -371,6 +423,7 @@
         feedbackDiv.innerHTML = `🏁 Jogo terminado! ${data.winner} venceu.`;
         rollDiceBtn.disabled = true;
         verificarBtn.disabled = true;
+        stopTimer();
     });
     socket.on('error-msg', msg => { feedbackDiv.innerHTML = `❌ ${msg}`; });
     function updatePlayersList(players, readyStatus) {
