@@ -162,19 +162,19 @@
 </div>
 
 <script>
-    // Conecta ao servidor Socket.IO no mesmo domínio (sem hardcoded URL)
-    const socket = io();
+    // Conecta ao servidor Socket.IO no Render (URL CORRETA)
+    const socket = io('https://motor-while.onrender.com');
 
     let currentRoom = null, myName = null;
     let gameActive = false, playersList = [], playersPositions = [], currentTurn = null;
     let currentMissao = null, currentPosicao = null;
     let blocosSelecionados = [];
     let timerInterval = null;
-    let timeLeft = 120; // 2 MINUTOS (120 segundos)
+    let timeLeft = 120; // 2 MINUTOS
     let timeoutTriggered = false;
     let ultimoDado = null;
 
-    // DOM
+    // DOM elements
     const lobbyScreen = document.getElementById('lobbyScreen');
     const gameScreen = document.getElementById('gameScreen');
     const joinBtn = document.getElementById('joinRoomBtn');
@@ -213,7 +213,7 @@
 
     function startTimer() {
         stopTimer();
-        timeLeft = 120; // 2 minutos
+        timeLeft = 120;
         timeoutTriggered = false;
         timerDisplay.textContent = formatTime(timeLeft);
         timerInterval = setInterval(() => {
@@ -342,8 +342,8 @@
         rollDiceBtn.disabled = true;
     };
 
-    // Socket events
-    socket.on('connect', () => console.log('Conectado'));
+    // Socket event handlers
+    socket.on('connect', () => console.log('Conectado ao servidor'));
     socket.on('room-joined', data => {
         currentRoom = data.room; myName = data.playerName;
         lobbyInfo.style.display = 'block';
