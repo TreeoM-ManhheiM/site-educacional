@@ -2,10 +2,10 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projeto Bimestral - Loop Infinito | ABNT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Projeto Bimestral - Loop Infinito | ABNT - Folhas A4 Verticais</title>
     <style>
-        /* ===== CONFIGURAÇÕES ABNT (NBR 14724) - SIMULAÇÃO FOLHA A4 ===== */
+        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
@@ -13,29 +13,34 @@
         }
 
         body {
-            background: #e9ecef; /* apenas para visualização na tela */
-            font-family: 'Times New Roman', Times, serif;
-            font-size: 12pt;
-            line-height: 1.5;
-            color: #000;
+            background: #b0b0b0; /* fundo cinza para destacar as folhas */
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 30px 0;
+            font-family: 'Times New Roman', Times, serif;
         }
 
-        /* Cada folha A4 será representada por uma div .sheet */
+        /* Simulação de folha A4 vertical (retrato) */
         .sheet {
-            width: 100%;
-            max-width: 1200px;
+            width: 21cm;          /* largura A4 */
+            min-height: 29.7cm;   /* altura A4 (mínima para permitir rolagem se conteúdo maior) */
             background: white;
-            margin: 30px auto;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            page-break-after: always; /* força quebra entre folhas na impressão */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 20px auto;
+            position: relative;
+            page-break-after: always; /* quebra na impressão */
+            /* Se o conteúdo ultrapassar a altura, terá scroll vertical */
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
-        /* Conteúdo interno com margens ABNT */
+        /* Margens internas conforme ABNT (superior 3cm, inferior 2cm, esquerda 3cm, direita 2cm) */
         .content {
             margin: 3cm 2cm 2cm 3cm;
+            font-size: 12pt;
+            line-height: 1.5;
+            text-align: justify;
         }
 
         /* Títulos primários (seção 1, 2, 3...) */
@@ -78,7 +83,7 @@
             text-align: justify;
         }
 
-        /* Código e blocos especiais */
+        /* Código */
         pre, code {
             font-family: 'Courier New', Courier, monospace;
             font-size: 10pt;
@@ -93,7 +98,7 @@
             border-left: 3px solid #1e293b;
             overflow-x: auto;
             background-color: #f8f9fa;
-            page-break-inside: avoid; /* evita quebra dentro do bloco de código */
+            white-space: pre-wrap;
         }
 
         /* Capa e folha de rosto – centralizadas */
@@ -134,50 +139,43 @@
             margin-left: 1.5em;
         }
 
-        /* Configuração da página na impressão (tamanho A4, margens, quebras) */
+        /* Número de página (para impressão) */
         @media print {
             body {
                 background: white;
-                margin: 0;
                 padding: 0;
+                margin: 0;
             }
             .sheet {
                 margin: 0;
                 box-shadow: none;
-                page-break-after: always; /* força quebra de folha entre cada .sheet */
+                page-break-after: always;
+                overflow: visible;
+                min-height: auto;
             }
-            /* Margens da página conforme ABNT */
             @page {
-                size: A4;
-                margin: 2.5cm 2cm 2cm 2.5cm; /* superior 2,5cm, inferior 2cm, esquerda 2,5cm, direita 2cm */
+                size: A4 portrait;
+                margin: 2.5cm 2cm 2cm 2.5cm;
             }
-            /* Remove cores de fundo e links sublinhados */
             a {
                 color: black;
                 text-decoration: none;
             }
-            /* Evita quebras dentro de blocos importantes */
-            h1, h2, h3, h4, h5, h6, p, ul, ol, pre {
-                page-break-inside: avoid;
-            }
         }
 
-        /* Apenas para visualização na tela (sem quebras) */
-        .page-number-sim {
-            text-align: right;
-            font-size: 10pt;
-            margin-top: 1.5em;
+        /* Rótulo opcional para número da folha (apenas tela) */
+        .sheet-label {
+            text-align: center;
+            font-size: 9pt;
             color: #6c757d;
-            border-top: 1px solid #dee2e6;
-            padding-top: 0.5em;
+            margin-top: 5px;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
 
-<!-- Cada folha recebe uma div .sheet, com quebra automática na impressão -->
-
-<!-- FOLHA 1: CAPA -->
+<!-- FOLHA 1 - CAPA -->
 <div class="sheet">
     <div class="content">
         <div class="capa">
@@ -193,8 +191,9 @@
         </div>
     </div>
 </div>
+<div class="sheet-label">📄 Capa</div>
 
-<!-- FOLHA 2: FOLHA DE ROSTO -->
+<!-- FOLHA 2 - FOLHA DE ROSTO -->
 <div class="sheet">
     <div class="content">
         <div class="folha-rosto">
@@ -209,8 +208,9 @@
         </div>
     </div>
 </div>
+<div class="sheet-label">📄 Folha de rosto</div>
 
-<!-- FOLHA 3: SUMÁRIO -->
+<!-- FOLHA 3 - SUMÁRIO -->
 <div class="sheet">
     <div class="content">
         <div class="sumario">
@@ -254,8 +254,9 @@
         </div>
     </div>
 </div>
+<div class="sheet-label">📄 Sumário</div>
 
-<!-- FOLHA 4: INÍCIO DO TRABALHO (RESUMO + INTRODUÇÃO) -->
+<!-- FOLHA 4 - RESUMO + INTRODUÇÃO -->
 <div class="sheet">
     <div class="content">
         <h1 id="resumo">RESUMO</h1>
@@ -267,8 +268,9 @@
         <p>O presente projeto propõe a realização de um campeonato de programação baseado no jogo digital <strong>Loop Infinito – Missão While</strong>, desenvolvido especialmente para consolidar estruturas de repetição em Python. O jogo simula um tabuleiro onde os jogadores avançam casas respondendo corretamente a desafios de código. O campeonato envolveu 25 alunos do curso técnico em Desenvolvimento de Sistemas da EE. Oito de Abril, organizados em duplas, e foi realizado em 5 aulas de 50 minutos. Este relatório descreve a organização, as regras, o formato do torneio, os resultados e a articulação do projeto com o Currículo Paulista.</p>
     </div>
 </div>
+<div class="sheet-label">📄 Resumo e Introdução</div>
 
-<!-- FOLHA 5: JUSTIFICATIVA E OBJETIVOS -->
+<!-- FOLHA 5 - JUSTIFICATIVA + OBJETIVOS -->
 <div class="sheet">
     <div class="content">
         <h1 id="justif">2 JUSTIFICATIVA</h1>
@@ -288,8 +290,9 @@
         </ul>
     </div>
 </div>
+<div class="sheet-label">📄 Justificativa e Objetivos</div>
 
-<!-- FOLHA 6: FUNDAMENTAÇÃO TEÓRICA -->
+<!-- FOLHA 6 - FUNDAMENTAÇÃO TEÓRICA -->
 <div class="sheet">
     <div class="content">
         <h1 id="fundamentacao">4 FUNDAMENTAÇÃO TEÓRICA</h1>
@@ -316,8 +319,9 @@ while contador > 0:
         <p>O jogo aborda também <code>break</code> (interrupção prematura), <code>continue</code> (pular iteração) e operadores lógicos (<code>and</code>, <code>or</code>, <code>not</code>), essenciais para condições complexas.</p>
     </div>
 </div>
+<div class="sheet-label">📄 Fundamentação Teórica</div>
 
-<!-- FOLHA 7: METODOLOGIA -->
+<!-- FOLHA 7 - METODOLOGIA -->
 <div class="sheet">
     <div class="content">
         <h1 id="metodologia">5 METODOLOGIA</h1>
@@ -349,8 +353,9 @@ while contador > 0:
         </ul>
     </div>
 </div>
+<div class="sheet-label">📄 Metodologia</div>
 
-<!-- FOLHA 8: DESENVOLVIMENTO DO CAMPEONATO -->
+<!-- FOLHA 8 - DESENVOLVIMENTO DO CAMPEONATO -->
 <div class="sheet">
     <div class="content">
         <h1 id="desenvolvimento">6 DESENVOLVIMENTO DO CAMPEONATO</h1>
@@ -378,8 +383,9 @@ while contador > 0:
         </ul>
     </div>
 </div>
+<div class="sheet-label">📄 Desenvolvimento do Campeonato</div>
 
-<!-- FOLHA 9: RESULTADOS E CONSIDERAÇÕES FINAIS -->
+<!-- FOLHA 9 - RESULTADOS + CONSIDERAÇÕES FINAIS -->
 <div class="sheet">
     <div class="content">
         <h1 id="resultados">7 RESULTADOS E DISCUSSÃO</h1>
@@ -391,8 +397,9 @@ while contador > 0:
         <p>Como sugestões para futuras edições, propõe-se a criação de um ranking persistente, a expansão do número de missões e a integração de um simulador Python real (Pyodide) para testes mais avançados.</p>
     </div>
 </div>
+<div class="sheet-label">📄 Resultados e Considerações Finais</div>
 
-<!-- FOLHA 10: REFERÊNCIAS -->
+<!-- FOLHA 10 - REFERÊNCIAS -->
 <div class="sheet">
     <div class="content">
         <h1 id="referencias">REFERÊNCIAS</h1>
@@ -404,8 +411,9 @@ while contador > 0:
         <p>SOCKET.IO. <strong>Documentação oficial</strong>. Disponível em: &lt;https://socket.io/docs/&gt;. Acesso em: 28 abr. 2026.</p>
     </div>
 </div>
+<div class="sheet-label">📄 Referências</div>
 
-<!-- FOLHA 11: APÊNDICE -->
+<!-- FOLHA 11 - APÊNDICE -->
 <div class="sheet">
     <div class="content">
         <h1 id="apendice">APÊNDICE – 30 MISSÕES DO JOGO</h1>
@@ -427,9 +435,9 @@ while True:
     print(f'Soma atual: {soma}')
 print(f'Soma final: {soma}')</code></pre>
         <p>As demais missões abordam: soma até 100, menu com break, números ímpares com continue, AND, OR, NOT, tabuada, primo, múltiplos, validação de entrada, fatorial, break/continue combinados, caixa eletrônico, adivinhação, média de notas, while aninhado, Fibonacci, operadores compostos, login com tentativas, pares até N, decrescente passo 2, potência de 2, soma até negativo, continue múltiplos de 5, múltiplo de 3 ou 5, limite de 100, soma de dígitos, inverter número.</p>
-        <div class="page-number-sim">Documento elaborado conforme a ABNT (NBR 14724).</div>
     </div>
 </div>
+<div class="sheet-label">📄 Apêndice</div>
 
 </body>
 </html>
