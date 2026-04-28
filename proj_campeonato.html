@@ -13,7 +13,7 @@
         }
 
         body {
-            background: #b0b0b0; /* fundo cinza para destacar as folhas */
+            background: #b0b0b0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -23,16 +23,17 @@
 
         /* Simulação de folha A4 vertical (retrato) */
         .sheet {
-            width: 21cm;          /* largura A4 */
-            min-height: 29.7cm;   /* altura A4 (mínima para permitir rolagem se conteúdo maior) */
+            width: 21cm;
+            min-height: 29.7cm;
             background: white;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             margin: 20px auto;
             position: relative;
-            page-break-after: always; /* quebra na impressão */
-            /* Se o conteúdo ultrapassar a altura, terá scroll vertical */
+            page-break-after: always;
             overflow-y: auto;
             overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         /* Margens internas conforme ABNT (superior 3cm, inferior 2cm, esquerda 3cm, direita 2cm) */
@@ -41,6 +42,35 @@
             font-size: 12pt;
             line-height: 1.5;
             text-align: justify;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Para empurrar o conteúdo inferior para o final da página */
+        .spacer {
+            flex: 1;
+        }
+
+        /* Capa e folha de rosto – elementos centralizados */
+        .capa, .folha-rosto {
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .capa h2, .folha-rosto h2 {
+            text-transform: none;
+            font-size: 14pt;
+            margin: 1.5em 0;
+        }
+
+        /* Cidade e ano centralizados na parte inferior */
+        .local-data {
+            text-align: center;
+            margin-top: auto;
+            padding-top: 2em;
         }
 
         /* Títulos primários (seção 1, 2, 3...) */
@@ -99,18 +129,6 @@
             overflow-x: auto;
             background-color: #f8f9fa;
             white-space: pre-wrap;
-        }
-
-        /* Capa e folha de rosto – centralizadas */
-        .capa, .folha-rosto {
-            text-align: center;
-            margin-bottom: 2em;
-        }
-
-        .capa h2, .folha-rosto h2 {
-            text-transform: none;
-            font-size: 14pt;
-            margin: 1.5em 0;
         }
 
         /* Sumário */
@@ -185,14 +203,12 @@
             <h2>André Corrêa de Lima</h2>
             <br><br><br>
             <h2 style="font-size: 16pt;">Loop Infinito – Missão While: Campeonato de Programação como Instrumento de Aprendizagem</h2>
-            <br><br><br><br>
-            <p style="text-indent: 0;">São Paulo</p>
-            <p style="text-indent: 0;">2026</p>
+            <div class="spacer"></div>
+            <div class="local-data">
+                Santo André<br>2026
+            </div>
         </div>
     </div>
-</div>
-<div class="sheet-label">📄 Capa</div>
-
 <!-- FOLHA 2 - FOLHA DE ROSTO -->
 <div class="sheet">
     <div class="content">
@@ -202,14 +218,12 @@
             <p style="text-indent: 0;">Projeto bimestral apresentado ao componente curricular de Programação como requisito para avaliação do primeiro bimestre, utilizando o jogo digital "Loop Infinito – Missão While" para consolidar estruturas de repetição em Python.</p>
             <br><br>
             <p style="text-indent: 0;"><strong>Orientador:</strong> Prof. Me. (nome completo)</p>
-            <br><br><br><br>
-            <p style="text-indent: 0;">São Paulo</p>
-            <p style="text-indent: 0;">2026</p>
+            <div class="spacer"></div>
+            <div class="local-data">
+                Santo André<br>2026
+            </div>
         </div>
     </div>
-</div>
-<div class="sheet-label">📄 Folha de rosto</div>
-
 <!-- FOLHA 3 - SUMÁRIO -->
 <div class="sheet">
     <div class="content">
@@ -253,9 +267,6 @@
             </ul>
         </div>
     </div>
-</div>
-<div class="sheet-label">📄 Sumário</div>
-
 <!-- FOLHA 4 - RESUMO + INTRODUÇÃO -->
 <div class="sheet">
     <div class="content">
@@ -267,9 +278,6 @@
         <p>O ensino de programação enfrenta o desafio de tornar conceitos abstratos – como laços de repetição – compreensíveis e motivadores para os estudantes. O comando <code>while</code> e suas variações (<code>break</code>, <code>continue</code>, operadores lógicos) são fundamentais para a construção de algoritmos, mas frequentemente geram dificuldades devido à necessidade de controle preciso de condições e atualização de variáveis. A gamificação surge como uma estratégia eficaz para aumentar o engajamento, transformando o aprendizado em uma experiência lúdica e competitiva.</p>
         <p>O presente projeto propõe a realização de um campeonato de programação baseado no jogo digital <strong>Loop Infinito – Missão While</strong>, desenvolvido especialmente para consolidar estruturas de repetição em Python. O jogo simula um tabuleiro onde os jogadores avançam casas respondendo corretamente a desafios de código. O campeonato envolveu 25 alunos do curso técnico em Desenvolvimento de Sistemas da EE. Oito de Abril, organizados em duplas, e foi realizado em 5 aulas de 50 minutos. Este relatório descreve a organização, as regras, o formato do torneio, os resultados e a articulação do projeto com o Currículo Paulista.</p>
     </div>
-</div>
-<div class="sheet-label">📄 Resumo e Introdução</div>
-
 <!-- FOLHA 5 - JUSTIFICATIVA + OBJETIVOS -->
 <div class="sheet">
     <div class="content">
@@ -289,9 +297,6 @@
             <li>Documentar a experiência como modelo replicável para outros componentes curriculares.</li>
         </ul>
     </div>
-</div>
-<div class="sheet-label">📄 Justificativa e Objetivos</div>
-
 <!-- FOLHA 6 - FUNDAMENTAÇÃO TEÓRICA -->
 <div class="sheet">
     <div class="content">
@@ -318,9 +323,6 @@ while contador > 0:
     contador -= 1</code></pre>
         <p>O jogo aborda também <code>break</code> (interrupção prematura), <code>continue</code> (pular iteração) e operadores lógicos (<code>and</code>, <code>or</code>, <code>not</code>), essenciais para condições complexas.</p>
     </div>
-</div>
-<div class="sheet-label">📄 Fundamentação Teórica</div>
-
 <!-- FOLHA 7 - METODOLOGIA -->
 <div class="sheet">
     <div class="content">
@@ -352,9 +354,6 @@ while contador > 0:
             <li><strong>Duração</strong>: 5 aulas de 50 minutos (distribuídas conforme cronograma).</li>
         </ul>
     </div>
-</div>
-<div class="sheet-label">📄 Metodologia</div>
-
 <!-- FOLHA 8 - DESENVOLVIMENTO DO CAMPEONATO -->
 <div class="sheet">
     <div class="content">
@@ -382,9 +381,6 @@ while contador > 0:
             <li><strong>Aula 5</strong>: Premiação, discussão coletiva e aplicação do pós-teste.</li>
         </ul>
     </div>
-</div>
-<div class="sheet-label">📄 Desenvolvimento do Campeonato</div>
-
 <!-- FOLHA 9 - RESULTADOS + CONSIDERAÇÕES FINAIS -->
 <div class="sheet">
     <div class="content">
@@ -396,9 +392,6 @@ while contador > 0:
         <p>O projeto demonstrou que o campeonato de programação utilizando o jogo "Loop Infinito – Missão While" é um eficaz instrumento de engajamento e avaliação da aprendizagem de estruturas de repetição. Alinhado ao Currículo Paulista, promove o desenvolvimento de competências técnicas e socioemocionais essenciais para o curso técnico de Desenvolvimento de Sistemas. A experiência pode ser replicada em outros componentes curriculares e incentiva a adoção de metodologias ativas no ambiente escolar.</p>
         <p>Como sugestões para futuras edições, propõe-se a criação de um ranking persistente, a expansão do número de missões e a integração de um simulador Python real (Pyodide) para testes mais avançados.</p>
     </div>
-</div>
-<div class="sheet-label">📄 Resultados e Considerações Finais</div>
-
 <!-- FOLHA 10 - REFERÊNCIAS -->
 <div class="sheet">
     <div class="content">
@@ -410,9 +403,6 @@ while contador > 0:
         <p>PYTHON SOFTWARE FOUNDATION. <strong>The Python Tutorial – More Control Flow Tools</strong>. Disponível em: &lt;https://docs.python.org/3/tutorial/controlflow.html&gt;. Acesso em: 28 abr. 2026.</p>
         <p>SOCKET.IO. <strong>Documentação oficial</strong>. Disponível em: &lt;https://socket.io/docs/&gt;. Acesso em: 28 abr. 2026.</p>
     </div>
-</div>
-<div class="sheet-label">📄 Referências</div>
-
 <!-- FOLHA 11 - APÊNDICE -->
 <div class="sheet">
     <div class="content">
