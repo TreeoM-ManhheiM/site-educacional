@@ -142,7 +142,7 @@
             <button id="rollDiceBtn" disabled>🎲 ROLAR DADO</button>
         </div>
         <div class="timer-area">
-            <div class="timer" id="timerDisplay">03:00</div>
+            <div class="timer" id="timerDisplay">02:00</div>
         </div>
         <div id="missaoArea" style="display:none;">
             <div class="missao-painel">
@@ -170,8 +170,9 @@
     let currentMissao = null, currentPosicao = null;
     let blocosSelecionados = [];
     let timerInterval = null;
-    let timeLeft = 180;
+    let timeLeft = 120; // 2 MINUTOS (120 segundos)
     let timeoutTriggered = false;
+    let ultimoDado = null;
 
     // DOM
     const lobbyScreen = document.getElementById('lobbyScreen');
@@ -212,7 +213,7 @@
 
     function startTimer() {
         stopTimer();
-        timeLeft = 180;
+        timeLeft = 120; // 2 minutos
         timeoutTriggered = false;
         timerDisplay.textContent = formatTime(timeLeft);
         timerInterval = setInterval(() => {
@@ -228,7 +229,7 @@
                         bloco.style.opacity = '0.5';
                     });
                     missaoArea.style.display = 'none';
-                    feedbackDiv.innerHTML = '⏰ Tempo esgotado! Você voltou uma casa e a vez passou.';
+                    feedbackDiv.innerHTML = '⏰ Tempo esgotado! Você voltará para a posição anterior.';
                 }
             } else {
                 timeLeft--;
@@ -322,7 +323,7 @@
     verificarBtn.onclick = () => {
         if (!gameActive || currentTurn !== myName) { feedbackDiv.innerHTML = '❌ Não é sua vez!'; return; }
         if (!currentMissao) return;
-        // Sem validação de número de linhas – envia diretamente
+        
         verificarBtn.disabled = true;
         document.querySelectorAll('.bloco').forEach(bloco => {
             bloco.style.pointerEvents = 'none';
@@ -375,6 +376,7 @@
     });
     socket.on('dice-rolled', data => {
         if (data.playerId === myName) {
+            ultimoDado = data.dice;
             const diceFaces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
             diceResult.innerHTML = diceFaces[data.dice-1];
             feedbackDiv.innerHTML = `🎲 Você rolou ${data.dice}! Avançou para a casa ${data.newPosition}.`;
@@ -410,7 +412,7 @@
             });
             missaoArea.style.display = 'none';
             feedbackDiv.innerHTML = 'Sua vez! Role o dado.';
-            timerDisplay.textContent = '03:00';
+            timerDisplay.textContent = '02:00';
         } else {
             rollDiceBtn.disabled = true;
             verificarBtn.disabled = true;
