@@ -78,7 +78,6 @@
         }
         .missao-painel { background: #f8fafc; border-radius: 1.5rem; padding: 1rem; margin-top: 1rem; border: 1px solid #e2e8f0; }
         .story-box { background: #ffffff; border-left: 5px solid #3b82f6; padding: 1rem; border-radius: 1rem; margin-bottom: 1rem; }
-        .dica { background: #fef9c3; padding: 0.8rem; border-radius: 1rem; margin-bottom: 1rem; color: #854d0e; }
         .paleta { background: #f1f5f9; border-radius: 1rem; padding: 1rem; margin-bottom: 1rem; max-height: 200px; overflow-y: auto; }
         .bloco {
             display: inline-block; background: #ffffff; border: 1px solid #cbd5e1;
@@ -133,7 +132,7 @@
         <div id="missaoArea" style="display:none;">
             <div class="missao-painel">
                 <div id="storyBox" class="story-box"></div>
-                <div id="dicaBox" class="dica"></div>
+                <!-- SEM DICA -->
                 <div><strong>🧩 Blocos disponíveis (clique para adicionar):</strong></div>
                 <div id="paleta" class="paleta"></div>
                 <div><strong>📝 Seu código (clique no ❌ para remover):</strong></div>
@@ -157,14 +156,13 @@
 </div>
 
 <script>
-    const SOCKET_URL = 'https://motor-while.onrender.com';
+    const SOCKET_URL = 'https://motor-while.onrender.com'; // ATUALIZE PARA SEU SERVIDOR
     const socket = io(SOCKET_URL);
 
     let currentRoom = null, myName = null;
     let gameActive = false, playersList = [], playersPositions = [], currentTurn = null;
     let currentMissao = null, currentPosicao = null;
     let blocosSelecionados = [];
-    let aguardandoMissao = false;
 
     // DOM
     const lobbyScreen = document.getElementById('lobbyScreen');
@@ -183,7 +181,6 @@
     const rollDiceBtn = document.getElementById('rollDiceBtn');
     const missaoArea = document.getElementById('missaoArea');
     const storyBox = document.getElementById('storyBox');
-    const dicaBox = document.getElementById('dicaBox');
     const paletaDiv = document.getElementById('paleta');
     const codigoMontadoDiv = document.getElementById('codigoMontado');
     const verificarBtn = document.getElementById('verificarBtn');
@@ -227,7 +224,6 @@
         currentMissao = missao;
         currentPosicao = pos;
         storyBox.innerHTML = `<div style="font-weight:bold;">📖 ${missao.titulo}</div><div>${missao.historia}</div>`;
-        dicaBox.innerHTML = `💡 Dica: ${missao.dica}`;
         // Gerar blocos (código esperado + distrações)
         let blocos = [...missao.codigoEsperado];
         const distracoes = ["for i in range(10):","if x > 0:","else:","    pass","break","continue","    i += 1","    i -= 1","print('teste')","while True:"];
@@ -277,7 +273,7 @@
         terminalDiv.style.display = 'block';
         terminalOutput.innerHTML = '<div>🐍 Simulando execução...</div>';
         for (let linha of blocosSelecionados) terminalOutput.innerHTML += `<div>${linha}</div>`;
-        terminalOutput.innerHTML += '<div>✅ Simulação concluída (use "Verificar" para validação).</div>';
+        terminalOutput.innerHTML += '<div>✅ Simulação concluída (use "Verificar" para validação oficial).</div>';
     }
     verificarBtn.onclick = () => {
         if (!gameActive || currentTurn !== myName) { feedbackDiv.innerHTML = '❌ Não é sua vez!'; return; }
@@ -285,13 +281,15 @@
         const esperado = currentMissao.codigoEsperado;
         if (blocosSelecionados.length !== esperado.length) { feedbackDiv.innerHTML = `❌ Número de linhas incorreto. Esperado ${esperado.length}, você usou ${blocosSelecionados.length}.`; return; }
         let correto = true;
-        for (let i=0; i<esperado.length; i++) if (blocosSelecionados[i] !== esperado[i]) { correto = false; break; }
+        for (let i=0; i<esperado.length; i++) {
+            if (blocosSelecionados[i] !== esperado[i]) { correto = false; break; }
+        }
         if (correto) {
             socket.emit('submit-codigo', { room: currentRoom, playerId: myName, posicao: currentPosicao, blocosMontados: blocosSelecionados });
             feedbackDiv.innerHTML = '✅ Código correto! Aguardando resultado...';
         } else {
-            feedbackDiv.innerHTML = '❌ Código incorreto. Voltará uma casa e passará a vez.';
             socket.emit('submit-codigo', { room: currentRoom, playerId: myName, posicao: currentPosicao, blocosMontados: blocosSelecionados });
+            feedbackDiv.innerHTML = '❌ Código incorreto. Voltará uma casa e passará a vez.';
         }
         missaoArea.style.display = 'none';
     };
@@ -340,22 +338,24 @@
         if (data.playerId === myName) {
             const diceFaces = ['⚀','⚁','⚂','⚃','⚄','⚅'];
             diceResult.innerHTML = diceFaces[data.dice-1];
-            feedbackDiv.innerHTML = `🎲 Você rolou ${data.dice}! Avançou para a casa ${data.newPosition}. Responda a missão.`;
+            feedbackDiv.innerHTML = `🎲 Você rolou ${data.dice}! Avançou para a casa ${data.newPosition}.`;
         }
-    });
-    socket.on('move-result', data => {
         playersPositions = data.positions;
         renderBoard(playersPositions);
-        if (data.playerId === myName && data.message) feedbackDiv.innerHTML = data.message;
-        if (data.playerId !== myName) {
-            turnStatus.innerText = `🎲 Vez de: ${currentTurn}`;
-        }
     });
     socket.on('missao-received', data => {
         if (data.playerId === myName) {
             exibirMissaoUI(data.missao, data.posicao);
             rollDiceBtn.disabled = true;
         }
+    });
+    socket.on('move-result', data => {
+        playersPositions = data.positions;
+        renderBoard(playersPositions);
+        if (data.playerId === myName) {
+            feedbackDiv.innerHTML = data.message;
+        }
+        // O turno será atualizado por 'turn-update'
     });
     socket.on('turn-update', data => {
         currentTurn = data.currentPlayer;
