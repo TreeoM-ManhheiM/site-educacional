@@ -162,8 +162,8 @@
 </div>
 
 <script>
-    const SOCKET_URL = 'https://motor-while.onrender.com'; // ATUALIZE PARA SEU SERVIDOR
-    const socket = io(SOCKET_URL);
+    // Conecta ao servidor Socket.IO no mesmo domínio (sem hardcoded URL)
+    const socket = io();
 
     let currentRoom = null, myName = null;
     let gameActive = false, playersList = [], playersPositions = [], currentTurn = null;
