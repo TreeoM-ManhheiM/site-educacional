@@ -71,9 +71,9 @@
         .players-on-tile { margin-top: 5px; display: flex; flex-wrap: wrap; justify-content: center; gap: 3px; }
         .dice-area { text-align: center; margin: 15px 0; }
         .dice {
-            background: white; width: 80px; height: 80px; border-radius: 20px;
+            background: white; width: 94px; height: 94px; border-radius: 20px;
             display: inline-flex; align-items: center; justify-content: center;
-            font-size: 3rem; font-weight: bold; margin: 10px; color: #1e293b;
+            font-size: 3.5rem; font-weight: bold; margin: 10px; color: #1e293b;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1); border: 2px solid #cbd5e1;
         }
         .missao-painel { background: #f8fafc; border-radius: 1.5rem; padding: 1rem; margin-top: 1rem; border: 1px solid #e2e8f0; }
@@ -89,9 +89,6 @@
         .codigo-area { background: #ffffff; border-radius: 1rem; padding: 1rem; font-family: monospace; min-height: 150px; border: 1px solid #cbd5e1; margin-bottom: 1rem; }
         .linha-codigo { display: flex; justify-content: space-between; padding: 0.2rem 0; border-bottom: 1px dashed #e2e8f0; }
         .remover-linha { color: #ef4444; cursor: pointer; margin-left: 0.8rem; }
-        .terminal { background: #1e293b; border-radius: 1rem; margin-top: 1rem; overflow: hidden; }
-        .terminal-header { background: #0f172a; padding: 0.5rem; color: white; display: flex; justify-content: space-between; }
-        .terminal-content { padding: 0.8rem; font-family: monospace; font-size: 0.8rem; color: #86efac; background: #020617; max-height: 150px; overflow-y: auto; white-space: pre-wrap; }
         .feedback { margin-top: 1rem; padding: 0.8rem; border-radius: 1rem; }
         .feedback.sucesso { background: #dcfce7; color: #166534; border: 1px solid #22c55e; }
         .feedback.erro { background: #fee2e2; color: #991b1b; border: 1px solid #ef4444; }
@@ -132,24 +129,15 @@
         <div id="missaoArea" style="display:none;">
             <div class="missao-painel">
                 <div id="storyBox" class="story-box"></div>
-                <!-- SEM DICA -->
                 <div><strong>🧩 Blocos disponíveis (clique para adicionar):</strong></div>
                 <div id="paleta" class="paleta"></div>
                 <div><strong>📝 Seu código (clique no ❌ para remover):</strong></div>
                 <div id="codigoMontado" class="codigo-area"></div>
                 <div>
                     <button id="verificarBtn" class="primary">✅ VERIFICAR CÓDIGO</button>
-                    <button id="rodarBtn" class="success">▶️ RODAR CÓDIGO</button>
                     <button id="limparBtn" class="warning">🗑 LIMPAR CÓDIGO</button>
                 </div>
                 <div id="feedback" class="feedback"></div>
-                <div class="terminal" id="terminal" style="display:none;">
-                    <div class="terminal-header">
-                        <span>🐍 Terminal Python (simulação)</span>
-                        <button id="fecharTerminal" style="background:#334155; padding:0.2rem 0.5rem;">✕</button>
-                    </div>
-                    <div id="terminalOutput" class="terminal-content"></div>
-                </div>
             </div>
         </div>
     </div>
@@ -184,12 +172,8 @@
     const paletaDiv = document.getElementById('paleta');
     const codigoMontadoDiv = document.getElementById('codigoMontado');
     const verificarBtn = document.getElementById('verificarBtn');
-    const rodarBtn = document.getElementById('rodarBtn');
     const limparBtn = document.getElementById('limparBtn');
     const feedbackDiv = document.getElementById('feedback');
-    const terminalDiv = document.getElementById('terminal');
-    const terminalOutput = document.getElementById('terminalOutput');
-    const fecharTerminal = document.getElementById('fecharTerminal');
 
     function renderBoard(positions) {
         boardTrack.innerHTML = '';
@@ -244,8 +228,13 @@
         blocosSelecionados = [];
         exibirCodigoMontado();
         feedbackDiv.innerHTML = '';
-        terminalDiv.style.display = 'none';
         missaoArea.style.display = 'block';
+        // Habilita o botão verificar e os blocos
+        verificarBtn.disabled = false;
+        document.querySelectorAll('.bloco').forEach(bloco => {
+            bloco.style.pointerEvents = 'auto';
+            bloco.style.opacity = '1';
+        });
     }
     function exibirCodigoMontado() {
         codigoMontadoDiv.innerHTML = '';
@@ -268,22 +257,24 @@
         });
     }
     function limparCodigo() { blocosSelecionados = []; exibirCodigoMontado(); feedbackDiv.innerHTML = ''; }
-    async function rodarCodigoSimulado() {
-        if (blocosSelecionados.length === 0) { feedbackDiv.innerHTML = '❌ Nenhum código para executar.'; return; }
-        terminalDiv.style.display = 'block';
-        terminalOutput.innerHTML = '<div>🐍 Simulando execução...</div>';
-        for (let linha of blocosSelecionados) terminalOutput.innerHTML += `<div>${linha}</div>`;
-        terminalOutput.innerHTML += '<div>✅ Simulação concluída (use "Verificar" para validação oficial).</div>';
-    }
     verificarBtn.onclick = () => {
         if (!gameActive || currentTurn !== myName) { feedbackDiv.innerHTML = '❌ Não é sua vez!'; return; }
         if (!currentMissao) return;
         const esperado = currentMissao.codigoEsperado;
-        if (blocosSelecionados.length !== esperado.length) { feedbackDiv.innerHTML = `❌ Número de linhas incorreto. Esperado ${esperado.length}, você usou ${blocosSelecionados.length}.`; return; }
+        if (blocosSelecionados.length !== esperado.length) { 
+            feedbackDiv.innerHTML = `❌ Número de linhas incorreto. Esperado ${esperado.length}, você usou ${blocosSelecionados.length}.`;
+            return;
+        }
         let correto = true;
         for (let i=0; i<esperado.length; i++) {
             if (blocosSelecionados[i] !== esperado[i]) { correto = false; break; }
         }
+        // Desabilita botão e blocos para evitar múltiplos envios
+        verificarBtn.disabled = true;
+        document.querySelectorAll('.bloco').forEach(bloco => {
+            bloco.style.pointerEvents = 'none';
+            bloco.style.opacity = '0.5';
+        });
         if (correto) {
             socket.emit('submit-codigo', { room: currentRoom, playerId: myName, posicao: currentPosicao, blocosMontados: blocosSelecionados });
             feedbackDiv.innerHTML = '✅ Código correto! Aguardando resultado...';
@@ -293,9 +284,7 @@
         }
         missaoArea.style.display = 'none';
     };
-    rodarBtn.onclick = rodarCodigoSimulado;
     limparBtn.onclick = limparCodigo;
-    fecharTerminal.onclick = () => terminalDiv.style.display = 'none';
     rollDiceBtn.onclick = () => {
         if (!gameActive || currentTurn !== myName) { feedbackDiv.innerHTML = '❌ Não é sua vez!'; return; }
         socket.emit('roll-dice', { room: currentRoom, playerId: myName });
@@ -355,7 +344,6 @@
         if (data.playerId === myName) {
             feedbackDiv.innerHTML = data.message;
         }
-        // O turno será atualizado por 'turn-update'
     });
     socket.on('turn-update', data => {
         currentTurn = data.currentPlayer;
@@ -364,10 +352,16 @@
         renderBoard(playersPositions);
         if (currentTurn === myName && gameActive) {
             rollDiceBtn.disabled = false;
+            verificarBtn.disabled = false; // reabilita para o próximo turno
+            document.querySelectorAll('.bloco').forEach(bloco => {
+                bloco.style.pointerEvents = 'auto';
+                bloco.style.opacity = '1';
+            });
             missaoArea.style.display = 'none';
             feedbackDiv.innerHTML = 'Sua vez! Role o dado.';
         } else {
             rollDiceBtn.disabled = true;
+            verificarBtn.disabled = true;
             missaoArea.style.display = 'none';
         }
     });
@@ -376,6 +370,7 @@
         turnStatus.innerText = `🏆 VENCEDOR: ${data.winner}`;
         feedbackDiv.innerHTML = `🏁 Jogo terminado! ${data.winner} venceu.`;
         rollDiceBtn.disabled = true;
+        verificarBtn.disabled = true;
     });
     socket.on('error-msg', msg => { feedbackDiv.innerHTML = `❌ ${msg}`; });
     function updatePlayersList(players, readyStatus) {
