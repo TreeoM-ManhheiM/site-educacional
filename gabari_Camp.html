@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gabarito - 30 Missões Loop Infinito</title>
+    <title>Gabarito - 30 Missões Loop Infinito (com comentários linha a linha)</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -44,7 +44,7 @@
             font-family: 'Fira Code', monospace;
             font-size: 0.85rem;
         }
-        .codigo pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+        .codigo pre { margin: 0; white-space: pre-wrap; word-break: break-word; line-height: 1.4; }
         footer { text-align: center; margin-top: 2rem; font-size: 0.8rem; color: #64748b; }
         @media (max-width: 700px) {
             body { padding: 1rem; }
@@ -55,7 +55,7 @@
 <body>
 <div class="container">
     <h1>📋 Gabarito das 30 Missões</h1>
-    <div class="sub">Códigos corretos – Loop Infinito Missão While</div>
+    <div class="sub">Códigos corretos – Loop Infinito Missão While (com comentários explicativos)</div>
 
     <!-- Missão 1 -->
     <div class="missao-card">
@@ -64,10 +64,10 @@
             <span class="id">Missão 1</span>
         </div>
         <div class="historia">Use um loop `while` para exibir os números de 5 até 1 (decrescente).</div>
-        <div class="codigo"><pre>contador = 5
-while contador > 0:
-    print(contador)
-    contador -= 1</pre></div>
+        <div class="codigo"><pre>contador = 5                     # começa com 5
+while contador > 0:              # enquanto contador for maior que 0
+    print(contador)              # imprime o número atual (5,4,3,2,1)
+    contador -= 1                # decrementa 1 (contador = contador - 1)</pre></div>
     </div>
 
     <!-- Missão 2 -->
@@ -77,12 +77,12 @@ while contador > 0:
             <span class="id">Missão 2</span>
         </div>
         <div class="historia">Some números de 1 até atingir ou ultrapassar 100. Exiba a soma final.</div>
-        <div class="codigo"><pre>soma = 0
-numero = 1
-while soma < 100:
-    soma += numero
-    numero += 1
-print(soma)</pre></div>
+        <div class="codigo"><pre>soma = 0                         # acumulador da soma começa vazio
+numero = 1                       # primeiro número natural
+while soma < 100:                # enquanto a soma não atingiu 100
+    soma += numero               # adiciona o número atual à soma (soma = soma + numero)
+    numero += 1                  # passa para o próximo número (numero = numero + 1)
+print(soma)                      # exibe a soma final</pre></div>
     </div>
 
     <!-- Missão 3 -->
@@ -92,11 +92,11 @@ print(soma)</pre></div>
             <span class="id">Missão 3</span>
         </div>
         <div class="historia">Crie um loop infinito que pede um comando. Se digitar 'sair', use break.</div>
-        <div class="codigo"><pre>while True:
-    comando = input('Digite um comando (ou "sair"): ')
-    if comando == 'sair':
-        break
-    print(f'Você digitou: {comando}')</pre></div>
+        <div class="codigo"><pre>while True:                      # loop infinito (roda para sempre até break)
+    comando = input('Digite um comando (ou "sair"): ')   # lê o comando do usuário
+    if comando == 'sair':        # se o comando for exatamente "sair"
+        break                    # interrompe o loop imediatamente
+    print(f'Você digitou: {comando}')  # senão, mostra o que foi digitado</pre></div>
     </div>
 
     <!-- Missão 4 -->
@@ -106,13 +106,13 @@ print(soma)</pre></div>
             <span class="id">Missão 4</span>
         </div>
         <div class="historia">Exiba apenas números ímpares de 1 a 10. Use continue para pular pares.</div>
-        <div class="codigo"><pre>i = 1
-while i <= 10:
-    if i % 2 == 0:
-        i += 1
-        continue
-    print(i)
-    i += 1</pre></div>
+        <div class="codigo"><pre>i = 1                            # começa em 1
+while i <= 10:                   # enquanto i for menor ou igual a 10
+    if i % 2 == 0:               # se i for par (resto da divisão por 2 é zero)
+        i += 1                   # incrementa i (vai para o próximo número)
+        continue                 # pula o resto do código, volta ao início do loop
+    print(i)                     # imprime apenas os ímpares
+    i += 1                       # incrementa i para o próximo</pre></div>
     </div>
 
     <!-- Missão 5 -->
@@ -122,12 +122,12 @@ while i <= 10:
             <span class="id">Missão 5</span>
         </div>
         <div class="historia">Percorra números de 1 a 20. Pare ao encontrar um número divisível por 3 e por 5.</div>
-        <div class="codigo"><pre>i = 1
-while i <= 20:
-    if i % 3 == 0 and i % 5 == 0:
-        break
-    print(i)
-    i += 1</pre></div>
+        <div class="codigo"><pre>i = 1                            # começa em 1
+while i <= 20:                   # enquanto i for até 20
+    if i % 3 == 0 and i % 5 == 0:   # se i for divisível por 3 E por 5 (ou seja, por 15)
+        break                    # interrompe o loop
+    print(i)                     # imprime os números que não são múltiplos de 3 e 5 juntos
+    i += 1                       # incrementa i</pre></div>
     </div>
 
     <!-- Missão 6 -->
@@ -137,11 +137,11 @@ while i <= 20:
             <span class="id">Missão 6</span>
         </div>
         <div class="historia">Peça números até que o usuário digite 0 ou um número negativo. Use break.</div>
-        <div class="codigo"><pre>while True:
-    num = int(input('Digite um número (0 ou negativo para parar): '))
-    if num == 0 or num < 0:
-        break
-    print(f'Você digitou: {num}')</pre></div>
+        <div class="codigo"><pre>while True:                      # loop infinito
+    num = int(input('Digite um número (0 ou negativo para parar): '))   # lê número
+    if num == 0 or num < 0:      # se for zero OU negativo
+        break                    # sai do loop
+    print(f'Você digitou: {num}') # senão, mostra o número</pre></div>
     </div>
 
     <!-- Missão 7 -->
@@ -151,10 +151,10 @@ while i <= 20:
             <span class="id">Missão 7</span>
         </div>
         <div class="historia">Peça a senha. Enquanto a senha NÃO for '1234', continue pedindo.</div>
-        <div class="codigo"><pre>senha = ''
-while not senha == '1234':
-    senha = input('Digite a senha: ')
-print('Acesso liberado!')</pre></div>
+        <div class="codigo"><pre>senha = ''                       # senha começa vazia
+while not senha == '1234':       # enquanto NÃO for '1234' (negação)
+    senha = input('Digite a senha: ')   # pergunta a senha novamente
+print('Acesso liberado!')        # quando acertar, mostra mensagem</pre></div>
     </div>
 
     <!-- Missão 8 -->
@@ -164,11 +164,11 @@ print('Acesso liberado!')</pre></div>
             <span class="id">Missão 8</span>
         </div>
         <div class="historia">Peça um número e mostre sua tabuada do 1 ao 10 usando while.</div>
-        <div class="codigo"><pre>n = int(input('Digite um número: '))
-i = 1
-while i <= 10:
-    print(f'{n} x {i} = {n*i}')
-    i += 1</pre></div>
+        <div class="codigo"><pre>n = int(input('Digite um número: '))   # número digitado
+i = 1                            # contador começa em 1
+while i <= 10:                   # vai até 10
+    print(f'{n} x {i} = {n*i}')  # exibe a linha da tabuada
+    i += 1                       # incrementa o contador</pre></div>
     </div>
 
     <!-- Missão 9 -->
@@ -178,15 +178,15 @@ while i <= 10:
             <span class="id">Missão 9</span>
         </div>
         <div class="historia">Verifique se um número é primo. Se encontrar um divisor, use break.</div>
-        <div class="codigo"><pre>num = int(input('Digite um número: '))
-i = 2
-while i < num:
-    if num % i == 0:
-        print(f'{num} não é primo')
-        break
-    i += 1
-else:
-    print(f'{num} é primo')</pre></div>
+        <div class="codigo"><pre>num = int(input('Digite um número: '))   # número a testar
+i = 2                            # começa do primeiro divisor potencial
+while i < num:                   # enquanto i for menor que o número
+    if num % i == 0:             # se i divide num exatamente (resto zero)
+        print(f'{num} não é primo')   # não é primo
+        break                    # interrompe (já achou divisor)
+    i += 1                       # testa próximo divisor
+else:                            # else do while (executa se não houve break)
+    print(f'{num} é primo')      # se saiu sem break, é primo</pre></div>
     </div>
 
     <!-- Missão 10 -->
@@ -198,10 +198,10 @@ else:
         <div class="historia">Exiba números de 1 a 20, pulando os múltiplos de 3 (use continue).</div>
         <div class="codigo"><pre>i = 1
 while i <= 20:
-    if i % 3 == 0:
-        i += 1
-        continue
-    print(i)
+    if i % 3 == 0:               # se for múltiplo de 3
+        i += 1                   # incrementa antes de pular
+        continue                 # pula a impressão
+    print(i)                     # imprime os não múltiplos de 3
     i += 1</pre></div>
     </div>
 
@@ -212,10 +212,10 @@ while i <= 20:
             <span class="id">Missão 11</span>
         </div>
         <div class="historia">Peça um número entre 1 e 10. Enquanto não estiver nesse intervalo, continue pedindo.</div>
-        <div class="codigo"><pre>num = 0
-while num < 1 or num > 10:
-    num = int(input('Digite um número entre 1 e 10: '))
-print(f'Número válido: {num}')</pre></div>
+        <div class="codigo"><pre>num = 0                          # valor inicial inválido
+while num < 1 or num > 10:       # enquanto estiver fora do intervalo [1,10]
+    num = int(input('Digite um número entre 1 e 10: '))   # pede novamente
+print(f'Número válido: {num}')   # quando sair, número está correto</pre></div>
     </div>
 
     <!-- Missão 12 -->
@@ -225,13 +225,13 @@ print(f'Número válido: {num}')</pre></div>
             <span class="id">Missão 12</span>
         </div>
         <div class="historia">Calcule o fatorial de um número usando while.</div>
-        <div class="codigo"><pre>n = int(input('Digite um número: '))
-fatorial = 1
-original = n
-while n > 0:
-    fatorial *= n
-    n -= 1
-print(f'{original}! = {fatorial}')</pre></div>
+        <div class="codigo"><pre>n = int(input('Digite um número: '))   # número para calcular fatorial
+fatorial = 1                     # acumulador começa com 1
+original = n                     # guarda o valor original para mostrar no final
+while n > 0:                     # enquanto n for positivo
+    fatorial *= n                # multiplica: fatorial = fatorial * n
+    n -= 1                       # decrementa n (n = n - 1)
+print(f'{original}! = {fatorial}')   # exibe resultado</pre></div>
     </div>
 
     <!-- Missão 13 -->
@@ -243,13 +243,14 @@ print(f'{original}! = {fatorial}')</pre></div>
         <div class="historia">Percorra 1 a 50. Pule pares (continue). Se primo maior que 30, pare (break).</div>
         <div class="codigo"><pre>i = 1
 while i <= 50:
-    if i % 2 == 0:
+    if i % 2 == 0:               # se for par
         i += 1
-        continue
+        continue                 # pula (não imprime)
+    # verifica se é primo maior que 30 (simplificado: não divisível por 2,3,5)
     if i > 30 and i % 2 != 0 and i % 3 != 0 and i % 5 != 0:
         print(f'Primo encontrado: {i}')
-        break
-    print(i)
+        break                    # interrompe ao encontrar
+    print(i)                     # imprime números ímpares não primos >30
     i += 1</pre></div>
     </div>
 
@@ -260,15 +261,15 @@ while i <= 50:
             <span class="id">Missão 14</span>
         </div>
         <div class="historia">Saldo 1000. Saques: se insuficiente, continue; se 0, break.</div>
-        <div class="codigo"><pre>saldo = 1000
-while True:
+        <div class="codigo"><pre>saldo = 1000                     # saldo inicial
+while True:                      # loop infinito
     saque = int(input('Digite o valor do saque (0 para sair): '))
-    if saque == 0:
+    if saque == 0:               # se zero, encerra
         break
-    if saque > saldo:
+    if saque > saldo:            # se maior que o saldo
         print('Saldo insuficiente!')
-        continue
-    saldo -= saque
+        continue                 # volta ao início do loop, não faz o saque
+    saldo -= saque               # subtrai o saque do saldo
     print(f'Saque realizado. Saldo atual: {saldo}')</pre></div>
     </div>
 
@@ -279,14 +280,14 @@ while True:
             <span class="id">Missão 15</span>
         </div>
         <div class="historia">Número secreto = 42. Peça palpites até acertar. Use break.</div>
-        <div class="codigo"><pre>secreto = 42
+        <div class="codigo"><pre>secreto = 42                     # número a ser adivinhado
 while True:
     palpite = int(input('Adivinhe o número secreto: '))
-    if palpite == secreto:
+    if palpite == secreto:       # se acertou
         print('Acertou!')
-        break
+        break                    # sai do loop
     else:
-        print('Tente novamente!')</pre></div>
+        print('Tente novamente!')   # senão, continua</pre></div>
     </div>
 
     <!-- Missão 16 -->
@@ -300,13 +301,13 @@ while True:
 contador = 0
 while True:
     nota = float(input('Digite a nota (-1 para sair): '))
-    if nota == -1:
+    if nota == -1:               # sentinela de saída
         break
-    if nota < 0:
+    if nota < 0:                 # se negativa, ignora
         continue
-    soma += nota
-    contador += 1
-if contador > 0:
+    soma += nota                 # acumula a nota válida
+    contador += 1                # conta quantas notas foram somadas
+if contador > 0:                 # se leu pelo menos uma nota
     media = soma / contador
     print(f'Média: {media:.2f}')</pre></div>
     </div>
@@ -319,12 +320,12 @@ if contador > 0:
         </div>
         <div class="historia">i de 1 a 3, j de 1 a 5. Se j == 3, break interno.</div>
         <div class="codigo"><pre>i = 1
-while i <= 3:
+while i <= 3:                    # loop externo (i)
     j = 1
-    while j <= 5:
+    while j <= 5:                # loop interno (j)
         if j == 3:
-            break
-        print(i, j)
+            break                # interrompe o loop interno
+        print(i, j)              # imprime par (i,j)
         j += 1
     i += 1</pre></div>
     </div>
@@ -336,10 +337,10 @@ while i <= 3:
             <span class="id">Missão 18</span>
         </div>
         <div class="historia">Gere Fibonacci até ultrapassar 1000. Pare quando termo > 1000.</div>
-        <div class="codigo"><pre>a, b = 0, 1
-while a <= 1000:
-    print(a)
-    a, b = b, a + b</pre></div>
+        <div class="codigo"><pre>a, b = 0, 1                     # primeiros termos: a=0, b=1
+while a <= 1000:                 # enquanto o termo for <= 1000
+    print(a)                     # mostra o termo
+    a, b = b, a + b              # atualiza: a vira b, b vira a+b (próximo termo)</pre></div>
     </div>
 
     <!-- Missão 19 -->
@@ -350,7 +351,7 @@ while a <= 1000:
         </div>
         <div class="historia">Peça um número entre 51 e 99. Enquanto não, continue.</div>
         <div class="codigo"><pre>num = 0
-while not (num > 50 and num < 100):
+while not (num > 50 and num < 100):   # enquanto NÃO estiver no intervalo (51-99)
     num = int(input('Digite um número entre 51 e 99: '))
 print(f'Número aceito: {num}')</pre></div>
     </div>
@@ -368,12 +369,12 @@ while tentativas < 3:
     senha = input('Senha: ')
     if usuario == 'admin' and senha == '123':
         print('Acesso liberado!')
-        break
+        break                     # acertou, sai do loop
     else:
-        tentativas += 1
+        tentativas += 1           # incrementa contador de erros
         print(f'Senha incorreta! Tentativas restantes: {3 - tentativas}')
-        continue
-else:
+        continue                  # continua o loop (volta para pedir de novo)
+else:                             # else do while (executa se não houve break)
     print('Conta bloqueada! Muitas tentativas.')</pre></div>
     </div>
 
@@ -384,11 +385,11 @@ else:
             <span class="id">Missão 21</span>
         </div>
         <div class="historia">Exiba todos os números pares de 2 até N.</div>
-        <div class="codigo"><pre>n = int(input('Digite um número: '))
-i = 2
-while i <= n:
-    print(i)
-    i += 2</pre></div>
+        <div class="codigo"><pre>n = int(input('Digite um número: '))   # limite superior
+i = 2                                 # primeiro par
+while i <= n:                         # enquanto i <= n
+    print(i)                          # imprime o par
+    i += 2                            # incrementa de 2 em 2</pre></div>
     </div>
 
     <!-- Missão 22 -->
@@ -398,10 +399,10 @@ while i <= n:
             <span class="id">Missão 22</span>
         </div>
         <div class="historia">Exiba 10,8,6,4,2 usando while.</div>
-        <div class="codigo"><pre>i = 10
-while i >= 1:
-    print(i)
-    i -= 2</pre></div>
+        <div class="codigo"><pre>i = 10                              # começa em 10
+while i >= 1:                       # enquanto for maior ou igual a 1
+    print(i)                        # imprime 10,8,6,4,2
+    i -= 2                          # decrementa 2 a cada passo</pre></div>
     </div>
 
     <!-- Missão 23 -->
@@ -411,10 +412,10 @@ while i >= 1:
             <span class="id">Missão 23</span>
         </div>
         <div class="historia">Exiba potências de 2 menores que 1000 (1,2,4,8...).</div>
-        <div class="codigo"><pre>i = 1
-while i < 1000:
-    print(i)
-    i *= 2</pre></div>
+        <div class="codigo"><pre>i = 1                               # primeira potência (2⁰)
+while i < 1000:                     # enquanto for menor que 1000
+    print(i)                        # imprime 1,2,4,8,16,32,64,128,256,512
+    i *= 2                          # multiplica por 2 (próxima potência)</pre></div>
     </div>
 
     <!-- Missão 24 -->
@@ -427,10 +428,10 @@ while i < 1000:
         <div class="codigo"><pre>soma = 0
 while True:
     num = int(input('Digite um número (negativo para parar): '))
-    if num < 0:
-        break
-    soma += num
-    print(f'Soma parcial: {soma}')</pre></div>
+    if num < 0:                     # se for negativo
+        break                       # encerra o loop
+    soma += num                     # acumula o número positivo
+    print(f'Soma parcial: {soma}')  # mostra a soma parcial</pre></div>
     </div>
 
     <!-- Missão 25 -->
@@ -442,10 +443,10 @@ while True:
         <div class="historia">Exiba 1 a 30, pulando múltiplos de 5.</div>
         <div class="codigo"><pre>i = 1
 while i <= 30:
-    if i % 5 == 0:
+    if i % 5 == 0:                  # se for múltiplo de 5
         i += 1
-        continue
-    print(i)
+        continue                    # pula a impressão
+    print(i)                        # imprime os que não são múltiplos de 5
     i += 1</pre></div>
     </div>
 
@@ -457,7 +458,7 @@ while i <= 30:
         </div>
         <div class="historia">Peça número múltiplo de 3 ou 5. Enquanto não, continue.</div>
         <div class="codigo"><pre>num = 0
-while not (num % 3 == 0 or num % 5 == 0):
+while not (num % 3 == 0 or num % 5 == 0):   # enquanto NÃO for múltiplo de 3 OU de 5
     num = int(input('Digite um múltiplo de 3 ou 5: '))
 print(f'Número válido: {num}')</pre></div>
     </div>
@@ -469,12 +470,12 @@ print(f'Número válido: {num}')</pre></div>
             <span class="id">Missão 27</span>
         </div>
         <div class="historia">Exiba 1 a N, mas pare se ultrapassar 100.</div>
-        <div class="codigo"><pre>n = int(input('Digite o limite: '))
+        <div class="codigo"><pre>n = int(input('Digite o limite: '))   # valor máximo desejado
 i = 1
-while i <= n:
-    if i > 100:
-        break
-    print(i)
+while i <= n:                         # enquanto i <= n
+    if i > 100:                       # se ultrapassou 100
+        break                         # interrompe o loop
+    print(i)                          # imprime o número
     i += 1</pre></div>
     </div>
 
@@ -485,12 +486,12 @@ while i <= n:
             <span class="id">Missão 28</span>
         </div>
         <div class="historia">Calcule a soma dos dígitos de um número positivo.</div>
-        <div class="codigo"><pre>n = int(input('Digite um número: '))
+        <div class="codigo"><pre>n = int(input('Digite um número: '))   # ex: 123
 soma = 0
-while n > 0:
-    soma += n % 10
-    n //= 10
-print(f'Soma dos dígitos: {soma}')</pre></div>
+while n > 0:                          # enquanto ainda houver dígitos
+    soma += n % 10                    # pega o último dígito (123 % 10 = 3) e soma
+    n //= 10                          # elimina o último dígito (123 // 10 = 12)
+print(f'Soma dos dígitos: {soma}')    # resultado: 1+2+3 = 6</pre></div>
     </div>
 
     <!-- Missão 29 -->
@@ -500,12 +501,12 @@ print(f'Soma dos dígitos: {soma}')</pre></div>
             <span class="id">Missão 29</span>
         </div>
         <div class="historia">Inverta a ordem dos dígitos. Ex: 123 → 321.</div>
-        <div class="codigo"><pre>n = int(input('Digite um número: '))
+        <div class="codigo"><pre>n = int(input('Digite um número: '))   # ex: 123
 invertido = 0
 while n > 0:
-    invertido = invertido * 10 + n % 10
-    n //= 10
-print(f'Número invertido: {invertido}')</pre></div>
+    invertido = invertido * 10 + n % 10   # pega o último dígito e adiciona ao invertido
+    n //= 10                              # remove o último dígito
+print(f'Número invertido: {invertido}')   # 321</pre></div>
     </div>
 
     <!-- Missão 30 -->
@@ -518,16 +519,16 @@ print(f'Número invertido: {invertido}')</pre></div>
         <div class="codigo"><pre>soma = 0
 while True:
     num = int(input('Digite um número (-1 para sair): '))
-    if num == -1:
+    if num == -1:                     # se for -1, sai
         break
-    soma += num
-    if soma > 500:
-        break
-    print(f'Soma atual: {soma}')
-print(f'Soma final: {soma}')</pre></div>
+    soma += num                       # acumula
+    if soma > 500:                    # se ultrapassou 500
+        break                         # sai também
+    print(f'Soma atual: {soma}')      # mostra soma parcial
+print(f'Soma final: {soma}')          # exibe o total</pre></div>
     </div>
 
-    <footer>Gabarito oficial das 30 missões – utilize para corrigir ou estudar os códigos corretos.</footer>
+    <footer>Gabarito oficial das 30 missões – utilize para corrigir ou estudar os códigos corretos.<br>✅ Todas as linhas contêm comentários explicativos (tipo "incrementa", "imprime", "compara", "pula", etc.)</footer>
 </div>
 </body>
 </html>
