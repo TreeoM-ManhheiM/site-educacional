@@ -215,7 +215,6 @@
             pointer-events: none;
         }
 
-        /* Indicador do primeiro ponto da parede */
         .obstacle-marker {
             position: absolute;
             width: 12px;
@@ -624,8 +623,8 @@
         let activeConfigDeviceId = null;
         let weather = 'clear';
         let interferenceLevel = 0;
-        let pendingReconnect = []; // Links Wi-Fi aguardando reconexao automatica
-        let obstacleFirstPoint = null; // Primeiro ponto da parede (modo dois cliques)
+        let pendingReconnect = [];
+        let obstacleFirstPoint = null;
 
         const workspace = document.getElementById('workspace');
         const svgLayer = document.getElementById('cables-layer');
@@ -639,7 +638,7 @@
             if (btn) btn.classList.add('active');
             workspace.style.cursor = mode === 'connect' ? 'crosshair' : mode === 'delete' ? 'not-allowed' : mode === 'obstacle' ? 'crosshair' : 'default';
             pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
-            obstacleFirstPoint = null; // Reseta o primeiro ponto ao mudar de modo
+            obstacleFirstPoint = null;
             removeObstacleMarkers();
             renderAll();
         }
@@ -697,11 +696,10 @@
             document.querySelectorAll('.obstacle-marker').forEach(m => m.remove());
         }
 
-        // ===================== VERIFICAÇÃO DE ALCANCE WLAN (com reconexao) =====================
+        // ===================== VERIFICAÇÃO DE ALCANCE WLAN (com reconexão) =====================
         function checkWlanRange() {
             const linksToRemove = [];
             
-            // Verifica links ativos que devem ser removidos (fora do alcance)
             links.forEach(link => {
                 if (link.portType !== 'WLAN') return;
                 const src = devices[link.sourceId];
@@ -723,7 +721,6 @@
                 
                 if (distance > range) {
                     linksToRemove.push(link.id);
-                    // Guarda para possivel reconexao
                     pendingReconnect.push({
                         sourceId: link.sourceId,
                         targetId: link.targetId,
@@ -734,7 +731,6 @@
                 }
             });
             
-            // Remove links que sairam do alcance
             if (linksToRemove.length > 0) {
                 linksToRemove.forEach(linkId => {
                     const link = links.find(l => l.id === linkId);
@@ -753,12 +749,11 @@
                 links = links.filter(l => !linksToRemove.includes(l.id));
             }
             
-            // Verifica se algum link pendente pode ser reconectado
             const reconnected = [];
             pendingReconnect = pendingReconnect.filter(pending => {
                 const src = devices[pending.sourceId];
                 const tgt = devices[pending.targetId];
-                if (!src || !tgt) return false; // dispositivo foi deletado
+                if (!src || !tgt) return false;
                 
                 const srcIntf = src.interfaces[pending.sourcePort];
                 const tgtIntf = tgt.interfaces[pending.targetPort];
@@ -779,7 +774,6 @@
                 const range = getWifiRange(ap);
                 
                 if (distance <= range) {
-                    // Reconectar!
                     const linkId = `link_${Date.now()}_${Math.random()}`;
                     links.push({
                         id: linkId,
@@ -792,9 +786,9 @@
                     srcIntf.connectedToLink.push(linkId);
                     tgtIntf.connectedToLink.push(linkId);
                     reconnected.push(pending);
-                    return false; // remove da lista de pendentes
+                    return false;
                 }
-                return true; // mantem na lista, ainda fora do alcance
+                return true;
             });
             
             if (linksToRemove.length > 0 || reconnected.length > 0) {
@@ -853,6 +847,21 @@
                     y1 = src.y + 27;
                 const x2 = tgt.x + 27,
                     y2 = tgt.y + 27;
+
+                // Linha invisível grossa para facilitar o hover
+                const hoverLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                hoverLine.setAttribute('x1', x1);
+                hoverLine.setAttribute('y1', y1);
+                hoverLine.setAttribute('x2', x2);
+                hoverLine.setAttribute('y2', y2);
+                hoverLine.setAttribute('stroke', 'transparent');
+                hoverLine.setAttribute('stroke-width', '12');
+                hoverLine.style.pointerEvents = 'stroke';
+                hoverLine.addEventListener('mouseenter', (e) => showRSSI(e, link, x1, y1, x2, y2));
+                hoverLine.addEventListener('mouseleave', hideRSSI);
+                svgLayer.appendChild(hoverLine);
+
+                // Linha visível normal
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
                 line.setAttribute('x1', x1);
                 line.setAttribute('y1', y1);
@@ -868,14 +877,14 @@
                 if (link.portType === 'MICROWAVE') cableClass = 'cable-wan';
                 line.setAttribute('class', cableClass);
                 line.setAttribute('data-link-id', link.id);
-                line.style.pointerEvents = 'stroke';
+                line.style.pointerEvents = 'none';
                 if (link.portType === 'WLAN' && interferenceLevel > 30) {
                     line.style.stroke = '#ef4444';
                     line.style.opacity = 0.6;
                 }
                 if ((link.portType === 'FSO' || link.portType === 'SAT') && weather !== 'clear') {
                     line.style.strokeDasharray = '1 6';
-                    line.style.opacity = weather === 'fog' ? 0.3 : 0.6;
+                    line.style.opacity = weather === 'fog' ? 0.5 : 0.6;
                 }
                 let crossesObstacle = false;
                 obstacles.forEach(obs => {
@@ -887,9 +896,8 @@
                     line.style.stroke = '#f97316';
                     line.style.strokeWidth = 3;
                 }
-                line.addEventListener('mouseenter', (e) => showRSSI(e, link, x1, y1, x2, y2));
-                line.addEventListener('mouseleave', hideRSSI);
                 svgLayer.appendChild(line);
+
                 if (link.portType !== 'WLAN' && link.portType !== 'BT' && link.portType !== 'NFC') {
                     const drawLabel = (px, py, cx, cy, text) => {
                         const angle = Math.atan2(cy - py, cx - px);
@@ -994,9 +1002,15 @@
 
             // Tratamento especial para SAT e FSO (baseado no clima)
             if (link.portType === 'SAT') {
-                rssi = (weather === 'rain') ? -60 : -50;
-                quality = rssi > -55 ? 'Boa' : 'Regular';
-                rate = 100; // Mbps simbolico
+                if (weather === 'rain') {
+                    rssi = -60;
+                } else if (weather === 'fog') {
+                    rssi = -70;
+                } else {
+                    rssi = -50;
+                }
+                quality = rssi > -55 ? 'Boa' : rssi > -65 ? 'Regular' : 'Fraca';
+                rate = 100; // Mbps simbólico
             } else if (link.portType === 'FSO') {
                 if (weather === 'fog') {
                     rssi = -90;
@@ -1008,9 +1022,9 @@
                     rssi = -40;
                     quality = 'Excelente';
                 }
-                rate = 10000; // 10 Gbps tipico
+                rate = 10000; // 10 Gbps típico
             } else {
-                // Wi‑Fi / WAN / LAN / MICROWAVE: usa distancia
+                // Wi‑Fi / WAN / LAN / MICROWAVE: usa distância
                 rssi = -30 - dist * 0.3;
                 if (link.portType === 'WLAN' && interferenceLevel > 30) rssi -= 20;
                 let crossesObs = false;
@@ -1025,12 +1039,13 @@
             }
 
             rssiTooltip.innerHTML = `
-            📶 RSSI: ${Math.round(rssi)} dBm (${quality})<br>
-            📡 Padrão: ${std}<br>
-            🚀 Taxa est.: ${rate.toFixed(0)} Mbps<br>
-            ${weather === 'rain' && (link.portType === 'SAT' || link.portType === 'WLAN') ? '🌧️ Chuva atenuando sinal' : ''}
-            ${weather === 'fog' && link.portType === 'FSO' ? '🌫️ Nevoeiro intenso' : ''}
-          `;
+                📶 RSSI: ${Math.round(rssi)} dBm (${quality})<br>
+                📡 Padrão: ${std}<br>
+                🚀 Taxa est.: ${rate.toFixed(0)} Mbps<br>
+                ${weather === 'rain' && (link.portType === 'SAT' || link.portType === 'WLAN') ? '🌧️ Chuva atenuando sinal' : ''}
+                ${weather === 'fog' && link.portType === 'FSO' ? '🌫️ Nevoeiro intenso' : ''}
+                ${weather === 'fog' && link.portType === 'SAT' ? '🌫️ Nevoeiro atenuando' : ''}
+            `;
             rssiTooltip.style.display = 'block';
             rssiTooltip.style.left = e.clientX + 15 + 'px';
             rssiTooltip.style.top = e.clientY - 20 + 'px';
@@ -1071,32 +1086,27 @@
                 return;
             }
             
-            // Modo parede com dois cliques
             if (mode === 'obstacle') {
                 const rect = workspace.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
                 
                 if (!obstacleFirstPoint) {
-                    // Primeiro clique: marca o ponto inicial
                     obstacleFirstPoint = { x, y };
                     showObstacleMarker(x, y);
                 } else {
-                    // Segundo clique: cria a parede entre os dois pontos
                     const x1 = obstacleFirstPoint.x;
                     const y1 = obstacleFirstPoint.y;
                     const x2 = x;
                     const y2 = y;
                     
-                    // Define o retangulo da parede (pode ser horizontal, vertical ou diagonal)
                     const wallX = Math.min(x1, x2);
                     const wallY = Math.min(y1, y2);
-                    const wallW = Math.abs(x2 - x1) || 60; // largura minima de 60px
-                    const wallH = Math.abs(y2 - y1) || 20; // altura minima de 20px
+                    const wallW = Math.abs(x2 - x1) || 60;
+                    const wallH = Math.abs(y2 - y1) || 20;
                     
                     obstacles.push({ x: wallX, y: wallY, w: wallW, h: wallH });
                     
-                    // Limpa o primeiro ponto e volta ao modo mover
                     obstacleFirstPoint = null;
                     removeObstacleMarkers();
                     renderAll();
@@ -1273,7 +1283,6 @@
         }
 
         function deleteDevice(devId) {
-            // Remove links pendentes de reconexao que envolvem este dispositivo
             pendingReconnect = pendingReconnect.filter(p => p.sourceId !== devId && p.targetId !== devId);
             
             links = links.filter(link => {
