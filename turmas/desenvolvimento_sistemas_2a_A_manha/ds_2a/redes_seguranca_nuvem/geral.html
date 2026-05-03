@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TCP/IP & Redes sem Fio: Wi‑Fi, BT, NFC, Satelite, Laser</title>
+    <title>TCP/IP & Redes sem Fio: Wi‑Fi, BT, NFC, Satélite, Laser</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap');
 
@@ -486,7 +486,7 @@
 <body>
 
     <div id="header">
-        <h1>TCP/IP & Redes sem Fio: Wi‑Fi, BT, NFC, Satelite, Laser</h1>
+        <h1>📡TCP/IP & Redes sem Fio: Wi‑Fi, BT, NFC, Satélite, Laser</h1>
         <div>
             <button onclick="clearWorkspace()" class="danger small">Limpar</button>
             <button onclick="exportJSON()" style="background: var(--success); color:#000;" class="small">Salvar .json</button>
@@ -495,47 +495,47 @@
 
     <div id="toolbar">
         <div class="tool-group">
-            <span>Acao</span>
+            <span>Ação</span>
             <button id="btn-move" class="active" onclick="setMode('move')">Mover / IP</button>
-            <button id="btn-connect" onclick="setMode('connect')">Cabear</button>
-            <button id="btn-delete" onclick="setMode('delete')">Deletar</button>
-            <button id="btn-obstacle" onclick="setMode('obstacle')">Parede</button>
+            <button id="btn-connect" onclick="setMode('connect')">🔗 Cabear</button>
+            <button id="btn-delete" onclick="setMode('delete')">❌ Deletar</button>
+            <button id="btn-obstacle" onclick="setMode('obstacle')">🧱 Parede</button>
         </div>
         <div class="tool-group">
             <span>Dispositivos</span>
-            <button onclick="addDevice('PC','[PC]')">PC</button>
-            <button onclick="addDevice('Notebook','[NB]')">Notebook</button>
-            <button onclick="addDevice('Smartphone','[SP]')">Smartphone</button>
-            <button onclick="addDevice('Switch','[SW]')">Switch</button>
-            <button onclick="addDevice('Roteador','[RT]')">Roteador</button>
-            <button onclick="addDevice('AccessPoint','[AP]')">AP Wi-Fi</button>
-            <button onclick="addDevice('Internet','[INET]')">Internet</button>
-            <button onclick="addDevice('Servidor_DHCP','[DHCP]')">DHCP</button>
-            <button onclick="addDevice('Servidor_Web','[WEB]')">Web/DNS</button>
+            <button onclick="addDevice('PC','💻')">PC</button>
+            <button onclick="addDevice('Notebook','💻')">Notebook</button>
+            <button onclick="addDevice('Smartphone','📱')">Smartphone</button>
+            <button onclick="addDevice('Switch','🔀')">Switch</button>
+            <button onclick="addDevice('Roteador','📡')">Roteador</button>
+            <button onclick="addDevice('AccessPoint','📶')">AP Wi-Fi</button>
+            <button onclick="addDevice('Internet','☁️')">Internet</button>
+            <button onclick="addDevice('Servidor_DHCP','🗄️')">DHCP</button>
+            <button onclick="addDevice('Servidor_Web','🌍')">Web/DNS</button>
         </div>
         <div class="tool-group">
             <span>Wireless Extra</span>
-            <button onclick="addDevice('Bluetooth','[BT]')">Bluetooth</button>
-            <button onclick="addDevice('TagNFC','[NFC]')">Tag NFC</button>
-            <button onclick="addDevice('MicroondasForno','[MW]')">Forno MW</button>
-            <button onclick="addDevice('AntenaParabolica','[uW]')">Micro-ondas</button>
-            <button onclick="addDevice('FSO','[FSO]')">Laser FSO</button>
-            <button onclick="addDevice('Satelite','[SAT]')">Satelite</button>
+            <button onclick="addDevice('Bluetooth','🎧')">Bluetooth</button>
+            <button onclick="addDevice('TagNFC','🏷️')">Tag NFC</button>
+            <button onclick="addDevice('MicroondasForno','🛑')">Forno MW</button>
+            <button onclick="addDevice('AntenaParabolica','📡')">Antena Parabólica</button>
+            <button onclick="addDevice('FSO','🔦')">Laser FSO</button>
+            <button onclick="addDevice('Satelite','🛰️')">Satélite</button>
         </div>
     </div>
 
     <div id="env-bar">
-        <span>Clima:</span>
+        <span>🌦️ Clima:</span>
         <select id="weather-select" onchange="applyWeather()">
-            <option value="clear">Ceu limpo</option>
+            <option value="clear">Céu limpo</option>
             <option value="rain">Chuva moderada</option>
             <option value="fog">Nevoeiro denso</option>
         </select>
-        <span>Interferencia 2.4GHz:</span>
+        <span>📶 Interferência 2.4GHz:</span>
         <input type="range" id="interference-slider" min="0" max="100" value="0" oninput="applyInterference()">
         <span id="interference-value">0%</span>
         <button onclick="clearObstacles()" class="small">Remover Paredes</button>
-        <span style="margin-left:auto;">Duplo clique = Configurar</span>
+        <span style="margin-left:auto;">💡 Duplo clique = Configurar</span>
     </div>
 
     <div id="workspace" onmousedown="onWorkspaceDown(event)" onmousemove="onWorkspaceMove(event)" onmouseup="onWorkspaceUp(event)" ontouchmove="onTouchMove(event)">
@@ -553,7 +553,7 @@
 
     <div id="config-modal" class="modal-overlay">
         <div class="modal" style="max-width:550px;">
-            <h2 id="config-modal-title">Configuracao</h2>
+            <h2 id="config-modal-title">Configuração</h2>
             <div class="config-row" style="margin-bottom:10px;">
                 <label style="width:100px;">Hostname:</label>
                 <input type="text" id="cfg-hostname" style="font-weight:bold;color:var(--accent);">
@@ -585,7 +585,7 @@
                 ports: [
                     { name: 'Gi0/0 (Gateway LAN)', type: 'LAN' },
                     { name: 'Gi0/1 (WAN/Internet)', type: 'WAN' },
-                    { name: 'Uplink Satelite (SAT)', type: 'SAT' }
+                    { name: 'Uplink Satélite (SAT)', type: 'SAT' }
                 ]
             },
             'AccessPoint': {
@@ -604,7 +604,7 @@
             'AntenaParabolica': {
                 ports: [
                     { name: 'Microwave-Link', type: 'MICROWAVE' },
-                    { name: 'Uplink Satelite (SAT)', type: 'SAT' }
+                    { name: 'Uplink Satélite (SAT)', type: 'SAT' }
                 ]
             },
             'FSO': { ports: [{ name: 'Laser-Optical', type: 'FSO' }] },
@@ -631,7 +631,7 @@
         const svgLayer = document.getElementById('cables-layer');
         const rssiTooltip = document.getElementById('rssi-tooltip');
 
-        // ===================== MODOS DE OPERACAO =====================
+        // ===================== MODOS DE OPERAÇÃO =====================
         function setMode(newMode) {
             mode = newMode;
             document.querySelectorAll('#toolbar .tool-group:first-child button').forEach(b => b.classList.remove('active'));
@@ -697,7 +697,7 @@
             document.querySelectorAll('.obstacle-marker').forEach(m => m.remove());
         }
 
-        // ===================== VERIFICACAO DE ALCANCE WLAN (com reconexao) =====================
+        // ===================== VERIFICAÇÃO DE ALCANCE WLAN (com reconexao) =====================
         function checkWlanRange() {
             const linksToRemove = [];
             
@@ -802,7 +802,7 @@
             }
         }
 
-        // ===================== RENDERIZACAO PRINCIPAL =====================
+        // ===================== RENDERIZAÇÃO PRINCIPAL =====================
         function renderAll() {
             renderDevices();
             renderLinks();
@@ -986,26 +986,50 @@
 
         function showRSSI(e, link, x1, y1, x2, y2) {
             const dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-            let rssi = -30 - dist * 0.3;
-            if (link.portType === 'WLAN' && interferenceLevel > 30) rssi -= 20;
-            let crossesObs = false;
-            obstacles.forEach(obs => { if (lineIntersectsRect(x1, y1, x2, y2, obs.x, obs.y, obs.w, obs.h)) crossesObs = true; });
-            if (crossesObs) rssi -= 15;
-            if (weather === 'rain' && (link.portType === 'WLAN' || link.portType === 'SAT')) rssi -= 10;
-            if (weather === 'fog' && link.portType === 'FSO') rssi = -90;
-            const quality = rssi > -50 ? 'Excelente' : rssi > -65 ? 'Boa' : rssi > -75 ? 'Regular' : 'Fraca';
-            const std = devices[link.sourceId]?.wifiStandard || devices[link.targetId]?.wifiStandard || '802.11ac';
+            let rssi;
+            let quality;
+            let rate = 0;
+            let std = devices[link.sourceId]?.wifiStandard || devices[link.targetId]?.wifiStandard || '802.11ac';
             const rates = { '802.11b': 11, '802.11g': 54, '802.11n': 300, '802.11ac': 1300, '802.11ax': 9600 };
-            let rate = rates[std] || 1300;
-            if (rssi < -70) rate *= 0.1;
-            else if (rssi < -60) rate *= 0.4;
-            else rate *= 0.8;
+
+            // Tratamento especial para SAT e FSO (baseado no clima)
+            if (link.portType === 'SAT') {
+                rssi = (weather === 'rain') ? -60 : -50;
+                quality = rssi > -55 ? 'Boa' : 'Regular';
+                rate = 100; // Mbps simbolico
+            } else if (link.portType === 'FSO') {
+                if (weather === 'fog') {
+                    rssi = -90;
+                    quality = 'Fraca';
+                } else if (weather === 'rain') {
+                    rssi = -65;
+                    quality = 'Regular';
+                } else {
+                    rssi = -40;
+                    quality = 'Excelente';
+                }
+                rate = 10000; // 10 Gbps tipico
+            } else {
+                // Wi‑Fi / WAN / LAN / MICROWAVE: usa distancia
+                rssi = -30 - dist * 0.3;
+                if (link.portType === 'WLAN' && interferenceLevel > 30) rssi -= 20;
+                let crossesObs = false;
+                obstacles.forEach(obs => { if (lineIntersectsRect(x1, y1, x2, y2, obs.x, obs.y, obs.w, obs.h)) crossesObs = true; });
+                if (crossesObs) rssi -= 15;
+                if (weather === 'rain' && link.portType === 'WLAN') rssi -= 10;
+                quality = rssi > -50 ? 'Excelente' : rssi > -65 ? 'Boa' : rssi > -75 ? 'Regular' : 'Fraca';
+                rate = rates[std] || 1300;
+                if (rssi < -70) rate *= 0.1;
+                else if (rssi < -60) rate *= 0.4;
+                else rate *= 0.8;
+            }
+
             rssiTooltip.innerHTML = `
-            RSSI: ${Math.round(rssi)} dBm (${quality})<br>
-            Padrao: ${std}<br>
-            Taxa est.: ${rate.toFixed(0)} Mbps<br>
-            ${crossesObs ? 'Obstaculo no caminho' : ''}
-            ${interferenceLevel>30 ? 'Interferencia alta' : ''}
+            📶 RSSI: ${Math.round(rssi)} dBm (${quality})<br>
+            📡 Padrão: ${std}<br>
+            🚀 Taxa est.: ${rate.toFixed(0)} Mbps<br>
+            ${weather === 'rain' && (link.portType === 'SAT' || link.portType === 'WLAN') ? '🌧️ Chuva atenuando sinal' : ''}
+            ${weather === 'fog' && link.portType === 'FSO' ? '🌫️ Nevoeiro intenso' : ''}
           `;
             rssiTooltip.style.display = 'block';
             rssiTooltip.style.left = e.clientX + 15 + 'px';
@@ -1094,7 +1118,7 @@
             }
         }
 
-        // ===================== CONEXAO =====================
+        // ===================== CONEXÃO =====================
         function handleConnectionClick(devId) {
             const dev = devices[devId];
             if (pendingConnection.step === 0) {
@@ -1153,11 +1177,11 @@
                 listDiv.appendChild(btn);
                 hasOptions = true;
             });
-            if (!hasOptions) listDiv.innerHTML = '<div style="color:var(--danger);padding:10px;">Nenhuma interface compativel.</div>';
+            if (!hasOptions) listDiv.innerHTML = '<div style="color:var(--danger);padding:10px;">Nenhuma interface compatível.</div>';
             document.getElementById('port-modal').style.display = 'flex';
         }
 
-        // ===================== CONFIGURACAO TCP/IP + WIRELESS =====================
+        // ===================== CONFIGURAÇÃO TCP/IP + WIRELESS =====================
         function onDeviceDblClick(e, devId) {
             if (mode !== 'move') return;
             activeConfigDeviceId = devId;
@@ -1174,12 +1198,12 @@
               <div class="interface-block">
                 <div class="interface-title"><span>${portName} [MAC:${intf.mac}]</span> ${statusTxt}</div>
                 <div class="dhcp-toggle">
-                  <label><input type="radio" name="dhcp_${portName}" value="static" ${!intf.dhcp?'checked':''} onchange="toggleDHCP('${portName}',false)"> Estatico</label>
+                  <label><input type="radio" name="dhcp_${portName}" value="static" ${!intf.dhcp?'checked':''} onchange="toggleDHCP('${portName}',false)"> Estático</label>
                   <label><input type="radio" name="dhcp_${portName}" value="dhcp" ${intf.dhcp?'checked':''} onchange="toggleDHCP('${portName}',true)"> DHCP</label>
                 </div>
                 <div class="cfg-group-${portName}">
                   <div class="config-row"><label>IPv4:</label><input type="text" id="cfg-ip-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.ip}" ${disableAttr}></div>
-                  <div class="config-row"><label>Mascara:</label><input type="text" id="cfg-mask-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.mask}" ${disableAttr}></div>
+                  <div class="config-row"><label>Máscara:</label><input type="text" id="cfg-mask-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.mask}" ${disableAttr}></div>
                   <div class="config-row"><label>Gateway:</label><input type="text" id="cfg-gw-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.gateway}" ${disableAttr}></div>
                   <div class="config-row"><label>DNS:</label><input type="text" id="cfg-dns-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.dns}" ${disableAttr}></div>
                 </div>
@@ -1188,8 +1212,8 @@
             if (dev.type === 'AccessPoint' || dev.interfaces['Antena-WLAN']) {
                 container.innerHTML += `
               <div class="interface-block">
-                <div class="interface-title">Configuracoes Wireless</div>
-                <div class="config-row"><label>Padrao:</label><select id="cfg-wifi-std">
+                <div class="interface-title">📶 Configurações Wireless</div>
+                <div class="config-row"><label>Padrão:</label><select id="cfg-wifi-std">
                  <option value="802.11b" ${dev.wifiStandard==='802.11b'?'selected':''}>802.11b – 11 Mbps, alcance ~100 m</option>
                  <option value="802.11g" ${dev.wifiStandard==='802.11g'?'selected':''}>802.11g – 54 Mbps, alcance ~70 m</option>
                  <option value="802.11n" ${dev.wifiStandard==='802.11n'?'selected':''}>802.11n – 300 Mbps, alcance ~60 m</option>
@@ -1201,7 +1225,7 @@
                   <option value="6" ${dev.wifiChannel==6?'selected':''}>6 (2.437 GHz)</option>
                   <option value="11" ${dev.wifiChannel==11?'selected':''}>11 (2.462 GHz)</option>
                 </select></div>
-                <div class="config-row"><label>Potencia:</label><input type="range" id="cfg-tx-power" min="5" max="30" value="${dev.txPower||20}" style="flex:1;"> <span id="tx-power-val">${dev.txPower||20} dBm</span></div>
+                <div class="config-row"><label>Potência:</label><input type="range" id="cfg-tx-power" min="5" max="30" value="${dev.txPower||20}" style="flex:1;"> <span id="tx-power-val">${dev.txPower||20} dBm</span></div>
               </div>`;
                 document.getElementById('cfg-tx-power').addEventListener('input', function() {
                     document.getElementById('tx-power-val').textContent = this.value + ' dBm';
@@ -1291,7 +1315,7 @@
         }
 
         function exportJSON() {
-            const topology = { metadata: { software: "TCP/IP & Redes sem Fio Lab", timestamp: new Date().toISOString() }, nodes: devices, connections: links, obstacles };
+            const topology = { metadata: { software: "NetSim Pro", timestamp: new Date().toISOString() }, nodes: devices, connections: links, obstacles };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(topology, null, 2));
             const a = document.createElement('a');
             a.setAttribute("href", dataStr);
