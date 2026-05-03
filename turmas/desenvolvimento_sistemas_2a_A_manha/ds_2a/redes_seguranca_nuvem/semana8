@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade Prática – Semana 8 – 2.º TA</title>
+    <style>
+        /* Estilo ABNT básico */
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000;
+            background: #fff;
+            margin: 3cm 2cm 2cm 3cm; /* Margens ABNT */
+            text-align: justify;
+        }
+        h1, h2, h3 {
+            font-weight: bold;
+            text-align: center;
+        }
+        h1 {
+            font-size: 14pt;
+            margin-bottom: 0;
+        }
+        h2 {
+            font-size: 13pt;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h3 {
+            font-size: 12pt;
+            margin-top: 1em;
+            margin-bottom: 0.5em;
+            text-align: left;
+        }
+        p {
+            text-indent: 1.25cm; /* Parágrafo ABNT */
+            margin: 0.5em 0;
+        }
+        ul, ol {
+            margin-left: 1.5cm;
+            padding-left: 0;
+        }
+        li {
+            margin-bottom: 0.3em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 5px;
+            text-align: center;
+        }
+        .sem-indent {
+            text-indent: 0;
+        }
+        .linha-resposta {
+            border-bottom: 1px solid #000;
+            width: 100%;
+            margin: 1em 0;
+            display: block;
+        }
+        .cabecalho {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 2em;
+        }
+        .cabecalho p {
+            text-indent: 0;
+            margin: 0;
+        }
+        @media print {
+            body {
+                margin: 2cm;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho institucional -->
+    <div class="cabecalho">
+        <p><strong>E.E. OITO DE ABRIL</strong></p>
+        <p><strong>Curso Técnico em Desenvolvimento de Sistemas – 2.º TA/2026</strong></p>
+        <p><strong>Disciplina: Redes de Computadores – Semana 8</strong></p>
+        <p><strong>Prof. Eng.° André Corrêa de Lima</strong></p>
+        <p><strong>Aluno(a): ___________________________________________ Data: ____/____/2026</strong></p>
+    </div>
+
+    <h1>ATIVIDADE PRÁTICA: MEIOS DE TRANSMISSÃO NÃO GUIADOS (WIRELESS)</h1>
+
+    <p class="sem-indent"><strong>Objetivo:</strong> Investigar características de frequências, alcance e limitações das tecnologias sem fio usando o simulador <em>TCP/IP & Redes sem Fio: Wi‑Fi, BT, NFC, Satélite, Laser</em>.</p>
+
+    <!-- AULA 1 -->
+    <h2>AULA 1 – Fundamentos de Ondas de Rádio e Micro‑ondas</h2>
+
+    <h3>Exercício 1 – Alcance versus Frequência</h3>
+    <ol>
+        <li>Adicione um 📶 <strong>AP Wi‑Fi</strong>.</li>
+        <li>⚙️ Dê duplo clique no AP e, em <strong>Configurações Wireless</strong>, escolha <strong>802.11b – 11 Mbps, alcance ~100 m</strong>. Observe o círculo azul.</li>
+        <li>Altere para <strong>802.11ax / Wi‑Fi 6 – 9,6 Gbps, alcance ~30 m</strong> e veja o círculo diminuir.</li>
+        <li>Conecte um 📱 <strong>Smartphone</strong> ao AP (🔗 <code>Wlan0</code> → <code>Antena-WLAN</code>) e afaste‑o até a linha desaparecer.</li>
+    </ol>
+    <p><strong>Perguntas:</strong></p>
+    <p>a) Qual padrão tem maior alcance? Por quê?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>b) Por que o 802.11ax cobre menos área mesmo sendo mais rápido?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>c) Em que situação real o 802.11b seria preferível ao 802.11ax?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+
+    <h3>Exercício 2 – Obstáculos e Linha de Visada</h3>
+    <ol>
+        <li>Conecte um 📶 <strong>AP Wi‑Fi</strong> (802.11n) a um 💻 <strong>Notebook</strong> (🔗 <code>Antena-WLAN</code> → <code>Wlan0</code>).</li>
+        <li>🖱️ Passe o mouse sobre a linha e anote o RSSI e a taxa.</li>
+        <li>Ative o modo 🧱 <strong>Parede</strong>. Clique em um ponto inicial e depois em um segundo ponto para criar uma parede entre os dois dispositivos. Observe a cor da linha e o tooltip.</li>
+        <li>Repita o procedimento para adicionar mais duas paredes e observe novamente.</li>
+    </ol>
+    <p><strong>Perguntas:</strong></p>
+    <p>a) Como o RSSI e a cor da linha mudam com os obstáculos? Que fenômenos físicos estão envolvidos?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>b) Por que a linha fica laranja/vermelha ao cruzar paredes?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>c) Onde você posicionaria o AP em uma casa para minimizar perdas de sinal?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+
+    <!-- AULA 2 -->
+    <h2>AULA 2 – Wi‑Fi, Bluetooth e NFC</h2>
+
+    <h3>Exercício 3 – Comparação de Padrões Wi‑Fi</h3>
+    <ol>
+        <li>Conecte um 💻 <strong>Notebook</strong> a um 📶 <strong>AP Wi‑Fi</strong> (🔗 <code>Wlan0</code> → <code>Antena-WLAN</code>).</li>
+        <li>⚙️ No AP, alterne o padrão entre <strong>802.11b</strong>, <strong>802.11n</strong> e <strong>802.11ac</strong>.</li>
+        <li>Em cada caso, 🖱️ passe o mouse sobre o link e preencha a tabela abaixo.</li>
+    </ol>
+
+    <table>
+        <tr>
+            <th>Padrão</th>
+            <th>Taxa teórica</th>
+            <th>Alcance informado</th>
+            <th>Taxa estimada (RSSI)</th>
+        </tr>
+        <tr>
+            <td>802.11b</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>802.11n</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>802.11ac</td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+
+    <p><strong>Perguntas:</strong></p>
+    <p>a) Por que a taxa estimada é sempre menor que a teórica?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>b) Qual padrão mínimo você recomendaria para streaming 4K? Justifique.</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+
+    <h3>Exercício 4 – Bluetooth: Alcance e Aplicações</h3>
+    <ol>
+        <li>Adicione um [BT] <strong>Bluetooth</strong> e um 📱 <strong>Smartphone</strong>.</li>
+        <li>Conecte‑os no modo 🔗 <strong>Cabear</strong> (<code>BT0</code> → <code>BT-Radio</code>).</li>
+        <li>Observe o círculo de cobertura rosa e o link tracejado rosa.</li>
+        <li>Afaste o smartphone até o link desaparecer.</li>
+    </ol>
+    <p><strong>Perguntas:</strong></p>
+    <p>a) Compare alcance e taxa do Bluetooth com os do Wi‑Fi.</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>b) Por que fones de ouvido usam Bluetooth, e não Wi‑Fi?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>c) Para transferir 50 MB entre smartphones, qual tecnologia seria mais adequada? Justifique.</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+
+    <!-- AULA 3 -->
+    <h2>AULA 3 – Comunicação Óptica e Satélite</h2>
+
+    <h3>Exercício 5 – Laser FSO e Sensibilidade Climática</h3>
+    <ol>
+        <li>Adicione dois transceptores [FSO] <strong>Laser FSO</strong> e conecte‑os (🔗 <code>Laser-Optical</code>).</li>
+        <li>Com 🌦️ <strong>Céu limpo</strong>, 🖱️ passe o mouse sobre a linha verde e anote RSSI e qualidade.</li>
+        <li>Mude para 🌦️ <strong>Chuva moderada</strong> e depois para 🌦️ <strong>Nevoeiro denso</strong>. Observe a linha e o tooltip.</li>
+    </ol>
+    <p><strong>Perguntas:</strong></p>
+    <p>a) O que acontece com o laser no nevoeiro denso? Explique o fenômeno.</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>b) Por que enlaces a laser não são ideais para longas distâncias, mesmo com taxa elevada?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>c) Qual clima seria ideal para uma rede óptica sem fio externa?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+
+    <h3>Exercício 6 – Satélite e Efeito do Clima</h3>
+    <ol>
+        <li>Adicione um [SAT] <strong>Satélite</strong> e um [RT] <strong>Roteador</strong>.</li>
+        <li>Em 🔗 <strong>Cabear</strong>, conecte <code>Uplink Satélite (SAT)</code> do roteador a <code>Uplink/Downlink</code> do satélite. O link amarelo aparece.</li>
+        <li>Com 🌦️ <strong>Céu limpo</strong>, 🖱️ passe o mouse sobre o link e anote o RSSI.</li>
+        <li>Mude para 🌦️ <strong>Chuva moderada</strong> e veja as mudanças no tooltip. Repita com 🌦️ <strong>Nevoeiro denso</strong> e compare.</li>
+    </ol>
+    <p><strong>Perguntas:</strong></p>
+    <p>a) Por que a chuva afeta o enlace de satélite? Relacione com as frequências empregadas (ex.: banda Ka).</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>b) Se fosse um satélite GEO, a latência seria maior ou menor que a de um LEO? Por quê?</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <p>c) Cite uma aplicação real que se beneficia de constelações LEO, como a Starlink.</p>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+    <span class="linha-resposta"></span>
+
+    <br>
+    <p class="sem-indent"><strong>Bom trabalho!</strong></p>
+
+</body>
+</html>
