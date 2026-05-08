@@ -36,7 +36,7 @@
             flex-direction: column;
         }
 
-        /* Margens internas conforme ABNT (superior 3cm, inferior 2cm, esquerda 3cm, direita 2cm) */
+        /* Margens internas conforme ABNT (superior 3cm, direita 2cm, inferior 2cm, esquerda 3cm) */
         .content {
             margin: 3cm 2cm 2cm 3cm;
             font-size: 12pt;
@@ -165,15 +165,21 @@
                 margin: 0;
             }
             .sheet {
+                width: auto;
+                min-height: auto;
                 margin: 0;
                 box-shadow: none;
                 page-break-after: always;
                 overflow: visible;
-                min-height: auto;
+            }
+            .content {
+                /* Na impressão, a margem é controlada pela @page */
+                margin: 0;
             }
             @page {
                 size: A4 portrait;
-                margin: 2.5cm 2cm 2cm 2.5cm;
+                /* Margens ABNT: superior 3cm, direita 2cm, inferior 2cm, esquerda 3cm */
+                margin: 3cm 2cm 2cm 3cm;
             }
             a {
                 color: black;
@@ -189,7 +195,8 @@
         <div class="content">
             <div class="capa">
                 <div style="font-size: 14pt; font-weight: bold;">EE. OITO DE ABRIL</div>
-                <p style="text-indent: 0;">Técnico em Desenvolvimento de Sistemas – Educação Profissional Paulista</p>
+                <!-- Parágrafo centralizado: adicionei text-align: center -->
+                <p style="text-indent: 0; text-align: center;">Técnico em Desenvolvimento de Sistemas – Educação Profissional Paulista</p>
                 <br><br><br>
                 <h2>2° TA</h2>
                 <br><br><br>
