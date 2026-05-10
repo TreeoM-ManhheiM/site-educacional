@@ -77,6 +77,15 @@
       box-shadow: 0 4px 12px rgba(0,0,0,0.2);
       box-sizing: border-box;
       padding: 3cm 2cm 2cm 3cm;
+      position: relative;
+    }
+
+    /* Numeração de Página (Visualização Web) */
+    .num-pagina {
+      position: absolute;
+      top: 2cm;
+      right: 2cm;
+      font-size: 10pt;
     }
 
     p { 
@@ -90,15 +99,18 @@
     .bold { font-weight: bold; }
     .uppercase { text-transform: uppercase; }
 
+    /* Hierarquia de Títulos ABNT */
     h1, h2, h3 { 
         margin: 0 0 12pt 0; 
         line-height: 1.5; 
-        font-weight: bold; 
         text-indent: 0; 
     }
-    h1 { font-size: 12pt; text-transform: uppercase; margin-top: 24pt; }
-    h2 { font-size: 12pt; text-transform: uppercase; margin-top: 18pt; }
-    h3 { font-size: 12pt; margin-top: 18pt; font-style: italic; }
+    /* H1: Seção Primária - Maiúscula e Negrito */
+    h1 { font-size: 12pt; text-transform: uppercase; font-weight: bold; margin-top: 24pt; }
+    /* H2: Seção Secundária - Maiúscula sem Negrito */
+    h2 { font-size: 12pt; text-transform: uppercase; font-weight: normal; margin-top: 18pt; }
+    /* H3: Seção Terciária - Minúscula e Negrito (sem itálico) */
+    h3 { font-size: 12pt; font-weight: bold; font-style: normal; margin-top: 18pt; }
 
     ul, ol { margin: 0 0 12pt var(--indent); padding: 0; text-align: justify; }
     li { margin-bottom: 6pt; }
@@ -135,7 +147,7 @@
     }
     .sumario-pagina { flex-shrink: 0; }
 
-    /* Tabelas */
+    /* Tabelas (Padrão IBGE - sem bordas laterais) */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -143,7 +155,10 @@
       font-size: 10pt;
     }
     th, td {
-      border: 1px solid #000;
+      border-top: 1px solid #000;
+      border-bottom: 1px solid #000;
+      border-left: none; /* Correção IBGE */
+      border-right: none; /* Correção IBGE */
       padding: 8pt;
       text-align: left;
       vertical-align: top;
@@ -160,11 +175,19 @@
       white-space: pre-wrap;
     }
 
+    /* Referências Bibliográficas (NBR 6023) */
+    .referencias p {
+      text-align: left; /* Alinhado à esquerda */
+      text-indent: 0; /* Sem recuo */
+      line-height: 1.0; /* Espaçamento simples */
+      margin-bottom: 12pt; /* Espaço entre as obras */
+    }
+
     /* Estilo das Assinaturas */
     .assinaturas-container {
       margin-top: 60pt;
       display: grid;
-      grid-template-columns: 1fr 1fr; /* Duas colunas */
+      grid-template-columns: 1fr 1fr;
       gap: 50pt 20pt;
       text-indent: 0;
     }
@@ -192,6 +215,7 @@
       .paper-fixed { height: 100vh; }
       .page-break { page-break-after: always; }
       .assinaturas-container { page-break-inside: avoid; }
+      /* Numeração gerada nativamente na impressão pode variar por navegador, mas o elemento .num-pagina cuida da visualização básica */
     }
   </style>
 </head>
@@ -247,7 +271,7 @@
   </div>
 
   <div class="paper-content page-break">
-    <h1 class="center uppercase" style="margin-top: 0;">Sumário</h1>
+    <h1 class="center" style="margin-top: 0;">SUMÁRIO</h1>
     
     <div class="sumario-box">
       <div class="sumario-item">
@@ -271,12 +295,12 @@
         <span class="sumario-pagina">5</span>
       </div>
       <div class="sumario-item">
-        <span class="sumario-texto" style="margin-left: 20pt;">4.1 Objetivo Geral</span>
+        <span class="sumario-texto" style="margin-left: 20pt;">4.1 OBJETIVO GERAL</span>
         <div class="sumario-pontos"></div>
         <span class="sumario-pagina">5</span>
       </div>
       <div class="sumario-item">
-        <span class="sumario-texto" style="margin-left: 20pt;">4.2 Objetivos Específicos</span>
+        <span class="sumario-texto" style="margin-left: 20pt;">4.2 OBJETIVOS ESPECÍFICOS</span>
         <div class="sumario-pontos"></div>
         <span class="sumario-pagina">5</span>
       </div>
@@ -291,12 +315,12 @@
         <span class="sumario-pagina">7</span>
       </div>
       <div class="sumario-item">
-        <span class="sumario-texto" style="margin-left: 20pt;">6.1 Traduzindo Fórmulas para Lógica de Programação</span>
+        <span class="sumario-texto" style="margin-left: 20pt;">6.1 TRADUZINDO FÓRMULAS PARA LÓGICA DE PROGRAMAÇÃO</span>
         <div class="sumario-pontos"></div>
         <span class="sumario-pagina">7</span>
       </div>
       <div class="sumario-item">
-        <span class="sumario-texto" style="margin-left: 20pt;">6.2 Preparação para o Provão Paulista</span>
+        <span class="sumario-texto" style="margin-left: 20pt;">6.2 PREPARAÇÃO PARA O PROVÃO PAULISTA</span>
         <div class="sumario-pontos"></div>
         <span class="sumario-pagina">8</span>
       </div>
@@ -314,8 +338,9 @@
   </div>
 
   <div class="paper-content">
+    <div class="num-pagina">4</div>
     
-    <h1 style="margin-top: 0;" class="center">1 INTRODUÇÃO</h1>
+    <h1 style="margin-top: 0;">1 INTRODUÇÃO</h1>
     <p>
       O presente projeto propõe uma abordagem pedagógica inovadora, rigorosamente alinhada às diretrizes da SEDUC-SP, que visa unir de forma estrutural as disciplinas de Desenvolvimento de Sistemas (Programação) e Matemática. O foco centra-se na turma do 2º Ano do Ensino Médio Técnico (2º TA) da EE. Oito de Abril, incidindo sobre o currículo do 2º Bimestre de 2026.
     </p>
@@ -323,7 +348,7 @@
       Frequentemente, os estudantes enfrentam barreiras cognitivas perante o elevado grau de abstração exigido no estudo de Funções Exponenciais e Logaritmos. A proposta deste projeto consiste em utilizar as aulas de Programação (Linguagem Python) para desenvolver códigos que, posteriormente, atuarão como simuladores interativos nas aulas de Matemática.
     </p>
 
-    <h1 class="center">2 JUSTIFICATIVA E IMPACTO NA APRENDIZAGEM</h1>
+    <h1>2 JUSTIFICATIVA E IMPACTO NA APRENDIZAGEM</h1>
     <p>
       A preparação para avaliações de alto rendimento, como o Provão Paulista, exige que o aluno diferencie com precisão as propriedades operatórias admissíveis das intuições errôneas. Ao construir e interagir com um Simulador Computacional, o código deixa de ser um fim em si mesmo e converte-se no meio através do qual a Matemática se torna palpável e passível de experimentação.
     </p>
@@ -331,7 +356,7 @@
       Quando o aluno insere dados que contrariam as propriedades matemáticas, o terminal devolve uma mensagem de erro explícita. Este mecanismo dedutivo erradica o bloqueio imposto pela resolução em papel e caneta, fomentando um ambiente de investigação onde o estudante descobre as regras a partir da validação lógica e computacional.
     </p>
 
-    <h1 class="center">3 A DINÂMICA DA INTERDISCIPLINARIDADE</h1>
+    <h1>3 A DINÂMICA DA INTERDISCIPLINARIDADE</h1>
     <p>
       A divisão da carga cognitiva processa-se em duas etapas interdependentes:
     </p>
@@ -340,19 +365,19 @@
       <li><strong>Na Aula de Matemática:</strong> O simulador desenvolvido é posto à prova. O aluno testa propriedades operatórias, valida resoluções algébricas e gera gráficos. O Python atua como validador das regras que serão objeto de avaliação no Provão Paulista.</li>
     </ul>
 
-    <h1 class="center">4 OBJETIVOS</h1>
-    <h2>4.1 Objetivo Geral</h2>
+    <h1>4 OBJETIVOS</h1>
+    <h2>4.1 OBJETIVO GERAL</h2>
     <p>
       Integrar os componentes de Linguagem de Programação e Matemática de modo a evidenciar que o Desenvolvimento de Sistemas é a aplicação tangível do raciocínio matemático, consolidando a aprendizagem para o Provão Paulista mediante um simulador computacional.
     </p>
-    <h2>4.2 Objetivos Específicos</h2>
+    <h2>4.2 OBJETIVOS ESPECÍFICOS</h2>
     <ul>
       <li>Garantir a cobertura integral das 28 aulas do cronograma da SEDUC, transformando as aulas de "Khan/Revisão" em laboratórios práticos.</li>
       <li>Refutar equívocos algorítmicos comuns, demonstrando, via código, que propriedades como o logaritmo de uma soma não correspondem à soma dos logaritmos.</li>
       <li>Programar e interpretar modelos matemáticos do mundo real, tais como a escala sismológica de Richter e a medição química de pH.</li>
     </ul>
 
-    <h1 class="center">5 CRONOGRAMA DE EXECUÇÃO (28 AULAS)</h1>
+    <h1>5 CRONOGRAMA DE EXECUÇÃO (28 AULAS)</h1>
     <p>
       O cronograma articula o progresso simultâneo dos conteúdos segundo a matriz oficial do 2º Bimestre:
     </p>
@@ -389,7 +414,7 @@
       </tbody>
     </table>
 
-    <h1 class="center">6 O SIMULADOR INTERATIVO: A PONTE ENTRE CÓDIGO E MATEMÁTICA</h1>
+    <h1>6 O SIMULADOR INTERATIVO: A PONTE ENTRE CÓDIGO E MATEMÁTICA</h1>
     <p>
       O simulador desenvolvido atua como um laboratório virtual onde o aluno deixa de ser um mero receptor de fórmulas e passa a ser um testador ativo de hipóteses matemáticas. Focado no currículo do Provão Paulista, a ferramenta converte regras algébricas abstratas em algoritmos visuais e interativos.
     </p>
@@ -397,7 +422,7 @@
       Ao invés de apenas decorar que um logaritmo não aceita valores negativos, o aluno tenta inserir esse valor no sistema e recebe um erro de compilação ou de validação. Esse processo de depuração de código (<i>debug</i>) torna-se, na prática, o processo de lapidação do raciocínio matemático.
     </p>
 
-    <h2>6.1 Traduzindo Fórmulas para Lógica de Programação</h2>
+    <h2>6.1 TRADUZINDO FÓRMULAS PARA LÓGICA DE PROGRAMAÇÃO</h2>
     <p>
       Para que o simulador funcione, a matemática pura é traduzida em três pilares fundamentais da programação:
     </p>
@@ -426,29 +451,32 @@ else:
       As aulas finais focam em fenômenos reais, como o pH e a Escala Richter. O Python utiliza a biblioteca nativa <code>math</code> para calcular essas escalas logarítmicas. A fórmula química pH = -log[H<sup>+</sup>] é traduzida de forma literal: <code>pH = -math.log10(H)</code>. Quando o simulador desenha a curva de decaimento, o aluno entende visualmente por que uma concentração minúscula de íons de hidrogênio (como 10<sup>-5</sup>) resulta em um pH inteiro positivo (5).
     </p>
 
-    <h2>6.2 Preparação para o Provão Paulista</h2>
+    <h2>6.2 PREPARAÇÃO PARA O PROVÃO PAULISTA</h2>
     <p>
       Provas de alto rendimento frequentemente incluem testes baseados em intuições falsas, como a tentação de afirmar que 2<sup>3</sup> + 2<sup>4</sup> = 2<sup>7</sup> ou que log(a + b) = log(a) + log(b). Ao integrar Python e simulações às aulas, o aluno não precisa esperar o professor corrigir sua prova para saber se errou; o interpretador atua como orientador em tempo real. Entender por que o código "quebrou" solidifica o conhecimento, tornando-o investigativo e à prova de falhas para os exames estaduais.
     </p>
 
-    <h1 class="center">7 AVALIAÇÃO E METODOLOGIA</h1>
+    <h1>7 AVALIAÇÃO E METODOLOGIA</h1>
     <p>
       A avaliação será pautada pela Aprendizagem Baseada na Investigação (<i>Inquiry-Based Learning</i>). Os alunos não serão classificados unicamente pela memorização sintática ou capacidade abstrata de aplicar uma fórmula. A nota reflete a capacidade de justificar, através do pensamento computacional estruturado na aula de programação, as escolhas e os bloqueios encontrados durante o teste matemático. Esta dualidade assegura uma aprendizagem efetiva, robusta e plenamente orientada ao Perfil de Egresso da SEDUC.
     </p>
 
-    <h1 class="center">8 REFERÊNCIAS BIBLIOGRÁFICAS</h1>
-    <p class="noindent">
-      ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. <strong>NBR 14724:</strong> Informação e documentação: Trabalhos acadêmicos: Apresentação. Rio de Janeiro: ABNT, 2011.
-    </p>
-    <p class="noindent">
-      SÃO PAULO (Estado). Secretaria da Educação. <strong>Currículo Paulista: Etapa Ensino Médio.</strong> São Paulo: SEDUC, 2026.
-    </p>
-    <p class="noindent">
-      SÃO PAULO (Estado). Secretaria da Educação. <strong>Material de Apoio SEDUC - 2ª Série (Aulas 1 a 28 do 2º Bimestre).</strong> São Paulo: SEDUC, 2026.
-    </p>
-    <p class="noindent">
-  LIMA, André Corrêa de. <strong>Simulador Educacional de Lógica e Matemática (Software Interativo).</strong> São Paulo: EE. Oito de Abril, 2026. Disponível em: &lt;https://9od.com.br/turmas/desenvolvimento_sistemas_2a_A_manha/ds_2a/simulad_log.html&gt;. Acesso em: 10 maio 2026.
-    </p>
+    <h1>8 REFERÊNCIAS BIBLIOGRÁFICAS</h1>
+    
+    <div class="referencias">
+      <p>
+        ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. <strong>NBR 14724:</strong> Informação e documentação: Trabalhos acadêmicos: Apresentação. Rio de Janeiro: ABNT, 2011.
+      </p>
+      <p>
+        SÃO PAULO (Estado). Secretaria da Educação. <strong>Currículo Paulista: Etapa Ensino Médio.</strong> São Paulo: SEDUC, 2026.
+      </p>
+      <p>
+        SÃO PAULO (Estado). Secretaria da Educação. <strong>Material de Apoio SEDUC - 2ª Série (Aulas 1 a 28 do 2º Bimestre).</strong> São Paulo: SEDUC, 2026.
+      </p>
+      <p>
+        LIMA, A. C. de. <strong>Simulador Educacional de Lógica e Matemática (Software Interativo).</strong> São Paulo: EE. Oito de Abril, 2026. Disponível em: &lt;https://9od.com.br/turmas/desenvolvimento_sistemas_2a_A_manha/ds_2a/simulad_log.html&gt;. Acesso em: 10 maio 2026.
+      </p>
+    </div>
 
     <div class="assinaturas-container page-break-inside-avoid">
       
