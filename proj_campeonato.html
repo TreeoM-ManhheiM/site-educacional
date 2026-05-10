@@ -40,7 +40,7 @@
         .content {
             margin: 3cm 2cm 2cm 3cm;
             font-size: 12pt;
-            line-height: 1.5;
+            line-height: 1.5; /* ABNT: Espaçamento 1,5 no texto geral */
             text-align: justify;
             flex: 1;
             display: flex;
@@ -68,21 +68,21 @@
             font-size: 12pt;
         }
 
-        /* Texto de natureza do trabalho (Folha de Rosto) com recuo de 8cm */
+        /* Texto de natureza do trabalho (Folha de Rosto) com recuo de 8cm da margem esquerda e entrelinhas simples */
         .nota-projeto {
             margin-left: 8cm;
-            font-size: 10pt;
-            line-height: 1.15;
+            font-size: 10pt; /* ABNT: Fonte menor que a do texto (10pt) */
+            line-height: 1.0; /* ABNT: Espaçamento simples */
             text-align: justify;
             text-indent: 0;
         }
 
         /* Títulos primários (seção 1, 2, 3...) */
         h1 {
-            font-size: 12pt;
+            font-size: 12pt; /* ABNT: Títulos devem ter o mesmo tamanho do texto */
             font-weight: bold;
             text-transform: uppercase;
-            margin: 1.5em 0 1.5em 0; /* 1 espaço de 1,5 antes e depois */
+            margin: 1.5em 0; /* ABNT: 1 espaço de 1,5 antes e depois */
             clear: both;
         }
 
@@ -90,14 +90,14 @@
         h2 {
             font-size: 12pt;
             font-weight: bold;
-            margin: 1.5em 0 1.5em 0;
+            margin: 1.5em 0;
             text-transform: none;
         }
 
         h3, h4 {
             font-size: 12pt;
             font-weight: bold;
-            margin: 1em 0 0.5em 0;
+            margin: 1.5em 0;
         }
 
         /* Títulos da Capa e Folha de Rosto */
@@ -110,8 +110,8 @@
 
         /* Parágrafos com recuo de 1,25 cm */
         p {
-            text-indent: 1.25cm;
-            margin-bottom: 0em;
+            text-indent: 1.25cm; /* Padrão ABNT usual */
+            margin-bottom: 0;
         }
 
         /* Listas */
@@ -124,23 +124,26 @@
             text-align: justify;
         }
 
-        /* Código */
+        /* Código / Elementos visuais (Equiparado a citações longas) */
         pre, code {
             font-family: 'Courier New', Courier, monospace;
-            font-size: 10pt;
+            font-size: 10pt; /* ABNT: Fonte menor (10pt) */
             background-color: #f1f3f5;
-            padding: 0.2em 0.4em;
             border-radius: 4px;
+        }
+        
+        code {
+            padding: 0.1em 0.3em;
         }
 
         pre {
-            margin: 1em 0;
+            margin: 1.5em 0;
             padding: 1em;
             border-left: 3px solid #1e293b;
             overflow-x: auto;
             background-color: #f8f9fa;
             white-space: pre-wrap;
-            line-height: 1.2;
+            line-height: 1.0; /* ABNT: Espaçamento simples */
         }
 
         /* Sumário */
@@ -171,6 +174,14 @@
         }
         .toc-level-2 {
             margin-left: 1.5em;
+        }
+
+        /* Referências (Alinhamento à esquerda e espaçamento simples - ABNT NBR 6023) */
+        .referencias p {
+            text-align: left;
+            text-indent: 0;
+            line-height: 1.0; /* Espaçamento simples */
+            margin-bottom: 1.5em; /* Uma linha em branco entre as referências */
         }
 
         /* Área de Assinaturas */
@@ -463,12 +474,14 @@ while contador > 0:
     <div class="sheet">
         <div class="content">
             <h1 id="referencias">REFERÊNCIAS</h1>
-            <p style="text-indent: 0;">DETERDING, S. et al. <strong>From game design elements to gamefulness: defining “gamification”</strong>. In: Proceedings of the 15th International Academic MindTrek Conference, 2011.</p>
-            <p style="text-indent: 0;">FREIRE, Paulo. <strong>Pedagogia da Autonomia</strong>. São Paulo: Paz e Terra, 1996.</p>
-            <p style="text-indent: 0;">LIMA, A. C. de. <strong>Loop Infinito – Missão While: jogo educacional para estruturas de repetição</strong>. Disponível em: &lt;https://9od.com.br/missao_while/index.html&gt;. Acesso em: 08 maio. 2026.</p>
-            <p style="text-indent: 0;">SÃO PAULO (Estado). <strong>Currículo Paulista: Etapa Ensino Médio</strong>. São Paulo: SEE, 2020. Disponível em: &lt;https://efape.educacao.sp.gov.br/curriculopaulista/wp-content/uploads/2020/07/Curr%C3%ADculo-Paulista- etapa-Ensino-M%C3%A9dio.pdf&gt;. Acesso em: 28 abr. 2026.</p>
-            <p style="text-indent: 0;">PYTHON SOFTWARE FOUNDATION. <strong>The Python Tutorial – More Control Flow Tools</strong>. Disponível em: &lt;https://docs.python.org/3/tutorial/controlflow.html&gt;. Acesso em: 28 abr. 2026.</p>
-            <p style="text-indent: 0;">SOCKET.IO. <strong>Documentação oficial</strong>. Disponível em: &lt;https://socket.io/docs/&gt;. Acesso em: 28 abr. 2026.</p>
+            <div class="referencias">
+                <p>DETERDING, S. et al. <strong>From game design elements to gamefulness: defining “gamification”</strong>. In: Proceedings of the 15th International Academic MindTrek Conference, 2011.</p>
+                <p>FREIRE, Paulo. <strong>Pedagogia da Autonomia</strong>. São Paulo: Paz e Terra, 1996.</p>
+                <p>LIMA, A. C. de. <strong>Loop Infinito – Missão While: jogo educacional para estruturas de repetição</strong>. Disponível em: &lt;https://9od.com.br/missao_while/index.html&gt;. Acesso em: 08 maio. 2026.</p>
+                <p>SÃO PAULO (Estado). <strong>Currículo Paulista: Etapa Ensino Médio</strong>. São Paulo: SEE, 2020. Disponível em: &lt;https://efape.educacao.sp.gov.br/curriculopaulista/wp-content/uploads/2020/07/Curr%C3%ADculo-Paulista- etapa-Ensino-M%C3%A9dio.pdf&gt;. Acesso em: 28 abr. 2026.</p>
+                <p>PYTHON SOFTWARE FOUNDATION. <strong>The Python Tutorial – More Control Flow Tools</strong>. Disponível em: &lt;https://docs.python.org/3/tutorial/controlflow.html&gt;. Acesso em: 28 abr. 2026.</p>
+                <p>SOCKET.IO. <strong>Documentação oficial</strong>. Disponível em: &lt;https://socket.io/docs/&gt;. Acesso em: 28 abr. 2026.</p>
+            </div>
         </div>
     </div>
 
