@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Projeto Bimestral - Loop Infinito | ABNT - Folhas A4 Verticais</title>
+    <title> Loop Infinito</title>
     <style>
         /* ===== RESET ===== */
         * {
@@ -173,6 +173,38 @@
             margin-left: 1.5em;
         }
 
+        /* Área de Assinaturas */
+        .assinaturas-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 2em;
+        }
+        .assinatura-box {
+            width: 45%;
+            text-align: center;
+            margin-bottom: 3em;
+        }
+        .assinatura-linha {
+            border-bottom: 1px solid black;
+            margin-bottom: 0.5em;
+            width: 100%;
+            height: 3em; /* Espaço para assinar */
+        }
+        .assinatura-box.full {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .assinatura-box.full .assinatura-linha {
+            width: 50%;
+        }
+        .assinatura-box p {
+            text-indent: 0; /* Remove recuo padrão de parágrafo */
+            text-align: center;
+        }
+
         /* Configurações de impressão */
         @media print {
             body {
@@ -212,7 +244,7 @@
                 <div style="font-size: 12pt; text-align: center; margin-top: 0.5em;">Técnico em Desenvolvimento de Sistemas – Educação Profissional Paulista</div>
                 <br><br><br><br>
                 
-                <div style="font-size: 12pt; text-transform: uppercase;">2° TA</div>
+                <div style="font-size: 12pt; text-transform: uppercase;">2ª Série TA – Desenvolvimento de Sistemas</div>
                 
                 <div class="spacer"></div>
                 
@@ -461,6 +493,34 @@ while True:
     print(f'Soma atual: {soma}')
 print(f'Soma final: {soma}')</code></pre>
             <p>As demais missões abordam: soma até 100, menu com break, números ímpares com continue, AND, OR, NOT, tabuada, primo, múltiplos, validação de entrada, fatorial, break/continue combinados, caixa eletrônico, adivinhação, média de notas, while aninhado, Fibonacci, operadores compostos, login com tentativas, pares até N, decrescente passo 2, potência de 2, soma até negativo, continue múltiplos de 5, múltiplo de 3 ou 5, limite de 100, soma de dígitos, inverter número.</p>
+        </div>
+    </div>
+
+    <div class="sheet">
+        <div class="content">
+              <div class="assinaturas-container">
+                <div class="assinatura-box">
+                    <div class="assinatura-linha"></div>
+                    <p>Direção</p>
+                </div>
+                <div class="assinatura-box">
+                    <div class="assinatura-linha"></div>
+                    <p>Coordenação</p>
+                </div>
+                <div class="assinatura-box">
+                    <div class="assinatura-linha"></div>
+                    <p>Prof° Exatas</p>
+                </div>
+                <div class="assinatura-box">
+                    <div class="assinatura-linha"></div>
+                    <p>Prof° Técnico</p>
+                </div>
+                <div class="assinatura-box full">
+                    <div class="assinatura-linha"></div>
+                    <p>Aluno Representante</p>
+                </div>
+            </div>
+            <div class="spacer"></div>
         </div>
     </div>
 
