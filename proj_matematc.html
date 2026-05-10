@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Projeto Interdisciplinar 2026 - ABNT</title>
+
+  <style>
+    /* Padrão ABNT: A4, margens 3cm(esq/sup) 2cm(dir/inf), fonte 12pt, justificado, 1,5 */
+    @page { 
+        size: A4; 
+        margin: 3cm 2cm 2cm 3cm; 
+    }
+
+    :root {
+      --font: "Times New Roman", Times, serif;
+      --size: 12pt;
+      --lh: 1.5;
+      --indent: 1.25cm;
+      --text: #000;
+      --paperW: 210mm;
+      --paperH: 297mm;
+      --bg: #e5e7eb;
+    }
+
+    html, body { 
+        margin: 0; 
+        padding: 0; 
+        background: var(--bg); 
+        color: var(--text); 
+    }
+    
+    body { 
+        font-family: var(--font); 
+        font-size: var(--size); 
+        line-height: var(--lh); 
+    }
+
+    /* Interface flutuante */
+    .no-print {
+      position: fixed;
+      top: 10px;
+      right: 20px;
+      z-index: 1000;
+    }
+    .btn {
+      border: 1px solid #222; 
+      background: #111; 
+      color: #fff;
+      padding: 12px 20px; 
+      border-radius: 6px; 
+      cursor: pointer;
+      font-family: sans-serif; 
+      font-weight: bold;
+    }
+
+    /* Páginas Fixas (Capa e Folha de Rosto) */
+    .paper-fixed {
+      width: var(--paperW);
+      height: var(--paperH);
+      background: #fff;
+      margin: 30px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-sizing: border-box;
+      padding: 3cm 2cm 2cm 3cm;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Páginas de Conteúdo */
+    .paper-content {
+      width: var(--paperW);
+      min-height: var(--paperH);
+      background: #fff;
+      margin: 30px auto;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      box-sizing: border-box;
+      padding: 3cm 2cm 2cm 3cm;
+    }
+
+    p { 
+        margin: 0 0 12pt 0; 
+        text-align: justify; 
+        text-indent: var(--indent); 
+    }
+    
+    .noindent { text-indent: 0; }
+    .center { text-align: center; text-indent: 0; }
+    .bold { font-weight: bold; }
+    .uppercase { text-transform: uppercase; }
+
+    h1, h2, h3 { 
+        margin: 0 0 12pt 0; 
+        line-height: 1.5; 
+        font-weight: bold; 
+        text-indent: 0; 
+    }
+    h1 { font-size: 12pt; text-transform: uppercase; margin-top: 24pt; }
+    h2 { font-size: 12pt; text-transform: uppercase; margin-top: 18pt; }
+    h3 { font-size: 12pt; margin-top: 18pt; font-style: italic; }
+
+    ul, ol { margin: 0 0 12pt var(--indent); padding: 0; text-align: justify; }
+    li { margin-bottom: 6pt; }
+
+    /* Recuo da nota na folha de rosto */
+    .recuo-rosto {
+        margin-left: 8cm;
+        text-align: justify;
+        font-size: 10pt;
+        line-height: 1.2;
+        text-indent: 0;
+    }
+
+    /* Rodapé centralizado no fim da folha */
+    .rodape-abnt {
+        margin-top: auto;
+        text-align: center;
+        text-transform: uppercase;
+        font-weight: bold;
+    }
+
+    /* Sumário */
+    .sumario-box { width: 100%; margin-top: 30pt; }
+    .sumario-item {
+        display: flex;
+        align-items: baseline;
+        margin-bottom: 8pt;
+    }
+    .sumario-texto { flex-shrink: 0; }
+    .sumario-pontos {
+        flex-grow: 1;
+        border-bottom: 1px dotted #000;
+        margin: 0 5pt;
+    }
+    .sumario-pagina { flex-shrink: 0; }
+
+    /* Tabelas */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15pt 0;
+      font-size: 10pt;
+    }
+    th, td {
+      border: 1px solid #000;
+      padding: 8pt;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { text-align: center; font-weight: bold; background: #f2f2f2; }
+
+    .codigo-python {
+      font-family: monospace;
+      font-size: 10pt;
+      background-color: #f4f4f4;
+      border-left: 3px solid #333;
+      padding: 10pt;
+      margin-bottom: 12pt;
+      white-space: pre-wrap;
+    }
+
+    /* Estilo das Assinaturas */
+    .assinaturas-container {
+      margin-top: 60pt;
+      display: grid;
+      grid-template-columns: 1fr 1fr; /* Duas colunas */
+      gap: 50pt 20pt;
+      text-indent: 0;
+    }
+    .assinatura-box {
+      text-align: center;
+      text-indent: 0;
+    }
+    .assinatura-linha {
+      border-top: 1px solid #000;
+      width: 80%;
+      margin: 0 auto 5pt auto;
+    }
+    .assinatura-cargo {
+      font-size: 10pt;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .page-break { page-break-after: always; }
+
+    @media print {
+      body { background: #fff; }
+      .no-print { display: none; }
+      .paper-fixed, .paper-content { margin: 0; box-shadow: none; width: auto; height: auto; min-height: auto; padding: 0; }
+      .paper-fixed { height: 100vh; }
+      .page-break { page-break-after: always; }
+      .assinaturas-container { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="no-print">
+    <button class="btn" onclick="window.print()">🖨️ IMPRIMIR / GERAR PDF</button>
+  </div>
+
+  <div class="paper-fixed page-break">
+    <div class="bold uppercase center">
+      GOVERNO DO ESTADO DE SÃO PAULO<br>
+      SECRETARIA DA EDUCAÇÃO DO ESTADO DE SÃO PAULO<br>
+      EE. OITO DE ABRIL
+    </div>
+
+    <div class="bold uppercase center" style="margin-top: 120pt; font-size: 14pt;">
+      LÓGICA E LINGUAGEM DE PROGRAMAÇÃO<br>
+      2ª Série – Desenvolvimento de Sistemas
+    </div>
+
+    <div class="bold uppercase center" style="margin-top: 100pt; font-size: 14pt;">
+      UNINDO PROGRAMAÇÃO E MATEMÁTICA: O CÓDIGO COMO FERRAMENTA DE COMPREENSÃO PARA O PROVÃO PAULISTA
+    </div>
+
+    <div class="rodape-abnt">
+      SÃO PAULO<br>
+      2026
+    </div>
+  </div>
+
+  <div class="paper-fixed page-break">
+    <div class="bold uppercase center">
+      LÓGICA E LINGUAGEM DE PROGRAMAÇÃO<br>
+      2ª Série – Desenvolvimento de Sistemas
+    </div>
+
+    <div class="bold uppercase center" style="margin-top: 100pt; font-size: 14pt;">
+      UNINDO PROGRAMAÇÃO E MATEMÁTICA: O CÓDIGO COMO FERRAMENTA DE COMPREENSÃO PARA O PROVÃO PAULISTA
+    </div>
+
+    <div class="recuo-rosto" style="margin-top: 60pt;">
+      Projeto pedagógico interdisciplinar apresentado à coordenação da EE. Oito de Abril, como requisito prático para o alinhamento das disciplinas de Desenvolvimento de Sistemas e Matemática (2º Bimestre) para as turmas do Ensino Médio Técnico (2º TA).<br><br>
+      <strong>Orientador:</strong> Eng° André Corrêa de Lima<br>
+      <strong>Foco:</strong> Escopo SEDUC (28 Aulas) - Exponenciais e Logaritmos.
+    </div>
+
+    <div class="rodape-abnt">
+      SÃO PAULO<br>
+      2026
+    </div>
+  </div>
+
+  <div class="paper-content page-break">
+    <h1 class="center uppercase" style="margin-top: 0;">Sumário</h1>
+    
+    <div class="sumario-box">
+      <div class="sumario-item">
+        <span class="sumario-texto bold">1 INTRODUÇÃO</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">4</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto bold">2 JUSTIFICATIVA E IMPACTO NA APRENDIZAGEM</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">4</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto bold">3 A DINÂMICA DA INTERDISCIPLINARIDADE</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">5</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto bold">4 OBJETIVOS</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">5</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto" style="margin-left: 20pt;">4.1 Objetivo Geral</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">5</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto" style="margin-left: 20pt;">4.2 Objetivos Específicos</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">5</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto bold">5 CRONOGRAMA DE EXECUÇÃO (28 AULAS)</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">6</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto bold">6 O SIMULADOR INTERATIVO: A PONTE ENTRE CÓDIGO E MATEMÁTICA</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">7</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto" style="margin-left: 20pt;">6.1 Traduzindo Fórmulas para Lógica de Programação</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">7</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto" style="margin-left: 20pt;">6.2 Preparação para o Provão Paulista</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">8</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto bold">7 AVALIAÇÃO E METODOLOGIA</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">8</span>
+      </div>
+      <div class="sumario-item">
+        <span class="sumario-texto bold">8 REFERÊNCIAS BIBLIOGRÁFICAS</span>
+        <div class="sumario-pontos"></div>
+        <span class="sumario-pagina">9</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="paper-content">
+    
+    <h1 style="margin-top: 0;" class="center">1 INTRODUÇÃO</h1>
+    <p>
+      O presente projeto propõe uma abordagem pedagógica inovadora, rigorosamente alinhada às diretrizes da SEDUC-SP, que visa unir de forma estrutural as disciplinas de Desenvolvimento de Sistemas (Programação) e Matemática. O foco centra-se na turma do 2º Ano do Ensino Médio Técnico (2º TA) da EE. Oito de Abril, incidindo sobre o currículo do 2º Bimestre de 2026.
+    </p>
+    <p>
+      Frequentemente, os estudantes enfrentam barreiras cognitivas perante o elevado grau de abstração exigido no estudo de Funções Exponenciais e Logaritmos. A proposta deste projeto consiste em utilizar as aulas de Programação (Linguagem Python) para desenvolver códigos que, posteriormente, atuarão como simuladores interativos nas aulas de Matemática.
+    </p>
+
+    <h1 class="center">2 JUSTIFICATIVA E IMPACTO NA APRENDIZAGEM</h1>
+    <p>
+      A preparação para avaliações de alto rendimento, como o Provão Paulista, exige que o aluno diferencie com precisão as propriedades operatórias admissíveis das intuições errôneas. Ao construir e interagir com um Simulador Computacional, o código deixa de ser um fim em si mesmo e converte-se no meio através do qual a Matemática se torna palpável e passível de experimentação.
+    </p>
+    <p>
+      Quando o aluno insere dados que contrariam as propriedades matemáticas, o terminal devolve uma mensagem de erro explícita. Este mecanismo dedutivo erradica o bloqueio imposto pela resolução em papel e caneta, fomentando um ambiente de investigação onde o estudante descobre as regras a partir da validação lógica e computacional.
+    </p>
+
+    <h1 class="center">3 A DINÂMICA DA INTERDISCIPLINARIDADE</h1>
+    <p>
+      A divisão da carga cognitiva processa-se em duas etapas interdependentes:
+    </p>
+    <ul>
+      <li><strong>Na Aula de Programação:</strong> O aluno compreende a arquitetura lógica. Desenvolve noções de variáveis, estruturas de repetição e condições (<code>if/else</code>) essenciais para programar o cálculo de uma potência ou validar a base de um logaritmo. É a fase de compreensão do motor.</li>
+      <li><strong>Na Aula de Matemática:</strong> O simulador desenvolvido é posto à prova. O aluno testa propriedades operatórias, valida resoluções algébricas e gera gráficos. O Python atua como validador das regras que serão objeto de avaliação no Provão Paulista.</li>
+    </ul>
+
+    <h1 class="center">4 OBJETIVOS</h1>
+    <h2>4.1 Objetivo Geral</h2>
+    <p>
+      Integrar os componentes de Linguagem de Programação e Matemática de modo a evidenciar que o Desenvolvimento de Sistemas é a aplicação tangível do raciocínio matemático, consolidando a aprendizagem para o Provão Paulista mediante um simulador computacional.
+    </p>
+    <h2>4.2 Objetivos Específicos</h2>
+    <ul>
+      <li>Garantir a cobertura integral das 28 aulas do cronograma da SEDUC, transformando as aulas de "Khan/Revisão" em laboratórios práticos.</li>
+      <li>Refutar equívocos algorítmicos comuns, demonstrando, via código, que propriedades como o logaritmo de uma soma não correspondem à soma dos logaritmos.</li>
+      <li>Programar e interpretar modelos matemáticos do mundo real, tais como a escala sismológica de Richter e a medição química de pH.</li>
+    </ul>
+
+    <h1 class="center">5 CRONOGRAMA DE EXECUÇÃO (28 AULAS)</h1>
+    <p>
+      O cronograma articula o progresso simultâneo dos conteúdos segundo a matriz oficial do 2º Bimestre:
+    </p>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 20%;">Bloco (SEDUC)</th>
+          <th style="width: 40%;">Atuação na Programação<br>(Construção do Código)</th>
+          <th style="width: 40%;">Atuação na Matemática<br>(Aplicação e Diagnóstico)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Aulas 1 a 8</strong><br>Exponenciais</td>
+          <td>Implementação de ciclos (loops) e análise da sintaxe do crescimento geométrico versus o linear em Python.</td>
+          <td>Aplicações em equações e gráficos. Na Aula de Verificação (Aula 8), os alunos validam as resoluções feitas à mão usando o simulador.</td>
+        </tr>
+        <tr>
+          <td><strong>Aulas 9 a 16</strong><br>Logaritmos</td>
+          <td>Construção de condicionais para estabelecer restrições de domínio (impedir a leitura de argumentos &le; 0).</td>
+          <td>Validação da propriedade do produto, do quociente e da mudança de base, diagnosticando falhas intuitivas de cálculo.</td>
+        </tr>
+        <tr>
+          <td><strong>Aulas 17 a 24</strong><br>Função Logarítmica</td>
+          <td>Uso da biblioteca <code>math</code> para integrar cálculos científicos (escalas de magnitude).</td>
+          <td>Interpretação do decaimento e compreensão prática das escalas de Richter e pH através do processamento de dados do utilizador.</td>
+        </tr>
+        <tr>
+          <td><strong>Aulas 25 a 28</strong><br>Revisão Final</td>
+          <td>Limpeza do código, depuração e melhoria da interface textual do terminal (Debug final).</td>
+          <td>Aula 28 (Khan/Revisão): Resolução de questões padrão do Provão Paulista suportada exclusivamente pelas deduções do simulador.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h1 class="center">6 O SIMULADOR INTERATIVO: A PONTE ENTRE CÓDIGO E MATEMÁTICA</h1>
+    <p>
+      O simulador desenvolvido atua como um laboratório virtual onde o aluno deixa de ser um mero receptor de fórmulas e passa a ser um testador ativo de hipóteses matemáticas. Focado no currículo do Provão Paulista, a ferramenta converte regras algébricas abstratas em algoritmos visuais e interativos.
+    </p>
+    <p>
+      Ao invés de apenas decorar que um logaritmo não aceita valores negativos, o aluno tenta inserir esse valor no sistema e recebe um erro de compilação ou de validação. Esse processo de depuração de código (<i>debug</i>) torna-se, na prática, o processo de lapidação do raciocínio matemático.
+    </p>
+
+    <h2>6.1 Traduzindo Fórmulas para Lógica de Programação</h2>
+    <p>
+      Para que o simulador funcione, a matemática pura é traduzida em três pilares fundamentais da programação:
+    </p>
+    
+    <h3>Exponenciais: Laços de Repetição (Loops) e Crescimento</h3>
+    <p>
+      Na matemática, a função exponencial f(x) = 2<sup>x</sup> representa um crescimento acelerado. No código Python, isso é demonstrado calculando a potência através do operador <code>**</code> ou iterando valores em um laço <code>for</code>. Quando o simulador gera o gráfico das exponenciais, ele processa um <i>loop</i>, calculando os pontos sequencialmente. O aluno visualiza instantaneamente a diferença entre um crescimento linear (uma reta) e o crescimento geométrico explosivo.
+    </p>
+
+    <h3>Logaritmos: Estruturas Condicionais e Restrição de Domínio</h3>
+    <p>
+      O cálculo de logaritmos é onde a lógica de programação mais brilha no auxílio à matemática. A teoria dita regras rígidas de existência: para log<sub>b</sub>(a), o logaritmando (a) deve ser maior que zero, e a base (b) deve ser maior que zero e diferente de um. No simulador em Python, essas regras são blindadas por estruturas condicionais:
+    </p>
+    
+    <div class="codigo-python noindent">if a <= 0 or b <= 0 or b == 1:
+    print("Erro Matemático: Valores fora do domínio do logaritmo!")
+else:
+    resultado = math.log(a, b)</div>
+
+    <p>
+      Isso ensina o aluno de forma empírica: o computador não calcula porque a regra matemática proíbe. Além disso, o código comprova propriedades. Se o aluno duvidar que log(x &middot; y) = log(x) + log(y), o simulador calcula os dois lados da igualdade no terminal, mostrando que os resultados coincidem e desmistificando as regras do livro didático.
+    </p>
+
+    <h3>Modelagem do Mundo Real: Bibliotecas e Aplicação Prática</h3>
+    <p>
+      As aulas finais focam em fenômenos reais, como o pH e a Escala Richter. O Python utiliza a biblioteca nativa <code>math</code> para calcular essas escalas logarítmicas. A fórmula química pH = -log[H<sup>+</sup>] é traduzida de forma literal: <code>pH = -math.log10(H)</code>. Quando o simulador desenha a curva de decaimento, o aluno entende visualmente por que uma concentração minúscula de íons de hidrogênio (como 10<sup>-5</sup>) resulta em um pH inteiro positivo (5).
+    </p>
+
+    <h2>6.2 Preparação para o Provão Paulista</h2>
+    <p>
+      Provas de alto rendimento frequentemente incluem testes baseados em intuições falsas, como a tentação de afirmar que 2<sup>3</sup> + 2<sup>4</sup> = 2<sup>7</sup> ou que log(a + b) = log(a) + log(b). Ao integrar Python e simulações às aulas, o aluno não precisa esperar o professor corrigir sua prova para saber se errou; o interpretador atua como orientador em tempo real. Entender por que o código "quebrou" solidifica o conhecimento, tornando-o investigativo e à prova de falhas para os exames estaduais.
+    </p>
+
+    <h1 class="center">7 AVALIAÇÃO E METODOLOGIA</h1>
+    <p>
+      A avaliação será pautada pela Aprendizagem Baseada na Investigação (<i>Inquiry-Based Learning</i>). Os alunos não serão classificados unicamente pela memorização sintática ou capacidade abstrata de aplicar uma fórmula. A nota reflete a capacidade de justificar, através do pensamento computacional estruturado na aula de programação, as escolhas e os bloqueios encontrados durante o teste matemático. Esta dualidade assegura uma aprendizagem efetiva, robusta e plenamente orientada ao Perfil de Egresso da SEDUC.
+    </p>
+
+    <h1 class="center">8 REFERÊNCIAS BIBLIOGRÁFICAS</h1>
+    <p class="noindent">
+      ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. <strong>NBR 14724:</strong> Informação e documentação: Trabalhos acadêmicos: Apresentação. Rio de Janeiro: ABNT, 2011.
+    </p>
+    <p class="noindent">
+      SÃO PAULO (Estado). Secretaria da Educação. <strong>Currículo Paulista: Etapa Ensino Médio.</strong> São Paulo: SEDUC, 2026.
+    </p>
+    <p class="noindent">
+      SÃO PAULO (Estado). Secretaria da Educação. <strong>Material de Apoio SEDUC - 2ª Série (Aulas 1 a 28 do 2º Bimestre).</strong> São Paulo: SEDUC, 2026.
+    </p>
+    <p class="noindent">
+      LIMA, André Corrêa de. <strong>Simulador Educacional de Lógica e Matemática (Software Interativo).</strong> São Paulo: EE. Oito de Abril, 2026.
+    </p>
+
+    <div class="assinaturas-container page-break-inside-avoid">
+      
+      <div class="assinatura-box">
+        <div class="assinatura-linha"></div>
+        <div class="assinatura-cargo">Direção</div>
+      </div>
+
+      <div class="assinatura-box">
+        <div class="assinatura-linha"></div>
+        <div class="assinatura-cargo">Coordenação</div>
+      </div>
+
+      <div class="assinatura-box">
+        <div class="assinatura-linha"></div>
+        <div class="assinatura-cargo">Prof° Exatas</div>
+      </div>
+
+      <div class="assinatura-box">
+        <div class="assinatura-linha"></div>
+        <div class="assinatura-cargo">Prof° Técnico</div>
+      </div>
+
+      <div class="assinatura-box" style="grid-column: span 2; margin-top: 20pt;">
+        <div class="assinatura-linha" style="width: 40%;"></div>
+        <div class="assinatura-cargo">Aluno Representante</div>
+      </div>
+
+    </div>
+
+  </div>
+
+</body>
+</html>
