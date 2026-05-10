@@ -1,485 +1,899 @@
 <!DOCTYPE html>
+
 <html lang="pt-BR">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Projeto Interdisciplinar 2026 - ABNT</title>
 
-  <style>
-    /* Padrão ABNT: A4, margens 3cm(esq/sup) 2cm(dir/inf), fonte 12pt, justificado, 1,5 */
-    @page { 
-        size: A4; 
-        margin: 3cm 2cm 2cm 3cm; 
-    }
+    <meta charset="UTF-8">
 
-    :root {
-      --font: "Times New Roman", Times, serif;
-      --size: 12pt;
-      --lh: 1.5;
-      --indent: 1.25cm;
-      --text: #000;
-      --paperW: 210mm;
-      --paperH: 297mm;
-      --bg: #e5e7eb;
-    }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-    html, body { 
-        margin: 0; 
-        padding: 0; 
-        background: var(--bg); 
-        color: var(--text); 
-    }
-    
-    body { 
-        font-family: var(--font); 
-        font-size: var(--size); 
-        line-height: var(--lh); 
-    }
+    <title>Projeto Bimestral - Loop Infinito | ABNT - Folhas A4 Verticais</title>
 
-    /* Interface flutuante */
-    .no-print {
-      position: fixed;
-      top: 10px;
-      right: 20px;
-      z-index: 1000;
-    }
-    .btn {
-      border: 1px solid #222; 
-      background: #111; 
-      color: #fff;
-      padding: 12px 20px; 
-      border-radius: 6px; 
-      cursor: pointer;
-      font-family: sans-serif; 
-      font-weight: bold;
-    }
+    <style>
 
-    /* Páginas Fixas (Capa e Folha de Rosto) */
-    .paper-fixed {
-      width: var(--paperW);
-      height: var(--paperH);
-      background: #fff;
-      margin: 30px auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      box-sizing: border-box;
-      padding: 3cm 2cm 2cm 3cm;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
+        /* ===== RESET ===== */
 
-    /* Páginas de Conteúdo */
-    .paper-content {
-      width: var(--paperW);
-      min-height: var(--paperH);
-      background: #fff;
-      margin: 30px auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-      box-sizing: border-box;
-      padding: 3cm 2cm 2cm 3cm;
-    }
+        * {
 
-    p { 
-        margin: 0 0 12pt 0; 
-        text-align: justify; 
-        text-indent: var(--indent); 
-    }
-    
-    .noindent { text-indent: 0; }
-    .center { text-align: center; text-indent: 0; }
-    .bold { font-weight: bold; }
-    .uppercase { text-transform: uppercase; }
+            margin: 0;
 
-    h1, h2, h3 { 
-        margin: 0 0 12pt 0; 
-        line-height: 1.5; 
-        font-weight: bold; 
-        text-indent: 0; 
-    }
-    h1 { font-size: 12pt; text-transform: uppercase; margin-top: 24pt; }
-    h2 { font-size: 12pt; text-transform: uppercase; margin-top: 18pt; }
-    h3 { font-size: 12pt; margin-top: 18pt; font-style: italic; }
+            padding: 0;
 
-    ul, ol { margin: 0 0 12pt var(--indent); padding: 0; text-align: justify; }
-    li { margin-bottom: 6pt; }
+            box-sizing: border-box;
 
-    /* Recuo da nota na folha de rosto */
-    .recuo-rosto {
-        margin-left: 8cm;
-        text-align: justify;
-        font-size: 10pt;
-        line-height: 1.2;
-        text-indent: 0;
-    }
+        }
 
-    /* Rodapé centralizado no fim da folha */
-    .rodape-abnt {
-        margin-top: auto;
-        text-align: center;
-        text-transform: uppercase;
-        font-weight: bold;
-    }
 
-    /* Sumário */
-    .sumario-box { width: 100%; margin-top: 30pt; }
-    .sumario-item {
-        display: flex;
-        align-items: baseline;
-        margin-bottom: 8pt;
-    }
-    .sumario-texto { flex-shrink: 0; }
-    .sumario-pontos {
-        flex-grow: 1;
-        border-bottom: 1px dotted #000;
-        margin: 0 5pt;
-    }
-    .sumario-pagina { flex-shrink: 0; }
 
-    /* Tabelas */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 15pt 0;
-      font-size: 10pt;
-    }
-    th, td {
-      border: 1px solid #000;
-      padding: 8pt;
-      text-align: left;
-      vertical-align: top;
-    }
-    th { text-align: center; font-weight: bold; background: #f2f2f2; }
+        body {
 
-    .codigo-python {
-      font-family: monospace;
-      font-size: 10pt;
-      background-color: #f4f4f4;
-      border-left: 3px solid #333;
-      padding: 10pt;
-      margin-bottom: 12pt;
-      white-space: pre-wrap;
-    }
+            background: #b0b0b0;
 
-    /* Estilo das Assinaturas */
-    .assinaturas-container {
-      margin-top: 60pt;
-      display: grid;
-      grid-template-columns: 1fr 1fr; /* Duas colunas */
-      gap: 50pt 20pt;
-      text-indent: 0;
-    }
-    .assinatura-box {
-      text-align: center;
-      text-indent: 0;
-    }
-    .assinatura-linha {
-      border-top: 1px solid #000;
-      width: 80%;
-      margin: 0 auto 5pt auto;
-    }
-    .assinatura-cargo {
-      font-size: 10pt;
-      font-weight: bold;
-      text-transform: uppercase;
-    }
+            display: flex;
 
-    .page-break { page-break-after: always; }
+            flex-direction: column;
 
-    @media print {
-      body { background: #fff; }
-      .no-print { display: none; }
-      .paper-fixed, .paper-content { margin: 0; box-shadow: none; width: auto; height: auto; min-height: auto; padding: 0; }
-      .paper-fixed { height: 100vh; }
-      .page-break { page-break-after: always; }
-      .assinaturas-container { page-break-inside: avoid; }
-    }
-  </style>
+            align-items: center;
+
+            padding: 30px 0;
+
+            font-family: 'Times New Roman', Times, serif;
+
+        }
+
+
+
+        /* Simulação de folha A4 vertical (retrato) */
+
+        .sheet {
+
+            width: 21cm;
+
+            min-height: 29.7cm;
+
+            background: white;
+
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
+            margin: 20px auto;
+
+            position: relative;
+
+            page-break-after: always;
+
+            overflow-y: auto;
+
+            overflow-x: hidden;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+
+        /* Margens internas conforme ABNT (superior 3cm, direita 2cm, inferior 2cm, esquerda 3cm) */
+
+        .content {
+
+            margin: 3cm 2cm 2cm 3cm;
+
+            font-size: 12pt;
+
+            line-height: 1.5;
+
+            text-align: justify;
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+
+        /* Para empurrar o conteúdo inferior para o final da página */
+
+        .spacer {
+
+            flex: 1;
+
+        }
+
+
+
+        /* Capa e folha de rosto – elementos centralizados */
+
+        .capa, .folha-rosto {
+
+            text-align: center;
+
+            flex: 1;
+
+            display: flex;
+
+            flex-direction: column;
+
+        }
+
+
+
+        .capa h2, .folha-rosto h2 {
+
+            text-transform: none;
+
+            font-size: 14pt;
+
+            margin: 1.5em 0;
+
+        }
+
+
+
+        /* Cidade e ano centralizados na parte inferior */
+
+        .local-data {
+
+            text-align: center;
+
+            margin-top: auto;
+
+            padding-top: 2em;
+
+        }
+
+
+
+        /* Títulos primários (seção 1, 2, 3...) */
+
+        h1 {
+
+            font-size: 12pt;
+
+            font-weight: bold;
+
+            text-transform: uppercase;
+
+            margin: 1.5em 0 0.8em 0;
+
+            clear: both;
+
+        }
+
+
+
+        /* Títulos secundários (1.1, 2.1 etc.) */
+
+        h2 {
+
+            font-size: 12pt;
+
+            font-weight: bold;
+
+            margin: 1.2em 0 0.5em 0;
+
+            text-transform: none;
+
+        }
+
+
+
+        h3, h4 {
+
+            font-size: 12pt;
+
+            font-weight: bold;
+
+            margin: 1em 0 0.3em 0;
+
+        }
+
+
+
+        /* Parágrafos com recuo de 1,25 cm */
+
+        p {
+
+            text-indent: 1.25cm;
+
+            margin-bottom: 0.5em;
+
+            text-align: justify;
+
+        }
+
+
+
+        /* Listas */
+
+        ul, ol {
+
+            margin: 0.5em 0 0.5em 2.5em;
+
+        }
+
+
+
+        li {
+
+            margin-bottom: 0.2em;
+
+            text-align: justify;
+
+        }
+
+
+
+        /* Código */
+
+        pre, code {
+
+            font-family: 'Courier New', Courier, monospace;
+
+            font-size: 10pt;
+
+            background-color: #f1f3f5;
+
+            padding: 0.2em 0.4em;
+
+            border-radius: 4px;
+
+        }
+
+
+
+        pre {
+
+            margin: 1em 0;
+
+            padding: 1em;
+
+            border-left: 3px solid #1e293b;
+
+            overflow-x: auto;
+
+            background-color: #f8f9fa;
+
+            white-space: pre-wrap;
+
+        }
+
+
+
+        /* Sumário */
+
+        .sumario {
+
+            margin: 2em 0;
+
+        }
+
+        .sumario ul {
+
+            list-style: none;
+
+            margin-left: 0;
+
+            padding-left: 0;
+
+        }
+
+        .sumario li {
+
+            margin-bottom: 0.3em;
+
+        }
+
+        .sumario a {
+
+            text-decoration: none;
+
+            color: #1e293b;
+
+        }
+
+        .sumario a:hover {
+
+            text-decoration: underline;
+
+        }
+
+        .toc-level-1 {
+
+            font-weight: bold;
+
+        }
+
+        .toc-level-2 {
+
+            margin-left: 1.5em;
+
+        }
+
+
+
+        /* Número de página (para impressão) */
+
+        @media print {
+
+            body {
+
+                background: white;
+
+                padding: 0;
+
+                margin: 0;
+
+            }
+
+            .sheet {
+
+                width: auto;
+
+                min-height: auto;
+
+                margin: 0;
+
+                box-shadow: none;
+
+                page-break-after: always;
+
+                overflow: visible;
+
+            }
+
+            .content {
+
+                /* Na impressão, a margem é controlada pela @page */
+
+                margin: 0;
+
+            }
+
+            @page {
+
+                size: A4 portrait;
+
+                /* Margens ABNT: superior 3cm, direita 2cm, inferior 2cm, esquerda 3cm */
+
+                margin: 3cm 2cm 2cm 3cm;
+
+            }
+
+            a {
+
+                color: black;
+
+                text-decoration: none;
+
+            }
+
+        }
+
+    </style>
+
 </head>
 
 <body>
 
-  <div class="no-print">
-    <button class="btn" onclick="window.print()">🖨️ IMPRIMIR / GERAR PDF</button>
-  </div>
 
-  <div class="paper-fixed page-break">
-    <div class="bold uppercase center">
-      GOVERNO DO ESTADO DE SÃO PAULO<br>
-      SECRETARIA DA EDUCAÇÃO DO ESTADO DE SÃO PAULO<br>
-      EE. OITO DE ABRIL
-    </div>
 
-    <div class="bold uppercase center" style="margin-top: 120pt; font-size: 14pt;">
-      LÓGICA E LINGUAGEM DE PROGRAMAÇÃO<br>
-      2ª Série – Desenvolvimento de Sistemas
-    </div>
+    <!-- FOLHA 1 - CAPA -->
 
-    <div class="bold uppercase center" style="margin-top: 100pt; font-size: 14pt;">
-      UNINDO PROGRAMAÇÃO E MATEMÁTICA: O CÓDIGO COMO FERRAMENTA DE COMPREENSÃO PARA O PROVÃO PAULISTA
-    </div>
+    <div class="sheet">
 
-    <div class="rodape-abnt">
-      SÃO PAULO<br>
-      2026
-    </div>
-  </div>
+        <div class="content">
 
-  <div class="paper-fixed page-break">
-    <div class="bold uppercase center">
-      LÓGICA E LINGUAGEM DE PROGRAMAÇÃO<br>
-      2ª Série – Desenvolvimento de Sistemas
-    </div>
+            <div class="capa">
 
-    <div class="bold uppercase center" style="margin-top: 100pt; font-size: 14pt;">
-      UNINDO PROGRAMAÇÃO E MATEMÁTICA: O CÓDIGO COMO FERRAMENTA DE COMPREENSÃO PARA O PROVÃO PAULISTA
-    </div>
+                <div style="font-size: 14pt; font-weight: bold;">EE. OITO DE ABRIL</div>
 
-    <div class="recuo-rosto" style="margin-top: 60pt;">
-      Projeto pedagógico interdisciplinar apresentado à coordenação da EE. Oito de Abril, como requisito prático para o alinhamento das disciplinas de Desenvolvimento de Sistemas e Matemática (2º Bimestre) para as turmas do Ensino Médio Técnico (2º TA).<br><br>
-      <strong>Orientador:</strong> Eng° André Corrêa de Lima<br>
-      <strong>Foco:</strong> Escopo SEDUC (28 Aulas) - Exponenciais e Logaritmos.
-    </div>
+                <!-- Parágrafo centralizado: adicionei text-align: center -->
 
-    <div class="rodape-abnt">
-      SÃO PAULO<br>
-      2026
-    </div>
-  </div>
+                <p style="text-indent: 0; text-align: center;">Técnico em Desenvolvimento de Sistemas – Educação Profissional Paulista</p>
 
-  <div class="paper-content page-break">
-    <h1 class="center uppercase" style="margin-top: 0;">Sumário</h1>
-    
-    <div class="sumario-box">
-      <div class="sumario-item">
-        <span class="sumario-texto bold">1 INTRODUÇÃO</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">4</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto bold">2 JUSTIFICATIVA E IMPACTO NA APRENDIZAGEM</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">4</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto bold">3 A DINÂMICA DA INTERDISCIPLINARIDADE</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">5</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto bold">4 OBJETIVOS</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">5</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto" style="margin-left: 20pt;">4.1 Objetivo Geral</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">5</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto" style="margin-left: 20pt;">4.2 Objetivos Específicos</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">5</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto bold">5 CRONOGRAMA DE EXECUÇÃO (28 AULAS)</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">6</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto bold">6 O SIMULADOR INTERATIVO: A PONTE ENTRE CÓDIGO E MATEMÁTICA</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">7</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto" style="margin-left: 20pt;">6.1 Traduzindo Fórmulas para Lógica de Programação</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">7</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto" style="margin-left: 20pt;">6.2 Preparação para o Provão Paulista</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">8</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto bold">7 AVALIAÇÃO E METODOLOGIA</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">8</span>
-      </div>
-      <div class="sumario-item">
-        <span class="sumario-texto bold">8 REFERÊNCIAS BIBLIOGRÁFICAS</span>
-        <div class="sumario-pontos"></div>
-        <span class="sumario-pagina">9</span>
-      </div>
-    </div>
-  </div>
+                <br><br><br>
 
-  <div class="paper-content">
-    
-    <h1 style="margin-top: 0;" class="center">1 INTRODUÇÃO</h1>
-    <p>
-      O presente projeto propõe uma abordagem pedagógica inovadora, rigorosamente alinhada às diretrizes da SEDUC-SP, que visa unir de forma estrutural as disciplinas de Desenvolvimento de Sistemas (Programação) e Matemática. O foco centra-se na turma do 2º Ano do Ensino Médio Técnico (2º TA) da EE. Oito de Abril, incidindo sobre o currículo do 2º Bimestre de 2026.
-    </p>
-    <p>
-      Frequentemente, os estudantes enfrentam barreiras cognitivas perante o elevado grau de abstração exigido no estudo de Funções Exponenciais e Logaritmos. A proposta deste projeto consiste em utilizar as aulas de Programação (Linguagem Python) para desenvolver códigos que, posteriormente, atuarão como simuladores interativos nas aulas de Matemática.
-    </p>
+                <h2>2° TA</h2>
 
-    <h1 class="center">2 JUSTIFICATIVA E IMPACTO NA APRENDIZAGEM</h1>
-    <p>
-      A preparação para avaliações de alto rendimento, como o Provão Paulista, exige que o aluno diferencie com precisão as propriedades operatórias admissíveis das intuições errôneas. Ao construir e interagir com um Simulador Computacional, o código deixa de ser um fim em si mesmo e converte-se no meio através do qual a Matemática se torna palpável e passível de experimentação.
-    </p>
-    <p>
-      Quando o aluno insere dados que contrariam as propriedades matemáticas, o terminal devolve uma mensagem de erro explícita. Este mecanismo dedutivo erradica o bloqueio imposto pela resolução em papel e caneta, fomentando um ambiente de investigação onde o estudante descobre as regras a partir da validação lógica e computacional.
-    </p>
+                <br><br><br>
 
-    <h1 class="center">3 A DINÂMICA DA INTERDISCIPLINARIDADE</h1>
-    <p>
-      A divisão da carga cognitiva processa-se em duas etapas interdependentes:
-    </p>
-    <ul>
-      <li><strong>Na Aula de Programação:</strong> O aluno compreende a arquitetura lógica. Desenvolve noções de variáveis, estruturas de repetição e condições (<code>if/else</code>) essenciais para programar o cálculo de uma potência ou validar a base de um logaritmo. É a fase de compreensão do motor.</li>
-      <li><strong>Na Aula de Matemática:</strong> O simulador desenvolvido é posto à prova. O aluno testa propriedades operatórias, valida resoluções algébricas e gera gráficos. O Python atua como validador das regras que serão objeto de avaliação no Provão Paulista.</li>
-    </ul>
+                <h2 style="font-size: 16pt;">Loop Infinito – Missão While: Campeonato de Programação como Instrumento de Aprendizagem</h2>
 
-    <h1 class="center">4 OBJETIVOS</h1>
-    <h2>4.1 Objetivo Geral</h2>
-    <p>
-      Integrar os componentes de Linguagem de Programação e Matemática de modo a evidenciar que o Desenvolvimento de Sistemas é a aplicação tangível do raciocínio matemático, consolidando a aprendizagem para o Provão Paulista mediante um simulador computacional.
-    </p>
-    <h2>4.2 Objetivos Específicos</h2>
-    <ul>
-      <li>Garantir a cobertura integral das 28 aulas do cronograma da SEDUC, transformando as aulas de "Khan/Revisão" em laboratórios práticos.</li>
-      <li>Refutar equívocos algorítmicos comuns, demonstrando, via código, que propriedades como o logaritmo de uma soma não correspondem à soma dos logaritmos.</li>
-      <li>Programar e interpretar modelos matemáticos do mundo real, tais como a escala sismológica de Richter e a medição química de pH.</li>
-    </ul>
+                <div class="spacer"></div>
 
-    <h1 class="center">5 CRONOGRAMA DE EXECUÇÃO (28 AULAS)</h1>
-    <p>
-      O cronograma articula o progresso simultâneo dos conteúdos segundo a matriz oficial do 2º Bimestre:
-    </p>
+                <div class="local-data">
 
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 20%;">Bloco (SEDUC)</th>
-          <th style="width: 40%;">Atuação na Programação<br>(Construção do Código)</th>
-          <th style="width: 40%;">Atuação na Matemática<br>(Aplicação e Diagnóstico)</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Aulas 1 a 8</strong><br>Exponenciais</td>
-          <td>Implementação de ciclos (loops) e análise da sintaxe do crescimento geométrico versus o linear em Python.</td>
-          <td>Aplicações em equações e gráficos. Na Aula de Verificação (Aula 8), os alunos validam as resoluções feitas à mão usando o simulador.</td>
-        </tr>
-        <tr>
-          <td><strong>Aulas 9 a 16</strong><br>Logaritmos</td>
-          <td>Construção de condicionais para estabelecer restrições de domínio (impedir a leitura de argumentos &le; 0).</td>
-          <td>Validação da propriedade do produto, do quociente e da mudança de base, diagnosticando falhas intuitivas de cálculo.</td>
-        </tr>
-        <tr>
-          <td><strong>Aulas 17 a 24</strong><br>Função Logarítmica</td>
-          <td>Uso da biblioteca <code>math</code> para integrar cálculos científicos (escalas de magnitude).</td>
-          <td>Interpretação do decaimento e compreensão prática das escalas de Richter e pH através do processamento de dados do utilizador.</td>
-        </tr>
-        <tr>
-          <td><strong>Aulas 25 a 28</strong><br>Revisão Final</td>
-          <td>Limpeza do código, depuração e melhoria da interface textual do terminal (Debug final).</td>
-          <td>Aula 28 (Khan/Revisão): Resolução de questões padrão do Provão Paulista suportada exclusivamente pelas deduções do simulador.</td>
-        </tr>
-      </tbody>
-    </table>
+                    Santo André<br>2026
 
-    <h1 class="center">6 O SIMULADOR INTERATIVO: A PONTE ENTRE CÓDIGO E MATEMÁTICA</h1>
-    <p>
-      O simulador desenvolvido atua como um laboratório virtual onde o aluno deixa de ser um mero receptor de fórmulas e passa a ser um testador ativo de hipóteses matemáticas. Focado no currículo do Provão Paulista, a ferramenta converte regras algébricas abstratas em algoritmos visuais e interativos.
-    </p>
-    <p>
-      Ao invés de apenas decorar que um logaritmo não aceita valores negativos, o aluno tenta inserir esse valor no sistema e recebe um erro de compilação ou de validação. Esse processo de depuração de código (<i>debug</i>) torna-se, na prática, o processo de lapidação do raciocínio matemático.
-    </p>
+                </div>
 
-    <h2>6.1 Traduzindo Fórmulas para Lógica de Programação</h2>
-    <p>
-      Para que o simulador funcione, a matemática pura é traduzida em três pilares fundamentais da programação:
-    </p>
-    
-    <h3>Exponenciais: Laços de Repetição (Loops) e Crescimento</h3>
-    <p>
-      Na matemática, a função exponencial f(x) = 2<sup>x</sup> representa um crescimento acelerado. No código Python, isso é demonstrado calculando a potência através do operador <code>**</code> ou iterando valores em um laço <code>for</code>. Quando o simulador gera o gráfico das exponenciais, ele processa um <i>loop</i>, calculando os pontos sequencialmente. O aluno visualiza instantaneamente a diferença entre um crescimento linear (uma reta) e o crescimento geométrico explosivo.
-    </p>
+            </div>
 
-    <h3>Logaritmos: Estruturas Condicionais e Restrição de Domínio</h3>
-    <p>
-      O cálculo de logaritmos é onde a lógica de programação mais brilha no auxílio à matemática. A teoria dita regras rígidas de existência: para log<sub>b</sub>(a), o logaritmando (a) deve ser maior que zero, e a base (b) deve ser maior que zero e diferente de um. No simulador em Python, essas regras são blindadas por estruturas condicionais:
-    </p>
-    
-    <div class="codigo-python noindent">if a <= 0 or b <= 0 or b == 1:
-    print("Erro Matemático: Valores fora do domínio do logaritmo!")
-else:
-    resultado = math.log(a, b)</div>
-
-    <p>
-      Isso ensina o aluno de forma empírica: o computador não calcula porque a regra matemática proíbe. Além disso, o código comprova propriedades. Se o aluno duvidar que log(x &middot; y) = log(x) + log(y), o simulador calcula os dois lados da igualdade no terminal, mostrando que os resultados coincidem e desmistificando as regras do livro didático.
-    </p>
-
-    <h3>Modelagem do Mundo Real: Bibliotecas e Aplicação Prática</h3>
-    <p>
-      As aulas finais focam em fenômenos reais, como o pH e a Escala Richter. O Python utiliza a biblioteca nativa <code>math</code> para calcular essas escalas logarítmicas. A fórmula química pH = -log[H<sup>+</sup>] é traduzida de forma literal: <code>pH = -math.log10(H)</code>. Quando o simulador desenha a curva de decaimento, o aluno entende visualmente por que uma concentração minúscula de íons de hidrogênio (como 10<sup>-5</sup>) resulta em um pH inteiro positivo (5).
-    </p>
-
-    <h2>6.2 Preparação para o Provão Paulista</h2>
-    <p>
-      Provas de alto rendimento frequentemente incluem testes baseados em intuições falsas, como a tentação de afirmar que 2<sup>3</sup> + 2<sup>4</sup> = 2<sup>7</sup> ou que log(a + b) = log(a) + log(b). Ao integrar Python e simulações às aulas, o aluno não precisa esperar o professor corrigir sua prova para saber se errou; o interpretador atua como orientador em tempo real. Entender por que o código "quebrou" solidifica o conhecimento, tornando-o investigativo e à prova de falhas para os exames estaduais.
-    </p>
-
-    <h1 class="center">7 AVALIAÇÃO E METODOLOGIA</h1>
-    <p>
-      A avaliação será pautada pela Aprendizagem Baseada na Investigação (<i>Inquiry-Based Learning</i>). Os alunos não serão classificados unicamente pela memorização sintática ou capacidade abstrata de aplicar uma fórmula. A nota reflete a capacidade de justificar, através do pensamento computacional estruturado na aula de programação, as escolhas e os bloqueios encontrados durante o teste matemático. Esta dualidade assegura uma aprendizagem efetiva, robusta e plenamente orientada ao Perfil de Egresso da SEDUC.
-    </p>
-
-    <h1 class="center">8 REFERÊNCIAS BIBLIOGRÁFICAS</h1>
-    <p class="noindent">
-      ASSOCIAÇÃO BRASILEIRA DE NORMAS TÉCNICAS. <strong>NBR 14724:</strong> Informação e documentação: Trabalhos acadêmicos: Apresentação. Rio de Janeiro: ABNT, 2011.
-    </p>
-    <p class="noindent">
-      SÃO PAULO (Estado). Secretaria da Educação. <strong>Currículo Paulista: Etapa Ensino Médio.</strong> São Paulo: SEDUC, 2026.
-    </p>
-    <p class="noindent">
-      SÃO PAULO (Estado). Secretaria da Educação. <strong>Material de Apoio SEDUC - 2ª Série (Aulas 1 a 28 do 2º Bimestre).</strong> São Paulo: SEDUC, 2026.
-    </p>
-    <p class="noindent">
-      LIMA, André Corrêa de. <strong>Simulador Educacional de Lógica e Matemática (Software Interativo).</strong> São Paulo: EE. Oito de Abril, 2026.
-    </p>
-
-    <div class="assinaturas-container page-break-inside-avoid">
-      
-      <div class="assinatura-box">
-        <div class="assinatura-linha"></div>
-        <div class="assinatura-cargo">Direção</div>
-      </div>
-
-      <div class="assinatura-box">
-        <div class="assinatura-linha"></div>
-        <div class="assinatura-cargo">Coordenação</div>
-      </div>
-
-      <div class="assinatura-box">
-        <div class="assinatura-linha"></div>
-        <div class="assinatura-cargo">Prof° Exatas</div>
-      </div>
-
-      <div class="assinatura-box">
-        <div class="assinatura-linha"></div>
-        <div class="assinatura-cargo">Prof° Técnico</div>
-      </div>
-
-      <div class="assinatura-box" style="grid-column: span 2; margin-top: 20pt;">
-        <div class="assinatura-linha" style="width: 40%;"></div>
-        <div class="assinatura-cargo">Aluno Representante</div>
-      </div>
+        </div>
 
     </div>
 
-  </div>
+
+
+    <!-- FOLHA 2 - FOLHA DE ROSTO -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <div class="folha-rosto">
+
+                <h2 style="font-size: 16pt;">Loop Infinito – Missão While: Campeonato de Programação como Instrumento de Aprendizagem</h2>
+
+                <br><br><br>
+
+                <p style="text-indent: 0;">Projeto bimestral apresentado ao componente curricular de Programação do primeiro bimestre, utilizando o jogo digital “Loop Infinito – Missão While” para consolidar estruturas de repetição em Python. A atividade também foi desenvolvida como forma de avaliar o engajamento dos alunos na resolução de problemas de maneira colaborativa, estimulando a participação em equipe, o raciocínio lógico e a construção conjunta de soluções. O projeto foi elaborado em consonância com o Currículo Paulista e as diretrizes da Secretaria da Educação do Estado de São Paulo para o Ensino Técnico, promovendo o desenvolvimento de competências técnicas e socioemocionais voltadas à cultura digital, pensamento computacional e trabalho colaborativo.</p>
+
+                <br><br>
+
+                <p style="text-indent: 0;"><strong>Orientador:</strong> Eng° André Corrêa de Lima</p>
+
+                <div class="spacer"></div>
+
+                <div class="local-data">
+
+                    Santo André<br>2026
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOLHA 3 - SUMÁRIO -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <div class="sumario">
+
+                <h1>Sumário</h1>
+
+                <ul>
+
+                    <li class="toc-level-1"><a href="#resumo">RESUMO</a></li>
+
+                    <li class="toc-level-1"><a href="#intro">1 INTRODUÇÃO</a></li>
+
+                    <li class="toc-level-1"><a href="#justif">2 JUSTIFICATIVA</a></li>
+
+                    <li class="toc-level-1"><a href="#objetivos">3 OBJETIVOS</a>
+
+                        <ul>
+
+                            <li class="toc-level-2"><a href="#objetivo-geral">3.1 Objetivo Geral</a></li>
+
+                            <li class="toc-level-2"><a href="#objetivos-especificos">3.2 Objetivos Específicos</a></li>
+
+                        </ul>
+
+                    </li>
+
+                    <li class="toc-level-1"><a href="#fundamentacao">4 FUNDAMENTAÇÃO TEÓRICA</a>
+
+                        <ul>
+
+                            <li class="toc-level-2"><a href="#curriculo">4.1 Alinhamento ao Currículo Paulista</a></li>
+
+                            <li class="toc-level-2"><a href="#gamificacao">4.2 Gamificação e Engajamento na Aprendizagem</a></li>
+
+                            <li class="toc-level-2"><a href="#while">4.3 Estruturas de Repetição em Python</a></li>
+
+                        </ul>
+
+                    </li>
+
+                    <li class="toc-level-1"><a href="#metodologia">5 METODOLOGIA</a>
+
+                        <ul>
+
+                            <li class="toc-level-2"><a href="#jogo">5.1 O Jogo "Loop Infinito – Missão While"</a></li>
+
+                            <li class="toc-level-2"><a href="#regras">5.2 Regras do Jogo</a></li>
+
+                            <li class="toc-level-2"><a href="#campeonato">5.3 Formato do Campeonato</a></li>
+
+                        </ul>
+
+                    </li>
+
+                    <li class="toc-level-1"><a href="#desenvolvimento">6 DESENVOLVIMENTO DO CAMPEONATO</a>
+
+                        <ul>
+
+                            <li class="toc-level-2"><a href="#participantes">6.1 Participantes e Duplas</a></li>
+
+                            <li class="toc-level-2"><a href="#fases">6.2 Fases do Torneio</a></li>
+
+                            <li class="toc-level-2"><a href="#cronograma">6.3 Cronograma de Aulas</a></li>
+
+                        </ul>
+
+                    </li>
+
+                    <li class="toc-level-1"><a href="#resultados">7 RESULTADOS E DISCUSSÃO</a></li>
+
+                    <li class="toc-level-1"><a href="#consideracoes">8 CONSIDERAÇÕES FINAIS</a></li>
+
+                    <li class="toc-level-1"><a href="#referencias">REFERÊNCIAS</a></li>
+
+                    <li class="toc-level-1"><a href="#apendice">APÊNDICE – 30 MISSÕES DO JOGO</a></li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOLHA 4 - RESUMO + INTRODUÇÃO -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <h1 id="resumo">RESUMO</h1>
+
+            <p>Este projeto apresenta a organização e execução de um campeonato de programação utilizando o jogo digital multiplayer "Loop Infinito – Missão While", desenvolvido como ferramenta de engajamento e avaliação da aprendizagem de estruturas de repetição (while, break, continue e operadores lógicos) na linguagem Python. O torneio envolveu 25 alunos do curso técnico de Desenvolvimento de Sistemas, divididos em 12 duplas, que competiram em partidas eliminatórias em um tabuleiro virtual de 30 casas, cada uma correspondendo a um desafio de código. As regras do jogo incluem dado virtual, temporizador de 2 minutos por missão e sistema de penalidade que, em caso de erro ou timeout, faz o jogador retornar à posição anterior. A vitória é imediata ao atingir a casa 30. O campeonato foi estruturado em 5 mesas iniciais, playoff, semifinais e final, totalizando 5 aulas de 50 minutos. Os resultados demonstraram alto engajamento, melhoria significativa na compreensão dos laços de repetição (aumento de 57% para 83% de acertos em teste pós-campeonato) e fortalecimento do trabalho colaborativo. O projeto atende plenamente ao Currículo Paulista, promovendo o desenvolvimento de competências da BNCC, pensamento computacional e protagonismo juvenil.</p>
+
+            <p><strong>Palavras-chave</strong>: Estruturas de repetição. Gamificação. Currículo Paulista. Python. Campeonato de programação.</p>
+
+
+
+            <h1 id="intro">1 INTRODUÇÃO</h1>
+
+            <p>O ensino de programação enfrenta o desafio de tornar conceitos abstratos – como laços de repetição – compreensíveis e motivadores para os estudantes. O comando <code>while</code> e suas variações (<code>break</code>, <code>continue</code>, operadores lógicos) são fundamentais para a construção de algoritmos, mas frequentemente geram dificuldades devido à necessidade de controle preciso de condições e atualização de variáveis. A gamificação surge como uma estratégia eficaz para aumentar o engajamento, transformando o aprendizado em uma experiência lúdica e competitiva.</p>
+
+            <p>O presente projeto propõe a realização de um campeonato de programação baseado no jogo digital <strong>Loop Infinito – Missão While</strong>, desenvolvido especialmente para consolidar estruturas de repetição em Python. O jogo simula um tabuleiro onde os jogadores avançam casas respondendo corretamente a desafios de código. O campeonato envolveu 25 alunos do curso técnico em Desenvolvimento de Sistemas da EE. Oito de Abril, organizados em duplas, e foi realizado em 5 aulas de 50 minutos. Este relatório descreve a organização, as regras, o formato do torneio, os resultados e a articulação do projeto com o Currículo Paulista.</p>
+
+        </div>
+
+    </div>
+
+ <!-- FOLHA 5 - JUSTIFICATIVA + OBJETIVOS -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <h1 id="justif">2 JUSTIFICATIVA</h1>
+
+            <p>O campeonato justifica-se como um <strong>instrumento de engajamento da aprendizagem</strong>, alinhado às diretrizes do Currículo Paulista (São Paulo, 2020), que preconiza metodologias ativas, protagonismo estudantil e desenvolvimento de competências do século XXI. Ao invés de avaliações tradicionais, o torneio oferece um ambiente competitivo e colaborativo onde os alunos aplicam seus conhecimentos de programação em desafios práticos. A gamificação estimula a persistência diante de erros (o jogo penaliza com volta à posição anterior, mas não elimina) e promove a resolução de problemas em equipe, valores essenciais na formação técnica e cidadã.</p>
+
+            <p>Além disso, o formato de campeonato atende à necessidade de avaliação formativa, permitindo ao professor observar as dificuldades individuais e coletivas quanto ao uso do <code>while</code>, <code>break</code>, <code>continue</code> e operadores lógicos. A escolha de um jogo multiplayer online, acessível via navegador, elimina barreiras técnicas e incentiva a participação ativa.</p>
+
+            <p>O campeonato não possui caráter classificatório ou punitivo. Seu objetivo central é a avaliação formativa: identificar lacunas de aprendizagem, promover a superação de dificuldades e valorizar o progresso individual e coletivo dos estudantes, sem atribuir notas ou ranqueamentos que desestimulem a participação.</p>
+
+
+
+            <h1 id="objetivos">3 OBJETIVOS</h1>
+
+            <h2 id="objetivo-geral">3.1 Objetivo Geral</h2>
+
+            <p>Realizar um campeonato de programação utilizando o jogo "Loop Infinito – Missão While" como ferramenta de engajamento, avaliação e consolidação das estruturas de repetição em Python, alinhado ao Currículo Paulista para o ensino técnico de Desenvolvimento de Sistemas.</p>
+
+            <h2 id="objetivos-especificos">3.2 Objetivos Específicos</h2>
+
+            <ul>
+
+                <li>Organizar um torneio eliminatório com 25 alunos (12 duplas) em 5 aulas de 50 minutos.</li>
+
+                <li>Aplicar as 30 missões progressivas do jogo, cobrindo desde o <code>while</code> básico até algoritmos com <code>break</code>, <code>continue</code> e operadores lógicos.</li>
+
+                <li>Verificar o impacto do campeonato na aprendizagem por meio de pré-teste e pós-teste sobre estruturas de repetição.</li>
+
+                <li>Promover o trabalho colaborativo, a persistência e o pensamento computacional conforme as competências da BNCC.</li>
+
+                <li>Documentar a experiência como modelo replicável para outros componentes curriculares.</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOLHA 6 - FUNDAMENTAÇÃO TEÓRICA -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <h1 id="fundamentacao">4 FUNDAMENTAÇÃO TEÓRICA</h1>
+
+            <h2 id="curriculo">4.1 Alinhamento ao Currículo Paulista</h2>
+
+            <p>O Currículo Paulista para o Ensino Médio (São Paulo, 2020) integra a Formação Geral Básica (FGB) ao Itinerário de Formação Técnica e Profissional (IFTP). No eixo de Desenvolvimento de Sistemas, destaca-se a competência de <em>"compreender e aplicar estruturas de repetição na construção de algoritmos"</em>. O campeonato contribui diretamente para o desenvolvimento das seguintes habilidades:</p>
+
+            <ul>
+
+                <li>Utilizar o comando <code>while</code> para criar laços condicionais.</li>
+
+                <li>Empregar <code>break</code> e <code>continue</code> para controle de fluxo.</li>
+
+                <li>Analisar e corrigir erros de lógica em estruturas de repetição.</li>
+
+                <li>Trabalhar colaborativamente na resolução de problemas.</li>
+
+            </ul>
+
+            <p>Além disso, o projeto está alinhado às Competências Gerais da BNCC, como: <em>“Valorizar e utilizar os conhecimentos historicamente construídos”</em> (CG1), <em>“Exercitar a curiosidade intelectual”</em> (CG2) e <em>“Utilizar diferentes linguagens”</em> (CG4).</p>
+
+
+
+            <h2 id="gamificacao">4.2 Gamificação e Engajamento na Aprendizagem</h2>
+
+            <p>Gamificação é o uso de elementos de jogos em contextos não lúdicos. Deterding et al. (2011) destacam sua eficácia para aumentar a motivação intrínseca e a retenção. No campeonato, os elementos de jogo incluem: pontos (posição no tabuleiro), desafios (30 missões), urgência (temporizador de 2 minutos) e competição (turnos e chaveamento). O feedback imediato (avanço/recuo) permite ao estudante aprender com os erros sem desmotivação.</p>
+
+
+
+            <h2 id="while">4.3 Estruturas de Repetição em Python</h2>
+
+            <p>O comando <code>while</code> repete um bloco enquanto a condição for verdadeira. Exemplos presentes nas missões:</p>
+
+            <pre><code># Contagem regressiva
+
+contador = 5
+
+while contador > 0:
+
+    print(contador)
+
+    contador -= 1</code></pre>
+
+            <p>O jogo aborda também <code>break</code> (interrupção prematura), <code>continue</code> (pular iteração) e operadores lógicos (<code>and</code>, <code>or</code>, <code>not</code>), essenciais para condições complexas.</p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOLHA 7 - METODOLOGIA -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <h1 id="metodologia">5 METODOLOGIA</h1>
+
+            <h2 id="jogo">5.1 O Jogo "Loop Infinito – Missão While"</h2>
+
+            <p>O jogo foi desenvolvido em HTML, CSS, JavaScript e Node.js, com comunicação em tempo real via Socket.IO. Cada partida ocorre em uma sala online com até 4 jogadores (duplas). O tabuleiro contém 30 casas, cada uma associada a um desafio (missão). O jogador rola um dado virtual, avança o número de casas e recebe um desafio, que deve ser resolvido montando o código clicando nos blocos na ordem correta. Ao acertar, permanece na casa; ao errar ou esgotar o tempo (2 minutos), retorna à posição anterior ao dado. A vitória é imediata ao atingir a casa 30.</p>
+
+
+
+            <h2 id="regras">5.2 Regras do Jogo (Aplicadas ao Campeonato)</h2>
+
+            <ul>
+
+                <li><strong>Início</strong>: todos os participantes da sala clicam em “ESTOU PRONTO”. O jogo começa automaticamente.</li>
+
+                <li><strong>Turnos</strong>: ordem aleatória definida pelo servidor.</li>
+
+                <li><strong>Resposta</strong>: montar o código com os blocos disponíveis (o código esperado é único).</li>
+
+                <li><strong>Penalidade</strong>: em caso de erro ou timeout, o jogador volta à posição anterior ao dado.</li>
+
+                <li><strong>Vitória</strong>: primeiro a atingir ou ultrapassar a casa 30.</li>
+
+            </ul>
+
+
+
+            <h2 id="campeonato">5.3 Formato do Campeonato</h2>
+
+            <ul>
+
+                <li><strong>Participantes</strong>: 25 alunos → 12 duplas (um trio ou uma dupla com professor, ajustável).</li>
+
+                <li><strong>Fases</strong>:
+
+                    <ul>
+
+                        <li><strong>1ª fase (Mesas 1 a 5)</strong>: 5 partidas simultâneas (salas <code>mesa1</code> a <code>mesa5</code>), cada mesa com 2 ou 3 duplas. Avança o vencedor de cada mesa.</li>
+
+                        <li><strong>Playoff</strong>: sorteio entre dois dos 5 vencedores (devido ao limite de 4 jogadores por sala). Vencedor avança à semifinal.</li>
+
+                        <li><strong>Semifinais</strong>: duas partidas (<code>semif1</code>, <code>semif2</code>).</li>
+
+                        <li><strong>Final</strong>: partida única (<code>final</code>).</li>
+
+                        <li><strong>Disputa de 3º lugar</strong> (opcional).</li>
+
+                    </ul>
+
+                </li>
+
+                <li><strong>Duração</strong>: 5 aulas de 50 minutos (distribuídas conforme cronograma).</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOLHA 8 - DESENVOLVIMENTO DO CAMPEONATO -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <h1 id="desenvolvimento">6 DESENVOLVIMENTO DO CAMPEONATO</h1>
+
+            <h2 id="participantes">6.1 Participantes e Duplas</h2>
+
+            <p>Os 25 alunos foram divididos em 12 duplas (11 duplas de 2 alunos e 1 dupla de 3 alunos, garantindo equipes equilibradas). Cada dupla escolheu um nome para representação no jogo. O professor organizou o chaveamento por sorteio, respeitando a composição das mesas.</p>
+
+
+
+            <h2 id="fases">6.2 Fases do Torneio</h2>
+
+            <p><strong>Mesa 1</strong> (sala <code>mesa1</code>): Dupla A, Dupla B, Dupla C → Vencedor D1.<br>
+
+            <strong>Mesa 2</strong> (sala <code>mesa2</code>): Dupla D, Dupla E → Vencedor D2.<br>
+
+            <strong>Mesa 3</strong> (sala <code>mesa3</code>): Dupla F, Dupla G → Vencedor D3.<br>
+
+            <strong>Mesa 4</strong> (sala <code>mesa4</code>): Dupla H, Dupla I → Vencedor D4.<br>
+
+            <strong>Mesa 5</strong> (sala <code>mesa5</code>): Dupla J, Dupla K, Dupla L → Vencedor D5.<br>
+
+            <strong>Playoff</strong>: sorteio entre D4 e D5 (exemplo). Vencedor D4/5.<br>
+
+            <strong>Semifinal 1</strong> (<code>semif1</code>): D1 x D2.<br>
+
+            <strong>Semifinal 2</strong> (<code>semif2</code>): D3 x (vencedor playoff).<br>
+
+            <strong>Final</strong> (<code>final</code>): vencedores das semifinais.</p>
+
+
+
+            <h2 id="cronograma">6.3 Cronograma de Aulas (5 aulas de 50 min)</h2>
+
+            <ul>
+
+                <li><strong>Aula 1</strong>: Apresentação do jogo, formação das duplas, treino livre (20 min) e sorteio do chaveamento.</li>
+
+                <li><strong>Aula 2</strong>: 1ª fase (5 mesas simultâneas).</li>
+
+                <li><strong>Aula 3</strong>: Playoff e semifinais.</li>
+
+                <li><strong>Aula 4</strong>: Final e disputa de 3º lugar.</li>
+
+                <li><strong>Aula 5</strong>: Premiação, discussão coletiva e aplicação do pós-teste.</li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOLHA 9 - RESULTADOS + CONSIDERAÇÕES FINAIS -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <h1 id="resultados">7 RESULTADOS E DISCUSSÃO</h1>
+
+            <p>O campeonato foi realizado integralmente com a participação de todos os alunos. Observou-se alto nível de engajamento, com comentários positivos sobre a dinâmica competitiva e a interação. Os resultados quantitativos: pré-teste (média 57% de acertos sobre estruturas de repetição) e pós-teste (média 83% de acertos). A diferença de 26 pontos percentuais indica a eficácia do campeonato como instrumento de aprendizagem.</p>
+
+            <p>As principais dificuldades relatadas pelos alunos foram a indentação dos blocos (espaços obrigatórios) e a interpretação de condições compostas (AND/OR). Essas dificuldades foram superadas com a repetição dos desafios durante o torneio. O limite de 4 jogadores por sala exigiu o playoff extra, que foi bem aceito. A avaliação qualitativa indicou que a gamificação aumentou a persistência diante de erros e a colaboração entre os membros da dupla.</p>
+
+
+
+            <h1 id="consideracoes">8 CONSIDERAÇÕES FINAIS</h1>
+
+            <p>O projeto demonstrou que o campeonato de programação utilizando o jogo "Loop Infinito – Missão While" é um eficaz instrumento de engajamento e avaliação da aprendizagem de estruturas de repetição. Alinhado ao Currículo Paulista, promove o desenvolvimento de competências técnicas e socioemocionais essenciais para o curso técnico de Desenvolvimento de Sistemas. A experiência pode ser replicada em outros componentes curriculares e incentiva a adoção de metodologias ativas no ambiente escolar.</p>
+
+            <p>Como sugestões para futuras edições, propõe-se a criação de um ranking persistente, a expansão do número de missões e a integração de um simulador Python real (Pyodide) para testes mais avançados.</p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOLHA 10 - REFERÊNCIAS -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <h1 id="referencias">REFERÊNCIAS</h1>
+
+            <p>DETERDING, S. et al. <strong>From game design elements to gamefulness: defining “gamification”</strong>. In: Proceedings of the 15th International Academic MindTrek Conference, 2011.</p>
+
+            <p>FREIRE, Paulo. <strong>Pedagogia da Autonomia</strong>. São Paulo: Paz e Terra, 1996.</p>
+
+            <p>LIMA, A. C. de. <strong>Loop Infinito – Missão While: jogo educacional para estruturas de repetição</strong>. Disponível em: &lt;https://9od.com.br/missao_while/index.html&gt;. Acesso em: 08 maio. 2026.</p>
+
+            <p>SÃO PAULO (Estado). <strong>Currículo Paulista: Etapa Ensino Médio</strong>. São Paulo: SEE, 2020. Disponível em: &lt;https://efape.educacao.sp.gov.br/curriculopaulista/wp-content/uploads/2020/07/Curr%C3%ADculo-Paulista- etapa-Ensino-M%C3%A9dio.pdf&gt;. Acesso em: 28 abr. 2026.</p>
+
+            <p>PYTHON SOFTWARE FOUNDATION. <strong>The Python Tutorial – More Control Flow Tools</strong>. Disponível em: &lt;https://docs.python.org/3/tutorial/controlflow.html&gt;. Acesso em: 28 abr. 2026.</p>
+
+            <p>SOCKET.IO. <strong>Documentação oficial</strong>. Disponível em: &lt;https://socket.io/docs/&gt;. Acesso em: 28 abr. 2026.</p>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- FOLHA 11 - APÊNDICE -->
+
+    <div class="sheet">
+
+        <div class="content">
+
+            <h1 id="apendice">APÊNDICE – 30 MISSÕES DO JOGO</h1>
+
+            <p>O jogo contém 30 missões progressivas, listadas resumidamente (o código completo está no arquivo <code>server.js</code> do projeto). Exemplos da primeira e da última missão:</p>
+
+            <pre><code># Missão 1 – Contagem regressiva
+
+contador = 5
+
+while contador > 0:
+
+    print(contador)
+
+    contador -= 1</code></pre>
+
+            <pre><code># Missão 30 – Desafio final
+
+soma = 0
+
+while True:
+
+    num = int(input('Digite um número (-1 para sair): '))
+
+    if num == -1:
+
+        break
+
+    soma += num
+
+    if soma > 500:
+
+        break
+
+    print(f'Soma atual: {soma}')
+
+print(f'Soma final: {soma}')</code></pre>
+
+            <p>As demais missões abordam: soma até 100, menu com break, números ímpares com continue, AND, OR, NOT, tabuada, primo, múltiplos, validação de entrada, fatorial, break/continue combinados, caixa eletrônico, adivinhação, média de notas, while aninhado, Fibonacci, operadores compostos, login com tentativas, pares até N, decrescente passo 2, potência de 2, soma até negativo, continue múltiplos de 5, múltiplo de 3 ou 5, limite de 100, soma de dígitos, inverter número.</p>
+
+        </div>
+
+    </div>
+
+
 
 </body>
+
 </html>
