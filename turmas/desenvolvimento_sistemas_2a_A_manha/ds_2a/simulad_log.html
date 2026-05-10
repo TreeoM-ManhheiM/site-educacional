@@ -1,0 +1,1097 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>22 Aulas | Exponenciais e Logaritmos | Gráficos Dinamicos + Exemplos do Livro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            padding: 1.8rem;
+            color: #eef4ff;
+        }
+        .container { max-width: 1500px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #00ffcc55;
+        }
+        .hero h1 {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            background: linear-gradient(135deg, #b3ffe0, #00ffcc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero p { color: #b9c7d9; margin-top: 0.5rem; }
+        
+        /* NOVAS REGRAS EM DUAS COLUNAS */
+        .regras {
+            background: #0f142055;
+            border-left: 6px solid #ff9800;
+            border-radius: 1.2rem;
+            margin-bottom: 2rem;
+            padding: 1rem 1.6rem;
+        }
+        .regras-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .regras-col {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 1rem;
+            padding: 0.8rem;
+        }
+        .regras-col h3 {
+            color: #ffb74d;
+            font-size: 1.1rem;
+            margin-bottom: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid #ffb74d55;
+            display: inline-block;
+            width: 100%;
+        }
+        .regras-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+        }
+        .regras-table th, .regras-table td {
+            border: 1px solid #334155;
+            padding: 6px 8px;
+            vertical-align: top;
+        }
+        .regras-table th {
+            background: #0f2c2c;
+            color: #00ffcc;
+            font-weight: 600;
+            text-align: center;
+        }
+        .regras-table td {
+            color: #cfddf5;
+        }
+        .regras-table td:first-child {
+            font-weight: 600;
+            color: #ffaa66;
+        }
+        @media (max-width: 750px) {
+            .regras-grid { grid-template-columns: 1fr; }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+            gap: 1.8rem;
+        }
+        .card {
+            background: rgba(18, 25, 40, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 1.75rem;
+            border: 1px solid #00ffcc30;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: 0.2s;
+        }
+        .card:hover { transform: translateY(-3px); border-color: #00ffcc80; box-shadow: 0 12px 30px #00000055; }
+        .card-header {
+            background: #07121f;
+            padding: 0.8rem 1.5rem;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #b3ffe0;
+            border-bottom: 1px solid #00ffcc30;
+        }
+        .theory-box {
+            background: #0b111ebb;
+            padding: 0.9rem 1.3rem;
+            font-size: 0.85rem;
+            border-bottom: 1px solid #ffffff10;
+            color: #cfddf5;
+            line-height: 1.55;
+        }
+        .theory-box strong { color: #00ffcc; }
+        .code-block {
+            background: #03070f;
+            padding: 0.6rem 1.2rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            color: #b3d4ff;
+            border-bottom: 1px solid #1e2a3a;
+            white-space: pre-wrap;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            padding: 0.8rem 1.2rem;
+            border-bottom: 1px solid #1e2a3a;
+        }
+        button {
+            background: #152032;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.75rem;
+            cursor: pointer;
+            color: #e2e8f0;
+            transition: 0.2s;
+        }
+        .btn-interagir { background: #0f2c2c; color: #00ffcc; border: 1px solid #00ffcc70; }
+        .btn-grafico { background: #1e273b; color: #aac8ff; border: 1px solid #5d7bbf; }
+        .btn-livro { background: #2a2a1a; color: #ffdd99; border: 1px solid #ffaa33; }
+        .btn-limpar { background: #2a1a1f; color: #ffaa99; border: 1px solid #ff7755; }
+        button:hover { opacity: 0.85; transform: scale(0.97); }
+        .livro-demo {
+            background: #1a1c0fdd;
+            border-top: 2px solid #ffbb44;
+            border-bottom: 1px solid #ffcc55;
+            margin: 0 1rem 0.5rem;
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            color: #fff0cc;
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .livro-demo.active { display: block; }
+        .resolucao-passos { margin: 8px 0 0 12px; border-left: 2px solid #ffbb44; padding-left: 12px; }
+        .grafico-area {
+            background: #00000030;
+            padding: 0.6rem;
+            display: none;
+            height: 260px;
+            width: 100%;
+        }
+        .grafico-area.active { display: block; }
+        canvas { width: 100% !important; height: 100% !important; }
+        .console {
+            background: #03060c;
+            padding: 0.6rem 1.2rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            max-height: 200px;
+            overflow-y: auto;
+            border-top: 1px solid #1e2a3a;
+        }
+        .log { border-left: 2px solid #2c6e6e; padding-left: 0.6rem; margin: 4px 0; color: #bbd4f0; }
+        .log-erro { border-left-color: #ff6e6e; color: #ffbbaa; }
+        .log-acerto { border-left-color: #6affb7; color: #bfffc0; }
+        footer { text-align: center; margin-top: 2rem; opacity: 0.7; font-size: 0.8rem; }
+        @media (max-width: 750px) {
+            .grid { grid-template-columns: 1fr; }
+            body { padding: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>22 Aulas | Funções Exponenciais e Logaritmos</h1>
+        <p>Interaja, digite valores, veja graficos com seus dados (negativos/positivos) e exemplos do livro.</p>
+    </div>
+    
+    <!-- ========== REGRAS EM DUAS COLUNAS (conforme solicitado) ========== -->
+    <div class="regras">
+        <div class="regras-grid">
+            <!-- Coluna 1: Propriedades das Potências -->
+            <div class="regras-col">
+                <h3>Propriedades das Potências</h3>
+                <table class="regras-table">
+                    <tr><th>Propriedade</th><th>Fórmula</th></tr>
+                    <tr><td>Produto</td><td>a<sup>m</sup> · a<sup>n</sup> = a<sup>m+n</sup></td></tr>
+                    <tr><td>Quociente</td><td>a<sup>m</sup> / a<sup>n</sup> = a<sup>m−n</sup> (a ≠ 0)</td></tr>
+                    <tr><td>Potência de potência</td><td>(a<sup>m</sup>)<sup>n</sup> = a<sup>m·n</sup></td></tr>
+                    <tr><td>Potência de produto</td><td>(ab)<sup>n</sup> = a<sup>n</sup> · b<sup>n</sup></td></tr>
+                    <tr><td>Potência de quociente</td><td>(a/b)<sup>n</sup> = a<sup>n</sup> / b<sup>n</sup> (b ≠ 0)</td></tr>
+                    <tr><td>Expoente zero</td><td>a<sup>0</sup> = 1 (a ≠ 0)</td></tr>
+                    <tr><td>Expoente negativo</td><td>a<sup>−n</sup> = 1 / a<sup>n</sup> (a ≠ 0)</td></tr>
+                    <tr><td>Expoente fracionário</td><td>a<sup>1/n</sup> = <sup>n</sup>√a (raiz n-ésima)</td></tr>
+                    <tr><td>Expoente racional</td><td>a<sup>m/n</sup> = <sup>n</sup>√(a<sup>m</sup>) = (<sup>n</sup>√a)<sup>m</sup></td></tr>
+                </table>
+            </div>
+            <!-- Coluna 2: Propriedades dos Logaritmos -->
+            <div class="regras-col">
+                <h3>Propriedades dos Logaritmos</h3>
+                <table class="regras-table">
+                    <tr><th>Propriedade</th><th>Fórmula</th></tr>
+                    <tr><td>Definição</td><td>log<sub>b</sub> a = x ⇔ b<sup>x</sup> = a (b>0, b≠1, a>0)</td></tr>
+                    <tr><td>Log do produto</td><td>log<sub>b</sub> (x·y) = log<sub>b</sub> x + log<sub>b</sub> y</td></tr>
+                    <tr><td>Log do quociente</td><td>log<sub>b</sub> (x/y) = log<sub>b</sub> x − log<sub>b</sub> y</td></tr>
+                    <tr><td>Log da potência</td><td>log<sub>b</sub> (x<sup>n</sup>) = n · log<sub>b</sub> x</td></tr>
+                    <tr><td>Log da raiz</td><td>log<sub>b</sub> <sup>n</sup>√x = (1/n) · log<sub>b</sub> x</td></tr>
+                    <tr><td>Log da base</td><td>log<sub>b</sub> b = 1</td></tr>
+                    <tr><td>Log de 1</td><td>log<sub>b</sub> 1 = 0</td></tr>
+                    <tr><td>Mudança de base</td><td>log<sub>b</sub> a = log<sub>c</sub> a / log<sub>c</sub> b (c>0, c≠1)</td></tr>
+                    <tr><td>Inversão exponencial</td><td>b<sup>log<sub>b</sub> x</sup> = x (x>0)</td></tr>
+                    <tr><td>Inversão logarítmica</td><td>log<sub>b</sub> (b<sup>x</sup>) = x</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid" id="aulas-grid"></div>
+    <footer> [Interagir] - digite valores | [Grafico] - mostra a curva com os valores que voce usou | [Exemplo do Livro] - passo a passo | [Limpar] - reinicia</footer>
+</div>
+
+<script>
+    // ==================== EXEMPLOS DO LIVRO DO ALUNO ====================
+    const exemplosLivro = {
+        aula1: [
+            { titulo: "5 * 3^x = 1215", passos: ["1) Isole a potencia: 3^x = 1215/5 = 243", "2) Fatore 243 = 3^5", "3) 3^x = 3^5 -> x = 5"], resultado: "x = 5" },
+            { titulo: "2^x + 2^(x+1) = 96", passos: ["1) 2^x + 2*2^x = 96 -> 3*2^x = 96", "2) 2^x = 32 = 2^5", "3) x = 5 (numero primo)"], resultado: "x = 5" }
+        ],
+        aula2: [{ titulo: "10 * 4^x - 10240 = 0", passos: ["10 * 4^x = 10240", "4^x = 1024", "4^x = 4^5", "x = 5"], resultado: "x = 5" }],
+        aula3: [
+            { titulo: "Base elevada a zero", passos: ["Qualquer base (diferente de zero) elevada a 0 e 1", "Ex: 7^0 = 1, 25^0 = 1"], resultado: "1" },
+            { titulo: "Expoente negativo", passos: ["a^-n = 1/a^n", "Ex: 2^-3 = 1/8 = 0,125"], resultado: "0,125" }
+        ],
+        aula4: [{ titulo: "(2^3)^2 = 2^6 = 64", passos: ["Multiplica os expoentes: 3 * 2 = 6"], resultado: "64" }],
+        aula5: [{ titulo: "f(3) = 1000 * 2^3 = 8000", passos: ["2^3 = 8", "1000 * 8 = 8000"], resultado: "8000" }],
+        aula6: [{ titulo: "Base 2 cresce, Base 0,5 decresce", passos: ["Base > 1 -> crescente", "0 < base < 1 -> decrescente"], resultado: "Classifique" }],
+        aula7: [{ titulo: "Bacterias: 400 inicial, dobra a cada 3h", passos: ["24h -> 8 periodos", "400 * 2^8 = 102400"], resultado: "102400" }],
+        aula8: [{ titulo: "2^(x+1) = 2^7", passos: ["Corta base: x+1 = 7 -> x = 6"], resultado: "x = 6" }],
+        aula9: [
+            { titulo: "log2 128", passos: ["2^n = 128 -> 2^7 -> n = 7"], resultado: "7" },
+            { titulo: "log10 1000", passos: ["10^n = 1000 -> 10^3 -> n = 3"], resultado: "3" }
+        ],
+        aula10: [{ titulo: "log3 1 = 0 e log3 3 = 1", passos: ["3^0 = 1, 3^1 = 3"], resultado: "0 e 1" }],
+        aula11: [{ titulo: "log12 = 1,079", passos: ["log2 = 0,301, log3 = 0,477", "log12 = log2+log2+log3 = 1,079"], resultado: "1,079" }],
+        aula12: [{ titulo: "log(3/2) = 0,176", passos: ["log3 - log2 = 0,477 - 0,301 = 0,176"], resultado: "0,176" }],
+        aula13: [{ titulo: "log(5^3) = 3*log5 ~= 2,097", passos: ["log5 ~= 0,699 -> 3 * 0,699 = 2,097"], resultado: "2,097" }],
+        aula14: [{ titulo: "log4 32 = 2,5", passos: ["log2 32 / log2 4 = 5 / 2 = 2,5"], resultado: "2,5" }],
+        aula15: [{ titulo: "2^x = 7 -> x ~= 2,807", passos: ["x = log7 / log2 = 2,807"], resultado: "2,807" }],
+        aula16: [{ titulo: "Dominio de log(x-3): x > 3", passos: ["x-3 > 0 -> x > 3"], resultado: "x > 3" }],
+        aula17: [{ titulo: "Base >1 cresce; base<1 decresce", passos: ["log2 x sobe, log0,5 x desce"], resultado: "classifique" }],
+        aula18: [{ titulo: "log5(3x+1) = 2 -> x = 8", passos: ["3x+1 = 25 -> x = 8"], resultado: "x = 8" }],
+        aula19: [{ titulo: "log2(x+3) + log2(x-3) = 4 -> x = 5", passos: ["log2(x^2-9)=4", "x^2-9 = 16 -> x=5"], resultado: "x = 5" }],
+        aula20: [{ titulo: "(log x)^2 - 5log x + 6 = 0", passos: ["y = log x -> y=2 ou y=3", "x = 100 ou x = 1000"], resultado: "100 ou 1000" }],
+        aula21: [{ titulo: "[H+] = 8 * 10^-5 -> pH = 4,1", passos: ["pH = -log(8*10^-5) = -(0,9-5) = 4,1"], resultado: "4,1" }],
+        aula22: [{ titulo: "Richter: A=2000 -> Ms = 5,9", passos: ["3,3 + log(400) = 5,9"], resultado: "5,9 (moderado)" }]
+    };
+
+    // ========== GRAFICO DINAMICO (COM NEGATIVOS/POSITIVOS) ==========
+    function gerarGrafico(card, tipo, dados) {
+        if (card.chart) card.chart.destroy();
+        if (!card.ctx) return;
+        let labels = [], valores = [];
+        const cor = '#00ffcc';
+
+        if (tipo === 'exp') {
+            let base = dados.base || 2;
+            let pontoX = dados.pontoX;
+            let minX = -4, maxX = 6;
+            if (pontoX !== undefined) {
+                minX = Math.min(minX, pontoX - 1.5);
+                maxX = Math.max(maxX, pontoX + 1.5);
+            }
+            for (let x = minX; x <= maxX; x += 0.2) {
+                labels.push(x.toFixed(2));
+                valores.push(Math.pow(base, x));
+            }
+            card.chart = new Chart(card.ctx, {
+                type: 'line', data: { labels, datasets: [{
+                    label: `y = ${base}^x`, data: valores, borderColor: cor, backgroundColor: cor+'22',
+                    tension: 0.3, fill: true,
+                    pointRadius: (ctx) => Math.abs(parseFloat(labels[ctx.dataIndex]) - (pontoX||0)) < 0.15 ? 6 : 1,
+                    pointBackgroundColor: (ctx) => Math.abs(parseFloat(labels[ctx.dataIndex]) - (pontoX||0)) < 0.15 ? '#ff9800' : cor
+                }] },
+                options: { responsive: true, maintainAspectRatio: true, scales: { x: { title: { display: true, text: 'x' } }, y: { title: { display: true, text: 'y' } } } }
+            });
+        } 
+        else if (tipo === 'log') {
+            let base = dados.base || 10;
+            let arg = dados.argumento;
+            let minX = 0.1, maxX = 20;
+            if (arg && arg > 0) maxX = Math.max(maxX, arg * 1.5);
+            for (let x = minX; x <= maxX; x += (maxX-minX)/80) {
+                labels.push(x.toFixed(2));
+                let yVal = (base === 10) ? Math.log10(x) : Math.log(x)/Math.log(base);
+                valores.push(yVal);
+            }
+            card.chart = new Chart(card.ctx, {
+                type: 'line', data: { labels, datasets: [{
+                    label: `y = log_${base}(x)`, data: valores, borderColor: '#ffaa66', tension: 0.3,
+                    pointRadius: (ctx) => Math.abs(parseFloat(labels[ctx.dataIndex]) - (arg||0)) < (maxX-minX)/20 ? 6 : 1,
+                    pointBackgroundColor: (ctx) => Math.abs(parseFloat(labels[ctx.dataIndex]) - (arg||0)) < (maxX-minX)/20 ? '#ff9800' : '#ffaa66'
+                }] },
+                options: { responsive: true, scales: { x: { title: { display: true, text: 'x' }, min: 0 }, y: { title: { display: true, text: 'y' } } } }
+            });
+        } 
+        else if (tipo === 'ph') {
+            let concDest = dados.concentracao;
+            for (let exp = -14; exp <= 0; exp += 0.2) {
+                let c = Math.pow(10, exp);
+                labels.push(c.toExponential(1));
+                valores.push(-Math.log10(c));
+            }
+            card.chart = new Chart(card.ctx, {
+                type: 'line', data: { labels, datasets: [{
+                    label: 'pH = -log[H+]', data: valores, borderColor: '#ffaa00', tension: 0.3,
+                    pointRadius: (ctx) => Math.abs(parseFloat(labels[ctx.dataIndex]) - (concDest||0)) < (concDest||1)*0.1 ? 6 : 1,
+                    pointBackgroundColor: (ctx) => Math.abs(parseFloat(labels[ctx.dataIndex]) - (concDest||0)) < (concDest||1)*0.1 ? '#ff5555' : '#ffaa00'
+                }] },
+                options: { scales: { y: { min: 0, max: 14, title: { display: true, text: 'pH' } }, x: { title: { display: true, text: '[H+] (mol/L)' } } }, responsive: true }
+            });
+        } 
+        else if (tipo === 'richter') {
+            let ampDest = dados.amplitude;
+            let maxAmp = Math.max(1000000, ampDest * 2);
+            for (let a = 1; a <= maxAmp; a *= 1.2) {
+                labels.push(a.toExponential(1));
+                valores.push(Math.log10(a));
+            }
+            card.chart = new Chart(card.ctx, {
+                type: 'line', data: { labels, datasets: [{
+                    label: 'M = log10(A)', data: valores, borderColor: '#ff9800', tension: 0.2,
+                    pointRadius: (ctx) => Math.abs(parseFloat(labels[ctx.dataIndex]) - (ampDest||0)) < (ampDest||1)*0.1 ? 6 : 1,
+                    pointBackgroundColor: (ctx) => Math.abs(parseFloat(labels[ctx.dataIndex]) - (ampDest||0)) < (ampDest||1)*0.1 ? '#ffcc44' : '#ff9800'
+                }] },
+                options: { scales: { x: { type: 'logarithmic', title: { display: true, text: 'Amplitude A' } }, y: { title: { display: true, text: 'Magnitude' } } }, responsive: true }
+            });
+        }
+    }
+
+    // ========== CLASSE CARD (ARMAZENA ULTIMOS DADOS) ==========
+    class AulaCard {
+        constructor(config) {
+            this.config = config;
+            this.chart = null;
+            this.graphVisible = false;
+            this.card = null;
+            this.consoleDiv = null;
+            this.graficoContainer = null;
+            this.livroDiv = null;
+            this.ctx = null;
+            this.ultimosDados = null;
+        }
+
+        criarCard() {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <div class="card-header">${this.config.titulo}</div>
+                <div class="theory-box">${this.config.teoria}</div>
+                <div class="code-block"><pre>${this.config.codigoDemo}</pre></div>
+                <div class="action-bar">
+                    <button class="btn-interagir">Interagir (digite valores)</button>
+                    <button class="btn-grafico">Ver Grafico (com seus dados)</button>
+                    <button class="btn-livro">Exemplo do Livro</button>
+                    <button class="btn-limpar">Limpar tudo</button>
+                </div>
+                <div class="livro-demo"></div>
+                <div class="grafico-area"><canvas></canvas></div>
+                <div class="console"><div class="log-area"></div></div>
+            `;
+            this.card = card;
+            this.consoleDiv = card.querySelector('.log-area');
+            this.graficoContainer = card.querySelector('.grafico-area');
+            const canvas = card.querySelector('canvas');
+            if (canvas) this.ctx = canvas.getContext('2d');
+            this.livroDiv = card.querySelector('.livro-demo');
+
+            this.card.querySelector('.btn-interagir').addEventListener('click', () => this.executarInteracao());
+            this.card.querySelector('.btn-grafico').addEventListener('click', () => this.toggleGrafico());
+            this.card.querySelector('.btn-livro').addEventListener('click', () => this.mostrarExemploLivro());
+            this.card.querySelector('.btn-limpar').addEventListener('click', () => this.limparTudo());
+
+            this.limparConsole();
+            return card;
+        }
+
+        log(msg, tipo = 'info') {
+            const div = document.createElement('div');
+            div.className = 'log';
+            if (tipo === 'erro') div.classList.add('log-erro');
+            if (tipo === 'acerto') div.classList.add('log-acerto');
+            div.innerText = msg;
+            this.consoleDiv.appendChild(div);
+            this.consoleDiv.scrollTop = this.consoleDiv.scrollHeight;
+        }
+
+        limparConsole() {
+            if (this.consoleDiv) {
+                this.consoleDiv.innerHTML = '';
+                this.log('Pronto! Clique em [Interagir] para digitar valores.', 'info');
+            }
+        }
+
+        limparTudo() {
+            this.limparConsole();
+            if (this.chart) { this.chart.destroy(); this.chart = null; }
+            this.graficoContainer.classList.remove('active');
+            this.graphVisible = false;
+            if (this.livroDiv) {
+                this.livroDiv.classList.remove('active');
+                this.livroDiv.innerHTML = '';
+            }
+            this.ultimosDados = null;
+        }
+
+        toggleGrafico() {
+            if (!this.ultimosDados) {
+                this.log("Nenhum dado ainda. Clique em 'Interagir' primeiro.", "erro");
+                return;
+            }
+            this.graphVisible = !this.graphVisible;
+            if (this.graphVisible) {
+                this.graficoContainer.classList.add('active');
+                const tipo = this.config.tipoGrafico || 'exp';
+                gerarGrafico(this, tipo, this.ultimosDados);
+            } else {
+                this.graficoContainer.classList.remove('active');
+                if (this.chart) { this.chart.destroy(); this.chart = null; }
+            }
+        }
+
+        mostrarExemploLivro() {
+            const exs = exemplosLivro[this.config.aulaKey];
+            if (!exs || exs.length === 0) {
+                this.log('Nenhum exemplo do livro para esta aula.', 'info');
+                return;
+            }
+            this.livroDiv.classList.add('active');
+            let html = `<strong>${this.config.titulo} -- Exemplos do livro</strong><div class="resolucao-passos">`;
+            exs.forEach(ex => {
+                html += `<div style="margin-top:8px;"><strong> ${ex.titulo}</strong><br>`;
+                ex.passos.forEach(p => html += ` -> ${p}<br>`);
+                html += `<span style="color:#ffaa66;">Resultado: ${ex.resultado}</span></div><hr style="border-color:#ffcc5533;">`;
+            });
+            html += `</div>`;
+            this.livroDiv.innerHTML = html;
+            this.log(`Exibindo ${exs.length} exemplo(s) do livro.`, 'acerto');
+        }
+
+        executarInteracao() {
+            this.limparConsole();
+            if (this.livroDiv) this.livroDiv.classList.remove('active');
+            this.config.acaoInterativa(this);
+        }
+    }
+
+    // ==================== 22 AULAS (COM CODIGOS PYTHON TOTALMENTE COMENTADOS) ====================
+    const aulas = [
+        { // Aula 1
+            aulaKey:'aula1',
+            titulo:'Aula 1 -- Potencia (Definicao)',
+            teoria:'a^n = a * a * ... * a',
+            codigoDemo:`# --- CALCULADORA DE POTENCIA ---
+# Este programa le base e expoente e mostra o resultado da potencia
+# O aluno pode copiar e colar no Python IDLE
+
+import math   # (opcional, usado apenas para casos especiais, mas a potencia e nativa)
+
+# Solicita a base (numero real)
+base = float(input("Digite a base: "))
+# Solicita o expoente (numero real)
+expoente = float(input("Digite o expoente: "))
+
+# Calcula base elevado ao expoente
+resultado = base ** expoente
+
+# Exibe o resultado
+print(f"{base} elevado a {expoente} e igual a {resultado}")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let b = prompt("Base:"); if(!b) return; let e = prompt("Expoente:"); if(!e) return;
+                let base=Number(b), exp=Number(e), res=Math.pow(base,exp);
+                card.log(`Definicao: ${base}^(${exp}) = ${res}`, 'acerto');
+                if(Number.isInteger(exp) && exp>0 && exp<=15) card.log(`Expansao: ${Array(exp).fill(base).join(" x ")}`, 'info');
+                card.ultimosDados = { base:base, pontoX:exp, pontoY:res };
+            }
+        },
+        { // Aula 2
+            aulaKey:'aula2',
+            titulo:'Aula 2 -- Mesma base (x e /)',
+            teoria:' a^m * a^n = a^(m+n) ; a^m / a^n = a^(m-n) ; soma/subtracao nao tem atalho',
+            codigoDemo:`# --- OPERACOES COM POTENCIAS DE MESMA BASE ---
+# Demonstra a regra da multiplicacao (soma expoentes) e divisao (subtrai expoentes)
+# Para bases diferentes, nao ha atalho: calcula-se cada potencia separadamente.
+
+import math
+
+# Le os valores para a primeira potencia: base1 ^ expoente1
+base1 = float(input("Digite a Base 1: "))
+exp1 = float(input("Digite o Expoente 1: "))
+
+# Le os valores para a segunda potencia: base2 ^ expoente2
+base2 = float(input("Digite a Base 2: "))
+exp2 = float(input("Digite o Expoente 2: "))
+
+# Calcula os valores numericos individuais
+valor1 = base1 ** exp1
+valor2 = base2 ** exp2
+
+print(f"\\n1) {base1}^{exp1} = {valor1}")
+print(f"2) {base2}^{exp2} = {valor2}")
+
+# Soma e subtracao: NAO existe regra de expoente para soma/subtracao!
+print(f"\\nSOMA: {valor1} + {valor2} = {valor1 + valor2}   (sem atalho de expoente!)")
+print(f"SUBTRACAO: {valor1} - {valor2} = {valor1 - valor2}   (sem atalho!)")
+
+# Se as bases forem iguais, aplicamos as regras:
+if base1 == base2:
+    mult = base1 ** (exp1 + exp2)          # Multiplicacao: conserva base e soma expoentes
+    divi = base1 ** (exp1 - exp2)          # Divisao: conserva base e subtrai expoentes
+    print(f"\\nBASES IGUAIS! Regras validas:")
+    print(f"MULTIPLICACAO: {base1}^{exp1} * {base2}^{exp2} = {base1}^{exp1+exp2} = {mult}")
+    print(f"DIVISAO: {base1}^{exp1} / {base2}^{exp2} = {base1}^{exp1-exp2} = {divi}")
+else:
+    print(f"\\nBASES DIFERENTES! Nao ha regra de expoente.")
+    print(f"MULTIPLICACAO: {valor1} * {valor2} = {valor1 * valor2}")
+    print(f"DIVISAO: {valor1} / {valor2} = {valor1 / valor2}")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let b1=prompt("Base 1:"), e1=prompt("Exp 1:"), b2=prompt("Base 2:"), e2=prompt("Exp 2:");
+                if(!b1||!e1||!b2||!e2) return;
+                let base1=Number(b1), exp1=Number(e1), base2=Number(b2), exp2=Number(e2);
+                let v1=Math.pow(base1,exp1), v2=Math.pow(base2,exp2);
+                card.log(`Soma: ${v1}+${v2}=${v1+v2} (sem atalho)`, 'erro');
+                card.log(`Subtracao: ${v1}-${v2}=${v1-v2} (sem atalho)`, 'erro');
+                if(base1===base2){
+                    let mult=Math.pow(base1, exp1+exp2), divi=Math.pow(base1, exp1-exp2);
+                    card.log(`Multiplicacao: ${base1}^(${exp1}+${exp2}) = ${mult}`, 'acerto');
+                    card.log(`Divisao: ${base1}^(${exp1}-${exp2}) = ${divi}`, 'acerto');
+                    card.ultimosDados = { base:base1, pontoX:exp1+exp2, pontoY:mult };
+                } else {
+                    card.log(`Bases diferentes: x=${v1*v2}  /=${v1/v2}`, 'erro');
+                    card.ultimosDados = { base:base1, pontoX:exp1, pontoY:v1 };
+                }
+            }
+        },
+        { // Aula 3
+            aulaKey:'aula3',
+            titulo:'Aula 3 -- Expoente zero e negativo',
+            teoria:'a^0=1 (a!=0) ; a^-n = 1/a^n',
+            codigoDemo:`# --- POTENCIAS COM EXPOENTE ZERO E EXPOENTE NEGATIVO ---
+# Mostra que qualquer numero (diferente de zero) elevado a zero e 1.
+# E que expoente negativo inverte a base (a^-n = 1 / a^n).
+
+# Solicita base e expoente positivo para teste
+base = float(input("Digite a base (diferente de zero): "))
+exp_pos = int(input("Digite um expoente positivo (ex: 2, 3): "))
+
+# Expoente zero: sempre 1 (desde que base != 0)
+print(f"{base}^0 = 1")
+
+# Expoente negativo: inverte a base e expoente positivo
+negativo = base ** (-exp_pos)
+print(f"{base}^{-exp_pos} = 1 / {base}^{exp_pos} = 1 / {base**exp_pos} = {negativo}")
+
+# Atividade extra: mostrando que a multiplicacao a^(-n) * a^(n) = 1
+produto = negativo * (base ** exp_pos)
+print(f"\\nConferencia: {base}^{-exp_pos} * {base}^{exp_pos} = {produto} (deveria ser 1)")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let b=prompt("Base:"); if(!b) return; let e=prompt("Expoente positivo:"); if(!e) return;
+                let base=Number(b), exp=Number(e);
+                card.log(`${base}^0 = 1`, 'acerto');
+                let neg=Math.pow(base,-exp);
+                card.log(`${base}^-${exp} = 1/${base}^(${exp}) = ${neg}`, 'acerto');
+                card.ultimosDados = { base:base, pontoX:0, pontoY:1 };
+            }
+        },
+        { // Aula 4
+            aulaKey:'aula4',
+            titulo:'Aula 4 -- Potencia de potencia',
+            teoria:'(a^m)^n = a^(m*n)',
+            codigoDemo:`# --- POTENCIA DE POTENCIA ---
+# Demonstra a regra: (a^m)^n = a^(m*n)
+
+# Solicita a base e os dois expoentes
+base = float(input("Digite a base: "))
+m = float(input("Digite o expoente interno (m): "))
+n = float(input("Digite o expoente externo (n): "))
+
+# Aplica a regra: multiplicar os expoentes
+resultado = base ** (m * n)
+
+print(f"({base}^{m})^{n} = {base}^{m*n} = {resultado}")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let b=prompt("Base:"), m=prompt("Expoente interno m:"), n=prompt("Expoente externo n:");
+                if(!b||!m||!n) return; let base=Number(b), e1=Number(m), e2=Number(n), res=Math.pow(base, e1*e2);
+                card.log(`(${base}^(${e1}))^(${e2}) = ${base}^(${e1*e2}) = ${res}`, 'acerto');
+                card.ultimosDados = { base:base, pontoX:e1*e2, pontoY:res };
+            }
+        },
+        { // Aula 5
+            aulaKey:'aula5',
+            titulo:'Aula 5 -- Funcao exponencial',
+            teoria:'f(x) = a^x (a>0, a!=1)',
+            codigoDemo:`# --- FUNCAO EXPONENCIAL f(x) = a^x ---
+# Calcula o valor de a elevado a x, onde a e a base (a>0, a!=1)
+
+import math
+
+# Leitura da base a
+a = float(input("Digite a base (a > 0 e a != 1): "))
+
+# Verifica se a base e valida
+if a <= 0 or a == 1:
+    print("Erro: a base deve ser maior que 0 e diferente de 1.")
+else:
+    x = float(input("Digite o valor de x: "))
+    resultado = a ** x
+    print(f"f(x) = {a}^{x} = {resultado}")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let a=prompt("Base:"), x=prompt("Valor de x:"); if(!a||!x) return;
+                let base=Number(a), exp=Number(x); if(base<=0||base===1) return card.log("Base invalida",'erro');
+                let res=Math.pow(base,exp);
+                card.log(`f(${exp}) = ${base}^(${exp}) = ${res}`, 'acerto');
+                card.ultimosDados = { base:base, pontoX:exp, pontoY:res };
+            }
+        },
+        { // Aula 6
+            aulaKey:'aula6',
+            titulo:'Aula 6 -- Crescente/decrescente',
+            teoria:'Base>1 -> cresce; 0<base<1 -> decresce',
+            codigoDemo:`# --- CLASSIFICACAO DA FUNCAO EXPONENCIAL (crescente/decrescente) ---
+# Dependendo do valor da base a, a funcao f(x)=a^x pode ser crescente ou decrescente.
+
+a = float(input("Digite a base (a > 0 e a != 1): "))
+
+if a > 1:
+    print(f"A base {a} e maior que 1 -> funcao CRESCENTE")
+elif 0 < a < 1:
+    print(f"A base {a} esta entre 0 e 1 -> funcao DECRESCENTE")
+else:
+    print("Base invalida para funcao exponencial.")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let a=prompt("Base:"); if(!a) return; let base=Number(a);
+                if(base>1) card.log(`Base ${base} > 1 -> CRESCENTE`, 'acerto');
+                else if(base>0 && base<1) card.log(`Base ${base} entre 0 e 1 -> DECRESCENTE`, 'acerto');
+                else card.log("Base invalida",'erro');
+                if(base>0 && base!==1) card.ultimosDados = { base:base, pontoX:1, pontoY:Math.pow(base,1) };
+            }
+        },
+        { // Aula 7
+            aulaKey:'aula7',
+            titulo:'Aula 7 -- Modelagem exponencial',
+            teoria:'V(t)=V0 * (1+i)^t',
+            codigoDemo:`# --- MODELAGEM EXPONENCIAL (crescimento populacional, juros, etc.) ---
+# Formula: V(t) = V0 * (1 + taxa)^t
+
+V0 = float(input("Valor inicial (populacao, capital, etc.): "))
+taxa = float(input("Taxa de crescimento (em decimal, ex: 0.1 para 10%): "))
+t = float(input("Tempo (periodos): "))
+
+resultado = V0 * (1 + taxa) ** t
+print(f"Apos {t} periodos, o valor sera: {resultado:.2f}")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let v0=prompt("Valor inicial:"), taxa=prompt("Taxa (ex:0.1):"), t=prompt("Tempo:");
+                if(!v0||!taxa||!t) return;
+                let res=Number(v0)*Math.pow(1+Number(taxa), Number(t));
+                card.log(`V(${t}) = ${v0} * (1+${taxa})^(${t}) = ${res.toFixed(2)}`, 'acerto');
+                card.ultimosDados = { base:1+Number(taxa), pontoX:Number(t), pontoY:res };
+            }
+        },
+        { // Aula 8
+            aulaKey:'aula8',
+            titulo:'Aula 8 -- Equacoes exponenciais',
+            teoria:'a^u = a^v  =>  u = v',
+            codigoDemo:`# --- EQUACAO EXPONENCIAL SIMPLES (bases iguais) ---
+# Resolve 2^(x + M) = 2^N  ->  x + M = N  -> x = N - M
+
+M = float(input("Digite o valor de M (expoente deslocamento): "))
+N = float(input("Digite o valor de N (expoente do lado direito): "))
+
+x = N - M
+print(f"2^(x + {M}) = 2^{N}  =>  x = {x}")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let m=prompt("2^(x+M)=2^N. Digite M:"), n=prompt("Digite N:");
+                if(!m||!n) return; let x=Number(n)-Number(m);
+                card.log(`2^(x+${m}) = 2^${n} -> x = ${x}`, 'acerto');
+                card.ultimosDados = { base:2, pontoX:x, pontoY:Math.pow(2,x) };
+            }
+        },
+        { // Aula 9
+            aulaKey:'aula9',
+            titulo:'Aula 9 -- Logaritmo (definicao)',
+            teoria:'log_a x = b  <=>  a^b = x',
+            codigoDemo:`# --- DEFINICAO DE LOGARITMO ---
+# Calcula o logaritmo na base 10 e base 2 de um numero.
+
+import math
+
+x = float(input("Digite um numero positivo: "))
+
+if x <= 0:
+    print("Erro: logaritmo so e definido para numeros positivos.")
+else:
+    log10 = math.log10(x)
+    log2 = math.log2(x)
+    print(f"log10({x}) = {log10}")
+    print(f"log2({x}) = {log2}")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let arg=prompt("Argumento:"); if(!arg) return; let val=Number(arg);
+                if(val<=0) return card.log("Argumento >0",'erro');
+                card.log(`log10(${val}) = ${Math.log10(val)}`, 'acerto');
+                card.ultimosDados = { base:10, argumento:val, logVal:Math.log10(val) };
+            }
+        },
+        { // Aula 10
+            aulaKey:'aula10',
+            titulo:'Aula 10 -- Consequencias da definicao',
+            teoria:'log_a 1 = 0, log_a a = 1',
+            codigoDemo:`# --- CONSEQUENCIAS IMEDIATAS ---
+# log base 'a' de 1 e sempre 0, e log base 'a' de 'a' e sempre 1.
+
+base = float(input("Digite a base do logaritmo (a>0 e a!=1): "))
+
+if base <= 0 or base == 1:
+    print("Base invalida.")
+else:
+    print(f"log_{base}(1) = 0  (pois {base}^0 = 1)")
+    print(f"log_{base}({base}) = 1  (pois {base}^1 = {base})")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let b=prompt("Base:"); if(!b) return; let base=Number(b);
+                card.log(`log_${base}(1) = 0`, 'acerto');
+                card.log(`log_${base}(${base}) = 1`, 'acerto');
+                card.ultimosDados = { base:base, argumento:base, logVal:1 };
+            }
+        },
+        { // Aula 11
+            aulaKey:'aula11',
+            titulo:'Aula 11 -- Propriedade do produto',
+            teoria:'log(xy) = log x + log y',
+            codigoDemo:`# --- PROPRIEDADE DO PRODUTO DOS LOGARITMOS ---
+# Mostra que log(x*y) = log(x) + log(y)
+
+import math
+
+x = float(input("Digite o primeiro numero positivo (x): "))
+y = float(input("Digite o segundo numero positivo (y): "))
+
+if x <= 0 or y <= 0:
+    print("Erro: os numeros devem ser positivos.")
+else:
+    logx = math.log10(x)
+    logy = math.log10(y)
+    log_prod = math.log10(x * y)
+    print(f"log({x}) + log({y}) = {logx} + {logy} = {logx+logy}")
+    print(f"log({x}*{y}) = log({x*y}) = {log_prod}")
+    print(f"Os valores sao iguais: {logx+logy} == {log_prod}")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let x=prompt("X:"), y=prompt("Y:"); if(!x||!y) return;
+                let vx=Number(x), vy=Number(y); if(vx<=0||vy<=0) return card.log("Positivo",'erro');
+                let prod=vx*vy, logProd=Math.log10(prod);
+                card.log(`log(${vx} * ${vy}) = log(${vx})+log(${vy}) = ${Math.log10(vx)+Math.log10(vy)}`, 'acerto');
+                card.ultimosDados = { base:10, argumento:prod, logVal:logProd };
+            }
+        },
+        { // Aula 12
+            aulaKey:'aula12',
+            titulo:'Aula 12 -- Propriedade do quociente',
+            teoria:'log(x/y) = log x - log y',
+            codigoDemo:`# --- PROPRIEDADE DO QUOCIENTE DOS LOGARITMOS ---
+# Mostra que log(x/y) = log(x) - log(y)
+
+import math
+
+x = float(input("Digite o numerador (x) positivo: "))
+y = float(input("Digite o denominador (y) positivo: "))
+
+if x <= 0 or y <= 0:
+    print("Erro: numeros devem ser positivos.")
+else:
+    logx = math.log10(x)
+    logy = math.log10(y)
+    log_quo = math.log10(x / y)
+    print(f"log({x}) - log({y}) = {logx} - {logy} = {logx - logy}")
+    print(f"log({x}/{y}) = log({x/y}) = {log_quo}")
+    print(f"Os valores sao iguais: {logx - logy} == {log_quo}")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let x=prompt("X:"), y=prompt("Y:"); if(!x||!y) return;
+                let vx=Number(x), vy=Number(y); if(vx<=0||vy<=0) return card.log("Positivo",'erro');
+                let quoc=vx/vy, logQuoc=Math.log10(quoc);
+                card.log(`log(${vx}/${vy}) = ${logQuoc}`, 'acerto');
+                card.ultimosDados = { base:10, argumento:quoc, logVal:logQuoc };
+            }
+        },
+        { // Aula 13
+            aulaKey:'aula13',
+            titulo:'Aula 13 -- Log da potencia',
+            teoria:'log(x^n) = n * log x',
+            codigoDemo:`# --- LOGARITMO DE UMA POTENCIA ---
+# Mostra que log(x^n) = n * log(x)
+
+import math
+
+x = float(input("Digite a base x (positiva): "))
+n = float(input("Digite o expoente n: "))
+
+if x <= 0:
+    print("Erro: x deve ser positivo.")
+else:
+    log_potencia = n * math.log10(x)
+    print(f"{n} * log({x}) = {n} * {math.log10(x)} = {log_potencia}")
+    print(f"log({x}^{n}) = log({x**n}) = {math.log10(x**n)}")
+    print(f"Ambos calculam o mesmo valor: {log_potencia}")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let x=prompt("X:"), n=prompt("Expoente n:"); if(!x||!n) return;
+                let vx=Number(x), exp=Number(n); if(vx<=0) return card.log("X>0",'erro');
+                let pot=Math.pow(vx,exp), logPot=exp*Math.log10(vx);
+                card.log(`log(${vx}^(${exp})) = ${exp} * log(${vx}) = ${logPot}`, 'acerto');
+                card.ultimosDados = { base:10, argumento:pot, logVal:logPot };
+            }
+        },
+        { // Aula 14
+            aulaKey:'aula14',
+            titulo:'Aula 14 -- Mudanca de base',
+            teoria:'log_a x = log x / log a',
+            codigoDemo:`# --- MUDANCA DE BASE DO LOGARITMO ---
+# Converte log na base a para base 10: log_a(x) = log10(x) / log10(a)
+
+import math
+
+x = float(input("Digite o argumento x (positivo): "))
+a = float(input("Digite a base original a (a>0 e a!=1): "))
+
+if x <= 0 or a <= 0 or a == 1:
+    print("Erro: argumento positivo, base positiva e diferente de 1.")
+else:
+    resultado = math.log10(x) / math.log10(a)
+    print(f"log_{a}({x}) = log10({x}) / log10({a}) = {math.log10(x)} / {math.log10(a)} = {resultado}")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let x=prompt("Argumento:"), a=prompt("Base original:"); if(!x||!a) return;
+                let vx=Number(x), base=Number(a); if(vx<=0||base<=0||base===1) return card.log("Invalido",'erro');
+                let res=Math.log10(vx)/Math.log10(base);
+                card.log(`log_${base}(${vx}) = ${res}`, 'acerto');
+                card.ultimosDados = { base:base, argumento:vx, logVal:res };
+            }
+        },
+        { // Aula 15
+            aulaKey:'aula15',
+            titulo:'Aula 15 -- a^x = k (com log)',
+            teoria:'x = log k / log a',
+            codigoDemo:`# --- RESOLVENDO EQUACAO EXPONENCIAL USANDO LOGARITMO ---
+# Dado a^x = k, encontramos x = log(k) / log(a)
+
+import math
+
+a = float(input("Digite a base a (a>0 e a!=1): "))
+k = float(input("Digite o valor k (k>0): "))
+
+if a <= 0 or a == 1 or k <= 0:
+    print("Erro: verifique as condicoes (a>0, a!=1, k>0)")
+else:
+    x = math.log10(k) / math.log10(a)
+    print(f"{a}^x = {k}  =>  x = log_{a}({k}) = {x}")`,
+            tipoGrafico:'exp',
+            acaoInterativa:(card)=>{
+                let a=prompt("Base a:"), k=prompt("Resultado k:"); if(!a||!k) return;
+                let base=Number(a), valK=Number(k), x=Math.log10(valK)/Math.log10(base);
+                card.log(`${base}^x = ${valK} -> x = ${x}`, 'acerto');
+                card.ultimosDados = { base:base, pontoX:x, pontoY:valK };
+            }
+        },
+        { // Aula 16
+            aulaKey:'aula16',
+            titulo:'Aula 16 -- Dominio do log',
+            teoria:'log(argumento) so existe se >0',
+            codigoDemo:`# --- DOMINIO DA FUNCAO LOGARITMICA ---
+# Verifica se o argumento do log e valido (deve ser positivo)
+
+import math
+
+arg = float(input("Digite o argumento do logaritmo: "))
+
+if arg > 0:
+    print(f"Argumento {arg} > 0 -> logaritmo DEFINIDO nos reais.")
+else:
+    print(f"Argumento {arg} NAO e positivo -> logaritmo NAO EXISTE nos reais.")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let arg=prompt("Argumento:"); if(!arg) return; let val=Number(arg);
+                if(val>0) { card.log(`Dominio valido: ${val} > 0`, 'acerto'); card.ultimosDados = { base:10, argumento:val, logVal:Math.log10(val) }; }
+                else card.log(`${val} nao e >0 -> log nao existe`, 'erro');
+            }
+        },
+        { // Aula 17
+            aulaKey:'aula17',
+            titulo:'Aula 17 -- Cresc/decresc do log',
+            teoria:'Base>1 -> cresce; 0<base<1 -> decresce',
+            codigoDemo:`# --- MONOTONICIDADE DA FUNCAO LOGARITMICA ---
+# Se base > 1: log cresce; se 0<base<1: log decresce
+
+base = float(input("Digite a base do logaritmo: "))
+
+if base > 1:
+    print(f"Base {base} > 1 -> funcao logaritmica CRESCENTE")
+elif 0 < base < 1:
+    print(f"Base {base} entre 0 e 1 -> funcao DECRESCENTE")
+else:
+    print("Base invalida para logaritmo.")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let b=prompt("Base:"); if(!b) return; let base=Number(b);
+                if(base>1) { card.log(`Base ${base} > 1 -> log CRESCENTE`, 'acerto'); card.ultimosDados = { base:base, argumento:10, logVal:Math.log10(10)/Math.log10(base) }; }
+                else if(base>0 && base<1) { card.log(`Base ${base} entre 0 e 1 -> log DECRESCENTE`, 'acerto'); card.ultimosDados = { base:base, argumento:10, logVal:Math.log10(10)/Math.log10(base) }; }
+                else card.log("Base invalida",'erro');
+            }
+        },
+        { // Aula 18
+            aulaKey:'aula18',
+            titulo:'Aula 18 -- Equacao log basica',
+            teoria:'log_a A = k  =>  A = a^k',
+            codigoDemo:`# --- EQUACAO LOGARITMICA SIMPLES ---
+# Resolve log_a(A) = k  ->  A = a^k
+
+a = float(input("Digite a base do logaritmo (a>0, a!=1): "))
+k = float(input("Digite o valor do logaritmo (k): "))
+
+if a <= 0 or a == 1:
+    print("Base invalida.")
+else:
+    A = a ** k
+    print(f"log_{a}(A) = {k}  =>  A = {a}^{k} = {A}")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let b=prompt("Base:"), k=prompt("Valor do log:"); if(!b||!k) return;
+                let base=Number(b), valK=Number(k), A=Math.pow(base,valK);
+                card.log(`log_${base}(A) = ${valK} -> A = ${base}^(${valK}) = ${A}`, 'acerto');
+                card.ultimosDados = { base:base, argumento:A, logVal:valK };
+            }
+        },
+        { // Aula 19
+            aulaKey:'aula19',
+            titulo:'Aula 19 -- Equacao com propriedades',
+            teoria:'log(x)+log(2)=log(10) -> x=5',
+            codigoDemo:`# --- EQUACAO USANDO SOMA DE LOGARITMOS ---
+# Resolve log(x) + log(2) = log(val)  ->  log(2x) = log(val) -> 2x = val -> x = val/2
+
+import math
+
+val = float(input("Digite o valor do lado direito (log(val)): "))
+
+if val <= 0:
+    print("Valor deve ser positivo.")
+else:
+    x = val / 2
+    print(f"log(x) + log(2) = log({val})")
+    print(f"log(2x) = log({val})")
+    print(f"2x = {val}  =>  x = {x}")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let val=prompt("log(x)+log(2)=log(val). Digite val:"); if(!val) return;
+                let v=Number(val), x=v/2;
+                card.log(`log(x)+log(2)=log(${v}) -> 2x = ${v} -> x = ${x}`, 'acerto');
+                card.ultimosDados = { base:10, argumento:x, logVal:Math.log10(x) };
+            }
+        },
+        { // Aula 20
+            aulaKey:'aula20',
+            titulo:'Aula 20 -- Substituicao (2o grau)',
+            teoria:'y = log x, resolva y^2 - Sy + P = 0',
+            codigoDemo:`# --- EQUACAO COM SUBSTITUICAO (log x)^2 ---
+# Resolve (log x)^2 - S*log x + P = 0  fazendo y = log x
+# Exemplo numerico: y^2 - 8y + 15 = 0  -> raizes 3 e 5 -> x = 10^3 e x = 10^5
+
+import math
+
+# Para fins didaticos, usamos S=8 e P=15 (exemplo do livro)
+S = 8
+P = 15
+
+print("Resolvendo (log x)^2 - 8 log x + 15 = 0")
+print("Fazendo y = log x, temos y^2 - 8y + 15 = 0")
+print("Raizes: y = 3  ou  y = 5")
+print("log x = 3  =>  x = 10^3 = 1000")
+print("log x = 5  =>  x = 10^5 = 100000")
+print("Solucao: x = 1000 ou x = 100000")`,
+            tipoGrafico:'log',
+            acaoInterativa:(card)=>{
+                let s=prompt("Soma das raizes (ex:8):"), p=prompt("Produto (ex:15):");
+                if(!s||!p) return;
+                card.log(`Equacao: y^2 - ${s}y + ${p} = 0 -> y1=3, y2=5 (exemplo)`, 'info');
+                card.log(`log x = 3 -> x = 1000 ; log x = 5 -> x = 100000`, 'acerto');
+                card.ultimosDados = { base:10, argumento:1000, logVal:3 };
+            }
+        },
+        { // Aula 21
+            aulaKey:'aula21',
+            titulo:'Aula 21 -- pH',
+            teoria:'pH = -log[H+]',
+            codigoDemo:`# --- CALCULO DO pH (aplicacao de log) ---
+# pH = -log10( concentracao de ions H+ )
+
+import math
+
+expoente = float(input("Digite o expoente negativo da concentracao (ex: 5 para 10^-5): "))
+conc = 10 ** (-expoente)
+ph = -math.log10(conc)
+
+print(f"[H+] = {conc} mol/L")
+print(f"pH = -log({conc}) = {ph:.2f}")`,
+            tipoGrafico:'ph',
+            acaoInterativa:(card)=>{
+                let expo=prompt("Expoente negativo da [H+] (ex:5):"); if(!expo) return;
+                let conc=Math.pow(10, -Number(expo)), pH=-Math.log10(conc);
+                card.log(`[H+] = ${conc} mol/L -> pH = ${pH.toFixed(2)}`, 'acerto');
+                card.ultimosDados = { concentracao:conc, ph:pH };
+            }
+        },
+        { // Aula 22
+            aulaKey:'aula22',
+            titulo:'Aula 22 -- Escala Richter',
+            teoria:'M = log10(A)',
+            codigoDemo:`# --- MAGNITUDE DE TERREMOTOS (Escala Richter) ---
+# M = log10(amplitude)  (considerando A0=1)
+
+import math
+
+amplitude = float(input("Digite a amplitude maxima das ondas (A): "))
+if amplitude <= 0:
+    print("Amplitude deve ser positiva.")
+else:
+    mag = math.log10(amplitude)
+    print(f"Magnitude = log10({amplitude}) = {mag:.1f} Richter")
+    if mag < 4:
+        print("Classificacao: pequeno")
+    elif mag < 5:
+        print("Classificacao: ligeiro")
+    elif mag < 6:
+        print("Classificacao: moderado")
+    elif mag < 10:
+        print("Classificacao: grande")
+    else:
+        print("Extremo")`,
+            tipoGrafico:'richter',
+            acaoInterativa:(card)=>{
+                let amp=prompt("Amplitude:"); if(!amp) return;
+                let mag=Math.log10(Number(amp));
+                card.log(`Magnitude = ${mag.toFixed(1)} Richter`, 'acerto');
+                if(mag<4) card.log("Pequeno",'info'); else if(mag<5) card.log("Ligeiro",'info'); else if(mag<6) card.log("Moderado",'info'); else if(mag<10) card.log("Grande",'info');
+                card.ultimosDados = { amplitude:Number(amp) };
+            }
+        }
+    ];
+
+    const grid = document.getElementById('aulas-grid');
+    aulas.forEach(aula => {
+        const card = new AulaCard(aula);
+        grid.appendChild(card.criarCard());
+    });
+</script>
+</body>
+</html>
