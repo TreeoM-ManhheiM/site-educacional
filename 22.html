@@ -1,0 +1,60 @@
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+public class Downloader {
+
+    public static void main(String[] args) throws Exception {
+
+        int[] ids = {
+            44570,44572,44574,44579,44581,44583,
+            44588,44590,44592,44597,44599,44601,
+            44606,44608,44610,44615,44617,44619,
+            44624,44626,44628
+        };
+
+        for (int id : ids) {
+
+            String pageUrl = "https://educacaoprofissional.educacao.sp.gov.br/mod/url/view.php?id=" + id;
+
+            System.out.println("Acessando: " + pageUrl);
+
+            HttpURLConnection conn = (HttpURLConnection) new URL(pageUrl).openConnection();
+            conn.setInstanceFollowRedirects(false);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0");
+
+            conn.connect();
+
+            // tenta pegar redirecionamento
+            String redirect = conn.getHeaderField("Location");
+
+            if (redirect != null && redirect.contains(".pdf")) {
+                System.out.println("PDF encontrado: " + redirect);
+
+                baixarPDF(redirect, "arquivo_" + id + ".pdf");
+
+            } else {
+                System.out.println("Não encontrou PDF direto: " + id);
+            }
+        }
+    }
+
+    public static void baixarPDF(String url, String nomeArquivo) {
+        try (InputStream in = new URL(url).openStream();
+             FileOutputStream fos = new FileOutputStream(nomeArquivo)) {
+
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = in.read(buffer)) != -1) {
+                fos.write(buffer, 0, bytesRead);
+            }
+
+            System.out.println("✅ Baixado: " + nomeArquivo);
+
+        } catch (Exception e) {
+            System.out.println("❌ Erro ao baixar: " + url);
+        }
+    }
+}
+``
