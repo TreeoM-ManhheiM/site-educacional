@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Sistemas Lineares - Gráfico de Equação do 1º Grau</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(145deg, #f5f7fc 0%, #e9eef4 100%);
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: rgba(255,255,255,0.92);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
+            overflow: hidden;
+            backdrop-filter: blur(2px);
+            transition: all 0.2s;
+        }
+
+        .header {
+            background: #1e2a3e;
+            color: white;
+            padding: 1.2rem 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            padding: 1.5rem 2rem 2rem;
+        }
+
+        .input-area {
+            background: #ffffffcc;
+            border-radius: 1.5rem;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 1px solid #cfdfed;
+        }
+
+        .equation-input {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-end;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            flex: 3;
+            min-width: 200px;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            color: #0b3b5f;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #cbdbe2;
+            border-radius: 2rem;
+            background: white;
+            transition: 0.2s;
+            font-family: monospace;
+            font-weight: 500;
+        }
+
+        .input-group input:focus {
+            border-color: #2c7da0;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(44,125,160,0.2);
+        }
+
+        .btn-group {
+            flex: 1;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        button {
+            background: #2c7da0;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 3rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border: 1px solid #ffffff30;
+        }
+
+        button:hover {
+            background: #1f5e7a;
+            transform: scale(0.97);
+        }
+
+        button.secondary {
+            background: #5d6d7e;
+        }
+
+        button.secondary:hover {
+            background: #3e4a59;
+        }
+
+        .examples {
+            background: #eef2f7;
+            border-radius: 1rem;
+            padding: 0.8rem 1.2rem;
+            font-size: 0.85rem;
+            color: #1f3b4c;
+            margin-top: 0.8rem;
+        }
+
+        .examples span {
+            font-family: monospace;
+            background: #fff;
+            padding: 4px 10px;
+            border-radius: 30px;
+            display: inline-block;
+            margin: 4px 6px 4px 0;
+            cursor: pointer;
+            transition: 0.1s;
+            border: 1px solid #bdd3e6;
+        }
+
+        .examples span:hover {
+            background: #cbdbe2;
+            transform: scale(1.02);
+        }
+
+        .graph-container {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        canvas {
+            background: #fefefe;
+            border-radius: 1rem;
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd9ce;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .info-equation {
+            margin-top: 1rem;
+            font-weight: 500;
+            background: #f0f6fa;
+            padding: 10px;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 1rem;
+            text-align: center;
+        }
+
+        footer {
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 1rem;
+            background: #e2e8f0;
+            color: #2c3e50;
+        }
+
+        @media (max-width: 680px) {
+            .card {
+                padding: 1rem;
+            }
+            .equation-input {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .btn-group {
+                justify-content: center;
+                margin-top: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>8 de Abril 2026 -  Sistemas Lineares | Reta y = mx + b</h1>
+        <p>Tema da semana: Modelagem com Funções de 1º Grau</p>
+    </div>
+    <div class="card">
+        <div class="input-area">
+            <div class="equation-input">
+                <div class="input-group">
+                    <label>✏️ Equação da reta (formato y = mx + b):</label>
+                    <input type="text" id="equationInput" placeholder="Ex: y = 2x + 3   ou    -x + 5   ou   y = -4x" value="y = 2x - 1">
+                </div>
+                <div class="btn-group">
+                    <button id="plotBtn">📈 Plotar Gráfico</button>
+                    <button id="resetZoomBtn" class="secondary">⟳ Redefinir Visão</button>
+                </div>
+            </div>
+            <div class="examples">
+                💡 <strong>Exemplos rápidos (clique para usar):</strong><br>
+                <span onclick="setExample('y = 2x + 1')">y = 2x + 1</span>
+                <span onclick="setExample('y = -x + 3')">y = -x + 3</span>
+                <span onclick="setExample('y = 4')">y = 4 (reta horizontal)</span>
+                <span onclick="setExample('x = 2')">x = 2 (reta vertical)</span>
+                <span onclick="setExample('y = 0.5x - 2')">y = 0.5x - 2</span>
+                <span onclick="setExample('y = -2x')">y = -2x</span>
+            </div>
+            <div class="info-equation" id="infoDisplay">
+                📌 Reta atual: <strong id="currentEq">y = 2x - 1</strong> → m = 2 | b = -1
+            </div>
+        </div>
+
+        <div class="graph-container">
+            <canvas id="cartesianCanvas" width="800" height="500" style="width:100%; height:auto; max-width:800px; aspect-ratio:800/500"></canvas>
+            <p style="margin: 8px 0 0; font-size:0.8rem;">🖱️ Arraste para mover | ⚡ Scroll para zoom | Clique no gráfico e mova</p>
+        </div>
+        <footer>
+            🧠 Habilidade: interpretar coeficiente angular (m) e linear (b). Use qualquer equação do tipo y = m·x + b ou x = constante.
+            A reta é desenhada automaticamente no plano.
+        </footer>
+    </div>
+</div>
+
+<script>
+    (function(){
+        // -------- Configurações do Canvas interativo (arrastar + zoom) ----------
+        const canvas = document.getElementById('cartesianCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Dimensões reais do canvas (fixas 800x500)
+        canvas.width = 800;
+        canvas.height = 500;
+        let width = 800;
+        let height = 500;
+
+        // Estado da visualização (world coordinates)
+        let xMin = -10.0;
+        let xMax = 10.0;
+        let yMin = -6.25;   // proporcional à altura (10* (500/800) = 6.25)
+        let yMax = 6.25;
+
+        // Variáveis para interação com mouse/touch
+        let isDragging = false;
+        let lastMouseX = 0, lastMouseY = 0;
+
+        // Função para recalcular yMin/yMax mantendo proporção (opcional ao zoom)
+        function fixAspectRatio() {
+            // mantém a proporção baseada no eixo X atual e largura/altura
+            const currentXRange = xMax - xMin;
+            const targetYRange = currentXRange * (height / width);
+            const centerY = (yMin + yMax) / 2;
+            yMin = centerY - targetYRange / 2;
+            yMax = centerY + targetYRange / 2;
+        }
+
+        // Ajuste inicial da proporção
+        fixAspectRatio();
+
+        // ----- Transformações coordenadas (world -> pixel)
+        function worldToPixel(xWorld, yWorld) {
+            const px = ((xWorld - xMin) / (xMax - xMin)) * width;
+            const py = height - ((yWorld - yMin) / (yMax - yMin)) * height;
+            return {x: px, y: py};
+        }
+
+        function pixelToWorld(px, py) {
+            const xWorld = xMin + (px / width) * (xMax - xMin);
+            const yWorld = yMin + ((height - py) / height) * (yMax - yMin);
+            return {x: xWorld, y: yWorld};
+        }
+
+        // ----- Desenho da grade, eixos e fundo
+        function drawGridAndAxes() {
+            ctx.save();
+            ctx.strokeStyle = "#ccc";
+            ctx.lineWidth = 0.6;
+            ctx.fillStyle = "#2c3e4e";
+            ctx.font = "12px 'Segoe UI', 'Courier New'";
+            ctx.shadowBlur = 0;
+
+            // Grade principal (linhas a cada 1 unidade, mas dinâmico)
+            let step = 1;
+            // se o zoom for muito alto, ajuste de step automático
+            const xRange = xMax - xMin;
+            if(xRange > 20) step = 2;
+            if(xRange > 50) step = 5;
+            if(xRange > 100) step = 10;
+            
+            // linhas verticais
+            let startX = Math.ceil(xMin / step) * step;
+            for (let x = startX; x <= xMax; x += step) {
+                const {x: px} = worldToPixel(x, 0);
+                if(px >= 0 && px <= width) {
+                    ctx.beginPath();
+                    ctx.moveTo(px, 0);
+                    ctx.lineTo(px, height);
+                    ctx.strokeStyle = "#ddd";
+                    ctx.stroke();
+                    // escrever valores
+                    ctx.fillStyle = "#3a6b8c";
+                    ctx.fillText(x.toFixed(x===Math.floor(x) ? 0 : 1), px+3, worldToPixel(0, yMin+0.3).y);
+                }
+            }
+
+            // linhas horizontais
+            let startY = Math.ceil(yMin / step) * step;
+            for (let y = startY; y <= yMax; y += step) {
+                const {y: py} = worldToPixel(0, y);
+                if(py >= 0 && py <= height) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, py);
+                    ctx.lineTo(width, py);
+                    ctx.strokeStyle = "#ddd";
+                    ctx.stroke();
+                    ctx.fillStyle = "#3a6b8c";
+                    ctx.fillText(y.toFixed(y===Math.floor(y) ? 0 : 1), worldToPixel(xMin+0.2, y).x, py-3);
+                }
+            }
+
+            // Eixo X (y=0)
+            const originX0 = worldToPixel(xMin, 0);
+            const originX1 = worldToPixel(xMax, 0);
+            ctx.beginPath();
+            ctx.moveTo(0, originX0.y);
+            ctx.lineTo(width, originX1.y);
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            // Eixo Y (x=0)
+            const originY0 = worldToPixel(0, yMin);
+            const originY1 = worldToPixel(0, yMax);
+            ctx.beginPath();
+            ctx.moveTo(originY0.x, 0);
+            ctx.lineTo(originY1.x, height);
+            ctx.stroke();
+
+            // setas simples
+            ctx.fillStyle = "#1e2f3a";
+            // seta eixo X
+            let arrowX = worldToPixel(xMax, 0);
+            ctx.beginPath();
+            ctx.moveTo(arrowX.x-8, arrowX.y-4);
+            ctx.lineTo(arrowX.x, arrowX.y);
+            ctx.lineTo(arrowX.x-8, arrowX.y+4);
+            ctx.fill();
+            // seta eixo Y
+            let arrowY = worldToPixel(0, yMax);
+            ctx.beginPath();
+            ctx.moveTo(arrowY.x-4, arrowY.y+8);
+            ctx.lineTo(arrowY.x, arrowY.y);
+            ctx.lineTo(arrowY.x+4, arrowY.y+8);
+            ctx.fill();
+
+            ctx.fillStyle = "#1f3b4c";
+            ctx.font = "bold 14px 'Segoe UI'";
+            ctx.fillText("x", arrowX.x-12, arrowX.y-5);
+            ctx.fillText("y", arrowY.x+5, arrowY.y-8);
+            ctx.font = "11px monospace";
+            ctx.fillStyle = "#2c3e66";
+            ctx.fillText("0", worldToPixel(0,0).x+3, worldToPixel(0,0).y-3);
+            ctx.restore();
+        }
+
+        // ----- parser flexível de equação: suporta "y = mx + b", "mx + b", "x = c" 
+        function parseEquation(equationStr) {
+            // Remove espaços e converte para minúsculas para padronização
+            let eq = equationStr.trim().replace(/\s/g, '');
+            if(eq === "") return { error: "Equação vazia" };
+            
+            // Verifica se é uma reta vertical do tipo "x=c" ou "x=numero"
+            let verticalMatch = eq.match(/^x=([+-]?\d*\.?\d+)$/i);
+            if(verticalMatch) {
+                let c = parseFloat(verticalMatch[1]);
+                if(isNaN(c)) return { error: "Valor inválido para x = constante" };
+                return { type: "vertical", constant: c };
+            }
+            
+            // Se contém 'y=', remove parte 'y=' (case insensitive)
+            let cleanEq = eq;
+            if(eq.startsWith("y=")) {
+                cleanEq = eq.substring(2);
+            }
+            // Agora deve restar algo como "2x+3", "-x+5", "4", "0.5x-2"
+            // Regex para capturar coeficiente angular m e termo b
+            // Padrão: opcional sinal, número (com ponto), opcional x, depois opcional + constante
+            let m = null, b = null;
+            // Tenta extrair termos: procuramos por parte com x e termo independente
+            // ex: "2x+3" -> m=2, b=3 ; "-x+4" -> m=-1, b=4 ; "3x" -> m=3,b=0 ; "5" -> m=0,b=5
+            let hasX = false;
+            // primeiro isola partes
+            let termX = null;
+            let constPart = null;
+            
+            // Separa por '+' ou '-' considerando sinais
+            let expr = cleanEq;
+            // Adiciona sinal explícito no início se não tiver +/-
+            if(!expr.startsWith('+') && !expr.startsWith('-')) expr = '+' + expr;
+            
+            // Quebra em termos mantendo sinal
+            let terms = [];
+            let current = '';
+            for(let i=0; i<expr.length; i++) {
+                let ch = expr[i];
+                if(ch === '+' || ch === '-') {
+                    if(current !== '') terms.push(current);
+                    current = ch;
+                } else {
+                    current += ch;
+                }
+            }
+            if(current !== '') terms.push(current);
+            
+            for(let term of terms) {
+                if(term.includes('x')) {
+                    // termo com x
+                    let coeffStr = term.replace('x', '');
+                    if(coeffStr === '+' || coeffStr === '') coeffStr = '1';
+                    if(coeffStr === '-') coeffStr = '-1';
+                    let mVal = parseFloat(coeffStr);
+                    if(isNaN(mVal)) return { error: "Coeficiente angular inválido" };
+                    m = mVal;
+                    hasX = true;
+                } else {
+                    // termo constante
+                    let constVal = parseFloat(term);
+                    if(!isNaN(constVal)) {
+                        b = constVal;
+                    }
+                }
+            }
+            
+            if(!hasX && m === null) {
+                // caso constante pura: y = b (reta horizontal)
+                m = 0;
+                if(b === null) b = 0;
+            }
+            if(m === null) m = 0;
+            if(b === null) b = 0;
+            
+            if(!isNaN(m) && !isNaN(b)) {
+                return { type: "linear", m: m, b: b };
+            } else {
+                return { error: "Não foi possível interpretar a equação. Use formato y = mx + b ou x = c" };
+            }
+        }
+
+        // Função para desenhar reta (qualquer equação)
+        let currentFunction = null; // guarda última função plotada {type, params}
+        
+        function drawFunction(equationObj) {
+            if(equationObj.error) {
+                ctx.clearRect(0,0,width,height);
+                drawGridAndAxes();
+                ctx.fillStyle = "#b91c1c";
+                ctx.font = "14px 'Segoe UI'";
+                ctx.fillText("⚠️ " + equationObj.error, 30, 50);
+                return false;
+            }
+            
+            ctx.save();
+            ctx.beginPath();
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = "#d64933";
+            ctx.shadowBlur = 0;
+            
+            if(equationObj.type === "vertical") {
+                const xConst = equationObj.constant;
+                // verifica se xConst está dentro da janela visível ou próxima
+                const p1 = worldToPixel(xConst, yMin);
+                const p2 = worldToPixel(xConst, yMax);
+                ctx.beginPath();
+                ctx.moveTo(p1.x, p1.y);
+                ctx.lineTo(p2.x, p2.y);
+                ctx.strokeStyle = "#c0392b";
+                ctx.stroke();
+                // desenha uma pequena anotação
+                ctx.fillStyle = "#a73226";
+                ctx.font = "bold 12px monospace";
+                ctx.fillText(`x = ${xConst}`, p1.x+5, p1.y-8);
+            } 
+            else if(equationObj.type === "linear") {
+                const m = equationObj.m;
+                const b = equationObj.b;
+                // definindo função y = m*x + b
+                const func = (x) => m * x + b;
+                
+                // amostragem suave para desenho contínuo
+                let steps = 400;
+                let firstPoint = true;
+                for (let i = 0; i <= steps; i++) {
+                    let t = i / steps;
+                    let xWorld = xMin + t * (xMax - xMin);
+                    let yWorld = func(xWorld);
+                    const {x, y} = worldToPixel(xWorld, yWorld);
+                    if (y >= 0 && y <= height && isFinite(yWorld)) {
+                        if (firstPoint) {
+                            ctx.beginPath();
+                            ctx.moveTo(x, y);
+                            firstPoint = false;
+                        } else {
+                            ctx.lineTo(x, y);
+                        }
+                    } else {
+                        firstPoint = true;
+                    }
+                }
+                ctx.stroke();
+                
+                // também desenha um pequeno destaque para inclinação
+                ctx.fillStyle = "#b03a2e";
+                ctx.font = "italic 13px monospace";
+                ctx.fillText(`y = ${m}x + ${b}`, 20, 40);
+            }
+            ctx.restore();
+            return true;
+        }
+        
+        // desenha tudo: grade e a função atual
+        function render(currentEquationObj) {
+            ctx.clearRect(0, 0, width, height);
+            drawGridAndAxes();
+            if(currentEquationObj && !currentEquationObj.error) {
+                drawFunction(currentEquationObj);
+            } else if(currentEquationObj && currentEquationObj.error){
+                drawFunction(currentEquationObj);
+            } else {
+                // nada
+            }
+            // Atualiza texto info extra
+            if(currentEquationObj && !currentEquationObj.error) {
+                let infoText = "";
+                if(currentEquationObj.type === "linear") {
+                    infoText = `y = ${currentEquationObj.m}x + ${currentEquationObj.b}  →  m = ${currentEquationObj.m}  |  b = ${currentEquationObj.b}`;
+                } else if(currentEquationObj.type === "vertical") {
+                    infoText = `x = ${currentEquationObj.constant}  (Reta vertical)`;
+                }
+                document.getElementById("currentEq").innerHTML = infoText || "Equação carregada";
+            } else if(currentEquationObj && currentEquationObj.error) {
+                document.getElementById("currentEq").innerHTML = `Erro: ${currentEquationObj.error}`;
+            } else {
+                document.getElementById("currentEq").innerHTML = "Nenhuma equação válida";
+            }
+        }
+        
+        // estado global da equação atual
+        let currentParsed = null;
+        
+        // função principal para atualizar a partir da string de input
+        function updateFromInput() {
+            let inputText = document.getElementById("equationInput").value;
+            let parsed = parseEquation(inputText);
+            currentParsed = parsed;
+            render(currentParsed);
+        }
+        
+        // redefinir zoom / visualização original
+        function resetView() {
+            xMin = -10.0;
+            xMax = 10.0;
+            yMin = -6.25;
+            yMax = 6.25;
+            fixAspectRatio();
+            render(currentParsed);
+        }
+        
+        // eventos de interação (arrastar, zoom)
+        function handlePan(deltaXpx, deltaYpx) {
+            // delta em pixels -> deslocamento em coordenadas do mundo
+            const deltaXWorld = (deltaXpx / width) * (xMax - xMin);
+            const deltaYWorld = (deltaYpx / height) * (yMax - yMin) * -1; // pois y pixel invertido
+            xMin -= deltaXWorld;
+            xMax -= deltaXWorld;
+            yMin -= deltaYWorld;
+            yMax -= deltaYWorld;
+            render(currentParsed);
+        }
+        
+        function handleZoom(centerXWorld, centerYWorld, factor) {
+            // factor > 1 da zoom in, < 1 zoom out
+            const newXRange = (xMax - xMin) * factor;
+            const newYRange = (yMax - yMin) * factor;
+            // manter centro fixo
+            const xCenter = centerXWorld !== undefined ? centerXWorld : (xMin + xMax)/2;
+            const yCenter = centerYWorld !== undefined ? centerYWorld : (yMin + yMax)/2;
+            xMin = xCenter - newXRange/2;
+            xMax = xCenter + newXRange/2;
+            yMin = yCenter - newYRange/2;
+            yMax = yCenter + newYRange/2;
+            fixAspectRatio();  // mantém proporção adequada
+            render(currentParsed);
+        }
+        
+        // ----- Eventos do Canvas -----
+        function onMouseDown(e) {
+            e.preventDefault();
+            isDragging = true;
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if(e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            const canvasX = (clientX - rect.left) * scaleX;
+            const canvasY = (clientY - rect.top) * scaleY;
+            lastMouseX = canvasX;
+            lastMouseY = canvasY;
+            canvas.style.cursor = 'grabbing';
+        }
+        
+        function onMouseMove(e) {
+            if(!isDragging) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            let clientX, clientY;
+            if(e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            const canvasX = (clientX - rect.left) * scaleX;
+            const canvasY = (clientY - rect.top) * scaleY;
+            const deltaX = canvasX - lastMouseX;
+            const deltaY = canvasY - lastMouseY;
+            if(deltaX !== 0 || deltaY !== 0) {
+                handlePan(deltaX, deltaY);
+                lastMouseX = canvasX;
+                lastMouseY = canvasY;
+            }
+        }
+        
+        function onMouseUp(e) {
+            isDragging = false;
+            canvas.style.cursor = 'default';
+        }
+        
+        function onWheel(e) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const mouseCanvasX = (e.clientX - rect.left) * scaleX;
+            const mouseCanvasY = (e.clientY - rect.top) * scaleY;
+            const mouseWorld = pixelToWorld(mouseCanvasX, mouseCanvasY);
+            const delta = e.deltaY > 0 ? 1.1 : 0.9;
+            handleZoom(mouseWorld.x, mouseWorld.y, delta);
+        }
+        
+        // adicionar eventos
+        canvas.addEventListener('mousedown', onMouseDown);
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+        canvas.addEventListener('wheel', onWheel, {passive: false});
+        canvas.addEventListener('touchstart', onMouseDown, {passive: false});
+        window.addEventListener('touchmove', onMouseMove, {passive: false});
+        window.addEventListener('touchend', onMouseUp);
+        
+        // botões
+        document.getElementById('plotBtn').addEventListener('click', () => {
+            updateFromInput();
+        });
+        document.getElementById('resetZoomBtn').addEventListener('click', () => {
+            resetView();
+        });
+        
+        // Inicialização
+        window.setExample = (eqString) => {
+            document.getElementById('equationInput').value = eqString;
+            updateFromInput();
+        };
+        
+        // primeira renderização com equação padrão
+        let initialEq = document.getElementById('equationInput').value;
+        currentParsed = parseEquation(initialEq);
+        render(currentParsed);
+    })();
+</script>
+</body>
+</html>
