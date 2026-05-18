@@ -2,192 +2,106 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CNN Simulator - Reconhecimento de Dígitos (Corrigido)</title>
+    <title>CNN Simulator - Desenhe e Reconheça (controle total)</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body {
-            background: linear-gradient(145deg, #f0f4fa 0%, #e2e8f0 100%);
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.96);
-            border-radius: 2rem;
-            box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-            padding: 25px;
-        }
-        h1 {
-            margin: 0;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .sub { color: #2c3e66; margin-bottom: 25px; border-left: 5px solid #ff9800; padding-left: 15px; }
-        .duas-colunas { display: flex; flex-wrap: wrap; gap: 30px; }
-        .col-desenho { flex: 1.2; min-width: 280px; background: #fefefe; border-radius: 28px; padding: 20px; text-align: center; }
-        .col-parametros { flex: 2; min-width: 300px; }
-        canvas#drawCanvas { background: white; border-radius: 24px; box-shadow: 0 0 0 3px #ff9800; cursor: crosshair; width: 280px; height: 280px; }
-        .botoes-acoes { display: flex; gap: 12px; margin: 15px auto; justify-content: center; }
-        button { background: #ff9800; border: none; padding: 8px 18px; border-radius: 60px; font-weight: bold; color: white; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #e68900; transform: scale(0.96); }
-        .predicao { background: #1e3c72; margin-top: 20px; padding: 12px; border-radius: 40px; color: white; font-weight: bold; font-size: 1.4rem; }
-        .predicao span { font-size: 2.5rem; background: #ff9800; display: inline-block; padding: 0 20px; border-radius: 60px; margin-left: 10px; }
-        .param-group { background: #f8fafd; border-radius: 20px; padding: 12px 18px; margin-bottom: 16px; border: 1px solid #e0e7f0; }
-        .param-group label { font-weight: 700; display: block; margin-bottom: 6px; color: #1e4663; }
-        input { width: 100%; padding: 8px; border-radius: 40px; border: 1px solid #ccc; }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #eef2f7; margin: 0; padding: 20px; }
+        .container { max-width: 1300px; margin: auto; background: white; border-radius: 32px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        h1 { margin: 0 0 5px; color: #1e3c72; }
+        .sub { border-left: 5px solid #ff9800; padding-left: 15px; margin-bottom: 25px; color: #2c3e66; }
+        .flex { display: flex; flex-wrap: wrap; gap: 30px; }
+        .desenho-area { flex: 1; min-width: 280px; text-align: center; background: #fcfcfc; border-radius: 28px; padding: 20px; }
+        .params-area { flex: 2; min-width: 280px; }
+        canvas#drawCanvas { background: white; border-radius: 20px; box-shadow: 0 0 0 3px #ff9800; cursor: crosshair; width: 280px; height: 280px; }
+        button { background: #ff9800; border: none; padding: 8px 18px; border-radius: 60px; font-weight: bold; color: white; cursor: pointer; margin: 5px; transition: 0.2s; }
+        button:hover { background: #e68900; transform: scale(0.97); }
+        .pred-box { background: #1e3c72; margin-top: 20px; padding: 12px; border-radius: 40px; color: white; font-size: 1.3rem; }
+        .pred-box span { font-size: 2.5rem; background: #ff9800; display: inline-block; padding: 0 20px; border-radius: 60px; margin-left: 10px; }
+        .param-group { background: #f8fafd; border-radius: 20px; padding: 12px 18px; margin-bottom: 16px; border: 1px solid #ddd; }
+        .param-group label { font-weight: bold; display: block; margin-bottom: 6px; }
+        input { width: 100%; padding: 6px; border-radius: 40px; border: 1px solid #ccc; }
         .slider-value { background: #ff9800; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; margin-left: 12px; }
-        .status-area { background: #eef2f7; border-radius: 20px; padding: 12px; font-family: monospace; font-size: 13px; max-height: 200px; overflow-y: auto; margin-top: 16px; }
-        .feature-maps { margin-top: 25px; background: #1a1a2e; border-radius: 24px; padding: 15px; color: white; display: none; }
-        .mapas-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; justify-content: center; }
-        .mapa { width: 60px; height: 60px; background: black; border-radius: 8px; }
-        .loader { display: inline-block; width: 16px; height: 16px; border: 2px solid #fff; border-top: 2px solid #ff9800; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        footer { font-size: 12px; text-align: center; margin-top: 35px; opacity: 0.7; }
+        .status { background: #eef2f7; border-radius: 20px; padding: 12px; font-family: monospace; font-size: 13px; max-height: 180px; overflow-y: auto; margin-top: 15px; }
+        .stop-btn { background: #dc3545; }
+        .stop-btn:hover { background: #bb2d3b; }
+        footer { text-align: center; margin-top: 30px; font-size: 12px; opacity: 0.7; }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>🧠 CNN Simulator - Reconhecimento de Dígitos Desenhados</h1>
-    <div class="sub">✍️ Desenhe um dígito → a rede tenta adivinhar. Ajuste os parâmetros e re-treine para entender o impacto!</div>
-    <div class="duas-colunas">
-        <div class="col-desenho">
-            <canvas id="drawCanvas" width="280" height="280" style="touch-action: none;"></canvas>
-            <div class="botoes-acoes">
+    <h1>🧠 Simulador CNN - Desenhe um dígito</h1>
+    <div class="sub">✏️ Desenhe com o mouse/toque → clique em "Reconhecer". <br>
+    ⚙️ Ajuste os parâmetros → clique em "Treinar Modelo" (não treina sozinho).</div>
+    
+    <div class="flex">
+        <div class="desenho-area">
+            <canvas id="drawCanvas" width="280" height="280"></canvas>
+            <div style="margin: 12px 0;">
                 <button id="clearBtn">🗑️ Limpar</button>
                 <button id="predictBtn">🔍 Reconhecer</button>
             </div>
-            <div class="predicao">🤖 Rede acredita: <span id="predNumber">?</span></div>
-            <small>💡 Desenhe com traço grosso e centralizado.</small>
+            <div class="pred-box">
+                🤖 Rede acredita que é: <span id="predNumber">?</span>
+            </div>
         </div>
-        <div class="col-parametros">
+
+        <div class="params-area">
             <div class="param-group">
-                <label>🔹 Conv1 filtros: <span id="f1_val" class="slider-value">16</span></label>
+                <label>Conv1 - Filtros: <span id="f1_val" class="slider-value">16</span></label>
                 <input type="range" id="filtros1" min="8" max="64" step="8" value="16">
                 <label>Kernel size: <span id="k1_val" class="slider-value">3</span></label>
                 <input type="range" id="kernel1" min="2" max="5" step="1" value="3">
             </div>
             <div class="param-group">
-                <label>🔸 Conv2 filtros: <span id="f2_val" class="slider-value">32</span></label>
+                <label>Conv2 - Filtros: <span id="f2_val" class="slider-value">32</span></label>
                 <input type="range" id="filtros2" min="8" max="64" step="8" value="32">
                 <label>Kernel size: <span id="k2_val" class="slider-value">3</span></label>
                 <input type="range" id="kernel2" min="2" max="5" step="1" value="3">
             </div>
             <div class="param-group">
-                <label>🧠 Neurônios Dense: <span id="dense_val" class="slider-value">128</span></label>
+                <label>Neurônios Dense: <span id="dense_val" class="slider-value">128</span></label>
                 <input type="range" id="denseUnits" min="32" max="256" step="32" value="128">
                 <label>Dropout: <span id="drop_val" class="slider-value">0.25</span></label>
                 <input type="range" id="dropout" min="0" max="0.5" step="0.05" value="0.25">
             </div>
             <div class="param-group">
-                <label>⚙️ Learning rate: <span id="lr_val" class="slider-value">0.001</span></label>
+                <label>Learning rate: <span id="lr_val" class="slider-value">0.001</span></label>
                 <input type="range" id="lr" min="0.0001" max="0.005" step="0.0005" value="0.001">
                 <label>Batch size: <span id="batch_val" class="slider-value">32</span></label>
                 <input type="range" id="batch" min="16" max="128" step="16" value="32">
                 <label>Épocas: <span id="ep_val" class="slider-value">5</span></label>
-                <input type="range" id="epocas" min="2" max="12" step="1" value="5">
+                <input type="range" id="epocas" min="2" max="10" step="1" value="5">
             </div>
-            <button id="treinarBtn">🚀 TREINAR MODELO</button>
-            <div class="status-area" id="statusLog">Carregando dados MNIST reais...</div>
+            <div style="display: flex; gap: 10px;">
+                <button id="treinarBtn" style="flex:2;">🚀 TREINAR MODELO</button>
+                <button id="stopTreinoBtn" class="stop-btn" style="flex:1;">⏹️ Parar</button>
+            </div>
+            <div class="status" id="statusLog">
+                ✅ Pronto. Clique em "TREINAR MODELO" para começar.
+            </div>
         </div>
     </div>
-    <div class="feature-maps" id="featureMapsPanel">
-        <div style="display: flex; justify-content: space-between;">
-            <strong>🎨 Mapas de ativação (primeira camada)</strong>
-            <button id="showMapsBtn" style="background:#ff9800; padding: 4px 12px;">Atualizar mapas</button>
-        </div>
-        <div id="mapsContainer" class="mapas-grid"></div>
-        <small>Cada quadrado = um filtro convolucional.</small>
-    </div>
-    <footer>TensorFlow.js + MNIST (fonte confiável). Agora com acurácia real acima de 90% após treino.</footer>
+    <footer>Usando MNIST real (fonte: zygmuntz/kaggle-stuff). Acurácia esperada >85% após 5 épocas.</footer>
 </div>
 
 <script>
-    // ------------------------------------------------------------
-    // CONFIGURAÇÕES GLOBAIS
-    // ------------------------------------------------------------
-    let modeloCNN = null;
-    let dadosTreino = null, dadosTeste = null;
-    let estaTreinando = false;
-
-    // Canvas desenho
+    // ======================== ELEMENTOS ========================
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas.getContext('2d');
     let desenhando = false;
-    function initCanvas() {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, 280, 280);
-        ctx.lineWidth = 24;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = 'black';
-    }
-    function getCanvasTensor() {
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = 28;
-        tempCanvas.height = 28;
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCtx.drawImage(canvas, 0, 0, 28, 28);
-        const imgData = tempCtx.getImageData(0, 0, 28, 28);
-        const pixels = [];
-        for (let i = 0; i < imgData.data.length; i += 4) {
-            let gray = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2]) / 3;
-            // MNIST espera fundo escuro (0) e dígito claro (1) - inverte
-            let val = (255 - gray) / 255.0;
-            pixels.push(val);
-        }
-        return tf.tensor4d(pixels, [1, 28, 28, 1]);
-    }
-
-    function startDrawing(e) { desenhando = true; draw(e); }
-    function stopDrawing() { desenhando = false; ctx.beginPath(); }
-    function draw(e) {
-        if (!desenhando) return;
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        let clientX, clientY;
-        if (e.touches) { clientX = e.touches[0].clientX; clientY = e.touches[0].clientY; }
-        else { clientX = e.clientX; clientY = e.clientY; }
-        let x = (clientX - rect.left) * scaleX;
-        let y = (clientY - rect.top) * scaleY;
-        x = Math.min(Math.max(0, x), 280);
-        y = Math.min(Math.max(0, y), 280);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    }
-    canvas.addEventListener('mousedown', startDrawing);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDrawing);
-    canvas.addEventListener('touchstart', startDrawing);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDrawing);
-    document.getElementById('clearBtn').addEventListener('click', () => {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, 280, 280);
-        document.getElementById('predNumber').innerText = '?';
-    });
-
-    // Elementos
-    const predNumberSpan = document.getElementById('predNumber');
-    const statusLogDiv = document.getElementById('statusLog');
-    const btnTreinar = document.getElementById('treinarBtn');
-    const btnPredict = document.getElementById('predictBtn');
-    const btnShowMaps = document.getElementById('showMapsBtn');
-    const featurePanel = document.getElementById('featureMapsPanel');
+    let modelo = null;
+    let dadosTreino = null, dadosTeste = null;
+    let treinando = false;
+    let stopTraining = false;
+    let currentFit = null;  // para poder parar
 
     // Sliders
     const f1 = document.getElementById('filtros1'), k1 = document.getElementById('kernel1');
     const f2 = document.getElementById('filtros2'), k2 = document.getElementById('kernel2');
     const dense = document.getElementById('denseUnits'), dropout = document.getElementById('dropout');
     const lr = document.getElementById('lr'), batch = document.getElementById('batch'), epocas = document.getElementById('epocas');
-    function atualizaLabels() {
+    const atualizaLabels = () => {
         document.getElementById('f1_val').innerText = f1.value;
         document.getElementById('k1_val').innerText = k1.value;
         document.getElementById('f2_val').innerText = f2.value;
@@ -197,15 +111,119 @@
         document.getElementById('lr_val').innerText = parseFloat(lr.value).toFixed(4);
         document.getElementById('batch_val').innerText = batch.value;
         document.getElementById('ep_val').innerText = epocas.value;
-    }
+    };
     f1.oninput = atualizaLabels; k1.oninput = atualizaLabels; f2.oninput = atualizaLabels;
     k2.oninput = atualizaLabels; dense.oninput = atualizaLabels; dropout.oninput = atualizaLabels;
     lr.oninput = atualizaLabels; batch.oninput = atualizaLabels; epocas.oninput = atualizaLabels;
     atualizaLabels();
 
-    // ------------------------------------------------------------
-    // MODELO DINÂMICO
-    // ------------------------------------------------------------
+    // ======================== DESENHO ========================
+    function initCanvas() {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, 280, 280);
+        ctx.lineWidth = 24;
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'black';
+    }
+    function getTensorFromCanvas() {
+        const temp = document.createElement('canvas');
+        temp.width = 28; temp.height = 28;
+        const tCtx = temp.getContext('2d');
+        tCtx.drawImage(canvas, 0, 0, 28, 28);
+        const img = tCtx.getImageData(0, 0, 28, 28);
+        const pixels = [];
+        for (let i = 0; i < img.data.length; i += 4) {
+            let gray = (img.data[i] + img.data[i+1] + img.data[i+2]) / 3;
+            // MNIST: fundo preto(0), dígito branco(1). Nosso canvas: fundo branco(255), traço preto(0)
+            let val = (255 - gray) / 255.0;
+            pixels.push(val);
+        }
+        return tf.tensor4d(pixels, [1, 28, 28, 1]);
+    }
+    function start(e) { desenhando = true; draw(e); }
+    function stop() { desenhando = false; ctx.beginPath(); }
+    function draw(e) {
+        if (!desenhando) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        let cx, cy;
+        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+        else { cx = e.clientX; cy = e.clientY; }
+        let x = (cx - rect.left) * scaleX;
+        let y = (cy - rect.top) * scaleY;
+        x = Math.min(Math.max(0, x), 280);
+        y = Math.min(Math.max(0, y), 280);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    }
+    canvas.addEventListener('mousedown', start);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stop);
+    canvas.addEventListener('touchstart', start);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stop);
+    document.getElementById('clearBtn').onclick = () => {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, 280, 280);
+        document.getElementById('predNumber').innerText = '?';
+    };
+    initCanvas();
+
+    // ======================== CARREGAR MNIST REAL ========================
+    async function carregarDadosMNIST() {
+        const statusDiv = document.getElementById('statusLog');
+        statusDiv.innerHTML = '📡 Baixando dataset MNIST (real)... aguarde.';
+        // URL funcional e confiável (CSV com label + 784 pixels)
+        const url = 'https://raw.githubusercontent.com/zygmuntz/kaggle-stuff/master/mnist_train.csv';
+        try {
+            const resp = await fetch(url);
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const texto = await resp.text();
+            const linhas = texto.split('\n').filter(l => l.trim().length > 0);
+            // Embaralhar para melhor distribuição
+            for (let i = linhas.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [linhas[i], linhas[j]] = [linhas[j], linhas[i]];
+            }
+            const total = 8000;   // 7000 treino, 1000 teste (rápido)
+            const treinoRaw = linhas.slice(0, 7000);
+            const testeRaw = linhas.slice(7000, 8000);
+            
+            function processar(arr) {
+                const xs = [], ys = [];
+                for (let linha of arr) {
+                    const partes = linha.split(',').map(Number);
+                    if (partes.length !== 785) continue;
+                    const label = partes[0];
+                    const pixels = partes.slice(1);
+                    if (pixels.some(isNaN)) continue;
+                    const norm = pixels.map(p => p / 255.0);
+                    xs.push(norm);
+                    ys.push(label);
+                }
+                return { xs, ys };
+            }
+            const treino = processar(treinoRaw);
+            const teste = processar(testeRaw);
+            if (treino.xs.length === 0) throw new Error('Nenhum dado válido');
+            
+            const xTrain = tf.tensor4d(treino.xs, [treino.xs.length, 28, 28, 1]);
+            const yTrain = tf.oneHot(tf.tensor1d(treino.ys, 'int32'), 10);
+            const xTest = tf.tensor4d(teste.xs, [teste.xs.length, 28, 28, 1]);
+            const yTest = tf.oneHot(tf.tensor1d(teste.ys, 'int32'), 10);
+            statusDiv.innerHTML = `✅ MNIST carregado: ${treino.xs.length} treino, ${teste.xs.length} teste. Pronto para treinar.`;
+            return { xTrain, yTrain, xTest, yTest };
+        } catch (err) {
+            statusDiv.innerHTML = `❌ Erro ao carregar MNIST: ${err.message}. Verifique sua internet.`;
+            throw err;
+        }
+    }
+
+    // ======================== CRIAR MODELO (com parâmetros atuais) ========================
     function criarModelo() {
         const model = tf.sequential();
         model.add(tf.layers.conv2d({
@@ -232,180 +250,108 @@
         return model;
     }
 
-    // ------------------------------------------------------------
-    // CARREGAR MNIST REAL (CSV CORRETO)
-    // ------------------------------------------------------------
-    async function carregarMNISTReal() {
-        statusLogDiv.innerHTML = '<div class="loader"></div> Baixando MNIST (dados reais)...';
-        // Usando o dataset oficial do MNIST em CSV hospedado no GitHub (formato label, pixel0... pixel783)
-        const url = 'https://raw.githubusercontent.com/myleott/mnist_png/master/mnist_train.csv';
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const texto = await response.text();
-            const linhas = texto.split('\n').filter(l => l.trim().length > 0);
-            // Primeira linha pode ser cabeçalho? Vamos verificar se o primeiro campo é 'label'
-            let start = 0;
-            if (linhas[0].startsWith('label')) start = 1;
-            const dados = linhas.slice(start);
-            // Embaralhar levemente para melhor distribuição
-            for (let i = dados.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [dados[i], dados[j]] = [dados[j], dados[i]];
-            }
-            const trainSize = 5000;
-            const trainRaw = dados.slice(0, trainSize);
-            const testRaw = dados.slice(trainSize, trainSize + 1000);
-            
-            function processar(rawArray) {
-                const xs = [], ys = [];
-                for (let linha of rawArray) {
-                    const partes = linha.split(',').map(Number);
-                    if (partes.length !== 785) continue;
-                    const label = partes[0];
-                    const pixels = partes.slice(1);
-                    // Verificar se há NaN
-                    if (pixels.some(isNaN)) continue;
-                    // Normalizar para [0,1] (já está em 0-255)
-                    const norm = pixels.map(p => p / 255.0);
-                    xs.push(norm);
-                    ys.push(label);
-                }
-                return { xs, ys };
-            }
-            const train = processar(trainRaw);
-            const test = processar(testRaw);
-            if (train.xs.length === 0) throw new Error('Nenhum dado válido no CSV');
-            console.log(`Treino: ${train.xs.length} amostras, Teste: ${test.xs.length}`);
-            // Exibir primeiro exemplo para debug
-            console.log('Primeira label:', train.ys[0], 'primeiros pixels:', train.xs[0].slice(0,5));
-            
-            const xTrain = tf.tensor4d(train.xs, [train.xs.length, 28, 28, 1]);
-            const yTrain = tf.oneHot(tf.tensor1d(train.ys, 'int32'), 10);
-            const xTest = tf.tensor4d(test.xs, [test.xs.length, 28, 28, 1]);
-            const yTest = tf.oneHot(tf.tensor1d(test.ys, 'int32'), 10);
-            statusLogDiv.innerHTML = `✅ MNIST carregado! Treino: ${train.xs.length}, Teste: ${test.xs.length}. Iniciando treino...`;
-            return { xTrain, yTrain, xTest, yTest };
-        } catch (err) {
-            console.error(err);
-            statusLogDiv.innerHTML = `⚠️ Erro ao carregar MNIST real: ${err.message}. Usando dados sintéticos (baixa qualidade).`;
-            // Fallback sintético para não travar
-            const synX = tf.randomNormal([2000,28,28,1]);
-            const synY = tf.oneHot(tf.randomUniform([2000],0,10,'int32'),10);
-            return { xTrain: synX, yTrain: synY, xTest: synX, yTest: synY };
-        }
-    }
-
-    // ------------------------------------------------------------
-    // TREINAMENTO
-    // ------------------------------------------------------------
+    // ======================== TREINAR (ACIONADO PELO BOTÃO) ========================
     async function treinar() {
-        if (estaTreinando) { statusLogDiv.innerHTML += '<br>⏳ Já treinando...'; return; }
-        if (!dadosTreino) {
-            const dados = await carregarMNISTReal();
-            dadosTreino = { x: dados.xTrain, y: dados.yTrain };
-            dadosTeste = { x: dados.xTest, y: dados.yTest };
+        if (treinando) {
+            document.getElementById('statusLog').innerHTML += '<br>⚠️ Já está treinando. Aguarde ou clique em "Parar".';
+            return;
         }
-        estaTreinando = true;
-        btnTreinar.disabled = true;
-        const ep = parseInt(epocas.value);
-        const batchSize = parseInt(batch.value);
+        if (!dadosTreino) {
+            try {
+                const dados = await carregarDadosMNIST();
+                dadosTreino = { x: dados.xTrain, y: dados.yTrain };
+                dadosTeste = { x: dados.xTest, y: dados.yTest };
+            } catch(e) {
+                return;
+            }
+        }
+        treinando = true;
+        stopTraining = false;
+        document.getElementById('treinarBtn').disabled = true;
+        const statusDiv = document.getElementById('statusLog');
+        statusDiv.innerHTML = `🚀 Iniciando treino com ${epocas.value} épocas...<br>`;
+        
         const novoModelo = criarModelo();
-        modeloCNN = novoModelo;
-        statusLogDiv.innerHTML = `<div class="loader"></div> Treinando ${ep} épocas... (pode levar de 20s a 1 minuto)`;
+        modelo = novoModelo;
+        const batchSize = parseInt(batch.value);
+        const ep = parseInt(epocas.value);
         
         try {
-            await novoModelo.fit(dadosTreino.x, dadosTreino.y, {
+            currentFit = novoModelo.fit(dadosTreino.x, dadosTreino.y, {
                 batchSize: batchSize,
                 epochs: ep,
                 validationData: [dadosTeste.x, dadosTeste.y],
                 callbacks: {
-                    onEpochEnd: (epoch, logs) => {
-                        if (logs) {
-                            const acc = (logs.acc * 100).toFixed(2);
-                            const valAcc = (logs.val_acc * 100).toFixed(2);
-                            statusLogDiv.innerHTML = `Época ${epoch+1}/${ep} - acurácia treino: ${acc}% | val: ${valAcc}%<br>` + statusLogDiv.innerHTML;
-                            if (epoch+1 === ep) {
-                                statusLogDiv.innerHTML = `🎉 Treinamento concluído! Acurácia final: ${valAcc}%<br>` + statusLogDiv.innerHTML;
-                                document.getElementById('predNumber').innerText = '?';
-                            }
+                    onEpochEnd: async (epoch, logs) => {
+                        if (stopTraining) {
+                            statusDiv.innerHTML += `⏹️ Parada solicitada na época ${epoch+1}.<br>`;
+                            currentFit.stopTraining = true;
+                            treinando = false;
+                            document.getElementById('treinarBtn').disabled = false;
+                            return;
+                        }
+                        const acc = (logs.acc * 100).toFixed(2);
+                        const valAcc = (logs.val_acc * 100).toFixed(2);
+                        statusDiv.innerHTML += `Época ${epoch+1}/${ep} - acurácia treino: ${acc}% | val: ${valAcc}%<br>`;
+                        if (epoch+1 === ep) {
+                            statusDiv.innerHTML += `🎉 Treino concluído! Acurácia final: ${valAcc}%<br>`;
+                            treinando = false;
+                            document.getElementById('treinarBtn').disabled = false;
                         }
                     }
                 }
             });
-            // Avaliação extra
-            const evalRes = modeloCNN.evaluate(dadosTeste.x, dadosTeste.y);
-            const testAcc = (evalRes[1].dataSync()[0] * 100).toFixed(2);
-            statusLogDiv.innerHTML = `📊 Avaliação final no teste: ${testAcc}%<br>` + statusLogDiv.innerHTML;
+            await currentFit;
         } catch (err) {
-            statusLogDiv.innerHTML = `❌ Erro no treino: ${err.message}<br>` + statusLogDiv.innerHTML;
-            console.error(err);
+            statusDiv.innerHTML += `❌ Erro: ${err.message}<br>`;
         } finally {
-            estaTreinando = false;
-            btnTreinar.disabled = false;
+            treinando = false;
+            document.getElementById('treinarBtn').disabled = false;
+            currentFit = null;
         }
     }
 
+    // Parar treinamento
+    function pararTreino() {
+        if (treinando) {
+            stopTraining = true;
+            if (currentFit) currentFit.stopTraining = true;
+            document.getElementById('statusLog').innerHTML += '🛑 Parando treinamento...<br>';
+        } else {
+            document.getElementById('statusLog').innerHTML += 'ℹ️ Nenhum treino em andamento.<br>';
+        }
+    }
+
+    // Reconhecer dígito desenhado
     async function reconhecer() {
-        if (!modeloCNN) { predNumberSpan.innerText = '? (treine primeiro)'; return; }
-        const tensor = getCanvasTensor();
-        const pred = modeloCNN.predict(tensor);
+        if (!modelo) {
+            document.getElementById('predNumber').innerText = '? (treine primeiro)';
+            return;
+        }
+        const tensor = getTensorFromCanvas();
+        const pred = modelo.predict(tensor);
         const classe = pred.argMax(1).dataSync()[0];
-        predNumberSpan.innerText = classe;
+        document.getElementById('predNumber').innerText = classe;
         tensor.dispose();
         pred.dispose();
     }
 
-    async function mostrarMapas() {
-        if (!modeloCNN) return;
-        featurePanel.style.display = 'block';
-        const convLayer = modeloCNN.layers.find(l => l.getClassName() === 'Conv2D');
-        if (!convLayer) { document.getElementById('mapsContainer').innerHTML = '<i>Camada conv não encontrada</i>'; return; }
-        const tensor = getCanvasTensor();
-        const intermedio = tf.model({ inputs: modeloCNN.inputs, outputs: convLayer.output });
-        const ativ = intermedio.predict(tensor);
-        const maps = await ativ.squeeze([0]);
-        const numFiltros = maps.shape[2];
-        const h = maps.shape[0], w = maps.shape[1];
-        const container = document.getElementById('mapsContainer');
-        container.innerHTML = '';
-        for (let i = 0; i < Math.min(numFiltros, 12); i++) {
-            const fmap = maps.slice([0,0,i], [h, w, 1]);
-            const minVal = fmap.min().dataSync()[0];
-            const maxVal = fmap.max().dataSync()[0];
-            const norm = fmap.sub(minVal).div(Math.max(maxVal - minVal, 1e-6));
-            const vals = await norm.data();
-            const canvasMap = document.createElement('canvas');
-            canvasMap.width = 64; canvasMap.height = 64;
-            canvasMap.className = 'mapa';
-            const ctxMap = canvasMap.getContext('2d');
-            const imgData = ctxMap.createImageData(64, 64);
-            for (let y = 0; y < 64; y++) {
-                for (let x = 0; x < 64; x++) {
-                    const origY = Math.floor(y * h / 64);
-                    const origX = Math.floor(x * w / 64);
-                    const v = vals[origY * w + origX] * 255;
-                    const idx = (y * 64 + x) * 4;
-                    imgData.data[idx] = v; imgData.data[idx+1] = v;
-                    imgData.data[idx+2] = v; imgData.data[idx+3] = 255;
-                }
-            }
-            ctxMap.putImageData(imgData, 0, 0);
-            container.appendChild(canvasMap);
-            fmap.dispose();
-        }
-        tensor.dispose();
-        ativ.dispose();
-        intermedio.dispose();
-    }
-
-    btnPredict.addEventListener('click', reconhecer);
-    btnShowMaps.addEventListener('click', mostrarMapas);
-    btnTreinar.addEventListener('click', treinar);
-    initCanvas();
-    // Iniciar treino automático após carregar
+    // Eventos dos botões
+    document.getElementById('treinarBtn').onclick = treinar;
+    document.getElementById('stopTreinoBtn').onclick = pararTreino;
+    document.getElementById('predictBtn').onclick = reconhecer;
+    
+    // Pré-carregar os dados (mas não treinar) para ficar mais rápido quando clicar em Treinar
     (async () => {
-        await treinar();
+        document.getElementById('statusLog').innerHTML = '🔄 Pré-carregando dataset MNIST (uma vez)...';
+        try {
+            const dados = await carregarDadosMNIST();
+            dadosTreino = { x: dados.xTrain, y: dados.yTrain };
+            dadosTeste = { x: dados.xTest, y: dados.yTest };
+            document.getElementById('statusLog').innerHTML = '✅ Dados carregados. Clique em "TREINAR MODELO" para começar.';
+        } catch(e) {
+            document.getElementById('statusLog').innerHTML = '❌ Falha no pré-carregamento. Tente recarregar a página.';
+        }
     })();
 </script>
 </body>
