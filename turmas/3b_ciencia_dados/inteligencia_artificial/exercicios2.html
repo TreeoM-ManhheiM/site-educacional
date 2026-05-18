@@ -2,443 +2,179 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>CNN Simulator - Reconhecimento de Dígitos (Funcional)</title>
+    <title>CNN - Reconhecimento de Dígitos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background: #eef2f7; margin: 0; padding: 20px; }
-        .container { max-width: 1300px; margin: auto; background: white; border-radius: 32px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { margin: 0 0 5px; color: #1e3c72; }
-        .sub { border-left: 5px solid #ff9800; padding-left: 15px; margin-bottom: 25px; color: #2c3e66; }
-        .flex { display: flex; flex-wrap: wrap; gap: 30px; }
-        .desenho-area { flex: 1; min-width: 280px; text-align: center; background: #fcfcfc; border-radius: 28px; padding: 20px; }
-        .params-area { flex: 2; min-width: 280px; }
-        canvas#drawCanvas { background: white; border-radius: 20px; box-shadow: 0 0 0 3px #ff9800; cursor: crosshair; width: 280px; height: 280px; }
-        button { background: #ff9800; border: none; padding: 8px 18px; border-radius: 60px; font-weight: bold; color: white; cursor: pointer; margin: 5px; transition: 0.2s; }
-        button:hover { background: #e68900; transform: scale(0.97); }
-        .pred-box { background: #1e3c72; margin-top: 20px; padding: 12px; border-radius: 40px; color: white; font-size: 1.3rem; }
-        .pred-box span { font-size: 2.5rem; background: #ff9800; display: inline-block; padding: 0 20px; border-radius: 60px; margin-left: 10px; }
-        .param-group { background: #f8fafd; border-radius: 20px; padding: 12px 18px; margin-bottom: 16px; border: 1px solid #ddd; }
-        .param-group label { font-weight: bold; display: block; margin-bottom: 6px; }
-        input { width: 100%; padding: 6px; border-radius: 40px; border: 1px solid #ccc; }
-        .slider-value { background: #ff9800; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; margin-left: 12px; }
-        .status { background: #eef2f7; border-radius: 20px; padding: 12px; font-family: monospace; font-size: 13px; max-height: 180px; overflow-y: auto; margin-top: 15px; }
-        .stop-btn { background: #dc3545; }
-        .stop-btn:hover { background: #bb2d3b; }
-        .feature-maps { margin-top: 25px; background: #1a1a2e; border-radius: 24px; padding: 15px; color: white; display: none; }
-        .mapas-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; justify-content: center; }
-        .mapa { width: 60px; height: 60px; background: black; border-radius: 8px; }
-        footer { text-align: center; margin-top: 30px; font-size: 12px; opacity: 0.7; }
+        * { box-sizing: border-box; font-family: Arial, sans-serif; }
+        body { background: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
+        canvas { background: white; border-radius: 16px; box-shadow: 0 0 0 3px #ff9800; cursor: crosshair; width: 280px; height: 280px; }
+        button { background: #ff9800; border: none; padding: 10px 20px; border-radius: 40px; font-weight: bold; color: white; cursor: pointer; margin: 10px; }
+        .pred { background: #1e3c72; margin-top: 20px; padding: 15px; border-radius: 40px; color: white; font-size: 1.5rem; }
+        .pred span { font-size: 3rem; background: #ff9800; padding: 0 20px; border-radius: 40px; }
+        .status { background: #eef2f7; border-radius: 16px; padding: 10px; margin-top: 20px; font-family: monospace; }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>🧠 Simulador CNN - Desenhe e Reconheça Dígitos</h1>
-    <div class="sub">✏️ Desenhe um dígito (0-9) no quadro → clique em "Reconhecer".<br>
-    ⚙️ Ajuste os parâmetros da CNN → clique em "TREINAR" (dados sintéticos realistas embutidos).</div>
-    
-    <div class="flex">
-        <div class="desenho-area">
-            <canvas id="drawCanvas" width="280" height="280"></canvas>
-            <div style="margin: 12px 0;">
-                <button id="clearBtn">🗑️ Limpar</button>
-                <button id="predictBtn">🔍 Reconhecer</button>
-                <button id="showMapsBtn">🎨 Ver Mapas</button>
-            </div>
-            <div class="pred-box">
-                🤖 Rede acredita que é: <span id="predNumber">?</span>
-            </div>
-        </div>
-
-        <div class="params-area">
-            <div class="param-group">
-                <label>Conv1 - Filtros: <span id="f1_val" class="slider-value">16</span></label>
-                <input type="range" id="filtros1" min="8" max="64" step="8" value="16">
-                <label>Kernel size: <span id="k1_val" class="slider-value">3</span></label>
-                <input type="range" id="kernel1" min="2" max="5" step="1" value="3">
-            </div>
-            <div class="param-group">
-                <label>Conv2 - Filtros: <span id="f2_val" class="slider-value">32</span></label>
-                <input type="range" id="filtros2" min="8" max="64" step="8" value="32">
-                <label>Kernel size: <span id="k2_val" class="slider-value">3</span></label>
-                <input type="range" id="kernel2" min="2" max="5" step="1" value="3">
-            </div>
-            <div class="param-group">
-                <label>Neurônios Dense: <span id="dense_val" class="slider-value">128</span></label>
-                <input type="range" id="denseUnits" min="32" max="256" step="32" value="128">
-                <label>Dropout: <span id="drop_val" class="slider-value">0.25</span></label>
-                <input type="range" id="dropout" min="0" max="0.5" step="0.05" value="0.25">
-            </div>
-            <div class="param-group">
-                <label>Learning rate: <span id="lr_val" class="slider-value">0.001</span></label>
-                <input type="range" id="lr" min="0.0001" max="0.005" step="0.0005" value="0.001">
-                <label>Batch size: <span id="batch_val" class="slider-value">32</span></label>
-                <input type="range" id="batch" min="16" max="128" step="16" value="32">
-                <label>Épocas: <span id="ep_val" class="slider-value">5</span></label>
-                <input type="range" id="epocas" min="2" max="10" step="1" value="5">
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button id="treinarBtn" style="flex:2;">🚀 TREINAR MODELO</button>
-                <button id="stopTreinoBtn" class="stop-btn" style="flex:1;">⏹️ Parar</button>
-            </div>
-            <div class="status" id="statusLog">
-                ✅ Pronto. Clique em TREINAR (dados já estão aqui dentro).
-            </div>
-        </div>
-    </div>
-    
-    <div class="feature-maps" id="featureMapsPanel">
-        <div style="display: flex; justify-content: space-between;">
-            <strong>🎨 Mapas de ativação (primeira camada) do seu desenho</strong>
-            <button id="refreshMapsBtn" style="background:#ff9800; padding: 4px 12px;">Atualizar mapas</button>
-        </div>
-        <div id="mapsContainer" class="mapas-grid"></div>
-        <small>Cada quadrado é um filtro convolucional - mostra onde ele "ativa" mais.</small>
-    </div>
-    <footer>Dados sintéticos realistas (1200 treino, 300 teste) gerados localmente. Acurácia esperada >80% após 5 épocas.</footer>
+<h2>🧠 Simulador CNN - Desenhe o dígito</h2>
+<canvas id="drawCanvas" width="280" height="280"></canvas>
+<div>
+    <button id="clearBtn">🗑️ Limpar</button>
+    <button id="trainBtn">🚀 TREINAR</button>
+    <button id="predictBtn">🔍 RECONHECER</button>
 </div>
+<div class="pred">🤖 Resultado: <span id="result">?</span></div>
+<div class="status" id="status">✅ Clique em TREINAR (dados já estão aqui)</div>
 
 <script>
-    // --------------------------------------------------------------
-    // 1. GERAÇÃO DE DADOS SINTÉTICOS REALISTAS (DÍGITOS DESENHADOS)
-    // --------------------------------------------------------------
-    // Função para desenhar um dígito em um canvas 28x28 e extrair os pixels
-    function gerarImagemDigito(digito, variacao) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 28;
-        canvas.height = 28;
-        const ctx = canvas.getContext('2d');
-        // Fundo preto (valor 0)
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, 28, 28);
-        // Configura o texto
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 20px "Courier New", monospace';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        // Pequena variação na posição e rotação para tornar o dataset mais realista
-        let dx = (variacao % 7) - 3;
-        let dy = (Math.floor(variacao / 7) % 7) - 3;
-        let x = 14 + dx;
-        let y = 14 + dy;
-        ctx.fillText(digito.toString(), x, y);
-        
-        // Adiciona um pequeno ruído gaussiano nos pixels
-        const imgData = ctx.getImageData(0, 0, 28, 28);
-        const pixels = new Array(28 * 28);
-        for (let i = 0; i < imgData.data.length; i += 4) {
-            const gray = imgData.data[i]; // R=G=B devido ao texto branco/fundo preto
-            let valor = gray / 255.0;
-            // Ruído leve (para simular variação)
-            const noise = (Math.random() - 0.5) * 0.1;
-            valor = Math.min(1, Math.max(0, valor + noise));
-            pixels[i/4] = valor;
+    // =============================================
+    // 1. Dados de treino (dígitos simples para teste)
+    // =============================================
+    function gerarImagem(digito, offset) {
+        const img = new Array(784).fill(0);
+        const cx = 14 + (offset % 5) - 2;
+        const cy = 14 + (Math.floor(offset / 5) % 5) - 2;
+        for (let y = 0; y < 28; y++) {
+            for (let x = 0; x < 28; x++) {
+                const dx = x - cx;
+                const dy = y - cy;
+                let val = 0;
+                if (digito === 0) val = Math.hypot(dx, dy) < 6 ? 1 : 0;
+                else if (digito === 1) val = (Math.abs(dx) < 3 && Math.abs(dy) < 10) ? 1 : 0;
+                else if (digito === 2) val = (Math.abs(dy) < 5 && Math.abs(dx) < 8) || (dy > 0 && dx < -2 && dx > -8) ? 1 : 0;
+                else if (digito === 3) val = (Math.abs(dy) < 5 && Math.abs(dx) < 8) || (Math.abs(dy - 6) < 4 && Math.abs(dx) < 8) ? 1 : 0;
+                else if (digito === 4) val = (Math.abs(dx) < 3 && Math.abs(dy) < 9) || (dy > -3 && dy < 3 && dx > 0 && dx < 10) ? 1 : 0;
+                else if (digito === 5) val = (Math.abs(dy) < 5 && Math.abs(dx) < 8) || (dy < 0 && dx > 0 && dx < 10) ? 1 : 0;
+                else if (digito === 6) val = Math.hypot(dx, dy + 3) < 7 || (Math.abs(dx) < 5 && dy > -3 && dy < 7) ? 1 : 0;
+                else if (digito === 7) val = (Math.abs(dx) < 10 && dy < 6 && dy > -10) ? 1 : 0;
+                else if (digito === 8) val = Math.hypot(dx, dy) < 7 ? 1 : 0;
+                else if (digito === 9) val = Math.hypot(dx, dy - 3) < 7 || (dy < -3 && Math.abs(dx) < 4) ? 1 : 0;
+                img[y * 28 + x] = Math.min(1, Math.max(0, val + (Math.random() - 0.5) * 0.15));
+            }
         }
-        return pixels;
+        return img;
     }
-
-    // Gerar dataset: 1200 treino (120 por dígito), 300 teste (30 por dígito)
-    const trainImages = [];
-    const trainLabels = [];
-    const testImages = [];
-    const testLabels = [];
-
-    for (let digit = 0; digit <= 9; digit++) {
-        for (let i = 0; i < 120; i++) {
-            trainImages.push(gerarImagemDigito(digit, i));
-            trainLabels.push(digit);
-        }
-        for (let i = 0; i < 30; i++) {
-            testImages.push(gerarImagemDigito(digit, i + 200));
-            testLabels.push(digit);
-        }
+    // 900 treino (90 por dígito), 200 teste (20 por dígito)
+    const trainImgs = [], trainLbls = [], testImgs = [], testLbls = [];
+    for (let d = 0; d <= 9; d++) {
+        for (let i = 0; i < 90; i++) { trainImgs.push(gerarImagem(d, i)); trainLbls.push(d); }
+        for (let i = 0; i < 20; i++) { testImgs.push(gerarImagem(d, i + 200)); testLbls.push(d); }
     }
+    for (let i = trainImgs.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i+1)); [trainImgs[i], trainImgs[j]] = [trainImgs[j], trainImgs[i]]; [trainLbls[i], trainLbls[j]] = [trainLbls[j], trainLbls[i]]; }
+    const xTrain = tf.tensor4d(trainImgs, [trainImgs.length, 28, 28, 1]);
+    const yTrain = tf.oneHot(tf.tensor1d(trainLbls, 'int32'), 10);
+    const xTest = tf.tensor4d(testImgs, [testImgs.length, 28, 28, 1]);
+    const yTest = tf.oneHot(tf.tensor1d(testLbls, 'int32'), 10);
+    document.getElementById('status').innerHTML = `✅ ${trainImgs.length} treino, ${testImgs.length} teste. Clique TREINAR.`;
 
-    // Embaralhar os dados de treino (importante)
-    for (let i = trainImages.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [trainImages[i], trainImages[j]] = [trainImages[j], trainImages[i]];
-        [trainLabels[i], trainLabels[j]] = [trainLabels[j], trainLabels[i]];
-    }
-
-    // Converter para tensores (formato correto: [N, 28, 28, 1])
-    const xTrain = tf.tensor4d(trainImages, [trainImages.length, 28, 28, 1]);
-    const yTrain = tf.oneHot(tf.tensor1d(trainLabels, 'int32'), 10);
-    const xTest = tf.tensor4d(testImages, [testImages.length, 28, 28, 1]);
-    const yTest = tf.oneHot(tf.tensor1d(testLabels, 'int32'), 10);
-
-    console.log('Dados prontos:', trainImages.length, 'treino,', testImages.length, 'teste');
-
-    // --------------------------------------------------------------
-    // 2. CONFIGURAÇÃO DO CANVAS DE DESENHO (USUÁRIO)
-    // --------------------------------------------------------------
+    // =============================================
+    // 2. Canvas e desenho
+    // =============================================
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas.getContext('2d');
-    let desenhando = false;
-
-    function initCanvas() {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, 280, 280);
-        ctx.lineWidth = 24;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = 'black';
-    }
-    initCanvas();
-
-    function getTensorFromUserDrawing() {
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = 28;
-        tempCanvas.height = 28;
-        const tempCtx = tempCanvas.getContext('2d');
-        tempCtx.drawImage(canvas, 0, 0, 28, 28);
-        const imgData = tempCtx.getImageData(0, 0, 28, 28);
-        const pixels = new Array(28 * 28);
-        for (let i = 0; i < imgData.data.length; i += 4) {
-            const gray = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2]) / 3;
-            // Inverter: nosso canvas tem fundo branco (255) e traço preto (0)
-            // O modelo espera fundo próximo de 0 e dígito próximo de 1
-            let val = (255 - gray) / 255.0;
-            pixels[i/4] = val;
+    let drawing = false;
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, 280, 280);
+    ctx.lineWidth = 24;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = 'black';
+    function getTensor() {
+        const tmp = document.createElement('canvas');
+        tmp.width = 28; tmp.height = 28;
+        tmp.getContext('2d').drawImage(canvas, 0, 0, 28, 28);
+        const img = tmp.getContext('2d').getImageData(0, 0, 28, 28);
+        const pixels = new Array(784);
+        for (let i = 0; i < img.data.length; i+=4) {
+            const gray = (img.data[i] + img.data[i+1] + img.data[i+2]) / 3;
+            pixels[i/4] = (255 - gray) / 255;
         }
         return tf.tensor4d(pixels, [1, 28, 28, 1]);
     }
-
-    function startDraw(e) { desenhando = true; draw(e); }
-    function stopDraw() { desenhando = false; ctx.beginPath(); }
+    function start(e) { drawing = true; draw(e); }
+    function end() { drawing = false; ctx.beginPath(); }
     function draw(e) {
-        if (!desenhando) return;
+        if (!drawing) return;
         e.preventDefault();
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width / rect.width;
         const scaleY = canvas.height / rect.height;
-        let clientX, clientY;
-        if (e.touches) {
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        }
-        let x = (clientX - rect.left) * scaleX;
-        let y = (clientY - rect.top) * scaleY;
-        x = Math.min(Math.max(0, x), 280);
-        y = Math.min(Math.max(0, y), 280);
+        let cx, cy;
+        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
+        else { cx = e.clientX; cy = e.clientY; }
+        let x = Math.min(280, Math.max(0, (cx - rect.left) * scaleX));
+        let y = Math.min(280, Math.max(0, (cy - rect.top) * scaleY));
         ctx.lineTo(x, y);
         ctx.stroke();
         ctx.beginPath();
         ctx.moveTo(x, y);
     }
-    canvas.addEventListener('mousedown', startDraw);
+    canvas.addEventListener('mousedown', start);
     canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stopDraw);
-    canvas.addEventListener('touchstart', startDraw);
+    canvas.addEventListener('mouseup', end);
+    canvas.addEventListener('touchstart', start);
     canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stopDraw);
-
+    canvas.addEventListener('touchend', end);
     document.getElementById('clearBtn').onclick = () => {
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, 280, 280);
-        document.getElementById('predNumber').innerText = '?';
+        document.getElementById('result').innerText = '?';
     };
 
-    // --------------------------------------------------------------
-    // 3. MODELO E TREINAMENTO
-    // --------------------------------------------------------------
-    let modelo = null;
-    let treinando = false;
-    let stopTraining = false;
-    let currentFit = null;
-
-    // Sliders e labels
-    const f1 = document.getElementById('filtros1'), k1 = document.getElementById('kernel1');
-    const f2 = document.getElementById('filtros2'), k2 = document.getElementById('kernel2');
-    const dense = document.getElementById('denseUnits'), dropout = document.getElementById('dropout');
-    const lr = document.getElementById('lr'), batch = document.getElementById('batch'), epocas = document.getElementById('epocas');
-    
-    function atualizaLabels() {
-        document.getElementById('f1_val').innerText = f1.value;
-        document.getElementById('k1_val').innerText = k1.value;
-        document.getElementById('f2_val').innerText = f2.value;
-        document.getElementById('k2_val').innerText = k2.value;
-        document.getElementById('dense_val').innerText = dense.value;
-        document.getElementById('drop_val').innerText = dropout.value;
-        document.getElementById('lr_val').innerText = parseFloat(lr.value).toFixed(4);
-        document.getElementById('batch_val').innerText = batch.value;
-        document.getElementById('ep_val').innerText = epocas.value;
-    }
-    f1.oninput = atualizaLabels; k1.oninput = atualizaLabels;
-    f2.oninput = atualizaLabels; k2.oninput = atualizaLabels;
-    dense.oninput = atualizaLabels; dropout.oninput = atualizaLabels;
-    lr.oninput = atualizaLabels; batch.oninput = atualizaLabels; epocas.oninput = atualizaLabels;
-    atualizaLabels();
-
+    // =============================================
+    // 3. Modelo e treinamento
+    // =============================================
+    let model = null, training = false, stop = false, currentFit = null;
     function criarModelo() {
-        const model = tf.sequential();
-        model.add(tf.layers.conv2d({
-            inputShape: [28, 28, 1],
-            filters: parseInt(f1.value),
-            kernelSize: parseInt(k1.value),
-            activation: 'relu',
-            padding: 'same'
-        }));
-        model.add(tf.layers.maxPooling2d({ poolSize: [2, 2] }));
-        model.add(tf.layers.conv2d({
-            filters: parseInt(f2.value),
-            kernelSize: parseInt(k2.value),
-            activation: 'relu',
-            padding: 'same'
-        }));
-        model.add(tf.layers.maxPooling2d({ poolSize: [2, 2] }));
-        model.add(tf.layers.flatten());
-        model.add(tf.layers.dense({ units: parseInt(dense.value), activation: 'relu' }));
-        model.add(tf.layers.dropout({ rate: parseFloat(dropout.value) }));
-        model.add(tf.layers.dense({ units: 10, activation: 'softmax' }));
-        const optimizer = tf.train.adam(parseFloat(lr.value));
-        model.compile({ optimizer, loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
-        return model;
+        const m = tf.sequential();
+        m.add(tf.layers.conv2d({ inputShape: [28,28,1], filters: 16, kernelSize: 3, activation: 'relu', padding: 'same' }));
+        m.add(tf.layers.maxPooling2d({ poolSize: [2,2] }));
+        m.add(tf.layers.conv2d({ filters: 32, kernelSize: 3, activation: 'relu', padding: 'same' }));
+        m.add(tf.layers.maxPooling2d({ poolSize: [2,2] }));
+        m.add(tf.layers.flatten());
+        m.add(tf.layers.dense({ units: 128, activation: 'relu' }));
+        m.add(tf.layers.dropout({ rate: 0.25 }));
+        m.add(tf.layers.dense({ units: 10, activation: 'softmax' }));
+        m.compile({ optimizer: tf.train.adam(0.001), loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+        return m;
     }
-
     async function treinar() {
-        if (treinando) {
-            document.getElementById('statusLog').innerHTML += '<br>⚠️ Já treinando. Aguarde ou clique em Parar.';
-            return;
-        }
-        treinando = true;
-        stopTraining = false;
-        document.getElementById('treinarBtn').disabled = true;
-        const statusDiv = document.getElementById('statusLog');
-        statusDiv.innerHTML = `🚀 Treinando com ${epocas.value} épocas...<br>`;
-        
+        if (training) { document.getElementById('status').innerHTML += '<br>⚠️ Já treinando'; return; }
+        training = true;
+        document.getElementById('trainBtn').disabled = true;
+        const statusDiv = document.getElementById('status');
+        statusDiv.innerHTML = '🚀 Treinando 4 épocas...<br>';
         const novoModelo = criarModelo();
-        modelo = novoModelo;
-        const batchSize = parseInt(batch.value);
-        const ep = parseInt(epocas.value);
-        
+        model = novoModelo;
         try {
             currentFit = await novoModelo.fit(xTrain, yTrain, {
-                batchSize: batchSize,
-                epochs: ep,
+                batchSize: 32, epochs: 4,
                 validationData: [xTest, yTest],
                 callbacks: {
                     onEpochEnd: (epoch, logs) => {
-                        if (stopTraining) {
-                            statusDiv.innerHTML += `⏹️ Parada solicitada na época ${epoch+1}.<br>`;
-                            if (currentFit) currentFit.stopTraining = true;
-                            treinando = false;
-                            document.getElementById('treinarBtn').disabled = false;
-                            return;
-                        }
-                        const acc = (logs.acc * 100).toFixed(2);
-                        const valAcc = (logs.val_acc * 100).toFixed(2);
-                        statusDiv.innerHTML += `Época ${epoch+1}/${ep} - acurácia treino: ${acc}% | val: ${valAcc}%<br>`;
-                        if (epoch+1 === ep) {
-                            statusDiv.innerHTML += `🎉 Treino concluído! Acurácia final: ${valAcc}%<br>`;
-                            treinando = false;
-                            document.getElementById('treinarBtn').disabled = false;
+                        const acc = (logs.acc * 100).toFixed(1);
+                        const valAcc = (logs.val_acc * 100).toFixed(1);
+                        statusDiv.innerHTML += `Época ${epoch+1}/4 - acurácia treino: ${acc}% | val: ${valAcc}%<br>`;
+                        if (epoch+1 === 4) {
+                            statusDiv.innerHTML += `🎉 Concluído! Acurácia final: ${valAcc}%<br>`;
+                            training = false;
+                            document.getElementById('trainBtn').disabled = false;
                         }
                     }
                 }
             });
         } catch(err) {
             statusDiv.innerHTML += `❌ Erro: ${err.message}<br>`;
-            console.error(err);
-        } finally {
-            treinando = false;
-            document.getElementById('treinarBtn').disabled = false;
-            currentFit = null;
-        }
+        } finally { training = false; document.getElementById('trainBtn').disabled = false; currentFit = null; }
     }
-
-    function pararTreino() {
-        if (treinando) {
-            stopTraining = true;
-            if (currentFit) currentFit.stopTraining = true;
-            document.getElementById('statusLog').innerHTML += '🛑 Parando treinamento...<br>';
-        } else {
-            document.getElementById('statusLog').innerHTML += 'ℹ️ Nenhum treino em andamento.<br>';
-        }
-    }
-
     async function reconhecer() {
-        if (!modelo) {
-            document.getElementById('predNumber').innerText = '? (treine primeiro)';
-            return;
-        }
-        const tensor = getTensorFromUserDrawing();
-        const pred = modelo.predict(tensor);
+        if (!model) { document.getElementById('result').innerText = '?'; alert('Clique em TREINAR primeiro'); return; }
+        const tensor = getTensor();
+        const pred = model.predict(tensor);
         const classe = pred.argMax(1).dataSync()[0];
-        document.getElementById('predNumber').innerText = classe;
-        tensor.dispose();
-        pred.dispose();
+        document.getElementById('result').innerText = classe;
+        tensor.dispose(); pred.dispose();
     }
-
-    // --------------------------------------------------------------
-    // 4. MAPAS DE ATIVAÇÃO
-    // --------------------------------------------------------------
-    const featurePanel = document.getElementById('featureMapsPanel');
-    async function atualizarMapas() {
-        if (!modelo) {
-            alert('Treine o modelo primeiro (clique em TREINAR)');
-            return;
-        }
-        featurePanel.style.display = 'block';
-        const convLayer = modelo.layers.find(l => l.getClassName() === 'Conv2D');
-        if (!convLayer) {
-            document.getElementById('mapsContainer').innerHTML = '<i>Camada convolucional não encontrada.</i>';
-            return;
-        }
-        const tensor = getTensorFromUserDrawing();
-        const intermediateModel = tf.model({ inputs: modelo.inputs, outputs: convLayer.output });
-        const ativacoes = intermediateModel.predict(tensor);
-        const maps = await ativacoes.squeeze([0]); // shape [h, w, numFilters]
-        const numFilters = maps.shape[2];
-        const h = maps.shape[0];
-        const w = maps.shape[1];
-        const container = document.getElementById('mapsContainer');
-        container.innerHTML = '';
-        for (let i = 0; i < Math.min(numFilters, 12); i++) {
-            const filtro = maps.slice([0,0,i], [h, w, 1]);
-            const minVal = filtro.min().dataSync()[0];
-            const maxVal = filtro.max().dataSync()[0];
-            const norm = filtro.sub(minVal).div(Math.max(maxVal - minVal, 1e-6));
-            const vals = await norm.data();
-            const canvasMap = document.createElement('canvas');
-            canvasMap.width = 64;
-            canvasMap.height = 64;
-            canvasMap.className = 'mapa';
-            const ctxMap = canvasMap.getContext('2d');
-            const imgData = ctxMap.createImageData(64, 64);
-            for (let y = 0; y < 64; y++) {
-                for (let x = 0; x < 64; x++) {
-                    const origY = Math.floor(y * h / 64);
-                    const origX = Math.floor(x * w / 64);
-                    const v = vals[origY * w + origX] * 255;
-                    const idx = (y * 64 + x) * 4;
-                    imgData.data[idx] = v;
-                    imgData.data[idx+1] = v;
-                    imgData.data[idx+2] = v;
-                    imgData.data[idx+3] = 255;
-                }
-            }
-            ctxMap.putImageData(imgData, 0, 0);
-            container.appendChild(canvasMap);
-            filtro.dispose();
-        }
-        tensor.dispose();
-        ativacoes.dispose();
-        intermediateModel.dispose();
-    }
-
-    // Botões
-    document.getElementById('treinarBtn').onclick = treinar;
-    document.getElementById('stopTreinoBtn').onclick = pararTreino;
+    document.getElementById('trainBtn').onclick = treinar;
     document.getElementById('predictBtn').onclick = reconhecer;
-    document.getElementById('showMapsBtn').onclick = atualizarMapas;
-    document.getElementById('refreshMapsBtn').onclick = atualizarMapas;
-
-    // Mensagem inicial
-    document.getElementById('statusLog').innerHTML = '✅ Dados sintéticos gerados (1200 treino, 300 teste). Clique em TREINAR.';
 </script>
 </body>
 </html>
