@@ -1,358 +1,109 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>CNN Simulator - Desenhe e Reconheça (controle total)</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
-    <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: #eef2f7; margin: 0; padding: 20px; }
-        .container { max-width: 1300px; margin: auto; background: white; border-radius: 32px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        h1 { margin: 0 0 5px; color: #1e3c72; }
-        .sub { border-left: 5px solid #ff9800; padding-left: 15px; margin-bottom: 25px; color: #2c3e66; }
-        .flex { display: flex; flex-wrap: wrap; gap: 30px; }
-        .desenho-area { flex: 1; min-width: 280px; text-align: center; background: #fcfcfc; border-radius: 28px; padding: 20px; }
-        .params-area { flex: 2; min-width: 280px; }
-        canvas#drawCanvas { background: white; border-radius: 20px; box-shadow: 0 0 0 3px #ff9800; cursor: crosshair; width: 280px; height: 280px; }
-        button { background: #ff9800; border: none; padding: 8px 18px; border-radius: 60px; font-weight: bold; color: white; cursor: pointer; margin: 5px; transition: 0.2s; }
-        button:hover { background: #e68900; transform: scale(0.97); }
-        .pred-box { background: #1e3c72; margin-top: 20px; padding: 12px; border-radius: 40px; color: white; font-size: 1.3rem; }
-        .pred-box span { font-size: 2.5rem; background: #ff9800; display: inline-block; padding: 0 20px; border-radius: 60px; margin-left: 10px; }
-        .param-group { background: #f8fafd; border-radius: 20px; padding: 12px 18px; margin-bottom: 16px; border: 1px solid #ddd; }
-        .param-group label { font-weight: bold; display: block; margin-bottom: 6px; }
-        input { width: 100%; padding: 6px; border-radius: 40px; border: 1px solid #ccc; }
-        .slider-value { background: #ff9800; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; margin-left: 12px; }
-        .status { background: #eef2f7; border-radius: 20px; padding: 12px; font-family: monospace; font-size: 13px; max-height: 180px; overflow-y: auto; margin-top: 15px; }
-        .stop-btn { background: #dc3545; }
-        .stop-btn:hover { background: #bb2d3b; }
-        footer { text-align: center; margin-top: 30px; font-size: 12px; opacity: 0.7; }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3ºB Ciência de Dados — Portal de Disciplinas</title>
+  <style>
+    :root { --bg:#0f172a; --card:#ffffff; --text:#111827; --muted:#475569; --acc:#2563eb; --ring:#e5e7eb; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family: system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial; background:#f6f7fb; color:var(--text); }
+    header { background:var(--bg); color:#fff; padding:28px 16px; }
+    header .wrap { max-width:1100px; margin:0 auto; }
+    h1 { margin:0 0 6px 0; font-size: clamp(1.4rem, 2.6vw, 2rem); }
+    p.lead { margin:0; color:#cbd5e1; font-size:0.95rem; }
+    main { max-width:1100px; margin:28px auto; padding:0 16px; }
+    .grid { display:grid; grid-template-columns: repeat(12, 1fr); gap:16px; }
+    .col { grid-column: span 12; }
+    @media (min-width:700px) { .col { grid-column: span 6; } }
+    @media (min-width:1000px) { .col { grid-column: span 4; } }
+    .card { background:var(--card); border:1px solid var(--ring); border-radius:12px; padding:16px; box-shadow:0 1px 6px rgba(0,0,0,.06); display:flex; flex-direction:column; gap:10px; min-height: 210px; }
+    .card h2 { margin:0; font-size:1.15rem; color:#0f172a; }
+    .card p { margin:0; color:var(--muted); font-size:0.95rem; }
+    .links { margin-top:8px; display:flex; flex-direction:column; gap:8px; }
+    .links a { display:inline-block; text-decoration:none; color:#fff; background:var(--acc); padding:10px 12px; border-radius:8px; font-weight:600; border:1px solid transparent; }
+    .links a:hover { filter:brightness(0.95); }
+    footer { max-width:1100px; margin:24px auto 40px; padding:0 16px; color:#475569; font-size:0.95rem; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+    footer a { color:var(--acc); text-decoration:none; }
+    footer a:hover { text-decoration:underline; }
+    .download { margin-top: 10px; }
+  </style>
 </head>
 <body>
-<div class="container">
-    <h1>🧠 Simulador CNN - Desenhe um dígito</h1>
-    <div class="sub">✏️ Desenhe com o mouse/toque → clique em "Reconhecer". <br>
-    ⚙️ Ajuste os parâmetros → clique em "Treinar Modelo" (não treina sozinho).</div>
-    
-    <div class="flex">
-        <div class="desenho-area">
-            <canvas id="drawCanvas" width="280" height="280"></canvas>
-            <div style="margin: 12px 0;">
-                <button id="clearBtn">🗑️ Limpar</button>
-                <button id="predictBtn">🔍 Reconhecer</button>
-            </div>
-            <div class="pred-box">
-                🤖 Rede acredita que é: <span id="predNumber">?</span>
-            </div>
-        </div>
-
-        <div class="params-area">
-            <div class="param-group">
-                <label>Conv1 - Filtros: <span id="f1_val" class="slider-value">16</span></label>
-                <input type="range" id="filtros1" min="8" max="64" step="8" value="16">
-                <label>Kernel size: <span id="k1_val" class="slider-value">3</span></label>
-                <input type="range" id="kernel1" min="2" max="5" step="1" value="3">
-            </div>
-            <div class="param-group">
-                <label>Conv2 - Filtros: <span id="f2_val" class="slider-value">32</span></label>
-                <input type="range" id="filtros2" min="8" max="64" step="8" value="32">
-                <label>Kernel size: <span id="k2_val" class="slider-value">3</span></label>
-                <input type="range" id="kernel2" min="2" max="5" step="1" value="3">
-            </div>
-            <div class="param-group">
-                <label>Neurônios Dense: <span id="dense_val" class="slider-value">128</span></label>
-                <input type="range" id="denseUnits" min="32" max="256" step="32" value="128">
-                <label>Dropout: <span id="drop_val" class="slider-value">0.25</span></label>
-                <input type="range" id="dropout" min="0" max="0.5" step="0.05" value="0.25">
-            </div>
-            <div class="param-group">
-                <label>Learning rate: <span id="lr_val" class="slider-value">0.001</span></label>
-                <input type="range" id="lr" min="0.0001" max="0.005" step="0.0005" value="0.001">
-                <label>Batch size: <span id="batch_val" class="slider-value">32</span></label>
-                <input type="range" id="batch" min="16" max="128" step="16" value="32">
-                <label>Épocas: <span id="ep_val" class="slider-value">5</span></label>
-                <input type="range" id="epocas" min="2" max="10" step="1" value="5">
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button id="treinarBtn" style="flex:2;">🚀 TREINAR MODELO</button>
-                <button id="stopTreinoBtn" class="stop-btn" style="flex:1;">⏹️ Parar</button>
-            </div>
-            <div class="status" id="statusLog">
-                ✅ Pronto. Clique em "TREINAR MODELO" para começar.
-            </div>
-        </div>
+  <header>
+    <div class="wrap">
+      <h1>3ºB — Ciência de Dados</h1>
+      <p class="lead">Portal das disciplinas com acesso rápido aos conteúdos, exercícios e páginas gerais.</p>
     </div>
-    <footer>Usando MNIST real (fonte: zygmuntz/kaggle-stuff). Acurácia esperada >85% após 5 épocas.</footer>
-</div>
+  </header>
 
-<script>
-    // ======================== ELEMENTOS ========================
-    const canvas = document.getElementById('drawCanvas');
-    const ctx = canvas.getContext('2d');
-    let desenhando = false;
-    let modelo = null;
-    let dadosTreino = null, dadosTeste = null;
-    let treinando = false;
-    let stopTraining = false;
-    let currentFit = null;  // para poder parar
+  <main>
+    <div class="grid">
+      <section class="col">
+        <div class="card">
+          <h2>Aprendizado de Máquina</h2>
+          <p>Fundamentos e prática aplicada.</p>
+          <div class="links">
+            <a href="/turmas/3b_ciencia_dados/matematica/geral.html">Geral</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana1.html">SEMANA 1 — Simulador Matriz</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana2.html">SEMANA 4 — Simulador Sistemas Lineares</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana5.html">SEMANA 5 — Simulador Equação da Reta </a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana61.html">SEMANA 6 — Histogramas e Gráficos de Dispersão​</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana6.html">SEMANA 6 — Simulador de Métricas de Regressão | MAE, MSE, RMSE, R²</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/exercicios.html">Exercícios</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/conteudos.html">Conteúdos</a>
 
-    // Sliders
-    const f1 = document.getElementById('filtros1'), k1 = document.getElementById('kernel1');
-    const f2 = document.getElementById('filtros2'), k2 = document.getElementById('kernel2');
-    const dense = document.getElementById('denseUnits'), dropout = document.getElementById('dropout');
-    const lr = document.getElementById('lr'), batch = document.getElementById('batch'), epocas = document.getElementById('epocas');
-    const atualizaLabels = () => {
-        document.getElementById('f1_val').innerText = f1.value;
-        document.getElementById('k1_val').innerText = k1.value;
-        document.getElementById('f2_val').innerText = f2.value;
-        document.getElementById('k2_val').innerText = k2.value;
-        document.getElementById('dense_val').innerText = dense.value;
-        document.getElementById('drop_val').innerText = dropout.value;
-        document.getElementById('lr_val').innerText = parseFloat(lr.value).toFixed(4);
-        document.getElementById('batch_val').innerText = batch.value;
-        document.getElementById('ep_val').innerText = epocas.value;
-    };
-    f1.oninput = atualizaLabels; k1.oninput = atualizaLabels; f2.oninput = atualizaLabels;
-    k2.oninput = atualizaLabels; dense.oninput = atualizaLabels; dropout.oninput = atualizaLabels;
-    lr.oninput = atualizaLabels; batch.oninput = atualizaLabels; epocas.oninput = atualizaLabels;
-    atualizaLabels();
+          </div>
+        </div>
+      </section>
 
-    // ======================== DESENHO ========================
-    function initCanvas() {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, 280, 280);
-        ctx.lineWidth = 24;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = 'black';
-    }
-    function getTensorFromCanvas() {
-        const temp = document.createElement('canvas');
-        temp.width = 28; temp.height = 28;
-        const tCtx = temp.getContext('2d');
-        tCtx.drawImage(canvas, 0, 0, 28, 28);
-        const img = tCtx.getImageData(0, 0, 28, 28);
-        const pixels = [];
-        for (let i = 0; i < img.data.length; i += 4) {
-            let gray = (img.data[i] + img.data[i+1] + img.data[i+2]) / 3;
-            // MNIST: fundo preto(0), dígito branco(1). Nosso canvas: fundo branco(255), traço preto(0)
-            let val = (255 - gray) / 255.0;
-            pixels.push(val);
-        }
-        return tf.tensor4d(pixels, [1, 28, 28, 1]);
-    }
-    function start(e) { desenhando = true; draw(e); }
-    function stop() { desenhando = false; ctx.beginPath(); }
-    function draw(e) {
-        if (!desenhando) return;
-        e.preventDefault();
-        const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        let cx, cy;
-        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
-        else { cx = e.clientX; cy = e.clientY; }
-        let x = (cx - rect.left) * scaleX;
-        let y = (cy - rect.top) * scaleY;
-        x = Math.min(Math.max(0, x), 280);
-        y = Math.min(Math.max(0, y), 280);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    }
-    canvas.addEventListener('mousedown', start);
-    canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('mouseup', stop);
-    canvas.addEventListener('touchstart', start);
-    canvas.addEventListener('touchmove', draw);
-    canvas.addEventListener('touchend', stop);
-    document.getElementById('clearBtn').onclick = () => {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, 280, 280);
-        document.getElementById('predNumber').innerText = '?';
-    };
-    initCanvas();
+      <section class="col">
+        <div class="card">
+          <h2>Inteligência Artificial</h2>
+          <p>Agentes, busca e aplicações de IA.</p>
+          <div class="links">
+            <a href="/turmas/3b_ciencia_dados/inteligencia_artificial/geral.html">Laboratorio de IA</a>
+            <a href="/turmas/3b_ciencia_dados/inteligencia_artificial/conteudos.html">Conteúdos</a>
+            <a href="/turmas/3b_ciencia_dados/inteligencia_artificial/exercicios.html">Construção</a>
+            <a href="/turmas/3b_ciencia_dados/inteligencia_artificial/game01.html">Webcam Transfer Learning — KNN</a>
+            <a href="/turmas/3b_ciencia_dados/inteligencia_artificial/game02.html">Webcam Transfer Learning — KNN + MobileNet</a>
+            <a href="/turmas/3b_ciencia_dados/inteligencia_artificial/game03.html">Construção</a>
 
-    // ======================== CARREGAR MNIST REAL ========================
-    async function carregarDadosMNIST() {
-        const statusDiv = document.getElementById('statusLog');
-        statusDiv.innerHTML = '📡 Baixando dataset MNIST (real)... aguarde.';
-        // URL funcional e confiável (CSV com label + 784 pixels)
-        const url = 'https://raw.githubusercontent.com/zygmuntz/kaggle-stuff/master/mnist_train.csv';
-        try {
-            const resp = await fetch(url);
-            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-            const texto = await resp.text();
-            const linhas = texto.split('\n').filter(l => l.trim().length > 0);
-            // Embaralhar para melhor distribuição
-            for (let i = linhas.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [linhas[i], linhas[j]] = [linhas[j], linhas[i]];
-            }
-            const total = 8000;   // 7000 treino, 1000 teste (rápido)
-            const treinoRaw = linhas.slice(0, 7000);
-            const testeRaw = linhas.slice(7000, 8000);
-            
-            function processar(arr) {
-                const xs = [], ys = [];
-                for (let linha of arr) {
-                    const partes = linha.split(',').map(Number);
-                    if (partes.length !== 785) continue;
-                    const label = partes[0];
-                    const pixels = partes.slice(1);
-                    if (pixels.some(isNaN)) continue;
-                    const norm = pixels.map(p => p / 255.0);
-                    xs.push(norm);
-                    ys.push(label);
-                }
-                return { xs, ys };
-            }
-            const treino = processar(treinoRaw);
-            const teste = processar(testeRaw);
-            if (treino.xs.length === 0) throw new Error('Nenhum dado válido');
-            
-            const xTrain = tf.tensor4d(treino.xs, [treino.xs.length, 28, 28, 1]);
-            const yTrain = tf.oneHot(tf.tensor1d(treino.ys, 'int32'), 10);
-            const xTest = tf.tensor4d(teste.xs, [teste.xs.length, 28, 28, 1]);
-            const yTest = tf.oneHot(tf.tensor1d(teste.ys, 'int32'), 10);
-            statusDiv.innerHTML = `✅ MNIST carregado: ${treino.xs.length} treino, ${teste.xs.length} teste. Pronto para treinar.`;
-            return { xTrain, yTrain, xTest, yTest };
-        } catch (err) {
-            statusDiv.innerHTML = `❌ Erro ao carregar MNIST: ${err.message}. Verifique sua internet.`;
-            throw err;
-        }
-    }
+          </div>
+        </div>
+      </section>
 
-    // ======================== CRIAR MODELO (com parâmetros atuais) ========================
-    function criarModelo() {
-        const model = tf.sequential();
-        model.add(tf.layers.conv2d({
-            inputShape: [28,28,1],
-            filters: parseInt(f1.value),
-            kernelSize: parseInt(k1.value),
-            activation: 'relu',
-            padding: 'same'
-        }));
-        model.add(tf.layers.maxPooling2d({ poolSize: [2,2] }));
-        model.add(tf.layers.conv2d({
-            filters: parseInt(f2.value),
-            kernelSize: parseInt(k2.value),
-            activation: 'relu',
-            padding: 'same'
-        }));
-        model.add(tf.layers.maxPooling2d({ poolSize: [2,2] }));
-        model.add(tf.layers.flatten());
-        model.add(tf.layers.dense({ units: parseInt(dense.value), activation: 'relu' }));
-        model.add(tf.layers.dropout({ rate: parseFloat(dropout.value) }));
-        model.add(tf.layers.dense({ units: 10, activation: 'softmax' }));
-        const optimizer = tf.train.adam(parseFloat(lr.value));
-        model.compile({ optimizer, loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
-        return model;
-    }
+      <section class="col">
+        <div class="card">
+          <h2>Matemática e Estatística para Ciência de Dados</h2>      
+          <p>Base matemática e estatística.</p>
+          <div class="links">
+            <a href="/turmas/3b_ciencia_dados/matematica/geral.html">Geral</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana1.html">SEMANA 1 — Simulador Matriz</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana2.html">SEMANA 4 — Simulador Sistemas Lineares</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana5.html">SEMANA 5 — Simulador Equação da Reta </a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana61.html">SEMANA 6 — Histogramas e Gráficos de Dispersão​</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/semana6.html">SEMANA 6 — Simulador de Métricas de Regressão | MAE, MSE, RMSE, R²</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/exercicios.html">Exercícios</a>
+            <a href="/turmas/3b_ciencia_dados/matematica/conteudos.html">Conteúdos</a>
+          </div>
+        </div>
+      </section>
 
-    // ======================== TREINAR (ACIONADO PELO BOTÃO) ========================
-    async function treinar() {
-        if (treinando) {
-            document.getElementById('statusLog').innerHTML += '<br>⚠️ Já está treinando. Aguarde ou clique em "Parar".';
-            return;
-        }
-        if (!dadosTreino) {
-            try {
-                const dados = await carregarDadosMNIST();
-                dadosTreino = { x: dados.xTrain, y: dados.yTrain };
-                dadosTeste = { x: dados.xTest, y: dados.yTest };
-            } catch(e) {
-                return;
-            }
-        }
-        treinando = true;
-        stopTraining = false;
-        document.getElementById('treinarBtn').disabled = true;
-        const statusDiv = document.getElementById('statusLog');
-        statusDiv.innerHTML = `🚀 Iniciando treino com ${epocas.value} épocas...<br>`;
-        
-        const novoModelo = criarModelo();
-        modelo = novoModelo;
-        const batchSize = parseInt(batch.value);
-        const ep = parseInt(epocas.value);
-        
-        try {
-            currentFit = novoModelo.fit(dadosTreino.x, dadosTreino.y, {
-                batchSize: batchSize,
-                epochs: ep,
-                validationData: [dadosTeste.x, dadosTeste.y],
-                callbacks: {
-                    onEpochEnd: async (epoch, logs) => {
-                        if (stopTraining) {
-                            statusDiv.innerHTML += `⏹️ Parada solicitada na época ${epoch+1}.<br>`;
-                            currentFit.stopTraining = true;
-                            treinando = false;
-                            document.getElementById('treinarBtn').disabled = false;
-                            return;
-                        }
-                        const acc = (logs.acc * 100).toFixed(2);
-                        const valAcc = (logs.val_acc * 100).toFixed(2);
-                        statusDiv.innerHTML += `Época ${epoch+1}/${ep} - acurácia treino: ${acc}% | val: ${valAcc}%<br>`;
-                        if (epoch+1 === ep) {
-                            statusDiv.innerHTML += `🎉 Treino concluído! Acurácia final: ${valAcc}%<br>`;
-                            treinando = false;
-                            document.getElementById('treinarBtn').disabled = false;
-                        }
-                    }
-                }
-            });
-            await currentFit;
-        } catch (err) {
-            statusDiv.innerHTML += `❌ Erro: ${err.message}<br>`;
-        } finally {
-            treinando = false;
-            document.getElementById('treinarBtn').disabled = false;
-            currentFit = null;
-        }
-    }
+      <section class="col">
+        <div class="card">
+          <h2>Exercícios</h2>
+          <p>Algoritmos, lógica computacional e fundamentos da programação.</p>
+          <div class="links">
+            </div>
+        </div>
+      </section>
+    </div>
+  </main>
 
-    // Parar treinamento
-    function pararTreino() {
-        if (treinando) {
-            stopTraining = true;
-            if (currentFit) currentFit.stopTraining = true;
-            document.getElementById('statusLog').innerHTML += '🛑 Parando treinamento...<br>';
-        } else {
-            document.getElementById('statusLog').innerHTML += 'ℹ️ Nenhum treino em andamento.<br>';
-        }
-    }
-
-    // Reconhecer dígito desenhado
-    async function reconhecer() {
-        if (!modelo) {
-            document.getElementById('predNumber').innerText = '? (treine primeiro)';
-            return;
-        }
-        const tensor = getTensorFromCanvas();
-        const pred = modelo.predict(tensor);
-        const classe = pred.argMax(1).dataSync()[0];
-        document.getElementById('predNumber').innerText = classe;
-        tensor.dispose();
-        pred.dispose();
-    }
-
-    // Eventos dos botões
-    document.getElementById('treinarBtn').onclick = treinar;
-    document.getElementById('stopTreinoBtn').onclick = pararTreino;
-    document.getElementById('predictBtn').onclick = reconhecer;
-    
-    // Pré-carregar os dados (mas não treinar) para ficar mais rápido quando clicar em Treinar
-    (async () => {
-        document.getElementById('statusLog').innerHTML = '🔄 Pré-carregando dataset MNIST (uma vez)...';
-        try {
-            const dados = await carregarDadosMNIST();
-            dadosTreino = { x: dados.xTrain, y: dados.yTrain };
-            dadosTeste = { x: dados.xTest, y: dados.yTest };
-            document.getElementById('statusLog').innerHTML = '✅ Dados carregados. Clique em "TREINAR MODELO" para começar.';
-        } catch(e) {
-            document.getElementById('statusLog').innerHTML = '❌ Falha no pré-carregamento. Tente recarregar a página.';
-        }
-    })();
-</script>
+  <footer>
+    <span>© 3ºB — Ciência de Dados</span>
+    <a href="/index.html">Voltar ao início</a>
+  </footer>
 </body>
 </html>
