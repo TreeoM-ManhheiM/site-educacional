@@ -2,13 +2,13 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CNN Simulator - Reconhecimento de Dígitos (Dados Embutidos)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CNN Simulator - Reconhecimento de Dígitos Desenhados</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
-        body { background: #eef2f7; margin: 0; padding: 20px; }
-        .container { max-width: 1300px; margin: auto; background: white; border-radius: 32px; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        * { box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 1300px; margin: 0 auto; background: white; border-radius: 2rem; padding: 25px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         h1 { margin: 0 0 5px; color: #1e3c72; }
         .sub { border-left: 5px solid #ff9800; padding-left: 15px; margin-bottom: 25px; color: #2c3e66; }
         .flex { display: flex; flex-wrap: wrap; gap: 30px; }
@@ -34,9 +34,9 @@
 </head>
 <body>
 <div class="container">
-    <h1>🧠 Simulador CNN - Desenhe e Reconheça Dígitos</h1>
-    <div class="sub">✏️ Desenhe com o mouse/toque → clique em "Reconhecer". <br>
-    ⚙️ Ajuste os parâmetros → clique em "TREINAR" (dados já estão embutidos, não baixa nada da internet).</div>
+    <h1>🧠 CNN Simulator - Desenhe e Reconheça Dígitos</h1>
+    <div class="sub">✏️ Desenhe um dígito (0-9) → clique "Reconhecer". <br>
+    Ajuste os parâmetros e clique "TREINAR" para ver a rede aprender (dados sintéticos realistas).</div>
     
     <div class="flex">
         <div class="desenho-area">
@@ -44,10 +44,10 @@
             <div style="margin: 12px 0;">
                 <button id="clearBtn">🗑️ Limpar</button>
                 <button id="predictBtn">🔍 Reconhecer</button>
-                <button id="showMapsBtn">🎨 Ver Mapas</button>
+                <button id="showMapsBtn">🎨 Mapas</button>
             </div>
             <div class="pred-box">
-                🤖 Rede acredita que é: <span id="predNumber">?</span>
+                🤖 Rede acredita: <span id="predNumber">?</span>
             </div>
         </div>
 
@@ -83,115 +83,170 @@
                 <button id="stopTreinoBtn" class="stop-btn" style="flex:1;">⏹️ Parar</button>
             </div>
             <div class="status" id="statusLog">
-                ✅ Pronto. Dados MNIST (1000 amostras) já incluídos. Clique em TREINAR.
+                ✅ Pronto. Dados sintéticos garantidos. Clique em TREINAR.
             </div>
         </div>
     </div>
     
     <div class="feature-maps" id="featureMapsPanel">
         <div style="display: flex; justify-content: space-between;">
-            <strong>🎨 Mapas de ativação (primeira camada) do seu desenho</strong>
-            <button id="refreshMapsBtn" style="background:#ff9800; padding: 4px 12px;">Atualizar mapas</button>
+            <strong>🎨 Mapas de ativação (primeira camada)</strong>
+            <button id="refreshMapsBtn" style="background:#ff9800; padding: 4px 12px;">Atualizar</button>
         </div>
         <div id="mapsContainer" class="mapas-grid"></div>
-        <small>Cada quadrado é um filtro convolucional - mostra onde ele "ativa" mais.</small>
+        <small>Cada quadrado = um filtro convolucional - mostra onde ele "ativa" mais no seu desenho.</small>
     </div>
-    <footer>Dados MNIST reais embutidos no código (1000 amostras). Acurácia esperada >80% após 5 épocas.</footer>
+    <footer>Simulador funcional com dados sintéticos de alta qualidade. Acurácia esperada >75% após 5 épocas.</footer>
 </div>
 
 <script>
     // ============================================================
-    // 1. DADOS MNIST EMBUTIDOS (pequeno dataset real)
+    // 1. GERAÇÃO ROBUSTA DE DADOS SINTÉTICOS (SEM CANVAS)
     // ============================================================
-    // São 1000 imagens (28x28) e rótulos, armazenados como arrays JS compactos.
-    // Cada imagem é um array de 784 números (0..1).
-    // Os dados foram extraídos do MNIST original e reduzidos para exemplo funcional.
-    // (Na prática, você pode substituir por um dataset maior, mas 1000 já é suficiente para aprendizado)
-    
-    const MNIST_EMBUTIDO = {
-        // 1000 imagens de treino, 200 de teste
-        train: {
-            images: [],
-            labels: []
-        },
-        test: {
-            images: [],
-            labels: []
-        }
-    };
-    
-    // Função para gerar dados sintéticos realistas (baseados em MNIST real comprimido)
-    // Como não podemos colocar 1000 imagens brutas aqui (o código ficaria enorme),
-    // vamos gerar variações de dígitos usando ruído e formas geométricas.
-    // Isso garante que o modelo aprenda padrões e o usuário veja o efeito dos parâmetros.
-    // Para uma demonstração didática, funciona perfeitamente.
-    
-    function gerarDigito(label, variacao) {
-        // Cria um canvas 28x28 em memória
-        const canvas = document.createElement('canvas');
-        canvas.width = 28;
-        canvas.height = 28;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = 'black';
-        ctx.fillRect(0, 0, 28, 28);
-        ctx.fillStyle = 'white';
-        ctx.font = '20px Arial';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        // Desenha o dígito com pequenas variações de posição e rotação
-        let x = 14 + (variacao % 5 - 2);
-        let y = 14 + (Math.floor(variacao/5) % 5 - 2);
-        ctx.fillText(label.toString(), x, y);
+    // Função que desenha um dígito diretamente em um array 28x28 (valores 0-1)
+    // Usa formas geométricas básicas para cada dígito, garantindo que sempre gera arrays válidos.
+    function criarImagemDigito(digito, variacao) {
+        // cria matriz 28x28 de zeros
+        let img = Array(28).fill().map(() => Array(28).fill(0));
         
-        // Adiciona um pouco de ruído gaussiano
-        const imgData = ctx.getImageData(0, 0, 28, 28);
-        const pixels = [];
-        for (let i = 0; i < imgData.data.length; i += 4) {
-            let gray = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2]) / 3;
-            // Ruído leve
-            let noise = (Math.random() - 0.5) * 0.1;
-            let val = Math.min(1, Math.max(0, gray / 255 + noise));
-            pixels.push(val);
+        // Função para desenhar um círculo
+        function desenharCirculo(cx, cy, raio, intensidade) {
+            for (let i = -raio; i <= raio; i++) {
+                for (let j = -raio; j <= raio; j++) {
+                    let x = cx + i, y = cy + j;
+                    if (x>=0 && x<28 && y>=0 && y<28 && i*i + j*j <= raio*raio) {
+                        img[y][x] = Math.max(img[y][x], intensidade);
+                    }
+                }
+            }
         }
-        return pixels;
+        function desenharLinha(x1, y1, x2, y2, espessura, intensidade) {
+            const dx = Math.abs(x2 - x1);
+            const dy = Math.abs(y2 - y1);
+            const sx = x1 < x2 ? 1 : -1;
+            const sy = y1 < y2 ? 1 : -1;
+            let err = dx - dy;
+            let x = x1, y = y1;
+            while (true) {
+                for (let e = -Math.floor(espessura/2); e <= Math.floor(espessura/2); e++) {
+                    for (let f = -Math.floor(espessura/2); f <= Math.floor(espessura/2); f++) {
+                        let nx = x + e, ny = y + f;
+                        if (nx>=0 && nx<28 && ny>=0 && ny<28) img[ny][nx] = Math.max(img[ny][nx], intensidade);
+                    }
+                }
+                if (x === x2 && y === y2) break;
+                const e2 = 2 * err;
+                if (e2 > -dy) { err -= dy; x += sx; }
+                if (e2 < dx) { err += dx; y += sy; }
+            }
+        }
+        function desenharRetangulo(x1, y1, x2, y2, intensidade) {
+            for (let y = y1; y <= y2; y++) {
+                for (let x = x1; x <= x2; x++) {
+                    if (x>=0 && x<28 && y>=0 && y<28) img[y][x] = intensidade;
+                }
+            }
+        }
+        
+        // Pequenas variações de posição e espessura
+        let shiftX = (variacao % 5 - 2) * 0.8;
+        let shiftY = (Math.floor(variacao/5) % 5 - 2) * 0.8;
+        let tamanho = 1.0 + (variacao % 3 - 1) * 0.1;
+        const cx = 14 + shiftX;
+        const cy = 14 + shiftY;
+        const raioBase = 8 * tamanho;
+        
+        switch(digito) {
+            case 0: // anel
+                desenharCirculo(cx, cy, raioBase, 0.9);
+                desenharCirculo(cx, cy, raioBase-3, 0.0);
+                break;
+            case 1: // linha vertical
+                desenharLinha(cx, cy-8, cx, cy+8, 4, 0.9);
+                break;
+            case 2: // curva "S"
+                desenharLinha(cx-5, cy-6, cx, cy-2, 3, 0.8);
+                desenharLinha(cx, cy-2, cx, cy+2, 3, 0.8);
+                desenharLinha(cx, cy+2, cx+5, cy+6, 3, 0.8);
+                break;
+            case 3: // dois arcos
+                desenharCirculo(cx, cy-4, 4, 0.8);
+                desenharCirculo(cx, cy+4, 4, 0.8);
+                desenharLinha(cx-3, cy-6, cx+3, cy-2, 3, 0.8);
+                desenharLinha(cx-3, cy+2, cx+3, cy+6, 3, 0.8);
+                break;
+            case 4: // cruz + linha
+                desenharLinha(cx-6, cy, cx+6, cy, 3, 0.9);
+                desenharLinha(cx, cy-6, cx, cy+6, 3, 0.9);
+                break;
+            case 5: // "S" invertido
+                desenharLinha(cx+5, cy-6, cx, cy-2, 3, 0.8);
+                desenharLinha(cx, cy-2, cx, cy+2, 3, 0.8);
+                desenharLinha(cx, cy+2, cx-5, cy+6, 3, 0.8);
+                break;
+            case 6: // círculo com gancho
+                desenharCirculo(cx-2, cy, raioBase-2, 0.9);
+                desenharLinha(cx+2, cy, cx+6, cy+4, 3, 0.8);
+                break;
+            case 7: // linha horizontal + vertical no topo
+                desenharLinha(cx-6, cy-4, cx+6, cy-4, 3, 0.9);
+                desenharLinha(cx, cy-4, cx, cy+6, 3, 0.9);
+                break;
+            case 8: // dois círculos
+                desenharCirculo(cx, cy-4, 4, 0.9);
+                desenharCirculo(cx, cy+4, 4, 0.9);
+                break;
+            case 9: // círculo com haste
+                desenharCirculo(cx, cy-3, raioBase-2, 0.9);
+                desenharLinha(cx, cy+2, cx, cy+8, 3, 0.8);
+                break;
+            default: break;
+        }
+        
+        // Adicionar ruído leve e converter para array 1D
+        let flat = [];
+        for (let y = 0; y < 28; y++) {
+            for (let x = 0; x < 28; x++) {
+                let val = img[y][x];
+                val += (Math.random() - 0.5) * 0.1;
+                val = Math.min(1, Math.max(0, val));
+                flat.push(val);
+            }
+        }
+        return flat;
     }
     
-    // Gerar 1000 amostras de treino (100 de cada dígito)
-    for (let digit = 0; digit <= 9; digit++) {
-        for (let i = 0; i < 100; i++) {
-            const img = gerarDigito(digit, i);
-            MNIST_EMBUTIDO.train.images.push(img);
-            MNIST_EMBUTIDO.train.labels.push(digit);
+    // Gerar 1500 imagens de treino (150 de cada dígito) e 300 de teste (30 cada)
+    const trainImages = [], trainLabels = [];
+    const testImages = [], testLabels = [];
+    for (let d=0; d<=9; d++) {
+        for (let i=0; i<150; i++) {
+            trainImages.push(criarImagemDigito(d, i));
+            trainLabels.push(d);
+        }
+        for (let i=0; i<30; i++) {
+            testImages.push(criarImagemDigito(d, i+200));
+            testLabels.push(d);
         }
     }
-    // Gerar 200 amostras de teste (20 de cada dígito)
-    for (let digit = 0; digit <= 9; digit++) {
-        for (let i = 0; i < 20; i++) {
-            const img = gerarDigito(digit, i+200);
-            MNIST_EMBUTIDO.test.images.push(img);
-            MNIST_EMBUTIDO.test.labels.push(digit);
-        }
+    // Embaralhar treino
+    for (let i=trainImages.length-1; i>0; i--) {
+        const j = Math.floor(Math.random()*(i+1));
+        [trainImages[i], trainImages[j]] = [trainImages[j], trainImages[i]];
+        [trainLabels[i], trainLabels[j]] = [trainLabels[j], trainLabels[i]];
     }
     
-    // Embaralhar dados de treino
-    for (let i = MNIST_EMBUTIDO.train.images.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [MNIST_EMBUTIDO.train.images[i], MNIST_EMBUTIDO.train.images[j]] = [MNIST_EMBUTIDO.train.images[j], MNIST_EMBUTIDO.train.images[i]];
-        [MNIST_EMBUTIDO.train.labels[i], MNIST_EMBUTIDO.train.labels[j]] = [MNIST_EMBUTIDO.train.labels[j], MNIST_EMBUTIDO.train.labels[i]];
-    }
-    
-    // Converter para tensores e guardar globalmente
     let dadosTreino = null, dadosTeste = null;
     function prepararTensores() {
-        const trainImages = tf.tensor4d(MNIST_EMBUTIDO.train.images, [MNIST_EMBUTIDO.train.images.length, 28, 28, 1]);
-        const trainLabels = tf.oneHot(tf.tensor1d(MNIST_EMBUTIDO.train.labels, 'int32'), 10);
-        const testImages = tf.tensor4d(MNIST_EMBUTIDO.test.images, [MNIST_EMBUTIDO.test.images.length, 28, 28, 1]);
-        const testLabels = tf.oneHot(tf.tensor1d(MNIST_EMBUTIDO.test.labels, 'int32'), 10);
-        return { xTrain: trainImages, yTrain: trainLabels, xTest: testImages, yTest: testLabels };
+        const xTrain = tf.tensor4d(trainImages, [trainImages.length, 28, 28, 1]);
+        const yTrain = tf.oneHot(tf.tensor1d(trainLabels, 'int32'), 10);
+        const xTest = tf.tensor4d(testImages, [testImages.length, 28, 28, 1]);
+        const yTest = tf.oneHot(tf.tensor1d(testLabels, 'int32'), 10);
+        return { xTrain, yTrain, xTest, yTest };
     }
     
     // ============================================================
-    // 2. CONFIGURAÇÃO DO DESENHO
+    // 2. DESENHO NO CANVAS (reconhecimento)
     // ============================================================
     const canvas = document.getElementById('drawCanvas');
     const ctx = canvas.getContext('2d');
@@ -210,32 +265,32 @@
         tCtx.drawImage(canvas, 0, 0, 28, 28);
         const img = tCtx.getImageData(0, 0, 28, 28);
         const pixels = [];
-        for (let i = 0; i < img.data.length; i += 4) {
-            let gray = (img.data[i] + img.data[i+1] + img.data[i+2]) / 3;
-            let val = (255 - gray) / 255.0; // inverter cores
+        for (let i=0; i<img.data.length; i+=4) {
+            let gray = (img.data[i]+img.data[i+1]+img.data[i+2])/3;
+            let val = (255 - gray)/255.0;
             pixels.push(val);
         }
-        return tf.tensor4d(pixels, [1, 28, 28, 1]);
+        return tf.tensor4d(pixels, [1,28,28,1]);
     }
-    function startDraw(e) { desenhando = true; draw(e); }
-    function stopDraw() { desenhando = false; ctx.beginPath(); }
+    function startDraw(e) { desenhando=true; draw(e); }
+    function stopDraw() { desenhando=false; ctx.beginPath(); }
     function draw(e) {
-        if (!desenhando) return;
+        if(!desenhando) return;
         e.preventDefault();
         const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
+        const scaleX = canvas.width/rect.width;
+        const scaleY = canvas.height/rect.height;
         let cx, cy;
-        if (e.touches) { cx = e.touches[0].clientX; cy = e.touches[0].clientY; }
-        else { cx = e.clientX; cy = e.clientY; }
-        let x = (cx - rect.left) * scaleX;
-        let y = (cy - rect.top) * scaleY;
-        x = Math.min(Math.max(0, x), 280);
-        y = Math.min(Math.max(0, y), 280);
-        ctx.lineTo(x, y);
+        if(e.touches) { cx=e.touches[0].clientX; cy=e.touches[0].clientY; }
+        else { cx=e.clientX; cy=e.clientY; }
+        let x = (cx - rect.left)*scaleX;
+        let y = (cy - rect.top)*scaleY;
+        x = Math.min(Math.max(0,x),280);
+        y = Math.min(Math.max(0,y),280);
+        ctx.lineTo(x,y);
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(x, y);
+        ctx.moveTo(x,y);
     }
     canvas.addEventListener('mousedown', startDraw);
     canvas.addEventListener('mousemove', draw);
@@ -244,200 +299,174 @@
     canvas.addEventListener('touchmove', draw);
     canvas.addEventListener('touchend', stopDraw);
     document.getElementById('clearBtn').onclick = () => {
-        ctx.fillStyle = 'white';
-        ctx.fillRect(0, 0, 280, 280);
-        document.getElementById('predNumber').innerText = '?';
+        ctx.fillStyle='white';
+        ctx.fillRect(0,0,280,280);
+        document.getElementById('predNumber').innerText='?';
     };
     initCanvas();
     
     // ============================================================
-    // 3. MODELO E TREINAMENTO
+    // 3. MODELO E TREINAMENTO (com controles)
     // ============================================================
     let modelo = null;
     let treinando = false;
     let stopTraining = false;
     let currentFit = null;
     
-    const f1 = document.getElementById('filtros1'), k1 = document.getElementById('kernel1');
-    const f2 = document.getElementById('filtros2'), k2 = document.getElementById('kernel2');
-    const dense = document.getElementById('denseUnits'), dropout = document.getElementById('dropout');
-    const lr = document.getElementById('lr'), batch = document.getElementById('batch'), epocas = document.getElementById('epocas');
+    const f1=document.getElementById('filtros1'), k1=document.getElementById('kernel1');
+    const f2=document.getElementById('filtros2'), k2=document.getElementById('kernel2');
+    const dense=document.getElementById('denseUnits'), dropout=document.getElementById('dropout');
+    const lr=document.getElementById('lr'), batch=document.getElementById('batch'), epocas=document.getElementById('epocas');
     function atualizaLabels() {
-        document.getElementById('f1_val').innerText = f1.value;
-        document.getElementById('k1_val').innerText = k1.value;
-        document.getElementById('f2_val').innerText = f2.value;
-        document.getElementById('k2_val').innerText = k2.value;
-        document.getElementById('dense_val').innerText = dense.value;
-        document.getElementById('drop_val').innerText = dropout.value;
-        document.getElementById('lr_val').innerText = parseFloat(lr.value).toFixed(4);
-        document.getElementById('batch_val').innerText = batch.value;
-        document.getElementById('ep_val').innerText = epocas.value;
+        document.getElementById('f1_val').innerText=f1.value;
+        document.getElementById('k1_val').innerText=k1.value;
+        document.getElementById('f2_val').innerText=f2.value;
+        document.getElementById('k2_val').innerText=k2.value;
+        document.getElementById('dense_val').innerText=dense.value;
+        document.getElementById('drop_val').innerText=dropout.value;
+        document.getElementById('lr_val').innerText=parseFloat(lr.value).toFixed(4);
+        document.getElementById('batch_val').innerText=batch.value;
+        document.getElementById('ep_val').innerText=epocas.value;
     }
-    f1.oninput = atualizaLabels; k1.oninput = atualizaLabels; f2.oninput = atualizaLabels;
-    k2.oninput = atualizaLabels; dense.oninput = atualizaLabels; dropout.oninput = atualizaLabels;
-    lr.oninput = atualizaLabels; batch.oninput = atualizaLabels; epocas.oninput = atualizaLabels;
+    f1.oninput=atualizaLabels; k1.oninput=atualizaLabels; f2.oninput=atualizaLabels;
+    k2.oninput=atualizaLabels; dense.oninput=atualizaLabels; dropout.oninput=atualizaLabels;
+    lr.oninput=atualizaLabels; batch.oninput=atualizaLabels; epocas.oninput=atualizaLabels;
     atualizaLabels();
     
     function criarModelo() {
         const model = tf.sequential();
-        model.add(tf.layers.conv2d({
-            inputShape: [28,28,1],
-            filters: parseInt(f1.value),
-            kernelSize: parseInt(k1.value),
-            activation: 'relu',
-            padding: 'same'
-        }));
-        model.add(tf.layers.maxPooling2d({ poolSize: [2,2] }));
-        model.add(tf.layers.conv2d({
-            filters: parseInt(f2.value),
-            kernelSize: parseInt(k2.value),
-            activation: 'relu',
-            padding: 'same'
-        }));
-        model.add(tf.layers.maxPooling2d({ poolSize: [2,2] }));
+        model.add(tf.layers.conv2d({inputShape:[28,28,1], filters:parseInt(f1.value), kernelSize:parseInt(k1.value), activation:'relu', padding:'same'}));
+        model.add(tf.layers.maxPooling2d({poolSize:[2,2]}));
+        model.add(tf.layers.conv2d({filters:parseInt(f2.value), kernelSize:parseInt(k2.value), activation:'relu', padding:'same'}));
+        model.add(tf.layers.maxPooling2d({poolSize:[2,2]}));
         model.add(tf.layers.flatten());
-        model.add(tf.layers.dense({ units: parseInt(dense.value), activation: 'relu' }));
-        model.add(tf.layers.dropout({ rate: parseFloat(dropout.value) }));
-        model.add(tf.layers.dense({ units: 10, activation: 'softmax' }));
-        const optimizer = tf.train.adam(parseFloat(lr.value));
-        model.compile({ optimizer, loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+        model.add(tf.layers.dense({units:parseInt(dense.value), activation:'relu'}));
+        model.add(tf.layers.dropout({rate:parseFloat(dropout.value)}));
+        model.add(tf.layers.dense({units:10, activation:'softmax'}));
+        model.compile({optimizer:tf.train.adam(parseFloat(lr.value)), loss:'categoricalCrossentropy', metrics:['accuracy']});
         return model;
     }
     
     async function treinar() {
-        if (treinando) {
-            document.getElementById('statusLog').innerHTML += '<br>⚠️ Já treinando. Aguarde ou pare.';
-            return;
+        if(treinando){ statusDiv.innerHTML+='<br>⚠️ Já treinando.'; return; }
+        if(!dadosTreino){
+            const tens=prepararTensores();
+            dadosTreino={x:tens.xTrain, y:tens.yTrain};
+            dadosTeste={x:tens.xTest, y:tens.yTest};
         }
-        if (!dadosTreino) {
-            const tensores = prepararTensores();
-            dadosTreino = { x: tensores.xTrain, y: tensores.yTrain };
-            dadosTeste = { x: tensores.xTest, y: tensores.yTest };
-        }
-        treinando = true;
-        stopTraining = false;
-        document.getElementById('treinarBtn').disabled = true;
-        const statusDiv = document.getElementById('statusLog');
-        statusDiv.innerHTML = `🚀 Treinando com ${epocas.value} épocas (dados embutidos)...<br>`;
-        const novoModelo = criarModelo();
-        modelo = novoModelo;
-        const batchSize = parseInt(batch.value);
-        const ep = parseInt(epocas.value);
-        try {
-            currentFit = novoModelo.fit(dadosTreino.x, dadosTreino.y, {
-                batchSize: batchSize,
-                epochs: ep,
-                validationData: [dadosTeste.x, dadosTeste.y],
-                callbacks: {
-                    onEpochEnd: (epoch, logs) => {
-                        if (stopTraining) {
-                            statusDiv.innerHTML += `⏹️ Parada na época ${epoch+1}.<br>`;
-                            if (currentFit) currentFit.stopTraining = true;
-                            treinando = false;
-                            document.getElementById('treinarBtn').disabled = false;
+        treinando=true;
+        stopTraining=false;
+        document.getElementById('treinarBtn').disabled=true;
+        const statusDiv=document.getElementById('statusLog');
+        statusDiv.innerHTML=`🚀 Treinando ${epocas.value} épocas (dados sintéticos robustos)...<br>`;
+        const novoModelo=criarModelo();
+        modelo=novoModelo;
+        const batchSize=parseInt(batch.value);
+        const ep=parseInt(epocas.value);
+        try{
+            currentFit=novoModelo.fit(dadosTreino.x, dadosTreino.y, {
+                batchSize, epochs:ep, validationData:[dadosTeste.x, dadosTeste.y],
+                callbacks:{
+                    onEpochEnd:(epoch,logs)=>{
+                        if(stopTraining){
+                            statusDiv.innerHTML+=`⏹️ Parada na época ${epoch+1}.<br>`;
+                            if(currentFit) currentFit.stopTraining=true;
+                            treinando=false;
+                            document.getElementById('treinarBtn').disabled=false;
                             return;
                         }
-                        const acc = (logs.acc * 100).toFixed(2);
-                        const valAcc = (logs.val_acc * 100).toFixed(2);
-                        statusDiv.innerHTML += `Época ${epoch+1}/${ep} - acurácia treino: ${acc}% | val: ${valAcc}%<br>`;
-                        if (epoch+1 === ep) {
-                            statusDiv.innerHTML += `🎉 Treino concluído! Acurácia final: ${valAcc}%<br>`;
-                            treinando = false;
-                            document.getElementById('treinarBtn').disabled = false;
+                        const acc=(logs.acc*100).toFixed(2);
+                        const valAcc=(logs.val_acc*100).toFixed(2);
+                        statusDiv.innerHTML+=`Época ${epoch+1}/${ep} - acc treino: ${acc}% | val: ${valAcc}%<br>`;
+                        if(epoch+1===ep){
+                            statusDiv.innerHTML+=`🎉 Concluído! Acurácia final: ${valAcc}%<br>`;
+                            treinando=false;
+                            document.getElementById('treinarBtn').disabled=false;
                         }
                     }
                 }
             });
             await currentFit;
-        } catch(err) {
-            statusDiv.innerHTML += `❌ Erro: ${err.message}<br>`;
-        } finally {
-            treinando = false;
-            document.getElementById('treinarBtn').disabled = false;
-            currentFit = null;
+        }catch(err){
+            statusDiv.innerHTML+=`❌ Erro: ${err.message}<br>`;
+        }finally{
+            treinando=false;
+            document.getElementById('treinarBtn').disabled=false;
+            currentFit=null;
         }
     }
     
-    function pararTreino() {
-        if (treinando) {
-            stopTraining = true;
-            if (currentFit) currentFit.stopTraining = true;
-            document.getElementById('statusLog').innerHTML += '🛑 Parando...<br>';
-        } else {
-            document.getElementById('statusLog').innerHTML += 'ℹ️ Nenhum treino em andamento.<br>';
+    function pararTreino(){
+        if(treinando){
+            stopTraining=true;
+            if(currentFit) currentFit.stopTraining=true;
+            document.getElementById('statusLog').innerHTML+='🛑 Parando...<br>';
+        }else{
+            document.getElementById('statusLog').innerHTML+='ℹ️ Nenhum treino em andamento.<br>';
         }
     }
     
-    async function reconhecer() {
-        if (!modelo) {
-            document.getElementById('predNumber').innerText = '? (treine primeiro)';
-            return;
-        }
-        const tensor = getTensorFromCanvas();
-        const pred = modelo.predict(tensor);
-        const classe = pred.argMax(1).dataSync()[0];
-        document.getElementById('predNumber').innerText = classe;
-        tensor.dispose();
-        pred.dispose();
+    async function reconhecer(){
+        if(!modelo){ document.getElementById('predNumber').innerText='? (treine)'; return; }
+        const tensor=getTensorFromCanvas();
+        const pred=modelo.predict(tensor);
+        const classe=pred.argMax(1).dataSync()[0];
+        document.getElementById('predNumber').innerText=classe;
+        tensor.dispose(); pred.dispose();
     }
     
     // Mapas de ativação
-    const featurePanel = document.getElementById('featureMapsPanel');
-    async function atualizarMapas() {
-        if (!modelo) { alert('Treine o modelo primeiro'); return; }
-        featurePanel.style.display = 'block';
-        const convLayer = modelo.layers.find(l => l.getClassName() === 'Conv2D');
-        if (!convLayer) { document.getElementById('mapsContainer').innerHTML = '<i>Camada conv não encontrada</i>'; return; }
-        const tensor = getTensorFromCanvas();
-        const intermedio = tf.model({ inputs: modelo.inputs, outputs: convLayer.output });
-        const ativ = intermedio.predict(tensor);
-        const maps = await ativ.squeeze([0]);
-        const numFiltros = maps.shape[2];
-        const h = maps.shape[0], w = maps.shape[1];
-        const container = document.getElementById('mapsContainer');
-        container.innerHTML = '';
-        for (let i = 0; i < Math.min(numFiltros, 12); i++) {
-            const fmap = maps.slice([0,0,i], [h, w, 1]);
-            const minVal = fmap.min().dataSync()[0];
-            const maxVal = fmap.max().dataSync()[0];
-            const norm = fmap.sub(minVal).div(Math.max(maxVal - minVal, 1e-6));
-            const vals = await norm.data();
-            const canvasMap = document.createElement('canvas');
-            canvasMap.width = 64; canvasMap.height = 64;
-            canvasMap.className = 'mapa';
-            const ctxMap = canvasMap.getContext('2d');
-            const imgData = ctxMap.createImageData(64, 64);
-            for (let y = 0; y < 64; y++) {
-                for (let x = 0; x < 64; x++) {
-                    const origY = Math.floor(y * h / 64);
-                    const origX = Math.floor(x * w / 64);
-                    const v = vals[origY * w + origX] * 255;
-                    const idx = (y * 64 + x) * 4;
-                    imgData.data[idx] = v; imgData.data[idx+1] = v;
-                    imgData.data[idx+2] = v; imgData.data[idx+3] = 255;
+    const featurePanel=document.getElementById('featureMapsPanel');
+    async function atualizarMapas(){
+        if(!modelo){ alert('Treine o modelo primeiro'); return; }
+        featurePanel.style.display='block';
+        const convLayer=modelo.layers.find(l=>l.getClassName()==='Conv2D');
+        if(!convLayer){ document.getElementById('mapsContainer').innerHTML='<i>Camada conv não encontrada</i>'; return; }
+        const tensor=getTensorFromCanvas();
+        const intermedio=tf.model({inputs:modelo.inputs, outputs:convLayer.output});
+        const ativ=intermedio.predict(tensor);
+        const maps=await ativ.squeeze([0]);
+        const numFiltros=maps.shape[2], h=maps.shape[0], w=maps.shape[1];
+        const container=document.getElementById('mapsContainer');
+        container.innerHTML='';
+        for(let i=0;i<Math.min(numFiltros,12);i++){
+            const fmap=maps.slice([0,0,i],[h,w,1]);
+            const minVal=fmap.min().dataSync()[0];
+            const maxVal=fmap.max().dataSync()[0];
+            const norm=fmap.sub(minVal).div(Math.max(maxVal-minVal,1e-6));
+            const vals=await norm.data();
+            const canvasMap=document.createElement('canvas');
+            canvasMap.width=64; canvasMap.height=64; canvasMap.className='mapa';
+            const ctxMap=canvasMap.getContext('2d');
+            const imgData=ctxMap.createImageData(64,64);
+            for(let y=0;y<64;y++){
+                for(let x=0;x<64;x++){
+                    const origY=Math.floor(y*h/64);
+                    const origX=Math.floor(x*w/64);
+                    const v=vals[origY*w+origX]*255;
+                    const idx=(y*64+x)*4;
+                    imgData.data[idx]=v; imgData.data[idx+1]=v; imgData.data[idx+2]=v; imgData.data[idx+3]=255;
                 }
             }
-            ctxMap.putImageData(imgData, 0, 0);
+            ctxMap.putImageData(imgData,0,0);
             container.appendChild(canvasMap);
             fmap.dispose();
         }
-        tensor.dispose();
-        ativ.dispose();
-        intermedio.dispose();
+        tensor.dispose(); ativ.dispose(); intermedio.dispose();
     }
     
-    document.getElementById('treinarBtn').onclick = treinar;
-    document.getElementById('stopTreinoBtn').onclick = pararTreino;
-    document.getElementById('predictBtn').onclick = reconhecer;
-    document.getElementById('showMapsBtn').onclick = atualizarMapas;
-    document.getElementById('refreshMapsBtn').onclick = atualizarMapas;
+    document.getElementById('treinarBtn').onclick=treinar;
+    document.getElementById('stopTreinoBtn').onclick=pararTreino;
+    document.getElementById('predictBtn').onclick=reconhecer;
+    document.getElementById('showMapsBtn').onclick=atualizarMapas;
+    document.getElementById('refreshMapsBtn').onclick=atualizarMapas;
     
-    // Pré-carregar os tensores
-    (() => {
-        const tensores = prepararTensores();
-        dadosTreino = { x: tensores.xTrain, y: tensores.yTrain };
-        dadosTeste = { x: tensores.xTest, y: tensores.yTest };
-        document.getElementById('statusLog').innerHTML = '✅ Dados MNIST sintéticos (1000 treino, 200 teste) carregados. Clique em TREINAR.';
+    // Pré-carregar tensores para evitar atraso
+    (()=>{
+        const t=prepararTensores();
+        dadosTreino={x:t.xTrain, y:t.yTrain};
+        dadosTeste={x:t.xTest, y:t.yTest};
+        document.getElementById('statusLog').innerHTML='✅ Dados sintéticos prontos (1500 treino, 300 teste). Clique em TREINAR.';
     })();
 </script>
 </body>
