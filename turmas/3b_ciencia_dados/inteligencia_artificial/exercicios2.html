@@ -3,42 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Simulador CNN + Reconhecimento de Dígitos Desenhados</title>
+    <title>Simulador CNN: Desenhe e Reconheça Dígitos</title>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
     <style>
-        * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, sans-serif;
-        }
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         body {
-            background: linear-gradient(145deg, #f5f7fc 0%, #e9edf2 100%);
+            background: linear-gradient(145deg, #f0f4fa 0%, #e2e8f0 100%);
             margin: 0;
             padding: 20px;
         }
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.96);
             border-radius: 2rem;
             box-shadow: 0 20px 35px rgba(0,0,0,0.2);
-            overflow: hidden;
-            backdrop-filter: blur(2px);
             padding: 25px;
         }
         h1 {
-            margin: 0 0 5px;
-            font-size: 2rem;
+            margin: 0;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            font-size: 2rem;
         }
         .sub {
             color: #2c3e66;
             margin-bottom: 25px;
             border-left: 5px solid #ff9800;
             padding-left: 15px;
-            font-weight: 500;
         }
         .duas-colunas {
             display: flex;
@@ -48,11 +42,11 @@
         .col-desenho {
             flex: 1.2;
             min-width: 280px;
-            background: #ffffffdd;
+            background: #fefefe;
             border-radius: 28px;
             padding: 20px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            backdrop-filter: blur(4px);
+            text-align: center;
         }
         .col-parametros {
             flex: 2;
@@ -61,7 +55,7 @@
         canvas#drawCanvas {
             background: white;
             border-radius: 24px;
-            box-shadow: 0 0 0 2px #ff9800, 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 0 0 3px #ff9800, 0 10px 20px rgba(0,0,0,0.2);
             cursor: crosshair;
             display: block;
             margin: 0 auto;
@@ -84,25 +78,19 @@
             cursor: pointer;
             transition: 0.2s;
             font-size: 0.9rem;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
-        button:hover {
-            background: #e68900;
-            transform: scale(0.96);
-        }
+        button:hover { background: #e68900; transform: scale(0.96); }
         .predicao {
             background: #1e3c72;
             margin-top: 20px;
             padding: 12px;
             border-radius: 40px;
-            text-align: center;
             color: white;
             font-weight: bold;
-            font-size: 1.8rem;
-            letter-spacing: 2px;
+            font-size: 1.4rem;
         }
         .predicao span {
-            font-size: 3rem;
+            font-size: 2.5rem;
             background: #ff9800;
             display: inline-block;
             padding: 0 20px;
@@ -122,12 +110,7 @@
             margin-bottom: 6px;
             color: #1e4663;
         }
-        input, select {
-            width: 100%;
-            padding: 8px 12px;
-            border-radius: 40px;
-            border: 1px solid #ccc;
-        }
+        input { width: 100%; padding: 8px; border-radius: 40px; border: 1px solid #ccc; }
         .slider-value {
             background: #ff9800;
             color: white;
@@ -153,19 +136,8 @@
             padding: 15px;
             color: white;
         }
-        .mapas-grid {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            justify-content: center;
-            margin-top: 10px;
-        }
-        .mapa {
-            background: black;
-            border-radius: 8px;
-            width: 60px;
-            height: 60px;
-        }
+        .mapas-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; justify-content: center; }
+        .mapa { background: black; border-radius: 8px; width: 60px; height: 60px; }
         .loader {
             display: inline-block;
             width: 16px;
@@ -177,40 +149,28 @@
             margin-right: 8px;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
-        footer {
-            font-size: 12px;
-            text-align: center;
-            margin-top: 35px;
-            opacity: 0.7;
-        }
-        hr {
-            margin: 20px 0;
-        }
+        footer { font-size: 12px; text-align: center; margin-top: 35px; opacity: 0.7; }
     </style>
 </head>
 <body>
 <div class="container">
     <h1>🧠 Simulador CNN: Desenhe e Reconheça Dígitos</h1>
-    <div class="sub">✍️ Desenhe um dígito (0-9) no quadro → a rede neural convolucional tenta adivinhar.<br>
-    ⚙️ Ajuste os parâmetros da CNN, clique em "Treinar modelo" e veja como a predição muda!</div>
+    <div class="sub">✍️ Desenhe um dígito no quadro → a rede neural tenta adivinhar.<br>
+    ⚙️ Altere os parâmetros da CNN, clique em "TREINAR" e veja o reconhecimento melhorar!</div>
 
     <div class="duas-colunas">
-        <!-- Área de desenho e predição -->
         <div class="col-desenho">
             <canvas id="drawCanvas" width="280" height="280" style="touch-action: none;"></canvas>
             <div class="botoes-acoes">
                 <button id="clearBtn">🗑️ Limpar</button>
                 <button id="predictBtn">🔍 Reconhecer agora</button>
             </div>
-            <div class="predicao" id="predictionDisplay">
+            <div class="predicao">
                 🤖 Rede acredita que é: <span id="predNumber">?</span>
             </div>
-            <div style="text-align: center; margin-top: 12px;">
-                <small>💡 Dica: desenhe com o mouse/dedo. Preencha bem o dígito.</small>
-            </div>
+            <div style="margin-top: 12px;"><small>💡 Dica: desenhe com traço grosso e centralizado.</small></div>
         </div>
 
-        <!-- Painel de parâmetros da CNN -->
         <div class="col-parametros">
             <div class="param-group">
                 <label>🔹 Conv1 - Filtros: <span id="f1_val" class="slider-value">8</span></label>
@@ -235,43 +195,43 @@
                 <input type="range" id="lr" min="0.0001" max="0.01" step="0.0005" value="0.001">
                 <label>Batch size: <span id="batch_val" class="slider-value">64</span></label>
                 <input type="range" id="batch" min="16" max="128" step="16" value="64">
-                <label>Épocas (treino): <span id="ep_val" class="slider-value">3</span></label>
+                <label>Épocas: <span id="ep_val" class="slider-value">3</span></label>
                 <input type="range" id="epocas" min="1" max="8" step="1" value="3">
             </div>
             <button id="treinarBtn">🚀 TREINAR MODELO (com parâmetros atuais)</button>
             <div class="status-area" id="statusLog">
-                📡 Aguardando... Carregando dados MNIST e treinando modelo padrão.
+                Aguardando... Carregando dados MNIST e treinando modelo inicial.
             </div>
         </div>
     </div>
 
-    <!-- Visualização das feature maps (camada convolucional) -->
     <div class="feature-maps" id="featureMapsPanel" style="display: none;">
-        <div style="display: flex; justify-content: space-between;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
             <strong>🎨 Mapas de ativação (primeira camada conv) do seu desenho</strong>
             <button id="showMapsBtn" style="background:#ff9800; padding: 4px 12px;">Atualizar mapas</button>
         </div>
         <div id="mapsContainer" class="mapas-grid"></div>
-        <small style="opacity:0.7;">Cada quadradinho é um filtro convolucional mostrando onde ele "ativa" mais.</small>
+        <small>Cada quadrado = um filtro convolucional - mostra onde ele "ativa" mais.</small>
     </div>
-    <footer>
-        Simulador didático - TensorFlow.js + MNIST. Desenhe e veja a rede em ação. Ajuste parâmetros e re-treine!
-    </footer>
+    <footer>TensorFlow.js + MNIST. Ajuste os parâmetros e re-treine para entender o impacto na CNN.</footer>
 </div>
 
 <script>
-    // --------------------------------------------------------------
+    // ------------------------------------------------------------
     // 1. Variáveis globais
-    // --------------------------------------------------------------
+    // ------------------------------------------------------------
     let modeloCNN = null;
-    let dadosTreino = null;   // { xTrain, yTrain }
-    let dadosTeste = null;    // { xTest, yTest } (usado pra avaliar)
+    let dadosTreino = null;   // { xs, ys }
+    let dadosTeste = null;    // { xs, ys }
     let estaTreinando = false;
-    let canvasDesenho = document.getElementById('drawCanvas');
-    let ctx = canvasDesenho.getContext('2d');
+    let mnistCarregado = false;
+
+    // Canvas desenho
+    const canvas = document.getElementById('drawCanvas');
+    const ctx = canvas.getContext('2d');
     let desenhando = false;
-    
-    // Elementos
+
+    // Elementos DOM
     const predNumberSpan = document.getElementById('predNumber');
     const statusLogDiv = document.getElementById('statusLog');
     const btnTreinar = document.getElementById('treinarBtn');
@@ -279,7 +239,7 @@
     const btnPredict = document.getElementById('predictBtn');
     const btnShowMaps = document.getElementById('showMapsBtn');
     const featurePanel = document.getElementById('featureMapsPanel');
-    
+
     // Sliders e labels
     const f1 = document.getElementById('filtros1');
     const k1 = document.getElementById('kernel1');
@@ -290,7 +250,7 @@
     const lr = document.getElementById('lr');
     const batch = document.getElementById('batch');
     const epocas = document.getElementById('epocas');
-    
+
     function atualizaLabels() {
         document.getElementById('f1_val').innerText = f1.value;
         document.getElementById('k1_val').innerText = k1.value;
@@ -306,45 +266,43 @@
     k2.oninput = atualizaLabels; dense.oninput = atualizaLabels; dropout.oninput = atualizaLabels;
     lr.oninput = atualizaLabels; batch.oninput = atualizaLabels; epocas.oninput = atualizaLabels;
     atualizaLabels();
-    
-    // --------------------------------------------------------------
-    // 2. Configurar desenho no canvas
-    // --------------------------------------------------------------
+
+    // ------------------------------------------------------------
+    // 2. Configurar desenho
+    // ------------------------------------------------------------
     function initCanvas() {
         ctx.fillStyle = 'white';
         ctx.fillRect(0, 0, 280, 280);
-        ctx.lineWidth = 20;
+        ctx.lineWidth = 22;
         ctx.lineCap = 'round';
         ctx.strokeStyle = 'black';
     }
-    function getCanvasData() {
-        // redimensiona para 28x28 (MNIST) e normaliza
+    function getCanvasTensor() {
+        // cria canvas 28x28 com o desenho redimensionado
         const tempCanvas = document.createElement('canvas');
         tempCanvas.width = 28;
         tempCanvas.height = 28;
         const tempCtx = tempCanvas.getContext('2d');
-        tempCtx.drawImage(canvasDesenho, 0, 0, 28, 28);
+        tempCtx.drawImage(canvas, 0, 0, 28, 28);
         const imgData = tempCtx.getImageData(0, 0, 28, 28);
         const pixels = [];
         for (let i = 0; i < imgData.data.length; i += 4) {
-            // escala de cinza: média de R,G,B, e depois invertemos (MNIST: fundo preto, dígito branco)
             let gray = (imgData.data[i] + imgData.data[i+1] + imgData.data[i+2]) / 3;
-            // Inverter: nosso canvas tem fundo branco (255) e traço preto (0). MNIST quer fundo 0 e dígito 255.
+            // Inverter: nosso desenho tem fundo branco (255) e traço preto (0). MNIST quer fundo 0 e dígito 255.
             let val = 255 - gray;
             pixels.push(val / 255.0);
         }
         return tf.tensor4d(pixels, [1, 28, 28, 1]);
     }
-    
-    // Eventos mouse/touch
+
     function startDrawing(e) { desenhando = true; draw(e); }
     function stopDrawing() { desenhando = false; ctx.beginPath(); }
     function draw(e) {
         if (!desenhando) return;
         e.preventDefault();
-        const rect = canvasDesenho.getBoundingClientRect();
-        const scaleX = canvasDesenho.width / rect.width;
-        const scaleY = canvasDesenho.height / rect.height;
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
         let clientX, clientY;
         if (e.touches) {
             clientX = e.touches[0].clientX;
@@ -362,41 +320,48 @@
         ctx.beginPath();
         ctx.moveTo(x, y);
     }
-    canvasDesenho.addEventListener('mousedown', startDrawing);
-    canvasDesenho.addEventListener('mousemove', draw);
-    canvasDesenho.addEventListener('mouseup', stopDrawing);
-    canvasDesenho.addEventListener('touchstart', startDrawing);
-    canvasDesenho.addEventListener('touchmove', draw);
-    canvasDesenho.addEventListener('touchend', stopDrawing);
-    btnLimpar.addEventListener('click', () => { ctx.fillStyle = 'white'; ctx.fillRect(0, 0, 280, 280); predNumberSpan.innerText = '?'; });
-    
-    // --------------------------------------------------------------
+    canvas.addEventListener('mousedown', startDrawing);
+    canvas.addEventListener('mousemove', draw);
+    canvas.addEventListener('mouseup', stopDrawing);
+    canvas.addEventListener('touchstart', startDrawing);
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchend', stopDrawing);
+    btnLimpar.addEventListener('click', () => {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, 280, 280);
+        predNumberSpan.innerText = '?';
+    });
+
+    // ------------------------------------------------------------
     // 3. Predição e feature maps
-    // --------------------------------------------------------------
+    // ------------------------------------------------------------
     async function reconhecer() {
-        if (!modeloCNN) { predNumberSpan.innerText = '? (treine primeiro)'; return; }
-        const tensorImg = getCanvasData();
+        if (!modeloCNN) {
+            predNumberSpan.innerText = '? (treine primeiro)';
+            return;
+        }
+        const tensorImg = getCanvasTensor();
         const pred = modeloCNN.predict(tensorImg);
-        const valores = await pred.data();
         const classe = pred.argMax(1).dataSync()[0];
         predNumberSpan.innerText = classe;
         tensorImg.dispose();
         pred.dispose();
         return classe;
     }
-    
+
     async function atualizarFeatureMaps() {
         if (!modeloCNN) return;
         featurePanel.style.display = 'block';
-        // Pegar a primeira camada convolucional (espera-se que seja a primeira camada do modelo)
+        // Encontrar a primeira camada convolucional
         const camadaConv = modeloCNN.layers.find(l => l.getClassName() === 'Conv2D');
-        if (!camadaConv) { document.getElementById('mapsContainer').innerHTML = '<i>Não foi possível extrair mapas</i>'; return; }
-        const tensorImg = getCanvasData();
-        // Criar modelo intermediário que retorna saída da primeira conv
+        if (!camadaConv) {
+            document.getElementById('mapsContainer').innerHTML = '<i>Não foi possível extrair mapas</i>';
+            return;
+        }
+        const tensorImg = getCanvasTensor();
         const intermediateModel = tf.model({ inputs: modeloCNN.inputs, outputs: camadaConv.output });
         const ativacoes = intermediateModel.predict(tensorImg);
-        // ativacoes shape: [1, altura, largura, numFiltros]
-        const maps = await ativacoes.squeeze([0]); // remove batch
+        const maps = await ativacoes.squeeze([0]); // [altura, largura, numFiltros]
         const numFiltros = maps.shape[2];
         const altura = maps.shape[0];
         const largura = maps.shape[1];
@@ -404,14 +369,15 @@
         container.innerHTML = '';
         for (let i = 0; i < Math.min(numFiltros, 12); i++) {
             const filtroAtiv = maps.slice([0,0,i], [altura, largura, 1]);
-            const min = filtroAtiv.min().dataSync()[0];
-            const max = filtroAtiv.max().dataSync()[0];
-            let normalizada = filtroAtiv.sub(min).div(max - min + 1e-6);
+            const minVal = filtroAtiv.min().dataSync()[0];
+            const maxVal = filtroAtiv.max().dataSync()[0];
+            let norm = filtroAtiv.sub(minVal).div(Math.max(maxVal - minVal, 1e-6));
             const canvasMapa = document.createElement('canvas');
-            canvasMapa.width = 64; canvasMapa.height = 64;
+            canvasMapa.width = 64;
+            canvasMapa.height = 64;
             canvasMapa.className = 'mapa';
             const ctxMap = canvasMapa.getContext('2d');
-            const vals = await normalizada.data();
+            const vals = await norm.data();
             const imgData = ctxMap.createImageData(64, 64);
             for (let y = 0; y < 64; y++) {
                 for (let x = 0; x < 64; x++) {
@@ -433,75 +399,85 @@
         ativacoes.dispose();
         intermediateModel.dispose();
     }
+
     btnPredict.addEventListener('click', reconhecer);
     btnShowMaps.addEventListener('click', atualizarFeatureMaps);
-    
-    // --------------------------------------------------------------
-    // 4. Construir modelo com parâmetros atuais
-    // --------------------------------------------------------------
-    function criarModeloComParametros() {
+
+    // ------------------------------------------------------------
+    // 4. Criar modelo com parâmetros atuais
+    // ------------------------------------------------------------
+    function criarModelo() {
         const params = {
-            filtros1: parseInt(f1.value),
-            kernel1: parseInt(k1.value),
-            filtros2: parseInt(f2.value),
-            kernel2: parseInt(k2.value),
-            denseUnits: parseInt(dense.value),
-            dropoutRate: parseFloat(dropout.value),
+            f1: parseInt(f1.value),
+            k1: parseInt(k1.value),
+            f2: parseInt(f2.value),
+            k2: parseInt(k2.value),
+            dense: parseInt(dense.value),
+            dropout: parseFloat(dropout.value),
             lr: parseFloat(lr.value)
         };
         const model = tf.sequential();
         model.add(tf.layers.conv2d({
             inputShape: [28,28,1],
-            filters: params.filtros1,
-            kernelSize: params.kernel1,
+            filters: params.f1,
+            kernelSize: params.k1,
             activation: 'relu',
             padding: 'same'
         }));
         model.add(tf.layers.maxPooling2d({ poolSize: [2,2] }));
         model.add(tf.layers.conv2d({
-            filters: params.filtros2,
-            kernelSize: params.kernel2,
+            filters: params.f2,
+            kernelSize: params.k2,
             activation: 'relu',
             padding: 'same'
         }));
         model.add(tf.layers.maxPooling2d({ poolSize: [2,2] }));
         model.add(tf.layers.flatten());
-        model.add(tf.layers.dense({ units: params.denseUnits, activation: 'relu' }));
-        model.add(tf.layers.dropout({ rate: params.dropoutRate }));
+        model.add(tf.layers.dense({ units: params.dense, activation: 'relu' }));
+        model.add(tf.layers.dropout({ rate: params.dropout }));
         model.add(tf.layers.dense({ units: 10, activation: 'softmax' }));
         const optimizer = tf.train.adam(params.lr);
         model.compile({ optimizer, loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
         return model;
     }
-    
-    // --------------------------------------------------------------
-    // 5. Carregar MNIST (reduzido para rapidez)
-    // --------------------------------------------------------------
+
+    // ------------------------------------------------------------
+    // 5. Carregar MNIST (versão estável - usando arquivo pequeno e confiável)
+    // ------------------------------------------------------------
     async function carregarMNIST() {
-        statusLogDiv.innerHTML = '<div class="loader"></div> Baixando MNIST (5000 treino, 1000 teste)...';
-        const url = 'https://raw.githubusercontent.com/vincentarelbundock/Rdatasets/master/csv/datasets/mnist_train.csv';
+        statusLogDiv.innerHTML = '<div class="loader"></div> Carregando MNIST (amostra 5000/1000)...';
+        // Usar uma fonte mais confiável: dataset pré-processado do próprio TensorFlow.js não funciona diretamente, então usamos o CSV do repositório conhecido, mas tratando erros.
+        const url = 'https://raw.githubusercontent.com/myleott/mnist_png/master/mnist_train.csv';
+        // Fallback: se falhar, usaremos dados sintéticos mas com aviso.
         try {
-            const resp = await fetch(url);
-            const texto = await resp.text();
-            const linhas = texto.split('\n').slice(1, 6001); // 6000 amostras
-            const trainLinhas = linhas.slice(0, 5000);
-            const testLinhas = linhas.slice(5000, 6000);
-            function parse(arr) {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Falha no fetch');
+            const texto = await response.text();
+            const linhas = texto.split('\n').filter(l => l.trim().length > 0);
+            // Pular cabeçalho se existir (primeira linha pode ser label,pixel0,...)
+            let startIdx = 0;
+            if (linhas[0].includes('label')) startIdx = 1;
+            const todas = linhas.slice(startIdx, 6000 + startIdx);
+            const trainData = todas.slice(0, 5000);
+            const testData = todas.slice(5000, 6000);
+            
+            function parseLines(arr) {
                 const xs = [], ys = [];
-                for (let linha of arr) {
-                    if (!linha.trim()) continue;
-                    const vals = linha.split(',').map(Number);
-                    const label = vals[0];
-                    const pixels = vals.slice(1);
-                    if (pixels.length === 784) {
+                for (let line of arr) {
+                    const parts = line.split(',').map(Number);
+                    if (parts.length !== 785) continue;
+                    const label = parts[0];
+                    const pixels = parts.slice(1);
+                    if (pixels.length === 784 && !pixels.some(isNaN)) {
                         xs.push(pixels.map(p => p / 255.0));
                         ys.push(label);
                     }
                 }
                 return { xs, ys };
             }
-            const train = parse(trainLinhas);
-            const test = parse(testLinhas);
+            const train = parseLines(trainData);
+            const test = parseLines(testData);
+            if (train.xs.length === 0) throw new Error('Nenhum dado válido');
             const xTrain = tf.tensor4d(train.xs, [train.xs.length, 28, 28, 1]);
             const yTrain = tf.oneHot(tf.tensor1d(train.ys, 'int32'), 10);
             const xTest = tf.tensor4d(test.xs, [test.xs.length, 28, 28, 1]);
@@ -509,31 +485,38 @@
             statusLogDiv.innerHTML = `✅ MNIST carregado: ${train.xs.length} treino, ${test.xs.length} teste.`;
             return { xTrain, yTrain, xTest, yTest };
         } catch (err) {
-            statusLogDiv.innerHTML = `❌ Erro ao carregar MNIST: ${err.message}. Usando dados aleatórios (didático)`;
-            // fallback sintético
-            const fakeX = tf.randomNormal([1000,28,28,1]);
-            const fakeY = tf.oneHot(tf.randomUniform([1000], 0, 10, 'int32'), 10);
-            return { xTrain: fakeX, yTrain: fakeY, xTest: fakeX, yTest: fakeY };
+            console.error(err);
+            statusLogDiv.innerHTML = `⚠️ Não foi possível carregar MNIST real (${err.message}). Usando dados sintéticos para demonstração. O reconhecimento será limitado.`;
+            // Dados sintéticos aleatórios (apenas para não quebrar)
+            const syntheticX = tf.randomNormal([2000, 28, 28, 1]);
+            const syntheticY = tf.oneHot(tf.randomUniform([2000], 0, 10, 'int32'), 10);
+            return { xTrain: syntheticX, yTrain: syntheticY, xTest: syntheticX, yTest: syntheticY };
         }
     }
-    
-    // --------------------------------------------------------------
+
+    // ------------------------------------------------------------
     // 6. Treinar modelo
-    // --------------------------------------------------------------
+    // ------------------------------------------------------------
     async function treinarModelo() {
-        if (estaTreinando) { statusLogDiv.innerHTML += '<br>⏳ Já treinando...'; return; }
-        if (!dadosTreino) {
+        if (estaTreinando) {
+            statusLogDiv.innerHTML += '<br>⏳ Treinamento em andamento...';
+            return;
+        }
+        if (!mnistCarregado || !dadosTreino) {
             const dados = await carregarMNIST();
             dadosTreino = { x: dados.xTrain, y: dados.yTrain };
             dadosTeste = { x: dados.xTest, y: dados.yTest };
+            mnistCarregado = true;
         }
         estaTreinando = true;
         btnTreinar.disabled = true;
         const ep = parseInt(epocas.value);
         const batchSize = parseInt(batch.value);
-        const novoModelo = criarModeloComParametros();
+        
+        const novoModelo = criarModelo();
         modeloCNN = novoModelo;
-        statusLogDiv.innerHTML = `<div class="loader"></div> Treinando com ${ep} épocas... (Isso pode levar até 1 min)`;
+        statusLogDiv.innerHTML = `<div class="loader"></div> Treinando com ${ep} épocas... Isso pode levar alguns segundos.`;
+        
         try {
             await novoModelo.fit(dadosTreino.x, dadosTreino.y, {
                 batchSize: batchSize,
@@ -541,41 +524,38 @@
                 validationData: [dadosTeste.x, dadosTeste.y],
                 callbacks: {
                     onEpochEnd: (epoch, logs) => {
-                        statusLogDiv.innerHTML = `Época ${epoch+1}/${ep} - acurácia treino: ${(logs.acc*100).toFixed(2)}% | val: ${(logs.val_acc*100).toFixed(2)}%<br>${statusLogDiv.innerHTML}`;
+                        if (logs && logs.acc !== undefined) {
+                            statusLogDiv.innerHTML = `Época ${epoch+1}/${ep} - acurácia treino: ${(logs.acc*100).toFixed(2)}% | val: ${(logs.val_acc*100).toFixed(2)}%<br>` + statusLogDiv.innerHTML;
+                        } else {
+                            statusLogDiv.innerHTML = `Época ${epoch+1}/${ep} concluída.<br>` + statusLogDiv.innerHTML;
+                        }
                         if (epoch+1 === ep) {
-                            statusLogDiv.innerHTML = `✅ Treinamento concluído! Acurácia final: ${(logs.val_acc*100).toFixed(2)}%<br>` + statusLogDiv.innerHTML;
+                            statusLogDiv.innerHTML = `✅ Treinamento finalizado!<br>` + statusLogDiv.innerHTML;
                         }
                     }
                 }
             });
-            // Teste rápido
-            const evalResult = novoModelo.evaluate(dadosTeste.x, dadosTeste.y);
+            // Avaliação final
+            const evalResult = modeloCNN.evaluate(dadosTeste.x, dadosTeste.y);
             const testAcc = evalResult[1].dataSync()[0];
             statusLogDiv.innerHTML = `🎉 Modelo pronto! Acurácia em teste: ${(testAcc*100).toFixed(2)}%<br>` + statusLogDiv.innerHTML;
         } catch(err) {
-            statusLogDiv.innerHTML = `❌ Erro no treino: ${err.message}`;
+            statusLogDiv.innerHTML = `❌ Erro no treinamento: ${err.message}<br>` + statusLogDiv.innerHTML;
+            console.error(err);
         } finally {
             estaTreinando = false;
             btnTreinar.disabled = false;
         }
     }
-    
-    // --------------------------------------------------------------
-    // 7. Inicialização: carregar dados e treinar modelo padrão
-    // --------------------------------------------------------------
+
+    // ------------------------------------------------------------
+    // 7. Inicialização
+    // ------------------------------------------------------------
     (async () => {
-        const dados = await carregarMNIST();
-        dadosTreino = { x: dados.xTrain, y: dados.yTrain };
-        dadosTeste = { x: dados.xTest, y: dados.yTest };
-        // modelo padrão (com valores iniciais)
-        const modeloPadrao = criarModeloComParametros();
-        modeloCNN = modeloPadrao;
-        statusLogDiv.innerHTML += "<br>📌 Modelo inicial criado (sem treino). Clique em 'TREINAR' para começar o aprendizado!";
-        // Opcional: treinar automaticamente uma época rápida para já ter alguma predição
-        await treinarModelo(); // já inicia treino com parâmetros padrão
         initCanvas();
+        statusLogDiv.innerHTML = "Carregando dados e treinando modelo inicial (pode levar até 30s)...";
+        await treinarModelo(); // treina automaticamente com parâmetros padrão
     })();
-    
     btnTreinar.addEventListener('click', treinarModelo);
 </script>
 </body>
