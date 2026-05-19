@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Busca de Vagas</title>
+</head>
+<body>
+
+<h1>Buscar vagas de tecnologia</h1>
+
+<input type="text" id="busca" placeholder="Ex: desenvolvedor de sistemas">
+<button onclick="buscarVagas()">Pesquisar</button>
+
+<div id="resultado"></div>
+
+<script>
+async function buscarVagas() {
+  const termo = document.getElementById("busca").value;
+
+  const url = `https://api.adzuna.com/v1/api/jobs/br/search/1?app_id=SEU_ID&app_key=SUA_KEY&what=${termo}`;
+
+  const response = await fetch(url);
+  const data = await response.json();
+
+  const div = document.getElementById("resultado");
+  div.innerHTML = "";
+
+  data.results.forEach(vaga => {
+    div.innerHTML += `
+      <div style="border:1px solid #ccc; margin:10px; padding:10px;">
+        <h3>${vaga.title}</h3>
+        <p>${vaga.company.display_name}</p>
+        <p>${vaga.location.display_name}</p>
+        <a href="${vaga.redirect_url}" target  </div>
+    `;
+  });
+}
+</script>
+
+</body>
+</html>
