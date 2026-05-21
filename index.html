@@ -42,37 +42,11 @@
             color: #1e293b;
         }
 
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 50px;
-        }
-
-        .card {
-            background: white;
-            padding: 25px;
+        .dica-pedagogica {
+            background: #eef2ff;
+            padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(0,0,0,0.12);
-        }
-
-        .card a {
-            text-decoration: none;
-            font-size: 20px;
-            font-weight: bold;
-            color: #2563eb;
-        }
-
-        .card p {
-            margin-top: 10px;
-            font-size: 15px;
-            color: #555;
+            margin-bottom: 30px;
         }
 
         .menu {
@@ -126,13 +100,13 @@
         }
 
         /* ===== BOTÕES DOS JOGOS ===== */
-
         .btn-domino,
         .btn-xadrez,
         .btn-atari,
         .btn-truco,
         .btn-gamao,
-        .btn-while {
+        .btn-while,
+        .btn-hanoi {
             display: inline-block;
             padding: 12px 24px;
             color: white;
@@ -148,7 +122,6 @@
         .btn-domino {
             background-color: #10b981;
         }
-
         .btn-domino:hover {
             background-color: #059669;
             transform: scale(1.05);
@@ -157,7 +130,6 @@
         .btn-xadrez {
             background-color: #1e293b;
         }
-
         .btn-xadrez:hover {
             background-color: #334155;
             transform: scale(1.05);
@@ -166,7 +138,6 @@
         .btn-atari {
             background-color: #d97706;
         }
-
         .btn-atari:hover {
             background-color: #b45309;
             transform: scale(1.05);
@@ -175,28 +146,32 @@
         .btn-truco {
             background-color: #8b5cf6;
         }
-
         .btn-truco:hover {
             background-color: #7c3aed;
             transform: scale(1.05);
         }
 
         .btn-gamao {
-            background-color: #b45309; /* tom âmbar/madeira */
+            background-color: #b45309;
         }
-
         .btn-gamao:hover {
             background-color: #92400e;
             transform: scale(1.05);
         }
 
-        /* NOVO BOTÃO DO JOGO MISSÃO WHILE */
         .btn-while {
             background-color: #3b82f6;
         }
-
         .btn-while:hover {
             background-color: #2563eb;
+            transform: scale(1.05);
+        }
+
+        .btn-hanoi {
+            background-color: #d68b27;
+        }
+        .btn-hanoi:hover {
+            background-color: #b45f1b;
             transform: scale(1.05);
         }
     </style>
@@ -225,7 +200,7 @@
             </p>
         </section>
 
-        <!-- LINKS DAS TURMAS + NOVO LINK DO CAMPEONATO -->
+        <!-- LINKS DAS TURMAS -->
         <section class="menu">
             <ul>
                 <li>
@@ -241,7 +216,7 @@
              </ul>
         </section>
 
-        <h2>Conteúdos</h2>
+        <h2>Conteúdos & Jogos</h2>
         <section class="menu">
             <ul>
                 <li><a href="link_drive.html">Link Drive</a></li>
@@ -251,6 +226,7 @@
                 <li><a href="loboratorio_jogos.html">Laboratório de Jogos de Lógica</a></li>
             </ul>
 
+            <!-- BOTÕES RÁPIDOS DOS JOGOS -->
             <div style="text-align:center; display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
                 <a href="domino/" class="btn-domino"> Dominó Lógico</a>
                 <a href="xadrez/" class="btn-xadrez"> Xadrez Lógico</a>
@@ -259,6 +235,7 @@
                 <a href="truco/" class="btn-truco"> Truco Paulista</a>
                 <a href="atari/2600.html" class="btn-atari"> Emulador ALL ROMS</a>
                 <a href="missao_while/index.html" class="btn-while"> Missão While</a>
+                <a href="torre_de_hanoi.html" class="btn-hanoi"> Torre de Hanói</a>
             </div>
         </section>
 
