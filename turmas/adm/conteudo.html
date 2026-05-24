@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Inovação e Empreendedorismo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            line-height: 1.5;
+            color: #000000;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .abnt-container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 3cm 2cm 2cm 3cm;
+            background: white;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.05);
+        }
+
+        h1 {
+            font-size: 18pt;
+            font-weight: bold;
+            text-align: center;
+            margin: 2cm 0 0.5cm 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitulo {
+            text-align: center;
+            font-size: 14pt;
+            font-weight: normal;
+            margin-top: -0.2cm;
+            margin-bottom: 1.5cm;
+            font-style: normal;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 0.3cm;
+        }
+
+        h3 {
+            font-size: 13pt;
+            font-weight: bold;
+            margin: 0.8cm 0 0.4cm 0;
+            color: #1a2a4f;
+        }
+
+        h4 {
+            font-size: 12pt;
+            font-weight: bold;
+            margin: 0.6cm 0 0.2cm 0;
+            font-style: normal;
+            border-bottom: 1px dotted #ddd;
+            padding-bottom: 2px;
+        }
+
+        .semana {
+            margin-bottom: 0.8cm;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .aula-item {
+            margin-left: 0.7cm;
+            margin-bottom: 0.45cm;
+            padding-left: 0.2cm;
+        }
+
+        .tema-semana {
+            font-size: 11pt;
+            font-style: italic;
+            background-color: #f4f4f9;
+            padding: 0.2cm 0.4cm;
+            margin-top: 0.2cm;
+            margin-bottom: 0.3cm;
+            border-left: 4px solid #2c3e66;
+            margin-left: 0.7cm;
+        }
+
+        .tema-semana strong {
+            font-style: normal;
+            color: #1a2a4f;
+        }
+
+        .habilidades,
+        .socioemocionais,
+        .objetivo {
+            margin-left: 0.5cm;
+            margin-top: 0.15cm;
+            margin-bottom: 0.1cm;
+            text-align: justify;
+        }
+
+        .habilidades strong,
+        .socioemocionais strong,
+        .objetivo strong {
+            font-weight: bold;
+        }
+
+        .sumario {
+            margin: 1cm 0 1.2cm 0;
+            background: #fafafc;
+            padding: 0.5cm 0.8cm;
+            border: 1px solid #ddd;
+        }
+        .sumario h3 {
+            margin-top: 0;
+            font-size: 13pt;
+            text-transform: uppercase;
+        }
+        .sumario-lista {
+            columns: 2;
+            column-gap: 1.2cm;
+            list-style: none;
+            padding-left: 0.2cm;
+        }
+        .sumario-lista li {
+            margin-bottom: 0.2cm;
+            font-size: 10pt;
+        }
+        .sumario-lista a {
+            text-decoration: none;
+            color: #1e466e;
+        }
+        .sumario-lista a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            margin-top: 1.8cm;
+            border-top: 1px solid #aaa;
+            padding-top: 0.5cm;
+            font-size: 10pt;
+            text-align: center;
+            color: #444;
+        }
+
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+            }
+            .abnt-container {
+                padding: 3cm 2cm 2cm 3cm;
+                box-shadow: none;
+            }
+            .sumario {
+                background: white;
+                border: 1px solid #ccc;
+            }
+            a {
+                text-decoration: none;
+                color: black;
+            }
+            .semana {
+                break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .abnt-container {
+                padding: 1.5cm 1cm 1.5cm 1.5cm;
+            }
+            .sumario-lista {
+                columns: 1;
+            }
+            h1 {
+                font-size: 16pt;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="abnt-container">
+        <h1>INOVAÇÃO E EMPREENDEDORISMO</h1>
+        <div class="subtitulo">3 aulas por semana</div>
+
+        <div class="sumario">
+            <h3>SUMÁRIO</h3>
+            <ul class="sumario-lista">
+                <li><a href="#semana1">Semana 1 – Conceitos Fundamentais de Inovação</a></li>
+                <li><a href="#semana2">Semana 2 – Tipos de Inovação: Disruptiva x Incremental</a></li>
+                <li><a href="#semana3">Semana 3 – Análise de Casos de Inovação Disruptiva</a></li>
+                <li><a href="#semana4">Semana 4 – Introdução ao Empreendedorismo</a></li>
+                <li><a href="#semana5">Semana 5 – Processos Empreendedores</a></li>
+                <li><a href="#semana6">Semana 6 – Plano de Negócios na Prática</a></li>
+                <li><a href="#semana7">Semana 7 – Conceitos e Tipos de Produtos e Serviços Inovadores</a></li>
+                <li><a href="#semana8">Semana 8 – Introdução à Gestão da Mudança</a></li>
+                <li><a href="#semana9">Semana 9 – Modelos de Gestão da Mudança</a></li>
+                <li><a href="#semana10">Semana 10 – Modelos de Negócios Inovadores: Construção e Exemplos</a></li>
+                <li><a href="#semana11">Semana 11 – Criação de Modelos de Negócios Sustentáveis</a></li>
+                <li><a href="#semana12">Semana 12 – Fundamentos do Design Thinking</a></li>
+                <li><a href="#semana13">Semana 13 – Etapas do Processo de Design Thinking</a></li>
+                <li><a href="#semana14">Semana 14 – Design Thinking e Canvas: Colocando em Prática</a></li>
+                <li><a href="#semana15">Semana 15 – Ferramentas de Inovação</a></li>
+                <li><a href="#semana16">Semana 16 – Pesquisa e Desenvolvimento para Inovação</a></li>
+                <li><a href="#semana17">Semana 17 – Pitch para Investidores na Prática</a></li>
+                <li><a href="#semana18">Semana 18 – Tecnologia na Administração: Transformação Digital</a></li>
+                <li><a href="#semana19">Semana 19 – Resistência à Mudança: Como Superar?</a></li>
+                <li><a href="#semana20">Semana 20 – Desenvolvimento de Produtos e Serviços Inovadores</a></li>
+                <li><a href="#semana21">Semana 21 – Criação de Protótipos de Produtos e Serviços Inovadores</a></li>
+                <li><a href="#semana22">Semana 22 – Business Model Canvas para Pequenos Negócios</a></li>
+                <li><a href="#semana23">Semana 23 – Criação de Modelos de Negócios com Canvas</a></li>
+                <li><a href="#semana24">Semana 24 – Inovação na Gestão de Produtos e Serviços</a></li>
+                <li><a href="#semana25">Semana 25 – Inovação Aberta</a></li>
+                <li><a href="#semana26">Semana 26 – Simulação de Inovação Tecnológica</a></li>
+                <li><a href="#semana27">Semana 27 – Métodos Ágeis: Desenvolvimento de Produtos e Serviços Inovadores</a></li>
+                <li><a href="#semana28">Semana 28 – Desenvolvimento de Serviços: Design de Experiência</a></li>
+            </ul>
+        </div>
+
+        <!-- SEMANA 1 -->
+        <section id="semana1" class="semana">
+            <h3>SEMANA 1 – Conceitos Fundamentais de Inovação</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Conceitos Fundamentais de Inovação</div>
+            <div class="aula-item"><h4>Aula 1: Inovação: definição e importância</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer oportunidades de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse por novas ideias, conceitos e abordagens.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer diferentes definições de inovação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Elementos-chave da inovação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer oportunidades de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse por novas ideias, conceitos e abordagens.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer elementos-chave da inovação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Ciclo de vida da inovação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer oportunidades de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Demonstrar interesse por novas ideias, conceitos e abordagens.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Idear oportunidades de negócios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 2 -->
+        <section id="semana2" class="semana">
+            <h3>SEMANA 2 – Tipos de Inovação: Disruptiva x Incremental</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Tipos de Inovação: Disruptiva x Incremental</div>
+            <div class="aula-item"><h4>Aula 1: Inovação disruptiva: conceitos e exemplos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer casos de inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer casos de inovação disruptiva.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Inovação incremental: estratégias e impactos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer casos de inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer casos de inovação incremental.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Comparando inovações incrementais</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer casos de inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar práticas de sustentabilidade.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 3 -->
+        <section id="semana3" class="semana">
+            <h3>SEMANA 3 – Análise de Casos de Inovação Disruptiva</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Análise de Casos de Inovação Disruptiva</div>
+            <div class="aula-item"><h4>Aula 1: Inovação disruptiva na prática (parte 1)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender os fatores que influenciam a viabilidade de novas ideias.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Analisar casos de inovação disruptiva.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Inovação disruptiva na prática (parte 2)</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender os fatores que influenciam a viabilidade de novas ideias.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar tecnologias emergentes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Inovações disruptivas: impactos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Compreender os fatores que influenciam a viabilidade de novas ideias.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer tendências de inovação e seus impactos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 4 -->
+        <section id="semana4" class="semana">
+            <h3>SEMANA 4 – Introdução ao Empreendedorismo</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução ao Empreendedorismo</div>
+            <div class="aula-item"><h4>Aula 1: Empreendedorismo: conceitos e importância</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer aspectos do empreendedorismo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer conceitos e importância do empreendedorismo.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Características e habilidades do empreendedor</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer aspectos do empreendedorismo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar características empreendedoras.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Identificação de oportunidades: da ideia ao negócio</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer aspectos do empreendedorismo.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Empregar práticas de ideação.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 5 -->
+        <section id="semana5" class="semana">
+            <h3>SEMANA 5 – Processos Empreendedores</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Processos Empreendedores</div>
+            <div class="aula-item"><h4>Aula 1: Etapas do empreendedorismo: da ideia ao mercado</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar plano de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a elaboração de plano de negócios.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Introdução à implementação de negócios</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar plano de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a elaboração de plano de negócios.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Gestão e crescimento sustentável: desafios e oportunidades</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar plano de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a elaboração de plano de negócios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 6 -->
+        <section id="semana6" class="semana">
+            <h3>SEMANA 6 – Plano de Negócios na Prática</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Plano de Negócios na Prática</div>
+            <div class="aula-item"><h4>Aula 1: Planejamento de negócios na prática</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar plano de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Elaborar plano de negócios.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Inovação e sustentabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar plano de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Elaborar plano de negócios.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Desenvolvimento de competências empreendedoras</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Elaborar plano de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Elaborar plano de negócios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 7 -->
+        <section id="semana7" class="semana">
+            <h3>SEMANA 7 – Conceitos e Tipos de Produtos e Serviços Inovadores</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Conceitos e Tipos de Produtos e Serviços Inovadores</div>
+            <div class="aula-item"><h4>Aula 1: Fundamentos da inovação em produtos e serviços</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar ferramentas de inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser perseverante para alcançar desafios.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Comparar diferentes tipos de inovação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Tipologia de produtos e serviços inovadores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar ferramentas de inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser perseverante para alcançar desafios.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar como produtos inovadores impactam o mercado.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Como a inovação pode apoiar a criação de produtos e serviços?</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar ferramentas de inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser perseverante para alcançar desafios.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar necessidades de mercado.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 8 -->
+        <section id="semana8" class="semana">
+            <h3>SEMANA 8 – Introdução à Gestão da Mudança</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Introdução à Gestão da Mudança</div>
+            <div class="aula-item"><h4>Aula 1: Conceitos básicos de gestão da mudança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e organizar as etapas de um processo de mudança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar a importância e os fundamentos da gestão da mudança nas organizações.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Etapas da gestão da mudança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e organizar as etapas de um processo de mudança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar as etapas de um processo de Gestão da Mudança. Reconhecer a sequência das etapas de Gestão da Mudança.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Ferramentas e técnicas para implementação da mudança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e organizar as etapas de um processo de mudança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar e avaliar a eficácia das principais ferramentas de Gestão da Mudança.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 9 -->
+        <section id="semana9" class="semana">
+            <h3>SEMANA 9 – Modelos de Gestão da Mudança</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelos de Gestão da Mudança</div>
+            <div class="aula-item"><h4>Aula 1: Fundamentos da gestão da mudança organizacional</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar os princípios básicos, avaliando os modelos de gestão da mudança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar os princípios básicos da gestão da mudança e seus componentes essenciais para implementação nas organizações.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Estratégias para implementar mudanças eficazes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar os princípios básicos, avaliando os modelos de gestão da mudança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar estratégias de implementação de mudanças, etapas do processo e problemas frequentes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Modelos de gestão da mudança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar os princípios básicos, avaliando os modelos de gestão da mudança.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar e avaliar modelos de gestão da mudança em diferentes contextos organizacionais.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 10 -->
+        <section id="semana10" class="semana">
+            <h3>SEMANA 10 – Modelos de Negócios Inovadores: Construção e Exemplos</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Modelos de Negócios Inovadores: Construção e Exemplos</div>
+            <div class="aula-item"><h4>Aula 1: Construindo modelos de negócios sustentáveis</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e aplicar ferramentas e estratégias para desenvolver e melhorar ideias de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar elementos de um modelo de negócios sustentável e reconhecer casos de sucesso de microempresas sustentáveis.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Inovação e empreendedorismo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e aplicar ferramentas e estratégias para desenvolver e melhorar ideias de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender como a criação de ideias inovadoras pode ser transformada em negócios viáveis.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Do planejamento à sustentabilidade</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar e aplicar ferramentas e estratégias para desenvolver e melhorar ideias de negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explorar modelos de negócios sustentáveis adequados para pequenos empresários. Reconhecer a importância do planejamento estratégico na sustentabilidade do negócio.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 11 -->
+        <section id="semana11" class="semana">
+            <h3>SEMANA 11 – Criação de Modelos de Negócios Sustentáveis</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Criação de Modelos de Negócios Sustentáveis</div>
+            <div class="aula-item"><h4>Aula 1: Fundamentos de modelos de negócios sustentáveis</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer a importância do empreendedorismo na criação de modelos de negócios sustentáveis.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Atuar crítica e responsavelmente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar a importância do empreendedorismo na criação de modelos de negócios sustentáveis.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Estratégias de implementação de modelos sustentáveis</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer a importância do empreendedorismo na criação de modelos de negócios sustentáveis.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Atuar crítica e responsavelmente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer estratégias para implementar sustentabilidade em um modelo de negócio.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Avaliação de impacto de modelos de negócios sustentáveis</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer a importância do empreendedorismo na criação de modelos de negócios sustentáveis.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Atuar crítica e responsavelmente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar impacto ambiental e social de diferentes modelos de negócios sustentáveis. Identificar desafios e oportunidades associados a negócios sustentáveis.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 12 -->
+        <section id="semana12" class="semana">
+            <h3>SEMANA 12 – Fundamentos do Design Thinking</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Fundamentos do Design Thinking</div>
+            <div class="aula-item"><h4>Aula 1: Introdução ao Design Thinking</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar problemas nas etapas de desenvolvimento de projetos para a busca de soluções.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar as etapas principais do processo de Design Thinking e compreender a importância da empatia no desenvolvimento de soluções inovadoras.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Métodos do Design Thinking</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar problemas nas etapas de desenvolvimento de projetos para a busca de soluções.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender etapas e técnicas na etapa de prototipagem.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Implementação e aplicação do Design Thinking</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar problemas nas etapas de desenvolvimento de projetos para a busca de soluções.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a funcionalidade da metodologia Design Thinking para o desenvolvimento de produtos e serviços.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 13 -->
+        <section id="semana13" class="semana">
+            <h3>SEMANA 13 – Etapas do Processo de Design Thinking</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Etapas do Processo de Design Thinking</div>
+            <div class="aula-item"><h4>Aula 1: As bases do Design Thinking</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Comunicar de forma clara os objetivos e as melhorias de um projeto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar a importância da empatia e das técnicas de pesquisa para delimitar problemas no processo de Design Thinking.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Ideação criativa</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Comunicar de forma clara os objetivos e as melhorias de um projeto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer técnicas de brainstorming e de seleção de ideias.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Prototipagem rápida e storytelling</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Comunicar de forma clara os objetivos e as melhorias de um projeto.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar novas soluções.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender técnicas de prototipagem, storytelling e coleta de feedback para validar e comunicar soluções.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 14 -->
+        <section id="semana14" class="semana">
+            <h3>SEMANA 14 – Design Thinking e Canvas: Colocando em Prática</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Design Thinking e Canvas: Colocando em Prática</div>
+            <div class="aula-item"><h4>Aula 1: Ideação: gerando soluções criativas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver soluções práticas e inovadoras para os problemas selecionados no processo de ideação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar desafios e definir o problema a ser abordado, aplicando técnicas de brainstorming para gerar e selecionar ideias.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Prototipagem: transformando ideias em protótipos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver soluções práticas e inovadoras para os problemas selecionados no processo de ideação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Aplicar técnicas de brainstorming para gerar e selecionar ideias.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Storytelling: comunicando soluções</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver soluções práticas e inovadoras para os problemas selecionados no processo de ideação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar em equipe.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Utilizar técnicas de storytelling para criar uma narrativa persuasiva e captar a atenção do público-alvo.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 15 -->
+        <section id="semana15" class="semana">
+            <h3>SEMANA 15 – Ferramentas de Inovação</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Ferramentas de Inovação</div>
+            <div class="aula-item"><h4>Aula 1: Mapa da empatia para Design Thinking</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar metodologias de inovação por meio do Design Thinking para a busca de soluções no desenvolvimento de novos produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar conceitos fundamentais do Design Thinking.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Fases do Design Thinking</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar metodologias de inovação por meio do Design Thinking para a busca de soluções no desenvolvimento de novos produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explorar etapas do Design Thinking.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Aplicação de Canvas em startups</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar metodologias de inovação por meio do Design Thinking para a busca de soluções no desenvolvimento de novos produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer Business Model Canvas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 16 -->
+        <section id="semana16" class="semana">
+            <h3>SEMANA 16 – Pesquisa e Desenvolvimento para Inovação</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Pesquisa e Desenvolvimento para Inovação</div>
+            <div class="aula-item"><h4>Aula 1: Inovação apoiada por pesquisa e desenvolvimento</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer etapas básicas de desenvolvimento de novos produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir diante de desafios e dificuldades.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar métodos de pesquisa utilizados em projetos de inovação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Ferramentas de pesquisa aplicadas à inovação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer etapas básicas de desenvolvimento de novos produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir diante de desafios e dificuldades.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Utilizar ferramentas de pesquisa para identificar oportunidades de inovação.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Ciclo de vida de produtos inovadores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Reconhecer etapas básicas de desenvolvimento de novos produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Persistir diante de desafios e dificuldades.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer ciclo de produtos desde o lançamento até a obsolescência.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 17 -->
+        <section id="semana17" class="semana">
+            <h3>SEMANA 17 – Pitch para Investidores na Prática</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Pitch para Investidores na Prática</div>
+            <div class="aula-item"><h4>Aula 1: Problema x proposição de valor</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Praticar pitch para o desenvolvimento da comunicação persuasiva.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Comunicar-se de forma eficaz.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar um problema de mercado e formular uma proposta de valor.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Estruturação de pitch</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Praticar pitch para o desenvolvimento da comunicação persuasiva.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Comunicar-se de forma eficaz.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Desenvolver um pitch estruturado.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Feedback construtivo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Praticar pitch para o desenvolvimento da comunicação persuasiva.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Comunicar-se de forma eficaz.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Apresentar o pitch desenvolvido.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 18 -->
+        <section id="semana18" class="semana">
+            <h3>SEMANA 18 – Tecnologia na Administração: Transformação Digital</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Tecnologia na Administração: Transformação Digital</div>
+            <div class="aula-item"><h4>Aula 1: Primeiros passos na transformação digital</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar processos de mudança organizacional.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser flexível.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar principais conceitos e benefícios da transformação digital.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Tecnologias disruptivas no ambiente corporativo</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar processos de mudança organizacional.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser flexível.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explorar como tecnologias disruptivas moldam novas oportunidades de negócios.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Implementação da transformação digital</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar processos de mudança organizacional.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser flexível.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Conhecer abordagens para incorporar transformação digital.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 19 -->
+        <section id="semana19" class="semana">
+            <h3>SEMANA 19 – Resistência à Mudança: Como Superar?</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Resistência à Mudança: Como Superar?</div>
+            <div class="aula-item"><h4>Aula 1: Reconhecendo a resistência à mudança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar razões da resistência.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser resiliente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar conceitos e impactos da resistência à mudança.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Causas e impactos da resistência à mudança</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar razões da resistência.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser resiliente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar causas da resistência à mudança.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Ferramentas para superar a resistência</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Identificar razões da resistência.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser resiliente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer técnicas de gestão da mudança.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 20 -->
+        <section id="semana20" class="semana">
+            <h3>SEMANA 20 – Desenvolvimento de Produtos e Serviços Inovadores</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Desenvolvimento de Produtos e Serviços Inovadores</div>
+            <div class="aula-item"><h4>Aula 1: Fundamentos do desenvolvimento de produtos e serviços inovadores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para desenvolvimento de produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser resiliente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar principais conceitos e etapas do desenvolvimento de produtos e serviços inovadores.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Ferramentas de desenvolvimento para inovação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para desenvolvimento de produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser resiliente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explorar diferentes ferramentas utilizadas para inovação no desenvolvimento de produtos e serviços.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Prototipagem e teste de conceitos inovadores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para desenvolvimento de produtos e serviços.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser resiliente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer a importância da prototipagem rápida.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 21 -->
+        <section id="semana21" class="semana">
+            <h3>SEMANA 21 – Criação de Protótipos de Produtos e Serviços Inovadores</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Criação de Protótipos de Produtos e Serviços Inovadores</div>
+            <div class="aula-item"><h4>Aula 1: Introdução à criação de protótipos inovadores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métodos de prototipagem rápida.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar diferentes tipos de protótipo e suas aplicações.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Técnicas de prototipagem rápida</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métodos de prototipagem rápida.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Utilizar ferramentas e técnicas de prototipagem rápida.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Testando e refinando protótipos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Utilizar métodos de prototipagem rápida.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Gerar soluções originais e inovadoras.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Saber tratar feedbacks para refinamento.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 22 -->
+        <section id="semana22" class="semana">
+            <h3>SEMANA 22 – Business Model Canvas para Pequenos Negócios</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Business Model Canvas para Pequenos Negócios</div>
+            <div class="aula-item"><h4>Aula 1: Importância do BMC para pequenos negócios</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver propostas de valor, estrutura de custos e fontes de receitas para pequenos negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar analiticamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Reconhecer conceito e importância do BMC para pequenos negócios.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Análise de mercado e proposta de valor no contexto de pequenos negócios</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver propostas de valor, estrutura de custos e fontes de receitas para pequenos negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar analiticamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Formular proposta de valor utilizando BMC.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Estrutura de custos e fontes de receitas para pequenos negócios</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver propostas de valor, estrutura de custos e fontes de receitas para pequenos negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar analiticamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar estrutura de custos e fontes de receita para pequenos negócios.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 23 -->
+        <section id="semana23" class="semana">
+            <h3>SEMANA 23 – Criação de Modelos de Negócios com Canvas</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Criação de Modelos de Negócios com Canvas</div>
+            <div class="aula-item"><h4>Aula 1: Criação de proposta de valor e segmento de clientes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver propostas de valor, estrutura de custos e fontes de receitas para pequenos negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar analiticamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Descrever a proposta de valor de um negócio e identificar os segmentos de clientes.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Canais de distribuição, relacionamento com clientes e fontes de receita</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver propostas de valor, estrutura de custos e fontes de receitas para pequenos negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar analiticamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Descrever canais de distribuição e formas de relacionamento com cliente e listar principais fontes de receita.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Recursos e atividades principais, parcerias e estrutura de custos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver propostas de valor, estrutura de custos e fontes de receitas para pequenos negócios.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar analiticamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Descrever recursos-chave, atividades principais, parcerias e estrutura de custos.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 24 -->
+        <section id="semana24" class="semana">
+            <h3>SEMANA 24 – Inovação na Gestão de Produtos e Serviços</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Inovação na Gestão de Produtos e Serviços</div>
+            <div class="aula-item"><h4>Aula 1: Papel da inovação na evolução de produtos e serviços</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser criativo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender a importância e o impacto da inovação na evolução de produtos e serviços.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Maneiras de implementar inovação em produtos e serviços</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser criativo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Relacionar estratégias e abordagens eficazes para implementar inovação em produtos e serviços.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Desenvolvimento e implementação de ideias inovadoras</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Ser criativo.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar como ideias inovadoras são desenvolvidas e implementadas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 25 -->
+        <section id="semana25" class="semana">
+            <h3>SEMANA 25 – Inovação Aberta</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Inovação Aberta</div>
+            <div class="aula-item"><h4>Aula 1: Inovação aberta: conceitos e fundamentos</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Entender conceito de inovação aberta e seus fundamentos.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Modelos e exemplos de inovação aberta em empresas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explorar diferentes modelos e exemplos práticos de inovação aberta.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Benefícios e desafios da inovação aberta para organizações</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Trabalhar de forma colaborativa.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar benefícios e desafios da inovação aberta.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 26 -->
+        <section id="semana26" class="semana">
+            <h3>SEMANA 26 – Simulação de Inovação Tecnológica</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Simulação de Inovação Tecnológica</div>
+            <div class="aula-item"><h4>Aula 1: Entendendo as necessidades dos clientes</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar estrategicamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar necessidades e problemas de clientes para criar soluções úteis.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Criando protótipos tecnológicos simples</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar estrategicamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar protótipos simples que representem ideias para resolver problemas.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Planejando a implementação</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar ferramentas para fomentar inovação.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Pensar estrategicamente.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar plano básico para colocar soluções em prática.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 27 -->
+        <section id="semana27" class="semana">
+            <h3>SEMANA 27 – Métodos Ágeis: Desenvolvimento de Produtos e Serviços Inovadores</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Métodos Ágeis: Desenvolvimento de Produtos e Serviços Inovadores</div>
+            <div class="aula-item"><h4>Aula 1: Métodos ágeis para microempreendedores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar práticas básicas de Scrum e Kanban no desenvolvimento de produtos e serviços inovadores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Explorar como métodos ágeis podem ser adaptados e aplicados no contexto de microempreendedores para o desenvolvimento de produtos e serviços inovadores.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Scrum aplicado ao desenvolvimento de produtos inovadores</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar práticas básicas de Scrum e Kanban no desenvolvimento de produtos e serviços inovadores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Compreender como o Scrum pode ser utilizado por microempreendedores no desenvolvimento de produtos inovadores.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Kanban na gestão de serviços para microempresas</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Aplicar práticas básicas de Scrum e Kanban no desenvolvimento de produtos e serviços inovadores.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar princípios do Kanban e como podem ser aplicados na gestão de serviços para microempresas.</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 28 -->
+        <section id="semana28" class="semana">
+            <h3>SEMANA 28 – Desenvolvimento de Serviços: Design de Experiência</h3>
+            <div class="tema-semana"><strong>Tema da semana:</strong> Desenvolvimento de Serviços: Design de Experiência</div>
+            <div class="aula-item"><h4>Aula 1: Listar pontos de contato na jornada do cliente</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver protótipos de serviços que atendam às expectativas dos clientes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar como diferentes pontos de contato afetam a experiência do cliente e influenciam a satisfação e a percepção do serviço.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 2: Descrever protótipos simples de serviços</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver protótipos de serviços que atendam às expectativas dos clientes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Criar representações visuais e funcionais de serviços que ajudem a comunicar ideias e testar conceitos com simplicidade.</div>
+            </div>
+            <div class="aula-item"><h4>Aula 3: Revisar e ajustar serviços com base em feedback</h4>
+                <div class="habilidades"><strong>Habilidades técnicas:</strong> Desenvolver protótipos de serviços que atendam às expectativas dos clientes.</div>
+                <div class="socioemocionais"><strong>Habilidades socioemocionais:</strong> Resolver problemas.</div>
+                <div class="objetivo"><strong>Objetivo da aula:</strong> Identificar áreas de melhorias e propor alterações que otimizem o desempenho do serviço ou protótipo.</div>
+            </div>
+        </section>
+
+        <footer>
+            &copy; 2025 - Conteúdo Programático de Inovação e Empreendedorismo
+        </footer>
+    </div>
+</body>
+</html>
