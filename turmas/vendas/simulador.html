@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 Laboratório de Inovação & Empreendedorismo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap');
+
+        :root {
+            --bg-color: #0a0f1a;
+            --panel-bg: #141c2c;
+            --accent: #f59e0b;
+            --accent-conn: #06b6d4;
+            --text-light: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-light);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        #header {
+            background: #020617;
+            padding: 10px 18px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--accent);
+            z-index: 100;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        #header h1 {
+            font-size: 1.05rem;
+            font-family: 'Fira Code', monospace;
+            color: var(--accent);
+        }
+
+        #toolbar {
+            background: var(--panel-bg);
+            padding: 8px 14px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            z-index: 99;
+            border-bottom: 1px solid var(--border);
+            align-items: center;
+        }
+        .tool-group {
+            display: flex;
+            gap: 4px;
+            border-right: 2px solid var(--border);
+            padding-right: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .tool-group span {
+            color: var(--text-muted);
+            font-size: 0.55rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-right: 4px;
+            letter-spacing: 1.5px;
+        }
+
+        button {
+            background: #1e293b;
+            color: #e2e8f0;
+            border: 1px solid #334155;
+            padding: 5px 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter';
+            font-size: 0.65rem;
+            font-weight: 600;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        button:hover { background: #334155; border-color: var(--accent); }
+        button.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        button.danger { background: #7f1d1d; border-color: #7f1d1d; }
+        button.small { padding: 3px 7px; font-size: 0.6rem; }
+
+        #info-bar {
+            background: #020617;
+            padding: 5px 14px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            z-index: 98;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            color: var(--text-muted);
+            font-size: 0.65rem;
+        }
+
+        #workspace {
+            flex: 1;
+            position: relative;
+            background-image: radial-gradient(rgba(255,255,255,0.03) 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            overflow: auto;
+            cursor: default;
+        }
+        svg#connections-layer {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .link-idea { stroke: #f59e0b; stroke-width: 2.5; stroke-dasharray: 6 3; }
+        .link-canvas { stroke: #06b6d4; stroke-width: 2; }
+        .link-disrupt { stroke: #ef4444; stroke-width: 3; stroke-dasharray: 8 4; }
+        .link-increm { stroke: #3b82f6; stroke-width: 2.5; }
+        .link-prototipo { stroke: #a855f7; stroke-width: 2; stroke-dasharray: 3 3; }
+        .link-pitch { stroke: #10b981; stroke-width: 2.5; }
+
+        .connection-label {
+            font-family: 'Fira Code', monospace;
+            font-size: 8px;
+            fill: #fbbf24;
+            font-weight: bold;
+            text-shadow: 0 0 4px black;
+            pointer-events: none;
+        }
+
+        .node {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: #1e293b;
+            border: 2px solid #475569;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            z-index: 20;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+            user-select: none;
+            transition: transform 0.15s, border-color 0.15s;
+            padding: 8px 6px;
+        }
+        .node:active { cursor: grabbing; transform: scale(0.95); }
+        .node:hover { border-color: var(--accent); }
+        .node.selected { border-color: #10b981; box-shadow: 0 0 18px #10b981; }
+        .node-icon { font-size: 28px; pointer-events: none; margin-bottom: 3px; }
+        .node-label {
+            font-size: 8px;
+            font-weight: 700;
+            color: #cbd5e1;
+            pointer-events: none;
+            text-align: center;
+            line-height: 1.3;
+            position: absolute;
+            bottom: -20px;
+            white-space: nowrap;
+            background: rgba(0,0,0,0.8);
+            padding: 2px 6px;
+            border-radius: 10px;
+            max-width: 120px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tooltip {
+            position: fixed;
+            background: #0f172a;
+            border: 1px solid var(--accent);
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-family: 'Fira Code';
+            z-index: 2000;
+            pointer-events: none;
+            display: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.9);
+            max-width: 250px;
+            white-space: normal;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 3000;
+            backdrop-filter: blur(3px);
+        }
+        .modal {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+            color: white;
+        }
+        .modal h2 {
+            margin: 0 0 12px;
+            font-size: 1rem;
+            color: var(--accent);
+            font-family: 'Fira Code';
+        }
+        .modal textarea {
+            width: 100%;
+            height: 80px;
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #475569;
+            border-radius: 6px;
+            padding: 8px;
+            font-family: 'Fira Code';
+            font-size: 0.75rem;
+            resize: vertical;
+        }
+        .modal button {
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        @media (max-width: 768px) {
+            button { padding: 4px 7px; font-size: 0.6rem; }
+            .node { width: 55px; height: 55px; }
+            .node-icon { font-size: 22px; }
+            .node-label { font-size: 7px; bottom: -18px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="header">
+        <h1>🧪 Laboratório de Inovação & Empreendedorismo</h1>
+        <div style="display:flex; gap:8px;">
+            <button onclick="clearWorkspace()" class="danger small">🧹 Limpar</button>
+            <button onclick="document.getElementById('import-file').click()" style="background:#3b82f6;color:#fff;" class="small">📂 Importar .json</button>
+            <button onclick="exportJSON()" style="background:#10b981;color:#000;" class="small">💾 Salvar .json</button>
+        </div>
+        <input type="file" id="import-file" accept=".json" style="display:none;" onchange="importJSON(event)">
+    </div>
+
+    <div id="toolbar">
+        <div class="tool-group">
+            <span>Ação</span>
+            <button id="btn-move" class="active" onclick="setMode('move')">✋ Mover / Editar</button>
+            <button id="btn-connect" onclick="setMode('connect')">🔗 Conectar</button>
+            <button id="btn-delete" onclick="setMode('delete')">🗑️ Deletar</button>
+        </div>
+        <div class="tool-group">
+            <span>Conceitos</span>
+            <button onclick="addNode('ideia','💡','Ideia')">💡 Ideia</button>
+            <button onclick="addNode('oportunidade','🎯','Oportunidade')">🎯 Oportunidade</button>
+            <button onclick="addNode('cliente','👤','Cliente')">👤 Cliente</button>
+            <button onclick="addNode('problema','❓','Problema')">❓ Problema</button>
+            <button onclick="addNode('solucao','✅','Solução')">✅ Solução</button>
+            <button onclick="addNode('tecnologia','⚙️','Tecnologia')">⚙️ Tecnologia</button>
+        </div>
+        <div class="tool-group">
+            <span>Inovação</span>
+            <button onclick="addNode('disruptiva','⚡','Inov. Disruptiva')">⚡ Disruptiva</button>
+            <button onclick="addNode('incremental','🔧','Inov. Incremental')">🔧 Incremental</button>
+            <button onclick="addNode('prototipo','🧩','Protótipo')">🧩 Protótipo</button>
+            <button onclick="addNode('canvas','📋','Canvas BMC')">📋 Canvas</button>
+            <button onclick="addNode('pitch','🎤','Pitch')">🎤 Pitch</button>
+        </div>
+        <div class="tool-group">
+            <span>Processos</span>
+            <button onclick="addNode('designthinking','🎨','Design Thinking')">🎨 DT</button>
+            <button onclick="addNode('scrum','🔄','Scrum')">🔄 Scrum</button>
+            <button onclick="addNode('mudanca','🌊','Gestão Mudança')">🌊 Mudança</button>
+        </div>
+    </div>
+
+    <div id="info-bar">
+        <span>💡 Arraste cards | Clique em "Conectar" e use em dois cards | Duplo clique no card ou na linha para anotar/editar | Clique na linha em "Deletar" para removê-la</span>
+        <span style="margin-left:auto;">📂 Importe um .json para carregar um cenário</span>
+    </div>
+
+    <div id="workspace">
+        <svg id="connections-layer"></svg>
+        <div id="tooltip" class="tooltip"></div>
+    </div>
+
+    <div id="conn-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>✏️ Descreva esta etapa</h2>
+            <textarea id="conn-annotation" placeholder="Ex: 'Gera uma oportunidade de negócio' ou 'Valida a ideia com o cliente'..."></textarea>
+            <button onclick="saveConnectionAnnotation()" style="background:#10b981;color:#000;">Salvar etapa</button>
+            <button onclick="closeConnModal()" style="margin-top:5px;">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="node-modal" class="modal-overlay">
+        <div class="modal">
+            <h2>📌 Anotação do card</h2>
+            <textarea id="node-annotation" placeholder="Descreva detalhes, exemplos, observações..."></textarea>
+            <button onclick="saveNodeAnnotation()" style="background:#10b981;color:#000;">Salvar anotação</button>
+            <button onclick="closeNodeModal()" style="margin-top:5px;">Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== ESTADO ==========
+        let mode = 'move';
+        let nodes = {};
+        let connections = [];
+        let nodeCounter = 1;
+        let draggedNodeId = null;
+        let offsetX = 0, offsetY = 0;
+        let pendingConnection = { step: 0, sourceId: null };
+        let editingNodeId = null;
+        let editingConnectionId = null;
+
+        const workspace = document.getElementById('workspace');
+        const svgLayer = document.getElementById('connections-layer');
+        const tooltip = document.getElementById('tooltip');
+
+        // ========== CONFIGURAÇÃO DE EVENTOS GLOBAIS ==========
+        window.addEventListener('mousemove', onWorkspaceMove);
+        window.addEventListener('mouseup', onWorkspaceUp);
+        window.addEventListener('touchmove', onTouchMove, { passive: false });
+        window.addEventListener('touchend', onWorkspaceUp);
+        workspace.addEventListener('mousedown', onWorkspaceDown);
+
+        // ========== MODOS ==========
+        function setMode(newMode) {
+            mode = newMode;
+            ['move','connect','delete'].forEach(m => document.getElementById(`btn-${m}`).classList.remove('active'));
+            document.getElementById(`btn-${newMode}`).classList.add('active');
+            workspace.style.cursor = mode === 'connect' ? 'crosshair' : mode === 'delete' ? 'not-allowed' : 'default';
+            pendingConnection = { step: 0, sourceId: null };
+            renderAll();
+        }
+
+        // ========== IMPORTAÇÃO DE JSON ==========
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.nodes && data.connections) {
+                        nodes = data.nodes;
+                        connections = data.connections;
+                        const ids = Object.keys(nodes).map(k => parseInt(k.replace('node_', ''))).filter(n => !isNaN(n));
+                        nodeCounter = ids.length > 0 ? Math.max(...ids) + 1 : 1;
+                        renderAll();
+                        showToast('✅ Cenário importado com sucesso!');
+                    } else {
+                        alert('JSON inválido. O arquivo deve conter "nodes" e "connections".');
+                    }
+                } catch (err) {
+                    alert('Erro ao ler o arquivo JSON: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.textContent = msg;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '30px';
+            toast.style.left = '50%';
+            toast.style.transform = 'translateX(-50%)';
+            toast.style.background = '#10b981';
+            toast.style.color = '#000';
+            toast.style.padding = '10px 25px';
+            toast.style.borderRadius = '30px';
+            toast.style.fontWeight = '700';
+            toast.style.fontSize = '0.85rem';
+            toast.style.zIndex = '4000';
+            toast.style.boxShadow = '0 8px 20px rgba(0,0,0,0.5)';
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2500);
+        }
+
+        // ========== NODES ==========
+        function addNode(type, icon, label) {
+            const id = `node_${nodeCounter++}`;
+            nodes[id] = {
+                id, type, icon, label,
+                x: workspace.clientWidth/2 - 35 + (Math.random()*120-60),
+                y: workspace.clientHeight/2 - 35 + (Math.random()*100-50),
+                annotation: ''
+            };
+            setMode('move');
+            renderAll();
+        }
+
+        function deleteNode(nodeId) {
+            connections = connections.filter(c => c.sourceId !== nodeId && c.targetId !== nodeId);
+            delete nodes[nodeId];
+            renderAll();
+        }
+
+        // ========== CONEXÕES ==========
+        function handleConnectClick(nodeId) {
+            if (pendingConnection.step === 0) {
+                pendingConnection = { step: 1, sourceId: nodeId };
+                renderAll();
+            } else if (pendingConnection.step === 1 && nodeId !== pendingConnection.sourceId) {
+                const src = nodes[pendingConnection.sourceId];
+                const tgt = nodes[nodeId];
+                const exists = connections.some(c => 
+                    (c.sourceId === pendingConnection.sourceId && c.targetId === nodeId) ||
+                    (c.sourceId === nodeId && c.targetId === pendingConnection.sourceId)
+                );
+                if (!exists) {
+                    const newConn = {
+                        id: `conn_${Date.now()}`,
+                        sourceId: pendingConnection.sourceId,
+                        targetId: nodeId,
+                        sourceType: src.type,
+                        targetType: tgt.type,
+                        annotation: ''
+                    };
+                    connections.push(newConn);
+                    editingConnectionId = newConn.id;
+                    document.getElementById('conn-annotation').value = '';
+                    document.getElementById('conn-modal').style.display = 'flex';
+                }
+                pendingConnection = { step: 0, sourceId: null };
+                renderAll();
+            }
+        }
+
+        function saveConnectionAnnotation() {
+            const text = document.getElementById('conn-annotation').value.trim();
+            if (editingConnectionId) {
+                const conn = connections.find(c => c.id === editingConnectionId);
+                if (conn) conn.annotation = text; // Permite limpar salvando vazio se desejar
+            }
+            closeConnModal();
+            renderAll();
+        }
+
+        function closeConnModal() {
+            document.getElementById('conn-modal').style.display = 'none';
+            editingConnectionId = null;
+        }
+
+        // ========== ANOTAÇÃO DE NÓ ==========
+        function openNodeAnnotation(nodeId) {
+            editingNodeId = nodeId;
+            const node = nodes[nodeId];
+            document.getElementById('node-annotation').value = node.annotation || '';
+            document.getElementById('node-modal').style.display = 'flex';
+        }
+
+        function saveNodeAnnotation() {
+            const text = document.getElementById('node-annotation').value.trim();
+            if (editingNodeId) {
+                nodes[editingNodeId].annotation = text;
+            }
+            closeNodeModal();
+            renderAll();
+        }
+
+        function closeNodeModal() {
+            document.getElementById('node-modal').style.display = 'none';
+            editingNodeId = null;
+        }
+
+        // ========== RENDER ==========
+        function renderAll() {
+            renderNodes();
+            renderConnections();
+        }
+
+        function renderNodes() {
+            workspace.querySelectorAll('.node').forEach(n => n.remove());
+            Object.values(nodes).forEach(nd => {
+                const el = document.createElement('div');
+                el.className = `node ${pendingConnection.sourceId === nd.id ? 'selected' : ''}`;
+                el.id = nd.id;
+                el.style.left = nd.x + 'px';
+                el.style.top = nd.y + 'px';
+                el.innerHTML = `<div class="node-icon">${nd.icon}</div><div class="node-label">${nd.label}</div>`;
+                
+                // Mouse e Touch Events ativos
+                el.addEventListener('mousedown', (e) => onNodeDown(e, nd.id));
+                el.addEventListener('touchstart', (e) => onNodeTouchStart(e, nd.id), { passive: false });
+                
+                el.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    if (mode === 'move') openNodeAnnotation(nd.id);
+                });
+                workspace.appendChild(el);
+            });
+        }
+
+        function renderConnections() {
+            svgLayer.innerHTML = '';
+            connections.forEach(conn => {
+                const src = nodes[conn.sourceId];
+                const tgt = nodes[conn.targetId];
+                if (!src || !tgt) return;
+                
+                // Adaptativo para tamanhos mobile/desktop básicos (raio aproximado do centro do card = 35px)
+                const offsetCard = window.innerWidth <= 768 ? 27.5 : 35;
+                const x1 = src.x + offsetCard, y1 = src.y + offsetCard;
+                const x2 = tgt.x + offsetCard, y2 = tgt.y + offsetCard;
+
+                // Linha invisível mais larga para facilitar cliques e hove
+                const hoverL = document.createElementNS('http://www.w3.org/2000/svg','line');
+                hoverL.setAttribute('x1',x1); hoverL.setAttribute('y1',y1);
+                hoverL.setAttribute('x2',x2); hoverL.setAttribute('y2',y2);
+                hoverL.setAttribute('stroke','transparent');
+                hoverL.setAttribute('stroke-width','16');
+                hoverL.style.pointerEvents = 'stroke';
+                hoverL.style.cursor = mode === 'delete' ? 'not-allowed' : mode === 'move' ? 'pointer' : 'default';
+                
+                hoverL.addEventListener('mouseenter',(e)=> showConnTooltip(e, conn));
+                hoverL.addEventListener('mouseleave',()=> tooltip.style.display='none');
+                
+                // Evento de clique para deletar ou duplo clique para editar a linha
+                hoverL.addEventListener('click', (e) => {
+                    if (mode === 'delete') {
+                        e.stopPropagation();
+                        connections = connections.filter(c => c.id !== conn.id);
+                        tooltip.style.display = 'none';
+                        renderAll();
+                    }
+                });
+                hoverL.addEventListener('dblclick', (e) => {
+                    if (mode === 'move') {
+                        e.stopPropagation();
+                        editingConnectionId = conn.id;
+                        document.getElementById('conn-annotation').value = conn.annotation || '';
+                        document.getElementById('conn-modal').style.display = 'flex';
+                    }
+                });
+
+                svgLayer.appendChild(hoverL);
+
+                // Linha visível estilizada
+                const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+                line.setAttribute('x1',x1); line.setAttribute('y1',y1);
+                line.setAttribute('x2',x2); line.setAttribute('y2',y2);
+                let cls = 'link-idea';
+                if (conn.sourceType === 'disruptiva' || conn.targetType === 'disruptiva') cls = 'link-disrupt';
+                else if (conn.sourceType === 'incremental' || conn.targetType === 'incremental') cls = 'link-increm';
+                else if (conn.sourceType === 'prototipo' || conn.targetType === 'prototipo') cls = 'link-prototipo';
+                else if (conn.sourceType === 'canvas' || conn.targetType === 'canvas') cls = 'link-canvas';
+                else if (conn.sourceType === 'pitch' || conn.targetType === 'pitch') cls = 'link-pitch';
+                line.setAttribute('class', cls);
+                svgLayer.appendChild(line);
+
+                // Rótulo descritivo no centro da linha
+                if (conn.annotation) {
+                    const midX = (x1+x2)/2, midY = (y1+y2)/2;
+                    const txt = document.createElementNS('http://www.w3.org/2000/svg','text');
+                    txt.setAttribute('x', midX); txt.setAttribute('y', midY - 8);
+                    txt.setAttribute('class','connection-label');
+                    txt.setAttribute('text-anchor','middle');
+                    txt.textContent = conn.annotation.length > 25 ? conn.annotation.substring(0,22)+'…' : conn.annotation;
+                    svgLayer.appendChild(txt);
+                }
+            });
+        }
+
+        function showConnTooltip(e, conn) {
+            const src = nodes[conn.sourceId];
+            const tgt = nodes[conn.targetId];
+            if(!src || !tgt) return;
+            const ann = conn.annotation ? `<br>📝 <i>${conn.annotation}</i>` : '';
+            tooltip.innerHTML = `🔗 <b>${src.label}</b> ↔ <b>${tgt.label}</b>${ann}`;
+            tooltip.style.display = 'block';
+            tooltip.style.left = e.clientX + 15 + 'px';
+            tooltip.style.top = e.clientY - 20 + 'px';
+        }
+
+        // ========== LOGICA DOS EVENTOS MOUSE/TOUCH ==========
+        function onNodeDown(e, nodeId) {
+            e.stopPropagation();
+            if (mode === 'delete') { deleteNode(nodeId); return; }
+            if (mode === 'connect') { handleConnectClick(nodeId); return; }
+            if (mode === 'move') {
+                draggedNodeId = nodeId;
+                const rect = document.getElementById(nodeId).getBoundingClientRect();
+                offsetX = e.clientX - rect.left;
+                offsetY = e.clientY - rect.top;
+            }
+        }
+
+        function onNodeTouchStart(e, nodeId) {
+            if (mode !== 'move') return; 
+            e.stopPropagation();
+            draggedNodeId = nodeId;
+            const touch = e.touches[0];
+            const rect = document.getElementById(nodeId).getBoundingClientRect();
+            offsetX = touch.clientX - rect.left;
+            offsetY = touch.clientY - rect.top;
+        }
+
+        function onWorkspaceMove(e) {
+            if (draggedNodeId && mode === 'move') {
+                const nd = nodes[draggedNodeId];
+                const rect = workspace.getBoundingClientRect();
+                nd.x = e.clientX - rect.left - offsetX;
+                nd.y = e.clientY - rect.top - offsetY;
+                renderAll();
+            }
+        }
+
+        function onTouchMove(e) {
+            if (draggedNodeId && mode === 'move') {
+                e.preventDefault(); // Evita scroll da tela ao arrastar o card
+                const nd = nodes[draggedNodeId];
+                const touch = e.touches[0];
+                const rect = workspace.getBoundingClientRect();
+                nd.x = touch.clientX - rect.left - offsetX;
+                nd.y = touch.clientY - rect.top - offsetY;
+                renderAll();
+            }
+        }
+
+        function onWorkspaceUp() { draggedNodeId = null; }
+
+        function onWorkspaceDown(e) {
+            if (mode === 'connect' && pendingConnection.step === 1) {
+                pendingConnection = { step: 0, sourceId: null };
+                renderAll();
+            }
+        }
+
+        function clearWorkspace() {
+            if (confirm('Apagar todo o laboratório?')) {
+                nodes = {}; connections = []; nodeCounter = 1; renderAll();
+            }
+        }
+
+        function exportJSON() {
+            const data = { nodes, connections };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'laboratorio-inovacao.json';
+            a.click();
+        }
+
+        // Inicialização primária
+        renderAll();
+    </script>
+</body>
+</html>
