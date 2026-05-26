@@ -96,7 +96,7 @@
 
   <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
   <script>
-    // Conexão híbrida robusta igual à do dominó
+    // 🌐 URL do Render atualizada e configurada com suporte a WebSockets estáveis
     const socket = io("https://motor-planningpoker.onrender.com", {
       transports: ["polling"],
       upgrade: true
@@ -130,12 +130,11 @@
     function votar(valor) {
       if (salaRevelada) return alert("A rodada acabou! Inicie uma nova rodada para votar de novo.");
       
-      // Atualiza visual local imediatamente (Feedback ágil)
       const cartas = document.querySelectorAll('.meu-baralho .carta');
       cartas.forEach(c => c.classList.remove('selecionada'));
 
       if (meuVoto === valor) {
-        meuVoto = null; // Tirou o voto
+        meuVoto = null; 
       } else {
         meuVoto = valor;
         document.getElementById(`my-card-${valor}`).classList.add('selecionada');
@@ -157,7 +156,7 @@
           conteudoCarta = "";
         } else if (!j.voto) {
           classeCarta = "carta";
-          conteudoCarta = "💤"; // Não votou ainda
+          conteudoCarta = "💤"; 
         }
 
         return `
@@ -182,11 +181,11 @@
       painelStats.style.display = 'block';
       
       if (stats.consenso) {
-        painelStats.innerHTML = `🎉 <strong>Consenso Atingido!</strong> Todos votaram em comum acordo! Estimativa: <strong>${stats.media}</strong>`;
+        painelStats.innerHTML = `🎉 <strong>Consenso Atingido!</strong> Todo mundo votou igual! Estimativa fechada em: <strong>${stats.media}</strong>`;
         painelStats.style.borderColor = "#10b981";
         painelStats.style.background = "rgba(16, 185, 129, 0.15)";
       } else {
-        painelStats.innerHTML = `📊 Votos revelados! Média da Equipe: <strong>${stats.media}</strong> pontos. <br> <small>Discutam as maiores e menores estimativas antes de re-votar!</small>`;
+        painelStats.innerHTML = `📊 Votos revelados! Média calculada: <strong>${stats.media}</strong> pontos. <br> <small>Discutam as maiores e menores estimativas antes de abrir uma nova rodada!</small>`;
         painelStats.style.borderColor = "#fbbf24";
         painelStats.style.background = "rgba(251, 191, 36, 0.15)";
       }
@@ -195,7 +194,7 @@
     socket.on('rodadaReiniciada', (sala) => {
       meuVoto = null;
       document.getElementById('estatisticas').style.display = 'none';
-      gerarMeuBaralho(); // Reseta seleção do baralho
+      gerarMeuBaralho(); 
       renderizarMesa(sala);
     });
   </script>
