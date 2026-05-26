@@ -106,7 +106,8 @@
         .btn-truco,
         .btn-gamao,
         .btn-while,
-        .btn-hanoi {
+        .btn-hanoi,
+        .btn-poker {
             display: inline-block;
             padding: 12px 24px;
             color: white;
@@ -174,6 +175,15 @@
             background-color: #b45f1b;
             transform: scale(1.05);
         }
+
+        /* Novo estilo personalizado para o Planning Poker */
+        .btn-poker {
+            background-color: #6366f1;
+        }
+        .btn-poker:hover {
+            background-color: #4f46e5;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 
@@ -192,7 +202,7 @@
                 <strong>todo</strong> — o contexto, a realidade e a vivência do aluno —
                 para depois chegar às <strong>partes</strong>.
             </p>
-            <p>Seu método utiliza uma abordagem <strong>sociocultural</strong>,
+            <p> Seu método utiliza uma abordagem <strong>sociocultural</strong>,
                 em que o aprendizado nasce da <strong>vida e da experiência</strong>.
             </p>
             <p>Neste laboratório, a programação segue o mesmo princípio:
@@ -200,7 +210,6 @@
             </p>
         </section>
 
-        <!-- LINKS DAS TURMAS -->
         <section class="menu">
             <ul>
                 <li>
@@ -219,7 +228,7 @@
                     </a>
                 </li>
                 <li>
-                      <a href="turmas/adm/index.html">
+                    <a href="turmas/adm/index.html">
                         ADMINISTRAÇÃO - 3ª SÉRIE A 
                     </a>
                 </li>
@@ -236,7 +245,6 @@
                 <li><a href="loboratorio_jogos.html">Laboratório de Jogos de Lógica</a></li>
             </ul>
 
-            <!-- BOTÕES RÁPIDOS DOS JOGOS -->
             <div style="text-align:center; display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
                 <a href="domino/" class="btn-domino"> Dominó Lógico</a>
                 <a href="xadrez/" class="btn-xadrez"> Xadrez Lógico</a>
@@ -246,7 +254,7 @@
                 <a href="atari/2600.html" class="btn-atari"> Emulador ALL ROMS</a>
                 <a href="missao_while/index.html" class="btn-while"> Missão While</a>  
                 <a href="torre_de_hanoi.html" class="btn-hanoi"> Torre de Hanói</a>
-                <a href="planningpoker/index.html" class="btn-hanoi"> Torre de Hanói</a>
+                <a href="planningpoker/index.html" class="btn-poker"> Planning Poker Lógico</a>
             </div>
         </section>
 
