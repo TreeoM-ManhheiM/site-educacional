@@ -154,10 +154,16 @@
           conteudoCarta = "💤"; 
         }
 
-        // Se o jogador clicou em revelar mas a mesa ainda não abriu geral
+        // Status: Aguardando revelar
         if (j.prontoParaRevelar && !sala.revelado) {
             statusTexto = '👁️ Quer Revelar';
             corStatus = '#6366f1';
+        }
+
+        // NOVO: Status: Aguardando reiniciar a rodada
+        if (sala.revelado && j.prontoParaReiniciar) {
+            statusTexto = '🔄 Quer Reiniciar';
+            corStatus = '#f59e0b'; // Cor amarela/laranja para destaque
         }
 
         return `
@@ -170,8 +176,12 @@
       }).join('');
     }
 
+    // Mesmo que 'atualizarSala' não traga as estatísticas novas, ele precisa repintar a mesa para mostrar os status
     socket.on('atualizarSala', (sala) => {
-      document.getElementById('estatisticas').style.display = 'none';
+      // Só esconde as estatísticas se a sala ainda não tiver sido revelada
+      if (!sala.revelado) {
+          document.getElementById('estatisticas').style.display = 'none';
+      }
       renderizarMesa(sala);
     });
 
