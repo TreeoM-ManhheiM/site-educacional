@@ -3,248 +3,169 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planning Poker Lógico</title>
+  <title>Manual Pedagógico — Planning Poker Lógico</title>
   <style>
     body {
       margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #0f172a; color: white; text-align: center;
+      background: #0f172a; color: #f8fafc; line-height: 1.6; text-align: left;
     }
-    #lobby, #painel-poker { max-width: 900px; margin: auto; padding: 20px; }
+    header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      padding: 40px 20px; text-align: center; border-bottom: 2px solid #334155;
+    }
+    header h1 { margin: 0; font-size: 32px; color: #3b82f6; }
+    header p { margin: 10px 0 0 0; color: #94a3b8; font-size: 18px; }
     
-    .mesa-votos {
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;
-      background: #1e293b; padding: 30px; border-radius: 15px;
-      min-height: 150px; margin: 20px 0; border: 2px dashed #475569;
+    main { max-width: 1000px; margin: auto; padding: 30px 20px; }
+    
+    .container-guia {
+      background: #1e293b; padding: 40px; border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155;
     }
     
-    .carta {
-      width: 70px; height: 110px; background: #f8fafc; color: #1e293b;
-      border-radius: 10px; font-weight: bold; font-size: 24px;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3); user-select: none; transition: all 0.2s;
+    h2 { color: #fbbf24; border-bottom: 2px solid #334155; padding-bottom: 8px; margin-top: 35px; }
+    h3 { color: #60a5fa; margin-top: 25px; display: flex; align-items: center; gap: 10px; }
+    
+    .badge {
+      font-size: 12px; padding: 4px 8px; border-radius: 6px; font-weight: bold; text-transform: uppercase;
+    }
+    .badge-adm { background: #3b82f6; color: white; }
+    .badge-vendas { background: #ec4899; color: white; }
+    .badge-dev { background: #10b981; color: white; }
+    .badge-dados { background: #8b5cf6; color: white; }
+
+    .card-cenario {
+      background: #0f172a; border-left: 4px solid #3b82f6; padding: 20px;
+      border-radius: 0 12px 12px 0; margin: 15px 0;
+    }
+    .card-cenario.vendas { border-left-color: #ec4899; }
+    .card-cenario.dev { border-left-color: #10b981; }
+    .card-cenario.dados { border-left-color: #8b5cf6; }
+
+    .topico-debate { margin-left: 15px; padding-left: 10px; border-left: 2px dashed #475569; }
+    
+    .escala-fibonacci {
+      display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0; justify-content: center;
+    }
+    .fib-item {
+      background: #334155; padding: 10px; border-radius: 8px; width: 110px; text-align: center;
+      font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .fib-item strong { display: block; font-size: 20px; color: #fbbf24; margin-bottom: 4px; }
+
+    .diretriz-seduc {
+      background: rgba(59, 130, 246, 0.1); border: 2px solid #3b82f6;
+      padding: 20px; border-radius: 10px; margin: 20px 0;
     }
     
-    .carta.oculta {
-      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-      color: white; border: 3px solid #ffffff;
+    .btn-voltar {
+      display: inline-block; background: #3b82f6; color: white; text-decoration: none;
+      padding: 14px 28px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+      margin-top: 30px; text-align: center;
     }
-    .carta.oculta::after { content: "❓"; font-size: 20px; }
-
-    .meu-baralho { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 30px; }
-    .meu-baralho .carta { cursor: pointer; }
-    .meu-baralho .carta:hover { transform: translateY(-10px); background: #e2e8f0; }
-    .meu-baralho .carta.selecionada {
-      background: #fbbf24; color: #1e293b; transform: translateY(-15px);
-      box-shadow: 0 0 15px #fbbf24;
-    }
-
-    .status-voto { font-size: 14px; margin-top: 8px; color: #94a3b8; font-weight: bold; }
-    .player-card { display: flex; flex-direction: column; align-items: center; background: #1e293b; padding: 15px; border-radius: 12px; min-width: 90px;}
-
-    button {
-      background: #3b82f6; color: white; border: none; padding: 12px 24px;
-      border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; margin: 5px;
-    }
-    button:hover { background: #2563eb; }
-    .btn-revelar { background: #10b981; }
-    .btn-revelar:hover { background: #059669; }
-    .btn-reset { background: #ef4444; }
-    .btn-reset:hover { background: #dc2626; }
-    .btn-chutar { background: #dc2626; color: white; padding: 4px 8px; font-size: 12px; border-radius: 4px; margin-top: 8px; }
-
-    #estatisticas {
-      background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981;
-      padding: 15px; border-radius: 10px; display: none; font-size: 18px; margin: 15px 0;
-    }
-    input { padding: 12px; border-radius: 8px; border: none; margin: 5px; width: 200px; font-size: 16px; }
+    .btn-voltar:hover { background: #2563eb; }
     
-    #painel-professor {
-      background: #1e293b; border: 2px solid #3b82f6; padding: 20px; border-radius: 15px; margin-bottom: 20px;
-    }
+    ul { padding-left: 20px; }
+    li { margin-bottom: 10px; }
+    strong { color: #fff; }
   </style>
 </head>
 <body>
 
-  <div id="lobby">
-    <h1 style="color: #60a5fa; font-size: 36px;">Planning Poker Lógico 🃏</h1>
-    <p>Insira seus dados ou escaneie o QR Code do professor para entrar na sala.</p>
-    <br>
-    <input type="text" id="nick" placeholder="Seu Nome/Apelido">
-    <input type="text" id="sala" placeholder="Nome da Sala (ex: Squad-A)">
-    <br><br>
-    <button onclick="entrar()">ENTRAR NA SALA</button>
-  </div>
+  <header>
+    <h1>🃏 Planning Poker Lógico</h1>
+    <p>Guia Metodológico e Pedagógico — Alinhado à SEDUC-2026</p>
+  </header>
 
-  <div id="painel-poker" style="display: none;">
-    <h2 id="titulo-sala" style="color: #60a5fa; margin-bottom: 5px;">Sala: -</h2>
-    
-    <div id="painel-professor" style="display: none;">
-      <h3 style="color: #fbbf24; margin-top: 0;">👑 Painel do Moderador</h3>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 40px;">
-        <div>
-          <button class="btn-revelar" onclick="socket.emit('revelarVotos')">👁️ Revelar Votos</button>
-          <button class="btn-reset" onclick="socket.emit('reiniciarRodada')">🔄 Nova Rodada</button>
-        </div>
-        <div id="qr-container" style="background: white; padding: 10px; border-radius: 10px; text-align: center;">
-          <div id="qrcode"></div>
-          <small style="color: #1e293b; font-weight: bold; display: block; margin-top: 5px;">Aponte para entrar direto!</small>
+  <main>
+    <div class="container-guia">
+      
+      <div class="diretriz-seduc">
+        <h3 style="margin-top:0; color: #3b82f6;">🎯 Diretriz de Aprendizagem Ativa (SEDUC-2026)</h3>
+        <p>Esta ferramenta foi desenhada para romper com o modelo de aula meramente expositiva. Ao utilizar o <strong>Planning Poker Lógico</strong>, o estudante assume o papel de analista estratégico. A dinâmica estimula a <strong>Instrução por Pares (Peer Instruction)</strong>, a tomada de decisão baseada em dados, a escuta empática e a defesa técnica de argumentos em equipe.</p>
+      </div>
+
+      <h2>💡 O Conceito da Ferramenta</h2>
+      <p>No mercado corporativo global, o Planning Poker serve para estimar o tempo de tarefas de software. Aqui, nós o adaptamos didaticamente: o Professor apresenta um <strong>Desafio de Mercado (Problema Real)</strong> e os estudantes utilizam a escala numérica para mensurar o <strong>Grau de Impacto, Custo, Risco Tecnológico ou Esforço Operacional</strong> envolvido na resolução desse problema.</p>
+
+      <h3>📊 Significado Pedagógico da Escala (Fibonacci)</h3>
+      <div class="escala-fibonacci">
+        <div class="fib-item"><strong>0 a 3</strong> Baixo Risco / Baixo Esforço</div>
+        <div class="fib-item"><strong>5 a 13</strong> Complexidade Média</div>
+        <div class="fib-item"><strong>21 a 34</strong> Alto Impacto / Risco Crítico</div>
+        <div class="fib-item"><strong>? / ☕</strong> Dúvida Teórica / Pausa Técnica</div>
+      </div>
+
+      <h2>🏢 Aplicação Prática por Itinerário Formativo Técnico</h2>
+      <p>Abaixo estão os modelos de estudos de caso prontos para o corpo docente aplicar em sala de aula de acordo com cada matriz técnica:</p>
+
+      <h3><span class="badge badge-adm">Administração</span> 1. Gestão de Riscos Organizacionais e Compliance</h3>
+      <div class="card-cenario">
+        <p><strong>Desafio Lido pelo Professor:</strong> <em>"Uma nova legislação fiscal entrou em vigor, mudando a tributação de ICMS sobre nossos produtos digitais. Se errarmos a transição, a empresa será multada pela Receita Federal. Qual o nível de risco operacional e de governança para o nosso negócio?"</em></p>
+        <p><strong>Foco da Votação dos Alunos:</strong> Grau de impacto financeiro e vulnerabilidade institucional se o processo falhar.</p>
+        <div class="topico-debate">
+          <p>🔄 <strong>A Dinâmica do Debate Teórico:</strong></p>
+          <ul>
+            <li><strong>Estudante com Voto Baixo (ex: 2):</strong> Defende uma solução de mitigação ágil baseada em terceirização (ex: contratar uma consultoria contábil imediata ou usar um software ERP padrão).</li>
+            <li><strong>Estudante com Voto Alto (ex: 21):</strong> Alerta sobre a burocracia oculta, o tempo de treinamento das equipes internas e a necessidade de readequação do fluxo de caixa para absorver possíveis oscilações.</li>
+          </ul>
         </div>
       </div>
+
+      <h3><span class="badge badge-vendas">Vendas</span> 2. Planejamento Comercial e Estratégia Go-To-Market</h3>
+      <div class="card-cenario vendas">
+        <p><strong>Desafio Lido pelo Professor:</strong> <em>"Nossa marca quer lançar uma campanha de indicação em massa (Growth Hacking) onde o cliente atual ganha R$ 20 por cada novo usuário que trouxer. Qual a complexidade e o risco financeiro desta ação em termos de Custo de Aquisição de Cliente (CAC)?"</em></p>
+        <p><strong>Foco da Votação dos Alunos:</strong> Avaliação do equilíbrio entre o orçamento disponível para vendas e a capacidade de conversão da campanha.</p>
+        <div class="topico-debate">
+          <p>🔄 <strong>A Dinâmica do Debate Teórico:</strong></p>
+          <ul>
+            <li><strong>Estudante com Voto Baixo (ex: 3):</strong> Foca na escalabilidade agressiva e no aumento rápido de faturamento, enxergando uma execução enxuta de marketing digital orgânico.</li>
+            <li><strong>Estudante com Voto Alto (ex: 13):</strong> Levanta os riscos de fraudes no regulamento (perfis fakes), o risco de o ROI (Retorno sobre o Investimento) ser negativo se os novos clientes não consumirem recorrentemente, e os limites do Código de Defesa do Consumidor (CDC).</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3><span class="badge badge-dev">Desenvolvimento de Sistemas</span> 3. Arquitetura de Software e Segurança da Informação</h3>
+      <div class="card-cenario dev">
+        <p><strong>Desafio Lido pelo Professor:</strong> <em>"Precisamos migrar o banco de dados local de um hospital universitário para uma arquitetura em nuvem distribuída (Cloud Computing), garantindo criptografia ponta a ponta e zero queda no sistema. Qual o nível de esforço técnico e risco estrutural?"</em></p>
+        <p><strong>Foco da Votação dos Alunos:</strong> Complexidade da infraestrutura, tratamento de concorrência e conformidade com a LGPD (Lei Geral de Proteção de Dados).</p>
+        <div class="topico-debate">
+          <p>🔄 <strong>A Dinâmica do Debate Teórico:</strong></p>
+          <ul>
+            <li><strong>Estudante com Voto Baixo (ex: 5):</strong> Argumenta a favor do uso de serviços gerenciados nativos em nuvem (como AWS ou Azure) que oferecem ferramentas automatizadas de migração "lift-and-shift".</li>
+            <li><strong>Estudante com Voto Alto (ex: 34):</strong> Pontua os gargalos invisíveis: integridade dos dados legados corrompidos, riscos de ataques de injeção SQL ou sequestro de dados (Ransomware) durante a transferência e o tempo necessário para testes de regressão exaustivos.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3><span class="badge badge-dados">Ciência de Dados</span> 4. Inteligência de Negócios (BI) e Modelagem Preditiva</h3>
+      <div class="card-cenario dados">
+        <p><strong>Desafio Lido pelo Professor:</strong> <em>"A secretaria de educação nos forneceu uma base de dados histórica bruta, sem tratamento, contendo notas de 200 mil estudantes. Devemos criar um modelo preditivo de IA para antecipar e prevenir a evasão escolar no próximo bimestre. Qual o tamanho do desafio?"</em></p>
+        <p><strong>Foco da Votação dos Alunos:</strong> Esforço na fase de Engenharia/Saneamento de Dados (ETL) e tratamento de vieses algorítmicos.</p>
+        <div class="topico-debate">
+          <p>🔄 <strong>A Dinâmica do Debate Teórico:</strong></p>
+          <ul>
+            <li><strong>Estudante com Voto Baixo (ex: 3):</strong> Imagina o pipeline tradicional: importar um arquivo CSV no Python, aplicar uma biblioteca padrão de Machine Learning (como Scikit-Learn) e plotar gráficos de acurácia rapidamente no Power BI.</li>
+            <li><strong>Estudante com Voto Alto (ex: 21):</strong> Enxerga a realidade analítica: dados faltantes, inconsistência de registros manuais, a alta complexidade para definir as variáveis preditoras corretas e o risco ético do modelo tomar decisões enviesadas ou preconceituosas sobre minorias.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>🔄 A Lógica da Discussão em Nível Pedagógico</h2>
+      <p>Diferente de um jogo de competição, aqui a divergência de notas é estimulada. A inversão de votos converte-se em uma rica <strong>aula de negociação, escuta ativa e síntese conceitual</strong>:</p>
+      <ul>
+        <li><strong>Quem votou Menos Pontos (Visão Executiva/Prática):</strong> Representa o pragmatismo empresarial. Foca no MVP (Produto Mínimo Viável), na otimização de recursos disponíveis, na automação imediata e nas soluções de mercado de rápida entrega. Ele força o grupo a pensar em eficiência.</li>
+        <li><strong>Quem votou Mais Pontos (Visão Analítica/Preventiva):</strong> Representa a inteligência de riscos e compliance. Enxerga os gargalos operacionais, falhas técnicas de segurança, custos ocultos de manutenção, impactos comportamentais no ecossistema e burocracias regulatórias. Ele protege a tomada de decisão contra falhas críticas.</li>
+      </ul>
+
+      <p>🏅 <strong>O Ganho Pedagógico Final:</strong> O estudante aprende que decisões corporativas não são puramente certas ou erradas. Ao defenderem seus pontos de vista técnicos, debaterem construtivamente e votarem uma segunda vez em busca do <strong>Consenso</strong>, os estudantes vivenciam na prática o desenvolvimento de um <strong>Planejamento Estratégico Corporativo Real</strong>.</p>
+
+      <center>
+        <a href="index.html" class="btn-voltar">⬅️ VOLTAR PARA O LOBBY DO JOGO</a>
+      </center>
+
     </div>
+  </main>
 
-    <div id="estatisticas"></div>
-
-    <h3>Mesa de Estimativas</h3>
-    <div class="mesa-votos" id="mesa"></div>
-
-    <h3>Seu Baralho (Fibonacci)</h3>
-    <div class="meu-baralho" id="meu-baralho"></div>
-  </div>
-
-  <script src="https://cdn.socket.io/4.8.3/socket.io.min.js"></script>
-  <script>
-    const socket = io("https://motor-planningpoker.onrender.com", {
-      transports: ["polling"],
-      upgrade: true
-    });
-
-    const cartasFibonacci = ['0', '1', '2', '3', '5', '8', '13', '21', '34', '?', '☕'];
-    let meuVoto = null;
-    let salaRevelada = false;
-
-    // NOVO: Verifica se o aluno veio pelo link do QR Code (?sala=NomeDaSala)
-    window.onload = function() {
-      const parametros = new URLSearchParams(window.location.search);
-      const salaUrl = parametros.get('sala');
-      if (salaUrl) {
-        document.getElementById('sala').value = salaUrl;
-        document.getElementById('sala').style.background = '#e2e8f0'; // Feedback visual de preenchido
-      }
-    };
-
-    function entrar() {
-      const apelido = document.getElementById('nick').value;
-      const sala = document.getElementById('sala').value || "Geral";
-      if (!apelido) return alert("Por favor, digite seu nome!");
-
-      socket.emit('entrarSala', { apelido, sala });
-      
-      document.getElementById('lobby').style.display = 'none';
-      document.getElementById('painel-poker').style.display = 'block';
-      document.getElementById('titulo-sala').innerText = `Sala: ${sala}`;
-      
-      gerarMeuBaralho();
-    }
-
-    function gerarMeuBaralho() {
-      const container = document.getElementById('meu-baralho');
-      container.innerHTML = cartasFibonacci.map(v => `
-        <div class="carta" id="my-card-${v}" onclick="votar('${v}')">${v}</div>
-      `).join('');
-    }
-
-    function votar(valor) {
-      if (salaRevelada) return alert("A rodada acabou! Peça ao professor para iniciar uma nova rodada.");
-      
-      const cartas = document.querySelectorAll('.meu-baralho .carta');
-      cartas.forEach(c => c.classList.remove('selecionada'));
-
-      if (meuVoto === valor) {
-        meuVoto = null; 
-      } else {
-        meuVoto = valor;
-        document.getElementById(`my-card-${valor}`).classList.add('selecionada');
-      }
-
-      socket.emit('votar', valor);
-    }
-
-    function renderizarMesa(sala) {
-      salaRevelada = sala.revelado;
-      const mesa = document.getElementById('mesa');
-      const souModerador = (sala.moderador === socket.id);
-
-      // Exibe ou esconde o painel do professor dinamicamente
-      if (souModerador) {
-        document.getElementById('painel-professor').style.display = 'block';
-        // Gera a URL dinâmica com o nome da sala atual para o QR Code
-        const urlAcesso = `${window.location.origin}${window.location.pathname}?sala=${encodeURIComponent(document.getElementById('sala').value)}`;
-        document.getElementById('qrcode').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(urlAcesso)}" alt="QR Code">`;
-      } else {
-        document.getElementById('painel-professor').style.display = 'none';
-      }
-      
-      mesa.innerHTML = sala.jogadores.map(j => {
-        let classeCarta = "carta";
-        let conteudoCarta = j.voto || "";
-        let statusTexto = j.voto ? '✅ Votou' : '⏳ Pensando...';
-        let corStatus = j.voto ? '#10b981' : '#94a3b8';
-        
-        let ehLider = (j.id === sala.moderador);
-        let nomeExibicao = ehLider ? `👑 ${j.nome}` : j.nome;
-
-        if (j.voto && !sala.revelado) {
-          classeCarta = "carta oculta";
-          conteudoCarta = "";
-        } else if (!j.voto) {
-          classeCarta = "carta";
-          conteudoCarta = "💤"; 
-        }
-
-        // Se o usuário atual for o moderador, adiciona o botão de chutar nos OUTROS jogadores
-        let botaoChutar = "";
-        if (souModerador && j.id !== socket.id) {
-          botaoChutar = `<button class="btn-chutar" onclick="socket.emit('chutarJogador', '${j.id}')">❌ Chutar</button>`;
-        }
-
-        return `
-          <div class="player-card">
-            <div class="${classeCarta}">${conteudoCarta}</div>
-            <div style="font-weight: bold; margin-top: 10px; color: ${ehLider ? '#fbbf24' : 'white'};">${nomeExibicao}</div>
-            <div class="status-voto" style="color: ${corStatus};">${statusTexto}</div>
-            ${botaoChutar}
-          </div>
-        `;
-      }).join('');
-    }
-
-    socket.on('atualizarSala', (sala) => {
-      if (!sala.revelado) {
-          document.getElementById('estatisticas').style.display = 'none';
-      }
-      renderizarMesa(sala);
-    });
-
-    socket.on('votosRevelados', ({ sala, stats }) => {
-      renderizarMesa(sala);
-      
-      const painelStats = document.getElementById('estatisticas');
-      painelStats.style.display = 'block';
-      
-      if (stats.consenso) {
-        painelStats.innerHTML = `🎉 <strong>Consenso Atingido!</strong> Todos votaram igual! Estimativa: <strong>${stats.media}</strong>`;
-        painelStats.style.borderColor = "#10b981";
-        painelStats.style.background = "rgba(16, 185, 129, 0.15)";
-      } else {
-        painelStats.innerHTML = `📊 Votos revelados! Média calculada: <strong>${stats.media}</strong> pontos. <br> <small>Discutam as diferenças antes da próxima rodada!</small>`;
-        painelStats.style.borderColor = "#fbbf24";
-        painelStats.style.background = "rgba(251, 191, 36, 0.15)";
-      }
-    });
-
-    socket.on('rodadaReiniciada', (sala) => {
-      meuVoto = null;
-      document.getElementById('estatisticas').style.display = 'none';
-      gerarMeuBaralho(); 
-      renderizarMesa(sala);
-    });
-
-    // NOVO: Ouvinte para o aluno que for expulso pelo mestre
-    socket.on('voceFoiChutado', () => {
-      alert("Você foi removido da sala pelo moderador.");
-      // Recarrega limpando os parâmetros para voltar ao lobby limpo
-      window.location.href = window.location.origin + window.location.pathname;
-    });
-  </script>
 </body>
 </html>
