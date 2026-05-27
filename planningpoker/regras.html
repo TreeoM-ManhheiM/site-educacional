@@ -1,39 +1,171 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Como funciona o Planning Poker?</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f8; color: #333; line-height: 1.6; margin: 0; padding: 40px 20px;}
-        .box { max-width: 700px; margin: auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
-        h1 { color: #2563eb; }
-        h2 { color: #1e293b; margin-top: 30px; }
-        ol { padding-left: 20px; }
-        li { margin-bottom: 12px; }
-        .btn { display: inline-block; background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px;}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manual Pedagógico — Planning Poker Lógico</title>
+  <style>
+    body {
+      margin: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #0f172a; color: #f8fafc; line-height: 1.6; text-align: left;
+    }
+    header {
+      background: linear-gradient(135deg, #1e293b, #0f172a);
+      padding: 40px 20px; text-align: center; border-bottom: 2px solid #334155;
+    }
+    header h1 { margin: 0; font-size: 32px; color: #3b82f6; }
+    header p { margin: 10px 0 0 0; color: #94a3b8; font-size: 18px; }
+    
+    main { max-width: 1000px; margin: auto; padding: 30px 20px; }
+    
+    .container-guia {
+      background: #1e293b; padding: 40px; border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3); border: 1px solid #334155;
+    }
+    
+    h2 { color: #fbbf24; border-bottom: 2px solid #334155; padding-bottom: 8px; margin-top: 35px; }
+    h3 { color: #60a5fa; margin-top: 25px; display: flex; align-items: center; gap: 10px; }
+    
+    .badge {
+      font-size: 12px; padding: 4px 8px; border-radius: 6px; font-weight: bold; text-transform: uppercase;
+    }
+    .badge-adm { background: #3b82f6; color: white; }
+    .badge-vendas { background: #ec4899; color: white; }
+    .badge-dev { background: #10b981; color: white; }
+    .badge-dados { background: #8b5cf6; color: white; }
+
+    .card-cenario {
+      background: #0f172a; border-left: 4px solid #3b82f6; padding: 20px;
+      border-radius: 0 12px 12px 0; margin: 15px 0;
+    }
+    .card-cenario.vendas { border-left-color: #ec4899; }
+    .card-cenario.dev { border-left-color: #10b981; }
+    .card-cenario.dados { border-left-color: #8b5cf6; }
+
+    .topico-debate { margin-left: 15px; padding-left: 10px; border-left: 2px dashed #475569; }
+    
+    .escala-fibonacci {
+      display: flex; gap: 10px; flex-wrap: wrap; margin: 20px 0; justify-content: center;
+    }
+    .fib-item {
+      background: #334155; padding: 10px; border-radius: 8px; width: 110px; text-align: center;
+      font-size: 14px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .fib-item strong { display: block; font-size: 20px; color: #fbbf24; margin-bottom: 4px; }
+
+    .diretriz-seduc {
+      background: rgba(59, 130, 246, 0.1); border: 2px solid #3b82f6;
+      padding: 20px; border-radius: 10px; margin: 20px 0;
+    }
+    
+    .btn-voltar {
+      display: inline-block; background: #3b82f6; color: white; text-decoration: none;
+      padding: 14px 28px; border-radius: 8px; font-weight: bold; transition: background 0.2s;
+      margin-top: 30px; text-align: center;
+    }
+    .btn-voltar:hover { background: #2563eb; }
+    
+    ul { padding-left: 20px; }
+    li { margin-bottom: 10px; }
+    strong { color: #fff; }
+  </style>
 </head>
 <body>
-    <div class="box">
-        <h1>O que é o Planning Poker? 🃏</h1>
-        <p>O Planning Poker é uma técnica baseada em gamificação utilizada por equipes de tecnologia (Scrum/Agile) para <strong>estimar o esforço ou a complexidade</strong> de desenvolvimento de uma determinada tarefa.</p>
-        
-        <h2>Passo a Passo do Jogo:</h2>
-        <ol>
-            <li><strong>Leitura da Tarefa:</strong> O professor ou líder lê o problema ou desafio que precisa ser resolvido.</li>
-            <li><strong>Discussão:</strong> A equipe discute brevemente os requisitos e as possíveis dificuldades técnicas.</li>
-            <li><strong>Voto Secreto:</strong> Cada jogador escolhe uma carta do seu baralho que representa o esforço necessário (usando a sequência de Fibonacci). Enquanto você escolhe, seu voto fica **escondido** para não influenciar os colegas!</li>
-            <li><strong>A Revelação:</strong> Quando todos terminam, clica-se em "Revelar Votos". Todas as cartas se viram ao mesmo tempo.</li>
-            <li><strong>Alinhamento:</strong> Se houver divergência (ex: alguém votou 2 e outro votou 21), os extremos explicam seus pontos de vista para que a equipe chegue a um consenso.</li>
-        </ol>
 
-        <h2>O que significam as cartas especiais?</h2>
-        <ul>
-            <li><strong>? (Interrogação):</strong> Significa "Não tenho a menor ideia de como resolver ou faltam informações".</li>
-            <li><strong>☕ (Café):</strong> Significa "Estou cansado, precisamos de um intervalo antes de estimar isso!".</li>
-        </ul>
+  <header>
+    <h1>🃏 Planning Poker Lógico</h1>
+    <p>Guia Metodológico e Pedagógico — Alinhado à SEDUC-2026</p>
+  </header>
 
-        <center><a href="index.html" class="btn">VOLTAR PARA O POKER</a></center>
+  <main>
+    <div class="container-guia">
+      
+      <div class="diretriz-seduc">
+        <h3 style="margin-top:0; color: #3b82f6;">🎯 Diretriz de Aprendizagem Ativa (SEDUC-2026)</h3>
+        <p>Esta ferramenta foi desenhada para romper com o modelo de aula meramente expositiva. Ao utilizar o <strong>Planning Poker Lógico</strong>, o estudante assume o papel de analista estratégico. A dinâmica estimula a <strong>Instrução por Pares (Peer Instruction)</strong>, a tomada de decisão baseada em dados, a escuta empática e a defesa técnica de argumentos em equipe.</p>
+      </div>
+
+      <h2>💡 O Conceito da Ferramenta</h2>
+      <p>No mercado corporativo global, o Planning Poker serve para estimar o tempo de tarefas de software. Aqui, nós o adaptamos didaticamente: o Professor apresenta um <strong>Desafio de Mercado (Problema Real)</strong> e os estudantes utilizam a escala numérica para mensurar o <strong>Grau de Impacto, Custo, Risco Tecnológico ou Esforço Operacional</strong> envolvido na resolução desse problema.</p>
+
+      <h3>📊 Significado Pedagógico da Escala (Fibonacci)</h3>
+      <div class="escala-fibonacci">
+        <div class="fib-item"><strong>0 a 3</strong> Baixo Risco / Baixo Esforço</div>
+        <div class="fib-item"><strong>5 a 13</strong> Complexidade Média</div>
+        <div class="fib-item"><strong>21 a 34</strong> Alto Impacto / Risco Crítico</div>
+        <div class="fib-item"><strong>? / ☕</strong> Dúvida Teórica / Pausa Técnica</div>
+      </div>
+
+      <h2>🏢 Aplicação Prática por Itinerário Formativo Técnico</h2>
+      <p>Abaixo estão os modelos de estudos de caso prontos para o corpo docente aplicar em sala de aula de acordo com cada matriz técnica:</p>
+
+      <h3><span class="badge badge-adm">Administração</span> 1. Gestão de Riscos Organizacionais e Compliance</h3>
+      <div class="card-cenario">
+        <p><strong>Desafio Lido pelo Professor:</strong> <em>"Uma nova legislação fiscal entrou em vigor, mudando a tributação de ICMS sobre nossos produtos digitais. Se errarmos a transição, a empresa será multada pela Receita Federal. Qual o nível de risco operacional e de governança para o nosso negócio?"</em></p>
+        <p><strong>Foco da Votação dos Alunos:</strong> Grau de impacto financeiro e vulnerabilidade institucional se o processo falhar.</p>
+        <div class="topico-debate">
+          <p>🔄 <strong>A Dinâmica do Debate Teórico:</strong></p>
+          <ul>
+            <li><strong>Estudante com Voto Baixo (ex: 2):</strong> Defende uma solução de mitigação ágil baseada em terceirização (ex: contratar uma consultoria contábil imediata ou usar um software ERP padrão).</li>
+            <li><strong>Estudante com Voto Alto (ex: 21):</strong> Alerta sobre a burocracia oculta, o tempo de treinamento das equipes internas e a necessidade de readequação do fluxo de caixa para absorver possíveis oscilações.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3><span class="badge badge-vendas">Vendas</span> 2. Planejamento Comercial e Estratégia Go-To-Market</h3>
+      <div class="card-cenario vendas">
+        <p><strong>Desafio Lido pelo Professor:</strong> <em>"Nossa marca quer lançar uma campanha de indicação em massa (Growth Hacking) onde o cliente atual ganha R$ 20 por cada novo usuário que trouxer. Qual a complexidade e o risco financeiro desta ação em termos de Custo de Aquisição de Cliente (CAC)?"</em></p>
+        <p><strong>Foco da Votação dos Alunos:</strong> Avaliação do equilíbrio entre o orçamento disponível para vendas e a capacidade de conversão da campanha.</p>
+        <div class="topico-debate">
+          <p>🔄 <strong>A Dinâmica do Debate Teórico:</strong></p>
+          <ul>
+            <li><strong>Estudante com Voto Baixo (ex: 3):</strong> Foca na escalabilidade agressiva e no aumento rápido de faturamento, enxergando uma execução enxuta de marketing digital orgânico.</li>
+            <li><strong>Estudante com Voto Alto (ex: 13):</strong> Levanta os riscos de fraudes no regulamento (perfis fakes), o risco de o ROI (Retorno sobre o Investimento) ser negativo se os novos clientes não consumirem recorrentemente, e os limites do Código de Defesa do Consumidor (CDC).</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3><span class="badge badge-dev">Desenvolvimento de Sistemas</span> 3. Arquitetura de Software e Segurança da Informação</h3>
+      <div class="card-cenario dev">
+        <p><strong>Desafio Lido pelo Professor:</strong> <em>"Precisamos migrar o banco de dados local de um hospital universitário para uma arquitetura em nuvem distribuída (Cloud Computing), garantindo criptografia ponta a ponta e zero queda no sistema. Qual o nível de esforço técnico e risco estrutural?"</em></p>
+        <p><strong>Foco da Votação dos Alunos:</strong> Complexidade da infraestrutura, tratamento de concorrência e conformidade com a LGPD (Lei Geral de Proteção de Dados).</p>
+        <div class="topico-debate">
+          <p>🔄 <strong>A Dinâmica do Debate Teórico:</strong></p>
+          <ul>
+            <li><strong>Estudante com Voto Baixo (ex: 5):</strong> Argumenta a favor do uso de serviços gerenciados nativos em nuvem (como AWS ou Azure) que oferecem ferramentas automatizadas de migração "lift-and-shift".</li>
+            <li><strong>Estudante com Voto Alto (ex: 34):</strong> Pontua os gargalos invisíveis: integridade dos dados legados corrompidos, riscos de ataques de injeção SQL ou sequestro de dados (Ransomware) durante a transferência e o tempo necessário para testes de regressão exaustivos.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3><span class="badge badge-dados">Ciência de Dados</span> 4. Inteligência de Negócios (BI) e Modelagem Preditiva</h3>
+      <div class="card-cenario dados">
+        <p><strong>Desafio Lido pelo Professor:</strong> <em>"A secretaria de educação nos forneceu uma base de dados histórica bruta, sem tratamento, contendo notas de 200 mil estudantes. Devemos criar um modelo preditivo de IA para antecipar e prevenir a evasão escolar no próximo bimestre. Qual o tamanho do desafio?"</em></p>
+        <p><strong>Foco da Votação dos Alunos:</strong> Esforço na fase de Engenharia/Saneamento de Dados (ETL) e tratamento de vieses algorítmicos.</p>
+        <div class="topico-debate">
+          <p>🔄 <strong>A Dinâmica do Debate Teórico:</strong></p>
+          <ul>
+            <li><strong>Estudante com Voto Baixo (ex: 3):</strong> Imagina o pipeline tradicional: importar um arquivo CSV no Python, aplicar uma biblioteca padrão de Machine Learning (como Scikit-Learn) e plotar gráficos de acurácia rapidamente no Power BI.</li>
+            <li><strong>Estudante com Voto Alto (ex: 21):</strong> Enxerga a realidade analítica: dados faltantes, inconsistência de registros manuais, a alta complexidade para definir as variáveis preditoras corretas e o risco ético do modelo tomar decisões enviesadas ou preconceituosas sobre minorias.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2>🔄 A Lógica da Discussão em Nível Pedagógico</h2>
+      <p>Diferente de um jogo de competição, aqui a divergência de notas é estimulada. A inversão de votos converte-se em uma rica <strong>aula de negociação, escuta ativa e síntese conceitual</strong>:</p>
+      <ul>
+        <li><strong>Quem votou Menos Pontos (Visão Executiva/Prática):</strong> Representa o pragmatismo empresarial. Foca no MVP (Produto Mínimo Viável), na otimização de recursos disponíveis, na automação imediata e nas soluções de mercado de rápida entrega. Ele força o grupo a pensar em eficiência.</li>
+        <li><strong>Quem votou Mais Pontos (Visão Analítica/Preventiva):</strong> Representa a inteligência de riscos e compliance. Enxerga os gargalos operacionais, falhas técnicas de segurança, custos ocultos de manutenção, impactos comportamentais no ecossistema e burocracias regulatórias. Ele protege a tomada de decisão contra falhas críticas.</li>
+      </ul>
+
+      <p>🏅 <strong>O Ganho Pedagógico Final:</strong> O estudante aprende que decisões corporativas não são puramente certas ou erradas. Ao defenderem seus pontos de vista técnicos, debaterem construtivamente e votarem uma segunda vez em busca do <strong>Consenso</strong>, os estudantes vivenciam na prática o desenvolvimento de um <strong>Planejamento Estratégico Corporativo Real</strong>.</p>
+
+      <center>
+        <a href="index.html" class="btn-voltar">⬅️ VOLTAR PARA O LOBBY DO JOGO</a>
+      </center>
+
     </div>
+  </main>
+
 </body>
 </html>
