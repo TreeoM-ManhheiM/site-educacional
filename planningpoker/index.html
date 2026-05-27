@@ -41,16 +41,19 @@
     .status-voto { font-size: 14px; margin-top: 8px; color: #94a3b8; font-weight: bold; }
     .player-card { display: flex; flex-direction: column; align-items: center; background: #1e293b; padding: 15px; border-radius: 12px; min-width: 90px;}
 
-    button {
+    button, .btn-link {
       background: #3b82f6; color: white; border: none; padding: 12px 24px;
       border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px; margin: 5px;
+      display: inline-block; text-decoration: none;
     }
-    button:hover { background: #2563eb; }
+    button:hover, .btn-link:hover { background: #2563eb; }
     .btn-revelar { background: #10b981; }
     .btn-revelar:hover { background: #059669; }
     .btn-reset { background: #ef4444; }
     .btn-reset:hover { background: #dc2626; }
     .btn-chutar { background: #dc2626; color: white; padding: 4px 8px; font-size: 12px; border-radius: 4px; margin-top: 8px; }
+    .btn-manual { background: #8b5cf6; }
+    .btn-manual:hover { background: #7c3aed; }
 
     #estatisticas {
       padding: 20px; border-radius: 12px; display: none; margin: 20px 0; border: 2px solid;
@@ -72,10 +75,15 @@
     <input type="text" id="sala" placeholder="Nome da Sala (ex: Squad-A)">
     <br><br>
     <button onclick="entrar()">ENTRAR NA SALA</button>
+    <br><br>
+    <a href="regras.html" class="btn-link btn-manual" target="_blank">📖 Ver Manual de Regras e Cenários</a>
   </div>
 
   <div id="painel-poker" style="display: none;">
-    <h2 id="titulo-sala" style="color: #60a5fa; margin-bottom: 5px;">Sala: -</h2>
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 900px; margin: auto;">
+      <h2 id="titulo-sala" style="color: #60a5fa; margin: 0;">Sala: -</h2>
+      <a href="regras.html" class="btn-link btn-manual" style="padding: 8px 16px; font-size: 14px;" target="_blank">📖 Manual Técnico</a>
+    </div>
     
     <div id="painel-professor" style="display: none;">
       <h3 style="color: #fbbf24; margin-top: 0;">👑 Painel do Moderador</h3>
@@ -210,7 +218,6 @@
       renderizarMesa(sala);
     });
 
-    // NOVO: Renderização Dinâmica do Debate Pedagógico de Extremos
     socket.on('votosRevelados', ({ sala, stats }) => {
       renderizarMesa(sala);
       
@@ -228,7 +235,6 @@
         painelStats.style.borderColor = "#10b981";
         painelStats.style.background = "rgba(16, 185, 129, 0.15)";
       } else {
-        // Formata os nomes dos alunos envolvidos nos extremos
         let nomesMenor = stats.jogadoresMenor.join(', ');
         let nomesMaior = stats.jogadoresMaior.join(', ');
 
