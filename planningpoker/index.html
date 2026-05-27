@@ -53,8 +53,7 @@
     .btn-chutar { background: #dc2626; color: white; padding: 4px 8px; font-size: 12px; border-radius: 4px; margin-top: 8px; }
 
     #estatisticas {
-      background: rgba(16, 185, 129, 0.15); border: 2px solid #10b981;
-      padding: 15px; border-radius: 10px; display: none; font-size: 18px; margin: 15px 0;
+      padding: 20px; border-radius: 12px; display: none; margin: 20px 0; border: 2px solid;
     }
     input { padding: 12px; border-radius: 8px; border: none; margin: 5px; width: 200px; font-size: 16px; }
     
@@ -66,7 +65,7 @@
 <body>
 
   <div id="lobby">
-    <h1 style="color: #60a5fa; font-size: 36px;">Planning Poker Lógico EE. Oito de Abril</h1>
+    <h1 style="color: #60a5fa; font-size: 36px;">Planning Poker Lógico EE. Oito de Abril 2026</h1>
     <p>Insira seus dados ou escaneie o QR Code do professor para entrar na sala.</p>
     <br>
     <input type="text" id="nick" placeholder="Seu Nome/Apelido">
@@ -87,7 +86,7 @@
         </div>
         <div id="qr-container" style="background: white; padding: 10px; border-radius: 10px; text-align: center;">
           <div id="qrcode"></div>
-          <small style="color: #1e293b; font-weight: bold; display: block; margin-top: 5px;">Aponte para entrar direto!</small>
+          <small style="color: #1e293b; font-weight: bold; display: block; margin-top: 5px;">Aponte para entrar!</small>
         </div>
       </div>
     </div>
@@ -97,7 +96,7 @@
     <h3>Mesa de Estimativas</h3>
     <div class="mesa-votos" id="mesa"></div>
 
-    <h3>Direitos Reservados EE. Oito de Abril</h3>
+    <h3>Direitos Reservados EE. Oito de Abril 2026</h3>
     <div class="meu-baralho" id="meu-baralho"></div>
   </div>
 
@@ -112,13 +111,12 @@
     let meuVoto = null;
     let salaRevelada = false;
 
-    // NOVO: Verifica se o aluno veio pelo link do QR Code (?sala=NomeDaSala)
     window.onload = function() {
       const parametros = new URLSearchParams(window.location.search);
       const salaUrl = parametros.get('sala');
       if (salaUrl) {
         document.getElementById('sala').value = salaUrl;
-        document.getElementById('sala').style.background = '#e2e8f0'; // Feedback visual de preenchido
+        document.getElementById('sala').style.background = '#e2e8f0';
       }
     };
 
@@ -164,10 +162,8 @@
       const mesa = document.getElementById('mesa');
       const souModerador = (sala.moderador === socket.id);
 
-      // Exibe ou esconde o painel do professor dinamicamente
       if (souModerador) {
         document.getElementById('painel-professor').style.display = 'block';
-        // Gera a URL dinâmica com o nome da sala atual para o QR Code
         const urlAcesso = `${window.location.origin}${window.location.pathname}?sala=${encodeURIComponent(document.getElementById('sala').value)}`;
         document.getElementById('qrcode').innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=130x130&data=${encodeURIComponent(urlAcesso)}" alt="QR Code">`;
       } else {
@@ -191,7 +187,6 @@
           conteudoCarta = "💤"; 
         }
 
-        // Se o usuário atual for o moderador, adiciona o botão de chutar nos OUTROS jogadores
         let botaoChutar = "";
         if (souModerador && j.id !== socket.id) {
           botaoChutar = `<button class="btn-chutar" onclick="socket.emit('chutarJogador', '${j.id}')">❌ Chutar</button>`;
@@ -215,6 +210,7 @@
       renderizarMesa(sala);
     });
 
+    // NOVO: Renderização Dinâmica do Debate Pedagógico de Extremos
     socket.on('votosRevelados', ({ sala, stats }) => {
       renderizarMesa(sala);
       
@@ -222,13 +218,46 @@
       painelStats.style.display = 'block';
       
       if (stats.consenso) {
-        painelStats.innerHTML = `🎉 <strong>Consenso Atingido!</strong> Todos votaram igual! Estimativa: <strong>${stats.media}</strong>`;
+        painelStats.innerHTML = `
+          <div style="text-align: center;">
+            <span style="font-size: 32px;">🎉</span>
+            <h3 style="color: #10b981; margin: 5px 0;">Consenso Geral Atingido!</h3>
+            <p style="margin: 5px 0;">Todos os votos válidos estão alinhados em: <strong>${stats.media}</strong> pontos.</p>
+          </div>
+        `;
         painelStats.style.borderColor = "#10b981";
         painelStats.style.background = "rgba(16, 185, 129, 0.15)";
       } else {
-        painelStats.innerHTML = `📊 Votos revelados! Média calculada: <strong>${stats.media}</strong> pontos. <br> <small>Discutam as diferenças antes da próxima rodada!</small>`;
+        // Formata os nomes dos alunos envolvidos nos extremos
+        let nomesMenor = stats.jogadoresMenor.join(', ');
+        let nomesMaior = stats.jogadoresMaior.join(', ');
+
+        painelStats.innerHTML = `
+          <div style="text-align: left;">
+            <h3 style="color: #fbbf24; margin-top: 0; display: flex; align-items: center; gap: 10px;">
+              🗣️ Momento de Debate Pedagógico (Média da Mesa: ${stats.media})
+            </h3>
+            <p style="color: #94a3b8; font-size: 14px; margin: 0 0 15px 0;">
+              Metodologia de Gestão: Identificamos visões divergentes. Os extremos devem justificar seus pontos de vista técnico/gerencial:
+            </p>
+            
+            <div style="background: rgba(59, 130, 246, 0.12); border-left: 5px solid #3b82f6; padding: 12px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
+              <strong style="color: #60a5fa;">📉 Visão Otimista / Pragmática (Voto ${stats.menorVoto}):</strong><br>
+              <span style="color: #ffffff; font-weight: bold;">${nomesMenor}</span> deve(m) explicar por que enxerga(m) a execução deste desafio como algo simples, rápido ou de baixo custo.
+            </div>
+
+            <div style="background: rgba(239, 68, 68, 0.12); border-left: 5px solid #ef4444; padding: 12px; border-radius: 0 8px 8px 0;">
+              <strong style="color: #f87171;">📈 Visão Analítica / De Risco (Voto ${stats.maiorVoto}):</strong><br>
+              <span style="color: #ffffff; font-weight: bold;">${nomesMaior}</span> deve(m) alertar a equipe sobre os riscos ocultos, complexidade técnica (banco de dados, integrações) ou custos operacionais envolvidos.
+            </div>
+
+            <p style="text-align: center; margin: 15px 0 0 0; font-size: 13px; color: #fbbf24; font-weight: bold;">
+              💡 Após ouvirem os argumentos, o moderador pode abrir uma "Nova Rodada" para ver se a turma chega ao consenso!
+            </p>
+          </div>
+        `;
         painelStats.style.borderColor = "#fbbf24";
-        painelStats.style.background = "rgba(251, 191, 36, 0.15)";
+        painelStats.style.background = "rgba(251, 191, 36, 0.06)";
       }
     });
 
@@ -239,10 +268,8 @@
       renderizarMesa(sala);
     });
 
-    // NOVO: Ouvinte para o aluno que for expulso pelo mestre
     socket.on('voceFoiChutado', () => {
       alert("Você foi removido da sala pelo moderador.");
-      // Recarrega limpando os parâmetros para voltar ao lobby limpo
       window.location.href = window.location.origin + window.location.pathname;
     });
   </script>
