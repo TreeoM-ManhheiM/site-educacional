@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apostila de Apoio - Lógica e Programação</title>
+</head>
+<body>
+
+<h1>Apostila de Apoio - Lógica e Linguagem de Programação</h1>
+
+<hr>
+
+<!-- SEMANA 1 -->
+<h2>SEMANA 1 - Criando seu Primeiro Algoritmo</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Escolha UMA das situações abaixo e escreva um algoritmo detalhado no caderno ou editor de texto:
+</p>
+
+<ul>
+<li>Fazer um suco natural.</li>
+<li>Trocar o pneu de uma bicicleta.</li>
+<li>Organizar uma festa surpresa.</li>
+<li>Preparar-se para uma prova.</li>
+</ul>
+
+<p><strong>Requisitos obrigatórios:</strong></p>
+<ol>
+<li>Mínimo de 10 passos e máximo de 20 passos.</li>
+<li>Utilize a estrutura: <code>ALGORITMO / INÍCIO / passos numerados / FIM</code>.</li>
+<li>Seja específico e claro nas instruções.</li>
+<li>Considere possíveis problemas durante o processo (ex: falta de ingrediente, pneu furado grave, etc.).</li>
+</ol>
+
+<p><strong>Exemplo de Resolução em Python:</strong></p>
+
+<pre>
+# Exemplo de sequência lógica simples em Python:
+print("--- Algoritmo: Preparar Suco Natural ---")
+print("1 - Lavar as frutas com água corrente")
+print("2 - Descascar e cortar as frutas em pedaços")
+print("3 - Verificar se as sementes foram removidas")
+print("4 - Adicionar as frutas cortadas no liquidificador")
+print("5 - Adicionar 500ml de água e gelo a gosto")
+print("6 - Tampar o liquidificador adequadamente")
+print("7 - Ligar o liquidificador e bater por 2 minutos")
+print("8 - Desligar o equipamento e provar o suco")
+print("9 - Adoçar se necessário e misturar novamente")
+print("10 - Servir em um copo limpo")
+</pre>
+
+<p><em>Instruções de entrega:</em> Após finalizar a atividade, envie o algoritmo completo aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 2 -->
+<h2>SEMANA 2 - Sistema de Vendas</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Você vai criar um sistema para calcular o valor final de uma venda em uma loja, aplicando regras de negócio para descontos e frete.
+</p>
+
+<p><strong>Regras do Negócio:</strong></p>
+<ul>
+<li>Desconto de 5% para compras acima de R$100,00.</li>
+<li>Desconto de 10% para compras acima de R$500,00.</li>
+<li>Frete fixo de R$15,00 para compras com valor total abaixo de R$200,00.</li>
+</ul>
+
+<p><strong>Requisitos do Algoritmo:</strong></p>
+<ol>
+<li>Leia o valor total dos produtos (subtotal).</li>
+<li>Calcule o desconto apropriado com base no valor.</li>
+<li>Adicione o frete se o valor for menor que R$200,00.</li>
+<li>Mantenha a exibição de:
+    <ul>
+        <li>Subtotal;</li>
+        <li>Desconto aplicado;</li>
+        <li>Valor do frete;</li>
+        <li>Total final.</li>
+    </ul>
+</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+valor = float(input("Valor da compra: R$ "))
+
+desconto = 0.0
+
+if valor > 500:
+    desconto = valor * 0.10
+elif valor > 100:
+    desconto = valor * 0.05
+
+frete = 0.0
+
+if valor < 200:
+    frete = 15.0
+
+total = valor - desconto + frete
+
+print(f"Subtotal: R$ {valor:.2f}")
+print(f"Desconto: R$ {desconto:.2f}")
+print(f"Frete: R$ {frete:.2f}")
+print(f"Total Final: R$ {total:.2f}")
+</pre>
+
+<p><em>Instruções de entrega:</em> Após finalizar a atividade, envie o código de programação no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 3 -->
+<h2>SEMANA 3 - Sistema de Classificação de Idade</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Você deve criar um sistema completo que classifica pessoas por faixa etária e indica permissões específicas de acordo com a idade fornecida.
+</p>
+
+<p><strong>Faixas Etárias e Permissões Exigidas:</strong></p>
+<ul>
+<li><strong>Criança (0-12 anos):</strong> Exibir "Entrada gratuita em cinemas"</li>
+<li><strong>Adolescente (13-17 anos):</strong> Exibir "Meia entrada garantida"</li>
+<li><strong>Adulto (18-64 anos):</strong> Exibir "Pode dirigir e votar"</li>
+<li><strong>Idoso (65+ anos):</strong> Exibir "Prioridade em filas"</li>
+</ul>
+
+<p><strong>Etapas do Desenvolvimento:</strong></p>
+
+<p><em>Planejamento:</em></p>
+<ul>
+<li>Desenhe o fluxograma do processo.</li>
+<li>Identifique quando e onde a estrutura <code>SE...SENÃO</code> encadeada/aninhada precisará ser usada.</li>
+</ul>
+
+<p><em>Codificação:</em></p>
+<ul>
+<li>Escreva o pseudocódigo / código completo.</li>
+<li>Use o aninhamento adequado de condições.</li>
+</ul>
+
+<p><em>Casos de Teste:</em></p>
+<ul>
+<li>8 anos (Deve exibir Criança e Entrada gratuita)</li>
+<li>15 anos (Deve exibir Adolescente e Meia entrada)</li>
+<li>25 anos (Deve exibir Adulto e Pode dirigir)</li>
+<li>70 anos (Deve exibir Idoso e Prioridade em filas)</li>
+</ul>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+idade = int(input("Digite sua idade: "))
+
+if idade <= 12:
+    print("Classificação: Criança")
+    print("Permissão: Entrada gratuita em cinemas")
+elif idade <= 17:
+    print("Classificação: Adolescente")
+    print("Permissão: Meia entrada garantida")
+elif idade <= 64:
+    print("Classificação: Adulto")
+    print("Permissão: Pode dirigir e votar")
+else:
+    print("Classificação: Idoso")
+    print("Permissão: Prioridade em filas")
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie arquivo em word, pdf, ou foto do caderno contendo toda a criação aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 4 -->
+<h2>SEMANA 4 - Operadores Relacionais na Prática</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Melhoria contínua na prática: praticar a validação de condições utilizando operadores relacionais para verificação lógica de maioridade e permissões.
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Cadernos, canetas e lápis.</li>
+<li>Roteiro de atividade prática.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Em grupos com até 5 pessoas, leiam com atenção a atividade proposta no roteiro.</li>
+<li>Antes de iniciar a codificação, realizem esboços no papel para definir a lógica das verificações booleanas.</li>
+<li>Utilizem as ferramentas de desenvolvimento disponíveis para implementar a atividade.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+idade = int(input("Digite sua idade: "))
+
+eh_maior_de_idade = idade >= 18
+eh_menor_de_idade = idade < 18
+
+print("É maior de idade (>= 18)?", eh_maior_de_idade)
+print("É menor de idade (< 18)?", eh_menor_de_idade)
+</pre>
+
+<p><em>Instruções de entrega:</em> Registre suas respostas e observações do grupo diretamente aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 5 -->
+<h2>SEMANA 5 - Integrando Estrutura Sequencial com o Comando SE (Calculadora de Média)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Você deve criar um programa que leia duas notas de um aluno, calcule a média aritmética e verifique se o aluno foi aprovado ou não. A média mínima para aprovação é 6.0.
+</p>
+
+<p><strong>Instruções para Realização da Atividade:</strong></p>
+
+<ol>
+<li>Declare as variáveis para armazenar as duas notas e a média.</li>
+<li>Solicite e leia as duas notas do usuário.</li>
+<li>Calcule a média aritmética das notas: <code>media = (nota1 + nota2) / 2</code>.</li>
+<li>Exiba a média calculada no console.</li>
+<li>Use a estrutura <code>SE</code> (<code>if</code>) para verificar se a média é maior ou igual a 6.0.</li>
+<li>Se for verdadeiro, exiba a mensagem "Aprovado". Caso contrário, exiba "Reprovado".</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+nota1 = float(input("Digite a primeira nota: "))
+nota2 = float(input("Digite a segunda nota: "))
+
+media = (nota1 + nota2) / 2
+
+print(f"Média calculada: {media:.1f}")
+
+if media >= 6.0:
+    print("Situação: Aprovado")
+else:
+    print("Situação: Reprovado")
+</pre>
+
+<p><em>Instruções de entrega:</em> Entregue a atividade no AVA em documento no formato .doc ou .pdf com o exemplo de algoritmo desenvolvido no decorrer da atividade.</p>
+
+<hr>
+
+<!-- SEMANA 6 -->
+<h2>SEMANA 6 - Projeto Guiado - Lógica e Condição (Número Positivo/Negativo)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Atividade de melhoria contínua na prática focada em análise condicional e validação de números.
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Caderno para rascunhos.</li>
+<li>Caneta.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Leiam com atenção a atividade proposta no roteiro.</li>
+<li>Antes de iniciar a codificação, elaborem esboços no papel para definir a lógica de verificação numérica.</li>
+<li>Utilizem as ferramentas de desenvolvimento disponíveis para implementar a atividade.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+numero = int(input("Digite um número inteiro: "))
+
+if numero > 0:
+    print("O número digitado é POSITIVO.")
+elif numero < 0:
+    print("O número digitado é NEGATIVO.")
+else:
+    print("O número digitado é ZERO (Neutro).")
+</pre>
+
+<p><em>Instruções de entrega:</em> Após finalizar a atividade, envie o relatório com as respostas aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 7 -->
+<h2>SEMANA 7 - Estrutura SE/SENÃO (E-commerce de Atacado)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Vamos desenvolver uma venda para um e-commerce de atacado! Imagine que vocês fazem parte da equipe de desenvolvimento de um e-commerce de atacado. Só pode liberar vendas se o cliente tiver 18 anos ou mais.
+</p>
+
+<p><strong>Desafio em Grupo:</strong></p>
+<p>Em grupos, pensem em como a estrutura <code>SE/SENÃO</code> poderia ser usada para implementar essa lógica. Considerem os seguintes cenários de teste:</p>
+<ol>
+<li>Uma venda onde o cliente digitou a idade = 43.</li>
+<li>Uma venda onde o cliente digitou a idade = 10.</li>
+</ol>
+
+<p>Para cada cenário, descrevam em pseudocódigo a lógica de decisão que o sistema usaria (usando Visualg ou Python). Pensem nas seguintes perguntas orientadoras:</p>
+<ul>
+<li>Qual é a condição que precisa ser verificada?</li>
+<li>O que acontece se a condição for verdadeira?</li>
+<li>O que acontece se a condição for falsa?</li>
+</ul>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+idade = int(input("Digite a idade do cliente: "))
+
+if idade >= 18:
+    print("Venda LIBERADA. O cliente possui idade permitida para compras no atacado.")
+else:
+    print("Venda BLOQUEADA. O cliente é menor de idade e não pode finalizar a compra.")
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie a resolução com a análise dos dois cenários e a resposta às perguntas diretamente aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 8 -->
+<h2>SEMANA 8 - Estruturas de Repetição (Loop While)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+O detetive de bugs: encontrando e corrigindo um loop infinito utilizando a estrutura de repetição <code>enquanto</code> (<code>while</code>).
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Cadernos, canetas e lápis.</li>
+<li>Roteiro de atividade prática.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Leiam com atenção a atividade proposta no roteiro.</li>
+<li>Antes de iniciar a codificação, realizem esboços no papel para definir a lógica de parada da repetição.</li>
+<li>Utilizem as ferramentas de desenvolvimento disponíveis para implementar e corrigir o código.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+# Exemplo de controle de repetição e prevenção de loop infinito
+contador = 1
+
+while contador <= 5:
+    print(f"Tentativa número {contador}")
+    contador += 1 # Incremento obrigatório para atualização do laço
+</pre>
+
+<p><em>Instruções de entrega:</em> Sigam as instruções para o registro e envio diretamente aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 9 -->
+<h2>SEMANA 9 - Estruturas de Repetição (Loop For)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Programando o Robô Chef: sua primeira receita utilizando a estrutura de repetição contada <code>para</code> (<code>for</code>).
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Caderno para rascunhos.</li>
+<li>Caneta.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Leiam com atenção a atividade proposta no roteiro.</li>
+<li>Antes de iniciar a codificação, realizem esboços no papel para definir a sequência de iterações.</li>
+<li>Utilizem as ferramentas de desenvolvimento disponíveis para implementar a solução.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+# Exemplo de automação de passos de uma receita com o laço for
+passos_receita = [
+    "Misturar os ingredientes",
+    "Bater a massa",
+    "Colocar na forma",
+    "Assar por 40 minutos"
+]
+
+for indice, passo in enumerate(passos_receita, 1):
+    print(f"Passo {indice}: {passo}")
+</pre>
+
+<p><em>Instruções de entrega:</em> A entrega da atividade deve ser realizada aqui no AVA em um documento em formato .pdf ou .doc.</p>
+
+<hr>
+
+<!-- SEMANA 10 -->
+<h2>SEMANA 10 - Estruturas de Repetição Aninhadas</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Detetives de performance: analisando e construindo laços de repetição aninhados para resolver problemas complexos.
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Caderno para rascunhos.</li>
+<li>Canetas.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Leiam com atenção a atividade proposta no roteiro.</li>
+<li>Antes de iniciar a codificação, realizem esboços no papel para definir o fluxo interno e externo do laço.</li>
+<li>Utilizem as ferramentas de desenvolvimento para implementar e testar o algoritmo.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+# Exemplo de laços aninhados (Gerador de Tabuada)
+for i in range(1, 4):
+    print(f"--- Tabuada do {i} ---")
+    for j in range(1, 4):
+        print(f"{i} x {j} = {i * j}")
+</pre>
+
+<p><em>Instruções de entrega:</em> Ao final, envie um arquivo doc, pdf ou imagem com as respostas do grupo aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 11 -->
+<h2>SEMANA 11 - Vetores (Arrays Unidimensionais)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Ordenando listas com o algoritmo Bubble Sort em vetores unidimensionais.
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Papel e caneta ou editor simples de texto.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Leiam com atenção a atividade proposta no roteiro.</li>
+<li>Antes de iniciar a codificação, realizem testes de mesa no papel para entender as trocas de posição no vetor.</li>
+<li>Utilizem as ferramentas para implementar o algoritmo de ordenação.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+# Exemplo do algoritmo de ordenação Bubble Sort em vetores
+numeros = [5, 2, 8, 1, 9]
+tamanho = len(numeros)
+
+for i in range(tamanho):
+    for j in range(0, tamanho - i - 1):
+        if numeros[j] > numeros[j + 1]:
+            numeros[j], numeros[j + 1] = numeros[j + 1], numeros[j]
+
+print("Lista ordenada:", numeros)
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie um arquivo de texto com as respostas e o código no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 12 -->
+<h2>SEMANA 12 - Matrizes (Arrays Bidimensionais)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Desafio: Construindo a lógica base e a estrutura bidimensional para um Jogo da Velha utilizando matrizes.
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Caderno para rascunhos.</li>
+<li>Caneta.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Leiam com atenção a atividade proposta no roteiro.</li>
+<li>Antes de iniciar a codificação, realizem esboços das coordenadas de linhas e colunas no papel.</li>
+<li>Utilizem as ferramentas de desenvolvimento para implementar a estrutura de matriz.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+# Estrutura base de representação de uma Matriz 3x3 para Jogo da Velha
+tabuleiro = [
+    [" ", " ", " "],
+    [" ", " ", " "],
+    [" ", " ", " "]
+]
+
+print("Exibição do Tabuleiro:")
+for linha in tabuleiro:
+    print(" | ".join(linha))
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie a resolução da atividade prática conforme orientado no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 13 -->
+<h2>SEMANA 13 - Funções e Procedimentos</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Boas práticas de nomeação, modularização e implementação de funções com e sem retorno.
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Caderno para rascunhos e caneta.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Execute o código, entenda seu funcionamento e comente o papel de cada função.</li>
+<li>Renomeie as funções e variáveis com nomes claros e descritivos (padrão <code>snake_case</code>).</li>
+<li>Garanta a criação de funções com retorno de dados e procedimentos de exibição.</li>
+<li>Teste com diferentes entradas de dados.</li>
+<li>Salve o programa final em um arquivo .py.</li>
+<li>Escreva um breve relato explicando as melhorias estruturais implementadas.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+# Função com retorno
+def calcular_media(notas):
+    if not notas:
+        return 0.0
+    return sum(notas) / len(notas)
+
+# Procedimento (função sem retorno explícito)
+def exibir_status_aluno(media):
+    if media >= 6.0:
+        print("Status: Aprovado")
+    else:
+        print("Status: Reprovado")
+
+# Execução do programa
+notas_aluno = [7.5, 8.0, 6.0]
+media_final = calcular_media(notas_aluno)
+print(f"Média calculada: {media_final:.2f}")
+exibir_status_aluno(media_final)
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie o arquivo contendo o código ajustado e o relato explicativo no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 14 -->
+<h2>SEMANA 14 - Revisão Integrada e Modularização</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Do caos à ação: priorizando melhorias e construindo um sistema modularizado de revisão integrando menus, listas e funções.
+</p>
+
+<p><strong>Materiais Necessários:</strong></p>
+<ul>
+<li>Computador com ambiente de desenvolvimento.</li>
+<li>Editor de texto ou IDE para pseudocódigo/Python.</li>
+<li>Caderno para rascunhos.</li>
+<li>Canetas.</li>
+</ul>
+
+<p><strong>Passo a Passo:</strong></p>
+<ol>
+<li>Leiam com atenção a atividade proposta no roteiro.</li>
+<li>Antes de iniciar a codificação, desenhe o fluxo do menu e a conexão entre os módulos.</li>
+<li>Utilizem as ferramentas de desenvolvimento para implementar o projeto final modularizado.</li>
+</ol>
+
+<p><strong>Código Python:</strong></p>
+
+<pre>
+# Mini-projeto modularizado integrando funções e estruturas de controle
+def exibir_menu():
+    print("\n--- SISTEMA MODULAR ---")
+    print("1 - Adicionar item")
+    print("2 - Listar itens")
+    print("0 - Sair")
+
+def sistema_principal():
+    itens = []
+    opcao = -1
+    
+    while opcao != 0:
+        exibir_menu()
+        opcao = int(input("Escolha uma opção: "))
+        
+        if opcao == 1:
+            novo_item = input("Digite o nome do item: ")
+            itens.append(novo_item)
+            print("Item adicionado com sucesso!")
+        elif opcao == 2:
+            print("\nItens cadastrados:", itens)
+        elif opcao == 0:
+            print("Encerrando o sistema...")
+        else:
+            print("Opção inválida!")
+
+# Inicialização do programa
+sistema_principal()
+</pre>
+
+<p><em>Instruções de entrega:</em> Entregar no AVA um documento contendo a resolução completa e o código do projeto final.</p>
+
+</body>
+</html>
