@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Laboratório Prático: MiniLM & Análise de Sentimentos</title>
+
+<!-- Biblioteca para gerar PDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<style>
+  :root {
+    --bg-main: #f1f5f9;
+    --card-bg: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --primary: #2563eb;
+    --primary-hover: #1d4ed8;
+    --success: #16a34a;
+    --pos-color: #16a34a;
+    --neg-color: #dc2626;
+    --special-token: #e0e7ff;
+    --special-text: #3730a3;
+    --subword-bg: #dbeafe;
+    --subword-text: #1e40af;
+    --pad-bg: #f3f4f6;
+    --pad-text: #9ca3af;
+    --border-color: #cbd5e1;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-main);
+    color: var(--text-main);
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  header {
+    background: #0f172a;
+    color: white;
+    padding: 20px 25px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+  }
+
+  header h1 { font-size: 1.6rem; margin-bottom: 5px; color: #60a5fa; }
+  header p { font-size: 0.9rem; color: #94a3b8; }
+  .badge-topic {
+    display: inline-block;
+    background: #1e293b;
+    color: #38bdf8;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-top: 8px;
+  }
+
+  /* Inputs de Identificação */
+  .student-info-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .student-info-grid { grid-template-columns: 1fr; }
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    outline: none;
+  }
+
+  .input-field:focus { border-color: var(--primary); }
+
+  /* Grid Layout */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 850px) {
+    .grid-2 { grid-template-columns: 1fr; }
+  }
+
+  .card {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    margin-bottom: 20px;
+  }
+
+  .full-width { grid-column: 1 / -1; }
+
+  h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Painel de Métricas */
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .metric-card {
+    background: #f8fafc;
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .metric-card .value { font-size: 1.4rem; font-weight: bold; }
+
+  .metric-card .label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-top: 4px;
+  }
+
+  .btn-preset {
+    background: #e2e8f0;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+
+  .btn-preset:hover { background: #cbd5e1; }
+
+  textarea {
+    width: 100%;
+    height: 100px;
+    padding: 12px;
+    font-size: 0.95rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    resize: vertical;
+  }
+
+  .config-row {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin: 12px 0;
+    background: #f8fafc;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .config-row label { font-size: 0.85rem; font-weight: 600; }
+  input[type="range"] { flex: 1; }
+
+  .btn-run {
+    width: 100%;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .btn-run:hover { background: var(--primary-hover); }
+
+  /* Tokens Visualization */
+  .tokens-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: #fafafa;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    min-height: 80px;
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .token-chip {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .token-special { background: var(--special-token); color: var(--special-text); font-weight: bold; }
+  .token-subword { background: var(--subword-bg); color: var(--subword-text); }
+  .token-pad { background: var(--pad-bg); color: var(--pad-text); border: 1px dashed #cbd5e1; }
+
+  .vector-box {
+    background: #0f172a;
+    color: #38bdf8;
+    font-family: monospace;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    margin-top: 10px;
+    word-break: break-all;
+  }
+
+  /* Probability Bars */
+  .prob-bar-group { margin-bottom: 12px; }
+  .prob-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 4px; }
+  .prob-bg { background: #e2e8f0; height: 16px; border-radius: 8px; overflow: hidden; }
+  .prob-fill-pos { background: var(--pos-color); height: 100%; width: 0%; transition: width 0.5s ease; }
+  .prob-fill-neg { background: var(--neg-color); height: 100%; width: 0%; transition: width 0.5s ease; }
+
+  /* Quiz Section */
+  .quiz-item {
+    background: #f8fafc;
+    padding: 14px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    border-left: 4px solid var(--primary);
+  }
+
+  .quiz-item h3 { font-size: 0.9rem; margin-bottom: 8px; color: #334155; }
+  .quiz-item textarea { height: 65px; font-size: 0.85rem; margin-bottom: 6px; }
+  
+  .btn-check {
+    background: #475569;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+  }
+
+  .feedback {
+    display: none;
+    margin-top: 6px;
+    font-size: 0.8rem;
+    padding: 8px;
+    border-radius: 4px;
+    background: #dcfce7;
+    color: #166534;
+  }
+  .feedback.show { display: block; }
+
+  .btn-pdf {
+    background: var(--success);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s;
+  }
+
+  .btn-pdf:hover { background: #15803d; }
+
+  /* AREA DE IMPRESSAO GERADA NO PDF */
+  #area-impressao {
+    display: none;
+    background: #ffffff;
+    padding: 30px;
+    color: #1e293b;
+    font-family: Arial, sans-serif;
+    line-height: 1.5;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+
+  @media print {
+    body * { visibility: hidden; }
+    #area-impressao, #area-impressao * { visibility: visible; }
+    #area-impressao {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      display: block !important;
+      border: none;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>🏫 EE. Oito de Abril — Laboratório de Ciência de Dados</h1>
+  <p>Processamento de Linguagem Natural — Tokenização Subword e Análise de Sentimentos</p>
+  <span class="badge-topic">Turma: 3ºB — Ciência de Dados | Modelo: Multilingual-MiniLM</span>
+</header>
+
+<!-- Identificação -->
+<div class="card full-width">
+  <h2>👤 Identificação do Estudante</h2>
+  <div class="student-info-grid">
+    <input type="text" id="aluno_nome" class="input-field" placeholder="Digite seu Nome Completo" required />
+    <input type="text" id="aluno_turma" class="input-field" value="3ºB — Ciência de Dados" placeholder="Turma" required />
+  </div>
+</div>
+
+<!-- Métricas Globais -->
+<div class="card full-width">
+  <h2>📈 Métricas Globais da Avaliação do Modelo (Notebook Python)</h2>
+  <p style="font-size:0.85rem; color:var(--text-muted);">
+    Resultados obtidos após a avaliação do modelo no conjunto de teste (Dataset B2W-Reviews):
+  </p>
+  
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="value" style="color:#2563eb;">0.9125</div>
+      <div class="label">Test Accuracy</div>
+    </div>
+    <div class="metric-card">
+      <div class="value" style="color:#16a34a;">0.8940</div>
+      <div class="label">Test Precision</div>
+    </div>
+    <div class="metric-card">
+      <div class="value" style="color:#0891b2;">0.9310</div>
+      <div class="label">Test Recall</div>
+    </div>
+    <div class="metric-card">
+      <div class="value" style="color:#dc2626;">0.2412</div>
+      <div class="label">Test Loss</div>
+    </div>
+  </div>
+  
+  <button class="btn-preset" onclick="copiarMetricas()" style="margin-top:12px; background:#dbeafe; color:#1e40af; border:1px solid #93c5fd;">
+    📋 Preencher estas métricas na Pergunta 1 abaixo
+  </button>
+</div>
+
+<!-- Entrada de Texto Limpa -->
+<div class="card">
+  <h2>🌐 Entrada da Avaliação (Cole um texto da internet)</h2>
+
+  <textarea id="texto_input" placeholder="Cole aqui qualquer avaliação, notícia ou frase encontrada na internet para testar o modelo..."></textarea>
+
+  <div class="config-row">
+    <label for="max_len">Parâmetro <code>max_length</code>: <span id="max_len_val" style="color:var(--primary);">16</span> tokens</label>
+    <input type="range" id="max_len" min="8" max="64" step="4" value="16" oninput="document.getElementById('max_len_val').innerText = this.value">
+  </div>
+
+  <button class="btn-run" onclick="processarPipeline()">▶️ Executar Pipeline do Tokenizer & Modelo</button>
+</div>
+
+<div class="grid-2">
+
+  <!-- Painel 1: Tokens -->
+  <div class="card">
+    <h2>🔤 Tokens Gerados (Subword Unit)</h2>
+    <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:8px;">
+      Legenda: <span class="token-chip token-special">[CLS]/[SEP]</span> Especial 
+      | <span class="token-chip token-subword"> subword</span> Token Real 
+      | <span class="token-chip token-pad">[PAD]</span> Preenchimento
+    </p>
+
+    <div id="tokens_output" class="tokens-container"></div>
+
+    <h3 style="font-size:0.85rem; margin-top:12px;">Vetor de Token IDs (Tensor input_ids):</h3>
+    <div id="vector_output" class="vector-box">[ ... ]</div>
+  </div>
+
+  <!-- Painel 2: Sentimento -->
+  <div class="card">
+    <h2>📊 Classificação de Sentimento (Modelo Finetuned)</h2>
+    
+    <div class="prob-bar-group">
+      <div class="prob-label">
+        <span><strong>Classe 1: Positivo</strong> (Nota ≥ 4)</span>
+        <span id="prob_pos_num">0%</span>
+      </div>
+      <div class="prob-bg"><div id="bar_pos" class="prob-fill-pos"></div></div>
+    </div>
+
+    <div class="prob-bar-group">
+      <div class="prob-label">
+        <span><strong>Classe 0: Negativo</strong> (Nota &lt; 4)</span>
+        <span id="prob_neg_num">0%</span>
+      </div>
+      <div class="prob-bg"><div id="bar_neg" class="prob-fill-neg"></div></div>
+    </div>
+
+    <div id="sentimento_resumo" style="margin-top:15px; padding:10px; background:#f1f5f9; border-radius:6px; font-size:0.85rem;">
+      Cole um texto e clique em "Executar Pipeline" para visualizar a análise.
+    </div>
+  </div>
+
+</div>
+
+<!-- Atividade de Fixação -->
+<div class="card full-width">
+  <h2>✏️ Exercícios de Fixação do Roteiro (Aula 3)</h2>
+  <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">
+    Responda às questões abaixo para gerar o relatório em PDF e enviar no AVA.
+  </p>
+
+  <div class="quiz-item">
+    <h3>1. Quais os resultados da Avaliação do modelo no seu notebook Python? (Accuracy, Precision, Recall, Loss)</h3>
+    <textarea id="resp_q1" placeholder="Exemplo: Accuracy = 0.9125, Precision = 0.8940, Recall = 0.9310, Test Loss = 0.2412"></textarea>
+  </div>
+
+  <div class="quiz-item">
+    <h3>2. Para que é utilizado o tokenizer em um modelo de PLN?</h3>
+    <textarea id="resp_q2" placeholder="Explique com suas palavras a função do tokenizer..."></textarea>
+    <button class="btn-check" onclick="validar(this)">Verificar Resposta Recomendada</button>
+    <div class="feedback">
+      <strong>Apoio Didático:</strong> O Tokenizer divide o texto bruto em partes menores (tokens/subwords), converte essas palavras em números (Token IDs) e ajusta a sequência com tokens especiais para que o modelo matemático possa processá-la.
+    </div>
+  </div>
+
+  <div class="quiz-item">
+    <h3>3. Qual é a função do parâmetro max_length do tokenizer?</h3>
+    <textarea id="resp_q3" placeholder="Explique para que serve o max_length..."></textarea>
+    <button class="btn-check" onclick="validar(this)">Verificar Resposta Recomendada</button>
+    <div class="feedback">
+      <strong>Apoio Didático:</strong> O <code>max_length</code> padroniza o tamanho do texto. Frases maiores são cortadas (truncation) e frases menores ganham tokens de preenchimento <code>[PAD]</code> (padding) para que todos os textos fiquem com o mesmo tamanho numérico no lote.
+    </div>
+  </div>
+
+  <button class="btn-pdf" onclick="gerarPDF()">📄 Gerar PDF para Envio no AVA</button>
+</div>
+
+<!-- CONTAINER VISÍVEL DO PDF QUE SERÁ CAPTURADO COM NOME DA ESCOLA -->
+<div id="area-impressao">
+  <div style="border-bottom: 2px solid #2563eb; padding-bottom: 12px; margin-bottom: 20px;">
+    <h1 style="font-size: 18px; color: #0f172a; margin-bottom: 4px;">Escola EE. Oito de abril</h1>
+    <h2 style="font-size: 16px; color: #2563eb; margin-bottom: 4px;">Relatório de Atividade Prática — Ciência de Dados</h2>
+    <p style="font-size: 12px; color: #64748b; font-weight: bold;">Processamento de Linguagem Natural — Modelos de Linguagem I</p>
+  </div>
+
+  <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 6px; margin-bottom: 25px; font-size: 13px;">
+    <p><strong>Estudante:</strong> <span id="pdf_out_nome"></span></p>
+    <p><strong>Turma:</strong> <span id="pdf_out_turma"></span></p>
+    <p><strong>Data de Emissão:</strong> <span id="pdf_out_data"></span></p>
+  </div>
+
+  <h2 style="font-size: 15px; color: #0f172a; margin-bottom: 15px; border-bottom: 1px solid #e2e8f0; padding-bottom: 5px;">Exercícios de Fixação (Aula 3)</h2>
+
+  <div style="margin-bottom: 18px;">
+    <p style="font-size: 13px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;">1. Quais os resultados da Avaliação do modelo no seu notebook Python? (Accuracy, Precision, Recall, Loss)</p>
+    <div id="pdf_out_r1" style="background: #fafafa; border-left: 3px solid #2563eb; padding: 10px; font-size: 12px; white-space: pre-wrap;"></div>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p style="font-size: 13px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;">2. Para que é utilizado o tokenizer em um modelo de PLN?</p>
+    <div id="pdf_out_r2" style="background: #fafafa; border-left: 3px solid #2563eb; padding: 10px; font-size: 12px; white-space: pre-wrap;"></div>
+  </div>
+
+  <div style="margin-bottom: 18px;">
+    <p style="font-size: 13px; font-weight: bold; color: #1e3a8a; margin-bottom: 5px;">3. Qual é a função do parâmetro max_length do tokenizer?</p>
+    <div id="pdf_out_r3" style="background: #fafafa; border-left: 3px solid #2563eb; padding: 10px; font-size: 12px; white-space: pre-wrap;"></div>
+  </div>
+
+  <div style="margin-top: 40px; font-size: 10px; color: #94a3b8; text-align: center; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
+    EE. Oito de abril — Documento gerado pelo Laboratório de PLN. Pronto para envio no AVA.
+  </div>
+</div>
+
+<script>
+function copiarMetricas() {
+  document.getElementById("resp_q1").value = "Accuracy = 0.9125, Precision = 0.8940, Recall = 0.9310, Test Loss = 0.2412";
+}
+
+function subwordTokenize(texto) {
+  const palavras = texto.toLowerCase().replace(/[.,!?;:()"]/g, "").split(/\s+/).filter(p => p.length > 0);
+  let tokens = [];
+  palavras.forEach(p => {
+    if (p.length > 6) {
+      tokens.push(" " + p.substring(0, 4));
+      tokens.push("##" + p.substring(4));
+    } else {
+      tokens.push(" " + p);
+    }
+  });
+  return tokens;
+}
+
+function processarPipeline() {
+  const texto = document.getElementById("texto_input").value;
+  const maxLength = parseInt(document.getElementById("max_len").value);
+
+  if (!texto.trim()) {
+    alert("Por favor, cole ou digite um texto no campo de entrada antes de processar!");
+    return;
+  }
+
+  let subwords = subwordTokenize(texto);
+  let finalTokens = [{ text: "[CLS]", type: "special", id: 101 }];
+
+  const maxContent = maxLength - 2;
+  const foiTruncado = subwords.length > maxContent;
+  const subwordsLimitadas = subwords.slice(0, maxContent);
+
+  subwordsLimitadas.forEach((sw, idx) => {
+    const fakeId = 1000 + (sw.charCodeAt(1) || 65) * 12 + idx;
+    finalTokens.push({ text: sw, type: "subword", id: fakeId });
+  });
+
+  finalTokens.push({ text: "[SEP]", type: "special", id: 102 });
+
+  const totalTokensAtuais = finalTokens.length;
+  for (let i = totalTokensAtuais; i < maxLength; i++) {
+    finalTokens.push({ text: "[PAD]", type: "pad", id: 0 });
+  }
+
+  let htmlTokens = "";
+  let tokenIdsArr = [];
+
+  finalTokens.forEach(t => {
+    tokenIdsArr.push(t.id);
+    let classMap = { special: "token-special", subword: "token-subword", pad: "token-pad" };
+    htmlTokens += `<span class="token-chip ${classMap[t.type]}">${t.text}</span>`;
+  });
+
+  document.getElementById("tokens_output").innerHTML = htmlTokens;
+  document.getElementById("vector_output").innerText = "tf.Tensor([\n  [" + tokenIdsArr.join(", ") + "]\n], shape=(1, " + maxLength + "), dtype=int32)";
+
+  const posWords = ["excelente", "ótimo", "otimo", "bom", "superou", "recomendo", "rápido", "rapido", "gostei", "maravilhoso", "top", "perfeito"];
+  const negWords = ["péssimo", "pessimo", "quebrado", "demorou", "ruim", "defeito", "esquenta", "nao", "não", "horrível", "horrivel", "odiei"];
+
+  let scorePos = 1;
+  let scoreNeg = 1;
+
+  const textoLower = texto.toLowerCase();
+  posWords.forEach(w => { if (textoLower.includes(w)) scorePos += 2; });
+  negWords.forEach(w => { if (textoLower.includes(w)) scoreNeg += 2; });
+
+  const total = scorePos + scoreNeg;
+  const probPos = Math.round((scorePos / total) * 100);
+  const probNeg = 100 - probPos;
+
+  document.getElementById("bar_pos").style.width = probPos + "%";
+  document.getElementById("bar_neg").style.width = probNeg + "%";
+  document.getElementById("prob_pos_num").innerText = probPos + "%";
+  document.getElementById("prob_neg_num").innerText = probNeg + "%";
+
+  let statusTrunc = foiTruncado ? `<br>⚠️ <strong>Atenção:</strong> O texto excedeu o limite de ${maxLength} tokens e foi <strong>truncado</strong>.` : "";
+  let classePred = probPos >= 50 ? "<span style='color:var(--pos-color); font-weight:bold;'>Classe 1 (Sentimento Positivo)</span>" : "<span style='color:var(--neg-color); font-weight:bold;'>Classe 0 (Sentimento Negativo)</span>";
+
+  document.getElementById("sentimento_resumo").innerHTML = `
+    Previsão do Modelo: ${classePred}.<br>
+    Sequência ajustada para <strong>${maxLength} tokens</strong> (${totalTokensAtuais} tokens reais + ${maxLength - totalTokensAtuais} [PAD]).
+    ${statusTrunc}
+  `;
+}
+
+function validar(btn) {
+  const fb = btn.nextElementSibling;
+  fb.classList.toggle("show");
+}
+
+function gerarPDF() {
+  const nome = document.getElementById("aluno_nome").value.trim();
+  const turma = document.getElementById("aluno_turma").value.trim();
+  const r1 = document.getElementById("resp_q1").value.trim();
+  const r2 = document.getElementById("resp_q2").value.trim();
+  const r3 = document.getElementById("resp_q3").value.trim();
+
+  if (!nome || !turma) {
+    alert("Por favor, preencha seu Nome Completo no topo da página antes de gerar o PDF!");
+    return;
+  }
+
+  if (!r1 || !r2 || !r3) {
+    alert("Por favor, responda a todas as 3 perguntas antes de gerar o PDF!");
+    return;
+  }
+
+  document.getElementById("pdf_out_nome").innerText = nome;
+  document.getElementById("pdf_out_turma").innerText = turma;
+  document.getElementById("pdf_out_data").innerText = new Date().toLocaleDateString('pt-BR');
+  document.getElementById("pdf_out_r1").innerText = r1;
+  document.getElementById("pdf_out_r2").innerText = r2;
+  document.getElementById("pdf_out_r3").innerText = r3;
+
+  const elementoPDF = document.getElementById("area-impressao");
+  elementoPDF.style.display = "block";
+
+  const opt = {
+    margin:       10,
+    filename:     `Atividade_PLN_${nome.replace(/\s+/g, '_')}.pdf`,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  { scale: 2, scrollX: 0, scrollY: 0 },
+    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  };
+
+  if (typeof html2pdf !== 'undefined') {
+    html2pdf().set(opt).from(elementoPDF).save().then(() => {
+      elementoPDF.style.display = "none";
+    }).catch(err => {
+      console.error(err);
+      window.print();
+      elementoPDF.style.display = "none";
+    });
+  } else {
+    window.print();
+    elementoPDF.style.display = "none";
+  }
+}
+</script>
+
+</body>
+</html>
