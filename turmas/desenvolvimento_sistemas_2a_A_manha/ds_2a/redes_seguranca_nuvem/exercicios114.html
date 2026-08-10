@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apostila de Apoio - Redes de Computadores e Segurança na Nuvem</title>
+</head>
+<body>
+
+<h1>Apostila de Apoio - Redes de Computadores e Segurança na Nuvem</h1>
+
+<hr>
+
+<!-- SEMANA 1 -->
+<h2>SEMANA 1 - Projetando a Rede Ideal</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Vocês foram contratados para projetar a rede de uma startup de games em crescimento.
+</p>
+
+<p><strong>Estrutura da Empresa:</strong></p>
+<ul>
+<li>15 desenvolvedores</li>
+<li>5 designers</li>
+<li>3 servidores</li>
+<li>2 impressoras</li>
+</ul>
+
+<p><strong>Contexto:</strong> A startup planeja dobrar de tamanho em 1 ano e tem um orçamento médio, mas precisa garantir alta disponibilidade da rede.</p>
+
+<p><strong>Perguntas a serem respondidas:</strong></p>
+<ol>
+<li>Qual seria a topologia principal para essa rede? Justifiquem sua escolha.</li>
+<li>Vocês considerariam usar uma topologia híbrida? Se sim, expliquem por quê.</li>
+</ol>
+
+<p><strong>Exemplo de Resolução/Resposta:</strong></p>
+
+<pre>
+1. Topologia Principal: Estrela (Star).
+   Justificativa: Centraliza as conexões em switches gerenciáveis, facilitando a manutenção, 
+   o isolamento de falhas e a expansão rápida da rede para suportar o crescimento previsto.
+
+2. Uso de Topologia Híbrida:
+   Sim, uma topologia Híbrida (Estrela com Anel/Malha no Backbone).
+   Justificativa: As estações conectam-se em Estrela aos switches de acesso, enquanto os 
+   servidores e switches de distribuição conectam-se em Malha ou Anel Redundante para 
+   garantir a alta disponibilidade exigida pelos serviços críticos.
+</pre>
+
+<p><em>Instruções de entrega:</em> Elaborem um relatório com suas respostas, salvem em um arquivo de texto e façam o registro aqui no Ambiente Virtual de Aprendizagem (AVA).</p>
+
+<hr>
+
+<!-- SEMANA 2 -->
+<h2>SEMANA 2 - Consultoria de Redes (Topologia em Barramento)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Imagine que vocês são consultores e precisam avaliar três clientes para determinar a viabilidade da topologia em barramento.
+</p>
+
+<p><strong>Cenários:</strong></p>
+<ul>
+<li><strong>Cliente A:</strong> Fazenda remota com cinco sensores de solo espalhados ao longo de 1 km.</li>
+<li><strong>Cliente B:</strong> Escritório de advocacia com 15 computadores e dados sigilosos.</li>
+<li><strong>Cliente C:</strong> Laboratório maker educacional com orçamento mínimo para 10 PCs.</li>
+</ul>
+
+<p><strong>Questões para cada cliente:</strong></p>
+<ol>
+<li>Barramento é viável? (Sim/Não).</li>
+<li>Justifique com duas vantagens ou dois problemas.</li>
+<li>Se não barramento, qual alternativa?</li>
+<li>Estime a diferença de custo (%).</li>
+</ol>
+
+<p><strong>Exemplo de Resolução/Resposta:</strong></p>
+
+<pre>
+--- Cliente A (Fazenda) ---
+1. Viável? Não.
+2. Problemas: Atenuação do sinal em 1 km de cabo coaxial e alta suscetibilidade a ruídos externos.
+3. Alternativa: Conexão Sem Fio (LoRaWAN / Wi-Fi de longo alcance) ou Fibra Óptica.
+4. Diferença de custo: ~40% mais caro na implantação, porém funcional e sustentável.
+
+--- Cliente B (Escritório de Advocacia) ---
+1. Viável? Não.
+2. Problemas: Baixa segurança (facilidade de interceptação do tráfego) e um ponto único de falha no cabo central.
+3. Alternativa: Topologia em Estrela com Switch.
+4. Diferença de custo: ~20% a 30% mais caro em relação ao barramento puro.
+
+--- Cliente C (Laboratório Maker) ---
+1. Viável? Sim (com restrições) ou Não recomendado.
+2. Vantagens/Problemas: Baixo custo de cabeamento inicial, porém colisões frequentes de pacotes.
+3. Alternativa: Topologia em Estrela simples com switch de baixo custo.
+4. Diferença de custo: ~15% mais dispendioso que o barramento, oferecendo desempenho muito superior.
+</pre>
+
+<p><em>Instruções de entrega:</em> Após finalizar a atividade, envie a resposta do grupo por meio de um Doc/PDF aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 3 -->
+<h2>SEMANA 3 - Simulando Problemas no Token Ring</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Simular a operação do token em um cenário normal e em três cenários com falhas na topologia em anel.
+</p>
+
+<p><strong>Como Fazer:</strong></p>
+<ul>
+<li>Definir um monitor e as estações;</li>
+<li>Guardar instruções específicas apresentadas para três estações;</li>
+<li>Fazer a simulação apresentada para que o monitor possa identificar.</li>
+</ul>
+
+<p><strong>Breve Discussão (Perguntas):</strong></p>
+<ol>
+<li>Qual falha foi mais difícil?</li>
+<li>Como o monitor ajudou?</li>
+<li>Qual foi a importância da redundância?</li>
+</ol>
+
+<p><strong>Exemplo de Resolução/Resposta:</strong></p>
+
+<pre>
+1. Falha mais difícil: O rompimento do anel principal ou a perda silenciosa do token.
+2. Atuação do monitor: Identificou a ausência do token circulante no tempo determinado (timeout) e gerou um novo token de controle.
+3. Importância da redundância: A adoção de um anel duplo (contrarrotativo) permite que o tráfego contorne a falha mantendo a rede operacional.
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie foto ou documento online com a análise da simulação e respostas das questões discutidas, aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 4 -->
+<h2>SEMANA 4 - Comparativo de Meios e Sinais de Transmissão</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Elaborar uma tabela comparativa e um pitch de apresentação recomendando o meio de transmissão ideal para diferentes cenários de conexão entre São Paulo e Rio de Janeiro.
+</p>
+
+<p><strong>Tabela de Análise:</strong></p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Conexão</th>
+      <th>Meio Sugerido</th>
+      <th>Tipo de Sinal</th>
+      <th>Guiado / Não Guiado</th>
+      <th>Justificativa</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>SP - RJ (400km)</strong></td>
+      <td>Fibra Óptica Monomodo</td>
+      <td>Luminoso (Óptico)</td>
+      <td>Guiado</td>
+      <td>Alta largura de banda, baixa atenuação em longas distâncias e imunidade a ruídos elétricos.</td>
+    </tr>
+    <tr>
+      <td><strong>Dentro de cada escritório</strong></td>
+      <td>Cabo Par Trançado (UTP Cat6)</td>
+      <td>Elétrico</td>
+      <td>Guiado</td>
+      <td>Excelente custo-benefício, fácil instalação e suporte a velocidades Gigabit em curtas distâncias.</td>
+    </tr>
+    <tr>
+      <td><strong>Backup emergencial</strong></td>
+      <td>Link via Satélite / Rádio PTP</td>
+      <td>Eletromagnético (RF)</td>
+      <td>Não Guiado</td>
+      <td>Redundância física total que garante conectividade caso a infraestrutura terrestre falhe.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Pitch de Apresentação (Exemplo):</strong></p>
+
+<pre>
+Recomendamos uma solução híbrida para garantir máxima performance e disponibilidade. 
+A conexão interurbana (SP-RJ) utilizará Fibra Óptica Monomodo pela alta capacidade de banda e baixíssima atenuação. 
+Internamente, os escritórios contarão com cabeamento estruturado UTP Cat6, otimizando custos e manutenção. 
+Para mitigar paralisações, implementaremos um link via Rádio/Satélite como backup emergencial, assegurando redundância total de infraestrutura.
+</pre>
+
+<p><em>Instruções de entrega:</em> O registro deve conter a tabela e o parágrafo (pitch) produzidos pelo grupo enviados no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 5 -->
+<h2>SEMANA 5 - Projeto de Cabeamento Estruturado</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Atuar como consultor de infraestrutura de rede e elaborar um projeto de cabeamento considerando as necessidades de um cenário específico.
+</p>
+
+<p><strong>Cenários Disponíveis:</strong></p>
+
+<ul>
+<li><strong>Cenário 1 (Escola):</strong> 20 salas de aula, laboratório de informática, biblioteca e setor administrativo. Orçamento limitado, necessidade de estabilidade.</li>
+<li><strong>Cenário 2 (Hospital):</strong> Centro cirúrgico, UTI com equipamentos sensíveis, recepção e área administrativa. Prioridade para estabilidade e segurança.</li>
+<li><strong>Cenário 3 (Indústria):</strong> Máquinas pesadas, área de produção automatizada, laboratório de controle de qualidade e escritórios. Alto nível de interferência eletromagnética (EMI).</li>
+</ul>
+
+<p><strong>Exemplo de Resolução (Cenário Escolhido: Indústria):</strong></p>
+
+<pre>
+--- Relatório Técnico do Projeto de Cabeamento ---
+
+Cenário Escolhido: Cenário 3 - Indústria
+
+1. Especificação dos Materiais:
+   - Área de Produção e Máquinas: Cabos STP (Shielded Twisted Pair) Cat6A com blindagem individual e global, além de eletrodutos metálicos aterrados.
+   - Escritórios e ADM: Cabos UTP Cat6.
+   - Backbone de Interligação: Fibra Óptica Multimodo OM4.
+
+2. Justificativa:
+   A área fabril possui motores pesados geradores de forte interferência eletromagnética (EMI). O uso de cabos blindados (STP) e fibra óptica anula ruídos industriais. O backbone em fibra garante expansão futura de banda para os próximos 10 anos.
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie relatório técnico em .doc ou .pdf aqui no AVA, com a explicação do cenário e justificativa dos materiais.</p>
+
+<hr>
+
+<!-- SEMANA 6 -->
+<h2>SEMANA 6 - Análise de Transmissão na Camada Física</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Análise de requisitos de transmissão, atenuação e imunidade a ruídos em diferentes meios de comunicação da Camada Física.
+</p>
+
+<p><strong>Exemplo de Resolução:</strong></p>
+
+<pre>
+# Análise de Parâmetros da Camada Física:
+1. Atenuação: Ocorre com a perda de potência do sinal ao longo da distância.
+2. Solução: Uso de repetidores ou regeneradores de sinal a cada intervalo técnico.
+3. Imunidade a Ruídos: A Fibra Óptica possui imunidade total contra EMI/RFI por utilizar luz ao invés de eletricidade.
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie a análise técnica solicitada através do AVA.</p>
+
+<hr>
+
+<!-- SEMANA 7 -->
+<h2>SEMANA 7 - Codificação, Modulação e Multiplexação</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Elaborar um resumo claro para a equipe sobre os conceitos de modulação (AM, FM, PM) e multiplexação (FDM, TDM, WDM), cobrindo definições, usos e mitigação de erros.
+</p>
+
+<p><strong>Modelo de Resposta (Até 10 linhas):</strong></p>
+
+<pre>
+1. Modulação: Processo de alterar propriedades de uma onda portadora para transmitir dados por meios físicos.
+2. AM (Varia Amplitude - Rádio AM) | FM (Varia Frequência - Rádio FM) | PM (Varia Fase - Modems/Wi-Fi).
+3. Multiplexação: Técnica para compartilhar o mesmo meio físico entre múltiplos canais simultâneos.
+4. FDM (Divide Frequência - TV a cabo) | TDM (Divide Tempo - Telefonia digital) | WDM (Divide Comprimento de Onda - Fibra óptica).
+5. Risco e Mitigação: Ruído eletromagnético causa degradação; reduz-se com blindagem e filtros de sinal.
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie um documento com a resposta do grupo, no formato de texto aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 8 -->
+<h2>SEMANA 8 - Otimizando a Oficina de Casa (Wireless)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Em grupo, analisem a "caixa de ferramentas" de conectividade da sua casa e planejem como usar cada tecnologia sem fio da melhor forma possível.
+</p>
+
+<p><strong>Orientações de Registro:</strong></p>
+<ol>
+<li>Mapear equipamentos sem fio e suas tecnologias: Wi-Fi, Bluetooth e NFC.</li>
+<li>Identificar pontos fracos no sinal Wi-Fi e propor soluções.</li>
+<li>Identificar substituições convenientes por conexões Bluetooth.</li>
+<li>Propor uma automação doméstica utilitária com tag NFC.</li>
+</ol>
+
+<p><strong>Exemplo de Resolução:</strong></p>
+
+<pre>
+1. Inventário de Dispositivos:
+   - Smart TV: Wi-Fi
+   - Caixa de Som Portátil: Bluetooth
+   - Smartphone / Pagamentos: NFC
+
+2. Diagnóstico Wi-Fi:
+   - Problema: Sinal fraco no quarto dos fundos devido às paredes.
+   - Solução: Centralizar o roteador ou implementar nós de rede Mesh.
+
+3. Substituição Bluetooth:
+   - Substituição do mouse com fio por um modelo Bluetooth para ergonomia.
+
+4. Automação NFC:
+   - Tag NFC na porta de saída para alternar perfis e desligar lâmpadas inteligentes.
+</pre>
+
+<p><em>Instruções de entrega:</em> Anotem as respostas em grupo e registrem o arquivo no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 9 -->
+<h2>SEMANA 9 - Chamado no Teams (Fibra Óptica e Diagnósticos)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Análise emergencial de instabilidade em um link de fibra óptica monomodo de 25 km com múltiplos conectores e emendas.
+</p>
+
+<p><strong>Exemplo de Resolução:</strong></p>
+
+<ol>
+<li><strong>Principais Causas de Instabilidade:</strong>
+   <ul>
+     <li>Curvatura excessiva no cabo (micro ou macrocurvaturas).</li>
+     <li>Perda de inserção / sujeira ou má fusão nas emendas e conectores.</li>
+   </ul>
+</li>
+<li><strong>Soluções Práticas:</strong>
+   <ul>
+     <li>Reorganizar o cabeamento respeitando o raio mínimo de curvatura.</li>
+     <li>Limpar conectores e refazer as fusões de fibra deficientes.</li>
+   </ul>
+</li>
+<li><strong>Instrumento Principal de Diagnóstico:</strong>
+   <ul>
+     <li><strong>OTDR (Optical Time-Domain Reflectometer)</strong> para refletometria e localização exata das falhas.</li>
+   </ul>
+</li>
+</ol>
+
+<p><em>Instruções de entrega:</em> Enviem o documento com as respostas de diagnóstico no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 10 -->
+<h2>SEMANA 10 - Engenheiros de Rede: Montando o Quadro Ethernet</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Compreensão prática do formato e dos campos que compõem a estrutura de um quadro Ethernet na Camada de Enlace de Dados.
+</p>
+
+<p><strong>Exemplo de Resolução / Estrutura Lógica:</strong></p>
+
+<pre>
+[ Preâmbulo / SFD ] -> [ MAC Destino ] -> [ MAC Origem ] -> [ EtherType / Tamanho ] -> [ Carga Útil (Dados) ] -> [ FCS (CRC32) ]
+</pre>
+
+<p><em>Instruções de entrega:</em> Registre as respostas da reflexão e simulação dos campos no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 11 -->
+<h2>SEMANA 11 - Planejamento de Rede com VLSM</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Divisão e sub-roteamento do bloco de endereços <code>192.168.10.0/24</code> para atender com eficiência (VLSM) diferentes setores da startup TechHub.
+</p>
+
+<p><strong>Sub-redes Alocadas (Sequencial):</strong></p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Departamento</th>
+      <th>Rede</th>
+      <th>Máscara</th>
+      <th>Primeiro Host</th>
+      <th>Último Host</th>
+      <th>Broadcast</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr><td>WiFi Visitantes (45)</td><td>192.168.10.0</td><td>255.255.255.192 (/26)</td><td>192.168.10.1</td><td>192.168.10.62</td><td>192.168.10.63</td></tr>
+    <tr><td>Desenvolvimento (30)</td><td>192.168.10.64</td><td>255.255.255.224 (/27)</td><td>192.168.10.65</td><td>192.168.10.94</td><td>192.168.10.95</td></tr>
+    <tr><td>Administrativo (30)</td><td>192.168.10.96</td><td>255.255.255.224 (/27)</td><td>192.168.10.97</td><td>192.168.10.126</td><td>192.168.10.127</td></tr>
+    <tr><td>Servidores (12)</td><td>192.168.10.128</td><td>255.255.255.240 (/28)</td><td>192.168.10.129</td><td>192.168.10.142</td><td>192.168.10.143</td></tr>
+    <tr><td>Link Roteadores (2)</td><td>192.168.10.144</td><td>255.255.255.252 (/30)</td><td>192.168.10.145</td><td>192.168.10.146</td><td>192.168.10.147</td></tr>
+  </tbody>
+</table>
+
+<p><em>Instruções de entrega:</em> Enviar a planilha preenchida no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 12 -->
+<h2>SEMANA 12 - Cabeçalho TCP e Conexão (3-Way Handshake)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Análise de mecanismos da Camada de Transporte: estabelecimento de conexão via Three-Way Handshake, controle de fluxo e controle de congestionamento no TCP.
+</p>
+
+<p><strong>Exemplo de Resolução:</strong></p>
+
+<pre>
+Estabelecimento de Conexão (3-Way Handshake):
+1. Cliente -> Servidor : [SYN] (Seq = X)
+2. Servidor -> Cliente : [SYN-ACK] (Seq = Y, Ack = X + 1)
+3. Cliente -> Servidor : [ACK] (Ack = Y + 1)
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie a folha de respostas ou roteiro no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 13 -->
+<h2>SEMANA 13 - Incidente de Segurança no Slack (Ataques Cibernéticos)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Responder ao chamado de urgência da gerência informando sobre a indisponibilidade do site durante a Black Friday devido a picos anômalos de tráfego.
+</p>
+
+<p><strong>Exemplo de Resposta para a Equipe:</strong></p>
+
+<pre>
+Carlos, estamos enfrentando um ataque de **DDoS (Distributed Denial of Service)**.
+Mecanismo: Uma rede remota de computadores infectados (**botnet**) está gerando requisições 
+simultâneas para exaurir os recursos do servidor web.
+Analogia: Funciona como uma multidão coordenada bloqueando deliberadamente as portas de entrada 
+de uma loja física, impedindo que clientes legítimos entrem.
+</pre>
+
+<p><em>Instruções de entrega:</em> Registrar a resposta formulada no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 14 -->
+<h2>SEMANA 14 - Laboratório de Análise de Logs (SOC)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Análise técnica de alertas emitidos pelo IDS/IPS para diferenciar ameaças reais internas de ruídos de rede.
+</p>
+
+<p><strong>Análise do Log:</strong></p>
+
+<pre>
+TIMESTAMP: 2026-02-01 14:30:05
+SRC_IP: 192.168.1.50 (Interno - Marketing)
+DST_IP: 200.20.20.1 (Servidor Externo desconhecido)
+PORT: 443
+EVENT: Large Outbound Transfer (3.5 GB)
+SIGNATURE: Anomaly-Based Detection
+</pre>
+
+<p><strong>Exemplo de Resolução:</strong></p>
+
+<pre>
+1. Diagnóstico: Trata-se de um evento de **exfiltração de dados (vazamento de dados)** originado internamente.
+   Um host do setor de Marketing está enviando um volume atípico de dados (3.5 GB) para um IP externo desconhecido.
+
+2. Regra de Mitigação no IPS:
+   Isolar e bloquear tráfego do IP de origem (192.168.1.50) e restringir tráfego de saída não categorizado para o IP de destino.
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie a análise do log no AVA.</p>
+
+</body>
+</html>
