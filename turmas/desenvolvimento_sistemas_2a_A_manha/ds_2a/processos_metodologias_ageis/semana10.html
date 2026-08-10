@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apostila de Apoio - Processos de Desenvolvimento de Software e Metodologias Ágeis</title>
+</head>
+<body>
+
+<h1>Apostila de Apoio - Processos de Desenvolvimento de Software e Metodologias Ágeis</h1>
+
+<hr>
+
+<!-- SEMANA 1 -->
+<h2>SEMANA 1 - Simulando o Ciclo Completo de Requisitos</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Vocês serão responsáveis por implementar um sistema de pedidos online em uma padaria que será inaugurada dentro de dois meses em Campinas.
+</p>
+
+<p><strong>Atribuições por membro/fase:</strong></p>
+<ul>
+<li><strong>Identificação:</strong> Listar três problemas/necessidades reais.</li>
+<li><strong>Elicitação:</strong> Criar cinco perguntas para o dono da padaria.</li>
+<li><strong>Documentação:</strong> Escrever um requisito completo.</li>
+<li><strong>Validação:</strong> Encontrar dois problemas no requisito.</li>
+</ul>
+
+<p><strong>Exemplo de Resolução/Resposta:</strong></p>
+
+<pre>
+1. Identificação (Problemas/Necessidades Reais):
+   - Filas excessivas no balcão nos horários de pico, gerando insatisfação.
+   - Perda de vendas por falta de um canal digital prévio para encomendar itens sob encomenda.
+   - Erros manuais frequentes no registro de pedidos de encomendas.
+
+2. Elicitação (Perguntas para o Dono da Padaria):
+   - Quais são os produtos mais vendidos e que necessitam de confirmação rápida de estoque?
+   - Como você deseja receber as notificações de novos pedidos efetuados pelo aplicativo/site?
+   - Quais formas de pagamento deverão ser aceitas no momento da retirada ou entrega?
+   - Qual é o raio geográfico máximo para entregas em Campinas e os horários de funcionamento?
+   - Existe algum sistema de caixa ou gestão que precise ser integrado ao novo sistema?
+
+3. Documentação (Requisito Completo):
+   ID: REQ-01 - Realização de Pedido Online com Retirada Agendada.
+   Descrição: O sistema deve permitir que o cliente selecione itens do cardápio, escolha um horário para retirada e conclua o pedido.
+   Critérios de Aceite: O cliente deve visualizar apenas produtos em estoque; o horário de retirada deve respeitar o tempo mínimo de preparação de 20 minutos; e um comprovante deve ser enviado por e-mail após a confirmação.
+
+4. Validação (Problemas Encontrados no Requisito):
+   - Ambiguidade no controle de estoque simultâneo (dois clientes comprando o último item ao mesmo tempo).
+   - Ausência de regra de negócio definida para casos de cancelamento ou não comparecimento do cliente.
+</pre>
+
+<p><em>Instruções de entrega:</em> O grupo deverá entregar a atividade por meio de um documento de texto aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 2 -->
+<h2>SEMANA 2 - Mini Sprint de Elicitação</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+A biblioteca da faculdade deseja modernizar o sistema de reserva das salas de estudo. A sua missão é registrar perguntas e descobertas durante o processo de elicitação, ajudando a entender melhor as necessidades para esse novo sistema.
+</p>
+
+<p><strong>Passo a passo:</strong></p>
+<ol>
+<li>Criar 3 perguntas estruturadas (fechadas), 3 perguntas semiestruturadas e 5 questões para questionário.</li>
+<li>Entrevistar outra dupla e registrar as principais descobertas.</li>
+<li>Identificar 3 requisitos revelados (pelo menos 1 "não óbvio") e classificá-los usando a metodologia MoSCoW.</li>
+</ol>
+
+<p><strong>Exemplo de Resolução/Resposta:</strong></p>
+
+<pre>
+1. Perguntas de Elicitação:
+   - Estruturadas: Qual a capacidade máxima por sala? O tempo limite de reserva é 2h? Exige vínculo ativo de matrícula?
+   - Semiestruturadas: Como tratam atrasos nas reservas? Quais recursos (projetores/tomadas) são mais pedidos? Como funciona a limpeza das salas entre os usos?
+   - Questionário: Frequência de uso semanal; Período de preferência; Experiência prévia com salas ocupadas indevidamente; Sugestões de melhoria (texto livre); Grau de importância do silêncio (1 a 5).
+
+2. Requisitos Revelados e Classificação MoSCoW:
+   - REQ-01 (Óbvio): Autenticação do estudante via RA e senha institucional. [Must have]
+   - REQ-02 (Óbvio): Envio de lembrete de reserva por e-mail ou WhatsApp 15 minutos antes do horário. [Should have]
+   - REQ-03 (Não Óbvio): Liberação automática da sala por No-Show se o QR Code da porta não for escaneado em até 10 minutos. [Must have]
+</pre>
+
+<p><em>Instruções de entrega:</em> Escreva uma síntese em um arquivo de texto e envie aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 3 -->
+<h2>SEMANA 3 - Clínica dos Princípios Ágeis</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Diagnosticar e "tratar" problemas com base nos princípios do Manifesto Ágil diante do seguinte cenário de uma startup caótica: <em>"Nossas entregas atrasam, às vezes só a cada 6 meses. A equipe faz hora extra todos os dias. O cliente reclama porque não é ouvido. O código está desorganizado, mas nunca sobra tempo para arrumar."</em>
+</p>
+
+<p><strong>Quadro de Diagnóstico e Solução:</strong></p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Princípios Violados</th>
+      <th>Consequências</th>
+      <th>Ações de Melhoria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Princípio 1/3:</strong> Entregar software funcionando com frequência.</td>
+      <td>Feedback muito tardio (6 meses) e produto desalinhado com o cliente.</td>
+      <td>Adotar Sprints de 2 semanas com entregas incrementais.</td>
+    </tr>
+    <tr>
+      <td><strong>Princípio 8:</strong> Ritmo sustentável de trabalho.</td>
+      <td>Burnout na equipe, alta rotatividade e aumento de falhas.</td>
+      <td>Eliminar horas extras diárias e adequar o escopo à capacidade real do time.</td>
+    </tr>
+    <tr>
+      <td><strong>Princípio 9:</strong> Atenção contínua à excelência técnica.</td>
+      <td>Código caótico que reduz a velocidade e gera bugs recorrentes.</td>
+      <td>Reservar 15% a 20% de cada Sprint para refatoração e débito técnico.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><em>Instruções de entrega:</em> Envie o quadro (A4 digital) dividido nas três colunas para registro no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 4 -->
+<h2>SEMANA 4 - Arquiteto de Testes do App de Mensagens</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Planejar os testes para a nova feature "Mensagem que desaparece após 24 horas" em um aplicativo de mensagens, descrevendo os testes por tipo e distribuindo os recursos (priorização para 10 testes).
+</p>
+
+<p><strong>Tabela de Mapeamento e Priorização:</strong></p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Tipo de Teste</th>
+      <th>Mapeamento</th>
+      <th>Priorização (Recursos)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Unitário</strong></td>
+      <td>Testar a função isolada <code>definirExpiracao(mensagem, 24)</code> verificando se o tempo de expiração é calculado corretamente.</td>
+      <td>5 testes (50%)</td>
+    </tr>
+    <tr>
+      <td><strong>Integração</strong></td>
+      <td>Verificar a comunicação entre o serviço de mensagens e a rotina de exclusão automática do banco de dados.</td>
+      <td>2 testes (20%)</td>
+    </tr>
+    <tr>
+      <td><strong>E2E (sistema)</strong></td>
+      <td>Simular envio de mensagem pelo Usuário A para o Usuário B e validar se ela desaparece de ambas as telas após 24h.</td>
+      <td>2 testes (20%)</td>
+    </tr>
+    <tr>
+      <td><strong>Manual (aceitação)</strong></td>
+      <td>Validar a usabilidade do temporizador na interface gráfica e os avisos mostrados ao usuário.</td>
+      <td>1 teste (10%)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><em>Instruções de entrega:</em> Envie foto ou arquivo com as respostas da tabela aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 5 -->
+<h2>SEMANA 5 - Testando um App de Quiz</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Aplicar as técnicas de particionamento de equivalência e análise de valor-limite para testar um aplicativo de quiz educacional conforme seus requisitos.
+</p>
+
+<p><strong>Requisitos do App:</strong></p>
+<ul>
+<li>Usuários podem responder entre 5 e 50 perguntas por sessão.</li>
+<li>Cada pergunta tem tempo-limite entre 10 e 60 segundos.</li>
+<li>Pontuação: respostas corretas valem entre 1 e 10 pontos.</li>
+<li>Idade mínima para cadastro: 13 anos.</li>
+<li>Usuários podem criar quizzes com 5-20 perguntas.</li>
+</ul>
+
+<p><strong>Exemplo de Resolução / Casos de Teste:</strong></p>
+
+<pre>
+--- Caso de Teste 1 ---
+ID: TC-001
+Objetivo: Criar quiz com número mínimo de perguntas.
+Técnica: Valor-limite.
+Entrada: Número de perguntas = 5.
+Resultado: Sistema deve aceitar a criação do quiz.
+
+--- Caso de Teste 2 ---
+ID: TC-002
+Objetivo: Validar cadastro de usuário com idade abaixo do limite.
+Técnica: Valor-limite.
+Entrada: Idade = 12 anos.
+Resultado: Sistema deve rejeitar o cadastro exibindo mensagem de erro.
+
+--- Caso de Teste 3 ---
+ID: TC-003
+Objetivo: Validar tempo-limite superior por pergunta.
+Técnica: Particionamento de Equivalência.
+Entrada: Tempo limite = 65 segundos.
+Resultado: Sistema deve rejeitar a entrada por ultrapassar o limite máximo.
+</pre>
+
+<p><em>Instruções de entrega:</em> Gere um relatório no formato .doc ou .pdf e envie aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 6 -->
+<h2>SEMANA 6 - Responder um E-mail sobre Requisitos (SMART)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Redigir uma resposta ao e-mail da PM Juliana aplicando a técnica SMART para esclarecer e propor uma versão reescrita dos requisitos do módulo de relatórios, acompanhada de critérios de aceite.
+</p>
+
+<p><strong>Exemplo de Resposta ao E-mail:</strong></p>
+
+<pre>
+De: squad-a@empresa.com
+Para: pm.juliana@empresa.com
+Assunto: Re: Refinar Requisitos — Módulo de relatórios
+
+Olá Juliana,
+
+Agradecemos o envio das diretrizes sobre o novo módulo de relatórios. Entendemos a importância de ter relatórios de vendas mensais rápidos para apoio à diretoria.
+
+Para alinhar os requisitos ao padrão SMART, levantamos as seguintes perguntas de esclarecimento:
+- Quais formatos exatos de exportação são necessários (ex: PDF, XLSX, CSV)?
+- Qual o tempo máximo de resposta tolerado para o termo "rápido" (ex: até 3 segundos)?
+
+Proposta de Requisito Reescrito (SMART):
+"O sistema deve gerar um relatório de vendas consolidadas por mês, permitindo visualização em tela e exportação nos formatos PDF e XLSX, com tempo de carregamento inferior a 3 segundos para históricos de até 12 meses."
+
+Critérios de Aceite:
+1. O relatório deve ser exibido em até 3 segundos após a seleção do mês.
+2. A exportação para PDF e XLSX deve manter a formatação do cabeçalho institucional.
+3. Caso não haja vendas no período, o sistema deve exibir a mensagem: "Nenhum registro encontrado".
+
+Riscos e Próximos Passos:
+- Dependência da estabilidade do banco de dados de vendas.
+- Próximo passo: Validação do formato de saída pela diretoria.
+
+Atenciosamente,
+Squad A
+</pre>
+
+<p><em>Instruções de entrega:</em> Envio da atividade no formato resposta-email-requisitos_Squad-A.pdf no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 7 -->
+<h2>SEMANA 7 - Guardiões do Livro de Receitas da Vovó</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Criar a estrutura de uma planilha de "Registro de Controle de Mudanças" (PCM) e registrar duas solicitações recebidas para o projeto do livro de receitas.
+</p>
+
+<p><strong>Tabela de Registro de Controle de Mudanças:</strong></p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Solicitante</th>
+      <th>Descrição da Mudança</th>
+      <th>Urgência / Impacto</th>
+      <th>Status</th>
+      <th>Data Aprovação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>01</td>
+      <td>Tio Carlos</td>
+      <td>Criar versão sem açúcar do bolo de chocolate usando adoçante culinário.</td>
+      <td>Urgência Alta / Impacto Médio (ajuste de receita e testes)</td>
+      <td>Pendente</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>02</td>
+      <td>Prima Joana</td>
+      <td>Adicionar uma colher de café na massa do bolo de chocolate.</td>
+      <td>Urgência Baixa / Impacto Baixo (ideia futura)</td>
+      <td>Pendente</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><em>Instruções de entrega:</em> Após finalizar a planilha, envie aqui no AVA no formato Doc/PDF.</p>
+
+<hr>
+
+<!-- SEMANA 8 -->
+<h2>SEMANA 8 - Escrevendo a Receita Perfeita para Encontrar Bugs</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Elaborar a estrutura detalhada de um caso de teste funcional com base no roteiro da aula prática.
+</p>
+
+<p><strong>Exemplo de Resolução / Caso de Teste Completo:</strong></p>
+
+<pre>
+ID do Teste: CT-FUNC-001
+Título: Validação do Cadastro de Novo Usuário no Sistema
+
+Pré-condições:
+- Navegador atualizado e acesso à tela de cadastro.
+- Utilizar um e-mail ainda não cadastrado.
+
+Passos de Execução:
+1. Acessar a página de cadastro do sistema.
+2. Preencher o campo "Nome Completo" com "Maria Souza".
+3. Preencher o campo "E-mail" com "maria.souza@email.com".
+4. Preencher o campo "Senha" com "Senha123!".
+5. Clicar no botão "Cadastrar".
+
+Dados de Teste:
+- Nome: Maria Souza | E-mail: maria.souza@email.com | Senha: Senha123!
+
+Resultado Esperado:
+- O sistema exibe a mensagem "Cadastro realizado com sucesso!" e redireciona para a página de Login.
+</pre>
+
+<p><em>Instruções de entrega:</em> Registre sua atividade no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 9 -->
+<h2>SEMANA 9 - Desvendando a Qualidade dos Testes como um Detetive</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Preencher os dados do sistema "EduTech", calcular o KPI-DF, a taxa de sucesso e a cobertura de requisitos, e classificar a criticidade dos módulos.
+</p>
+
+<p><strong>Tabela de Indicadores de Qualidade (EduTech):</strong></p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Módulo</th>
+      <th>Requisitos Testados</th>
+      <th>Testes Executados</th>
+      <th>Testes Passados</th>
+      <th>Bugs / Defeitos</th>
+      <th>Taxa Sucesso</th>
+      <th>Classificação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Autenticação</td>
+      <td>10 / 10 (100%)</td>
+      <td>20</td>
+      <td>20</td>
+      <td>0</td>
+      <td>100%</td>
+      <td>Estável</td>
+    </tr>
+    <tr>
+      <td>Financeiro</td>
+      <td>8 / 10 (80%)</td>
+      <td>25</td>
+      <td>15</td>
+      <td>10</td>
+      <td>60%</td>
+      <td>CRÍTICO</td>
+    </tr>
+    <tr>
+      <td>Salas Virtuais</td>
+      <td>5 / 10 (50%)</td>
+      <td>10</td>
+      <td>8</td>
+      <td>2</td>
+      <td>80%</td>
+      <td>Atenção (Baixa Cobertura)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Relatório e Recomendações:</strong></p>
+
+<pre>
+1. Módulo mais crítico: Financeiro (apresentou taxa de sucesso de apenas 60% e 10 defeitos).
+2. Recomendação: Bloquear a liberação do módulo Financeiro até a correção dos bugs e realizar novos testes de regressão no módulo de Salas Virtuais para aumentar a cobertura de requisitos.
+</pre>
+
+<p><em>Instruções de entrega:</em> Após finalizar, envie a planilha completa aqui no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 10 -->
+<h2>SEMANA 10 - O Dilema do Contrato: Traduzindo Valores em Ações</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Análise prática do dilema entre seguir rigorosamente o contrato ou priorizar a colaboração com o cliente para a entrega de valor no software.
+</p>
+
+<p><strong>Exemplo de Resolução / Lógica de Decisão:</strong></p>
+
+<pre>
+Lógica de Decisão Ágil:
+SE (A nova solicitação do cliente agregar valor real ao produto) ENTÃO
+   Avaliar o impacto na Sprint atual;
+   Negociar a troca de escopo de igual esforço (Troca de itens no Backlog);
+SENÃO
+   Apresentar justificativa técnica ao cliente e agendar a solicitação para Sprints futuras;
+FIM_SE
+
+Conclusão:
+A abordagem ágil prioriza a "Colaboração com o cliente mais que negociação de contratos". Em vez de recusar a mudança com base em cláusulas engessadas, o time busca formas flexíveis de acomodar o novo requisito sem comprometer o prazo final da entrega.
+</pre>
+
+<p><em>Instruções de entrega:</em> Entregue as respostas da atividade em arquivo ou fotografia do caderno no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 11 -->
+<h2>SEMANA 11 - Montando um Sprint Backlog Viável</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Planejamento de uma Sprint calculando a capacidade da equipe em horas, definindo User Stories com estimativas e montando o Sprint Backlog.
+</p>
+
+<p><strong>Estrutura do Sprint Backlog:</strong></p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>História de Usuário (User Story)</th>
+      <th>Pontos (Poker)</th>
+      <th>Horas Estimadas</th>
+      <th>Responsável</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>US01</td>
+      <td>Como usuário, quero me cadastrar para acessar o sistema.</td>
+      <td>5</td>
+      <td>30h</td>
+      <td>Dev / QA</td>
+    </tr>
+    <tr>
+      <td>US02</td>
+      <td>Como usuário, quero fazer login com e-mail e senha.</td>
+      <td>3</td>
+      <td>20h</td>
+      <td>Dev / QA</td>
+    </tr>
+    <tr>
+      <td>US03</td>
+      <td>Como usuário, quero redefinir minha senha esquecida.</td>
+      <td>3</td>
+      <td>20h</td>
+      <td>Dev / QA</td>
+    </tr>
+    <tr>
+      <td>US04</td>
+      <td>Como cliente, quero consultar meu histórico de pedidos.</td>
+      <td>5</td>
+      <td>35h</td>
+      <td>Dev / QA</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><em>Instruções de entrega:</em> Registre o planejamento do Sprint Backlog no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 12 -->
+<h2>SEMANA 12 - Product Owner: A Voz do Negócio</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Atuação no papel de Product Owner para priorização de backlog e definição do escopo de um MVP (Produto Mínimo Viável).
+</p>
+
+<p><strong>Exemplo de Resolução:</strong></p>
+
+<pre>
+Matriz de Priorização do Product Owner:
+1. Pagamento via Pix (Valor: Alto / Esforço: Médio) -> Alta Prioridade
+2. Cadastro de Clientes (Valor: Alto / Esforço: Baixo) -> Alta Prioridade
+3. Relatório em PDF (Valor: Médio / Esforço: Médio) -> Média Prioridade
+4. Tema Escuro na Interface (Valor: Baixo / Esforço: Baixo) -> Baixa Prioridade
+
+Escopo do MVP:
+Contemplar os itens 1 e 2 para permitir a operação mínima de vendas da plataforma de forma imediata.
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie a documentação de priorização no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 13 -->
+<h2>SEMANA 13 - Análise de Fluxo de Trabalho (CFD)</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Diagnosticar gargalos de desenvolvimento através da leitura de gráficos de Fluxo Cumulativo (Cumulative Flow Diagram - CFD).
+</p>
+
+<p><strong>Exemplo de Resolução:</strong></p>
+
+<pre>
+Diagnóstico do Gráfico CFD:
+1. Identificação do Gargalo: Aumento desproporcional na coluna "Code Review", indicando retenção de tarefas aguardando revisão.
+2. Impacto: Aumento do Lead Time e atraso na entrega final da Sprint.
+3. Solução Recomendada: Estabelecer limite de WIP (Work in Progress) na etapa de revisão e realizar pareamento para agilizar as análises.
+</pre>
+
+<p><em>Instruções de entrega:</em> Registrar a análise técnica no AVA.</p>
+
+<hr>
+
+<!-- SEMANA 14 -->
+<h2>SEMANA 14 - Laboratório Prático: Retrospectiva e Melhoria Contínua</h2>
+
+<p><strong>Descrição da Atividade:</strong><br>
+Elaborar um quadro de retrospectiva no formato Start-Stop-Continue e definir plano de ação para melhoria dos processos da equipe.
+</p>
+
+<p><strong>Quadro Start-Stop-Continue:</strong></p>
+
+<pre>
+--- START (Começar a fazer) ---
+- Aplicar limites rígidos de WIP no quadro Kanban.
+- Realizar revisões de código em blocos de horários fixos.
+
+--- STOP (Parar de fazer) ---
+- Parar de iniciar novas tarefas sem terminar as pendentes na etapa de testes.
+- Parar de assumir demandas sem estimativa de esforço prévia.
+
+--- CONTINUE (Continuar fazendo) ---
+- Manter reuniões diárias (Dailies) focadas e objetivas.
+- Manter a colaboração próxima entre desenvolvedores e a equipe de QA.
+</pre>
+
+<p><em>Instruções de entrega:</em> Envie a ata da retrospectiva e o plano de ação no AVA.</p>
+
+</body>
+</html>
