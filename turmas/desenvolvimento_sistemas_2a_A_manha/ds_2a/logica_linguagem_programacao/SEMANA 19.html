@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Simulador Didático: Manipulação de Strings</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%);
+            font-family: 'Inter', system-ui, 'Segoe UI', 'Fira Code', monospace;
+            padding: 2rem;
+            color: #eef4ff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid rgba(0, 255, 204, 0.3);
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #b3ffe0, #00ffcc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero p { font-size: 1.1rem; color: #b9c7d9; margin-top: 0.5rem; }
+        .badge-container {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        .badge {
+            background: rgba(0, 255, 204, 0.1);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            color: #00ffcc;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+        .card {
+            background: rgba(18, 25, 40, 0.75);
+            backdrop-filter: blur(4px);
+            border-radius: 1.5rem;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            transition: 0.2s;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .card:hover { transform: translateY(-4px); border-color: rgba(0, 255, 204, 0.5); }
+        .card-header {
+            background: rgba(0, 30, 30, 0.5);
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+        }
+        .card-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #b3ffe0;
+        }
+        .card-header h3:before { content: "🔤"; font-size: 1.2rem; }
+        .card-desc {
+            font-size: 0.85rem;
+            color: #93a1b8;
+            padding: 0.8rem 1.2rem 0 1.2rem;
+            line-height: 1.4;
+        }
+        .code-block {
+            background: #0a0e17;
+            padding: 0.8rem 1.2rem;
+            margin: 0.8rem 1.2rem;
+            border-radius: 0.8rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.82rem;
+            border-left: 3px solid #00ffcc;
+            white-space: pre-wrap;
+            color: #d6deeb;
+            overflow-x: auto;
+        }
+        .array-visualizer {
+            margin: 0.5rem 1.2rem 1rem 1.2rem;
+            background: #060a12;
+            padding: 1rem;
+            border-radius: 0.8rem;
+            border: 1px dashed rgba(0, 255, 204, 0.25);
+        }
+        .array-title {
+            font-size: 0.75rem;
+            color: #5f7f9e;
+            text-transform: uppercase;
+            margin-bottom: 0.6rem;
+            font-weight: 600;
+        }
+        .char-grid {
+            display: flex;
+            gap: 0.4rem;
+            overflow-x: auto;
+            padding-bottom: 0.4rem;
+        }
+        .char-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 45px;
+            background: #111a28;
+            border: 1px solid #23354d;
+            border-radius: 0.5rem;
+            padding: 0.4rem;
+            transition: all 0.3s ease;
+        }
+        .char-cell.active {
+            border-color: #00ffcc;
+            background: rgba(0, 255, 204, 0.15);
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+        }
+        .char-cell.error {
+            border-color: #ff5555;
+            background: rgba(255, 85, 85, 0.2);
+            box-shadow: 0 0 10px rgba(255, 85, 85, 0.4);
+        }
+        .char-index {
+            font-size: 0.65rem;
+            color: #00ffcc;
+            font-weight: bold;
+            border-bottom: 1px solid #23354d;
+            width: 100%;
+            text-align: center;
+            padding-bottom: 0.2rem;
+            margin-bottom: 0.3rem;
+        }
+        .char-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #ffffff;
+            font-family: monospace;
+        }
+        .controls {
+            padding: 0 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .control-group {
+            background: #111a24;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .control-group label {
+            font-size: 0.75rem;
+            color: #9ccfd8;
+        }
+        input, select {
+            background: #020617;
+            border: 1px solid #334155;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            width: auto;
+        }
+        .action-bar {
+            display: flex;
+            gap: 0.8rem;
+            padding: 0 1.2rem 0.8rem 1.2rem;
+        }
+        .btn {
+            border: none;
+            background: #1e2a3a;
+            color: #e2e8f0;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+        }
+        .btn-primary {
+            background: #0f2c2c;
+            color: #00ffcc;
+            border: 1px solid #00ffcc80;
+        }
+        .btn-primary:hover {
+            background: #00ccaa20;
+            border-color: #00ffcc;
+            transform: scale(0.98);
+        }
+        .btn-secondary:hover { background: #2d3b4b; }
+        .console-area {
+            background: #03060c;
+            border-top: 1px solid #1f2a3a;
+            padding: 1rem 1.2rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: auto;
+        }
+        .console-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #5f7f9e;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .log-content { color: #bbd4f0; }
+        .log-line {
+            border-left: 2px solid #2c6e6e;
+            padding-left: 8px;
+            margin: 4px 0;
+            font-size: 0.75rem;
+        }
+        .log-break { color: #ffb86c; border-left-color: #ffaa44; }
+        .log-continue { color: #8be9fd; border-left-color: #6ac8ff; }
+        .log-error { color: #ff6b6b; border-left-color: #ff4444; }
+        .log-success { color: #50fa7b; border-left-color: #50fa7b; }
+        footer {
+            text-align: center;
+            background: rgba(0, 20, 20, 0.5);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+        }
+        @media (max-width: 750px) {
+            body { padding: 1rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🔤 SEMANA 19: Manipulação de Strings</h1>
+        <p>Simulador interativo para imutabilidade, métodos embutidos, fatiamento (slicing) e parsing de logs.</p>
+        <div class="badge-container">
+            <span class="badge">Aula 1: Imutabilidade & Vetor de Caracteres</span>
+            <span class="badge">Aula 2: Métodos (.find, .replace, .strip)</span>
+            <span class="badge">Aula 3: Slicing [inicio:fim] & f-strings</span>
+            <span class="badge">Aula 4: Desafio Parsing de Logs (.split)</span>
+        </div>
+    </div>
+    
+    <div class="grid" id="examplesGrid"></div>
+
+    <footer>
+        <h3 style="color:#00ffcc;">🎯 Curiosidade & Experimentação em Código</h3>
+        <p style="font-size:0.85rem; color:#b9c7d9; margin-top:0.4rem;">
+            Explore textos como vetores imutáveis de caracteres indexados a partir do zero.<br>
+            Aprenda a fatiar, higienizar entradas e extrair inteligência de logs reais do sistema!
+        </p>
+    </footer>
+</div>
+
+<script>
+    const missoes = [
+        // --- AULA 1: REVISÃO E IMUTABILIDADE ---
+        {
+            title: "1. Imutabilidade e Reatribuição de Strings",
+            aula: "Aula 1",
+            desc: "Strings são vetores imutáveis em memória. Modificar um caractere direto por índice lança erro; a alteração exige gerar um novo objeto em memória.",
+            codeExemplo: "# Tentativa Inválida (Erro):\ntexto = 'Python'\ntexto[0] = 'J' # TypeError!\n\n# Forma Correta:\ntexto = 'J' + texto[1:] # Novo objeto",
+            controls: [
+                { label: "Modo de Modificação:", type: "select", options: ["Direta texto[0] = 'J' (Incorreto)", "Reatribuição texto = 'J' + texto[1:] (Correto)"], id: "modo" }
+            ],
+            run: (params, logger, updateVisual) => {
+                let textoOriginal = "Python";
+                let modo = params.modo;
+
+                if (modo.includes("Incorreto")) {
+                    updateVisual(textoOriginal, [0], true);
+                    logger(`🟢 Variável 'texto' apontando para a string em RAM: "${textoOriginal}"`, "info");
+                    logger(`❌ TypeError: 'str' object does not support item assignment!`, "error");
+                    logger(`💡 Strings são IMUTÁVEIS. Não é possível alterar texto[0] diretamente na memória.`, "break");
+                } else {
+                    let novoTexto = "J" + textoOriginal.slice(1);
+                    updateVisual(novoTexto, [0]);
+                    logger(`🟢 String original em RAM: "${textoOriginal}"`, "info");
+                    logger(`⚙️ Criando uma NOVA string por concatenação de 'J' com fatiamento 'ython'...`, "continue");
+                    logger(`✅ Sucesso! Variável 'texto' agora aponta para o novo objeto: "${novoTexto}"`, "success");
+                }
+            }
+        },
+
+        // --- AULA 2: MÉTODOS DE BUSCA E SUBSTITUIÇÃO ---
+        {
+            title: "2. Higienização e Transformação (.strip, .replace, .upper)",
+            aula: "Aula 2",
+            desc: "Aplique métodos nativos de busca e substituição para limpar espaços excedentes, trocar palavras e alterar a caixa do texto.",
+            codeExemplo: "bruto = '   admin@email.com   '\nlimpo = bruto.strip().upper()\nsubst = limpo.replace('EMAIL', 'CORREIO')",
+            controls: [
+                { label: "Texto Bruto:", type: "text", default: "  usuario@servidor.com  ", id: "txt" },
+                { label: "Operação:", type: "select", options: ["1. .strip() [Remover Espaços]", "2. .upper() [Caixa Alta]", "3. .replace('servidor', 'empresa')"], id: "op" }
+            ],
+            run: (params, logger, updateVisual) => {
+                let txt = params.txt || "  usuario@servidor.com  ";
+                let op = params.op;
+                let resultado = txt;
+
+                updateVisual(txt);
+                logger(`📥 Entrada bruta: "${txt}" (comprimento: ${txt.length})`, "info");
+
+                if (op.includes("strip")) {
+                    resultado = txt.trim();
+                    updateVisual(resultado);
+                    logger(`✂️ .strip() aplicado! Espaços das extremidades removidos.`, "success");
+                    logger(`📊 Novo comprimento: ${resultado.length} caracteres.`, "info");
+                } else if (op.includes("upper")) {
+                    resultado = txt.toUpperCase();
+                    updateVisual(resultado);
+                    logger(`🔠 .upper() aplicado! Todo o texto convertido para maiúsculas.`, "success");
+                } else {
+                    resultado = txt.replace("servidor", "empresa");
+                    updateVisual(resultado);
+                    logger(`🔄 .replace('servidor', 'empresa') aplicado!`, "success");
+                }
+            }
+        },
+
+        // --- AULA 3: SLICING E F-STRINGS ---
+        {
+            title: "3. Fatiamento (Slicing [início:fim]) & Formatação f-string",
+            aula: "Aula 3",
+            desc: "Extraia subpartes exatas de uma string utilizando subscrição por intervalo e monte saídas padronizadas com f-strings.",
+            codeExemplo: "codigo = 'DEV-2026-99'\ncategoria = codigo[0:3]   # 'DEV'\nano = codigo[4:8]         # '2026'\nrelatorio = f'Setor: {categoria} | Ano: {ano}'",
+            controls: [
+                { label: "Código de Entrada:", type: "text", default: "DEV-2026-99", id: "cod" },
+                { label: "Índice Início [start]:", type: "number", default: 0, id: "start" },
+                { label: "Índice Fim [stop]:", type: "number", default: 3, id: "stop" }
+            ],
+            run: (params, logger, updateVisual) => {
+                let cod = params.cod || "DEV-2026-99";
+                let start = parseInt(params.start) || 0;
+                let stop = parseInt(params.stop) || 0;
+
+                let activeIndices = [];
+                for (let i = start; i < stop && i < cod.length; i++) {
+                    activeIndices.push(i);
+                }
+
+                updateVisual(cod, activeIndices);
+
+                if (start < 0 || stop > cod.length || start >= stop) {
+                    logger(`⚠️ Intervalo de fatiamento [${start}:${stop}] atípico ou fora de faixa.`, "break");
+                }
+
+                let fatiado = cod.slice(start, stop);
+                logger(`✂️ Fatiamento codigo[${start}:${stop}] extraiu: "${fatiado}"`, "info");
+                
+                let relatorioFormatted = `📌 [RELATÓRIO FORMATADO VIA F-STRING]: Categoria='${fatiado}' | Raw='${cod}'`;
+                logger(`✨ ${relatorioFormatted}`, "success");
+            }
+        },
+
+        // --- AULA 4: PARSING DE LOGS ---
+        {
+            title: "4. Desafio: Parsing de Logs de Servidor com .split()",
+            aula: "Aula 4",
+            desc: "Extraia metadados essenciais (IP, Data, Status HTTP) de uma linha de log não estruturada dividindo a string por delimitadores.",
+            codeExemplo: "log = '192.168.1.1 - [17/Aug/2026] - 404'\npartes = log.split(' - ')\nip = partes[0]\ndata = partes[1].strip('[]')\nstatus = partes[2]",
+            controls: [
+                { label: "Linha de Log Bruta:", type: "text", default: "192.168.1.50 - [17/Aug/2026] - 404_NOT_FOUND", id: "logStr" },
+                { label: "Delimitador .split():", type: "text", default: " - ", id: "delim" }
+            ],
+            run: (params, logger, updateVisual) => {
+                let logStr = params.logStr || "192.168.1.50 - [17/Aug/2026] - 404_NOT_FOUND";
+                let delim = params.delim || " - ";
+
+                updateVisual(logStr);
+                logger(`📜 Recebida linha de log crua: "${logStr}"`, "info");
+                logger(`🔍 Aplicando .split('${delim}')...`, "continue");
+
+                let partes = logStr.split(delim);
+
+                if (partes.length < 3) {
+                    logger(`❌ Falha no Parsing! O delimitador '${delim}' não encontrou ao menos 3 seções no log.`, "error");
+                } else {
+                    let ip = partes[0];
+                    let data = partes[1].replace("[", "").replace("]", "");
+                    let status = partes[2];
+
+                    logger(`🎯 PARSING CONCLUÍDO COM SUCESSO:`, "success");
+                    logger(` ├─ 🌐 IP de Origem: ${ip}`, "info");
+                    logger(` ├─ 📅 Data/Hora: ${data}`, "info");
+                    logger(` └─ ⚠️ Status de Saída: ${status}`, status.includes("404") || status.includes("500") ? "error" : "success");
+                }
+            }
+        }
+    ];
+
+    function buildCard(mission, idx) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        
+        const header = document.createElement('div');
+        header.className = 'card-header';
+        const titleEl = document.createElement('h3');
+        titleEl.innerText = mission.title;
+        header.appendChild(titleEl);
+        
+        const descDiv = document.createElement('div');
+        descDiv.className = 'card-desc';
+        descDiv.innerHTML = `<strong>[${mission.aula}]</strong> ${mission.desc}`;
+
+        const codeDiv = document.createElement('div');
+        codeDiv.className = 'code-block';
+        codeDiv.innerHTML = `<pre style="margin:0;">${mission.codeExemplo}</pre>`;
+
+        // Visualizador da String como Vetor de Caracteres
+        const arrayVis = document.createElement('div');
+        arrayVis.className = 'array-visualizer';
+        const arrayTitle = document.createElement('div');
+        arrayTitle.className = 'array-title';
+        arrayTitle.innerText = '🧠 Estado em Memória (Vetor de Caracteres Indexado)';
+        const charGrid = document.createElement('div');
+        charGrid.className = 'char-grid';
+        arrayVis.appendChild(arrayTitle);
+        arrayVis.appendChild(charGrid);
+        
+        const controlsDiv = document.createElement('div');
+        controlsDiv.className = 'controls';
+        const controlValues = {};
+        
+        mission.controls.forEach(ctrl => {
+            const group = document.createElement('div');
+            group.className = 'control-group';
+            const label = document.createElement('label');
+            label.innerText = ctrl.label;
+            
+            let input;
+            if (ctrl.type === 'select') {
+                input = document.createElement('select');
+                ctrl.options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    option.innerText = opt;
+                    input.appendChild(option);
+                });
+            } else {
+                input = document.createElement('input');
+                input.type = ctrl.type;
+                input.value = ctrl.default;
+            }
+            
+            input.id = `ctrl-${idx}-${ctrl.id}`;
+            group.appendChild(label);
+            group.appendChild(input);
+            controlsDiv.appendChild(group);
+            controlValues[ctrl.id] = input;
+        });
+        
+        const actionBar = document.createElement('div');
+        actionBar.className = 'action-bar';
+        const runBtn = document.createElement('button');
+        runBtn.className = 'btn btn-primary';
+        runBtn.innerHTML = '▶ Executar Código';
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'btn btn-secondary';
+        clearBtn.innerHTML = '🗑 Limpar Log';
+        
+        const consoleDiv = document.createElement('div');
+        consoleDiv.className = 'console-area';
+        const consoleHeader = document.createElement('div');
+        consoleHeader.className = 'console-title';
+        consoleHeader.innerHTML = `<span>📟 CONSOLE / STRINGS OUTPUT</span><span>🐍 simulação string</span>`;
+        const logContent = document.createElement('div');
+        logContent.className = 'log-content';
+        consoleDiv.appendChild(consoleHeader);
+        consoleDiv.appendChild(logContent);
+        
+        actionBar.appendChild(runBtn);
+        actionBar.appendChild(clearBtn);
+
+        card.appendChild(header);
+        card.appendChild(descDiv);
+        card.appendChild(codeDiv);
+        card.appendChild(arrayVis);
+        card.appendChild(controlsDiv);
+        card.appendChild(actionBar);
+        card.appendChild(consoleDiv);
+        
+        // Renderizador da Grade de Caracteres
+        const updateVisual = (str, activeIndices = [], isError = false) => {
+            charGrid.innerHTML = '';
+            if (!str || str.length === 0) {
+                charGrid.innerHTML = '<div style="font-size:0.75rem; color:#5f7f9e;">[String Vazia]</div>';
+                return;
+            }
+            for (let i = 0; i < str.length; i++) {
+                const cell = document.createElement('div');
+                let className = 'char-cell';
+                if (activeIndices.includes(i)) {
+                    className += isError ? ' error' : ' active';
+                }
+                cell.className = className;
+                let charDisplay = str[i] === ' ' ? '␣' : str[i];
+                cell.innerHTML = `
+                    <div class="char-index">[${i}]</div>
+                    <div class="char-value">${charDisplay}</div>
+                `;
+                charGrid.appendChild(cell);
+            }
+        };
+
+        const logger = (msg, type = "info") => {
+            const logDiv = document.createElement('div');
+            let typeClass = 'log-line';
+            let prefix = 'ℹ️ ';
+            
+            if (type === 'break') { typeClass += ' log-break'; prefix = '💡 '; }
+            else if (type === 'continue') { typeClass += ' log-continue'; prefix = '🔄 '; }
+            else if (type === 'error') { typeClass += ' log-error'; prefix = '❌ '; }
+            else if (type === 'success') { typeClass += ' log-success'; prefix = '✅ '; }
+
+            logDiv.className = typeClass;
+            logDiv.innerHTML = `${prefix}${msg}`;
+            logContent.appendChild(logDiv);
+            logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+        
+        const clearLog = () => {
+            logContent.innerHTML = '';
+            const initMsg = document.createElement('div');
+            initMsg.className = 'log-line';
+            initMsg.innerHTML = '⚡ Pronto. Configure os parâmetros e execute a simulação.';
+            logContent.appendChild(initMsg);
+        };
+        clearLog();
+        
+        // Estado inicial
+        updateVisual("Python");
+
+        let isRunning = false;
+        const runSimulation = () => {
+            if (isRunning) return;
+            isRunning = true;
+            runBtn.disabled = true;
+            runBtn.style.opacity = "0.6";
+            
+            try {
+                const params = {};
+                for (let [key, input] of Object.entries(controlValues)) {
+                    params[key] = input.value;
+                }
+                mission.run(params, logger, updateVisual);
+            } catch (err) {
+                logger(`Erro de Execução: ${err.message}`, "error");
+            } finally {
+                isRunning = false;
+                runBtn.disabled = false;
+                runBtn.style.opacity = "1";
+            }
+        };
+        
+        runBtn.addEventListener('click', runSimulation);
+        clearBtn.addEventListener('click', () => {
+            if (!isRunning) clearLog();
+        });
+        
+        return card;
+    }
+    
+    const grid = document.getElementById('examplesGrid');
+    missoes.forEach((m, i) => {
+        grid.appendChild(buildCard(m, i));
+    });
+</script>
+</body>
+</html>
