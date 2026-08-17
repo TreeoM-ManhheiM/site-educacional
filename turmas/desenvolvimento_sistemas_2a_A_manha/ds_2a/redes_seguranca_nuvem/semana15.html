@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador de Validação e Segurança Web</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    body {
+      background-color: #f0f2f5;
+      color: #333;
+      padding: 20px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #1a73e8;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #ddd;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .tab-button {
+      flex: 1;
+      min-width: 150px;
+      padding: 12px;
+      border: none;
+      background: #f1f1f1;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: 0.3s;
+    }
+    .tab-button.active {
+      background: #1a73e8;
+      color: #fff;
+    }
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Estilo do bloco de diretrizes por aba */
+    .enterprise-card {
+      background-color: #f8f9fa;
+      border: 1px solid #dadce0;
+      border-left: 5px solid #1a73e8;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+    }
+    .enterprise-card h3 {
+      font-size: 15px;
+      color: #202124;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .enterprise-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .enterprise-list li {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #3c4043;
+    }
+    .enterprise-list strong {
+      color: #1a73e8;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    input[type="text"], input[type="password"], textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .hint-text {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+    .hint-text code {
+      background-color: #f1f3f4;
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-family: monospace;
+      color: #c7254e;
+    }
+    button.btn-submit {
+      background-color: #1a73e8;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      margin-top: 10px;
+    }
+    button.btn-submit:hover {
+      background-color: #1557b0;
+    }
+    .toggle-container {
+      background-color: #e8f0fe;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .toggle-container input {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    .toggle-container label {
+      margin-bottom: 0;
+      cursor: pointer;
+      color: #1967d2;
+    }
+    .output-box {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 4px;
+      background-color: #f8f9fa;
+      border-left: 4px solid #1a73e8;
+      word-wrap: break-word;
+    }
+    .error {
+      color: #d93025;
+      font-size: 13px;
+      margin-top: 4px;
+      display: none;
+    }
+    .sql-code {
+      font-family: monospace;
+      background: #272822;
+      color: #f8f8f2;
+      padding: 10px;
+      border-radius: 4px;
+      margin-top: 10px;
+    }
+    .comment-item {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      padding: 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    .qr-box {
+      margin-top: 15px;
+      text-align: center;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+    }
+    .qr-box img {
+      width: 180px;
+      height: 180px;
+      margin-top: 10px;
+    }
+
+    /* Estilos para o Glossário OWASP */
+    .owasp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 15px;
+      margin-top: 15px;
+    }
+    .owasp-card {
+      background-color: #fff;
+      border: 1px solid #e0e0e0;
+      border-top: 4px solid #1a73e8;
+      border-radius: 6px;
+      padding: 15px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .owasp-card h4 {
+      font-size: 15px;
+      color: #1a73e8;
+      margin-bottom: 8px;
+    }
+    .owasp-card p {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #555;
+    }
+    .owasp-card p strong {
+      color: #202124;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Simulador de Validação e Segurança Web</h1>
+
+  <!-- Navegação entre Aulas e OWASP -->
+  <div class="tabs">
+    <button class="tab-button active" onclick="openTab('aula3')">Validação de Entradas (Aula 3)</button>
+    <button class="tab-button" onclick="openTab('sqli')">Ataque SQL Injection (Aula 2)</button>
+    <button class="tab-button" onclick="openTab('xss')">Ataque XSS (Aula 2)</button>
+    <button class="tab-button" onclick="openTab('pix')">Ataque Pix Manipulation (Aula 2)</button>
+    <button class="tab-button" onclick="openTab('owasp')">OWASP Top 10</button>
+  </div>
+
+  <!-- ABA 1: VALIDAÇÃO DE ENTRADAS -->
+  <div id="aula3" class="tab-content active">
+    <h2>Validação de Formulários</h2>
+    
+    <div class="enterprise-card">
+      <h3>Segurança de Nível Empresarial</h3>
+      <ul class="enterprise-list">
+        <li><strong>Conformidade Regulatória:</strong> Projetado desde o início para atender a rigorosos padrões de autenticação como SOC2, HIPAA e LGPD/GDPR.</li>
+        <li><strong>Arquitetura Zero-Trust:</strong> Verificação contínua do contexto do usuário, integridade do dispositivo e localização de rede a cada requisição.</li>
+      </ul>
+    </div>
+
+    <p style="margin-bottom: 15px; color: #666;">Teste os 4 critérios de validação: Tipo de dados, Tamanho, Formato e Obrigatoriedade.</p>
+    
+    <form id="formValidacao" onsubmit="validarFormulario(event)">
+      <div class="form-group">
+        <label for="nome">Nome Completo (Obrigatório):</label>
+        <input type="text" id="nome" maxlength="100">
+        <div class="hint-text">Exemplo de teste: Insira apenas letras (máx. 100 caracteres).</div>
+        <div id="errNome" class="error">Por favor, insira apenas letras no nome.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="cpf">CPF (Obrigatório):</label>
+        <input type="text" id="cpf">
+        <div class="hint-text">Exemplo de teste: Digite exatamente 11 números (ex: 12345678901).</div>
+        <div id="errCpf" class="error">O CPF deve conter exatamente 11 números.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-mail:</label>
+        <input type="text" id="email">
+        <div class="hint-text">Exemplo de teste: <code>usuario@dominio.com</code></div>
+        <div id="errEmail" class="error">Insira um endereço de e-mail válido.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" oninput="aplicarMascaraTelefone(this)">
+        <div class="hint-text">Exemplo de teste: Máscara automática no formato <code>(XX) XXXXX-XXXX</code>.</div>
+        <div id="errTelefone" class="error">Formato de telefone inválido. Usa: (XX) XXXXX-XXXX.</div>
+      </div>
+
+      <button type="submit" class="btn-submit">Enviar Dados</button>
+    </form>
+
+    <div id="outValidacao" class="output-box" style="display:none;"></div>
+  </div>
+
+  <!-- ABA 2: SQL INJECTION -->
+  <div id="aula2-sqli" class="tab-content">
+    <h2>Simulador de SQL Injection (Login & Busca)</h2>
+
+    <div class="enterprise-card">
+      <h3>Segurança de Nível Empresarial</h3>
+      <ul class="enterprise-list">
+        <li><strong>Criptografia Ponta a Ponta:</strong> Todas as credenciais e tokens de sessão são criptografados em trânsito (TLS 1.3) e em repouso (AES-256).</li>
+        <li><strong>Arquitetura Zero-Trust:</strong> Verificação contínua do contexto do usuário e controles rígidos de acesso ao banco de dados.</li>
+      </ul>
+    </div>
+
+    <div class="toggle-container">
+      <input type="checkbox" id="secSqli">
+      <label for="secSqli"><strong>Ativar Proteção do Backend (Prepared Statements)</strong></label>
+    </div>
+
+    <form onsubmit="simularSqli(event)">
+      <div class="form-group">
+        <label for="sqlUser">Usuário / Campo de Busca:</label>
+        <input type="text" id="sqlUser">
+        <div class="hint-text">Tente injetar: <code>1' OR '1'='1</code></div>
+      </div>
+      <div class="form-group">
+        <label for="sqlPass">Senha:</label>
+        <input type="password" id="sqlPass" value="123456">
+      </div>
+      <button type="submit" class="btn-submit">Executar Query SQL</button>
+    </form>
+
+    <div class="output-box">
+      <strong>Comando SQL Gerado no Banco de Dados:</strong>
+      <div id="sqlQuery" class="sql-code">SELECT * FROM usuarios WHERE usuario = '' AND senha = '';</div>
+      <br>
+      <strong>Resultado da Execução:</strong>
+      <div id="sqlResult" style="margin-top: 5px;">Aguardando envio...</div>
+    </div>
+  </div>
+
+  <!-- ABA 3: XSS -->
+  <div id="aula2-xss" class="tab-content">
+    <h2>Simulador de Cross-Site Scripting (XSS)</h2>
+
+    <div class="enterprise-card">
+      <h3>Segurança de Nível Empresarial</h3>
+      <ul class="enterprise-list">
+        <li><strong>Detecção de Anomalias:</strong> Monitoramento baseado em IA sinaliza automaticamente injeções de dados suspeitas e scripts maliciosos.</li>
+        <li><strong>Arquitetura Zero-Trust:</strong> Verificação contínua do conteúdo inserido pelo usuário antes da renderização no contexto da sessão.</li>
+      </ul>
+    </div>
+
+    <div class="toggle-container">
+      <input type="checkbox" id="secXss">
+      <label for="secXss"><strong>Ativar Sanitização/Escape de HTML</strong></label>
+    </div>
+
+    <form onsubmit="adicionarComentario(event)">
+      <div class="form-group">
+        <label for="xssInput">Novo Comentário (Mural de Recados):</label>
+        <textarea id="xssInput" rows="3"></textarea>
+        <div class="hint-text">Tente injetar: <code>&lt;script&gt;alert('Ataque XSS!')&lt;/script&gt;</code> ou <code>&lt;img src='x' onerror='alert(1)'&gt;</code></div>
+      </div>
+      <button type="submit" class="btn-submit">Postar Comentário</button>
+    </form>
+
+    <h3 style="margin-top: 20px;">Comentários Exibidos:</h3>
+    <div id="commentsContainer" style="margin-top: 10px;">
+      <div class="comment-item">Comentário Exemplo: Olá a todos!</div>
+    </div>
+  </div>
+
+  <!-- ABA 4: PIX MANIPULATION ATTACK -->
+  <div id="aula2-pix" class="tab-content">
+    <h2>Simulador de Manipulação de Payload Pix (Geração de QR Code)</h2>
+
+    <div class="enterprise-card">
+      <h3>Segurança de Nível Empresarial</h3>
+      <ul class="enterprise-list">
+        <li><strong>Integridade de Transações:</strong> Assinatura digital e validação dos dados da chave Pix no servidor impedem adulteração do payload.</li>
+        <li><strong>Arquitetura Zero-Trust:</strong> Recusa automática de parâmetros monetários enviados sem validação estrita de integridade pelo backend.</li>
+      </ul>
+    </div>
+
+    <div class="toggle-container">
+      <input type="checkbox" id="secPix">
+      <label for="secPix"><strong>Ativar Proteção do Backend (Validação e Assinatura de Payload)</strong></label>
+    </div>
+
+    <form onsubmit="simularAtaquePix(event)">
+      <div class="form-group">
+        <label for="pixChave">Chave Pix de Destino:</label>
+        <input type="text" id="pixChave" value="loja@empresa.com">
+      </div>
+      <div class="form-group">
+        <label for="pixValor">Valor do Pagamento (R$):</label>
+        <input type="text" id="pixValor" value="100.00">
+        <div class="hint-text">Tente adulterar o valor ou a chave (ex: <code>0.01</code> ou <code>hacker@malicioso.com</code>)</div>
+      </div>
+      <button type="submit" class="btn-submit">Gerar QR Code Pix</button>
+    </form>
+
+    <div class="output-box">
+      <strong>Payload Gerado para o QR Code:</strong>
+      <div id="pixPayload" class="sql-code">Aguardando geração do QR Code...</div>
+      <br>
+      <strong>Resultado do Processamento:</strong>
+      <div id="pixResult" style="margin-top: 5px;">Aguardando envio...</div>
+
+      <div id="pixQrBox" class="qr-box" style="display:none;">
+        <strong>QR Code Resultante:</strong><br>
+        <img id="pixQrImg" src="" alt="QR Code Pix Simulado">
+      </div>
+    </div>
+  </div>
+
+  <!-- ABA 5: OWASP TOP 10 -->
+  <div id="tab-owasp" class="tab-content">
+    <h2>OWASP Top 10 (Versão Mais Recente Amplamente Adotada)</h2>
+
+    <div class="enterprise-card">
+      <h3>Segurança de Nível Empresarial</h3>
+      <ul class="enterprise-list">
+        <li><strong>Padrão Global:</strong> A lista OWASP Top 10 descreve os riscos de segurança de aplicações web mais críticos no mundo inteiro.</li>
+        <li><strong>Desenvolvimento Seguro:</strong> Referência essencial para equipes de desenvolvimento, testes de invasão e auditorias de conformidade.</li>
+      </ul>
+    </div>
+
+    <div class="owasp-grid">
+      <div class="owasp-card">
+        <h4>1. Broken Access Control</h4>
+        <p><strong>Falhas de autorização.</strong><br>Usuários acessam dados ou funções que não deveriam.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>2. Cryptographic Failures</h4>
+        <p><strong>Problemas de criptografia.</strong><br>Senhas e dados sensíveis armazenados ou transmitidos de forma insegura.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>3. Injection</h4>
+        <p><strong>SQL Injection, Command Injection, LDAP Injection etc.</strong><br>O atacante injeta comandos que o sistema executa.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>4. Insecure Design</h4>
+        <p><strong>Falhas de projeto da aplicação.</strong><br>O problema está na arquitetura, não apenas no código.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>5. Security Misconfiguration</h4>
+        <p><strong>Configurações incorretas.</strong><br>Erros em servidores, bancos de dados, permissões e frameworks.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>6. Vulnerable and Outdated Components</h4>
+        <p><strong>Componentes desatualizados.</strong><br>Uso de bibliotecas e componentes com vulnerabilidades conhecidas.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>7. Identification and Authentication Failures</h4>
+        <p><strong>Falhas de autenticação.</strong><br>Problemas em login, autenticação e gerenciamento de sessão.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>8. Software and Data Integrity Failures</h4>
+        <p><strong>Falhas de integridade.</strong><br>Falta de validação de atualizações, dependências e pipelines de software.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>9. Security Logging and Monitoring Failures</h4>
+        <p><strong>Falhas de logs e monitoramento.</strong><br>Logs insuficientes ou monitoramento inadequado de ataques.</p>
+      </div>
+
+      <div class="owasp-card">
+        <h4>10. Server-Side Request Forgery (SSRF)</h4>
+        <p><strong>Falsificação de requisição no lado do servidor.</strong><br>O sistema faz requisições para destinos controlados pelo atacante.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openTab(tabName) {
+    const contents = document.querySelectorAll('.tab-content');
+    const buttons = document.querySelectorAll('.tab-button');
+    
+    contents.forEach(content => content.classList.remove('active'));
+    buttons.forEach(button => button.classList.remove('active'));
+
+    if(tabName === 'aula3') {
+      document.getElementById('aula3').classList.add('active');
+      buttons[0].classList.add('active');
+    } else if(tabName === 'sqli') {
+      document.getElementById('aula2-sqli').classList.add('active');
+      buttons[1].classList.add('active');
+    } else if(tabName === 'xss') {
+      document.getElementById('aula2-xss').classList.add('active');
+      buttons[2].classList.add('active');
+    } else if(tabName === 'pix') {
+      document.getElementById('aula2-pix').classList.add('active');
+      buttons[3].classList.add('active');
+    } else if(tabName === 'owasp') {
+      document.getElementById('tab-owasp').classList.add('active');
+      buttons[4].classList.add('active');
+    }
+  }
+
+  function aplicarMascaraTelefone(input) {
+    let value = input.value.replace(/\D/g, "");
+    if (value.length > 11) value = value.slice(0, 11);
+    
+    if (value.length > 6) {
+      input.value = `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7)}`;
+    } else if (value.length > 2) {
+      input.value = `(${value.slice(0, 2)}) ${value.slice(2)}`;
+    } else if (value.length > 0) {
+      input.value = `(${value}`;
+    }
+  }
+
+  function validarFormulario(event) {
+    event.preventDefault();
+    
+    document.querySelectorAll('.error').forEach(e => e.style.display = 'none');
+    const out = document.getElementById('outValidacao');
+    out.style.display = 'none';
+
+    const nome = document.getElementById('nome').value.trim();
+    const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
+    const email = document.getElementById('email').value.trim();
+    const telefone = document.getElementById('telefone').value.trim();
+
+    let valido = true;
+
+    if (!nome || !/^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$/.test(nome)) {
+      document.getElementById('errNome').style.display = 'block';
+      valido = false;
+    }
+
+    if (cpf.length !== 11) {
+      document.getElementById('errCpf').style.display = 'block';
+      valido = false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email && !emailRegex.test(email)) {
+      document.getElementById('errEmail').style.display = 'block';
+      valido = false;
+    }
+
+    const telRegex = /^\(\d{2}\)\s\d{5}-\d{4}$/;
+    if (telefone && !telRegex.test(telefone)) {
+      document.getElementById('errTelefone').style.display = 'block';
+      valido = false;
+    }
+
+    if (valido) {
+      out.style.borderColor = '#34a853';
+      out.style.color = '#137333';
+      out.innerHTML = `<strong>Sucesso (Aceito):</strong> Todos os dados foram validados conforme as regras impostas.`;
+      out.style.display = 'block';
+    } else {
+      out.style.borderColor = '#d93025';
+      out.style.color = '#c5221f';
+      out.innerHTML = `<strong>Bloqueado (Aviso):</strong> O formulário contém erros de preenchimento. Verifique os campos destacados em vermelho.`;
+      out.style.display = 'block';
+    }
+  }
+
+  function simularSqli(event) {
+    event.preventDefault();
+    const userInput = document.getElementById('sqlUser').value;
+    const passInput = document.getElementById('sqlPass').value;
+    const isProtegido = document.getElementById('secSqli').checked;
+    
+    const queryDisplay = document.getElementById('sqlQuery');
+    const resultDisplay = document.getElementById('sqlResult');
+
+    if (!isProtegido) {
+      const queryInsegura = `SELECT * FROM usuarios WHERE usuario = '${userInput}' AND senha = '${passInput}';`;
+      queryDisplay.innerText = queryInsegura;
+
+      if (userInput.includes("' OR '1'='1") || userInput.includes("' OR 1=1")) {
+        resultDisplay.innerHTML = `<span style="color:red; font-weight:bold;">Acesso Concedido! (Bypass via SQL Injection)</span><br>O atacante conseguiu autenticar sem saber a senha válida.`;
+      } else {
+        resultDisplay.innerText = "Acesso Negado. Usuário ou senha inválidos.";
+      }
+    } else {
+      queryDisplay.innerText = `PREPARE stmt FROM 'SELECT * FROM usuarios WHERE usuario = ? AND senha = ?';\nEXECUTE stmt USING '${userInput.replace(/'/g, "''")}', '${passInput}';`;
+      
+      resultDisplay.innerHTML = `<span style="color:green; font-weight:bold;">Acesso Negado (Protegido).</span><br>Os dados de entrada foram tratados estritamente como texto (literais) e não alteraram a estrutura do comando SQL.`;
+    }
+  }
+
+  function adicionarComentario(event) {
+    event.preventDefault();
+    const input = document.getElementById('xssInput').value;
+    if (!input) return;
+
+    const isProtegido = document.getElementById('secXss').checked;
+    const container = document.getElementById('commentsContainer');
+    const newComment = document.createElement('div');
+    newComment.className = 'comment-item';
+
+    if (!isProtegido) {
+      newComment.innerHTML = input;
+
+      const scripts = newComment.querySelectorAll('script');
+      scripts.forEach(script => {
+        const newScript = document.createElement('script');
+        newScript.text = script.innerText;
+        document.body.appendChild(newScript);
+      });
+    } else {
+      newComment.innerText = input;
+    }
+
+    container.appendChild(newComment);
+    document.getElementById('xssInput').value = '';
+  }
+
+  function simularAtaquePix(event) {
+    event.preventDefault();
+    const chaveInput = document.getElementById('pixChave').value;
+    const valorInput = document.getElementById('pixValor').value;
+    const isProtegido = document.getElementById('secPix').checked;
+
+    const payloadDisplay = document.getElementById('pixPayload');
+    const resultDisplay = document.getElementById('pixResult');
+    const qrBox = document.getElementById('pixQrBox');
+    const qrImg = document.getElementById('pixQrImg');
+
+    if (!isProtegido) {
+      const payloadInseguro = `00020126360014BR.GOV.BCB.PIX01${chaveInput.length}${chaveInput}520400005303986540${valorInput.length}${valorInput}5802BR5908LOJA_DEMO6009SAO_PAULO6304`;
+      payloadDisplay.innerText = payloadInseguro;
+
+      const isManipulado = chaveInput !== 'loja@empresa.com' || valorInput !== '100.00';
+
+      if (isManipulado) {
+        resultDisplay.innerHTML = `<span style="color:red; font-weight:bold;">Vulnerabilidade Detectada! (Payload Adulterado Sem Validação)</span><br>O backend aceitou requisições não assinadas. O QR Code gerado reflete os dados manipulados pelo cliente sem checagem de integridade.`;
+      } else {
+        resultDisplay.innerHTML = `<span style="color:#1a73e8; font-weight:bold;">QR Code Gerado.</span><br>Sem o recurso de proteção ativo, o backend confia cegamente em dados enviados pelo frontend.`;
+      }
+
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(payloadInseguro)}`;
+      qrBox.style.display = 'block';
+    } else {
+      payloadDisplay.innerText = `[BACKEND_VALIDATION] CRC16 Checksum & Key Signature Verification failed for unverified parameters.`;
+      
+      const isManipulado = chaveInput !== 'loja@empresa.com' || valorInput !== '100.00';
+
+      if (isManipulado) {
+        resultDisplay.innerHTML = `<span style="color:green; font-weight:bold;">Ataque Bloqueado! (Tentativa de Modificação de Payload Recusada)</span><br>O servidor validou a integridade e os valores autorizados no banco de dados. Alterações de chave ou valor foram rejeitadas.`;
+        qrBox.style.display = 'none';
+      } else {
+        const payloadSeguro = `00020126360014BR.GOV.BCB.PIX0116loja@empresa.com5204000053039865406100.005802BR5908LOJA_DEMO6009SAO_PAULO6304E8A2`;
+        payloadDisplay.innerText = payloadSeguro;
+        resultDisplay.innerHTML = `<span style="color:green; font-weight:bold;">Requisição Protegida e Autorizada.</span><br>Os dados do pagamento foram validados de forma segura pelo servidor.`;
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(payloadSeguro)}`;
+        qrBox.style.display = 'block';
+      }
+    }
+  }
+</script>
+
+</body>
+</html>
