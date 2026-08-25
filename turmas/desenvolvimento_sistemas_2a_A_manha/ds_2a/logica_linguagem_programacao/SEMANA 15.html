@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Simulador Didático: Vetores Unidimensionais (Arrays)</title>
     <style>
+        /* RESET BÁSICO E CORES GERAIS */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%);
@@ -13,6 +14,8 @@
             color: #eef4ff;
         }
         .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* CABEÇALHO (HERO) */
         .hero {
             text-align: center;
             margin-bottom: 2.5rem;
@@ -27,6 +30,8 @@
             color: transparent;
         }
         .hero p { font-size: 1.1rem; color: #b9c7d9; margin-top: 0.5rem; }
+        
+        /* BADGES (AULAS) */
         .badge-container {
             display: flex;
             justify-content: center;
@@ -42,12 +47,16 @@
             border-radius: 1rem;
             font-size: 0.85rem;
         }
+
+        /* GRID DOS CARTÕES (CARDS) */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(580px, 1fr));
             gap: 1.8rem;
             margin-bottom: 2.5rem;
         }
+        
+        /* ESTILO DE CADA CARTÃO DE MISSÃO */
         .card {
             background: rgba(18, 25, 40, 0.75);
             backdrop-filter: blur(4px);
@@ -79,6 +88,8 @@
             padding: 0.8rem 1.2rem 0 1.2rem;
             line-height: 1.4;
         }
+
+        /* ÁREA DO CÓDIGO FONTE */
         .code-block {
             background: #0a0e17;
             padding: 0.8rem 1.2rem;
@@ -87,10 +98,30 @@
             font-family: 'Fira Code', monospace;
             font-size: 0.82rem;
             border-left: 3px solid #00ffcc;
-            white-space: pre-wrap;
             color: #d6deeb;
             overflow-x: auto;
+            position: relative;
         }
+        
+        /* NOVO BOTÃO DE COPIAR CÓDIGO */
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: #1e2a3a;
+            color: #00ffcc;
+            border: 1px solid #00ffcc50;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .copy-btn:hover {
+            background: #00ccaa30;
+        }
+
+        /* VISUALIZADOR DA MEMÓRIA (CAIXAS DO VETOR) */
         .array-visualizer {
             margin: 0.5rem 1.2rem 1rem 1.2rem;
             background: #060a12;
@@ -147,6 +178,8 @@
             font-weight: 600;
             color: #ffffff;
         }
+
+        /* CONTROLES E INPUTS */
         .controls {
             padding: 0 1.2rem;
             display: flex;
@@ -177,6 +210,8 @@
             font-size: 0.8rem;
             width: auto;
         }
+
+        /* BOTÕES DE AÇÃO */
         .action-bar {
             display: flex;
             gap: 0.8rem;
@@ -208,6 +243,8 @@
             transform: scale(0.98);
         }
         .btn-secondary:hover { background: #2d3b4b; }
+
+        /* CONSOLE DE SAÍDA */
         .console-area {
             background: #03060c;
             border-top: 1px solid #1f2a3a;
@@ -237,6 +274,7 @@
         .log-continue { color: #8be9fd; border-left-color: #6ac8ff; }
         .log-error { color: #ff6b6b; border-left-color: #ff4444; }
         .log-success { color: #50fa7b; border-left-color: #50fa7b; }
+
         footer {
             text-align: center;
             background: rgba(0, 20, 20, 0.5);
@@ -262,6 +300,7 @@
         </div>
     </div>
     
+    <!-- É aqui que as missões/simulações serão injetadas pelo JavaScript -->
     <div class="grid" id="examplesGrid"></div>
 
     <footer>
@@ -274,13 +313,24 @@
 </div>
 
 <script>
+    /**
+     * ARRAY DE MISSÕES (ESTRUTURA DE DADOS)
+     * Usando template literals (crases) para permitir quebras de linha naturais no código Python.
+     */
     const missoes = [
         // --- AULA 1: DECLARAÇÃO E INICIALIZAÇÃO ---
         {
             title: "1. Declaração e Reserva de Memória",
             aula: "Aula 1",
             desc: "Compreenda como o computador reserva posições contíguas na memória com valores padrão/nulos baseados no tamanho do vetor.",
-            codeExemplo: "tamanho = 5\nvetor = [0] * tamanho\nprint(f'Vetor criado com {len(vetor)} posições')",
+            codeExemplo: `# Define o tamanho total do vetor
+tamanho = 5
+
+# Cria um vetor preenchido com zeros (0)
+vetor = [0] * tamanho
+
+# Exibe o resultado na tela
+print(f'Vetor criado com {len(vetor)} posições')`,
             controls: [
                 { label: "Tamanho do Vetor:", type: "number", default: 5, id: "tam" },
                 { label: "Valor Inicial:", type: "number", default: 0, id: "initVal" }
@@ -305,7 +355,14 @@
             title: "2. Acesso Direto via Índice (Base 0)",
             aula: "Aula 1",
             desc: "Acesse elementos diretamente informando o índice. Lembre-se: o primeiro elemento sempre está no índice 0!",
-            codeExemplo: "vetor = [10, 20, 30, 40, 50]\nindice = 2\nvalor = vetor[indice] # Acessa o 3º elemento",
+            codeExemplo: `# Declara um vetor já com 5 números pré-definidos
+vetor = [10, 20, 30, 40, 50]
+
+# Define qual posição (índice) queremos ler
+indice = 2
+
+# Acessa o 3º elemento (pois a contagem começa do 0) e guarda na variável
+valor = vetor[indice]`,
             controls: [
                 { label: "Elementos (vírgula):", type: "text", default: "10,20,30,40,50", id: "elementos" },
                 { label: "Índice para Acessar:", type: "number", default: 2, id: "idx" }
@@ -331,7 +388,11 @@
             title: "3. Atribuição e Modificação de Valores",
             aula: "Aula 1",
             desc: "Modifique um elemento específico em uma posição de memória utilizando atribuição direta por índice.",
-            codeExemplo: "vetor = ['A', 'B', 'C', 'D']\nvetor[1] = 'X' # Altera o índice 1",
+            codeExemplo: `# Vetor inicial contendo letras
+vetor = ['A', 'B', 'C', 'D']
+
+# Substitui o valor existente no índice 1 (que é o 'B') pela letra 'X'
+vetor[1] = 'X'`,
             controls: [
                 { label: "Vetor Inicial:", type: "text", default: "A,B,C,D", id: "elementos" },
                 { label: "Índice a Alterar:", type: "number", default: 1, id: "idx" },
@@ -350,7 +411,7 @@
                 }
 
                 logger(`Valor antigo em vetor[${idx}]: '${vetor[idx]}'`, "info");
-                vetor[idx] = novoVal;
+                vetor[idx] = novoVal; 
                 updateVisual(vetor, idx);
                 logger(`✏️ Atribuição realizada: vetor[${idx}] = '${novoVal}'`, "success");
             }
@@ -361,7 +422,13 @@
             title: "4. Percurso Sequencial Completo (for)",
             aula: "Aula 2",
             desc: "Percorra integralmente um vetor do primeiro ao último elemento de forma sequencial com controle estrito de limites.",
-            codeExemplo: "vetor = [5, 12, 18, 24, 30]\nfor i in range(len(vetor)):\n    print(f'Índice {i} -> {vetor[i]}')",
+            codeExemplo: `# Cria um vetor numérico
+vetor = [5, 12, 18, 24, 30]
+
+# O comando 'range(len(vetor))' vai gerar números de 0 até o (tamanho - 1)
+for i in range(len(vetor)):
+    # Em cada volta do laço, 'i' assume um novo índice
+    print(f'Índice {i} -> {vetor[i]}')`,
             controls: [
                 { label: "Elementos do Vetor:", type: "text", default: "5,12,18,24,30", id: "elementos" }
             ],
@@ -370,20 +437,24 @@
                 let vetor = raw.split(',').map(x => x.trim());
 
                 logger(`Iniciando percurso sequencial no vetor de tamanho ${vetor.length}...`, "info");
-                
                 for (let i = 0; i < vetor.length; i++) {
                     updateVisual(vetor, i);
                     logger(`Lendo elemento: vetor[${i}] = ${vetor[i]}`, "info");
                 }
-                
                 logger(`✅ Percurso concluído sem estouro de índice!`, "success");
             }
         },
         {
             title: "5. Demonstração e Prevenção do IndexOutOfBounds",
             aula: "Aula 2",
-            desc: "Entenda o que acontece quando o laço tenta acessar um índice igual ou maior que o tamanho do vetor (ex: 'i <= len(vetor)').",
-            codeExemplo: "# ERRO TÍPICO DE LÓGICA:\n# Usar '<=' em vez de '<'\nfor i in range(0, len(vetor) + 1): \n    print(vetor[i]) # Gera IndexOutOfBounds!",
+            desc: "Entenda o que acontece quando o laço tenta acessar um índice igual ou maior que o tamanho do vetor.",
+            codeExemplo: `# ERRO TÍPICO DE LÓGICA:
+# Ao somar +1 no tamanho do vetor, o laço tenta ler uma posição que não existe na memória.
+
+# Suponha um vetor de tamanho 4 (índices 0, 1, 2, 3)
+for i in range(0, len(vetor) + 1): 
+    # Quando o 'i' valer 4, o programa irá travar e dar erro!
+    print(vetor[i]) # Gera o famoso IndexOutOfBounds`,
             controls: [
                 { label: "Tamanho do Vetor:", type: "number", default: 4, id: "tam" },
                 { label: "Modo de Condição:", type: "select", options: ["Correto (i < N)", "Incorreto (i <= N)"], id: "modo" }
@@ -397,7 +468,7 @@
                 logger(`Executando laço com condição de parada limite i = 0 até ${limite}...`, "info");
 
                 for (let i = 0; i <= limite; i++) {
-                    if (i >= vetor.length) {
+                    if (i >= vetor.length) { 
                         updateVisual(vetor, i, true);
                         logger(`💥 ESTOURO DE ÍNDICE DETECTADO! Tentativa de acessar vetor[${i}], mas o tamanho máximo é ${vetor.length}!`, "error");
                         logger(`⚠️ Lembre-se: Para um vetor de tamanho N, o último índice válido é N-1 (${vetor.length - 1}).`, "break");
@@ -413,7 +484,19 @@
             title: "6. Busca Sequencial com Condição de Parada",
             aula: "Aula 2",
             desc: "Percorra o vetor procurando por um elemento específico e interrompa o percurso assim que encontrá-lo.",
-            codeExemplo: "vetor = ['Ana', 'Bruno', 'Carla', 'Diego']\nalvo = 'Carla'\nfor i in range(len(vetor)):\n    if vetor[i] == alvo:\n        print('Encontrado!')\n        break",
+            codeExemplo: `# Vetor de nomes (nossa base de dados)
+vetor = ['Ana', 'Bruno', 'Carla', 'Diego']
+
+# O elemento que queremos encontrar
+alvo = 'Carla'
+
+# Percorre todos os índices
+for i in range(len(vetor)):
+    # Verifica se o valor na posição 'i' é igual ao alvo
+    if vetor[i] == alvo:
+        print('Encontrado!')
+        # Comando 'break' interrompe imediatamente o laço para economizar processamento
+        break`,
             controls: [
                 { label: "Nomes (separados por vírgula):", type: "text", default: "Ana,Bruno,Carla,Diego,Elena", id: "nomes" },
                 { label: "Nome para buscar:", type: "text", default: "Carla", id: "alvo" }
@@ -431,7 +514,7 @@
                     if (vetor[i].toLowerCase() === alvo.toLowerCase()) {
                         logger(`🎯 Elemento '${vetor[i]}' encontrado na posição/índice [${i}]! interrompendo busca (break).`, "success");
                         encontrado = true;
-                        break;
+                        break; 
                     } else {
                         logger(`Índice [${i}] é '${vetor[i]}' (diferente de '${alvo}'). Continuando...`, "info");
                     }
@@ -446,7 +529,18 @@
             title: "7. Acumulador/Soma de Elementos do Vetor",
             aula: "Aula 2",
             desc: "Percorra o vetor somando cada um de seus elementos numéricos a uma variável acumuladora.",
-            codeExemplo: "vetor = [10, 15, 20, 5]\nsoma = 0\nfor i in range(len(vetor)):\n    soma += vetor[i]\nprint('Soma:', soma)",
+            codeExemplo: `# Vetor com valores a serem somados
+vetor = [10, 15, 20, 5]
+
+# Inicializa a variável que vai guardar o total acumulado
+soma = 0
+
+# Percorre o vetor de ponta a ponta
+for i in range(len(vetor)):
+    # Pega o valor atual da posição 'i' e soma na variável total
+    soma += vetor[i]
+    
+print('Soma total:', soma)`,
             controls: [
                 { label: "Valores Numéricos:", type: "text", default: "10,15,20,5,30", id: "valores" }
             ],
@@ -470,7 +564,13 @@
             title: "8. Percurso Reverso (Do fim para o início)",
             aula: "Aula 2",
             desc: "Percorra o vetor em ordem inversa, começando do último índice (tamanho - 1) até o índice 0.",
-            codeExemplo: "vetor = [1, 2, 3, 4, 5]\nfor i in range(len(vetor) - 1, -1, -1):\n    print(vetor[i])",
+            codeExemplo: `# Vetor padrão
+vetor = [1, 2, 3, 4, 5]
+
+# A função range(início, fim, passo) permite controlar a direção.
+# Começamos no último índice (len(vetor) - 1), vamos até o 0 (fim no -1) e andamos de ré (passo -1)
+for i in range(len(vetor) - 1, -1, -1):
+    print(vetor[i])`,
             controls: [
                 { label: "Elementos:", type: "text", default: "Primeiro,Segundo,Terceiro,Quarto", id: "elementos" }
             ],
@@ -490,25 +590,48 @@
         }
     ];
 
+    /**
+     * FUNÇÃO PRINCIPAL: CONSTRÓI CADA CARTÃO NA TELA
+     */
     function buildCard(mission, idx) {
         const card = document.createElement('div');
         card.className = 'card';
         
+        // Cabeçalho (Título)
         const header = document.createElement('div');
         header.className = 'card-header';
         const titleEl = document.createElement('h3');
         titleEl.innerText = mission.title;
         header.appendChild(titleEl);
         
+        // Descrição
         const descDiv = document.createElement('div');
         descDiv.className = 'card-desc';
         descDiv.innerHTML = `<strong>[${mission.aula}]</strong> ${mission.desc}`;
 
+        // Bloco de Código Python (Com Botão de Copiar)
         const codeDiv = document.createElement('div');
         codeDiv.className = 'code-block';
-        codeDiv.innerHTML = `<pre style="margin:0;">${mission.codeExemplo}</pre>`;
+        
+        // BOTÃO COPIAR
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.innerText = '📋 Copiar';
+        copyBtn.title = "Copiar código para colar no VS Code, Colab ou Replit";
+        copyBtn.onclick = () => {
+            navigator.clipboard.writeText(mission.codeExemplo);
+            copyBtn.innerText = '✅ Copiado!';
+            setTimeout(() => { copyBtn.innerText = '📋 Copiar'; }, 2000);
+        };
+        
+        const preEl = document.createElement('pre');
+        preEl.style.margin = "0";
+        preEl.innerText = mission.codeExemplo; 
+        
+        codeDiv.appendChild(copyBtn);
+        codeDiv.appendChild(preEl);
 
-        // Visualizador de Array/Memória
+        // Visualizador de Memória
         const arrayVis = document.createElement('div');
         arrayVis.className = 'array-visualizer';
         const arrayTitle = document.createElement('div');
@@ -519,6 +642,7 @@
         arrayVis.appendChild(arrayTitle);
         arrayVis.appendChild(arrayBoxes);
         
+        // Área de Controles Dinâmicos (Inputs)
         const controlsDiv = document.createElement('div');
         controlsDiv.className = 'controls';
         const controlValues = {};
@@ -551,6 +675,7 @@
             controlValues[ctrl.id] = input;
         });
         
+        // Botões de Ação Inferiores
         const actionBar = document.createElement('div');
         actionBar.className = 'action-bar';
         const runBtn = document.createElement('button');
@@ -560,6 +685,7 @@
         clearBtn.className = 'btn btn-secondary';
         clearBtn.innerHTML = '🗑 Limpar Log';
         
+        // Console Virtual
         const consoleDiv = document.createElement('div');
         consoleDiv.className = 'console-area';
         const consoleHeader = document.createElement('div');
@@ -573,6 +699,7 @@
         actionBar.appendChild(runBtn);
         actionBar.appendChild(clearBtn);
 
+        // Montando o cartão final
         card.appendChild(header);
         card.appendChild(descDiv);
         card.appendChild(codeDiv);
@@ -581,7 +708,7 @@
         card.appendChild(actionBar);
         card.appendChild(consoleDiv);
         
-        // Função para atualizar visualizador do Array
+        // Atualiza os quadrados do vetor
         const updateVisual = (arr, activeIndex = -1, isError = false) => {
             arrayBoxes.innerHTML = '';
             arr.forEach((val, i) => {
@@ -597,7 +724,6 @@
                 arrayBoxes.appendChild(cell);
             });
 
-            // Se for um índice fora dos limites no erro
             if (isError && activeIndex >= arr.length) {
                 const cell = document.createElement('div');
                 cell.className = 'array-cell error';
@@ -609,6 +735,7 @@
             }
         };
 
+        // Registra as mensagens no "Console"
         const logger = (msg, type = "info") => {
             const logDiv = document.createElement('div');
             let typeClass = 'log-line';
@@ -622,6 +749,7 @@
             logDiv.className = typeClass;
             logDiv.innerHTML = `${prefix}${msg}`;
             logContent.appendChild(logDiv);
+            
             logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         };
         
@@ -634,9 +762,9 @@
         };
         clearLog();
         
-        // Renderização inicial neutra
         updateVisual([0, 0, 0, 0, 0]);
 
+        // Evento de Run
         let isRunning = false;
         const runSimulation = () => {
             if (isRunning) return;
@@ -649,6 +777,7 @@
                 for (let [key, input] of Object.entries(controlValues)) {
                     params[key] = input.value;
                 }
+                
                 mission.run(params, logger, updateVisual);
             } catch (err) {
                 logger(`Erro de Execução: ${err.message}`, "error");
@@ -667,6 +796,7 @@
         return card;
     }
     
+    // LOOP PRINCIPAL: Renderiza tudo ao carregar a página
     const grid = document.getElementById('examplesGrid');
     missoes.forEach((m, i) => {
         grid.appendChild(buildCard(m, i));
