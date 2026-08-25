@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Simulador de Otimização de Hiperparâmetros (Aulas 1 a 4)</title>
+    <!-- MathJax via CDNJS seguro -->
+    <script id="MathJax-script" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #0a0f1a 0%, #0c1220 100%);
+            font-family: 'Inter', system-ui, 'Segoe UI', monospace;
+            padding: 2rem;
+            color: #eef4ff;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid rgba(0, 255, 204, 0.3);
+        }
+        .hero h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #b3ffe0, #00ffcc);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .hero p { font-size: 1.1rem; color: #b9c7d9; margin-top: 0.5rem; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(550px, 1fr));
+            gap: 1.8rem;
+            margin-bottom: 2.5rem;
+        }
+        .card {
+            background: rgba(18, 25, 40, 0.75);
+            backdrop-filter: blur(2px);
+            border-radius: 1.75rem;
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            transition: 0.2s;
+            overflow: hidden;
+        }
+        .card:hover { transform: translateY(-4px); border-color: rgba(0, 255, 204, 0.5); }
+        .card-header {
+            background: rgba(0, 30, 30, 0.5);
+            padding: 0.9rem 1.5rem;
+            border-bottom: 1px solid rgba(0, 255, 204, 0.3);
+        }
+        .card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #b3ffe0;
+        }
+        .card-header h3:before { content: "⚙️"; font-size: 1.2rem; }
+        .theory-block {
+            background: rgba(10, 20, 35, 0.8);
+            margin: 1rem 1.2rem 0.5rem 1.2rem;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(0, 255, 204, 0.15);
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+        .theory-block strong { color: #00ffcc; }
+        .formula-box {
+            background: #060a12;
+            border: 1px dashed #00ffcc;
+            padding: 0.6rem 0.8rem;
+            margin: 0.6rem 0;
+            border-radius: 0.5rem;
+            color: #b3ffe0;
+            text-align: center;
+            font-size: 0.95rem;
+            overflow-x: auto;
+        }
+        
+        /* Nova classe para a caixa de exemplo prático */
+        .example-block {
+            background: rgba(15, 30, 50, 0.6);
+            margin: 0.5rem 1.2rem;
+            padding: 1rem;
+            border-radius: 1rem;
+            border: 1px solid rgba(130, 170, 255, 0.3);
+            font-size: 0.82rem;
+            line-height: 1.4;
+            color: #d1e0ff;
+        }
+        .example-block strong { color: #82aaff; }
+
+        .code-block {
+            background: #0a0e17;
+            padding: 0.8rem 1.2rem;
+            margin: 0.5rem 1.2rem 1rem 1.2rem;
+            border-radius: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            border-left: 3px solid #00ffcc;
+            white-space: pre-wrap;
+            color: #d6deeb;
+        }
+        .controls {
+            padding: 0 1.2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .control-group {
+            background: #111a24;
+            padding: 0.4rem 0.8rem;
+            border-radius: 2rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .control-group label {
+            font-size: 0.75rem;
+            color: #9ccfd8;
+        }
+        input, select {
+            background: #020617;
+            border: 1px solid #334155;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            width: auto;
+        }
+        .action-bar {
+            display: flex;
+            gap: 0.8rem;
+            padding: 0 1.2rem 0.8rem 1.2rem;
+        }
+        .btn {
+            border: none;
+            background: #1e2a3a;
+            color: #e2e8f0;
+            font-weight: 600;
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .btn-primary {
+            background: #0f2c2c;
+            color: #00ffcc;
+            border: 1px solid #00ffcc80;
+        }
+        .btn-primary:hover {
+            background: #00ccaa20;
+            border-color: #00ffcc;
+            transform: scale(0.97);
+        }
+        .btn-secondary:hover { background: #2d3b4b; }
+        .console-area {
+            background: #03060c;
+            border-top: 1px solid #1f2a3a;
+            padding: 1rem 1.2rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 220px;
+            overflow-y: auto;
+        }
+        .console-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            color: #5f7f9e;
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+        }
+        .log-content { color: #bbd4f0; }
+        .log-line {
+            border-left: 2px solid #2c6e6e;
+            padding-left: 8px;
+            margin: 4px 0;
+            font-size: 0.75rem;
+        }
+        .log-best { color: #00ffcc; border-left-color: #00ffcc; font-weight: bold; }
+        .log-warn { color: #ffb86c; border-left-color: #ffaa44; }
+        .log-info { color: #bbd4f0; border-left-color: #2c6e6e; }
+        footer {
+            text-align: center;
+            background: rgba(0, 20, 20, 0.5);
+            border-radius: 2rem;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 750px) {
+            body { padding: 1rem; }
+            .grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🎯 Laboratório de Otimização de Machine Learning</h1>
+        <p>Aulas 1 a 4: Experimente e compare Grid Search, Random Search, Algoritmos Genéticos e Otimização Bayesiana</p>
+    </div>
+    <div class="grid" id="examplesGrid"></div>
+    <footer>
+        <h3 style="color:#00ffcc;">🔬 Ajuste os Parâmetros e Analise os Resultados!</h3>
+        <p style="font-size:0.8rem; color:#b9c7d9; margin-top:0.3rem;">Explore o impacto de cada algoritmo no tempo, consumo computacional e acurácia do modelo.</p>
+    </footer>
+</div>
+
+<script>
+    const missoes = [
+        {
+            title: "1. Minimizar Função de Perda (MSE)",
+            conceito: "Métrica básica para medir a taxa de erro nas previsões numéricas contínuas.",
+            formula: "\\[ MSE = \\frac{1}{n} \\sum_{i=1}^{n} (y_i - \\hat{y}_i)^2 \\quad \\vert \\quad w_{novo} = w_{atual} + (y - w) \\cdot \\alpha \\]",
+            servico: "Mede o quão distante o valor previsto do modelo está do valor real.",
+            aplicacao: "Utilizado no treinamento de modelos de Regressão e Redes Neurais para direcionar o ajuste dos pesos.",
+            exemploPratico: "<strong>Exemplo Real:</strong> Se o alvo verdadeiro é 10 e nosso peso previsto atual é 8, o Erro (MSE de uma amostra) será \\( (10 - 8)^2 = 4 \\). Usando uma taxa de aprendizado (\\(\\alpha\\)) de 0.5, o novo peso será atualizado para: \\( 8 + (10 - 8) \\times 0.5 = 9 \\). O peso se aproximou do alvo!",
+            codeExemplo: "# Conceito de minimização do erro\nloss = (valor_real - peso_modelo)**2\npeso_modelo += (valor_real - peso_modelo) * lr",
+            controls: [
+                { label: "Valor Real (Alvo):", type: "number", default: 10, id: "target" },
+                { label: "Palpite Inicial (Peso):", type: "number", default: 2, id: "weight" },
+                { label: "Taxa de Aprendizado:", type: "number", default: 0.2, id: "lr" }
+            ],
+            run: (params, logger) => {
+                let target = parseFloat(params.target) || 10;
+                let w = parseFloat(params.weight) || 2;
+                let lr = parseFloat(params.lr) || 0.2;
+                
+                for (let step = 1; step <= 8; step++) {
+                    let loss = Math.pow(target - w, 2);
+                    logger(`Passo ${step}: Peso = ${w.toFixed(2)} | Erro (MSE) = ${loss.toFixed(4)}`, "info");
+                    w += (target - w) * lr;
+                }
+                logger(`Otimização concluída. Erro final aproximado de zero!`, "best");
+            }
+        },
+        {
+            title: "2. Seleção Estratégica Custo-Benefício",
+            conceito: "Análise multiobjetivo para otimização de recursos restritos.",
+            formula: "\\[ R_{efici\\hat{e}ncia} = \\frac{\\text{Desempenho}}{\\text{Custo}} \\]",
+            servico: "Calcula a opção de maior retorno por unidade de recurso investido.",
+            aplicacao: "Ajuda a escolher arquiteturas de modelos em produção com foco no balanço entre acurácia, latência e custo financeiro.",
+            exemploPratico: "<strong>Exemplo Real:</strong> O 'Modelo A' tem acurácia 0.90 mas consome R$ 30 (Ratio = 0.90 / 30 = 0.03). O 'Modelo B' tem acurácia 0.85 mas consome R$ 10 (Ratio = 0.85 / 10 = 0.085). O Modelo B entrega muito mais eficiência por real investido.",
+            codeExemplo: "# Ponto de Partida: Custo x Avaliação\nscore = avaliacao / custo",
+            controls: [
+                { label: "Opção Padrão:", type: "select", options: ["Burgers Top", "Pizza na Praça", "Churros de Ouro"], id: "truck" }
+            ],
+            run: (params, logger) => {
+                const dados = [
+                    { nome: "Burgers Top", custo: 30, aval: 4.5 },
+                    { nome: "Sushi Express", custo: 40, aval: 4.8 },
+                    { nome: "Pizza na Praça", custo: 25, aval: 4.2 },
+                    { nome: "Churros de Ouro", custo: 20, aval: 4.0 },
+                    { nome: "Tacos & Nachos", custo: 35, aval: 4.7 }
+                ];
+                let melhor = null;
+                let melhorScore = -1;
+
+                dados.forEach(item => {
+                    let score = item.aval / item.custo;
+                    logger(`${item.nome}: R$${item.custo} | Nota: ${item.aval} → Ratio: ${score.toFixed(3)}`, "info");
+                    if (score > melhorScore) {
+                        melhorScore = score;
+                        melhor = item;
+                    }
+                });
+                logger(`🏆 Melhor Custo-Benefício: ${melhor.nome} (Ratio: ${melhorScore.toFixed(3)})`, "best");
+            }
+        },
+        {
+            title: "3. Grid Search (Busca em Grade Exaustiva)",
+            conceito: "Varredura exaustiva de combinações em um espaço discreto pré-definido.",
+            formula: "\\[ N_{total} = \\prod_{i=1}^{k} |P_i| = |P_1| \\times |P_2| \\times \\dots \\times |P_k| \\]",
+            servico: "Testa rigorosamente 100% dos pares hipotéticos dentro do grid estipulado.",
+            aplicacao: "Recomendado para poucos parâmetros em pipelines pequenos onde a busca pela melhor solução absoluta é viável.",
+            exemploPratico: "<strong>Exemplo Real:</strong> Se vamos testar 3 valores de <code>n_estimators</code> (50, 100, 200) e 2 valores de <code>max_depth</code> (5, 10), teremos um total de \\( 3 \\times 2 = 6 \\) modelos treinados do absoluto zero para achar o melhor.",
+            codeExemplo: "# Testando TODAS as combinações\nfor est in [50, 100, 200]:\n    for depth in [5, 10]: evaluate()",
+            controls: [
+                { label: "Valores Estimadores:", type: "text", default: "50,100,200", id: "n_est" },
+                { label: "Valores Max Depth:", type: "text", default: "5,10,20", id: "depths" }
+            ],
+            run: (params, logger) => {
+                let n_est = params.n_est.split(',').map(Number);
+                let depths = params.depths.split(',').map(Number);
+                let total = n_est.length * depths.length;
+                
+                logger(`Iniciando varredura total de ${total} combinações...`, "warn");
+                let count = 0;
+                let bestAcc = 0;
+                let bestCombo = "";
+
+                n_est.forEach(e => {
+                    depths.forEach(d => {
+                        count++;
+                        let acc = 0.70 + (e * 0.0005) + (d * 0.008) - (e * d * 0.00003);
+                        acc = Math.min(acc, 0.96);
+                        logger(`[${count}/${total}] n_estimators=${e}, max_depth=${d} ➔ Acc: ${(acc*100).toFixed(2)}%`, "info");
+                        if (acc > bestAcc) {
+                            bestAcc = acc;
+                            bestCombo = `n_estimators=${e}, max_depth=${d}`;
+                        }
+                    });
+                });
+                logger(`🎯 Grade Completa! Melhor: ${bestCombo} (Acc: ${(bestAcc*100).toFixed(2)}%)`, "best");
+            }
+        },
+        {
+            title: "4. Otimização Evolucionária (Algoritmo Genético)",
+            conceito: "Busca por heurística inspirada na seleção natural e genética biológica.",
+            formula: "\\[ x_{novo} = f_{\\text{seleção}}(P) + f_{\\text{crossover}}(p_1, p_2) + \\mathcal{N}(0, \\sigma^2) \\]",
+            servico: "Evolui grupos de parâmetros através de gerações descartando as piores opções.",
+            aplicacao: "Otimização de hiperparâmetros complexos e topologias de Redes Neurais profundas.",
+            exemploPratico: "<strong>Exemplo Real:</strong> O algoritmo testa 6 taxas de aprendizado diferentes (a população inicial). Ele descarta as 3 piores e combina as 3 melhores fazendo uma 'média' (crossover) e somando um pequeno ruído (mutação) para criar a próxima geração de testes mais eficientes.",
+            codeExemplo: "# Seleção natural de hiperparâmetros\npopulacao = cruzar_e_mutar(melhores_individuos)",
+            controls: [
+                { label: "Tamanho População:", type: "number", default: 6, id: "pop" },
+                { label: "Gerações:", type: "number", default: 3, id: "gens" }
+            ],
+            run: (params, logger) => {
+                let popSize = parseInt(params.pop) || 6;
+                let gens = parseInt(params.gens) || 3;
+
+                let pop = Array.from({length: popSize}, () => ({
+                    lr: Math.random() * 0.1,
+                    fit: 0
+                }));
+
+                for (let g = 1; g <= gens; g++) {
+                    logger(`--- GERAÇÃO ${g} ---`, "warn");
+                    pop.forEach(ind => {
+                        ind.fit = 100 - Math.abs(0.03 - ind.lr) * 1000;
+                        logger(`Indivíduo LR=${ind.lr.toFixed(4)} ➔ Adaptabilidade: ${ind.fit.toFixed(1)}`, "info");
+                    });
+                    pop.sort((a,b) => b.fit - a.fit);
+                    logger(`Melhor da Geração ${g}: LR=${pop[0].lr.toFixed(4)}`, "best");
+                    
+                    pop = pop.map((ind, idx) => ({
+                        lr: Math.max(0.001, pop[0].lr + (Math.random() - 0.5) * (0.01 / g)),
+                        fit: 0
+                    }));
+                }
+            }
+        },
+        {
+            title: "5. Otimização Bayesiana (Sequential Model)",
+            conceito: "Método de otimização sequencial fundamentado em inferência probabilística.",
+            formula: "\\[ P(f \\vert D) = \\frac{P(D \\vert f) P(f)}{P(D)} \\quad \\vert \\quad x_{pr\\acute{o}ximo} = \\arg\\max \\text{EI}(x) \\]",
+            servico: "Aprende com o histórico dos testes anteriores para tentar adivinhar a posição da melhor configuração seguinte.",
+            aplicacao: "Utilizado em algoritmos de alto custo computacional, como XGBoost, LightGBM e modelos de Deep Learning.",
+            exemploPratico: "<strong>Exemplo Real:</strong> O otimizador testa os valores de parâmetro 10 e 50. O valor 10 teve acurácia 85% e o 50 teve 60%. Usando probabilidade bayesiana, a máquina deduz que o pico de acurácia deve estar perto do 10 e decide que seu próximo teste será o número 15 (em vez de perder tempo testando o 60).",
+            codeExemplo: "# Aprendendo com os testes anteriores\nproximo_ponto = modelo_probabilistico.sugerir()",
+            controls: [
+                { label: "Iterações:", type: "number", default: 5, id: "iters" }
+            ],
+            run: (params, logger) => {
+                let iters = parseInt(params.iters) || 5;
+                let bestScore = 0;
+                let currentPoint = 0.1;
+
+                for (let i = 1; i <= iters; i++) {
+                    let score = 0.95 - Math.abs(currentPoint - 0.5) * 0.8;
+                    logger(`Iteração ${i}: Testando ponto ${currentPoint.toFixed(3)} ➔ Score: ${score.toFixed(4)}`, "info");
+                    
+                    if (score > bestScore) {
+                        bestScore = score;
+                        logger(`   💡 Região promissora detectada! Refinando ao redor de ${currentPoint.toFixed(3)}`, "best");
+                    }
+                    currentPoint += (0.5 - currentPoint) * 0.6 + (Math.random() - 0.5) * 0.05;
+                }
+            }
+        },
+        {
+            title: "6. Random Search vs Grid Search (Combinações)",
+            conceito: "Estratégia de amostragem estocástica sobre o espaço de parâmetros.",
+            formula: "\\[ P(\\text{sucesso}) = 1 - (1 - p)^{n_{iter}} \\]",
+            servico: "Sorteia combinações aleatórias cobrindo áreas distintas sem desperdiçar execuções repetitivas.",
+            aplicacao: "Substituto prático do Grid Search para explorar grandes espaços de parâmetros com alta eficiência de tempo.",
+            exemploPratico: "<strong>Exemplo Real:</strong> Em um espaço com 10.000 combinações totais, o Grid Search faria 10.000 treinamentos. O Random Search, sorteando apenas 50 pontos aleatórios, consegue encontrar uma acurácia 95% similar na fração do tempo.",
+            codeExemplo: "# Comparando espaço de busca\n# Grid = 10.000 x Random = 50 amostras",
+            controls: [
+                { label: "Total de Combinações Possíveis:", type: "number", default: 10000, id: "gridTotal" },
+                { label: "Amostras Random Search:", type: "number", default: 50, id: "nIter" }
+            ],
+            run: (params, logger) => {
+                let gridTotal = parseInt(params.gridTotal) || 10000;
+                let nIter = parseInt(params.nIter) || 50;
+
+                logger(`Grid Search precisaria de: ${gridTotal} execuções exaustivas.`, "warn");
+                logger(`Random Search testará apenas: ${nIter} amostras aleatórias...`, "info");
+
+                let bestAcc = 0;
+                for (let i = 1; i <= nIter; i++) {
+                    let acc = 0.50 + Math.random() * 0.48;
+                    if (acc > bestAcc) bestAcc = acc;
+                }
+                
+                let economia = ((1 - (nIter / gridTotal)) * 100).toFixed(1);
+                logger(`Acurácia máxima achada pelo Random Search: ${(bestAcc*100).toFixed(2)}%`, "best");
+                logger(`⚡ Economia de tempo/computação: ${economia}% menor que o Grid Search!`, "best");
+            }
+        },
+        {
+            title: "7. Random Search com Var_Smoothing (np.logspace)",
+            conceito: "Amostragem em escalas de magnitudes exponenciais.",
+            formula: "\\[ x = 10^{k}, \\quad \\text{onde } k \\sim \\text{Uniforme}(a, b) \\]",
+            servico: "Busca valores em ordens de grandeza distintas (ex: 0.0001 até 10) sem priorizar apenas números grandes.",
+            aplicacao: "Otimização de taxas de aprendizado, regularizações L1/L2 e parâmetros como `var_smoothing` do Naive Bayes.",
+            exemploPratico: "<strong>Exemplo Real:</strong> Se precisarmos testar taxas de aprendizado de \\( 10^{-4} \\) até \\( 10^{0} \\), o Python sorteia expoentes. Se ele sortear o expoente -2, testaremos a taxa \\( 10^{-2} = 0.01 \\). Isso garante que vamos avaliar adequadamente os números super pequenos.",
+            codeExemplo: "# Escala logarítmica para hiperparâmetros\nvar_smoothing = np.logspace(-9, 0, num=n_iter)",
+            controls: [
+                { label: "Número de Iterações (n_iter):", type: "number", default: 5, id: "n_iter" }
+            ],
+            run: (params, logger) => {
+                let n = parseInt(params.n_iter) || 5;
+                logger(`Sorteando ${n} valores em escala logarítmica (1e-9 até 1e0)...`, "info");
+
+                for (let i = 1; i <= n; i++) {
+                    let exp = -9 + Math.random() * 9;
+                    let val = Math.pow(10, exp);
+                    let f1 = 0.80 + Math.random() * 0.18;
+                    logger(`Amostra ${i}: var_smoothing = ${val.toExponential(4)} ➔ F1-Score: ${f1.toFixed(4)}`, "info");
+                }
+                logger(`Processo finalizado com sucesso!`, "best");
+            }
+        },
+        {
+            title: "8. Quiz Interativo: Grid vs Random Search",
+            conceito: "Avaliador de conceitos e balanço de eficiências teóricas.",
+            formula: "\\[ Custo_{\\text{Grid}} = \\mathcal{O}(K^d) \\quad \\text{vs} \\quad Custo_{\\text{Random}} = \\mathcal{O}(n_{iter}) \\]",
+            servico: "Testa a retenção conceitual sobre as limitações de tempo e hardware entre abordagens.",
+            aplicacao: "Validação didática antes de estruturar pipelines de otimização em cenários reais.",
+            exemploPratico: "<strong>Exemplo Real:</strong> Um modelo de rede neural profunda leva 2 horas para treinar uma única vez. Se o seu Grid Search planeja cruzar 2.000 combinações, você precisaria de mais de 5 meses para ter o resultado. Nesse cenário, o Grid Search torna-se impraticável.",
+            codeExemplo: "# Pergunta da Aula 3:\nQual a principal limitação do Grid Search em relação ao Random Search?",
+            controls: [
+                { label: "Sua Resposta:", type: "select", options: ["Pode ser computacionalmente mais caro", "Não garante achar bons valores", "Avalia menos combinações"], id: "ans" }
+            ],
+            run: (params, logger) => {
+                if (params.ans === "Pode ser computacionalmente mais caro") {
+                    logger(`🟢 CORRETO! O Grid Search avalia todas as combinações possíveis, tornando-se extremamente demorado e caro em espaços grandes.`, "best");
+                } else {
+                    logger(`🔴 INCORRETO. Tente novamente! Lembre-se do tempo necessário para testar milhares de combinações.`, "warn");
+                }
+            }
+        },
+        {
+            title: "9. Otimização de Árvore de Decisão (F1-Score 1.0)",
+            conceito: "Ajuste de hiperparâmetros estruturais de modelos de decisão.",
+            formula: "\\[ H(X) = -\\sum_{i=1}^{c} p_i \\log_2(p_i) \\quad \\vert \\quad Gini = 1 - \\sum_{i=1}^{c} p_i^2 \\]",
+            servico: "Encontra a profundidade e a métrica de divisão perfeitas para classificar os dados sem gerar *overfitting*.",
+            aplicacao: "Utilizado na calibração de classificadores baseados em regras (Decision Trees, Random Forest).",
+            exemploPratico: "<strong>Exemplo Real:</strong> Num conjunto com 10 maçãs e 10 laranjas (proporções 0.5 e 0.5), a impureza de Gini é calculada como \\( 1 - (0.5^2 + 0.5^2) = 0.5 \\). Isso significa incerteza total. O hiperparâmetro certo ajudará a árvore a dividir os grupos até o Gini chegar perto de 0 (perfeito).",
+            codeExemplo: "# Exercício de Calibração de Árvore\ncriterion=['gini','entropy'], max_depth=[2,3,4,5]",
+            controls: [
+                { label: "Critério:", type: "select", options: ["entropy", "gini"], id: "crit" },
+                { label: "Profundidade (max_depth):", type: "number", default: 2, id: "depth" }
+            ],
+            run: (params, logger) => {
+                let crit = params.crit;
+                let depth = parseInt(params.depth);
+
+                let f1 = 0.85;
+                if (crit === "entropy" && depth === 2) f1 = 1.0;
+                else if (depth > 4) f1 = 0.88;
+                else f1 = 0.92;
+
+                logger(`Testando modelo: Critério=${crit}, max_depth=${depth}`, "info");
+                if (f1 === 1.0) {
+                    logger(`🏆 Excelente! F1-Score: ${f1.toFixed(2)} - Classificação perfeita sem overfitting!`, "best");
+                } else {
+                    logger(`F1-Score obtido: ${f1.toFixed(2)}. Tente ajustar o critério e profundidade.`, "info");
+                }
+            }
+        },
+        {
+            title: "10. BayesSearchCV com Distribuição Log-Uniforme",
+            conceito: "Busca Bayesiana combinada com amostragens contínuas não lineares.",
+            formula: "\\[ P(\\theta \\vert y) \\propto P(y \\vert \\theta) \\cdot P(\\theta), \\quad \\text{onde } \\log(\\theta) \\sim \\text{Uniforme} \\]",
+            servico: "Cria uma curva estimada de resultados combinando estatística Bayesiana e distribuição logarítmica.",
+            aplicacao: "Estratégia usada na biblioteca `scikit-optimize` para o ajuste fino de hiperparâmetros contínuos.",
+            exemploPratico: "<strong>Exemplo Real:</strong> O otimizador Bayesiano avalia a precisão na zona de \\( 10^{-4} \\) (deu 70%) e na zona de \\( 10^{-2} \\) (deu 90%). A matemática atualiza a 'crença' do algoritmo fazendo com que as próximas amostras logarítmicas sejam majoritariamente focadas perto de \\( 10^{-2} \\).",
+            codeExemplo: "# BayesSearchCV em log-uniforme\nBayesSearchCV(estimator, search_spaces)",
+            controls: [
+                { label: "Iterações Bayesianas:", type: "number", default: 4, id: "bIter" }
+            ],
+            run: (params, logger) => {
+                let iters = parseInt(params.bIter) || 4;
+                logger(`Executando BayesSearchCV...`, "warn");
+
+                for (let i = 1; i <= iters; i++) {
+                    let val = Math.pow(10, -Math.random() * 9);
+                    let score = 0.88 + (i * 0.02);
+                    logger(`Iteração ${i}: var_smoothing=${val.toExponential(3)} ➔ Score: ${score.toFixed(4)}`, "info");
+                }
+                logger(`Otimização Bayesiana concluída com aprendizado de superfície.`, "best");
+            }
+        },
+        {
+            title: "11. Comparativo de Custo Computacional e Recursos",
+            conceito: "Trade-off entre tempo de processamento, complexidade e taxa de convergência.",
+            formula: "\\[ Custo_{\\text{Grid}} = \\mathcal{O}(K^d) \\quad \\vert \\quad Custo_{\\text{Random}} = \\mathcal{O}(N) \\quad \\vert \\quad Custo_{\\text{Bayes}} = \\mathcal{O}(N \\cdot T_{\\text{Surrogate}}) \\]",
+            servico: "Relaciona o consumo do hardware com a garantia de encontrar a melhor solução.",
+            aplicacao: "Utilizado durante o planejamento de projetos de ML para definir os limites do orçamento computacional.",
+            exemploPratico: "<strong>Exemplo Real:</strong> Com R$ 100 de orçamento na AWS: O Grid Search gasta tudo tentando esgotar a grade e só chega em 15% dela. O Random Search testa 100 pontos aleatórios baratos. O Bayesiano usa os mesmos R$ 100 mas vai funilando até a melhor área, maximizando o ROI.",
+            codeExemplo: "# Métodos vs Performance vs Custo Computacional",
+            controls: [
+                { label: "Algoritmo:", type: "select", options: ["Grid Search", "Random Search", "Otimização Bayesiana"], id: "algo" }
+            ],
+            run: (params, logger) => {
+                const info = {
+                    "Grid Search": { tempo: "Muito Alto", custo: "Elevado", garantia: "Garante o melhor do espaço definido" },
+                    "Random Search": { tempo: "Baixo/Médio", custo: "Reduzido", garantia: "Encontra ótimas soluções rapidamente" },
+                    "Otimização Bayesiana": { tempo: "Eficiente", custo: "Otimizado", garantia: "Aprende com testes anteriores" }
+                };
+                let sel = info[params.algo];
+                logger(`Algoritmo: ${params.algo}`, "warn");
+                logger(`• Tempo de Execução: ${sel.tempo}`, "info");
+                logger(`• Custo Computacional: ${sel.custo}`, "info");
+                logger(`• Vantagem: ${sel.garantia}`, "best");
+            }
+        },
+        {
+            title: "12. Pipeline Completo de Otimização",
+            conceito: "Encadeamento do ciclo de vida de treinamento e calibração de modelos (MLOps).",
+            formula: "\\[ \\text{Pipeline} = X_{\\text{raw}} \\xrightarrow{\\text{Preprocessamento}} X_{\\text{clean}} \\xrightarrow[\\text{Hiperparâmetros}]{\\text{Otimização}} M_{\\text{opt}} \\]",
+            servico: "Orquestra a leitura de dados, execução do otimizador e exportação do modelo treinado.",
+            aplicacao: "Padrão de produção para automação do ciclo de Machine Learning.",
+            exemploPratico: "<strong>Exemplo Real:</strong> 1) Recebe base com valores nulos. 2) O Pipeline imputa as médias automaticamente. 3) Otimizador randomiza árvores de decisão. 4) Cospe um arquivo <code>modelo_final.pkl</code> que a equipe de software embute no site da empresa.",
+            codeExemplo: "# Simulação Geral do Pipeline\nPipeline: Dados ➔ Hiperparâmetros ➔ Modelo Otimizado",
+            controls: [
+                { label: "Métrica Alvo:", type: "select", options: ["Minimizar Perda", "Maximizar Acurácia", "Maximizar F1-Score"], id: "metric" }
+            ],
+            run: (params, logger) => {
+                logger(`⚙️ Carregando Pipeline de ML...`, "info");
+                logger(`1. Leitura dos dados realizada com sucesso.`, "info");
+                logger(`2. Espaço de busca configurado para o objetivo: ${params.metric}`, "warn");
+                logger(`3. Otimizador ajustando hiperparâmetros...`, "info");
+                logger(`✅ Pipeline concluído! Modelo pronto para implantação.`, "best");
+            }
+        }
+    ];
+
+    function buildCard(mission, idx) {
+        const card = document.createElement('div');
+        card.className = 'card';
+        
+        // 1. Cabeçalho
+        const header = document.createElement('div');
+        header.className = 'card-header';
+        const titleEl = document.createElement('h3');
+        titleEl.innerText = mission.title;
+        header.appendChild(titleEl);
+
+        // 2. Bloco Teórico
+        const theoryDiv = document.createElement('div');
+        theoryDiv.className = 'theory-block';
+        theoryDiv.innerHTML = `
+            <p><strong>💡 O que é:</strong> ${mission.conceito}</p>
+            <div class="formula-box">${mission.formula}</div>
+            <p><strong>⚙️ O que faz:</strong> ${mission.servico}</p>
+            <p><strong>🎯 Aplicação em ML:</strong> ${mission.aplicacao}</p>
+        `;
+
+        // 3. Bloco de Exemplo Prático (NOVO)
+        const exampleDiv = document.createElement('div');
+        exampleDiv.className = 'example-block';
+        exampleDiv.innerHTML = `📝 ${mission.exemploPratico}`;
+        
+        // 4. Bloco de Código
+        const codeDiv = document.createElement('div');
+        codeDiv.className = 'code-block';
+        codeDiv.innerHTML = `<pre style="margin:0;">${mission.codeExemplo}</pre>`;
+        
+        // 5. Controles
+        const controlsDiv = document.createElement('div');
+        controlsDiv.className = 'controls';
+        const controlValues = {};
+
+        mission.controls.forEach(ctrl => {
+            const group = document.createElement('div');
+            group.className = 'control-group';
+            const label = document.createElement('label');
+            label.innerText = ctrl.label;
+            
+            let input;
+            if (ctrl.type === "select") {
+                input = document.createElement('select');
+                ctrl.options.forEach(opt => {
+                    const option = document.createElement('option');
+                    option.value = opt;
+                    option.innerText = opt;
+                    input.appendChild(option);
+                });
+            } else {
+                input = document.createElement('input');
+                input.type = ctrl.type;
+                input.value = ctrl.default;
+            }
+            
+            input.id = `ctrl-${idx}-${ctrl.id}`;
+            group.appendChild(label);
+            group.appendChild(input);
+            controlsDiv.appendChild(group);
+            controlValues[ctrl.id] = input;
+        });
+        
+        // 6. Botões de Ação
+        const actionBar = document.createElement('div');
+        actionBar.className = 'action-bar';
+        const runBtn = document.createElement('button');
+        runBtn.className = 'btn btn-primary';
+        runBtn.innerHTML = '▶ Executar Simulação';
+        const clearBtn = document.createElement('button');
+        clearBtn.className = 'btn btn-secondary';
+        clearBtn.innerHTML = '🗑 Limpar Log';
+        
+        // 7. Console
+        const consoleDiv = document.createElement('div');
+        consoleDiv.className = 'console-area';
+        const consoleHeader = document.createElement('div');
+        consoleHeader.className = 'console-title';
+        consoleHeader.innerHTML = `<span>📟 CONSOLE</span><span>⚙️ otimização</span>`;
+        const logContent = document.createElement('div');
+        logContent.className = 'log-content';
+        consoleDiv.appendChild(consoleHeader);
+        consoleDiv.appendChild(logContent);
+        
+        actionBar.appendChild(runBtn);
+        actionBar.appendChild(clearBtn);
+        
+        // Montagem final do Card
+        card.appendChild(header);
+        card.appendChild(theoryDiv);
+        card.appendChild(exampleDiv); // Inserindo o novo bloco
+        card.appendChild(codeDiv);
+        card.appendChild(controlsDiv);
+        card.appendChild(actionBar);
+        card.appendChild(consoleDiv);
+        
+        const logger = (msg, type = "info") => {
+            const logDiv = document.createElement('div');
+            let logClass = 'log-info';
+            let prefix = 'ℹ️ ';
+            if (type === 'best') { logClass = 'log-best'; prefix = '⭐ '; }
+            if (type === 'warn') { logClass = 'log-warn'; prefix = '⚠️ '; }
+
+            logDiv.className = `log-line ${logClass}`;
+            logDiv.innerHTML = `${prefix}${msg}`;
+            logContent.appendChild(logDiv);
+            logDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        };
+        
+        const clearLog = () => {
+            logContent.innerHTML = '';
+            const initMsg = document.createElement('div');
+            initMsg.className = 'log-line log-info';
+            initMsg.innerHTML = '⚡ Pronto. Altere os parâmetros e execute a simulação.';
+            logContent.appendChild(initMsg);
+        };
+        clearLog();
+        
+        let isRunning = false;
+        const runSimulation = () => {
+            if (isRunning) return;
+            isRunning = true;
+            runBtn.disabled = true;
+            runBtn.style.opacity = "0.6";
+            try {
+                const params = {};
+                for (let [key, input] of Object.entries(controlValues)) {
+                    params[key] = input.value;
+                }
+                mission.run(params, logger);
+            } catch (err) {
+                logger(`Erro: ${err.message}`, "warn");
+            } finally {
+                isRunning = false;
+                runBtn.disabled = false;
+                runBtn.style.opacity = "1";
+                logger("✅ Execução finalizada.", "info");
+            }
+        };
+        
+        runBtn.addEventListener('click', runSimulation);
+        clearBtn.addEventListener('click', () => {
+            if (!isRunning) clearLog();
+        });
+        
+        return card;
+    }
+    
+    const grid = document.getElementById('examplesGrid');
+    missoes.forEach((m, i) => {
+        grid.appendChild(buildCard(m, i));
+    });
+
+    // Avisa o MathJax para varrer a página e compilar as fórmulas do HTML injetado
+    if (window.MathJax) {
+        window.MathJax.typesetPromise();
+    }
+</script>
+</body>
+</html>
