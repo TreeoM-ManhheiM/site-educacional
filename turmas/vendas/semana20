@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa sobre a Apple</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            color: #222;
+        }
+
+        header {
+            background-color: #000;
+            color: white;
+            text-align: center;
+            padding: 30px;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        p {
+            line-height: 1.6;
+        }
+
+        ul {
+            line-height: 1.8;
+        }
+
+        footer {
+            text-align: center;
+            background-color: #000;
+            color: white;
+            padding: 15px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Apple Inc.</h1>
+        <p>Pesquisa sobre a história e os produtos da Apple</p>
+    </header>
+
+    <main>
+
+        <h2>História</h2>
+        <p>
+            A Apple foi fundada em 1º de abril de 1976 por Steve Jobs,
+            Steve Wozniak e Ronald Wayne. A empresa começou desenvolvendo
+            computadores pessoais e ficou conhecida por criar produtos
+            com tecnologia e design inovadores.
+        </p>
+
+        <h2>Primeiros produtos</h2>
+        <p>
+            Um dos primeiros produtos foi o Apple I, criado por Steve
+            Wozniak. Em 1977, a empresa lançou o Apple II, que ajudou
+            a popularizar os computadores pessoais.
+        </p>
+
+        <h2>Principais produtos</h2>
+        <ul>
+            <li>iPhone</li>
+            <li>iPad</li>
+            <li>Mac</li>
+            <li>Apple Watch</li>
+            <li>AirPods</li>
+            <li>Apple Vision Pro</li>
+        </ul>
+
+        <h2>Importância da Apple</h2>
+        <p>
+            A Apple teve grande influência na tecnologia. O Macintosh,
+            lançado em 1984, ajudou a popularizar a interface gráfica.
+            Em 2007, o lançamento do iPhone mudou o mercado de
+            smartphones e tornou a Apple uma das empresas mais
+            conhecidas do mundo.
+        </p>
+
+        <h2>Curiosidades</h2>
+        <ul>
+            <li>A Apple foi fundada em 1976.</li>
+            <li>Steve Jobs e Steve Wozniak foram os principais fundadores.</li>
+            <li>O iPhone foi lançado em 2007.</li>
+            <li>Em 2026, a Apple completa 50 anos.</li>
+        </ul>
+
+        <h2>Conclusão</h2>
+        <p>
+            A Apple começou como uma pequena empresa de computadores
+            e se transformou em uma das maiores empresas de tecnologia
+            do mundo. Seus produtos contribuíram para mudar a forma
+            como as pessoas usam computadores, celulares e outros
+            dispositivos tecnológicos.
+        </p>
+
+    </main>
+
+    <footer>
+        <p>Pesquisa sobre a Apple - 2026</p>
+    </footer>
+
+</body>
+</html>
