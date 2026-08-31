@@ -256,6 +256,7 @@
             <span class="badge">Aula 2: Escopo Local vs. Global & Efeitos Colaterais</span>
             <span class="badge">Aula 3: Refatoração & Reutilização</span>
             <span class="badge">Aula 4: Peer Code Review & Checklist</span>
+            <span class="badge">Aula 5: Múltiplos Atributos</span>
         </div>
     </div>
     
@@ -265,7 +266,7 @@
         <h3 style="color:#00ffcc;">🎯 Curiosidade & Experimentação em Código</h3>
         <p style="font-size:0.85rem; color:#b9c7d9; margin-top:0.4rem;">
             Acompanhe o empilhamento e desempilhamento de funções na memória RAM em tempo real.<br>
-            Aprenda a isolar escopos para evitar vazamento de variáveis globais e aplique checklists de Code Review!
+            Copie os códigos das caixas pretas e execute-os diretamente no IDLE ou no seu editor Python favorito!
         </p>
     </footer>
 </div>
@@ -277,7 +278,15 @@
             title: "1. Chamada de Função e Pilha de Execução (Call Stack)",
             aula: "Aula 1",
             desc: "Compreenda como os argumentos são passados, a pilha empilha o contexto da função e o retorno devolve o controle ao bloco principal.",
-            codeExemplo: "def calcular_dobro(numero):\n    resultado = numero * 2\n    return resultado\n\nval = 5\nres = calcular_dobro(val)",
+            codeExemplo: `def calcular_dobro(numero):
+    resultado = numero * 2
+    return resultado
+
+
+# Bloco Principal
+val = int(input('Digite um número inteiro: '))
+res = calcular_dobro(val)
+print(f'O dobro de {val} é: {res}')`,
             controls: [
                 { label: "Valor de Entrada:", type: "number", default: 5, id: "val" }
             ],
@@ -317,7 +326,16 @@
             title: "2. Escopo Local vs. Global & Efeitos Colaterais",
             aula: "Aula 2",
             desc: "Compare a modificação segura de variáveis no escopo local com os riscos de alterar variáveis globais indesejadamente.",
-            codeExemplo: "# Modo Incorreto (Efeito Colateral):\ndef alterar(): global saldo; saldo = 0\n\n# Modo Correto (Escopo Isolado):\ndef alterar(s): return s - 50",
+            codeExemplo: `def cobrar_taxa(saldo):
+    # O escopo isola a variável, protegendo a global
+    return saldo - 20
+
+
+saldo_global = float(input('Digite o saldo inicial: R$ '))
+novo_saldo = cobrar_taxa(saldo_global)
+
+print(f'Saldo global original (intacto): R$ {saldo_global:.2f}')
+print(f'Saldo atualizado: R$ {novo_saldo:.2f}')`,
             controls: [
                 { label: "Saldo Inicial:", type: "number", default: 100, id: "saldo" },
                 { label: "Modo de Escopo:", type: "select", options: ["Correto (Isolamento Local)", "Incorreto (Efeito Colateral Global)"], id: "modo" }
@@ -369,8 +387,27 @@
         {
             title: "3. Refatoração de Código Monolítico em Módulos",
             aula: "Aula 3",
-            desc: "Substitua um bloco de código repetitivo e extenso por um conjunto de funções especializadas e reutilizáveis.",
-            codeExemplo: "# Funções Especializadas Reutilizáveis:\ndef validar(n): return n > 0\ndef calcular_imposto(v): return v * 0.15\ndef formatar(v): return f'R$ {v:.2f}'",
+            desc: "Substitua um bloco de código repetitivo por um conjunto de funções especializadas e fáceis de testar.",
+            codeExemplo: `def validar(n):
+    return n > 0
+
+
+def calc_imposto(v):
+    return v * 0.15
+
+
+def formatar(v):
+    return f'R$ {v:.2f}'
+
+
+preco = float(input('Digite o valor do produto: '))
+
+if validar(preco):
+    imposto = calc_imposto(preco)
+    total = preco + imposto
+    print(f'Total com imposto: {formatar(total)}')
+else:
+    print('Erro: Preço inválido!')`,
             controls: [
                 { label: "Valor do Produto:", type: "number", default: 200, id: "preco" }
             ],
@@ -421,8 +458,16 @@
         {
             title: "4. Simulação de Peer Code Review & Checklist",
             aula: "Aula 4",
-            desc: "Avalie um trecho de código submetido por um colega aplicando um checklist rigoroso de boas práticas de modularização.",
-            codeExemplo: "# Checklist de Avaliação:\n[ ] Nomes claros e expressivos\n[ ] Funções com responsabilidade única\n[ ] Ausência de variáveis globais\n[ ] Presença de retorno explícito",
+            desc: "Avalie um trecho de código aplicando um checklist rigoroso no Python.",
+            codeExemplo: `print('--- Checklist de Code Review ---')
+c1 = input('Nomes claros e expressivos? (s/n): ')
+c2 = input('Funções com responsabilidade única? (s/n): ')
+c3 = input('Ausência de variáveis globais? (s/n): ')
+
+if c1 == 's' and c2 == 's' and c3 == 's':
+    print('Status: APROVADO SEM FALHAS ✨')
+else:
+    print('Status: SOLICITADA REVISÃO ⚠️')`,
             controls: [
                 { label: "Nomes descritivos:", type: "select", options: ["Sim [Aprovado]", "Não [Atenção]"], id: "c1" },
                 { label: "Responsabilidade Única:", type: "select", options: ["Sim [Aprovado]", "Não [Atenção]"], id: "c2" },
@@ -446,7 +491,7 @@
                 let aprovado = c1 && c2 && c3;
 
                 if (aprovado) {
-                    stack[0].vars = `Status: APROVADO SEMA FALHAS ✨`;
+                    stack[0].vars = `Status: APROVADO SEM FALHAS ✨`;
                     updateVisual(stack);
                     logger(`🎉 CODE REVIEW APROVADO! O código atende a todos os critérios de modularização e clareza.`, "success");
                 } else {
@@ -454,6 +499,115 @@
                     updateVisual(stack, true);
                     logger(`⚠️ FEEDBACK ASSERTIVO: O código precisa de ajustes antes de ser aprovado. Verifique os itens marcados.`, "break");
                 }
+            }
+        },
+
+        // --- AULA 5: FUNÇÕES COM DOIS PARÂMETROS (CALCULADORA) ---
+        {
+            title: "5. Calculadora: Funções com Múltiplos Parâmetros",
+            aula: "Aula 5",
+            desc: "Simule chamadas enviando múltiplos atributos em uma estrutura completa de calculadora.",
+            codeExemplo: `def somar(a, b):
+    return a + b
+
+
+def subtrair(a, b):
+    return a - b
+
+
+def multiplicar(a, b):
+    return a * b
+
+
+def dividir(a, b):
+    if b == 0:
+        return 'Erro (Divisão por zero)'
+    return a / b
+
+
+v1 = float(input('Valor A: '))
+v2 = float(input('Valor B: '))
+op = input('Operação (+, -, *, /): ')
+
+if op == '+':
+    print(f'Resultado: {somar(v1, v2)}')
+elif op == '-':
+    print(f'Resultado: {subtrair(v1, v2)}')
+elif op == '*':
+    print(f'Resultado: {multiplicar(v1, v2)}')
+elif op == '/':
+    print(f'Resultado: {dividir(v1, v2)}')
+else:
+    print('Operação inválida!')`,
+            controls: [
+                { label: "Valor A:", type: "number", default: 10, id: "valA" },
+                { label: "Valor B:", type: "number", default: 5, id: "valB" },
+                { label: "Operação:", type: "select", options: ["Somar", "Subtrair", "Multiplicar", "Dividir"], id: "operacao" }
+            ],
+            run: (params, logger, updateVisual) => {
+                let a = parseFloat(params.valA);
+                let b = parseFloat(params.valB);
+                if (isNaN(a)) a = 0;
+                if (isNaN(b)) b = 0;
+                let op = params.operacao;
+
+                let stack = [];
+
+                // Estado Inicial: Main
+                stack.push({ name: "main()", vars: `v1 = ${a}, v2 = ${b}` });
+                updateVisual(stack);
+                logger(`🟢 Iniciando o programa principal com Valores: v1 = ${a}, v2 = ${b}`, "info");
+
+                let nomeFuncao = op.toLowerCase();
+                logger(`➡️ Chamando função '${nomeFuncao}(${a}, ${b})'...`, "continue");
+
+                // Chamada da função na Call Stack
+                stack.push({ name: `${nomeFuncao}(a, b)`, vars: `a = ${a}, b = ${b}, retorno = ?` });
+                updateVisual(stack);
+
+                let res;
+                // Processamento lógico dependendo da operação
+                if (op === "Somar") {
+                    res = a + b;
+                    logger(`⚙️ Processando Soma: ${a} + ${b} = ${res}`, "info");
+                } else if (op === "Subtrair") {
+                    res = a - b;
+                    logger(`⚙️ Processando Subtração: ${a} - ${b} = ${res}`, "info");
+                } else if (op === "Multiplicar") {
+                    res = a * b;
+                    logger(`⚙️ Processando Multiplicação: ${a} * ${b} = ${res}`, "info");
+                } else if (op === "Dividir") {
+                    if (b === 0) {
+                        res = "Erro: Divisão por Zero";
+                        stack[1].vars = `a = ${a}, b = ${b}, retorno = Erro`;
+                        updateVisual(stack, true);
+                        logger(`❌ Erro detectado: Tentativa de dividir por zero abortada!`, "error");
+                        
+                        setTimeout(() => {
+                            stack.pop();
+                            stack[0].vars += `, resultado = None`;
+                            updateVisual(stack, true);
+                            logger(`💥 A função falhou e devolveu o controle ao main() sem resultado.`, "break");
+                        }, 1000);
+                        return; 
+                    } else {
+                        res = a / b;
+                        logger(`⚙️ Processando Divisão: ${a} / ${b} = ${res}`, "info");
+                    }
+                }
+
+                // Atualizando estado dentro da função
+                stack[1].vars = `a = ${a}, b = ${b}, retorno = ${res}`;
+                updateVisual(stack);
+
+                // Retorno ao fluxo principal
+                setTimeout(() => {
+                    logger(`⬅️ Função '${nomeFuncao}' finalizada. Desempilhando e retornando ${res}.`, "success");
+                    stack.pop();
+                    stack[0].vars = `v1 = ${a}, v2 = ${b}, resultado = ${res}`;
+                    updateVisual(stack);
+                    logger(`✅ Bloco 'main()' recebe o resultado final: ${res}`, "success");
+                }, 800);
             }
         }
     ];
