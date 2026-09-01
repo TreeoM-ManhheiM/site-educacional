@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escolha ou resista</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#d9d9d9;
+    color:#333;
+}
+
+/* ATIVIDADE */
+
+.atividade{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    background:#e7e7e7;
+    padding:20px;
+    border-radius:5px;
+}
+
+.atividade h1{
+    font-size:42px;
+    margin-bottom:20px;
+}
+
+.atividade h2{
+    font-size:22px;
+    margin:20px 0 10px;
+}
+
+.atividade p{
+    line-height:1.8;
+    margin-bottom:15px;
+}
+
+.atividade ol{
+    margin:10px 0 15px 35px;
+}
+
+.atividade ul{
+    margin:5px 0 10px 25px;
+}
+
+.atividade li{
+    margin-bottom:8px;
+}
+
+.box-cenarios{
+    border:1px solid #333;
+    padding:20px;
+    margin-top:20px;
+    background:#fff;
+    border-radius:4px;
+}
+
+.box-cenarios h3{
+    font-size:18px;
+    margin-top:15px;
+    margin-bottom:8px;
+}
+
+.box-cenarios h3:first-child{
+    margin-top:0;
+}
+
+/* SITE CHANGE MANAGEMENT LAB */
+
+.header{
+    background:#7c3aed;
+    color:white;
+    padding:15px 30px;
+}
+
+.header .topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width:1200px;
+    margin:auto;
+}
+
+.logo{
+    font-size:35px;
+    font-weight:bold;
+    letter-spacing: -0.5px;
+}
+
+.pesquisa{
+    width:45%;
+}
+
+.pesquisa input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:5px;
+}
+
+.conteudo{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:3fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:25px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.titulo{
+    color:#7c3aed;
+    margin-bottom:10px;
+}
+
+.status{
+    display:inline-block;
+    background:#7c3aed;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+.problema{
+    line-height:1.9;
+}
+
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.info{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.info h3{
+    margin-bottom:10px;
+    color:#7c3aed;
+}
+
+.protocolo{
+    margin-top:25px;
+    background:#f5f3ff;
+    border-left:5px solid #7c3aed;
+    padding:20px;
+    border-radius:6px;
+}
+
+.protocolo h3{
+    margin-bottom:15px;
+    color:#7c3aed;
+}
+
+.protocolo ol{
+    padding-left:20px;
+}
+
+.protocolo li{
+    margin-bottom:10px;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ENUNCIADO -->
+
+<div class="atividade">
+
+    <h1>Escolha ou resista</h1>
+
+    <ol>
+        <li>Formem grupos de quatro alunos. Cada grupo receberá um cenário fictício que descreve uma mudança organizacional.</li>
+        <li>Analisem o cenário e determinem: custos percebidos, benefícios percebidos, Utilidade Percebida, Facilidade de Uso Percebida.</li>
+        <li>Com base na análise, decidam aceitar ou resistir à mudança, justificando sua resposta.</li>
+        <li>Compartilhem com os colegas a decisão tomada. A atividade deverá ser desenvolvida em uma folha ou no caderno, e cada estudante deverá enviar uma foto da análise do cenário e a decisão tomada aqui no AVA.</li>
+    </ol>
+
+    <div class="box-cenarios">
+
+        <h3>Cenário 1: escola adotando livros digitais</h3>
+        <ul>
+            <li><strong>Motivo da mudança:</strong> a escola quer modernizar seu ensino, economizar espaço e reduzir custos com impressão e distribuição de livros.</li>
+            <li><strong>Impacto esperado:</strong> redução de despesas com materiais, acesso mais rápido e atualizado a conteúdos digitais, bem como menos uso de papel.</li>
+            <li><strong>Público afetado:</strong> alunos, professores e pais.</li>
+            <li><strong>Dificuldades esperadas:</strong> adaptação dos professores e alunos ao uso de dispositivos digitais, necessidade de treinamento e possibilidade de resistência dos pais mais acostumados aos livros físicos.</li>
+        </ul>
+
+        <h3>Cenário 2: empresa implementando sistema de ponto eletrônico via aplicativo</h3>
+        <ul>
+            <li><strong>Motivo da mudança:</strong> a empresa quer modernizar o controle de ponto e evitar erros manuais, aumentando a eficiência na gestão de horários.</li>
+            <li><strong>Impacto esperado:</strong> redução de erros de marcação de ponto, maior controle de jornada de trabalho e facilidade de acesso aos dados de presença.</li>
+            <li><strong>Público afetado:</strong> funcionários da empresa e departamento de RH.</li>
+            <li><strong>Dificuldades esperadas:</strong> funcionários que não estão acostumados com tecnologia, problemas de compatibilidade com diferentes tipos de smartphones e possíveis dificuldades de acesso à internet em algumas áreas.</li>
+        </ul>
+
+        <h3>Cenário 3: loja substituindo atendimento presencial por autoatendimento em totens digitais</h3>
+        <ul>
+            <li><strong>Motivo da mudança:</strong> a loja quer reduzir custos com funcionários e melhorar a eficiência do atendimento, proporcionando uma experiência mais rápida para os clientes.</li>
+            <li><strong>Impacto esperado:</strong> redução de custos com pessoal, mais agilidade no atendimento e um ambiente mais moderno.</li>
+            <li><strong>Público afetado:</strong> clientes da loja e funcionários de atendimento.</li>
+            <li><strong>Dificuldades esperadas:</strong> clientes mais velhos ou menos familiarizados com tecnologia podem ter dificuldade em usar os totens, e funcionários podem perder postos de trabalho ou ter que se adaptar a novas funções.</li>
+        </ul>
+
+    </div>
+
+</div>
+
+<!-- CABEÇALHO CHANGE MANAGEMENT LAB -->
+
+<div class="header">
+    <div class="topo">
+        <div class="logo">ChangeLab</div>
+
+        <div class="pesquisa">
+            <input type="text" placeholder="Busque modelos de aceitação de tecnologia (TAM) e cenários">
+        </div>
+
+        <div>
+            👤 Grupo de Gestão &nbsp;&nbsp; 📊 Análise
+        </div>
+    </div>
+</div>
+
+<!-- CONTEÚDO -->
+
+<div class="conteudo">
+
+    <div class="card">
+
+        <h2 class="titulo">Análise Organizacional — Cenário 1 (Escola Adotando Livros Digitais)</h2>
+
+        <span class="status">Modelo TAM (Technology Acceptance Model)</span>
+
+        <div class="problema">
+
+            <p>
+                <strong>Objetivo da Análise:</strong> Avaliar os fatores que influenciam a adoção da transição para livros digitais na instituição de ensino, identificando barreiras e alavancadores de mudança.
+            </p>
+
+        </div>
+
+        <div class="protocolo">
+
+            <h3>📋 Matriz de Análise de Mudança</h3>
+
+            <p><strong>1. Custos Percebidos:</strong></p>
+            <ul style="margin-left: 20px; margin-bottom: 15px;">
+                <li>Investimento financeiro em dispositivos (tablets/e-readers) ou infraestrutura de Wi-Fi.</li>
+                <li>Tempo e esforço dedicados ao treinamento da equipe docente e adaptação dos alunos.</li>
+                <li>Custo psicológico de adaptação e resistência cultural por parte dos pais habituados ao livro físico.</li>
+            </ul>
+
+            <p><strong>2. Benefícios Percebidos:</strong></p>
+            <ul style="margin-left: 20px; margin-bottom: 15px;">
+                <li>Economia expressiva com impressão, frete e distribuição de materiais impressos.</li>
+                <li>Atualização instantânea do conteúdo pedagógico sem necessidade de novas edições físicas.</li>
+                <li>Redução do peso das mochilas dos estudantes e sustentabilidade ecológica (menos papel).</li>
+            </ul>
+
+            <p><strong>3. Utilidade Percebida:</strong></p>
+            <ul style="margin-left: 20px; margin-bottom: 15px;">
+                <li><strong>Alta:</strong> A tecnologia agrega valor real ao ensino, trazendo recursos interativos (vídeos, links, busca rápida) que enriquecem o aprendizado e centralizam todo o material didático em um só lugar.</li>
+            </ul>
+
+            <p><strong>4. Facilidade de Uso Percebida:</strong></p>
+            <ul style="margin-left: 20px; margin-bottom: 15px;">
+                <li><strong>Média a Alta:</strong> Embora os alunos (nativos digitais) se adaptem com facilidade, professores e pais necessitam de interfaces simples, tutoriais claros e suporte técnico constante nas primeiras semanas.</li>
+            </ul>
+
+            <br>
+
+            <p><strong>🎯 DECISÃO FINAL DO GRUPO: ACEITAR A MUDANÇA (Com Plano de Transição)</strong></p>
+            <br>
+
+            <p><strong>Justificativa da Decisão:</strong><br>
+            Decidimos <strong>ACEITAR</strong> a mudança porque os benefícios de longo prazo (pedagógicos, operacionais e ambientais) e a Utilidade Percebida superam significativamente os Custos Percebidos iniciais.<br><br>
+            Para mitigar a resistência e garantir o sucesso da transição, propomos as seguintes ações institucionais:<br>
+            • Oferecer oficinas de capacitação pedagógica digital para os professores antes do início do ano letivo;<br>
+            • Promover reuniões explicativas para os pais destacando a economia e a facilidade do novo formato;<br>
+            • Manter um período de transição híbrida de 1 semestre para adaptação gradual.</p>
+            <br>
+
+            <p>Atenciosamente,<br><strong>Grupo de Análise Organizacional - Grupo 1</strong></p>
+
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+
+        <div class="info">
+            <h3>Cenário Analisado</h3>
+
+            <p>
+                <strong>Cenário 1: Livros Digitais na Escola</strong> por apresentar um equilíbrio claro entre modernização do ensino e gestão de stakeholders (pais, alunos e professores).
+            </p>
+
+        </div>
+
+        <div class="info">
+            <h3>Visão dos Outros Cenários</h3>
+
+            <p><strong>Cenário 2 (Ponto via App):</strong> Aceitar com ressalva de fornecer smartphones corporativos ou pacotes de dados para áreas remotas.</p>
+            <br>
+            <p><strong>Cenário 3 (Totens de Loja):</strong> Resistir à substituição total; propor formato híbrido com atendentes para dar suporte a idosos.</p>
+
+        </div>
+
+        <div class="info">
+            <h3>Veredito TAM</h3>
+
+            <p>🟢 Utilidade: Alta</p>
+            <p>🟡 Facilidade: Média (Requer Treino)</p>
+            <p>✅ Decisão: Aceitar com Acompanhamento</p>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+Simulação educacional sobre Gestão da Mudança e Modelo de Aceitação de Tecnologia (TAM).
+</footer>
+
+</body>
+</html>
