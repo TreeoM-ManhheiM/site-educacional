@@ -1,120 +1,358 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pesquisa sobre a Apple</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recuperando a Confiança do Cliente</title>
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            margin: 0;
-            color: #222;
-        }
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
 
-        header {
-            background-color: #000;
-            color: white;
-            text-align: center;
-            padding: 30px;
-        }
+body{
+    background:#d9d9d9;
+    color:#333;
+}
 
-        main {
-            max-width: 900px;
-            margin: 30px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-        }
+/* ATIVIDADE */
 
-        h2 {
-            color: #333;
-        }
+.atividade{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    background:#e7e7e7;
+    padding:20px;
+    border-radius:5px;
+}
 
-        p {
-            line-height: 1.6;
-        }
+.atividade h1{
+    font-size:42px;
+    margin-bottom:20px;
+}
 
-        ul {
-            line-height: 1.8;
-        }
+.atividade h2{
+    font-size:22px;
+    margin:20px 0 10px;
+}
 
-        footer {
-            text-align: center;
-            background-color: #000;
-            color: white;
-            padding: 15px;
-            margin-top: 30px;
-        }
-    </style>
+.atividade p{
+    line-height:1.8;
+    margin-bottom:15px;
+}
+
+.atividade ul{
+    margin:10px 0 15px 35px;
+}
+
+.atividade li{
+    margin-bottom:8px;
+}
+
+/* SITE MAGALU */
+
+.header{
+    background:#0086ff;
+    color:white;
+    padding:15px 30px;
+}
+
+.header .topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width:1200px;
+    margin:auto;
+}
+
+.logo{
+    font-size:35px;
+    font-weight:bold;
+}
+
+.pesquisa{
+    width:45%;
+}
+
+.pesquisa input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:5px;
+}
+
+.conteudo{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:3fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:25px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.titulo{
+    color:#0086ff;
+    margin-bottom:10px;
+}
+
+.status{
+    display:inline-block;
+    background:#ff4d4d;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+.problema{
+    line-height:1.9;
+}
+
+.box{
+    background:#f7f7f7;
+    border-left:5px solid #0086ff;
+    padding:20px;
+    margin-top:20px;
+    border-radius:6px;
+}
+
+.box h3{
+    margin-bottom:10px;
+    color:#0086ff;
+}
+
+.box ul{
+    margin-left:20px;
+}
+
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.info{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.info h3{
+    margin-bottom:10px;
+    color:#0086ff;
+}
+
+.protocolo{
+    margin-top:25px;
+    background:#eef7ff;
+    border-left:5px solid #0086ff;
+    padding:20px;
+    border-radius:6px;
+}
+
+.protocolo h3{
+    margin-bottom:15px;
+    color:#0086ff;
+}
+
+.protocolo ol{
+    padding-left:20px;
+}
+
+.protocolo li{
+    margin-bottom:10px;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#666;
+}
+</style>
 </head>
 
 <body>
 
-    <header>
-        <h1>Apple Inc.</h1>
-        <p>Pesquisa sobre a história e os produtos da Apple</p>
-    </header>
+<!-- ENUNCIADO -->
 
-    <main>
+<div class="atividade">
 
-        <h2>História</h2>
-        <p>
-            A Apple foi fundada em 1º de abril de 1976 por Steve Jobs,
-            Steve Wozniak e Ronald Wayne. A empresa começou desenvolvendo
-            computadores pessoais e ficou conhecida por criar produtos
-            com tecnologia e design inovadores.
-        </p>
+    <h1>Recuperando a confiança do cliente</h1>
 
-        <h2>Primeiros produtos</h2>
-        <p>
-            Um dos primeiros produtos foi o Apple I, criado por Steve
-            Wozniak. Em 1977, a empresa lançou o Apple II, que ajudou
-            a popularizar os computadores pessoais.
-        </p>
+    <h2>ANALISEM A SITUAÇÃO</h2>
 
-        <h2>Principais produtos</h2>
-        <ul>
-            <li>iPhone</li>
-            <li>iPad</li>
-            <li>Mac</li>
-            <li>Apple Watch</li>
-            <li>AirPods</li>
-            <li>Apple Vision Pro</li>
-        </ul>
+    <p>
+        Vocês fazem parte da equipe Luiza Resolve e serão responsáveis por conduzir o atendimento desse cliente.
+        Leiam atentamente o caso apresentado abaixo e <strong>identifiquem os principais problemas enfrentados pelo cliente.</strong>
+    </p>
 
-        <h2>Importância da Apple</h2>
-        <p>
-            A Apple teve grande influência na tecnologia. O Macintosh,
-            lançado em 1984, ajudou a popularizar a interface gráfica.
-            Em 2007, o lançamento do iPhone mudou o mercado de
-            smartphones e tornou a Apple uma das empresas mais
-            conhecidas do mundo.
-        </p>
+    <p>Situação fictícia produzida pela SEDUC-SP.</p>
 
-        <h2>Curiosidades</h2>
-        <ul>
-            <li>A Apple foi fundada em 1976.</li>
-            <li>Steve Jobs e Steve Wozniak foram os principais fundadores.</li>
-            <li>O iPhone foi lançado em 2007.</li>
-            <li>Em 2026, a Apple completa 50 anos.</li>
-        </ul>
+    <h2>ELABOREM UM PROTOCOLO DE ATENDIMENTO</h2>
 
-        <h2>Conclusão</h2>
-        <p>
-            A Apple começou como uma pequena empresa de computadores
-            e se transformou em uma das maiores empresas de tecnologia
-            do mundo. Seus produtos contribuíram para mudar a forma
-            como as pessoas usam computadores, celulares e outros
-            dispositivos tecnológicos.
-        </p>
+    <p>
+        Em grupo, definam como a equipe da Luiza Resolve deve conduzir o atendimento.
+    </p>
 
-    </main>
+    <p><strong>O protocolo, registrado no caderno, deve indicar:</strong></p>
 
-    <footer>
-        <p>Pesquisa sobre a Apple - 2026</p>
-    </footer>
+    <ul>
+        <li>como iniciar o atendimento;</li>
+        <li>quais informações verificar;</li>
+        <li>qual solução oferecer;</li>
+        <li>como acompanhar o caso até sua conclusão.</li>
+    </ul>
+
+    <h2>COMPARTILHEM COM A TURMA</h2>
+
+    <p>
+        Apresentem o protocolo elaborado e justifiquem como ele pode recuperar a confiança do cliente e aumentar sua satisfação.
+    </p>
+
+    <p>Enviem uma foto do protocolo pelo AVA.</p>
+
+</div>
+
+<!-- CABEÇALHO MAGALU -->
+
+<div class="header">
+    <div class="topo">
+        <div class="logo">magalu</div>
+
+        <div class="pesquisa">
+            <input type="text" placeholder="Busque no Magazine Luiza">
+        </div>
+
+        <div>
+            👤 Cliente &nbsp;&nbsp; 🛒 Carrinho
+        </div>
+    </div>
+</div>
+
+<!-- CONTEÚDO -->
+
+<div class="conteudo">
+
+    <div class="card">
+
+        <h2 class="titulo">Caso atendido pela equipe Luiza Resolve</h2>
+
+        <span class="status">Entrega com problemas</span>
+
+        <div class="problema">
+
+            <p>
+                Um cliente comprou uma <strong>geladeira pelo site do Magazine Luiza</strong>
+                para a casa nova.
+            </p>
+
+            <p>
+                A entrega estava prevista para sexta-feira, um dia antes da mudança.
+            </p>
+
+            <p>
+                <strong>O produto não foi entregue.</strong>
+            </p>
+
+            <p>
+                Ao procurar atendimento, o cliente recebeu informações diferentes em cada canal utilizado.
+            </p>
+
+            <p>
+                Dois dias depois, a geladeira foi entregue com a porta amassada.
+            </p>
+
+            <p>
+                O cliente afirma que perdeu alimentos, precisou alterar sua mudança
+                e já pensa em não comprar mais na empresa.
+            </p>
+
+        </div>
+
+        <div class="protocolo">
+
+            <h3>✅ Protocolo de Atendimento - Luiza Resolve</h3>
+
+            <ol>
+                <li>Receber o cliente com cordialidade e pedir desculpas pelos transtornos.</li>
+                <li>Confirmar pedido, entrega, contatos anteriores e fotos do produto avariado.</li>
+                <li>Reconhecer o atraso, a divergência de informações e o dano no produto.</li>
+                <li>Oferecer troca imediata da geladeira sem custos adicionais.</li>
+                <li>Agendar retirada do produto defeituoso e nova entrega prioritária.</li>
+                <li>Avaliar compensação comercial pelo prejuízo e inconvenientes causados.</li>
+                <li>Manter acompanhamento ativo do caso até a resolução.</li>
+                <li>Entrar em contato após a conclusão para confirmar a satisfação do cliente.</li>
+            </ol>
+
+            <br>
+
+            <p>Olá! Agradecemos seu contato e pedimos sinceras desculpas pelos transtornos causados durante sua experiência de compra. Verificamos que ocorreram falhas na entrega, divergências nas informações fornecidas pelos canais de atendimento e o recebimento de um produto avariado.</p>
+            <br>
+            <p>Para solucionar a situação, seu caso foi tratado com prioridade e providenciaremos a troca da geladeira sem qualquer custo adicional. Nossa equipe acompanhará todas as etapas do processo até a entrega de um novo produto em perfeitas condições.</p>
+            <br>
+            <p>Também registramos sua manifestação para análise interna, visando corrigir as falhas identificadas e aprimorar nossos serviços de atendimento e logística.</p>
+            <br>
+            <p>Agradecemos pela oportunidade de corrigir essa experiência. Permanecemos à disposição para qualquer esclarecimento e esperamos reconquistar sua confiança.</p>
+            <br>
+            <p>Atenciosamente,<br><strong>Equipe Luiza Resolve - Magazine Luiza</strong></p>
+
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+
+        <div class="info">
+            <h3>Problemas Identificados</h3>
+
+            <ul>
+                <li>Atraso na entrega</li>
+                <li>Falha de comunicação</li>
+                <li>Produto avariado</li>
+                <li>Prejuízo ao cliente</li>
+                <li>Perda de confiança</li>
+            </ul>
+
+        </div>
+
+        <div class="info">
+            <h3>Objetivo</h3>
+
+            <p>
+                Recuperar a confiança do cliente,
+                solucionar o problema rapidamente
+                e restabelecer um relacionamento positivo.
+            </p>
+
+        </div>
+
+        <div class="info">
+            <h3>Nível de Satisfação</h3>
+
+            <p>🔴 Antes: Baixo</p>
+            <br>
+            <p>🟢 Após solução: Esperado Alto</p>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+Simulação educacional inspirada no atendimento da equipe Luiza Resolve - Magazine Luiza.
+</footer>
 
 </body>
 </html>
