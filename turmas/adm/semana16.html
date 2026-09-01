@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desenvolvendo um produto ou serviço</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#d9d9d9;
+    color:#333;
+}
+
+/* ATIVIDADE */
+
+.atividade{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    background:#e7e7e7;
+    padding:20px;
+    border-radius:5px;
+}
+
+.atividade h1{
+    font-size:42px;
+    margin-bottom:20px;
+}
+
+.atividade h2{
+    font-size:22px;
+    margin:20px 0 10px;
+}
+
+.atividade p{
+    line-height:1.8;
+    margin-bottom:15px;
+}
+
+.atividade ul{
+    margin:10px 0 15px 35px;
+}
+
+.atividade ol{
+    margin:10px 0 15px 35px;
+}
+
+.atividade li{
+    margin-bottom:8px;
+}
+
+/* SITE INNOVATION LAB */
+
+.header{
+    background:#ea580c;
+    color:white;
+    padding:15px 30px;
+}
+
+.header .topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width:1200px;
+    margin:auto;
+}
+
+.logo{
+    font-size:35px;
+    font-weight:bold;
+    letter-spacing: -0.5px;
+}
+
+.pesquisa{
+    width:45%;
+}
+
+.pesquisa input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:5px;
+}
+
+.conteudo{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:3fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:25px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.titulo{
+    color:#ea580c;
+    margin-bottom:10px;
+}
+
+.status{
+    display:inline-block;
+    background:#ea580c;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+.problema{
+    line-height:1.9;
+}
+
+.box{
+    background:#f7f7f7;
+    border-left:5px solid #ea580c;
+    padding:20px;
+    margin-top:20px;
+    border-radius:6px;
+}
+
+.box h3{
+    margin-bottom:10px;
+    color:#ea580c;
+}
+
+.box ul{
+    margin-left:20px;
+}
+
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.info{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.info h3{
+    margin-bottom:10px;
+    color:#ea580c;
+}
+
+.protocolo{
+    margin-top:25px;
+    background:#fff7ed;
+    border-left:5px solid #ea580c;
+    padding:20px;
+    border-radius:6px;
+}
+
+.protocolo h3{
+    margin-bottom:15px;
+    color:#ea580c;
+}
+
+.protocolo ol{
+    padding-left:20px;
+}
+
+.protocolo li{
+    margin-bottom:10px;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ENUNCIADO -->
+
+<div class="atividade">
+
+    <h1>Desenvolvendo um produto ou serviço</h1>
+
+    <ol>
+        <li>Formem grupos de cinco alunos. Cada grupo deve escolher um produto ou serviço que gostaria de desenvolver.</li>
+        <li>Selecionem um método de coleta de dados (entrevista, questionário, grupo focal ou observações).</li>
+        <li>Criem o esboço das etapas para desenvolver o produto, seguindo o exemplo apresentado na aula.</li>
+        <li>Após construírem essas etapas, apresentem seu trabalho para os colegas e expliquem como o método de coleta de dados pode auxiliar no desenvolvimento do produto ou serviço escolhido. Tirem uma foto do processo desenvolvido e enviem ao AVA.</li>
+    </ol>
+
+</div>
+
+<!-- CABEÇALHO INNOVATION LAB -->
+
+<div class="header">
+    <div class="topo">
+        <div class="logo">ProductLab</div>
+
+        <div class="pesquisa">
+            <input type="text" placeholder="Busque metodologias ou modelos de produtos">
+        </div>
+
+        <div>
+            👤 Grupo 1 &nbsp;&nbsp; 💡 Projetos
+        </div>
+    </div>
+</div>
+
+<!-- CONTEÚDO -->
+
+<div class="conteudo">
+
+    <div class="card">
+
+        <h2 class="titulo">Projeto de Desenvolvimento: App de Marmitas Saudáveis "NutriExpress"</h2>
+
+        <span class="status">Pesquisa & Desenvolvimento de Produto</span>
+
+        <div class="problema">
+
+            <p>
+                <strong>Produto/Serviço Escolhido:</strong> Aplicativo de assinatura de refeições saudáveis personalizadas para estudantes e jovens trabalhadores da região escolar/comercial.
+            </p>
+
+            <p>
+                <strong>Método de Coleta de Dados Selecionado:</strong> Questionário Online (Google Forms) combinado com Entrevistas em Profundidade.
+            </p>
+
+        </div>
+
+        <div class="protocolo">
+
+            <h3>🚀 Etapas do Desenvolvimento do Produto</h3>
+
+            <ol>
+                <li><strong>Etapa 1 — Ideação e Definição do Escopo:</strong> Mapeamento da ideia do serviço "NutriExpress" e definição do público-alvo prioritário.</li>
+                <li><strong>Etapa 2 — Coleta de Dados (Questionário e Entrevistas):</strong> Aplicação do questionário online para levantar preferências alimentares, orçamento médio diário e horários de pico. Entrevistas com 5 estudantes para entender os gargalos da rotina.</li>
+                <li><strong>Etapa 3 — Análise dos Resultados:</strong> Tabulação dos dados para identificar os pratos favoritos, restrições alimentares mais comuns (vegano, sem lactose) e valor máximo disposto a pagar.</li>
+                <li><strong>Etapa 4 — Prototipagem do Produto/Serviço:</strong> Criação do cardápio inicial (MVP) com 6 opções de marmitas e protótipo de telas do aplicativo para pedidos rápidos.</li>
+                <li><strong>Etapa 5 — Teste Piloto e Validação:</strong> Entrega teste para um grupo reduzido de usuários para avaliar sabor, tempo de entrega e usabilidade do app antes do lançamento oficial.</li>
+            </ol>
+
+            <br>
+
+            <p><strong>Como o Método de Coleta de Dados Auxilia no Desenvolvimento:</strong></p>
+            <br>
+
+            <p><strong>1. Validação do Preço Adequado:</strong><br>
+            O <em>questionário</em> permite quantificar exatamente quanto o público-alvo está disposto a pagar por refeição, evitando que o produto seja lançado com um preço fora da realidade dos estudantes.</p>
+            <br>
+
+            <p><strong>2. Definição Assertiva do Cardápio:</strong><br>
+            Por meio das respostas coletadas, eliminamos opções de pratos com baixa aceitação antes mesmo de comprar os ingredientes, reduzindo o desperdício de insumos e custos operacionais.</p>
+            <br>
+
+            <p><strong>3. Compreensão Profunda das Dores (Entrevistas):</strong><br>
+            As <em>entrevistas presenciais</em> revelam detalhes valiosos sobre a rotina dos usuários — como a necessidade de entregas agendadas antes do horário de intervalo —, o que direciona as funcionalidades prioritárias do aplicativo.</p>
+            <br>
+
+            <p>Atenciosamente,<br><strong>Grupo de Desenvolvimento de Produtos - Grupo 1</strong></p>
+
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+
+        <div class="info">
+            <h3>Método de Coleta</h3>
+
+            <ul>
+                <li>Questionário Online</li>
+                <li>Entrevistas em profundidade</li>
+                <li>Análise quanti e qualitativa</li>
+            </ul>
+
+        </div>
+
+        <div class="info">
+            <h3>Objetivo da Coleta</h3>
+
+            <p>
+                Identificar preferências de cardápio, faixa de preço viável e horários de entrega ideais para diminuir os riscos do lançamento.
+            </p>
+
+        </div>
+
+        <div class="info">
+            <h3>Estágio do Projeto</h3>
+
+            <p>🟠 Fase Atual: Estruturação do MVP</p>
+            <br>
+            <p>🟢 Próxima Fase: Teste Piloto com Usuários</p>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+Simulação educacional sobre Metodologias de Desenvolvimento de Produtos e Serviços.
+</footer>
+
+</body>
+</html>
