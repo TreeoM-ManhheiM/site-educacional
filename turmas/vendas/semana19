@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reconstruindo a imagem da marca - Domino's</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#d9d9d9;
+    color:#333;
+}
+
+/* ATIVIDADE */
+
+.atividade{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    background:#e7e7e7;
+    padding:20px;
+    border-radius:5px;
+}
+
+.atividade h1{
+    font-size:42px;
+    margin-bottom:20px;
+}
+
+.atividade h2{
+    font-size:22px;
+    margin:20px 0 10px;
+}
+
+.atividade p{
+    line-height:1.8;
+    margin-bottom:15px;
+}
+
+.atividade ul{
+    margin:10px 0 15px 35px;
+}
+
+.atividade li{
+    margin-bottom:8px;
+}
+
+/* SITE DOMINO'S */
+
+.header{
+    background:#006491;
+    color:white;
+    padding:15px 30px;
+}
+
+.header .topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width:1200px;
+    margin:auto;
+}
+
+.logo{
+    font-size:35px;
+    font-weight:bold;
+    letter-spacing: -1px;
+}
+
+.pesquisa{
+    width:45%;
+}
+
+.pesquisa input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:5px;
+}
+
+.conteudo{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:3fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:25px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.titulo{
+    color:#006491;
+    margin-bottom:10px;
+}
+
+.status{
+    display:inline-block;
+    background:#e31837;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+.problema{
+    line-height:1.9;
+}
+
+.box{
+    background:#f7f7f7;
+    border-left:5px solid #006491;
+    padding:20px;
+    margin-top:20px;
+    border-radius:6px;
+}
+
+.box h3{
+    margin-bottom:10px;
+    color:#006491;
+}
+
+.box ul{
+    margin-left:20px;
+}
+
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.info{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.info h3{
+    margin-bottom:10px;
+    color:#006491;
+}
+
+.protocolo{
+    margin-top:25px;
+    background:#eef7ff;
+    border-left:5px solid #006491;
+    padding:20px;
+    border-radius:6px;
+}
+
+.protocolo h3{
+    margin-bottom:15px;
+    color:#006491;
+}
+
+.protocolo ol{
+    padding-left:20px;
+}
+
+.protocolo li{
+    margin-bottom:10px;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ENUNCIADO -->
+
+<div class="atividade">
+
+    <h1>Reconstruindo a imagem da marca</h1>
+
+    <p>
+        Mesmo após realizar melhorias em seus produtos, a Domino's sabia que muitos consumidores ainda associavam a marca às críticas do passado. Para mostrar que a experiência havia mudado, a empresa decidiu <strong>criar um vídeo para apresentar as melhorias realizadas e convidar os consumidores a reavaliar a marca.</strong>
+    </p>
+
+    <p>Nesta atividade, vocês atuarão como integrantes da equipe de vendas responsável por essa campanha.</p>
+
+    <h2>ORGANIZEM-SE EM GRUPOS</h2>
+
+    <h2>CRIEM UM ROTEIRO PARA UM VÍDEO DE VENDAS DE ATÉ 30 SEGUNDOS</h2>
+
+    <p><strong>O roteiro deve apresentar a seguinte estrutura:</strong></p>
+
+    <ul>
+        <li>o problema enfrentado pela empresa;</li>
+        <li>as mudanças realizadas;</li>
+        <li>uma mensagem que incentive os consumidores a reavaliar a marca.</li>
+    </ul>
+
+    <h2>CONSIDEREM O OBJETIVO</h2>
+
+    <p>
+        A proposta do vídeo é melhorar a percepção dos consumidores sobre a Domino's durante a etapa de avaliação.
+    </p>
+
+    <h2>REGISTREM A PROPOSTA POR ESCRITO</h2>
+
+</div>
+
+<!-- CABEÇALHO DOMINO'S -->
+
+<div class="header">
+    <div class="topo">
+        <div class="logo">Domino's Pizza</div>
+
+        <div class="pesquisa">
+            <input type="text" placeholder="Busque no cardápio Domino's">
+        </div>
+
+        <div>
+            👤 Entrar &nbsp;&nbsp; 🍕 Meu Pedido
+        </div>
+    </div>
+</div>
+
+<!-- CONTEÚDO -->
+
+<div class="conteudo">
+
+    <div class="card">
+
+        <h2 class="titulo">Campanha de Vendas: Reconstruindo a Confiança</h2>
+
+        <span class="status">Rebranding & Reavaliação</span>
+
+        <div class="problema">
+
+            <p>
+                A Domino's enfrentava um grande desafio de percepção: apesar de ter reformulado completamente suas receitas e ingredientes, muitos clientes ainda mantinham uma imagem negativa baseada em experiências antigas.
+            </p>
+
+            <p>
+                Para romper essa barreira e fazer os consumidores reavaliarem a marca, a equipe de vendas desenvolveu uma estratégia transparente e direta por meio de um vídeo publicitário de 30 segundos.
+            </p>
+
+        </div>
+
+        <div class="protocolo">
+
+            <h3>🎬 Roteiro do Vídeo de Vendas (30 Segundos)</h3>
+
+            <ol>
+                <li><strong>[00s - 05s] O Problema:</strong> Imagens de comentários reais do passado criticando a pizza, acompanhadas por uma narração honesta assumindo que a qualidade antiga não era satisfatória.</li>
+                <li><strong>[05s - 15s] As Mudanças:</strong> Transição para a cozinha mostrando a mudança total: massa nova feita do zero diariamente, molho com tomates frescos e queijo 100% de verdade.</li>
+                <li><strong>[15s - 22s] A Nova Experiência:</strong> Cenas apetitosas da pizza saindo do forno perfeita, sendo cortada e servida quentinha.</li>
+                <li><strong>[22s - 30s] Chamada para Reavaliação:</strong> Convite direto ao público para experimentar a nova receita com um desconto exclusivo de reavaliação.</li>
+            </ol>
+
+            <br>
+
+            <p><strong>[Cena 1 - 00s a 05s]</strong><br>
+            <em>(Fundo escuro com ler comentários antigos na tela: "Parece papelão", "O molho não tem gosto".)</em><br>
+            <strong>Locutor:</strong> "A gente ouviu vocês. E sim... a nossa pizza do passado não era boa o suficiente."</p>
+            <br>
+
+            <p><strong>[Cena 2 - 05s a 15s]</strong><br>
+            <em>(Música dinâmica entra. Imagens aceleradas e bonitas de pizzaiolos preparando a nova massa, espalhando molho de tomate fresco e jogando bastante queijo derretido.)</em><br>
+            <strong>Locutor:</strong> "Por isso, mudamos tudo! Criamos uma nova massa feita do zero todos os dias, um molho de tomates selecionados e queijo 100% de verdade."</p>
+            <br>
+
+            <p><strong>[Cena 3 - 15s a 22s]</strong><br>
+            <em>(Cena em redesenho: uma fatia de pizza crocante sendo puxada com o queijo esticando.)</em><br>
+            <strong>Locutor:</strong> "Resultado? Uma pizza totalmente nova, crocante por fora, macia por dentro e cheia de sabor."</p>
+            <br>
+
+            <p><strong>[Cena 4 - 22s a 30s]</strong><br>
+            <em>(Aparece o logotipo atualizado da Domino's e o cupom de desconto "NOVADOMINOS" na tela.)</em><br>
+            <strong>Locutor:</strong> "Não acredite apenas na nossa palavra. Dê uma nova chance ao seu paladar. Peça agora com 30% OFF no cupom NOVADOMINOS e reavalie a nossa marca!"</p>
+            <br>
+
+            <p>Atenciosamente,<br><strong>Equipe de Vendas e Marketing - Domino's Pizza</strong></p>
+
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+
+        <div class="info">
+            <h3>Desafios Identificados</h3>
+
+            <ul>
+                <li>Preconceito com a marca</li>
+                <li>Memória negativa do cliente</li>
+                <li>Resistência à reavaliação</li>
+                <li>Necessidade de transparência</li>
+            </ul>
+
+        </div>
+
+        <div class="info">
+            <h3>Objetivo da Campanha</h3>
+
+            <p>
+                Melhorar a percepção dos consumidores sobre a Domino's na etapa de avaliação, incentivando um novo teste do produto.
+            </p>
+
+        </div>
+
+        <div class="info">
+            <h3>Percepção da Marca</h3>
+
+            <p>🔴 Antes: Associada a críticas antigas</p>
+            <br>
+            <p>🟢 Pós-Vídeo: Esperado Reavaliação Positiva</p>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+Simulação educacional baseada na campanha histórica de reestruturação de marca da Domino's Pizza.
+</footer>
+
+</body>
+</html>
