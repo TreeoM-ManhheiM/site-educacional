@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dilemas tecnológicos</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#d9d9d9;
+    color:#333;
+}
+
+/* ATIVIDADE */
+
+.atividade{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    background:#e7e7e7;
+    padding:20px;
+    border-radius:5px;
+}
+
+.atividade h1{
+    font-size:42px;
+    margin-bottom:20px;
+}
+
+.atividade h2{
+    font-size:22px;
+    margin:20px 0 10px;
+}
+
+.atividade p{
+    line-height:1.8;
+    margin-bottom:15px;
+}
+
+.atividade ol{
+    margin:10px 0 15px 35px;
+}
+
+.atividade li{
+    margin-bottom:8px;
+}
+
+.box-cenarios{
+    border:1px solid #333;
+    padding:20px;
+    margin-top:20px;
+    background:#fff;
+    border-radius:4px;
+}
+
+.box-cenarios h3{
+    font-size:18px;
+    margin-top:15px;
+    margin-bottom:8px;
+}
+
+.box-cenarios h3:first-child{
+    margin-top:0;
+}
+
+/* SITE ETHICSTECH LAB */
+
+.header{
+    background:#dc2626;
+    color:white;
+    padding:15px 30px;
+}
+
+.header .topo{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width:1200px;
+    margin:auto;
+}
+
+.logo{
+    font-size:35px;
+    font-weight:bold;
+    letter-spacing: -0.5px;
+}
+
+.pesquisa{
+    width:45%;
+}
+
+.pesquisa input{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:5px;
+}
+
+.conteudo{
+    width:95%;
+    max-width:1200px;
+    margin:20px auto;
+    display:grid;
+    grid-template-columns:3fr 1fr;
+    gap:20px;
+}
+
+.card{
+    background:white;
+    border-radius:10px;
+    padding:25px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.titulo{
+    color:#dc2626;
+    margin-bottom:10px;
+}
+
+.status{
+    display:inline-block;
+    background:#dc2626;
+    color:white;
+    padding:6px 12px;
+    border-radius:20px;
+    margin-bottom:20px;
+    font-size:14px;
+}
+
+.problema{
+    line-height:1.9;
+}
+
+.sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+}
+
+.info{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 6px rgba(0,0,0,.12);
+}
+
+.info h3{
+    margin-bottom:10px;
+    color:#dc2626;
+}
+
+.protocolo{
+    margin-top:25px;
+    background:#fef2f2;
+    border-left:5px solid #dc2626;
+    padding:20px;
+    border-radius:6px;
+}
+
+.protocolo h3{
+    margin-bottom:15px;
+    color:#dc2626;
+}
+
+.protocolo ol{
+    padding-left:20px;
+}
+
+.protocolo li{
+    margin-bottom:10px;
+}
+
+footer{
+    text-align:center;
+    padding:20px;
+    color:#666;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ENUNCIADO -->
+
+<div class="atividade">
+
+    <h1>Dilemas tecnológicos</h1>
+
+    <ol>
+        <li>Formem grupos de 5 pessoas.</li>
+        <li>Cada grupo receberá um cenário com um dilema ético relacionado à adoção de tecnologias disruptivas (disponível a seguir).</li>
+        <li>Discutam o cenário recebido e criem uma solução que equilibre inovação, ética e responsabilidade social. Anotem suas ideias em uma folha e preparem uma breve apresentação.</li>
+        <li>Cada grupo apresenta o dilema e a solução proposta. Essa atividade deverá ser enviada no AVA. Basta tirar uma foto e enviar.</li>
+    </ol>
+
+    <div class="box-cenarios">
+
+        <h3>Cenário 1 – Privacidade e dados</h3>
+        <p>Uma empresa de saúde criou um aplicativo que monitora sinais vitais, mas coleta dados sem informar claramente como serão usados.</p>
+        <p><strong>Pergunta-chave:</strong> como a empresa pode garantir a transparência e o consentimento dos usuários?</p>
+
+        <h3>Cenário 2 – Impacto no trabalho</h3>
+        <p>Uma fábrica automatizou suas linhas de produção com robôs, mas demitiu 30% de seus trabalhadores.</p>
+        <p><strong>Pergunta-chave:</strong> o que pode ser feito para minimizar os impactos sociais dessa decisão?</p>
+
+        <h3>Cenário 3 – Inclusão digital</h3>
+        <p>Uma startup lançou um aplicativo educacional incrível, mas ele só funciona em smartphones caros, excluindo estudantes de baixa renda.</p>
+        <p><strong>Pergunta-chave:</strong> como a empresa pode tornar sua tecnologia mais inclusiva?</p>
+
+    </div>
+
+</div>
+
+<!-- CABEÇALHO ETHICSTECH LAB -->
+
+<div class="header">
+    <div class="topo">
+        <div class="logo">EthicsTech</div>
+
+        <div class="pesquisa">
+            <input type="text" placeholder="Busque cenários, dilemas ou resoluções éticas">
+        </div>
+
+        <div>
+            👤 Grupo de Ética &nbsp;&nbsp; ⚖️ Projetos
+        </div>
+    </div>
+</div>
+
+<!-- CONTEÚDO -->
+
+<div class="conteudo">
+
+    <div class="card">
+
+        <h2 class="titulo">Resolução de Dilema Ético — Cenário 1 (Privacidade e Dados)</h2>
+
+        <span class="status">Governança de Dados & LGPD / GDPR</span>
+
+        <div class="problema">
+
+            <p>
+                <strong>Dilema Analisado:</strong> Aplicativo de saúde monitora sinais vitais, porém coleta e processa dados sem a devida transparência e consentimento claro dos usuários.
+            </p>
+
+            <p>
+                <strong>Objetivo da Proposta:</strong> Adequar o aplicativo aos princípios de ética, privacidade desde o design (Privacy by Design) e responsabilidade social, sem comprometer a inovação tecnológica.
+            </p>
+
+        </div>
+
+        <div class="protocolo">
+
+            <h3>🛡️ Solução Proposta: Modelo "Privacy First" em 4 Passos</h3>
+
+            <ol>
+                <li><strong>Termos de Uso em Linguagem Simples e Acessível:</strong> Substituição dos textos jurídicos longos por resumos em tópicos ilustrados, explicando em até 1 minuto exatamente quais dados são coletados (ex: batimentos, sono) e para qual finalidade médica.</li>
+                <li><strong>Consentimento Granular e Opt-in Explícito:</strong> O usuário escolhe exatamente o que quer compartilhar através de botões "liga/desliga" para cada função (ex: aceita monitorar sinais vitais para uso próprio, mas desativa o compartilhamento com pesquisas de terceiros).</li>
+                <li><strong>Central/Dashboard de Privacidade no App:</strong> Criação de uma aba onde o usuário pode visualizar, baixar em PDF ou apagar definitivamente seus dados do servidor a qualquer momento com 1 clique.</li>
+                <li><strong>Anonimização Obrigatória de Dados sensíveis:</strong> Qualquer dado utilizado para melhoria de algoritmos ou estudos deve passar por processo de criptografia e anonimização total, desvinculando o nome do paciente dos registros médicos.</li>
+            </ol>
+
+            <br>
+
+            <p><strong>Equilíbrio Encontrado (Inovação + Ética + Impacto Social):</strong></p>
+            <br>
+
+            <p>• <strong>Inovação:</strong> O aplicativo continua funcionando perfeitamente e aprimorando seus recursos por meio de inteligência artificial.<br>
+            • <strong>Ética:</strong> Respeito total à autonomia do usuário e cumprimento rigoroso das leis de proteção de dados.<br>
+            • <strong>Responsabilidade Social:</strong> Fortalecimento da confiança pública em ferramentas de telemedicina e saúde digital.</p>
+            <br>
+
+            <p>Atenciosamente,<br><strong>Grupo de Ética e Tecnologia - Grupo 1</strong></p>
+
+        </div>
+
+    </div>
+
+    <div class="sidebar">
+
+        <div class="info">
+            <h3>Cenário Escolhido</h3>
+
+            <p>
+                <strong>Cenário 1: Privacidade e Dados</strong> por abordar a proteção da privacidade e a confiança do usuário no setor de saúde digital.
+            </p>
+
+        </div>
+
+        <div class="info">
+            <h3>Soluções Rápida (Outros Cenários)</h3>
+
+            <p><strong>Cenário 2 (Automação):</strong> Criar programa de requalificação profissional interno para realocar funcionários demitidos em áreas de manutenção e programação de robôs.</p>
+            <br>
+            <p><strong>Cenário 3 (Inclusão):</strong> Desenvolver uma versão "Lite" otimizada para aparelhos antigos e com acesso offline ou via navegador web básico.</p>
+
+        </div>
+
+        <div class="info">
+            <h3>Tríplice da Solução</h3>
+
+            <p>🔴 Inovação Tecnológica</p>
+            <p>🟡 Transparência Ética</p>
+            <p>🟢 Segurança do Usuário</p>
+        </div>
+
+    </div>
+
+</div>
+
+<footer>
+Simulação educacional sobre Ética, Tecnologia e Responsabilidade Social.
+</footer>
+
+</body>
+</html>
