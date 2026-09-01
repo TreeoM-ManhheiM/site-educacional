@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plataforma Integrada: Feature Engineering & Machine Learning | Banco Alpha</title>
-    
+
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -70,9 +70,6 @@
             font-weight: 700;
         }
 
-        .badge-todo { background-color: #ff9800; color: #fff; }
-        .badge-done { background-color: #4caf50; color: #fff; }
-
         .code-editor {
             font-family: 'Courier New', Courier, monospace;
             background-color: #1e1e1e;
@@ -82,6 +79,7 @@
             width: 100%;
             height: 280px;
             border: 1px solid #333;
+            resize: vertical;
         }
 
         .console-output {
@@ -104,6 +102,10 @@
 
         .extra-col {
             background-color: #e8f5e9 !important;
+        }
+
+        pre {
+            margin-bottom: 0;
         }
     </style>
 </head>
@@ -333,7 +335,7 @@ df = pd.read_csv('dados_banco_alpha_modificado.csv')
 X = df.drop(columns=['AtrasoPagamento'])
 y = df['AtrasoPagamento']
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
 
 # Treinamento dos Classificadores
 lr_model = LogisticRegression(max_iter=1000).fit(X_train, y_train)
@@ -355,19 +357,24 @@ print("Acurácia Árvore de Decisão:", accuracy_score(y_test, dt_model.predict(
                     <hr>
 
                     <div class="bg-light p-3 rounded border mb-3">
-                        <pre><code>from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+                        <pre><code>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report, confusion_matrix
 
-# Relatório Completo de Métricas
+df = pd.read_csv('dados_banco_alpha_modificado.csv')
+X = df.drop(columns=['AtrasoPagamento'])
+y = df['AtrasoPagamento']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+model_dt = DecisionTreeClassifier(random_state=42).fit(X_train, y_train)
+pred_dt = model_dt.predict(X_test)
+
 print("=== Relatório de Classificação ===")
-print(classification_report(y_test, y_pred_dt))
+print(classification_report(y_test, pred_dt))
 
-# Matriz de Confusão
 print("=== Matriz de Confusão ===")
-print(confusion_matrix(y_test, y_pred_dt))
-
-# Pontuação ROC-AUC
-y_proba = dt_model.predict_proba(X_test)[:, 1]
-print("ROC-AUC Score:", round(roc_auc_score(y_test, y_proba), 4))</code></pre>
+print(confusion_matrix(y_test, pred_dt))</code></pre>
                     </div>
                     <button class="btn btn-success btn-sm w-auto" onclick="loadSnippet(2)"><i class="fa-solid fa-play me-1"></i> Carregar e Executar no Simulador</button>
                 </div>
@@ -381,25 +388,22 @@ print("ROC-AUC Score:", round(roc_auc_score(y_test, y_proba), 4))</code></pre>
                     <hr>
 
                     <div class="bg-light p-3 rounded border mb-3">
-                        <pre><code>from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import GridSearchCV
+                        <pre><code>import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
 
-param_grid = {
-    'n_estimators': [50, 100],
-    'max_depth': [3, 5, 10],
-    'min_samples_split': [2, 5]
-}
+df = pd.read_csv('dados_banco_alpha_modificado.csv')
+X = df.drop(columns=['AtrasoPagamento'])
+y = df['AtrasoPagamento']
 
-rf = RandomForestClassifier(random_state=42)
-grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, scoring='f1')
-grid_search.fit(X_train, y_train)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
 
-print("Melhores Hiperparâmetros:", grid_search.best_params_)
-best_rf = grid_search.best_estimator_
+rf = RandomForestClassifier(n_estimators=50, random_state=42)
+rf.fit(X_train, y_train)
 
-# Feature Importances no Ensemble
-importances = pd.Series(best_rf.feature_importances_, index=X.columns).sort_values(ascending=False)
-print("\nImportância Real no Modelo Ensemble:\n", importances)</code></pre>
+importances = pd.Series(rf.feature_importances_, index=X.columns).sort_values(ascending=False)
+print("=== Relevância das Variáveis no Ensemble ===")
+print(importances)</code></pre>
                     </div>
                     <button class="btn btn-warning text-dark btn-sm w-auto fw-bold" onclick="loadSnippet(3)"><i class="fa-solid fa-play me-1"></i> Carregar e Executar no Simulador</button>
                 </div>
@@ -586,7 +590,7 @@ print(importances)`
                 document.getElementById('pyodide-status').innerHTML = '<i class="fa-solid fa-circle-check me-2"></i> Ambiente Python (pandas + scikit-learn) pronto para execução!';
                 document.getElementById('run-btn').disabled = false;
                 
-                loadSnippet(1);
+                document.getElementById('code-editor').value = snippets[1];
             } catch (err) {
                 document.getElementById('pyodide-status').className = "alert alert-danger py-2";
                 document.getElementById('pyodide-status').innerHTML = '<i class="fa-solid fa-circle-xmark me-2"></i> Erro ao carregar Pyodide: ' + err.message;
@@ -623,6 +627,35 @@ print(importances)`
             document.getElementById('console-output').innerText = "Console limpo.";
         }
 
+        // Renderizar Gráfico de Importância de Features (Chart.js)
+        function renderFeatureChart() {
+            const ctx = document.getElementById('featureChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['TaxaUsoCredito', 'PontuacaoCredito', 'NumEmprestimos', 'RendaMensal', 'Idade'],
+                    datasets: [{
+                        label: 'Importância Relativa da Feature',
+                        data: [0.38, 0.29, 0.16, 0.11, 0.06],
+                        backgroundColor: [
+                            '#0d47a1', '#1976d2', '#2196f3', '#64b5f6', '#90caf9'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 0.5 }
+                    }
+                }
+            });
+        }
+
         // Funções de Downloads
         function downloadCSV() {
             const blob = new Blob([csvData], { type: 'text/csv' });
@@ -647,6 +680,20 @@ print(importances)`
                         "metadata": {},
                         "outputs": [],
                         "source": [snippets[1]]
+                    },
+                    {
+                        "cell_type": "code",
+                        "execution_count": null,
+                        "metadata": {},
+                        "outputs": [],
+                        "source": [snippets[2]]
+                    },
+                    {
+                        "cell_type": "code",
+                        "execution_count": null,
+                        "metadata": {},
+                        "outputs": [],
+                        "source": [snippets[3]]
                     }
                 ],
                 "metadata": { "language_info": { "name": "python" } },
@@ -662,29 +709,10 @@ print(importances)`
             a.click();
         }
 
-        // Renderizar Gráfico Chart.js ao Carregar
+        // Inicializar aplicação após carregar o DOM
         window.addEventListener('DOMContentLoaded', () => {
+            renderFeatureChart();
             initPyodide();
-
-            const ctx = document.getElementById('featureChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['PercentualSaldo', 'TempoComoCliente', 'RendaPorLimiteCartao', 'Idade', 'LimiteCartao'],
-                    datasets: [{
-                        label: 'Score de Importância de Feature',
-                        data: [0.38, 0.25, 0.20, 0.11, 0.06],
-                        backgroundColor: ['#1976d2', '#2e7d32', '#009688', '#ff9800', '#9e9e9e']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, max: 0.5 }
-                    }
-                }
-            });
         });
     </script>
 </body>
