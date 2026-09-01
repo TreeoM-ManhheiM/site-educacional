@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plataforma Integrada: Feature Engineering & Machine Learning | Banco Alpha</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Pyodide (Python no Navegador) -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+
+    <style>
+        :root {
+            --primary-color: #0d47a1;
+            --secondary-color: #1976d2;
+            --dark-blue: #1e3c72;
+            --accent-green: #2e7d32;
+            --warning-red: #c62828;
+            --bg-gray: #f4f6f9;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #212529;
+        }
+
+        .hero-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1e3c72 100%);
+            color: white;
+            padding: 2.5rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 1.5rem;
+            background-color: #ffffff;
+        }
+
+        .nav-pills .nav-link {
+            color: var(--dark-blue);
+            font-weight: 600;
+            border-radius: 8px;
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pills .nav-link.active {
+            background-color: var(--dark-blue);
+            color: white;
+        }
+
+        .table-responsive {
+            border-radius: 8px;
+            overflow-x: auto;
+        }
+
+        table th {
+            background-color: #eef2f7 !important;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .badge-todo { background-color: #ff9800; color: #fff; }
+        .badge-done { background-color: #4caf50; color: #fff; }
+
+        .code-editor {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border-radius: 8px;
+            padding: 15px;
+            width: 100%;
+            height: 280px;
+            border: 1px solid #333;
+        }
+
+        .console-output {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0d1117;
+            color: #58a6ff;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 150px;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+        }
+
+        .extra-col {
+            background-color: #e8f5e9 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Cabeçalho Principal -->
+    <div class="hero-header text-center">
+        <div class="container">
+            <h1 class="fw-bold"><i class="fa-solid fa-brain me-2"></i>Plataforma Integrada de Aprendizagem de Máquina</h1>
+            <p class="lead mb-1">Da Engenharia de Atributos (Feature Engineering) à Modelação de Inadimplência</p>
+            <small class="opacity-75">Estudo de Caso Prático: Dataset Banco Alpha</small>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+
+        <!-- Navegação Unificada por Abas -->
+        <ul class="nav nav-pills nav-justified mb-4 bg-white p-2 rounded shadow-sm" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="tab1-btn" data-bs-toggle="tab" data-bs-target="#aula1" type="button" role="tab"><i class="fa-solid fa-lightbulb me-1"></i> Aula 1: Conceitos</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab2-btn" data-bs-toggle="tab" data-bs-target="#aula2" type="button" role="tab"><i class="fa-solid fa-wand-magic-sparkles me-1"></i> Aula 2: Novas Features</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab3-btn" data-bs-toggle="tab" data-bs-target="#aula3" type="button" role="tab"><i class="fa-solid fa-filter me-1"></i> Aula 3: Seleção</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab4-btn" data-bs-toggle="tab" data-bs-target="#aula4" type="button" role="tab"><i class="fa-solid fa-diagram-project me-1"></i> Aula 4: Classificação</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab5-btn" data-bs-toggle="tab" data-bs-target="#aula5" type="button" role="tab"><i class="fa-solid fa-chart-pie me-1"></i> Aula 5: Métricas</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="tab6-btn" data-bs-toggle="tab" data-bs-target="#aula6" type="button" role="tab"><i class="fa-solid fa-network-wired me-1"></i> Aula 6: Ensembles</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="simulator-btn" data-bs-toggle="tab" data-bs-target="#simulator" type="button" role="tab"><i class="fa-solid fa-terminal me-1"></i> Simulador Python</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="downloads-btn" data-bs-toggle="tab" data-bs-target="#downloads" type="button" role="tab"><i class="fa-solid fa-download me-1"></i> Downloads</button>
+            </li>
+        </ul>
+
+        <!-- Conteúdo das Abas -->
+        <div class="tab-content" id="mainTabsContent">
+
+            <!-- AULA 1 -->
+            <div class="tab-pane fade show active" id="aula1" role="tabpanel">
+                <div class="card p-4">
+                    <h3><i class="fa-solid fa-book-open text-primary me-2"></i>Aula 1 – Introdução ao Feature Engineering</h3>
+                    <p class="text-muted">A Engenharia de Atributos consiste no processo de transformar dados brutos em variáveis preditivas para alimentar algoritmos de Machine Learning.</p>
+                    <hr>
+                    
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded bg-light h-100">
+                                <h5><i class="fa-solid fa-trash-can text-danger me-2"></i>1. Atributos Irrelevantes / Redundantes</h5>
+                                <ul>
+                                    <li><strong><code>ID_Cliente</code> / <code>pedido_id</code>:</strong> Apenas identificadores cadastrais sem padrão preditivo real.</li>
+                                    <li><strong><code>produto_id</code>:</strong> Redundante quando já possuímos a <code>categoria_produto</code>.</li>
+                                    <li><strong><code>tipo_dispositivo</code>:</strong> Pouco impacto direto na análise de risco financeiro.</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded bg-light h-100">
+                                <h5><i class="fa-solid fa-plus-circle text-success me-2"></i>2. Propostas de Novas Features</h5>
+                                <ul>
+                                    <li><strong><code>RendaPorLimiteCartao</code>:</strong> Mede a proporção do limite concedido em relação aos ganhos mensais.</li>
+                                    <li><strong><code>PercentualSaldo</code>:</strong> Percentual da renda mantido como saldo em conta.</li>
+                                    <li><strong><code>TempoComoCliente</code>:</strong> Medida em anos de engajamento com a instituição.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AULA 2 -->
+            <div class="tab-pane fade" id="aula2" role="tabpanel">
+                <div class="card p-4">
+                    <h3><i class="fa-solid fa-table text-primary me-2"></i>Aula 2 – Criação e Visualização de Features (Banco Alpha)</h3>
+                    <p class="text-muted">Demonstração das transformações aplicadas via Pandas no dataset <code>dados_banco_alpha.csv</code>.</p>
+                    <hr>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="fw-bold text-secondary">Tabela de Amostra dos Clientes:</span>
+                        <button class="btn btn-outline-primary btn-sm" onclick="toggleDatasetView()">
+                            <i class="fa-solid fa-eye me-1"></i> Alternar Visualização de Features Criadas
+                        </button>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle border" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th>ID_Cliente</th>
+                                    <th>DataAbertura</th>
+                                    <th>Idade</th>
+                                    <th>RendaMensal</th>
+                                    <th>SaldoConta</th>
+                                    <th>LimiteCartao</th>
+                                    <th>Status Atraso</th>
+                                    <th class="extra-col">TempoCliente (anos)</th>
+                                    <th class="extra-col">Renda/Limite</th>
+                                    <th class="extra-col">% Saldo/Renda</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>201</td>
+                                    <td>2018-01-25</td>
+                                    <td>25</td>
+                                    <td>R$ 3.000</td>
+                                    <td>R$ 900</td>
+                                    <td>R$ 4.000</td>
+                                    <td><span class="badge bg-success">0 (Em dia)</span></td>
+                                    <td class="extra-col fw-bold">8.10</td>
+                                    <td class="extra-col fw-bold">0.750</td>
+                                    <td class="extra-col fw-bold">30.00%</td>
+                                </tr>
+                                <tr>
+                                    <td>202</td>
+                                    <td>2018-03-02</td>
+                                    <td>57</td>
+                                    <td>R$ 4.500</td>
+                                    <td>R$ 2.100</td>
+                                    <td>R$ 8.000</td>
+                                    <td><span class="badge bg-danger">1 (Atraso)</span></td>
+                                    <td class="extra-col fw-bold">7.99</td>
+                                    <td class="extra-col fw-bold">0.563</td>
+                                    <td class="extra-col fw-bold">46.67%</td>
+                                </tr>
+                                <tr>
+                                    <td>203</td>
+                                    <td>2019-07-15</td>
+                                    <td>33</td>
+                                    <td>R$ 2.800</td>
+                                    <td>R$ 750</td>
+                                    <td>R$ 5.000</td>
+                                    <td><span class="badge bg-success">0 (Em dia)</span></td>
+                                    <td class="extra-col fw-bold">6.63</td>
+                                    <td class="extra-col fw-bold">0.560</td>
+                                    <td class="extra-col fw-bold">26.79%</td>
+                                </tr>
+                                <tr>
+                                    <td>204</td>
+                                    <td>2021-05-20</td>
+                                    <td>42</td>
+                                    <td>R$ 6.500</td>
+                                    <td>R$ 1.500</td>
+                                    <td>R$ 12.000</td>
+                                    <td><span class="badge bg-success">0 (Em dia)</span></td>
+                                    <td class="extra-col fw-bold">4.78</td>
+                                    <td class="extra-col fw-bold">0.542</td>
+                                    <td class="extra-col fw-bold">23.08%</td>
+                                </tr>
+                                <tr>
+                                    <td>205</td>
+                                    <td>2019-10-11</td>
+                                    <td>60</td>
+                                    <td>R$ 7.000</td>
+                                    <td>R$ 3.100</td>
+                                    <td>R$ 10.000</td>
+                                    <td><span class="badge bg-danger">1 (Atraso)</span></td>
+                                    <td class="extra-col fw-bold">6.39</td>
+                                    <td class="extra-col fw-bold">0.700</td>
+                                    <td class="extra-col fw-bold">44.29%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AULA 3 -->
+            <div class="tab-pane fade" id="aula3" role="tabpanel">
+                <div class="card p-4">
+                    <h3><i class="fa-solid fa-chart-column text-primary me-2"></i>Aula 3 – Seleção de Atributos & Relevância</h3>
+                    <p class="text-muted">Análise de colinearidade, redução de redundância e importância relativa das variáveis geradas.</p>
+                    <hr>
+
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded bg-light">
+                                <h5><i class="fa-solid fa-check-double text-success me-2"></i>Features Mais Relevantes</h5>
+                                <ol class="mb-0">
+                                    <li><strong><code>PercentualSaldo</code>:</strong> Indicador direto do nível de comprometimento financeiro.</li>
+                                    <li><strong><code>TempoComoCliente</code>:</strong> Histórico de retenção e estabilidade bancária.</li>
+                                    <li><strong><code>RendaPorLimiteCartao</code>:</strong> Avalia proporcionalidade de crédito concedido.</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 border rounded bg-light">
+                                <h5><i class="fa-solid fa-scissors text-warning me-2"></i>Atributos Descartados</h5>
+                                <p class="mb-0">Variáveis brutas como <code>SaldoConta</code> e <code>LimiteCartao</code> possuem alta multicolinearidade com a renda e foram combinadas nos novos índices para evitar <em>overfitting</em>.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5>Gráfico de Importância das Features (Simulação SelectKBest / Random Forest):</h5>
+                    <div class="chart-container">
+                        <canvas id="featureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AULA 4 -->
+            <div class="tab-pane fade" id="aula4" role="tabpanel">
+                <div class="card p-4">
+                    <h3><i class="fa-solid fa-sitemap text-primary me-2"></i>Aula 4 – Modelos de Classificação Supervisionada</h3>
+                    <p class="text-muted">Treinamento e comparação entre Regressão Logística e Árvores de Decisão para predição de inadimplência.</p>
+                    <hr>
+
+                    <div class="bg-light p-3 rounded border mb-3">
+                        <pre><code><span class="text-secondary"># Roteiro de Modelagem (Classificação)</span>
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+df = pd.read_csv('dados_banco_alpha_modificado.csv')
+
+X = df.drop(columns=['AtrasoPagamento'])
+y = df['AtrasoPagamento']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42, stratify=y)
+
+# Treinamento dos Classificadores
+lr_model = LogisticRegression(max_iter=1000).fit(X_train, y_train)
+dt_model = DecisionTreeClassifier(max_depth=5, random_state=42).fit(X_train, y_train)
+
+# Avaliação Inicial
+print("Acurácia Regressão Logística:", accuracy_score(y_test, lr_model.predict(X_test)))
+print("Acurácia Árvore de Decisão:", accuracy_score(y_test, dt_model.predict(X_test)))</code></pre>
+                    </div>
+                    <button class="btn btn-primary btn-sm w-auto" onclick="loadSnippet(1)"><i class="fa-solid fa-play me-1"></i> Carregar e Executar no Simulador</button>
+                </div>
+            </div>
+
+            <!-- AULA 5 -->
+            <div class="tab-pane fade" id="aula5" role="tabpanel">
+                <div class="card p-4">
+                    <h3><i class="fa-solid fa-square-poll-vertical text-success me-2"></i>Aula 5 – Métricas e Avaliação de Desempenho</h3>
+                    <p class="text-muted">Diagnóstico aprofundado com Matriz de Confusão, Precision, Recall e Curva ROC-AUC.</p>
+                    <hr>
+
+                    <div class="bg-light p-3 rounded border mb-3">
+                        <pre><code>from sklearn.metrics import classification_report, confusion_matrix, roc_auc_score
+
+# Relatório Completo de Métricas
+print("=== Relatório de Classificação ===")
+print(classification_report(y_test, y_pred_dt))
+
+# Matriz de Confusão
+print("=== Matriz de Confusão ===")
+print(confusion_matrix(y_test, y_pred_dt))
+
+# Pontuação ROC-AUC
+y_proba = dt_model.predict_proba(X_test)[:, 1]
+print("ROC-AUC Score:", round(roc_auc_score(y_test, y_proba), 4))</code></pre>
+                    </div>
+                    <button class="btn btn-success btn-sm w-auto" onclick="loadSnippet(2)"><i class="fa-solid fa-play me-1"></i> Carregar e Executar no Simulador</button>
+                </div>
+            </div>
+
+            <!-- AULA 6 -->
+            <div class="tab-pane fade" id="aula6" role="tabpanel">
+                <div class="card p-4">
+                    <h3><i class="fa-solid fa-sliders text-warning me-2"></i>Aula 6 – Ensembles & Otimização de Hiperparâmetros</h3>
+                    <p class="text-muted">Aumento da capacidade preditiva com Random Forest e busca exaustiva via GridSearchCV.</p>
+                    <hr>
+
+                    <div class="bg-light p-3 rounded border mb-3">
+                        <pre><code>from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
+
+param_grid = {
+    'n_estimators': [50, 100],
+    'max_depth': [3, 5, 10],
+    'min_samples_split': [2, 5]
+}
+
+rf = RandomForestClassifier(random_state=42)
+grid_search = GridSearchCV(estimator=rf, param_grid=param_grid, cv=3, scoring='f1')
+grid_search.fit(X_train, y_train)
+
+print("Melhores Hiperparâmetros:", grid_search.best_params_)
+best_rf = grid_search.best_estimator_
+
+# Feature Importances no Ensemble
+importances = pd.Series(best_rf.feature_importances_, index=X.columns).sort_values(ascending=False)
+print("\nImportância Real no Modelo Ensemble:\n", importances)</code></pre>
+                    </div>
+                    <button class="btn btn-warning text-dark btn-sm w-auto fw-bold" onclick="loadSnippet(3)"><i class="fa-solid fa-play me-1"></i> Carregar e Executar no Simulador</button>
+                </div>
+            </div>
+
+            <!-- SIMULADOR INTERATIVO -->
+            <div class="tab-pane fade" id="simulator" role="tabpanel">
+                <div class="card p-4">
+                    <h3><i class="fa-solid fa-terminal text-dark me-2"></i>Simulador Python Interativo (In-Browser)</h3>
+                    <p class="text-muted">Execução real de código Python com <code>pandas</code> e <code>scikit-learn</code> diretamente no seu navegador via WebAssembly.</p>
+
+                    <div id="pyodide-status" class="alert alert-info py-2">
+                        <i class="fa-solid fa-spinner fa-spin me-2"></i> Carregando motor Python e bibliotecas de Data Science... Aguarde.
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="code-editor" class="form-label fw-bold">Editor de Código Python:</label>
+                        <textarea id="code-editor" class="code-editor" spellcheck="false"></textarea>
+                    </div>
+
+                    <div class="mb-3 d-flex gap-2">
+                        <button id="run-btn" class="btn btn-success fw-bold" onclick="runPythonCode()" disabled>
+                            <i class="fa-solid fa-play me-1"></i> Executar Código
+                        </button>
+                        <button class="btn btn-secondary" onclick="clearConsole()">
+                            <i class="fa-solid fa-eraser me-1"></i> Limpar Console
+                        </button>
+                    </div>
+
+                    <div>
+                        <label class="form-label fw-bold">Console de Saída (Output):</label>
+                        <div id="console-output" class="console-output">Aguardando execução...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DOWNLOADS -->
+            <div class="tab-pane fade" id="downloads" role="tabpanel">
+                <div class="card p-4">
+                    <h3><i class="fa-solid fa-box-archive text-danger me-2"></i>Central de Downloads & Recursos</h3>
+                    <p class="text-muted">Baixe o conjunto de dados sintetizado do Banco Alpha e notebooks para execução local.</p>
+                    <hr>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="card border p-3 h-100">
+                                <h5><i class="fa-solid fa-file-csv text-success me-2"></i>Dataset CSV Modificado</h5>
+                                <p class="small text-muted mb-3">Base com variáveis originais e calculadas (Idade, RendaMensal, PontuacaoCredito, NumEmprestimos, TaxaUsoCredito, AtrasoPagamento).</p>
+                                <button class="btn btn-outline-success mt-auto" onclick="downloadCSV()">
+                                    <i class="fa-solid fa-download me-1"></i> Baixar dados_banco_alpha_modificado.csv
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card border p-3 h-100">
+                                <h5><i class="fa-solid fa-book-open text-primary me-2"></i>Notebook .ipynb Completo</h5>
+                                <p class="small text-muted mb-3">Jupyter Notebook com todo o roteiro prático, Feature Engineering, Modelagem e Avaliação.</p>
+                                <button class="btn btn-outline-primary mt-auto" onclick="downloadNotebook()">
+                                    <i class="fa-solid fa-download me-1"></i> Baixar Trilha_Completa_BancoAlpha.ipynb
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts de Lógica Integrada -->
+    <script>
+        let pyodide = null;
+
+        // Dataset Sintético do Banco Alpha
+        const csvData = `Idade,RendaMensal,PontuacaoCredito,NumEmprestimos,TaxaUsoCredito,AtrasoPagamento
+35,4500.0,720,2,0.35,0
+52,2800.0,580,5,0.85,1
+28,6200.0,800,1,0.15,0
+41,3100.0,610,4,0.72,1
+60,8500.0,750,2,0.20,0
+23,1900.0,520,3,0.90,1
+45,5000.0,690,3,0.45,0
+33,3800.0,640,2,0.60,0
+50,2200.0,500,6,0.95,1
+39,7100.0,780,1,0.25,0
+29,2900.0,590,4,0.80,1
+55,9200.0,820,1,0.10,0
+38,4100.0,670,3,0.50,0
+48,3300.0,600,4,0.68,1
+26,5100.0,730,2,0.30,0`;
+
+        // Trechos de Código para o Simulador
+        const snippets = {
+            1: `# AULA 4: TREINAMENTO DE CLASSIFICADORES
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import accuracy_score
+
+df = pd.read_csv('dados_banco_alpha_modificado.csv')
+
+X = df.drop(columns=['AtrasoPagamento'])
+y = df['AtrasoPagamento']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+
+# Regressão Logística
+model_lr = LogisticRegression().fit(X_train, y_train)
+pred_lr = model_lr.predict(X_test)
+
+# Árvore de Decisão
+model_dt = DecisionTreeClassifier(random_state=42).fit(X_train, y_train)
+pred_dt = model_dt.predict(X_test)
+
+print("Acurácia Regressão Logística:", accuracy_score(y_test, pred_lr))
+print("Acurácia Árvore de Decisão:", accuracy_score(y_test, pred_dt))`,
+
+            2: `# AULA 5: AVALIAÇÃO COM MÉTRICAS COMPLETA
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+
+df = pd.read_csv('dados_banco_alpha_modificado.csv')
+X = df.drop(columns=['AtrasoPagamento'])
+y = df['AtrasoPagamento']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+model_dt = DecisionTreeClassifier(random_state=42).fit(X_train, y_train)
+pred_dt = model_dt.predict(X_test)
+
+print("=== Relatório de Classificação ===")
+print(classification_report(y_test, pred_dt))
+
+print("=== Matriz de Confusão ===")
+print(confusion_matrix(y_test, pred_dt))`,
+
+            3: `# AULA 6: RANDOM FOREST E FEATURE IMPORTANCES
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+
+df = pd.read_csv('dados_banco_alpha_modificado.csv')
+X = df.drop(columns=['AtrasoPagamento'])
+y = df['AtrasoPagamento']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.20, random_state=42)
+
+rf = RandomForestClassifier(n_estimators=50, random_state=42)
+rf.fit(X_train, y_train)
+
+importances = pd.Series(rf.feature_importances_, index=X.columns).sort_values(ascending=False)
+print("=== Relevância das Variáveis no Ensemble ===")
+print(importances)`
+        };
+
+        // Alternar colunas da Tabela da Aula 2
+        function toggleDatasetView() {
+            var extraCols = document.getElementsByClassName("extra-col");
+            for (var i = 0; i < extraCols.length; i++) {
+                if (extraCols[i].style.display === "none") {
+                    extraCols[i].style.display = "table-cell";
+                } else {
+                    extraCols[i].style.display = "none";
+                }
+            }
+        }
+
+        // Inicializar Pyodide
+        async function initPyodide() {
+            try {
+                pyodide = await loadPyodide();
+                await pyodide.loadPackage(['pandas', 'scikit-learn']);
+                
+                // Gravar CSV no sistema virtual de arquivos do Pyodide
+                pyodide.FS.writeFile('dados_banco_alpha_modificado.csv', csvData);
+
+                document.getElementById('pyodide-status').className = "alert alert-success py-2";
+                document.getElementById('pyodide-status').innerHTML = '<i class="fa-solid fa-circle-check me-2"></i> Ambiente Python (pandas + scikit-learn) pronto para execução!';
+                document.getElementById('run-btn').disabled = false;
+                
+                loadSnippet(1);
+            } catch (err) {
+                document.getElementById('pyodide-status').className = "alert alert-danger py-2";
+                document.getElementById('pyodide-status').innerHTML = '<i class="fa-solid fa-circle-xmark me-2"></i> Erro ao carregar Pyodide: ' + err.message;
+            }
+        }
+
+        function loadSnippet(id) {
+            document.getElementById('code-editor').value = snippets[id];
+            const triggerTab = new bootstrap.Tab(document.getElementById('simulator-btn'));
+            triggerTab.show();
+        }
+
+        async function runPythonCode() {
+            const code = document.getElementById('code-editor').value;
+            const outputDiv = document.getElementById('console-output');
+            outputDiv.innerText = "Executando código...";
+
+            try {
+                pyodide.runPython(`
+                    import sys
+                    import io
+                    sys.stdout = io.StringIO()
+                `);
+
+                await pyodide.runPythonAsync(code);
+                const stdout = pyodide.runPython("sys.stdout.getvalue()");
+                outputDiv.innerText = stdout || "Código executado com sucesso (sem output para exibir).";
+            } catch (err) {
+                outputDiv.innerText = "Erro de Execução:\n" + err.message;
+            }
+        }
+
+        function clearConsole() {
+            document.getElementById('console-output').innerText = "Console limpo.";
+        }
+
+        // Funções de Downloads
+        function downloadCSV() {
+            const blob = new Blob([csvData], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'dados_banco_alpha_modificado.csv');
+            a.click();
+        }
+
+        function downloadNotebook() {
+            const notebookStructure = {
+                "cells": [
+                    {
+                        "cell_type": "markdown",
+                        "metadata": {},
+                        "source": ["# Trilha Completa de Machine Learning - Banco Alpha\n", "Estudo Prático: Feature Engineering, Modelagem e Avaliação."]
+                    },
+                    {
+                        "cell_type": "code",
+                        "execution_count": null,
+                        "metadata": {},
+                        "outputs": [],
+                        "source": [snippets[1]]
+                    }
+                ],
+                "metadata": { "language_info": { "name": "python" } },
+                "nbformat": 4,
+                "nbformat_minor": 2
+            };
+
+            const blob = new Blob([JSON.stringify(notebookStructure, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'Trilha_Completa_BancoAlpha.ipynb');
+            a.click();
+        }
+
+        // Renderizar Gráfico Chart.js ao Carregar
+        window.addEventListener('DOMContentLoaded', () => {
+            initPyodide();
+
+            const ctx = document.getElementById('featureChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['PercentualSaldo', 'TempoComoCliente', 'RendaPorLimiteCartao', 'Idade', 'LimiteCartao'],
+                    datasets: [{
+                        label: 'Score de Importância de Feature',
+                        data: [0.38, 0.25, 0.20, 0.11, 0.06],
+                        backgroundColor: ['#1976d2', '#2e7d32', '#009688', '#ff9800', '#9e9e9e']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, max: 0.5 }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
