@@ -2,8 +2,8 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TCP/IP & Redes sem Fio: Wi‑Fi, BT, NFC, Satélite, Laser</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>TCP/IP & Redes sem Fio: Identificador de Rede e Broadcast</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600;800&display=swap');
 
@@ -14,11 +14,13 @@
             --accent-wlan: #3b82f6;
             --danger: #ef4444;
             --success: #10b981;
+            --warning: #f59e0b;
             --text-light: #f8fafc;
         }
 
         * {
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -29,100 +31,97 @@
             display: flex;
             flex-direction: column;
             height: 100vh;
+            height: 100dvh;
             overflow: hidden;
         }
 
         #header {
             background: #020617;
-            padding: 10px 15px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--accent);
             z-index: 100;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
         }
         #header h1 {
             margin: 0;
-            font-size: 1.1rem;
+            font-size: 0.95rem;
             font-family: 'Fira Code', monospace;
             color: var(--accent);
         }
 
         #toolbar {
             background: var(--panel-bg);
-            padding: 8px 15px;
+            padding: 6px 10px;
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 8px;
             z-index: 99;
             border-bottom: 1px solid #334155;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: thin;
         }
+        #toolbar::-webkit-scrollbar { height: 4px; }
+        #toolbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
         .tool-group {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             border-right: 2px solid #334155;
-            padding-right: 12px;
+            padding-right: 8px;
             align-items: center;
-            flex-wrap: wrap;
+            flex-shrink: 0;
         }
         .tool-group span {
             color: #94a3b8;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: bold;
             text-transform: uppercase;
             margin-right: 4px;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         button {
             background: #334155;
             color: white;
             border: 1px solid #475569;
-            padding: 6px 10px;
+            padding: 8px 12px;
             border-radius: 6px;
             cursor: pointer;
             font-family: 'Inter';
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 600;
             transition: 0.2s;
             white-space: nowrap;
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
-        button:hover {
-            background: #475569;
-            border-color: var(--accent);
-        }
-        button.active {
-            background: var(--accent);
-            color: #000;
-            border-color: var(--accent);
-        }
-        button.danger {
-            background: var(--danger);
-            border-color: var(--danger);
-        }
-        button.small {
-            padding: 4px 8px;
-            font-size: 0.6rem;
-        }
+        button:hover, button:active { background: #475569; border-color: var(--accent); }
+        button.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        button.danger { background: var(--danger); border-color: var(--danger); }
+        button.small { padding: 4px 8px; font-size: 0.65rem; min-height: 28px; }
 
         #env-bar {
             background: #020617;
-            padding: 5px 15px;
+            padding: 6px 12px;
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
             z-index: 98;
             border-bottom: 1px solid #334155;
-            flex-wrap: wrap;
+            overflow-x: auto;
+            white-space: nowrap;
             color: #94a3b8;
             font-size: 0.7rem;
         }
-        #env-bar select,
-        #env-bar input[type="range"] {
+        #env-bar select, #env-bar input[type="range"] {
             background: #1e293b;
             color: white;
             border: 1px solid #475569;
@@ -130,12 +129,7 @@
             padding: 4px 8px;
             font-family: 'Inter';
             font-size: 0.7rem;
-        }
-        #env-bar label {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
+            height: 30px;
         }
 
         #workspace {
@@ -143,90 +137,29 @@
             position: relative;
             background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1.5px, transparent 1.5px);
             background-size: 25px 25px;
-            overflow: auto;
-            cursor: crosshair;
-            -webkit-overflow-scrolling: touch;
+            overflow: hidden;
+            touch-action: none;
+            user-select: none;
         }
         svg#cables-layer {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
             z-index: 10;
         }
 
-        .cable-lan {
-            stroke: #cbd5e1;
-            stroke-width: 3;
-        }
-        .cable-wan {
-            stroke: #ef4444;
-            stroke-width: 3;
-            stroke-dasharray: 10 5;
-        }
-        .cable-wlan {
-            stroke: var(--accent-wlan);
-            stroke-width: 2.5;
-            stroke-dasharray: 4 6;
-            animation: wlanPulse 1s linear infinite;
-        }
-        .cable-fso {
-            stroke: #10b981;
-            stroke-width: 1.5;
-            stroke-dasharray: 2 4;
-            filter: drop-shadow(0 0 4px #10b981);
-        }
-        .cable-sat {
-            stroke: #f59e0b;
-            stroke-width: 2;
-            stroke-dasharray: 8 4;
-        }
-        .cable-bt {
-            stroke: #f472b6;
-            stroke-width: 2;
-            stroke-dasharray: 3 3;
-        }
-        .cable-nfc {
-            stroke: #a78bfa;
-            stroke-width: 4;
-            stroke-dasharray: 1 2;
-        }
-        @keyframes wlanPulse {
-            to {
-                stroke-dashoffset: -10;
-            }
-        }
+        .cable-lan { stroke: #cbd5e1; stroke-width: 3; }
+        .cable-wan { stroke: #ef4444; stroke-width: 3; stroke-dasharray: 10 5; }
+        .cable-wlan { stroke: var(--accent-wlan); stroke-width: 2.5; stroke-dasharray: 4 6; animation: wlanPulse 1s linear infinite; }
+        .cable-fso { stroke: #10b981; stroke-width: 2; stroke-dasharray: 2 4; filter: drop-shadow(0 0 4px #10b981); }
+        .cable-sat { stroke: #f59e0b; stroke-width: 2; stroke-dasharray: 8 4; }
+        .cable-bt { stroke: #f472b6; stroke-width: 2; stroke-dasharray: 3 3; }
+        .cable-nfc { stroke: #a78bfa; stroke-width: 4; stroke-dasharray: 1 2; }
 
-        .port-label {
-            font-family: 'Fira Code', monospace;
-            font-size: 9px;
-            fill: #fbbf24;
-            font-weight: bold;
-            text-shadow: 0 0 4px black;
-        }
+        .obstacle-wall { stroke: #ef4444; stroke-width: 8; stroke-linecap: round; opacity: 0.85; }
 
-        .obstacle {
-            position: absolute;
-            background: rgba(239, 68, 68, 0.15);
-            border: 2px dashed #ef4444;
-            z-index: 5;
-            pointer-events: none;
-        }
-
-        .obstacle-marker {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #ef4444;
-            border: 2px solid #fff;
-            border-radius: 50%;
-            z-index: 25;
-            pointer-events: none;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 8px #ef4444;
-        }
+        @keyframes wlanPulse { to { stroke-dashoffset: -10; } }
 
         .coverage-circle {
             fill: rgba(59, 130, 246, 0.08);
@@ -238,8 +171,8 @@
 
         .node {
             position: absolute;
-            min-width: 55px;
-            min-height: 55px;
+            width: 54px;
+            height: 54px;
             background: #1e293b;
             border: 2px solid #475569;
             border-radius: 12px;
@@ -251,40 +184,27 @@
             z-index: 20;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
             user-select: none;
-            transition: 0.2s;
-            padding: 5px;
+            touch-action: none;
         }
-        .node:active {
-            cursor: grabbing;
-            transform: scale(0.95);
-        }
-        .node:hover {
-            border-color: var(--accent);
-        }
-        .node.selected {
-            border-color: var(--success);
-            box-shadow: 0 0 15px var(--success);
-        }
-        .node-icon {
-            font-size: 22px;
-            pointer-events: none;
-            margin-bottom: 2px;
-        }
+        .node:active { cursor: grabbing; transform: scale(0.96); }
+        .node.selected { border-color: var(--success); box-shadow: 0 0 15px var(--success); }
+        .node.ping-source { border-color: var(--warning); box-shadow: 0 0 15px var(--warning); }
+        .node-icon { font-size: 22px; pointer-events: none; }
         .node-label {
             font-size: 7px;
             font-weight: bold;
-            font-family: 'Fira Code';
+            font-family: 'Fira Code', monospace;
             color: #cbd5e1;
             pointer-events: none;
             text-align: center;
             line-height: 1.2;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 2px 4px;
+            background: rgba(0, 0, 0, 0.85);
+            padding: 2px 5px;
             border-radius: 4px;
             position: absolute;
-            bottom: -22px;
+            bottom: -28px;
             white-space: nowrap;
-            max-width: 100px;
+            max-width: 140px;
             overflow: hidden;
             text-overflow: ellipsis;
         }
@@ -296,33 +216,50 @@
             padding: 8px 12px;
             border-radius: 6px;
             font-size: 0.7rem;
-            font-family: 'Fira Code';
+            font-family: 'Fira Code', monospace;
             z-index: 2000;
             pointer-events: none;
             display: none;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8);
-            white-space: nowrap;
+            color: #e2e8f0;
+        }
+
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #020617;
+            border: 1px solid var(--accent);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            z-index: 3000;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            display: none;
+            text-align: center;
+            max-width: 90%;
         }
 
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
             display: none;
             justify-content: center;
             align-items: center;
             z-index: 1000;
             backdrop-filter: blur(3px);
+            padding: 15px;
         }
         .modal {
             background: #0f172a;
             padding: 20px;
             border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
+            width: 100%;
+            max-width: 580px;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
             border: 1px solid #334155;
             color: white;
@@ -335,44 +272,34 @@
             color: var(--accent);
             border-bottom: 2px solid #334155;
             padding-bottom: 8px;
-            font-family: 'Fira Code';
+            font-family: 'Fira Code', monospace;
         }
         .port-list {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 8px;
             margin-top: 10px;
             max-height: 250px;
             overflow-y: auto;
         }
         .port-item {
             background: #1e293b;
-            padding: 8px;
+            padding: 10px;
             border: 1px solid #334155;
             border-radius: 6px;
             cursor: pointer;
-            font-family: 'Fira Code';
+            font-family: 'Fira Code', monospace;
             font-size: 0.8rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-        .port-item:hover {
-            background: #334155;
-            border-color: var(--accent);
+            min-height: 40px;
         }
         .port-item.used {
             background: rgba(239, 68, 68, 0.1);
             color: #fca5a5;
             cursor: not-allowed;
             border-color: #7f1d1d;
-        }
-        .port-type-badge {
-            font-size: 0.6rem;
-            padding: 2px 5px;
-            border-radius: 4px;
-            background: #000;
-            text-transform: uppercase;
         }
 
         .config-interfaces {
@@ -390,134 +317,103 @@
         .interface-title {
             font-weight: bold;
             color: var(--accent);
-            margin-bottom: 10px;
-            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
             border-bottom: 1px solid #334155;
-            padding-bottom: 5px;
+            padding-bottom: 4px;
+            font-family: 'Fira Code', monospace;
             display: flex;
             justify-content: space-between;
-            font-family: 'Fira Code';
-            flex-wrap: wrap;
+            align-items: center;
         }
         .config-row {
             display: flex;
             gap: 8px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             align-items: center;
-            font-family: 'Fira Code';
-            font-size: 0.7rem;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
             flex-wrap: wrap;
         }
-        .config-row label {
-            width: 85px;
-            color: #94a3b8;
-        }
-        .config-row input[type="text"],
-        .config-row select {
+        .config-row label { width: 120px; color: #94a3b8; }
+        .config-row input[type="text"], .config-row select {
             flex: 1;
-            padding: 5px;
+            padding: 6px;
             background: #0f172a;
             color: #fff;
             border: 1px solid #475569;
             border-radius: 4px;
-            font-family: 'Fira Code';
-            outline: none;
-            min-width: 80px;
-        }
-        .config-row input:focus,
-        .config-row select:focus {
-            border-color: var(--accent);
-        }
-        .config-row input:disabled {
-            background: #334155;
-            color: #94a3b8;
-            cursor: not-allowed;
-            font-style: italic;
-        }
-        .dhcp-toggle {
-            display: flex;
-            gap: 12px;
-            background: #0f172a;
-            padding: 6px;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            border: 1px solid #334155;
-            flex-wrap: wrap;
-        }
-        .dhcp-toggle label {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            cursor: pointer;
-            color: #cbd5e1;
-            font-weight: bold;
-            font-size: 0.7rem;
-        }
-        .dhcp-toggle input[type="radio"] {
-            accent-color: var(--accent);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.75rem;
+            min-width: 120px;
+            height: 34px;
         }
 
-        @media (max-width: 768px) {
-            #header h1 {
-                font-size: 0.9rem;
-            }
-            button {
-                padding: 5px 8px;
-                font-size: 0.6rem;
-            }
-            .tool-group span {
-                font-size: 0.5rem;
-            }
-            .node {
-                min-width: 45px;
-                min-height: 45px;
-            }
-            .node-icon {
-                font-size: 18px;
-            }
-            .node-label {
-                font-size: 6px;
-                bottom: -18px;
-            }
+        .subnet-info-box {
+            background: #090d16;
+            border: 1px solid #38bdf8;
+            border-radius: 6px;
+            padding: 8px 12px;
+            margin-top: 10px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.72rem;
+            color: #38bdf8;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .subnet-info-box div {
+            display: flex;
+            justify-content: space-between;
+        }
+        .subnet-info-box strong {
+            color: #94a3b8;
+        }
+        .subnet-info-box span.val {
+            color: #f8fafc;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
 
     <div id="header">
-        <h1>📡TCP/IP & Redes sem Fio: Wi‑Fi, BT, NFC, Satélite, Laser</h1>
-        <div>
+        <h1>📡 Simulador TCP/IP IPv4 (Cálculo de Rede & Broadcast)</h1>
+        <div style="display:flex; gap:6px;">
             <button onclick="clearWorkspace()" class="danger small">Limpar</button>
+            <button onclick="document.getElementById('file-input').click()" style="background: #0284c7; color:#fff;" class="small">Abrir .json</button>
             <button onclick="exportJSON()" style="background: var(--success); color:#000;" class="small">Salvar .json</button>
+            <input type="file" id="file-input" accept=".json" style="display:none" onchange="importJSON(event)">
         </div>
     </div>
 
     <div id="toolbar">
         <div class="tool-group">
             <span>Ação</span>
-            <button id="btn-move" class="active" onclick="setMode('move')">Mover / IP</button>
+            <button id="btn-move" class="active" onclick="setMode('move')">🖐️ Mover/IP</button>
             <button id="btn-connect" onclick="setMode('connect')">🔗 Cabear</button>
-            <button id="btn-delete" onclick="setMode('delete')">❌ Deletar</button>
+            <button id="btn-ping" onclick="setMode('ping')">⚡ Simular Ping</button>
             <button id="btn-obstacle" onclick="setMode('obstacle')">🧱 Parede</button>
+            <button id="btn-delete" onclick="setMode('delete')">❌ Deletar</button>
         </div>
         <div class="tool-group">
             <span>Dispositivos</span>
             <button onclick="addDevice('PC','💻')">PC</button>
             <button onclick="addDevice('Notebook','💻')">Notebook</button>
             <button onclick="addDevice('Smartphone','📱')">Smartphone</button>
-            <button onclick="addDevice('Switch','🔀')">Switch</button>
+            <button onclick="addDevice('Switch','🔀')">Switch L2</button>
             <button onclick="addDevice('Roteador','📡')">Roteador</button>
             <button onclick="addDevice('AccessPoint','📶')">AP Wi-Fi</button>
             <button onclick="addDevice('Internet','☁️')">Internet</button>
-            <button onclick="addDevice('Servidor_DHCP','🗄️')">DHCP</button>
-            <button onclick="addDevice('Servidor_Web','🌍')">Web/DNS</button>
+            <button onclick="addDevice('Servidor_DHCP','🗄️')">Servidor DHCP</button>
+            <button onclick="addDevice('Servidor_Web','🌍')">Servidor Web</button>
         </div>
         <div class="tool-group">
             <span>Wireless Extra</span>
             <button onclick="addDevice('Bluetooth','🎧')">Bluetooth</button>
             <button onclick="addDevice('TagNFC','🏷️')">Tag NFC</button>
             <button onclick="addDevice('MicroondasForno','🛑')">Forno MW</button>
-            <button onclick="addDevice('AntenaParabolica','📡')">Antena Parabólica</button>
+            <button onclick="addDevice('AntenaParabolica','📡')">Parabólica</button>
             <button onclick="addDevice('FSO','🔦')">Laser FSO</button>
             <button onclick="addDevice('Satelite','🛰️')">Satélite</button>
         </div>
@@ -534,14 +430,16 @@
         <input type="range" id="interference-slider" min="0" max="100" value="0" oninput="applyInterference()">
         <span id="interference-value">0%</span>
         <button onclick="clearObstacles()" class="small">Remover Paredes</button>
-        <span style="margin-left:auto;">💡 Duplo clique = Configurar</span>
+        <span style="margin-left:auto; opacity:0.8;">💡 2 Toques no Dispositivo = Configurar IPv4</span>
     </div>
 
-    <div id="workspace" onmousedown="onWorkspaceDown(event)" onmousemove="onWorkspaceMove(event)" onmouseup="onWorkspaceUp(event)" ontouchmove="onTouchMove(event)">
+    <div id="workspace">
         <svg id="cables-layer"></svg>
         <div id="rssi-tooltip" class="rssi-tooltip"></div>
+        <div id="toast" class="toast-notification"></div>
     </div>
 
+    <!-- Modal de Seleção de Portas -->
     <div id="port-modal" class="modal-overlay">
         <div class="modal">
             <h2 id="port-modal-title">Ligar em qual Interface?</h2>
@@ -550,23 +448,23 @@
         </div>
     </div>
 
+    <!-- Modal de Configuração IPv4 Completa -->
     <div id="config-modal" class="modal-overlay">
-        <div class="modal" style="max-width:550px;">
-            <h2 id="config-modal-title">Configuração</h2>
-            <div class="config-row" style="margin-bottom:10px;">
-                <label style="width:100px;">Hostname:</label>
+        <div class="modal">
+            <h2 id="config-modal-title">Configuração de Dispositivo IPv4</h2>
+            <div class="config-row" style="margin-bottom:12px;">
+                <label>Hostname:</label>
                 <input type="text" id="cfg-hostname" style="font-weight:bold;color:var(--accent);">
             </div>
             <div id="config-interfaces" class="config-interfaces"></div>
             <div style="display:flex; gap:10px; margin-top:15px;">
-                <button onclick="saveConfig()" style="flex:1; background:var(--success); color:#000;">Salvar</button>
+                <button onclick="saveConfig()" style="flex:1; background:var(--success); color:#000;">Salvar Alterações</button>
                 <button onclick="closeModals()" style="flex:1;">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ===================== TEMPLATES DE DISPOSITIVOS =====================
         const deviceTemplates = {
             'PC': { ports: [{ name: 'FastEthernet0', type: 'LAN' }] },
             'Notebook': { ports: [{ name: 'FastEthernet0', type: 'LAN' }, { name: 'Wlan0', type: 'WLAN' }] },
@@ -577,14 +475,14 @@
                 ports: [
                     { name: 'Fa0/1', type: 'LAN' }, { name: 'Fa0/2', type: 'LAN' },
                     { name: 'Fa0/3', type: 'LAN' }, { name: 'Fa0/4', type: 'LAN' },
-                    { name: 'Gi0/1 (Uplink)', type: 'LAN' }
+                    { name: 'Gi0/1', type: 'LAN' }
                 ]
             },
             'Roteador': {
                 ports: [
-                    { name: 'Gi0/0 (Gateway LAN)', type: 'LAN' },
-                    { name: 'Gi0/1 (WAN/Internet)', type: 'WAN' },
-                    { name: 'Uplink Satélite (SAT)', type: 'SAT' }
+                    { name: 'Gi0/0/0 (LAN)', type: 'LAN' },
+                    { name: 'Gi0/0/1 (WAN)', type: 'WAN' },
+                    { name: 'SAT-0', type: 'SAT' }
                 ]
             },
             'AccessPoint': {
@@ -592,757 +490,830 @@
                     { name: 'Porta0 (LAN)', type: 'LAN' },
                     { name: 'Antena-WLAN', type: 'WLAN' }
                 ],
-                wifiStandard: '802.11ac',
-                wifiChannel: 6,
-                txPower: 20
+                wifiStandard: '802.11ac', wifiChannel: 6, txPower: 20
             },
-            'Internet': { ports: [{ name: 'Link-ISP-01', type: 'WAN' }, { name: 'Link-ISP-02', type: 'WAN' }] },
+            'Internet': { ports: [{ name: 'ISP-01', type: 'WAN' }, { name: 'ISP-02', type: 'WAN' }] },
             'Bluetooth': { ports: [{ name: 'BT-Radio', type: 'BT' }] },
             'TagNFC': { ports: [{ name: 'NFC-Tag', type: 'NFC' }] },
             'MicroondasForno': { ports: [{ name: 'Emitter', type: 'INTERFERENCE' }] },
-            'AntenaParabolica': {
-                ports: [
-                    { name: 'Microwave-Link', type: 'MICROWAVE' },
-                    { name: 'Uplink Satélite (SAT)', type: 'SAT' }
-                ]
-            },
+            'AntenaParabolica': { ports: [{ name: 'Microwave-Link', type: 'MICROWAVE' }, { name: 'SAT-Link', type: 'SAT' }] },
             'FSO': { ports: [{ name: 'Laser-Optical', type: 'FSO' }] },
-            'Satelite': { ports: [{ name: 'Uplink/Downlink', type: 'SAT' }], orbit: 'LEO' }
+            'Satelite': { ports: [{ name: 'Uplink-Downlink', type: 'SAT' }] }
         };
 
-        // ===================== ESTADO GLOBAL =====================
+        const availableCIDRs = [
+            { bits: 26, cidr: '/26', mask: '255.255.255.192', hosts: 62 },
+            { bits: 27, cidr: '/27', mask: '255.255.255.224', hosts: 30 },
+            { bits: 28, cidr: '/28', mask: '255.255.255.240', hosts: 14 },
+            { bits: 24, cidr: '/24', mask: '255.255.255.0',   hosts: 254 },
+            { bits: 25, cidr: '/25', mask: '255.255.255.128', hosts: 126 },
+            { bits: 30, cidr: '/30', mask: '255.255.255.252', hosts: 2 }
+        ];
+
         let mode = 'move';
         let devices = {};
         let links = [];
         let obstacles = [];
         let idCounter = 1;
         let draggedNodeId = null;
-        let offsetX = 0,
-            offsetY = 0;
+        let dragOffsetX = 0, dragOffsetY = 0;
         let pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
         let activeConfigDeviceId = null;
         let weather = 'clear';
         let interferenceLevel = 0;
-        let pendingReconnect = [];
-        let obstacleFirstPoint = null;
+        let lastTapTime = 0;
+        let activeWallStart = null;
+        let pingSourceId = null;
 
         const workspace = document.getElementById('workspace');
         const svgLayer = document.getElementById('cables-layer');
-        const rssiTooltip = document.getElementById('rssi-tooltip');
+        const tooltip = document.getElementById('rssi-tooltip');
 
-        // ===================== MODOS DE OPERAÇÃO =====================
         function setMode(newMode) {
             mode = newMode;
-            document.querySelectorAll('#toolbar .tool-group:first-child button').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#toolbar button').forEach(b => b.classList.remove('active'));
             const btn = document.getElementById(`btn-${newMode}`);
             if (btn) btn.classList.add('active');
-            workspace.style.cursor = mode === 'connect' ? 'crosshair' : mode === 'delete' ? 'not-allowed' : mode === 'obstacle' ? 'crosshair' : 'default';
             pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
-            obstacleFirstPoint = null;
-            removeObstacleMarkers();
+            pingSourceId = null;
             renderAll();
         }
 
         function generateMAC() {
-            return "XX:XX:XX:XX:XX:XX".replace(/X/g, () => "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16)));
+            return "52:54:00:XX:XX:XX".replace(/X/g, () => "0123456789ABCDEF".charAt(Math.floor(Math.random() * 16)));
         }
 
-        // ===================== ADICIONAR DISPOSITIVO =====================
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerHTML = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4500);
+        }
+
+        function ipToLong(ip) {
+            return ip.split('.').reduce((acc, octet) => ((acc << 8) + parseInt(octet, 10)) >>> 0, 0) >>> 0;
+        }
+
+        function longToIp(long) {
+            return [
+                (long >>> 24) & 255,
+                (long >>> 16) & 255,
+                (long >>> 8) & 255,
+                long & 255
+            ].join('.');
+        }
+
+        function cidrToMask(bits) {
+            const maskLong = (0xFFFFFFFF << (32 - bits)) >>> 0;
+            return longToIp(maskLong);
+        }
+
+        function maskToCidr(mask) {
+            const entry = availableCIDRs.find(opt => opt.mask === mask);
+            if (entry) return entry.cidr;
+            const long = ipToLong(mask);
+            let count = 0;
+            for (let i = 0; i < 32; i++) {
+                if ((long & (1 << (31 - i))) !== 0) count++;
+            }
+            return `/${count}`;
+        }
+
+        function cidrToBits(cidr) {
+            return parseInt(cidr.replace('/', ''), 10);
+        }
+
+        function validateIP(ip) {
+            const regex = /^(25[0-5]|24[0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|24[0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|24[0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|24[0-9]|[01]?[0-9][0-9]?)$/;
+            return regex.test(ip);
+        }
+
+        function getSubnetRange(ip, mask) {
+            const ipInt = ipToLong(ip);
+            const maskInt = ipToLong(mask);
+            const netInt = (ipInt & maskInt) >>> 0;
+            const wildcard = (~maskInt) >>> 0;
+            const broadcastInt = (netInt + wildcard) >>> 0;
+            return { start: netInt, end: broadcastInt, netInt, broadcastInt };
+        }
+
+        function calculateSubnetInfo(ip, mask) {
+            if (!validateIP(ip) || !validateIP(mask)) return null;
+            const ipInt = ipToLong(ip);
+            const maskInt = ipToLong(mask);
+            const netInt = (ipInt & maskInt) >>> 0;
+            const wildcard = (~maskInt) >>> 0;
+            const broadcastInt = (netInt + wildcard) >>> 0;
+
+            const totalAddresses = wildcard + 1;
+            const firstHostInt = netInt + 1;
+            const lastHostInt = broadcastInt - 1;
+
+            return {
+                networkIp: longToIp(netInt),
+                broadcastIp: longToIp(broadcastInt),
+                firstHostIp: totalAddresses > 2 ? longToIp(firstHostInt) : 'N/A',
+                lastHostIp: totalAddresses > 2 ? longToIp(lastHostInt) : 'N/A',
+                totalAddresses,
+                validHostsCount: Math.max(0, totalAddresses - 2)
+            };
+        }
+
+        function getUsedRanges(excludeCurrentDevId = null, excludeIfName = null) {
+            let ranges = [];
+            Object.values(devices).forEach(dev => {
+                Object.entries(dev.interfaces).forEach(([ifName, intf]) => {
+                    if (dev.id === excludeCurrentDevId && ifName === excludeIfName) return;
+                    if (intf.ip && intf.mask) {
+                        ranges.push(getSubnetRange(intf.ip, intf.mask));
+                    }
+                });
+            });
+            return ranges;
+        }
+
+        function checkIPDuplicate(targetIp, excludeDevId = null, excludeIfName = null) {
+            if (!targetIp) return false;
+            for (let devId in devices) {
+                for (let ifName in devices[devId].interfaces) {
+                    if (devId === excludeDevId && ifName === excludeIfName) continue;
+                    if (devices[devId].interfaces[ifName].ip === targetIp) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function findNextAvailableSubnet(prefixBits, excludeCurrentDevId = null, excludeIfName = null) {
+            const baseIpInt = ipToLong('192.168.1.0');
+            const blockSize = Math.pow(2, 32 - prefixBits);
+            const usedRanges = getUsedRanges(excludeCurrentDevId, excludeIfName);
+
+            let candidateStart = baseIpInt;
+
+            while (candidateStart <= ipToLong('192.168.255.255')) {
+                if (candidateStart % blockSize !== 0) {
+                    candidateStart = Math.ceil(candidateStart / blockSize) * blockSize;
+                }
+                const candidateEnd = candidateStart + blockSize - 1;
+
+                let hasOverlap = usedRanges.some(r => (candidateStart <= r.end && candidateEnd >= r.start));
+
+                if (!hasOverlap) {
+                    return {
+                        networkIp: longToIp(candidateStart),
+                        gatewayIp: longToIp(candidateStart + 1),
+                        firstHostIp: longToIp(candidateStart + 1),
+                        broadcastIp: longToIp(candidateEnd),
+                        mask: cidrToMask(prefixBits),
+                        cidr: '/' + prefixBits
+                    };
+                }
+                candidateStart += blockSize;
+            }
+            return null;
+        }
+
+        function isReservedOrConflictingIP(ip, mask) {
+            if (!ip || !mask) return { invalid: false };
+            const ipInt = ipToLong(ip);
+            const { netInt, broadcastInt } = getSubnetRange(ip, mask);
+
+            if (ipInt === netInt) {
+                return { invalid: true, reason: `O IP ${ip} é um endereço de REDE reservado!` };
+            }
+            if (ipInt === broadcastInt) {
+                return { invalid: true, reason: `O IP ${ip} é um endereço de BROADCAST reservado!` };
+            }
+            return { invalid: false };
+        }
+
         function addDevice(type, icon) {
             const id = `dev_${idCounter++}`;
             const template = deviceTemplates[type];
             let interfaces = {};
+            
             template.ports.forEach(port => {
+                const isDHCPClient = ['PC', 'Notebook', 'Smartphone'].includes(type);
                 interfaces[port.name] = {
                     type: port.type,
-                    dhcp: ['PC', 'Notebook', 'Smartphone'].includes(type),
+                    ipMode: isDHCPClient ? 'dhcp' : 'static',
                     ip: '',
-                    mask: '',
+                    mask: '255.255.255.192',
                     gateway: '',
-                    dns: '',
+                    dns: '8.8.8.8',
                     mac: generateMAC(),
                     connectedToLink: []
                 };
             });
+
+            const rect = workspace.getBoundingClientRect();
             devices[id] = {
-                id,
-                type,
-                icon,
-                name: `${type}_${idCounter-1}`,
-                x: workspace.clientWidth / 2 - 30 + (Math.random() * 80 - 40),
-                y: workspace.clientHeight / 2 - 30 + (Math.random() * 80 - 40),
-                interfaces: interfaces,
+                id, type, icon, name: `${type}_${idCounter-1}`,
+                x: rect.width / 2 - 27 + (Math.random() * 40 - 20),
+                y: rect.height / 2 - 27 + (Math.random() * 40 - 20),
+                interfaces,
                 wifiStandard: template.wifiStandard || '802.11ac',
                 wifiChannel: template.wifiChannel || 6,
-                txPower: template.txPower || 20,
-                orbit: template.orbit || 'LEO'
+                txPower: template.txPower || 20
             };
+
             setMode('move');
             renderAll();
         }
 
-        // ===================== MARCADORES DE PAREDE =====================
-        function showObstacleMarker(x, y) {
-            removeObstacleMarkers();
-            const marker = document.createElement('div');
-            marker.className = 'obstacle-marker';
-            marker.id = 'obstacle-marker';
-            marker.style.left = x + 'px';
-            marker.style.top = y + 'px';
-            workspace.appendChild(marker);
+        function checkLineIntersection(x1, y1, x2, y2, x3, y3, x4, y4) {
+            const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+            if (denom === 0) return false;
+            const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+            const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+            return (ua >= 0 && ua <= 1 && ub >= 0 && ub <= 1);
         }
 
-        function removeObstacleMarkers() {
-            document.querySelectorAll('.obstacle-marker').forEach(m => m.remove());
+        function getWifiRange(ap) {
+            let base = (ap.txPower || 20) * 8;
+            if (weather === 'rain') base *= 0.85;
+            if (weather === 'fog') base *= 0.70;
+            return base * (1 - interferenceLevel / 200);
         }
 
-        // ===================== VERIFICAÇÃO DE ALCANCE WLAN (com reconexão) =====================
-        function checkWlanRange() {
-            const linksToRemove = [];
-            
-            links.forEach(link => {
-                if (link.portType !== 'WLAN') return;
-                const src = devices[link.sourceId];
-                const tgt = devices[link.targetId];
-                if (!src || !tgt) return;
-                
-                let ap = src.type === 'AccessPoint' ? src : tgt.type === 'AccessPoint' ? tgt : null;
-                if (!ap) {
-                    if (src.interfaces['Antena-WLAN']) ap = src;
-                    else if (tgt.interfaces['Antena-WLAN']) ap = tgt;
-                }
-                if (!ap) return;
-                
-                const client = ap === src ? tgt : src;
-                const dx = (ap.x + 27) - (client.x + 27);
-                const dy = (ap.y + 27) - (client.y + 27);
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                const range = getWifiRange(ap);
-                
-                if (distance > range) {
-                    linksToRemove.push(link.id);
-                    pendingReconnect.push({
-                        sourceId: link.sourceId,
-                        targetId: link.targetId,
-                        sourcePort: link.sourcePort,
-                        targetPort: link.targetPort,
-                        portType: link.portType
-                    });
-                }
-            });
-            
-            if (linksToRemove.length > 0) {
-                linksToRemove.forEach(linkId => {
-                    const link = links.find(l => l.id === linkId);
-                    if (!link) return;
-                    const srcDev = devices[link.sourceId];
-                    const tgtDev = devices[link.targetId];
-                    if (srcDev && srcDev.interfaces[link.sourcePort]) {
-                        srcDev.interfaces[link.sourcePort].connectedToLink = 
-                            srcDev.interfaces[link.sourcePort].connectedToLink.filter(id => id !== linkId);
-                    }
-                    if (tgtDev && tgtDev.interfaces[link.targetPort]) {
-                        tgtDev.interfaces[link.targetPort].connectedToLink = 
-                            tgtDev.interfaces[link.targetPort].connectedToLink.filter(id => id !== linkId);
-                    }
-                });
-                links = links.filter(l => !linksToRemove.includes(l.id));
-            }
-            
-            const reconnected = [];
-            pendingReconnect = pendingReconnect.filter(pending => {
-                const src = devices[pending.sourceId];
-                const tgt = devices[pending.targetId];
-                if (!src || !tgt) return false;
-                
-                const srcIntf = src.interfaces[pending.sourcePort];
-                const tgtIntf = tgt.interfaces[pending.targetPort];
-                if (!srcIntf || !tgtIntf) return false;
-                if (srcIntf.connectedToLink.length > 0 || tgtIntf.connectedToLink.length > 0) return false;
-                
-                let ap = src.type === 'AccessPoint' ? src : tgt.type === 'AccessPoint' ? tgt : null;
-                if (!ap) {
-                    if (src.interfaces['Antena-WLAN']) ap = src;
-                    else if (tgt.interfaces['Antena-WLAN']) ap = tgt;
-                }
-                if (!ap) return false;
-                
-                const client = ap === src ? tgt : src;
-                const dx = (ap.x + 27) - (client.x + 27);
-                const dy = (ap.y + 27) - (client.y + 27);
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                const range = getWifiRange(ap);
-                
-                if (distance <= range) {
-                    const linkId = `link_${Date.now()}_${Math.random()}`;
-                    links.push({
-                        id: linkId,
-                        sourceId: pending.sourceId,
-                        targetId: pending.targetId,
-                        sourcePort: pending.sourcePort,
-                        targetPort: pending.targetPort,
-                        portType: pending.portType
-                    });
-                    srcIntf.connectedToLink.push(linkId);
-                    tgtIntf.connectedToLink.push(linkId);
-                    reconnected.push(pending);
-                    return false;
-                }
-                return true;
-            });
-            
-            if (linksToRemove.length > 0 || reconnected.length > 0) {
-                renderAll();
-            }
-        }
-
-        // ===================== RENDERIZAÇÃO PRINCIPAL =====================
         function renderAll() {
             renderDevices();
             renderLinks();
-            renderObstacles();
             renderCoverage();
+            renderObstacles();
         }
 
         function renderDevices() {
             workspace.querySelectorAll('.node').forEach(n => n.remove());
             Object.values(devices).forEach(dev => {
                 const el = document.createElement('div');
-                el.className = `node ${pendingConnection.sourceId === dev.id ? 'selected' : ''}`;
+                let extraClass = '';
+                if (pendingConnection.sourceId === dev.id) extraClass = 'selected';
+                if (pingSourceId === dev.id) extraClass = 'ping-source';
+
+                el.className = `node ${extraClass}`;
                 el.id = dev.id;
                 el.style.left = `${dev.x}px`;
                 el.style.top = `${dev.y}px`;
+
                 let ipSummary = '';
                 Object.values(dev.interfaces).forEach(intf => {
-                    if (intf.ip && intf.ip !== 'Auto (DHCP)') ipSummary += `<br><span style="color:var(--success)">${intf.ip}</span>`;
-                    else if (intf.dhcp && intf.connectedToLink.length > 0) ipSummary += `<br><span style="color:var(--accent-wlan)">DHCP</span>`;
+                    if (intf.ip) {
+                        const cidr = maskToCidr(intf.mask);
+                        ipSummary += `<br><span style="color:var(--success)">${intf.ip}${cidr}</span>`;
+                    } else if (intf.ipMode === 'dhcp') {
+                        ipSummary += `<br><span style="color:var(--warning)">DHCP (Pendente)</span>`;
+                    }
                 });
+
                 el.innerHTML = `<div class="node-icon">${dev.icon}</div><div class="node-label">${dev.name}${ipSummary}</div>`;
-                el.addEventListener('mousedown', (e) => onDeviceDown(e, dev.id));
-                el.addEventListener('dblclick', (e) => onDeviceDblClick(e, dev.id));
+                el.addEventListener('pointerdown', (e) => onNodePointerDown(e, dev.id));
                 workspace.appendChild(el);
             });
+        }
+
+        function getPointerPos(e) {
+            const rect = workspace.getBoundingClientRect();
+            return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+        }
+
+        function onNodePointerDown(e, id) {
+            e.stopPropagation();
+            const now = Date.now();
+
+            if (now - lastTapTime < 300) {
+                openConfigModal(id);
+                return;
+            }
+            lastTapTime = now;
+
+            if (mode === 'delete') {
+                deleteDevice(id);
+                return;
+            }
+            if (mode === 'connect') {
+                handleConnectStep(id);
+                return;
+            }
+            if (mode === 'ping') {
+                handlePingStep(id);
+                return;
+            }
+            if (mode === 'move') {
+                draggedNodeId = id;
+                const pos = getPointerPos(e);
+                dragOffsetX = pos.x - devices[id].x;
+                dragOffsetY = pos.y - devices[id].y;
+            }
+        }
+
+        workspace.addEventListener('pointerdown', (e) => {
+            if (mode === 'obstacle') {
+                const pos = getPointerPos(e);
+                activeWallStart = { x: pos.x, y: pos.y };
+            }
+        });
+
+        workspace.addEventListener('pointermove', (e) => {
+            const pos = getPointerPos(e);
+
+            if (draggedNodeId && mode === 'move') {
+                devices[draggedNodeId].x = Math.max(0, Math.min(workspace.clientWidth - 54, pos.x - dragOffsetX));
+                devices[draggedNodeId].y = Math.max(0, Math.min(workspace.clientHeight - 54, pos.y - dragOffsetY));
+                renderAll();
+                return;
+            }
+
+            if (activeWallStart && mode === 'obstacle') {
+                renderAll();
+                const tempLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                tempLine.setAttribute('x1', activeWallStart.x);
+                tempLine.setAttribute('y1', activeWallStart.y);
+                tempLine.setAttribute('x2', pos.x);
+                tempLine.setAttribute('y2', pos.y);
+                tempLine.setAttribute('class', 'obstacle-wall');
+                tempLine.setAttribute('style', 'stroke-dasharray: 4 4;');
+                svgLayer.appendChild(tempLine);
+                return;
+            }
+
+            updateTooltip(pos);
+        });
+
+        workspace.addEventListener('pointerup', (e) => {
+            if (activeWallStart && mode === 'obstacle') {
+                const pos = getPointerPos(e);
+                const dist = Math.hypot(pos.x - activeWallStart.x, pos.y - activeWallStart.y);
+                if (dist > 10) {
+                    obstacles.push({ x1: activeWallStart.x, y1: activeWallStart.y, x2: pos.x, y2: pos.y });
+                }
+                activeWallStart = null;
+                renderAll();
+            }
+            draggedNodeId = null;
+        });
+
+        function updateTooltip(pos) {
+            let closestAP = null;
+            let minDist = Infinity;
+
+            Object.values(devices).forEach(dev => {
+                if (dev.type === 'AccessPoint' || dev.interfaces['Wlan0']) {
+                    const center = { x: dev.x + 27, y: dev.y + 27 };
+                    const d = Math.hypot(pos.x - center.x, pos.y - center.y);
+                    if (d < minDist) {
+                        minDist = d;
+                        closestAP = dev;
+                    }
+                }
+            });
+
+            if (closestAP && minDist <= getWifiRange(closestAP)) {
+                let wallIntersections = 0;
+                const apCenter = { x: closestAP.x + 27, y: closestAP.y + 27 };
+                obstacles.forEach(w => {
+                    if (checkLineIntersection(apCenter.x, apCenter.y, pos.x, pos.y, w.x1, w.y1, w.x2, w.y2)) {
+                        wallIntersections++;
+                    }
+                });
+
+                const rssi = Math.round(-30 - (20 * Math.log10(Math.max(1, minDist / 10))) - (wallIntersections * 12) - (interferenceLevel / 4));
+                const quality = Math.max(0, Math.min(100, Math.round(2 * (rssi + 100))));
+                const speed = Math.max(0, Math.round((quality / 100) * 866));
+
+                tooltip.style.display = 'block';
+                tooltip.style.left = `${pos.x + 15}px`;
+                tooltip.style.top = `${pos.y + 15}px`;
+                tooltip.innerHTML = `<strong>${closestAP.name}</strong><br>Sinal: ${rssi} dBm (${quality}%)<br>Velocidade: ${speed} Mbps`;
+            } else {
+                tooltip.style.display = 'none';
+            }
+        }
+
+        function handleConnectStep(devId) {
+            if (pendingConnection.step === 0) {
+                openPortSelectionModal(devId, null);
+            } else {
+                if (pendingConnection.sourceId === devId) {
+                    showToast("Não é possível conectar um dispositivo a ele mesmo!");
+                    return;
+                }
+                openPortSelectionModal(devId, pendingConnection.portType);
+            }
+        }
+
+        function openPortSelectionModal(devId, filterType) {
+            const dev = devices[devId];
+            const portList = document.getElementById('port-list');
+            document.getElementById('port-modal-title').innerText = `Selecione a Interface em ${dev.name}`;
+            portList.innerHTML = '';
+
+            Object.entries(dev.interfaces).forEach(([ifName, intf]) => {
+                if (filterType && intf.type !== filterType) return;
+
+                const isUsed = links.some(l => 
+                    (l.dev1 === devId && l.port1 === ifName) || 
+                    (l.dev2 === devId && l.port2 === ifName)
+                );
+
+                const item = document.createElement('div');
+                item.className = `port-item ${isUsed ? 'used' : ''}`;
+                item.innerHTML = `<span>${ifName} [${intf.type}]</span><span>${isUsed ? 'Ocupada' : 'Livre'}</span>`;
+
+                if (!isUsed) {
+                    item.onclick = () => {
+                        if (pendingConnection.step === 0) {
+                            pendingConnection = { step: 1, sourceId: devId, sourcePort: ifName, portType: intf.type };
+                            closeModals();
+                            renderAll();
+                            showToast(`Porta ${ifName} de ${dev.name} selecionada. Clique no destino!`);
+                        } else {
+                            createLink(pendingConnection.sourceId, pendingConnection.sourcePort, devId, ifName, intf.type);
+                            pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
+                            closeModals();
+                        }
+                    };
+                }
+                portList.appendChild(item);
+            });
+
+            document.getElementById('port-modal').style.display = 'flex';
+        }
+
+        function createLink(dev1, port1, dev2, port2, type) {
+            links.push({ id: `link_${Date.now()}`, dev1, port1, dev2, port2, type });
+            triggerDHCPAutoConfig();
+            renderAll();
+            showToast("Conexão estabelecida com sucesso!");
         }
 
         function renderLinks() {
             svgLayer.innerHTML = '';
-            obstacles.forEach(obs => {
-                const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                rect.setAttribute('x', obs.x);
-                rect.setAttribute('y', obs.y);
-                rect.setAttribute('width', obs.w);
-                rect.setAttribute('height', obs.h);
-                rect.setAttribute('fill', 'rgba(239,68,68,0.1)');
-                rect.setAttribute('stroke', '#ef4444');
-                rect.setAttribute('stroke-dasharray', '5 5');
-                rect.classList.add('obstacle-svg');
-                svgLayer.appendChild(rect);
-            });
+            links.forEach(l => {
+                const d1 = devices[l.dev1];
+                const d2 = devices[l.dev2];
+                if (!d1 || !d2) return;
 
-            links.forEach(link => {
-                const src = devices[link.sourceId];
-                const tgt = devices[link.targetId];
-                if (!src || !tgt) return;
-                const x1 = src.x + 27,
-                    y1 = src.y + 27;
-                const x2 = tgt.x + 27,
-                    y2 = tgt.y + 27;
-
-                // Linha invisível grossa para facilitar o hover
-                const hoverLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                hoverLine.setAttribute('x1', x1);
-                hoverLine.setAttribute('y1', y1);
-                hoverLine.setAttribute('x2', x2);
-                hoverLine.setAttribute('y2', y2);
-                hoverLine.setAttribute('stroke', 'transparent');
-                hoverLine.setAttribute('stroke-width', '12');
-                hoverLine.style.pointerEvents = 'stroke';
-                hoverLine.addEventListener('mouseenter', (e) => showRSSI(e, link, x1, y1, x2, y2));
-                hoverLine.addEventListener('mouseleave', hideRSSI);
-                svgLayer.appendChild(hoverLine);
-
-                // Linha visível normal
                 const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', x1);
-                line.setAttribute('y1', y1);
-                line.setAttribute('x2', x2);
-                line.setAttribute('y2', y2);
+                line.setAttribute('x1', d1.x + 27);
+                line.setAttribute('y1', d1.y + 27);
+                line.setAttribute('x2', d2.x + 27);
+                line.setAttribute('y2', d2.y + 27);
+
                 let cableClass = 'cable-lan';
-                if (link.portType === 'WLAN') cableClass = 'cable-wlan';
-                if (link.portType === 'WAN') cableClass = 'cable-wan';
-                if (link.portType === 'FSO') cableClass = 'cable-fso';
-                if (link.portType === 'SAT') cableClass = 'cable-sat';
-                if (link.portType === 'BT') cableClass = 'cable-bt';
-                if (link.portType === 'NFC') cableClass = 'cable-nfc';
-                if (link.portType === 'MICROWAVE') cableClass = 'cable-wan';
+                if (l.type === 'WAN') cableClass = 'cable-wan';
+                if (l.type === 'WLAN') cableClass = 'cable-wlan';
+                if (l.type === 'FSO') cableClass = 'cable-fso';
+                if (l.type === 'SAT') cableClass = 'cable-sat';
+                if (l.type === 'BT') cableClass = 'cable-bt';
+                if (l.type === 'NFC') cableClass = 'cable-nfc';
+
                 line.setAttribute('class', cableClass);
-                line.setAttribute('data-link-id', link.id);
-                line.style.pointerEvents = 'none';
-                if (link.portType === 'WLAN' && interferenceLevel > 30) {
-                    line.style.stroke = '#ef4444';
-                    line.style.opacity = 0.6;
-                }
-                if ((link.portType === 'FSO' || link.portType === 'SAT') && weather !== 'clear') {
-                    line.style.strokeDasharray = '1 6';
-                    line.style.opacity = weather === 'fog' ? 0.5 : 0.6;
-                }
-                let crossesObstacle = false;
-                obstacles.forEach(obs => {
-                    if (lineIntersectsRect(x1, y1, x2, y2, obs.x, obs.y, obs.w, obs.h)) {
-                        crossesObstacle = true;
-                    }
-                });
-                if (crossesObstacle && link.portType === 'WLAN') {
-                    line.style.stroke = '#f97316';
-                    line.style.strokeWidth = 3;
-                }
                 svgLayer.appendChild(line);
-
-                if (link.portType !== 'WLAN' && link.portType !== 'BT' && link.portType !== 'NFC') {
-                    const drawLabel = (px, py, cx, cy, text) => {
-                        const angle = Math.atan2(cy - py, cx - px);
-                        const lx = px + Math.cos(angle) * 38;
-                        const ly = py + Math.sin(angle) * 38;
-                        const txt = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                        txt.setAttribute('x', lx);
-                        txt.setAttribute('y', ly);
-                        txt.setAttribute('class', 'port-label');
-                        txt.setAttribute('text-anchor', 'middle');
-                        txt.textContent = text.split(' ')[0];
-                        svgLayer.appendChild(txt);
-                    };
-                    drawLabel(x1, y1, x2, y2, link.sourcePort);
-                    drawLabel(x2, y2, x1, y1, link.targetPort);
-                }
-            });
-        }
-
-        function renderObstacles() {
-            document.querySelectorAll('.obstacle').forEach(o => o.remove());
-            obstacles.forEach(obs => {
-                const el = document.createElement('div');
-                el.className = 'obstacle';
-                el.style.left = obs.x + 'px';
-                el.style.top = obs.y + 'px';
-                el.style.width = obs.w + 'px';
-                el.style.height = obs.h + 'px';
-                workspace.appendChild(el);
             });
         }
 
         function renderCoverage() {
-            svgLayer.querySelectorAll('.coverage-circle').forEach(c => c.remove());
             Object.values(devices).forEach(dev => {
-                if (dev.type === 'AccessPoint' || (dev.interfaces['Antena-WLAN'] && dev.interfaces['Antena-WLAN'].type === 'WLAN')) {
+                if (dev.type === 'AccessPoint' || dev.interfaces['Wlan0']) {
                     const radius = getWifiRange(dev);
                     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                     circle.setAttribute('cx', dev.x + 27);
                     circle.setAttribute('cy', dev.y + 27);
                     circle.setAttribute('r', radius);
-                    circle.classList.add('coverage-circle');
-                    svgLayer.appendChild(circle);
-                }
-                if (dev.type === 'Bluetooth') {
-                    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    circle.setAttribute('cx', dev.x + 27);
-                    circle.setAttribute('cy', dev.y + 27);
-                    circle.setAttribute('r', 100);
-                    circle.setAttribute('fill', 'rgba(244,114,182,0.05)');
-                    circle.setAttribute('stroke', 'rgba(244,114,182,0.3)');
-                    circle.setAttribute('stroke-dasharray', '3 5');
+                    circle.setAttribute('class', 'coverage-circle');
                     svgLayer.appendChild(circle);
                 }
             });
         }
 
-        function getWifiRange(dev) {
-            const std = dev.wifiStandard || '802.11ac';
-            const power = dev.txPower || 20;
-            const baseRanges = {
-                '802.11b': 300,
-                '802.11g': 240,
-                '802.11n': 200,
-                '802.11ac': 160,
-                '802.11ax': 140
-            };
-            let radius = baseRanges[std] || 100;
-            const powerFactor = Math.pow(2, (power - 20) / 10);
-            return radius * powerFactor;
-        }
-
-        function lineIntersectsRect(x1, y1, x2, y2, rx, ry, rw, rh) {
-            function inside(x, y) { return x >= rx && x <= rx + rw && y >= ry && y <= ry + rh; }
-            if (inside(x1, y1) && inside(x2, y2)) return true;
-            const left = rx,
-                right = rx + rw,
-                top = ry,
-                bottom = ry + rh;
-            if (segmentsIntersect(x1, y1, x2, y2, left, top, right, top)) return true;
-            if (segmentsIntersect(x1, y1, x2, y2, right, top, right, bottom)) return true;
-            if (segmentsIntersect(x1, y1, x2, y2, right, bottom, left, bottom)) return true;
-            if (segmentsIntersect(x1, y1, x2, y2, left, bottom, left, top)) return true;
-            return false;
-        }
-
-        function segmentsIntersect(x1, y1, x2, y2, x3, y3, x4, y4) {
-            const det = (x2 - x1) * (y4 - y3) - (x4 - x3) * (y2 - y1);
-            if (det === 0) return false;
-            const t = ((x3 - x1) * (y4 - y3) - (y3 - y1) * (x4 - x3)) / det;
-            const u = ((x3 - x1) * (y2 - y1) - (y3 - y1) * (x2 - x1)) / det;
-            return t >= 0 && t <= 1 && u >= 0 && u <= 1;
-        }
-
-        function showRSSI(e, link, x1, y1, x2, y2) {
-            const dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-            let rssi;
-            let quality;
-            let rate = 0;
-            let std = devices[link.sourceId]?.wifiStandard || devices[link.targetId]?.wifiStandard || '802.11ac';
-            const rates = { '802.11b': 11, '802.11g': 54, '802.11n': 300, '802.11ac': 1300, '802.11ax': 9600 };
-
-            // Tratamento especial para SAT e FSO (baseado no clima)
-            if (link.portType === 'SAT') {
-                if (weather === 'rain') {
-                    rssi = -60;
-                } else if (weather === 'fog') {
-                    rssi = -70;
-                } else {
-                    rssi = -50;
-                }
-                quality = rssi > -55 ? 'Boa' : rssi > -65 ? 'Regular' : 'Fraca';
-                rate = 100; // Mbps simbólico
-            } else if (link.portType === 'FSO') {
-                if (weather === 'fog') {
-                    rssi = -90;
-                    quality = 'Fraca';
-                } else if (weather === 'rain') {
-                    rssi = -65;
-                    quality = 'Regular';
-                } else {
-                    rssi = -40;
-                    quality = 'Excelente';
-                }
-                rate = 10000; // 10 Gbps típico
-            } else {
-                // Wi‑Fi / WAN / LAN / MICROWAVE: usa distância
-                rssi = -30 - dist * 0.3;
-                if (link.portType === 'WLAN' && interferenceLevel > 30) rssi -= 20;
-                let crossesObs = false;
-                obstacles.forEach(obs => { if (lineIntersectsRect(x1, y1, x2, y2, obs.x, obs.y, obs.w, obs.h)) crossesObs = true; });
-                if (crossesObs) rssi -= 15;
-                if (weather === 'rain' && link.portType === 'WLAN') rssi -= 10;
-                quality = rssi > -50 ? 'Excelente' : rssi > -65 ? 'Boa' : rssi > -75 ? 'Regular' : 'Fraca';
-                rate = rates[std] || 1300;
-                if (rssi < -70) rate *= 0.1;
-                else if (rssi < -60) rate *= 0.4;
-                else rate *= 0.8;
-            }
-
-            rssiTooltip.innerHTML = `
-                📶 RSSI: ${Math.round(rssi)} dBm (${quality})<br>
-                📡 Padrão: ${std}<br>
-                🚀 Taxa est.: ${rate.toFixed(0)} Mbps<br>
-                ${weather === 'rain' && (link.portType === 'SAT' || link.portType === 'WLAN') ? '🌧️ Chuva atenuando sinal' : ''}
-                ${weather === 'fog' && link.portType === 'FSO' ? '🌫️ Nevoeiro intenso' : ''}
-                ${weather === 'fog' && link.portType === 'SAT' ? '🌫️ Nevoeiro atenuando' : ''}
-            `;
-            rssiTooltip.style.display = 'block';
-            rssiTooltip.style.left = e.clientX + 15 + 'px';
-            rssiTooltip.style.top = e.clientY - 20 + 'px';
-        }
-
-        function hideRSSI() { rssiTooltip.style.display = 'none'; }
-
-        // ===================== EVENTOS DE MOUSE / TOQUE =====================
-        function onDeviceDown(e, devId) {
-            e.stopPropagation();
-            if (mode === 'delete') { deleteDevice(devId); return; }
-            if (mode === 'connect') { handleConnectionClick(devId); return; }
-            if (mode === 'move') {
-                draggedNodeId = devId;
-                const rect = document.getElementById(devId).getBoundingClientRect();
-                offsetX = e.clientX - rect.left;
-                offsetY = e.clientY - rect.top;
-            }
-        }
-
-        function onWorkspaceMove(e) {
-            if (draggedNodeId && mode === 'move') {
-                const dev = devices[draggedNodeId];
-                const rect = workspace.getBoundingClientRect();
-                dev.x = e.clientX - rect.left - offsetX;
-                dev.y = e.clientY - rect.top - offsetY;
-                checkWlanRange();
-                renderAll();
-            }
-        }
-
-        function onWorkspaceUp() { draggedNodeId = null; }
-
-        function onWorkspaceDown(e) {
-            if (mode === 'connect' && pendingConnection.step === 1) {
-                pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
-                renderAll();
-                return;
-            }
-            
-            if (mode === 'obstacle') {
-                const rect = workspace.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                
-                if (!obstacleFirstPoint) {
-                    obstacleFirstPoint = { x, y };
-                    showObstacleMarker(x, y);
-                } else {
-                    const x1 = obstacleFirstPoint.x;
-                    const y1 = obstacleFirstPoint.y;
-                    const x2 = x;
-                    const y2 = y;
-                    
-                    const wallX = Math.min(x1, x2);
-                    const wallY = Math.min(y1, y2);
-                    const wallW = Math.abs(x2 - x1) || 60;
-                    const wallH = Math.abs(y2 - y1) || 20;
-                    
-                    obstacles.push({ x: wallX, y: wallY, w: wallW, h: wallH });
-                    
-                    obstacleFirstPoint = null;
-                    removeObstacleMarkers();
-                    renderAll();
-                    setMode('move');
-                }
-            }
-        }
-
-        function onTouchMove(e) {
-            if (draggedNodeId && mode === 'move') {
-                e.preventDefault();
-                const dev = devices[draggedNodeId];
-                const touch = e.touches[0];
-                const rect = workspace.getBoundingClientRect();
-                dev.x = touch.clientX - rect.left - offsetX;
-                dev.y = touch.clientY - rect.top - offsetY;
-                checkWlanRange();
-                renderAll();
-            }
-        }
-
-        // ===================== CONEXÃO =====================
-        function handleConnectionClick(devId) {
-            const dev = devices[devId];
-            if (pendingConnection.step === 0) {
-                openPortSelector(dev, null, (selectedPort, portType) => {
-                    pendingConnection = { step: 1, sourceId: devId, sourcePort: selectedPort, portType: portType };
-                    renderAll();
-                });
-            } else if (pendingConnection.step === 1) {
-                if (devId === pendingConnection.sourceId) return;
-                openPortSelector(dev, pendingConnection.portType, (selectedPort) => {
-                    const linkId = `link_${Date.now()}`;
-                    links.push({
-                        id: linkId,
-                        sourceId: pendingConnection.sourceId,
-                        sourcePort: pendingConnection.sourcePort,
-                        targetId: devId,
-                        targetPort: selectedPort,
-                        portType: pendingConnection.portType
-                    });
-                    devices[pendingConnection.sourceId].interfaces[pendingConnection.sourcePort].connectedToLink.push(linkId);
-                    devices[devId].interfaces[selectedPort].connectedToLink.push(linkId);
-                    pendingConnection = { step: 0, sourceId: null, sourcePort: null, portType: null };
-                    renderAll();
-                });
-            }
-        }
-
-        function openPortSelector(dev, restrictType, onSelectCallback) {
-            document.getElementById('port-modal-title').innerText = 'Ligar em qual Interface?';
-            const listDiv = document.getElementById('port-list');
-            listDiv.innerHTML = '';
-            let hasOptions = false;
-            Object.keys(dev.interfaces).forEach(portName => {
-                const intf = dev.interfaces[portName];
-                let tipoCompativel = false;
-                if (!restrictType) {
-                    tipoCompativel = true;
-                } else {
-                    if (intf.type === restrictType) {
-                        tipoCompativel = true;
-                    } else if ((restrictType === 'SAT' && intf.type === 'WAN') || 
-                               (restrictType === 'WAN' && intf.type === 'SAT')) {
-                        tipoCompativel = true;
-                    }
-                }
-                if (!tipoCompativel) return;
-                
-                const isUsed = intf.connectedToLink.length > 0 && !(dev.type === 'AccessPoint' && intf.type === 'WLAN');
-                let colorCode = intf.type === 'WLAN' ? '#3b82f6' : intf.type === 'WAN' ? '#ef4444' : intf.type === 'BT' ? '#f472b6' : intf.type === 'NFC' ? '#a78bfa' : intf.type === 'FSO' ? '#10b981' : intf.type === 'SAT' ? '#f59e0b' : '#10b981';
-                const btn = document.createElement('div');
-                btn.className = `port-item ${isUsed ? 'used' : ''}`;
-                btn.innerHTML = `
-              <div><span class="port-type-badge" style="background:${colorCode}">${intf.type}</span> <strong>${portName}</strong></div>
-              <span>${isUsed ? 'Ocupada' : 'Livre'}</span>`;
-                if (!isUsed) btn.onclick = () => { closeModals(); onSelectCallback(portName, intf.type); };
-                listDiv.appendChild(btn);
-                hasOptions = true;
+        function renderObstacles() {
+            obstacles.forEach(w => {
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', w.x1);
+                line.setAttribute('y1', w.y1);
+                line.setAttribute('x2', w.x2);
+                line.setAttribute('y2', w.y2);
+                line.setAttribute('class', 'obstacle-wall');
+                svgLayer.appendChild(line);
             });
-            if (!hasOptions) listDiv.innerHTML = '<div style="color:var(--danger);padding:10px;">Nenhuma interface compatível.</div>';
-            document.getElementById('port-modal').style.display = 'flex';
         }
 
-        // ===================== CONFIGURAÇÃO TCP/IP + WIRELESS =====================
-        function onDeviceDblClick(e, devId) {
-            if (mode !== 'move') return;
+        function openConfigModal(devId) {
             activeConfigDeviceId = devId;
             const dev = devices[devId];
             document.getElementById('cfg-hostname').value = dev.name;
             const container = document.getElementById('config-interfaces');
             container.innerHTML = '';
-            Object.keys(dev.interfaces).forEach(portName => {
-                const intf = dev.interfaces[portName];
-                const isUp = intf.connectedToLink.length > 0;
-                const statusTxt = isUp ? '<span style="color:var(--success)">UP</span>' : '<span style="color:var(--danger)">DOWN</span>';
-                const disableAttr = intf.dhcp ? 'disabled' : '';
-                container.innerHTML += `
-              <div class="interface-block">
-                <div class="interface-title"><span>${portName} [MAC:${intf.mac}]</span> ${statusTxt}</div>
-                <div class="dhcp-toggle">
-                  <label><input type="radio" name="dhcp_${portName}" value="static" ${!intf.dhcp?'checked':''} onchange="toggleDHCP('${portName}',false)"> Estático</label>
-                  <label><input type="radio" name="dhcp_${portName}" value="dhcp" ${intf.dhcp?'checked':''} onchange="toggleDHCP('${portName}',true)"> DHCP</label>
-                </div>
-                <div class="cfg-group-${portName}">
-                  <div class="config-row"><label>IPv4:</label><input type="text" id="cfg-ip-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.ip}" ${disableAttr}></div>
-                  <div class="config-row"><label>Máscara:</label><input type="text" id="cfg-mask-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.mask}" ${disableAttr}></div>
-                  <div class="config-row"><label>Gateway:</label><input type="text" id="cfg-gw-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.gateway}" ${disableAttr}></div>
-                  <div class="config-row"><label>DNS:</label><input type="text" id="cfg-dns-${portName}" value="${intf.dhcp?'Auto (DHCP)':intf.dns}" ${disableAttr}></div>
-                </div>
-              </div>`;
+
+            Object.entries(dev.interfaces).forEach(([ifName, intf]) => {
+                const currentCidr = maskToCidr(intf.mask);
+                const block = document.createElement('div');
+                block.className = 'interface-block';
+                block.innerHTML = `
+                    <div class="interface-title">
+                        <span>Interface: ${ifName} (${intf.type})</span>
+                        <button class="small" onclick="autoAllocateSubnet('${ifName}')" style="background:var(--accent); color:#000;">⚡ Alocar Sub-rede Livre</button>
+                    </div>
+                    <div class="config-row">
+                        <label>Modo IP:</label>
+                        <select id="cfg-mode-${ifName}" onchange="toggleIPInputs('${ifName}')">
+                            <option value="static" ${intf.ipMode === 'static' ? 'selected' : ''}>Estático / Manual</option>
+                            <option value="dhcp" ${intf.ipMode === 'dhcp' ? 'selected' : ''}>DHCP Automático</option>
+                        </select>
+                    </div>
+                    <div class="config-row">
+                        <label>Máscara (CIDR):</label>
+                        <select id="cfg-cidr-${ifName}" onchange="updateSubnetCalculation('${ifName}')">
+                            ${availableCIDRs.map(opt => `<option value="${opt.cidr}" ${opt.cidr === currentCidr ? 'selected' : ''}>${opt.cidr} (${opt.mask})</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="config-row">
+                        <label>Endereço IPv4:</label>
+                        <input type="text" id="cfg-ip-${ifName}" value="${intf.ip}" ${intf.ipMode === 'dhcp' ? 'readonly' : ''} oninput="updateSubnetCalculation('${ifName}')">
+                    </div>
+                    <div class="config-row">
+                        <label>Máscara Sub-rede:</label>
+                        <input type="text" id="cfg-mask-${ifName}" value="${intf.mask}" readonly style="opacity:0.7;">
+                    </div>
+                    <div class="config-row">
+                        <label>Default Gateway:</label>
+                        <input type="text" id="cfg-gw-${ifName}" value="${intf.gateway}" ${intf.ipMode === 'dhcp' ? 'readonly' : ''}>
+                    </div>
+                    <div class="config-row">
+                        <label>Servidor DNS:</label>
+                        <input type="text" id="cfg-dns-${ifName}" value="${intf.dns}">
+                    </div>
+
+                    <!-- CAIXA DE CÁLCULO DE SUB-REDE EM TEMPO REAL -->
+                    <div class="subnet-info-box">
+                        <div><strong>Rede (Network):</strong> <span id="info-net-${ifName}" class="val">-</span></div>
+                        <div><strong>Broadcast:</strong> <span id="info-bc-${ifName}" class="val">-</span></div>
+                        <div><strong>Hosts Válidos:</strong> <span id="info-range-${ifName}" class="val">-</span></div>
+                    </div>
+                `;
+                container.appendChild(block);
+                
+                // Calcula de imediato com os valores atuais
+                setTimeout(() => updateSubnetCalculation(ifName), 0);
             });
-            if (dev.type === 'AccessPoint' || dev.interfaces['Antena-WLAN']) {
-                container.innerHTML += `
-              <div class="interface-block">
-                <div class="interface-title">📶 Configurações Wireless</div>
-                <div class="config-row"><label>Padrão:</label><select id="cfg-wifi-std">
-                 <option value="802.11b" ${dev.wifiStandard==='802.11b'?'selected':''}>802.11b – 11 Mbps, alcance ~100 m</option>
-                 <option value="802.11g" ${dev.wifiStandard==='802.11g'?'selected':''}>802.11g – 54 Mbps, alcance ~70 m</option>
-                 <option value="802.11n" ${dev.wifiStandard==='802.11n'?'selected':''}>802.11n – 300 Mbps, alcance ~60 m</option>
-                 <option value="802.11ac" ${dev.wifiStandard==='802.11ac'?'selected':''}>802.11ac – 1,3 Gbps, alcance ~35 m</option>
-                 <option value="802.11ax" ${dev.wifiStandard==='802.11ax'?'selected':''}>802.11ax / Wi‑Fi 6 – 9,6 Gbps, alcance ~30 m</option>
-                </select></div>
-                <div class="config-row"><label>Canal:</label><select id="cfg-wifi-channel">
-                  <option value="1" ${dev.wifiChannel==1?'selected':''}>1 (2.412 GHz)</option>
-                  <option value="6" ${dev.wifiChannel==6?'selected':''}>6 (2.437 GHz)</option>
-                  <option value="11" ${dev.wifiChannel==11?'selected':''}>11 (2.462 GHz)</option>
-                </select></div>
-                <div class="config-row"><label>Potência:</label><input type="range" id="cfg-tx-power" min="5" max="30" value="${dev.txPower||20}" style="flex:1;"> <span id="tx-power-val">${dev.txPower||20} dBm</span></div>
-              </div>`;
-                document.getElementById('cfg-tx-power').addEventListener('input', function() {
-                    document.getElementById('tx-power-val').textContent = this.value + ' dBm';
-                });
-            }
+
             document.getElementById('config-modal').style.display = 'flex';
         }
 
-        function toggleDHCP(portName, isDHCP) {
-            const inputs = document.querySelectorAll(`.cfg-group-${portName} input[type="text"]`);
-            inputs.forEach(input => {
-                input.disabled = isDHCP;
-                if (isDHCP) {
-                    input.dataset.oldValue = input.value !== 'Auto (DHCP)' ? input.value : '';
-                    input.value = "Auto (DHCP)";
-                } else input.value = input.dataset.oldValue || "";
-            });
+        function updateMaskFromCIDR(ifName) {
+            const cidr = document.getElementById(`cfg-cidr-${ifName}`).value;
+            const bits = cidrToBits(cidr);
+            document.getElementById(`cfg-mask-${ifName}`).value = cidrToMask(bits);
+        }
+
+        function updateSubnetCalculation(ifName) {
+            updateMaskFromCIDR(ifName);
+            const ip = document.getElementById(`cfg-ip-${ifName}`).value.trim();
+            const mask = document.getElementById(`cfg-mask-${ifName}`).value.trim();
+
+            const infoNet = document.getElementById(`info-net-${ifName}`);
+            const infoBc = document.getElementById(`info-bc-${ifName}`);
+            const infoRange = document.getElementById(`info-range-${ifName}`);
+
+            const info = calculateSubnetInfo(ip, mask);
+            if (info) {
+                infoNet.innerText = info.networkIp;
+                infoBc.innerText = info.broadcastIp;
+                if (info.totalAddresses > 2) {
+                    infoRange.innerText = `${info.firstHostIp} até ${info.lastHostIp} (${info.validHostsCount} hosts)`;
+                } else {
+                    infoRange.innerText = 'Ponto-a-Ponto (/30)';
+                }
+            } else {
+                infoNet.innerText = '-';
+                infoBc.innerText = '-';
+                infoRange.innerText = '-';
+            }
+        }
+
+        function toggleIPInputs(ifName) {
+            const modeVal = document.getElementById(`cfg-mode-${ifName}`).value;
+            const ipInput = document.getElementById(`cfg-ip-${ifName}`);
+            const gwInput = document.getElementById(`cfg-gw-${ifName}`);
+            if (modeVal === 'dhcp') {
+                ipInput.readOnly = true;
+                gwInput.readOnly = true;
+            } else {
+                ipInput.readOnly = false;
+                gwInput.readOnly = false;
+            }
+        }
+
+        function autoAllocateSubnet(ifName) {
+            const cidrVal = document.getElementById(`cfg-cidr-${ifName}`).value;
+            const bits = cidrToBits(cidrVal);
+            const allocation = findNextAvailableSubnet(bits, activeConfigDeviceId, ifName);
+
+            if (allocation) {
+                document.getElementById(`cfg-ip-${ifName}`).value = allocation.firstHostIp;
+                document.getElementById(`cfg-mask-${ifName}`).value = allocation.mask;
+                document.getElementById(`cfg-gw-${ifName}`).value = allocation.gatewayIp;
+                updateSubnetCalculation(ifName);
+                showToast(`Sub-rede alocada: ${allocation.networkIp}${allocation.cidr}`);
+            } else {
+                showToast("Erro: Nenhuma sub-rede livre disponível para esse bloco CIDR!");
+            }
         }
 
         function saveConfig() {
-            if (!activeConfigDeviceId) return;
             const dev = devices[activeConfigDeviceId];
             dev.name = document.getElementById('cfg-hostname').value;
-            Object.keys(dev.interfaces).forEach(portName => {
-                const isDHCP = document.querySelector(`input[name="dhcp_${portName}"][value="dhcp"]`)?.checked;
-                if (isDHCP !== undefined) dev.interfaces[portName].dhcp = isDHCP;
-                if (!isDHCP) {
-                    dev.interfaces[portName].ip = document.getElementById(`cfg-ip-${portName}`)?.value.trim() || '';
-                    dev.interfaces[portName].mask = document.getElementById(`cfg-mask-${portName}`)?.value.trim() || '';
-                    dev.interfaces[portName].gateway = document.getElementById(`cfg-gw-${portName}`)?.value.trim() || '';
-                    dev.interfaces[portName].dns = document.getElementById(`cfg-dns-${portName}`)?.value.trim() || '';
-                } else {
-                    dev.interfaces[portName].ip = '';
-                    dev.interfaces[portName].mask = '';
+
+            for (let ifName in dev.interfaces) {
+                const modeVal = document.getElementById(`cfg-mode-${ifName}`).value;
+                const ipVal = document.getElementById(`cfg-ip-${ifName}`).value.trim();
+                const maskVal = document.getElementById(`cfg-mask-${ifName}`).value.trim();
+                const gwVal = document.getElementById(`cfg-gw-${ifName}`).value.trim();
+                const dnsVal = document.getElementById(`cfg-dns-${ifName}`).value.trim();
+
+                if (modeVal === 'static' && ipVal !== '') {
+                    // 1. Validação de IP Duplicado
+                    if (checkIPDuplicate(ipVal, activeConfigDeviceId, ifName)) {
+                        showToast(`❌ Erro: O IP ${ipVal} já está em uso por outro dispositivo!`);
+                        return;
+                    }
+
+                    // 2. Validação de Endereço de Rede ou Broadcast
+                    const checkReserved = isReservedOrConflictingIP(ipVal, maskVal);
+                    if (checkReserved.invalid) {
+                        showToast(`❌ Erro: ${checkReserved.reason}`);
+                        return;
+                    }
                 }
-            });
-            const wifiStd = document.getElementById('cfg-wifi-std');
-            if (wifiStd) dev.wifiStandard = wifiStd.value;
-            const wifiCh = document.getElementById('cfg-wifi-channel');
-            if (wifiCh) dev.wifiChannel = parseInt(wifiCh.value);
-            const txP = document.getElementById('cfg-tx-power');
-            if (txP) dev.txPower = parseInt(txP.value);
+
+                dev.interfaces[ifName].ipMode = modeVal;
+                dev.interfaces[ifName].ip = ipVal;
+                dev.interfaces[ifName].mask = maskVal;
+                dev.interfaces[ifName].gateway = gwVal;
+                dev.interfaces[ifName].dns = dnsVal;
+            }
+
+            triggerDHCPAutoConfig();
             closeModals();
+            renderAll();
+            showToast("Configurações gravadas com sucesso!");
+        }
+
+        function triggerDHCPAutoConfig() {
+            Object.values(devices).forEach(dev => {
+                Object.entries(dev.interfaces).forEach(([ifName, intf]) => {
+                    if (intf.ipMode === 'dhcp') {
+                        const connectedLink = links.find(l => 
+                            (l.dev1 === dev.id && l.port1 === ifName) || 
+                            (l.dev2 === dev.id && l.port2 === ifName)
+                        );
+
+                        if (connectedLink) {
+                            const neighborId = connectedLink.dev1 === dev.id ? connectedLink.dev2 : connectedLink.dev1;
+                            const neighborPort = connectedLink.dev1 === dev.id ? connectedLink.port2 : connectedLink.port1;
+                            const neighborIntf = devices[neighborId].interfaces[neighborPort];
+
+                            if (neighborIntf && neighborIntf.ip && neighborIntf.mask) {
+                                const { netInt, broadcastInt } = getSubnetRange(neighborIntf.ip, neighborIntf.mask);
+                                let candidate = netInt + 2;
+
+                                while (candidate < broadcastInt) {
+                                    const candidateIpStr = longToIp(candidate);
+                                    if (!checkIPDuplicate(candidateIpStr, dev.id, ifName) && candidateIpStr !== neighborIntf.ip) {
+                                        intf.ip = candidateIpStr;
+                                        intf.mask = neighborIntf.mask;
+                                        intf.gateway = neighborIntf.ip;
+                                        break;
+                                    }
+                                    candidate++;
+                                }
+                            }
+                        } else {
+                            intf.ip = '';
+                            intf.gateway = '';
+                        }
+                    }
+                });
+            });
+        }
+
+        function handlePingStep(devId) {
+            if (!pingSourceId) {
+                pingSourceId = devId;
+                renderAll();
+                showToast(`Origem do Ping selecionada: ${devices[devId].name}. Agora escolha o Destino!`);
+            } else {
+                if (pingSourceId === devId) {
+                    pingSourceId = null;
+                    renderAll();
+                    return;
+                }
+                runPingSimulation(pingSourceId, devId);
+                pingSourceId = null;
+                renderAll();
+            }
+        }
+
+        function runPingSimulation(srcId, dstId) {
+            const src = devices[srcId];
+            const dst = devices[dstId];
+
+            const srcIP = Object.values(src.interfaces).find(i => i.ip)?.ip;
+            const dstIP = Object.values(dst.interfaces).find(i => i.ip)?.ip;
+
+            if (!srcIP || !dstIP) {
+                showToast("⚡ PING FALHOU: Um dos dispositivos não possui endereço IPv4 válido!");
+                return;
+            }
+
+            const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            dot.setAttribute('r', 6);
+            dot.setAttribute('class', 'packet-dot');
+            dot.setAttribute('fill', '#10b981');
+            svgLayer.appendChild(dot);
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 0.05;
+                dot.setAttribute('cx', src.x + 27 + (dst.x - src.x) * progress);
+                dot.setAttribute('cy', src.y + 27 + (dst.y - src.y) * progress);
+
+                if (progress >= 1) {
+                    clearInterval(interval);
+                    dot.remove();
+                    showToast(`⚡ PING SUCESSO! Resposta de ${dstIP}: bytes=32 tempo=2ms TTL=128`);
+                }
+            }, 30);
+        }
+
+        function deleteDevice(id) {
+            delete devices[id];
+            links = links.filter(l => l.dev1 !== id && l.dev2 !== id);
+            renderAll();
+            showToast("Dispositivo e conexões associadas removidos.");
+        }
+
+        function clearWorkspace() {
+            devices = {};
+            links = [];
+            obstacles = [];
+            idCounter = 1;
+            renderAll();
+            showToast("Cenário limpo com sucesso!");
+        }
+
+        function clearObstacles() {
+            obstacles = [];
+            renderAll();
+            showToast("Paredes removidas!");
+        }
+
+        function applyWeather() {
+            weather = document.getElementById('weather-select').value;
             renderAll();
         }
 
-        function deleteDevice(devId) {
-            pendingReconnect = pendingReconnect.filter(p => p.sourceId !== devId && p.targetId !== devId);
-            
-            links = links.filter(link => {
-                if (link.sourceId === devId || link.targetId === devId) {
-                    const otherDevId = link.sourceId === devId ? link.targetId : link.sourceId;
-                    const otherPort = link.sourceId === devId ? link.targetPort : link.sourcePort;
-                    if (devices[otherDevId]) devices[otherDevId].interfaces[otherPort].connectedToLink = devices[otherDevId].interfaces[otherPort].connectedToLink.filter(id => id !== link.id);
-                    return false;
-                }
-                return true;
-            });
-            delete devices[devId];
+        function applyInterference() {
+            interferenceLevel = parseInt(document.getElementById('interference-slider').value, 10);
+            document.getElementById('interference-value').innerText = `${interferenceLevel}%`;
             renderAll();
         }
 
         function closeModals() {
             document.querySelectorAll('.modal-overlay').forEach(m => m.style.display = 'none');
-            activeConfigDeviceId = null;
-        }
-
-        function clearWorkspace() {
-            if (confirm("Apagar toda a topologia?")) { 
-                devices = {}; 
-                links = []; 
-                obstacles = []; 
-                pendingReconnect = [];
-                obstacleFirstPoint = null;
-                removeObstacleMarkers();
-                idCounter = 1; 
-                renderAll(); 
-            }
-        }
-
-        function clearObstacles() { 
-            obstacles = []; 
-            obstacleFirstPoint = null;
-            removeObstacleMarkers();
-            renderAll(); 
         }
 
         function exportJSON() {
-            const topology = { metadata: { software: "NetSim Pro", timestamp: new Date().toISOString() }, nodes: devices, connections: links, obstacles };
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(topology, null, 2));
+            const data = JSON.stringify({ devices, links, obstacles, idCounter }, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.setAttribute("href", dataStr);
-            a.setAttribute("download", "laboratorio-tcpip.json");
-            document.body.appendChild(a);
+            a.href = url;
+            a.download = `rede_tcp_ip_${Date.now()}.json`;
             a.click();
-            a.remove();
         }
 
-        function applyWeather() {
-            weather = document.getElementById('weather-select').value;
-            renderLinks();
-        }
-
-        function applyInterference() {
-            interferenceLevel = parseInt(document.getElementById('interference-slider').value);
-            document.getElementById('interference-value').textContent = interferenceLevel + '%';
-            renderLinks();
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    devices = parsed.devices || {};
+                    links = parsed.links || [];
+                    obstacles = parsed.obstacles || [];
+                    idCounter = parsed.idCounter || 1;
+                    renderAll();
+                    showToast("Cenário carregado com sucesso!");
+                } catch (err) {
+                    showToast("Erro ao ler arquivo JSON!");
+                }
+            };
+            reader.readAsText(file);
         }
     </script>
 </body>
