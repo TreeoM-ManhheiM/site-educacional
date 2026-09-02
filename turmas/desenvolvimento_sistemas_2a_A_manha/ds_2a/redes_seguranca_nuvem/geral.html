@@ -612,15 +612,17 @@
             return {
                 networkIp: longToIp(netInt),
                 broadcastIp: longToIp(broadcastInt),
-                firstHostIp: totalAddresses > 2 ? longToIp(firstHostInt) : 'N/A',
-                lastHostIp: totalAddresses > 2 ? longToIp(lastHostInt) : 'N/A',
+                firstHostIp: totalAddresses > 2 ? longToIp(firstHostInt) : longToIp(netInt),
+                lastHostIp: totalAddresses > 2 ? longToIp(lastHostInt) : longToIp(broadcastInt),
                 totalAddresses,
-                validHostsCount: Math.max(0, totalAddresses - 2)
+                validHostsCount: Math.max(0, totalAddresses > 2 ? totalAddresses - 2 : totalAddresses)
             };
         }
 
         function getUsedRanges(excludeCurrentDevId = null, excludeIfName = null) {
             let ranges = [];
+            
+            // 1. Pega o que já está salvo nos outros dispositivos
             Object.values(devices).forEach(dev => {
                 Object.entries(dev.interfaces).forEach(([ifName, intf]) => {
                     if (dev.id === excludeCurrentDevId && ifName === excludeIfName) return;
@@ -629,6 +631,20 @@
                     }
                 });
             });
+
+            // 2. Pega TAMBÉM o que está digitado nos inputs do modal atual (caso aberto)
+            if (activeConfigDeviceId) {
+                const dev = devices[activeConfigDeviceId];
+                Object.keys(dev.interfaces).forEach(ifName => {
+                    if (activeConfigDeviceId === excludeCurrentDevId && ifName === excludeIfName) return;
+                    const ipInput = document.getElementById(`cfg-ip-${ifName}`);
+                    const maskInput = document.getElementById(`cfg-mask-${ifName}`);
+                    if (ipInput && maskInput && ipInput.value.trim() && maskInput.value.trim()) {
+                        ranges.push(getSubnetRange(ipInput.value.trim(), maskInput.value.trim()));
+                    }
+                });
+            }
+
             return ranges;
         }
 
@@ -746,33 +762,38 @@
         }
 
         function renderDevices() {
-            workspace.querySelectorAll('.node').forEach(n => n.remove());
-            Object.values(devices).forEach(dev => {
-                const el = document.createElement('div');
-                let extraClass = '';
-                if (pendingConnection.sourceId === dev.id) extraClass = 'selected';
-                if (pingSourceId === dev.id) extraClass = 'ping-source';
+    workspace.querySelectorAll('.node').forEach(n => n.remove());
+    Object.values(devices).forEach(dev => {
+        const el = document.createElement('div');
+        let extraClass = '';
+        if (pendingConnection.sourceId === dev.id) extraClass = 'selected';
+        if (pingSourceId === dev.id) extraClass = 'ping-source';
 
-                el.className = `node ${extraClass}`;
-                el.id = dev.id;
-                el.style.left = `${dev.x}px`;
-                el.style.top = `${dev.y}px`;
+        el.className = `node ${extraClass}`;
+        el.id = dev.id;
+        el.style.left = `${dev.x}px`;
+        el.style.top = `${dev.y}px`;
 
-                let ipSummary = '';
-                Object.values(dev.interfaces).forEach(intf => {
-                    if (intf.ip) {
-                        const cidr = maskToCidr(intf.mask);
-                        ipSummary += `<br><span style="color:var(--success)">${intf.ip}${cidr}</span>`;
-                    } else if (intf.ipMode === 'dhcp') {
-                        ipSummary += `<br><span style="color:var(--warning)">DHCP (Pendente)</span>`;
-                    }
-                });
+        let ipSummary = '';
+        Object.entries(dev.interfaces).forEach(([ifName, intf]) => {
+            if (intf.ip && intf.mask) {
+                const cidr = maskToCidr(intf.mask);
+                const info = calculateSubnetInfo(intf.ip, intf.mask);
+                if (info) {
+                    ipSummary += `<br><span style="color:var(--success)">${ifName}: ${intf.ip}${cidr}</span><br><span style="color:#38bdf8; font-size:6px;">Rede: ${info.networkIp} | Bc: ${info.broadcastIp}</span>`;
+                } else {
+                    ipSummary += `<br><span style="color:var(--success)">${ifName}: ${intf.ip}${cidr}</span>`;
+                }
+            } else if (intf.ipMode === 'dhcp') {
+                ipSummary += `<br><span style="color:var(--warning)">${ifName}: DHCP (Pendente)</span>`;
+            }
+        });
 
-                el.innerHTML = `<div class="node-icon">${dev.icon}</div><div class="node-label">${dev.name}${ipSummary}</div>`;
-                el.addEventListener('pointerdown', (e) => onNodePointerDown(e, dev.id));
-                workspace.appendChild(el);
-            });
-        }
+        el.innerHTML = `<div class="node-icon">${dev.icon}</div><div class="node-label">${dev.name}${ipSummary}</div>`;
+        el.addEventListener('pointerdown', (e) => onNodePointerDown(e, dev.id));
+        workspace.appendChild(el);
+    });
+}
 
         function getPointerPos(e) {
             const rect = workspace.getBoundingClientRect();
@@ -1047,11 +1068,13 @@
                         <input type="text" id="cfg-dns-${ifName}" value="${intf.dns}">
                     </div>
 
-                    <!-- CAIXA DE CÁLCULO DE SUB-REDE EM TEMPO REAL -->
+                    <!-- CAIXA DE CÁLCULO DE SUB-REDE EM TEMPO REAL DIDÁTICA -->
                     <div class="subnet-info-box">
-                        <div><strong>Rede (Network):</strong> <span id="info-net-${ifName}" class="val">-</span></div>
-                        <div><strong>Broadcast:</strong> <span id="info-bc-${ifName}" class="val">-</span></div>
-                        <div><strong>Hosts Válidos:</strong> <span id="info-range-${ifName}" class="val">-</span></div>
+                        <div><strong>Início da Rede (Network):</strong> <span id="info-net-${ifName}" class="val">-</span></div>
+                        <div><strong>Primeiro Host:</strong> <span id="info-first-${ifName}" class="val">-</span></div>
+                        <div><strong>Último Host:</strong> <span id="info-last-${ifName}" class="val">-</span></div>
+                        <div><strong>Fim (Broadcast):</strong> <span id="info-bc-${ifName}" class="val">-</span></div>
+                        <div><strong>Total de Hosts Úteis:</strong> <span id="info-range-${ifName}" class="val">-</span></div>
                     </div>
                 `;
                 container.appendChild(block);
@@ -1075,20 +1098,22 @@
             const mask = document.getElementById(`cfg-mask-${ifName}`).value.trim();
 
             const infoNet = document.getElementById(`info-net-${ifName}`);
+            const infoFirst = document.getElementById(`info-first-${ifName}`);
+            const infoLast = document.getElementById(`info-last-${ifName}`);
             const infoBc = document.getElementById(`info-bc-${ifName}`);
             const infoRange = document.getElementById(`info-range-${ifName}`);
 
             const info = calculateSubnetInfo(ip, mask);
             if (info) {
                 infoNet.innerText = info.networkIp;
+                infoFirst.innerText = info.firstHostIp;
+                infoLast.innerText = info.lastHostIp;
                 infoBc.innerText = info.broadcastIp;
-                if (info.totalAddresses > 2) {
-                    infoRange.innerText = `${info.firstHostIp} até ${info.lastHostIp} (${info.validHostsCount} hosts)`;
-                } else {
-                    infoRange.innerText = 'Ponto-a-Ponto (/30)';
-                }
+                infoRange.innerText = `${info.validHostsCount} hosts utilizáveis`;
             } else {
                 infoNet.innerText = '-';
+                infoFirst.innerText = '-';
+                infoLast.innerText = '-';
                 infoBc.innerText = '-';
                 infoRange.innerText = '-';
             }
@@ -1110,17 +1135,39 @@
         function autoAllocateSubnet(ifName) {
             const cidrVal = document.getElementById(`cfg-cidr-${ifName}`).value;
             const bits = cidrToBits(cidrVal);
-            const allocation = findNextAvailableSubnet(bits, activeConfigDeviceId, ifName);
+            const blockSize = Math.pow(2, 32 - bits);
+            
+            const usedRanges = getUsedRanges(activeConfigDeviceId, ifName);
+            let candidateStart = ipToLong('192.168.1.0');
 
-            if (allocation) {
-                document.getElementById(`cfg-ip-${ifName}`).value = allocation.firstHostIp;
-                document.getElementById(`cfg-mask-${ifName}`).value = allocation.mask;
-                document.getElementById(`cfg-gw-${ifName}`).value = allocation.gatewayIp;
-                updateSubnetCalculation(ifName);
-                showToast(`Sub-rede alocada: ${allocation.networkIp}${allocation.cidr}`);
-            } else {
-                showToast("Erro: Nenhuma sub-rede livre disponível para esse bloco CIDR!");
+            while (candidateStart <= ipToLong('192.168.255.255')) {
+                if (candidateStart % blockSize !== 0) {
+                    candidateStart = Math.ceil(candidateStart / blockSize) * blockSize;
+                }
+                const candidateEnd = candidateStart + blockSize - 1;
+
+                let hasOverlap = usedRanges.some(r => (candidateStart <= r.end && candidateEnd >= r.start));
+
+                if (!hasOverlap) {
+                    const allocation = {
+                        networkIp: longToIp(candidateStart),
+                        gatewayIp: longToIp(candidateStart + 1),
+                        firstHostIp: longToIp(candidateStart + 1),
+                        broadcastIp: longToIp(candidateEnd),
+                        mask: cidrToMask(bits),
+                        cidr: '/' + bits
+                    };
+
+                    document.getElementById(`cfg-ip-${ifName}`).value = allocation.firstHostIp;
+                    document.getElementById(`cfg-mask-${ifName}`).value = allocation.mask;
+                    document.getElementById(`cfg-gw-${ifName}`).value = allocation.gatewayIp;
+                    updateSubnetCalculation(ifName);
+                    showToast(`Sub-rede alocada: ${allocation.networkIp}${allocation.cidr}`);
+                    return;
+                }
+                candidateStart += blockSize;
             }
+            showToast("Erro: Nenhuma sub-rede livre disponível para esse bloco CIDR!");
         }
 
         function saveConfig() {
@@ -1135,13 +1182,11 @@
                 const dnsVal = document.getElementById(`cfg-dns-${ifName}`).value.trim();
 
                 if (modeVal === 'static' && ipVal !== '') {
-                    // 1. Validação de IP Duplicado
                     if (checkIPDuplicate(ipVal, activeConfigDeviceId, ifName)) {
                         showToast(`❌ Erro: O IP ${ipVal} já está em uso por outro dispositivo!`);
                         return;
                     }
 
-                    // 2. Validação de Endereço de Rede ou Broadcast
                     const checkReserved = isReservedOrConflictingIP(ipVal, maskVal);
                     if (checkReserved.invalid) {
                         showToast(`❌ Erro: ${checkReserved.reason}`);
@@ -1318,3 +1363,4 @@
     </script>
 </body>
 </html>
+```[cite: 3]
