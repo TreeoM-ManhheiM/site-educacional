@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto de NLP - Aula 2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            text-align: center;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>CIÊNCIA DE DADOS</h1>
+<h1>Roteiro de Atividade Prática</h1>
+
+<br><br>
+
+<p><strong>Nome:</strong> ___________________________________________</p>
+<p><strong>Turma:</strong> ____________</p>
+
+<p><strong>Componente:</strong> Inteligência Artificial</p>
+<p><strong>Unidade Curricular:</strong> Projeto de Inteligência Artificial</p>
+<p><strong>Tema da Semana:</strong> Projeto de Processamento de Linguagem Natural (NLP)</p>
+
+<h2>Aula 2: Desenvolvimento do Projeto de NLP</h2>
+
+<div class="section">
+    <h3>Tarefa</h3>
+    <ul>
+        <li>Execute o código abaixo.</li>
+        <li>Se as bibliotecas não estiverem instaladas, instale-as.</li>
+        <li>Acompanhe as instruções.</li>
+    </ul>
+</div>
+
+<div class="section">
+    <h3>Importar os Dados</h3>
+<pre><code>
+import pandas as pd
+
+dataset = pd.read_csv("IMDBDataset.csv")
+print(dataset.head())
+</code></pre>
+</div>
+
+<div class="section">
+    <h3>Divisão de Treinamento e Teste</h3>
+<pre><code>
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+
+dataset.dropna(inplace=True)
+dataset['review'] = dataset['review'].str.lower()
+
+vectorizer = CountVectorizer(stop_words='english')
+X = vectorizer.fit_transform(dataset['review'])
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    dataset['sentiment'],
+    test_size=0.2,
+    random_state=42
+)
+</code></pre>
+</div>
+
+<div class="section">
+    <h3>Treinamento usando Naive Bayes</h3>
+<pre><code>
+from sklearn.naive_bayes import MultinomialNB
+
+model = MultinomialNB()
+model.fit(X_train, y_train)
+</code></pre>
+</div>
+
+<div class="section">
+    <h3>Previsões</h3>
+<pre><code>
+predictions = model.predict(X_test)
+
+for i, pred in enumerate(predictions[:5]):
+    print(f"Texto: {dataset['review'].iloc[i]}")
+    print(f"Previsto: {pred}")
+    print()
+</code></pre>
+</div>
+
+<div class="section">
+    <h3>Avaliação</h3>
+<pre><code>
+from sklearn.metrics import accuracy_score, classification_report
+
+accuracy = accuracy_score(y_test, predictions)
+print(f"Acurácia: {accuracy:.2f}")
+
+print(classification_report(y_test, predictions))
+</code></pre>
+</div>
+
+<div class="section">
+    <h3>Implementação do Modelo SVM (Resposta)</h3>
+
+<pre><code>
+from sklearn.svm import LinearSVC
+from sklearn.metrics import accuracy_score, classification_report
+
+svm_model = LinearSVC(random_state=42)
+svm_model.fit(X_train, y_train)
+
+svm_predictions = svm_model.predict(X_test)
+
+print("=== RESULTADOS SVM ===")
+print("Acurácia:", accuracy_score(y_test, svm_predictions))
+print(classification_report(y_test, svm_predictions))
+</code></pre>
+
+</div>
+
+<div class="section">
+    <h3>Implementação do Modelo Random Forest (Resposta)</h3>
+
+<pre><code>
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report
+
+rf_model = RandomForestClassifier(
+    n_estimators=100,
+    random_state=42
+)
+
+rf_model.fit(X_train, y_train)
+
+rf_predictions = rf_model.predict(X_test)
+
+print("=== RESULTADOS RANDOM FOREST ===")
+print("Acurácia:", accuracy_score(y_test, rf_predictions))
+print(classification_report(y_test, rf_predictions))
+</code></pre>
+
+</div>
+
+</body>
+</html>
