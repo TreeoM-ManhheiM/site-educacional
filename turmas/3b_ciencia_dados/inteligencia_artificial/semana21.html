@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tutorial Qwen 2.5 1.5B Instruct</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#121212;
+    color:#e0e0e0;
+    max-width:1200px;
+    margin:auto;
+    padding:20px;
+    line-height:1.6;
+}
+
+h1,h2,h3{
+    color:#4fc3f7;
+}
+
+pre{
+    background:#1e1e1e;
+    border:1px solid #444;
+    padding:15px;
+    overflow:auto;
+    border-radius:8px;
+}
+
+code{
+    color:#81c784;
+}
+
+.box{
+    background:#1d1d1d;
+    padding:15px;
+    margin:15px 0;
+    border-left:5px solid #4fc3f7;
+}
+
+hr{
+    margin:30px 0;
+}
+</style>
+
+</head>
+<body>
+
+<h1>Tutorial Qwen 2.5 1.5B Instruct Local</h1>
+
+<p>
+Este tutorial mostra como executar o modelo
+<strong>Qwen/Qwen2.5-1.5B-Instruct</strong>
+localmente utilizando Python, Transformers e PyTorch.
+</p>
+
+<h2>O que é o Qwen?</h2>
+
+<div class="box">
+Qwen é uma família de modelos LLM criada pela Alibaba.
+A versão Qwen 2.5 1.5B possui aproximadamente 1,5 bilhão de parâmetros
+e consegue conversar, responder perguntas, gerar código, auxiliar em
+Ciência de Dados e apoiar estudos de programação.
+</div>
+
+<h2>Instalação do Python</h2>
+
+<p>Verifique se o Python está instalado:</p>
+
+<pre><code>python --version</code></pre>
+
+<h2>Instalar Dependências</h2>
+
+<p>Instale todas as bibliotecas necessárias:</p>
+
+<pre><code>pip install transformers torch accelerate sentencepiece</code></pre>
+
+<h2>Verificar Instalação do Transformers</h2>
+
+<p>Verifique se o pacote foi instalado corretamente:</p>
+
+<pre><code>python -c "import transformers; print(transformers.__version__)"</code></pre>
+
+<p>Exemplo de saída:</p>
+
+<pre><code>4.56.0</code></pre>
+
+<h2>Verificar Instalação do PyTorch</h2>
+
+<pre><code>python -c "import torch; print(torch.__version__)"</code></pre>
+
+<h2>Primeiro Teste</h2>
+
+<pre><code>from transformers import pipeline
+
+chat = pipeline(
+    "text-generation",
+    model="Qwen/Qwen2.5-1.5B-Instruct"
+)
+
+resposta = chat(
+    "Qual é a capital do Brasil?",
+    max_new_tokens=50
+)
+
+print(resposta)</code></pre>
+
+<h2>Arquivos do Modelo</h2>
+
+<p>
+Na primeira execução o modelo será baixado automaticamente do Hugging Face.
+</p>
+
+<p>No Windows normalmente fica em:</p>
+
+<pre><code>C:\Users\SEU_USUARIO\.cache\huggingface</code></pre>
+
+<p>Arquivos comuns encontrados:</p>
+
+<pre><code>config.json
+tokenizer.json
+tokenizer_config.json
+generation_config.json
+model.safetensors</code></pre>
+
+<h2>Chat Completo com Histórico</h2>
+
+<pre><code>from transformers import pipeline
+from transformers.utils import logging
+
+# Esconde avisos do Transformers
+logging.set_verbosity_error()
+
+print("Carregando Qwen...")
+
+pipe = pipeline(
+    "text-generation",
+    model="Qwen/Qwen2.5-1.5B-Instruct"
+)
+
+mensagens = [
+    {
+        "role": "system",
+        "content": """
+Você é um assistente útil.
+Responda sempre em português do Brasil.
+Se perguntarem quem você é, responda:
+"Sou o modelo Qwen 2.5 1.5B Instruct executando localmente."
+Se não souber uma resposta, diga claramente que não sabe.
+Não invente datas, números ou fatos.
+Responda de forma objetiva e organizada.
+"""
+    }
+]
+
+print("Chat iniciado.")
+print("Comandos:")
+print(" sair")
+print(" limpar")
+print(" historico")
+
+while True:
+
+    pergunta = input("\nVocê: ").strip()
+
+    if pergunta.lower() == "sair":
+        print("\nIA: Até logo!")
+        break
+
+    if pergunta.lower() == "limpar":
+        mensagens = [mensagens[0]]
+        print("\nIA: Histórico apagado.")
+        continue
+
+    if pergunta.lower() == "historico":
+        print(f"\nMensagens armazenadas: {len(mensagens)}")
+        continue
+
+    mensagens.append({
+        "role": "user",
+        "content": pergunta
+    })
+
+    resposta = pipe(
+        mensagens,
+        max_new_tokens=900,
+        do_sample=True,
+        temperature=0.7,
+        top_p=0.9
+    )
+
+    texto_resposta = resposta[0]["generated_text"][-1]["content"]
+
+    mensagens.append({
+        "role": "assistant",
+        "content": texto_resposta
+    })
+
+    if len(mensagens) > 20:
+        mensagens = [mensagens[0]] + mensagens[-19:]
+
+    print("\nIA:")
+    print(texto_resposta)</code></pre>
+
+<h2>Explicação dos Parâmetros</h2>
+
+<h3>max_new_tokens</h3>
+
+<p>
+Quantidade máxima de tokens que o modelo pode gerar.
+</p>
+
+<pre><code>max_new_tokens = 900</code></pre>
+
+<p>
+Quanto maior, mais longa poderá ser a resposta.
+</p>
+
+<h3>temperature</h3>
+
+<p>
+Controla a criatividade da resposta.
+</p>
+
+<pre><code>temperature = 0.2 → mais técnico
+temperature = 0.4 → recomendado para programação
+temperature = 0.7 → equilibrado
+temperature = 1.0 → mais criativo</code></pre>
+
+<h3>top_p</h3>
+
+<p>
+Controla a diversidade das palavras escolhidas.
+</p>
+
+<pre><code>top_p = 0.9</code></pre>
+
+<h2>Comandos do Chat</h2>
+
+<h3>sair</h3>
+
+<pre><code>sair</code></pre>
+
+<p>Encerra o chatbot.</p>
+
+<h3>limpar</h3>
+
+<pre><code>limpar</code></pre>
+
+<p>Apaga todo o histórico da conversa.</p>
+
+<h3>historico</h3>
+
+<pre><code>historico</code></pre>
+
+<p>Mostra quantas mensagens estão armazenadas na memória.</p>
+
+<h2>Exemplos de Perguntas</h2>
+
+<pre><code>Explique redes neurais.
+Crie uma calculadora em Python.
+Explique MQTT.
+Monte um sistema de manutenção preditiva.
+Crie um dashboard HTML para IoT.
+Explique o Teorema de Pitágoras.
+Explique Machine Learning para iniciantes.
+Crie uma página HTML com CSS moderno.
+Explique a diferença entre TensorFlow e Scikit-learn.</code></pre>
+
+<hr>
+
+<p>
+Tutorial criado para estudos de LLMs locais usando Python, Transformers e Hugging Face.
+</p>
+
+</body>
+</html>
