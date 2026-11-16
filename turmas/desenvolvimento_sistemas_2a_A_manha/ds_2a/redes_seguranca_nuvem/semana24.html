@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberLab Simulator - TLS, PKI e mTLS</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@400;600&display=swap');
+
+        :root {
+            --bg-main: #0d1117;
+            --bg-panel: #161b22;
+            --bg-header: #010409;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --accent-hover: #1f6feb;
+            --success: #238636;
+            --success-text: #3fb950;
+            --danger: #da3633;
+            --danger-text: #f85149;
+            --border: #30363d;
+            --terminal-bg: #0a0c10;
+            --code-string: #a5d6ff;
+            --code-keyword: #ff7b72;
+            --code-prop: #79c0ff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header & Tabs */
+        header {
+            background-color: var(--bg-header);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+        header h1 { font-size: 1.2rem; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+        header h1 span { color: var(--accent); }
+        .tabs { display: flex; gap: 5px; }
+        .tab {
+            padding: 8px 16px;
+            background: transparent;
+            border: 1px solid transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .tab:hover { background: var(--bg-panel); color: var(--text-main); }
+        .tab.active { background: var(--bg-panel); color: var(--accent); border-color: var(--border); }
+
+        /* Workspace Layout */
+        .workspace { display: flex; flex: 1; overflow: hidden; }
+        .ide-panel { flex: 1.2; background: var(--bg-panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .terminal-panel { flex: 1; background: var(--terminal-bg); display: flex; flex-direction: column; }
+
+        .panel-header {
+            padding: 8px 15px;
+            background: var(--bg-main);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* Panels */
+        .view { display: none; padding: 20px; flex: 1; overflow-y: auto; }
+        .view.active { display: flex; flex-direction: column; }
+
+        /* Terminal */
+        #terminal-output {
+            flex: 1;
+            padding: 15px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-y: auto;
+            line-height: 1.5;
+            color: #e6edf3;
+        }
+        .term-line { margin-bottom: 2px; white-space: pre-wrap; }
+        .term-cmd { color: var(--success-text); font-weight: 600; }
+        .term-err { color: var(--danger-text); }
+        .term-sys { color: var(--accent); }
+        .term-warn { color: #d29922; }
+        .cursor { display: inline-block; width: 8px; height: 15px; background: var(--text-main); animation: blink 1s step-end infinite; vertical-align: middle; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* UI Elements */
+        button {
+            background: #21262d;
+            color: var(--text-main);
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        button:hover:not(:disabled) { background: #30363d; border-color: #8b949e; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button.primary { background: var(--success); border-color: rgba(240,246,252,0.1); color: white; }
+        button.primary:hover { background: #2ea043; }
+
+        /* Aula 1: Handshake Visual */
+        .handshake-visual { display: flex; justify-content: space-between; position: relative; padding: 20px 0; margin-bottom: 20px; }
+        .actor { text-align: center; z-index: 2; }
+        .actor-box { width: 80px; height: 80px; background: #21262d; border: 2px solid var(--border); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; }
+        .actor.active .actor-box { border-color: var(--accent); box-shadow: 0 0 15px rgba(88,166,255,0.3); }
+        .flow-line { position: absolute; left: 10%; right: 10%; top: 60px; height: 2px; background: var(--border); z-index: 1; }
+        .packet {
+            position: absolute; background: var(--accent); color: white; font-size: 0.75rem; padding: 4px 8px; border-radius: 4px;
+            opacity: 0; transition: all 0.5s ease; white-space: nowrap; top: -15px; transform: translateX(-50%);
+        }
+        
+        /* Aula 2: File Tree */
+        .file-tree { font-family: 'Fira Code', monospace; font-size: 0.9rem; margin-bottom: 20px; border-left: 1px solid var(--border); padding-left: 10px; }
+        .file-item { padding: 4px 0; color: var(--text-muted); display: flex; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.3s; }
+        .file-item.show { opacity: 1; }
+        .file-item.key { color: #d2a8ff; }
+        .file-item.csr { color: #ff7b72; }
+        .file-item.crt { color: #3fb950; }
+        
+        .pki-graph { display: flex; flex-direction: column; gap: 10px; align-items: center; margin-top: 20px; }
+        .cert-node { border: 1px solid var(--border); padding: 10px 20px; border-radius: 6px; background: #0d1117; text-align: center; width: 250px; opacity: 0.3; transition: 0.5s; }
+        .cert-node.active { opacity: 1; border-color: var(--success); box-shadow: 0 0 10px rgba(35,134,54,0.2); }
+        .pki-arrow { font-size: 1.2rem; color: var(--text-muted); }
+
+        /* Aula 3: Nginx Editor (CORRIGIDO) */
+        .editor-wrapper { background: #0d1117; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .editor-header { background: #161b22; padding: 8px 15px; font-size: 0.8rem; color: var(--text-muted); border-bottom: 1px solid var(--border); font-family: 'Inter', sans-serif; display: flex; align-items: center; gap: 8px; }
+        .editor-code { padding: 15px; font-family: 'Fira Code', monospace; font-size: 0.95rem; line-height: 1.6; color: #e6edf3; }
+        
+        .editor-code .keyword { color: var(--code-keyword); }
+        .editor-code .prop { color: var(--code-prop); }
+        .editor-code .string { color: var(--code-string); }
+        .editor-code .comment { color: #8b949e; font-style: italic; }
+        
+        /* Inputs disfarçados de código */
+        .inline-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed #8b949e;
+            color: var(--accent);
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            width: 280px; /* Aumentado para não cortar o texto */
+            outline: none;
+            padding: 0 5px;
+            transition: 0.2s;
+        }
+        .inline-input:focus { border-bottom: 1px solid var(--accent); background: rgba(88,166,255,0.1); }
+        .inline-input::placeholder { color: #484f58; }
+        
+        .inline-select {
+            background: transparent;
+            border: none;
+            border-bottom: 1px dashed #8b949e;
+            color: #ff7b72;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.95rem;
+            outline: none;
+            cursor: pointer;
+            padding: 0;
+        }
+        .inline-select option { background: var(--bg-main); color: var(--text-main); }
+        
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><span>🛡️</span> CyberLab CLI Simulator</h1>
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('lab1')">Lab 1: TLS Handshake</button>
+            <button class="tab" onclick="switchTab('lab2')">Lab 2: PKI OpenSSL</button>
+            <button class="tab" onclick="switchTab('lab3')">Lab 3: Nginx mTLS</button>
+        </div>
+    </header>
+
+    <div class="workspace">
+        <!-- ÁREA DE SIMULAÇÃO VISUAL -->
+        <div class="ide-panel">
+            <div class="panel-header">
+                <span>Visualização do Ambiente</span>
+                <button onclick="resetAll()" style="padding: 2px 8px; font-size: 0.7rem;">Resetar Tudo</button>
+            </div>
+
+            <!-- LAB 1 -->
+            <div id="view-lab1" class="view active">
+                <h3 style="margin-bottom: 20px;">Handshake TLS 1.2</h3>
+                <div class="handshake-visual">
+                    <div class="actor" id="actor-client">
+                        <div class="actor-box">💻</div>
+                        <div>Cliente</div>
+                    </div>
+                    <div class="flow-line"></div>
+                    <div id="packet-anim" class="packet">Mensagem</div>
+                    <div class="actor" id="actor-server">
+                        <div class="actor-box">🖥️</div>
+                        <div>Servidor</div>
+                    </div>
+                </div>
+                <div style="background: var(--bg-main); padding: 15px; border-radius: 6px; border: 1px solid var(--border);">
+                    <h4 style="color: var(--text-muted); margin-bottom: 10px;">Legenda dos Passos:</h4>
+                    <ul id="lab1-log" style="list-style: none; font-size: 0.9rem; line-height: 1.8; color: var(--text-muted);"></ul>
+                </div>
+                <div class="btn-group">
+                    <button id="btn-hs" class="primary" onclick="nextHandshakeStep()">Próximo Passo</button>
+                </div>
+            </div>
+
+            <!-- LAB 2 -->
+            <div id="view-lab2" class="view">
+                <h3 style="margin-bottom: 20px;">Sistema de Arquivos & Cadeia PKI</h3>
+                
+                <div style="display: flex; gap: 20px;">
+                    <div style="flex: 1;">
+                        <h4 style="color: var(--text-muted); margin-bottom: 10px;">Diretório Local:</h4>
+                        <div class="file-tree" id="file-tree">
+                            <div class="file-item" id="f-root-key">🔑 ca-raiz.key</div>
+                            <div class="file-item" id="f-root-crt">📜 ca-raiz.crt</div>
+                            <div class="file-item" id="f-int-key">🔑 ca-intermediaria.key</div>
+                            <div class="file-item" id="f-int-csr">📝 ca-intermediaria.csr</div>
+                            <div class="file-item" id="f-int-crt">📜 ca-intermediaria.crt</div>
+                            <div class="file-item" id="f-srv-key">🔑 servidor.key</div>
+                            <div class="file-item" id="f-srv-csr">📝 servidor.csr</div>
+                            <div class="file-item" id="f-srv-crt">📜 servidor.crt</div>
+                        </div>
+                    </div>
+                    <div style="flex: 1;">
+                        <h4 style="color: var(--text-muted); margin-bottom: 10px;">Hierarquia de Confiança:</h4>
+                        <div class="pki-graph">
+                            <div class="cert-node" id="node-root">Root CA (Autoassinada)</div>
+                            <div class="pki-arrow">↓</div>
+                            <div class="cert-node" id="node-int">Intermediate CA</div>
+                            <div class="pki-arrow">↓</div>
+                            <div class="cert-node" id="node-srv">Servidor (api.corpbank)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group" style="margin-top: 30px;">
+                    <button onclick="runLab2Step(1)" id="btn-l2-1" class="primary">Executar Bloco 1</button>
+                    <button onclick="runLab2Step(2)" id="btn-l2-2" disabled>Executar Bloco 2</button>
+                    <button onclick="runLab2Step(3)" id="btn-l2-3" disabled>Executar Bloco 3</button>
+                </div>
+            </div>
+
+            <!-- LAB 3 (Editor Corrigido) -->
+            <div id="view-lab3" class="view">
+                <h3 style="margin-bottom: 20px;">Configuração do Servidor Web (Nginx)</h3>
+                
+                <div class="editor-wrapper">
+                    <div class="editor-header">
+                        <span style="color: #8b949e;">📄</span> /etc/nginx/sites-available/default
+                    </div>
+                    <div class="editor-code">
+                        <span class="keyword">server</span> {<br>
+                        &nbsp;&nbsp;<span class="prop">listen</span> <span class="string">443 ssl</span>;<br>
+                        &nbsp;&nbsp;<span class="prop">server_name</span> <span class="string">api.corpbank.internal</span>;<br><br>
+                        &nbsp;&nbsp;<span class="prop">ssl_certificate</span> <span class="string">/etc/nginx/servidor.crt</span>;<br>
+                        &nbsp;&nbsp;<span class="prop">ssl_certificate_key</span> <span class="string">/etc/nginx/servidor.key</span>;<br><br>
+                        &nbsp;&nbsp;<span class="comment"># Diretivas mTLS (Preencha abaixo)</span><br>
+                        &nbsp;&nbsp;<span class="prop">ssl_client_certificate</span> <input type="text" id="inp-ca" class="inline-input" placeholder="/etc/nginx/ca-intermediaria.crt">;<br>
+                        &nbsp;&nbsp;<span class="prop">ssl_verify_client</span> 
+                        <select id="sel-verify" class="inline-select">
+                            <option value="off">off</option>
+                            <option value="on">on</option>
+                        </select>;<br>
+                        }
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button onclick="reloadNginx()" class="primary">Salvar e Recarregar Nginx</button>
+                </div>
+
+                <h4 style="color: var(--text-muted); margin-top: 30px; margin-bottom: 10px;">Painel de Testes (cURL):</h4>
+                <div class="btn-group">
+                    <button onclick="testCurl(false)">Testar SEM Certificado</button>
+                    <button onclick="testCurl(true)">Testar COM Certificado</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TERMINAL -->
+        <div class="terminal-panel">
+            <div class="panel-header">
+                <span>Terminal - bash</span>
+                <span>🟢 Online</span>
+            </div>
+            <div id="terminal-output">
+                <div class="term-line term-sys">[Sistema] Simulador iniciado. Selecione um laboratório acima.</div>
+                <div class="term-line">root@corpbank:~# <span class="cursor"></span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const term = document.getElementById('terminal-output');
+        
+        function sleep(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
+
+        async function typeTerminal(text, className = '', delay = 15) {
+            const line = document.createElement('div');
+            line.className = `term-line ${className}`;
+            term.appendChild(line);
+            
+            for (let char of text) {
+                line.innerHTML += char;
+                term.scrollTop = term.scrollHeight;
+                await sleep(delay);
+            }
+            term.scrollTop = term.scrollHeight;
+        }
+
+        function printTerminal(text, className = '') {
+            const line = document.createElement('div');
+            line.className = `term-line ${className}`;
+            line.innerHTML = text;
+            term.appendChild(line);
+            term.scrollTop = term.scrollHeight;
+        }
+
+        function clearTerminal() {
+            term.innerHTML = '<div class="term-line">root@corpbank:~# <span class="cursor"></span></div>';
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById(`view-${tabId}`).classList.add('active');
+            clearTerminal();
+            printTerminal(`[Sistema] Entrando no ${tabId.toUpperCase()}...`, 'term-sys');
+        }
+
+        function resetAll() { location.reload(); }
+
+        // ==========================================
+        // LAB 1: HANDSHAKE TLS
+        // ==========================================
+        const hsSteps = [
+            { from: 'client', msg: 'ClientHello', desc: 'Cliente envia versões TLS, cifras e número aleatório.', log: '➡️ ClientHello enviado.' },
+            { from: 'server', msg: 'ServerHello', desc: 'Servidor escolhe TLS, cifra e envia número aleatório.', log: '⬅️ ServerHello recebido.' },
+            { from: 'server', msg: 'Certificate', desc: 'Servidor envia o certificado digital (assinado pela CA).', log: '⬅️ Certificate recebido. Verificando assinatura...', validate: true },
+            { from: 'server', msg: 'ServerHelloDone', desc: 'Servidor avisa que terminou sua parte.', log: '⬅️ ServerHelloDone.' },
+            { from: 'client', msg: 'ClientKeyExchange', desc: 'Cliente envia chave pré-mestre cifrada com a chave pública.', log: '➡️ ClientKeyExchange enviado.' },
+            { from: 'both', msg: 'ChangeCipherSpec', desc: 'Aviso: a partir daqui, tudo será criptografado.', log: '🔄 ChangeCipherSpec (Ambos).' },
+            { from: 'both', msg: 'Finished', desc: 'Primeira mensagem cifrada. Handshake concluído.', log: '🔒 Finished. Conexão segura estabelecida!', success: true }
+        ];
+        let hsIndex = 0;
+        let isAnimating = false;
+
+        async function nextHandshakeStep() {
+            if (hsIndex >= hsSteps.length || isAnimating) return;
+            isAnimating = true;
+            const btn = document.getElementById('btn-hs');
+            btn.disabled = true;
+
+            const step = hsSteps[hsIndex];
+            
+            document.getElementById('actor-client').classList.remove('active');
+            document.getElementById('actor-server').classList.remove('active');
+            
+            const packet = document.getElementById('packet-anim');
+            packet.innerText = step.msg;
+            
+            if (step.from === 'client') {
+                document.getElementById('actor-client').classList.add('active');
+                packet.style.left = '10%';
+                packet.style.opacity = '1';
+                await sleep(50);
+                packet.style.left = '90%';
+            } else if (step.from === 'server') {
+                document.getElementById('actor-server').classList.add('active');
+                packet.style.left = '90%';
+                packet.style.opacity = '1';
+                await sleep(50);
+                packet.style.left = '10%';
+            } else {
+                document.getElementById('actor-client').classList.add('active');
+                document.getElementById('actor-server').classList.add('active');
+                packet.style.left = '50%';
+                packet.style.opacity = '1';
+            }
+
+            await sleep(600);
+            packet.style.opacity = '0';
+
+            await typeTerminal(`$ openssl s_client -connect api.corpbank.internal:443`, 'term-cmd');
+            await typeTerminal(step.log, step.success ? 'term-sys' : '');
+            if (step.validate) {
+                await sleep(500);
+                await typeTerminal('   ↳ Verificando CA... OK. Domínio confere... OK. Validade... OK.', 'term-sys');
+            }
+
+            const li = document.createElement('li');
+            li.innerHTML = `<b>${step.msg}</b>: ${step.desc}`;
+            if(step.success) li.style.color = 'var(--success-text)';
+            document.getElementById('lab1-log').appendChild(li);
+
+            hsIndex++;
+            isAnimating = false;
+            
+            if (hsIndex < hsSteps.length) {
+                btn.disabled = false;
+            } else {
+                btn.innerText = "Concluído";
+                await typeTerminal('Conexão segura. Dados podem ser transmitidos.', 'term-sys');
+            }
+        }
+
+        // ==========================================
+        // LAB 2: PKI OPENSSL
+        // ==========================================
+        function showFile(id) {
+            const el = document.getElementById(id);
+            el.classList.add('show');
+            if(id.includes('key')) el.classList.add('key');
+            if(id.includes('csr')) el.classList.add('csr');
+            if(id.includes('crt')) el.classList.add('crt');
+        }
+
+        async function runLab2Step(step) {
+            const btns = [document.getElementById('btn-l2-1'), document.getElementById('btn-l2-2'), document.getElementById('btn-l2-3')];
+            btns.forEach(b => b.disabled = true);
+
+            if (step === 1) {
+                await typeTerminal('$ openssl genrsa -aes256 -out ca-raiz.key 4096', 'term-cmd');
+                await typeTerminal('Generating RSA private key, 4096 bit long modulus');
+                showFile('f-root-key');
+                await sleep(300);
+                
+                await typeTerminal('$ openssl req -new -x509 -days 3650 -key ca-raiz.key -out ca-raiz.crt', 'term-cmd');
+                await typeTerminal('Enter pass phrase for ca-raiz.key: ********');
+                showFile('f-root-crt');
+                
+                document.getElementById('node-root').classList.add('active');
+                await typeTerminal('✅ CA Raiz criada com sucesso.', 'term-sys');
+                btns[1].disabled = false;
+
+            } else if (step === 2) {
+                await typeTerminal('$ openssl genrsa -out ca-intermediaria.key 2048', 'term-cmd');
+                showFile('f-int-key');
+                await sleep(200);
+                
+                await typeTerminal('$ openssl req -new -key ca-intermediaria.key -out ca-intermediaria.csr', 'term-cmd');
+                showFile('f-int-csr');
+                await sleep(200);
+                
+                await typeTerminal('$ openssl x509 -req -in ca-intermediaria.csr -CA ca-raiz.crt -CAkey ca-raiz.key -out ca-intermediaria.crt', 'term-cmd');
+                await typeTerminal('Signature ok');
+                showFile('f-int-crt');
+                
+                document.getElementById('node-int').classList.add('active');
+                await typeTerminal('✅ CA Intermediária assinada pela Raiz.', 'term-sys');
+                btns[2].disabled = false;
+
+            } else if (step === 3) {
+                await typeTerminal('$ openssl req -newkey rsa:2048 -nodes -keyout servidor.key -out servidor.csr', 'term-cmd');
+                showFile('f-srv-key');
+                showFile('f-srv-csr');
+                await sleep(200);
+                
+                await typeTerminal('$ openssl x509 -req -in servidor.csr -CA ca-intermediaria.crt -CAkey ca-intermediaria.key -out servidor.crt', 'term-cmd');
+                showFile('f-srv-crt');
+                document.getElementById('node-srv').classList.add('active');
+                await sleep(300);
+
+                await typeTerminal('$ cat ca-intermediaria.crt ca-raiz.crt > cadeia.crt && openssl verify -CAfile cadeia.crt servidor.crt', 'term-cmd');
+                await typeTerminal('servidor.crt: OK', 'term-sys');
+                await typeTerminal('✅ Cadeia de confiança validada com sucesso!', 'term-sys');
+                
+                btns[0].disabled = false;
+            }
+        }
+
+        // ==========================================
+        // LAB 3: NGINX mTLS
+        // ==========================================
+        let nginxRunning = false;
+        let mtlsEnabled = false;
+
+        async function reloadNginx() {
+            const caInput = document.getElementById('inp-ca').value.trim();
+            const verifyInput = document.getElementById('sel-verify').value;
+
+            await typeTerminal('$ nginx -t', 'term-cmd');
+            
+            if (!caInput) {
+                await typeTerminal('nginx: [emerg] no "ssl_client_certificate" is defined in server', 'term-err');
+                await typeTerminal('nginx: configuration file /etc/nginx/nginx.conf test failed', 'term-err');
+                nginxRunning = false;
+                return;
+            }
+
+            await typeTerminal('nginx: configuration file /etc/nginx/nginx.conf test is successful', 'term-sys');
+            await typeTerminal('$ nginx -s reload', 'term-cmd');
+            
+            nginxRunning = true;
+            mtlsEnabled = (verifyInput === 'on');
+            
+            if (mtlsEnabled) {
+                await typeTerminal('⚠️ mTLS ATIVADO. O servidor exigirá certificado de cliente.', 'term-warn');
+            } else {
+                await typeTerminal('⚠️ Apenas TLS comum. Qualquer um pode acessar.', 'term-warn');
+            }
+        }
+
+        async function testCurl(hasCert) {
+            if (!nginxRunning) {
+                await typeTerminal('Erro: Salve e recarregue o Nginx primeiro.', 'term-err');
+                return;
+            }
+
+            if (hasCert) {
+                await typeTerminal('$ curl -k --cert cliente.crt --key cliente.key https://api.corpbank.internal/', 'term-cmd');
+                await typeTerminal('< HTTP/1.1 200 OK');
+                await typeTerminal('<html><body><h1>Bem-vindo à API Interna da CorpBank</h1></body></html>', 'term-sys');
+                await typeTerminal('✅ Acesso Autorizado!', 'term-sys');
+            } else {
+                await typeTerminal('$ curl -k https://api.corpbank.internal/', 'term-cmd');
+                if (mtlsEnabled) {
+                    await typeTerminal('curl: (35) OpenSSL SSL_connect: sslv3 alert handshake failure', 'term-err');
+                    await typeTerminal('❌ Acesso Negado: O servidor exige um certificado válido.', 'term-err');
+                } else {
+                    await typeTerminal('< HTTP/1.1 200 OK');
+                    await typeTerminal('<html><body><h1>Bem-vindo à API Interna da CorpBank</h1></body></html>', 'term-sys');
+                    await typeTerminal('⚠️ Acesso liberado (mTLS desativado).', 'term-warn');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
